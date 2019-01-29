@@ -26,13 +26,13 @@
 #include "config.h"
 #include "WebProcessMainWin.h"
 
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMain final : public ChildProcessMainBase {
+class WebProcessMain final : public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
@@ -42,7 +42,7 @@ public:
 
 int WebProcessMainWin(int argc, char** argv)
 {
-    return ChildProcessMain<WebProcess, WebProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<WebProcess, WebProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

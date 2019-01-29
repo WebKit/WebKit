@@ -525,7 +525,7 @@ void PluginProcess::platformInitializePluginProcess(PluginProcessCreationParamet
 #endif
 }
 
-void PluginProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
+void PluginProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
     initializeShim();
 
@@ -623,7 +623,7 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
     }
 }
 
-void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+void PluginProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)", "visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name."), [[(NSString *)m_pluginPath lastPathComponent] stringByDeletingPathExtension], (NSString *)parameters.uiProcessName];
     _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
@@ -631,7 +631,7 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
         _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), kLSPlugInBundleIdentifierKey, m_pluginBundleIdentifier.createCFString().get(), nullptr);
 }
 
-void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+void PluginProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // PluginProcess may already be sandboxed if its parent process was sandboxed, and launched a child process instead of an XPC service.
     // This is generally not expected, however we currently always spawn a child process to create a MIME type preferences file.
@@ -695,7 +695,7 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"NSUseRemoteSavePanel" : @YES }];
 
-    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+    AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
 bool PluginProcess::shouldOverrideQuarantine()
@@ -705,7 +705,7 @@ bool PluginProcess::shouldOverrideQuarantine()
 
 void PluginProcess::stopRunLoop()
 {
-    ChildProcess::stopNSAppRunLoop();
+    AuxiliaryProcess::stopNSAppRunLoop();
 }
 
 } // namespace WebKit

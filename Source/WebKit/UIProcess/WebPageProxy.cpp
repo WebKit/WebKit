@@ -802,9 +802,9 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
 
 void WebPageProxy::finishAttachingToWebProcess(ShouldInitializeWebPage shouldInitializePage)
 {
-    ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
+    ASSERT(m_process->state() != AuxiliaryProcessProxy::State::Terminated);
 
-    if (m_process->state() == ChildProcessProxy::State::Running) {
+    if (m_process->state() == AuxiliaryProcessProxy::State::Running) {
         m_webProcessLifetimeTracker.webPageEnteringWebProcess();
         processDidFinishLaunching();
     }

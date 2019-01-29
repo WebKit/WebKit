@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DownloadProxyMap_h
-#define DownloadProxyMap_h
+#pragma once
 
 #include "DownloadID.h"
 #include <wtf/HashMap.h>
@@ -36,15 +35,15 @@ class ResourceRequest;
 
 namespace WebKit {
 
-class ChildProcessProxy;
 class DownloadProxy;
+class NetworkProcessProxy;
 class WebProcessPool;
 
 class DownloadProxyMap {
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
 
 public:
-    explicit DownloadProxyMap(ChildProcessProxy*);
+    explicit DownloadProxyMap(NetworkProcessProxy&);
     ~DownloadProxyMap();
 
     DownloadProxy* createDownloadProxy(WebProcessPool&, const WebCore::ResourceRequest&);
@@ -55,10 +54,8 @@ public:
     void processDidClose();
 
 private:
-    ChildProcessProxy* m_process;
+    NetworkProcessProxy* m_process;
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
 };
 
 } // namespace WebKit
-
-#endif // DownloadProxyMap_h

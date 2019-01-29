@@ -51,7 +51,7 @@ public:
     uint64_t pageID() const { return m_serviceWorkerPageID; }
 
 private:
-    // ChildProcessProxy
+    // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) final;
 
     // ProcessLauncher::Client

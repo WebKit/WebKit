@@ -208,7 +208,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #endif
 }
 
-void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
 {
 #if PLATFORM(MAC)
     updateProcessName();
@@ -348,7 +348,7 @@ void WebProcess::registerWithStateDumper()
 }
 #endif
 
-void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
+void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -402,9 +402,9 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 void WebProcess::stopRunLoop()
 {
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
-    ChildProcess::stopNSRunLoop();
+    AuxiliaryProcess::stopNSRunLoop();
 #else
-    ChildProcess::stopNSAppRunLoop();
+    AuxiliaryProcess::stopNSAppRunLoop();
 #endif
 }
 #endif
@@ -429,7 +429,7 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
 #endif
 }
 
-void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #if ENABLE(MANUAL_SANDBOXING)
@@ -444,7 +444,7 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 #else
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebProcess" ofType:@"sb"]);
 #endif
-    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+    AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 #endif
 #else
     UNUSED_PARAM(parameters);

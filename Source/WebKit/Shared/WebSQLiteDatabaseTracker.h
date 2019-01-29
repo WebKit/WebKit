@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSQLiteDatabaseTracker_h
-#define WebSQLiteDatabaseTracker_h
+#pragma once
 
 #include <WebCore/SQLiteDatabaseTrackerClient.h>
 #include <pal/HysteresisActivity.h>
@@ -32,15 +31,12 @@
 
 namespace WebKit {
 
-class ChildProcess;
 class NetworkProcess;
-class WebProcess;
 
 class WebSQLiteDatabaseTracker : public WebCore::SQLiteDatabaseTrackerClient {
     WTF_MAKE_NONCOPYABLE(WebSQLiteDatabaseTracker)
 public:
     explicit WebSQLiteDatabaseTracker(NetworkProcess&);
-    explicit WebSQLiteDatabaseTracker(WebProcess&);
 
     // WebCore::SQLiteDatabaseTrackerClient
     void willBeginFirstTransaction() override;
@@ -49,12 +45,8 @@ public:
 private:
     void hysteresisUpdated(PAL::HysteresisState);
 
-    ChildProcess& m_process;
+    NetworkProcess& m_process;
     PAL::HysteresisActivity m_hysteresis;
-    enum class ChildProcessType { Network, WebContent };
-    ChildProcessType m_childProcessType;
 };
 
 } // namespace WebKit
-
-#endif // WebSQLiteDatabaseTracker_h

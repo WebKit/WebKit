@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,21 @@
  */
 
 #include "config.h"
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 
-#include <cstring>
-#include <wtf/text/WTFString.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <stdlib.h>
 
 namespace WebKit {
 
-bool ChildProcessMainBase::parseCommandLine(int argc, char** argv)
+bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
 {
-    for (int i = 0; i < argc; i++) {
-        if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc) {
-            String str(argv[++i]);
-            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(str.toUInt64());
-        } else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc) {
-            String str(argv[++i]);
-            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(str.toUInt64());
-        }
-    }
+    ASSERT(argc >= 3);
+    if (argc < 3)
+        return false;
+
+    m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
+    m_parameters.connectionIdentifier = atoi(argv[2]);
     return true;
 }
 

@@ -30,7 +30,7 @@
 #include "AuthenticationDecisionListener.h"
 #include "AuthenticationManager.h"
 #include "AuthenticationManagerMessages.h"
-#include "ChildProcessProxy.h"
+#include "AuxiliaryProcessProxy.h"
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebCredential.h"

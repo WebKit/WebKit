@@ -36,7 +36,6 @@ class Connection;
 namespace WebKit {
 
 class AuthenticationDecisionListener;
-class ChildProcessProxy;
 class SecKeyProxyStore;
 class WebCredential;
 class WebProtectionSpace;

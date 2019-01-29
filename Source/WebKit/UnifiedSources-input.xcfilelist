@@ -169,13 +169,13 @@ $(SRCROOT)/Shared/AsyncRequest.cpp
 $(SRCROOT)/Shared/Authentication/AuthenticationManager.cpp
 $(SRCROOT)/Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 $(SRCROOT)/Shared/Authentication/cocoa/ClientCertificateAuthenticationXPCConstants.cpp
+$(SRCROOT)/Shared/AuxiliaryProcess.cpp
 $(SRCROOT)/Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 $(SRCROOT)/Shared/CacheModel.cpp
-$(SRCROOT)/Shared/ChildProcess.cpp
 $(SRCROOT)/Shared/Cocoa/APIDataCocoa.mm
 $(SRCROOT)/Shared/Cocoa/APIObject.mm
 $(SRCROOT)/Shared/Cocoa/ArgumentCodersCocoa.mm
-$(SRCROOT)/Shared/Cocoa/ChildProcessCocoa.mm
+$(SRCROOT)/Shared/Cocoa/AuxiliaryProcessCocoa.mm
 $(SRCROOT)/Shared/Cocoa/CompletionHandlerCallChecker.mm
 $(SRCROOT)/Shared/Cocoa/DataDetectionResult.mm
 $(SRCROOT)/Shared/Cocoa/LoadParametersCocoa.mm
@@ -279,7 +279,7 @@ $(SRCROOT)/Shared/WebsitePoliciesData.cpp
 $(SRCROOT)/Shared/cf/ArgumentCodersCF.cpp
 $(SRCROOT)/Shared/cf/CookieStorageUtilsCF.mm
 $(SRCROOT)/Shared/cg/ShareableBitmapCG.cpp
-$(SRCROOT)/Shared/ios/ChildProcessIOS.mm
+$(SRCROOT)/Shared/ios/AuxiliaryProcessIOS.mm
 $(SRCROOT)/Shared/ios/InteractionInformationAtPosition.mm
 $(SRCROOT)/Shared/ios/InteractionInformationRequest.cpp
 $(SRCROOT)/Shared/ios/NativeWebKeyboardEventIOS.mm
@@ -292,7 +292,7 @@ $(SRCROOT)/Shared/ios/WebPlatformTouchPointIOS.cpp
 $(SRCROOT)/Shared/ios/WebTouchEventIOS.cpp
 $(SRCROOT)/Shared/mac/ArgumentCodersMac.mm
 $(SRCROOT)/Shared/mac/AttributedString.mm
-$(SRCROOT)/Shared/mac/ChildProcessMac.mm
+$(SRCROOT)/Shared/mac/AuxiliaryProcessMac.mm
 $(SRCROOT)/Shared/mac/CodeSigning.mm
 $(SRCROOT)/Shared/mac/ColorSpaceData.mm
 $(SRCROOT)/Shared/mac/HangDetectionDisablerMac.mm
@@ -480,8 +480,8 @@ $(SRCROOT)/UIProcess/Automation/WebAutomationSession.cpp
 $(SRCROOT)/UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm
 $(SRCROOT)/UIProcess/Automation/ios/WebAutomationSessionIOS.mm
 $(SRCROOT)/UIProcess/Automation/mac/WebAutomationSessionMac.mm
+$(SRCROOT)/UIProcess/AuxiliaryProcessProxy.cpp
 $(SRCROOT)/UIProcess/BackgroundProcessResponsivenessTimer.cpp
-$(SRCROOT)/UIProcess/ChildProcessProxy.cpp
 $(SRCROOT)/UIProcess/Cocoa/AutomationClient.mm
 $(SRCROOT)/UIProcess/Cocoa/AutomationSessionClient.mm
 $(SRCROOT)/UIProcess/Cocoa/DiagnosticLoggingClient.mm

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetworkCacheStorage.h"
 
-#include "ChildProcess.h"
+#include "AuxiliaryProcess.h"
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheFileSystem.h"
@@ -1133,7 +1133,7 @@ void Storage::deleteOldVersions()
             if (directoryVersion >= version)
                 return;
 #if PLATFORM(MAC)
-            if (!ChildProcess::isSystemWebKit() && directoryVersion == lastStableVersion)
+            if (!AuxiliaryProcess::isSystemWebKit() && directoryVersion == lastStableVersion)
                 return;
 #endif
 

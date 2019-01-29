@@ -36,14 +36,14 @@
 
 namespace WebKit {
 
-class ChildProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client {
-    WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
+class AuxiliaryProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client {
+    WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
-    explicit ChildProcessProxy(bool alwaysRunsAtBackgroundPriority = false);
+    explicit AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority = false);
 
 public:
-    virtual ~ChildProcessProxy();
+    virtual ~AuxiliaryProcessProxy();
 
     void connect();
     void terminate();
@@ -109,7 +109,7 @@ private:
 };
 
 template<typename T>
-bool ChildProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
+bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
@@ -120,7 +120,7 @@ bool ChildProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC:
 }
 
 template<typename U> 
-bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
+bool AuxiliaryProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, Seconds timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
 {
     COMPILE_ASSERT(U::isSync, SyncMessageExpected);
 
@@ -133,7 +133,7 @@ bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_
 }
 
 template<typename T, typename... Args>
-void ChildProcessProxy::sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler)
+void AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler)
 {
     if (!m_connection) {
         T::cancelReply(WTFMove(completionHandler));

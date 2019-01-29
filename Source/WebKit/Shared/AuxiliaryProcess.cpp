@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ChildProcess.h"
+#include "AuxiliaryProcess.h"
 
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
@@ -42,23 +42,23 @@
 namespace WebKit {
 using namespace WebCore;
 
-ChildProcess::ChildProcess()
+AuxiliaryProcess::AuxiliaryProcess()
     : m_terminationCounter(0)
-    , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
+    , m_terminationTimer(RunLoop::main(), this, &AuxiliaryProcess::terminationTimerFired)
     , m_processSuppressionDisabled("Process Suppression Disabled by UIProcess")
 {
 }
 
-ChildProcess::~ChildProcess()
+AuxiliaryProcess::~AuxiliaryProcess()
 {
 }
 
-void ChildProcess::didClose(IPC::Connection&)
+void AuxiliaryProcess::didClose(IPC::Connection&)
 {
     _exit(EXIT_SUCCESS);
 }
 
-void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
+void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters& parameters)
 {
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
     Process::setIdentifier(*parameters.processIdentifier);
@@ -83,7 +83,7 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
     m_connection->open();
 }
 
-void ChildProcess::setProcessSuppressionEnabled(bool enabled)
+void AuxiliaryProcess::setProcessSuppressionEnabled(bool enabled)
 {
     if (enabled)
         m_processSuppressionDisabled.stop();
@@ -91,50 +91,50 @@ void ChildProcess::setProcessSuppressionEnabled(bool enabled)
         m_processSuppressionDisabled.start();
 }
 
-void ChildProcess::initializeProcess(const ChildProcessInitializationParameters&)
+void AuxiliaryProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }
 
-void ChildProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+void AuxiliaryProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
 {
 }
 
-void ChildProcess::initializeConnection(IPC::Connection*)
+void AuxiliaryProcess::initializeConnection(IPC::Connection*)
 {
 }
 
-void ChildProcess::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcess::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void ChildProcess::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcess::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
-void ChildProcess::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
+void AuxiliaryProcess::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
-void ChildProcess::removeMessageReceiver(IPC::StringReference messageReceiverName)
+void AuxiliaryProcess::removeMessageReceiver(IPC::StringReference messageReceiverName)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-void ChildProcess::removeMessageReceiver(IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcess::removeMessageReceiver(IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiver);
 }
 
-void ChildProcess::disableTermination()
+void AuxiliaryProcess::disableTermination()
 {
     m_terminationCounter++;
     m_terminationTimer.stop();
 }
 
-void ChildProcess::enableTermination()
+void AuxiliaryProcess::enableTermination()
 {
     ASSERT(m_terminationCounter > 0);
     m_terminationCounter--;
@@ -150,17 +150,17 @@ void ChildProcess::enableTermination()
     m_terminationTimer.startOneShot(m_terminationTimeout);
 }
 
-IPC::Connection* ChildProcess::messageSenderConnection()
+IPC::Connection* AuxiliaryProcess::messageSenderConnection()
 {
     return m_connection.get();
 }
 
-uint64_t ChildProcess::messageSenderDestinationID()
+uint64_t AuxiliaryProcess::messageSenderDestinationID()
 {
     return 0;
 }
 
-void ChildProcess::terminationTimerFired()
+void AuxiliaryProcess::terminationTimerFired()
 {
     if (!shouldTerminate())
         return;
@@ -168,52 +168,52 @@ void ChildProcess::terminationTimerFired()
     terminate();
 }
 
-void ChildProcess::stopRunLoop()
+void AuxiliaryProcess::stopRunLoop()
 {
     platformStopRunLoop();
 }
 
 #if !PLATFORM(IOS_FAMILY)
-void ChildProcess::platformStopRunLoop()
+void AuxiliaryProcess::platformStopRunLoop()
 {
     RunLoop::main().stop();
 }
 #endif
 
-void ChildProcess::terminate()
+void AuxiliaryProcess::terminate()
 {
     m_connection->invalidate();
 
     stopRunLoop();
 }
 
-void ChildProcess::shutDown()
+void AuxiliaryProcess::shutDown()
 {
     terminate();
 }
 
-void ChildProcess::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme) const
+void AuxiliaryProcess::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme) const
 {
     WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(urlScheme);
 }
 
 #if !PLATFORM(COCOA)
-void ChildProcess::platformInitialize()
+void AuxiliaryProcess::platformInitialize()
 {
 }
 
-void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
+void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
     WTFLogAlways("Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data());
     CRASH();
 }
 
 #if OS(LINUX)
-void ChildProcess::didReceiveMemoryPressureEvent(bool isCritical)
+void AuxiliaryProcess::didReceiveMemoryPressureEvent(bool isCritical)
 {
     MemoryPressureHandler::singleton().triggerMemoryPressureEvent(isCritical);
 }

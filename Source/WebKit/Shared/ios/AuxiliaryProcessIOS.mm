@@ -24,10 +24,9 @@
  */
 
 #import "config.h"
+#import "AuxiliaryProcess.h"
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
-
-#import "ChildProcess.h"
 
 #import "SandboxInitializationParameters.h"
 #import "XPCServiceEntryPoint.h"
@@ -46,7 +45,7 @@
 
 namespace WebKit {
 
-void ChildProcess::platformInitialize()
+void AuxiliaryProcess::platformInitialize()
 {
     FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::singleton(); 
     floatingPointEnvironment.enableDenormalSupport(); 
@@ -54,7 +53,7 @@ void ChildProcess::platformInitialize()
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
-void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
 #if ENABLE(MANUAL_SANDBOXING)
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
@@ -109,12 +108,12 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 #endif
 }
 
-void ChildProcess::setQOS(int, int)
+void AuxiliaryProcess::setQOS(int, int)
 {
 
 }
 
-void ChildProcess::platformStopRunLoop()
+void AuxiliaryProcess::platformStopRunLoop()
 {
     XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }

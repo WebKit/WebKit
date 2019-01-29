@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AuxiliaryProcessMain.h"
 
-#include "ChildProcess.h"
-#include "WebKit2Initialize.h"
-#include <wtf/RunLoop.h>
+#include <cstring>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class ChildProcessMainBase {
-public:
-    virtual bool platformInitialize() { return true; }
-    virtual bool parseCommandLine(int argc, char** argv);
-    virtual void platformFinalize() { }
-
-    ChildProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
-
-protected:
-    ChildProcessInitializationParameters m_parameters;
-};
-
-template<typename ChildProcessType>
-void initializeChildProcess(ChildProcessInitializationParameters&& parameters)
+bool AuxiliaryProcessMainBase::parseCommandLine(int argc, char** argv)
 {
-    ChildProcessType::singleton().initialize(WTFMove(parameters));
-}
-
-template<typename ChildProcessType, typename ChildProcessMainType>
-int ChildProcessMain(int argc, char** argv)
-{
-    ChildProcessMainType childMain;
-
-    if (!childMain.platformInitialize())
-        return EXIT_FAILURE;
-
-    InitializeWebKit2();
-
-    if (!childMain.parseCommandLine(argc, argv))
-        return EXIT_FAILURE;
-
-    initializeChildProcess<ChildProcessType>(childMain.takeInitializationParameters());
-    RunLoop::run();
-    childMain.platformFinalize();
-
-    return EXIT_SUCCESS;
+    for (int i = 0; i < argc; i++) {
+        if (!strcmp(argv[i], "-clientIdentifier") && i + 1 < argc) {
+            String str(argv[++i]);
+            m_parameters.connectionIdentifier = reinterpret_cast<HANDLE>(str.toUInt64());
+        } else if (!strcmp(argv[i], "-processIdentifier") && i + 1 < argc) {
+            String str(argv[++i]);
+            m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(str.toUInt64());
+        }
+    }
+    return true;
 }
 
 } // namespace WebKit

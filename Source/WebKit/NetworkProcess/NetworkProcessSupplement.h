@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessSupplement_h
-#define NetworkProcessSupplement_h
+#pragma once
 
-#include "ChildProcessSupplement.h"
+#include "AuxiliaryProcessSupplement.h"
 
 namespace WebKit {
 
 struct NetworkProcessCreationParameters;
 
-class NetworkProcessSupplement : public ChildProcessSupplement {
+class NetworkProcessSupplement : public AuxiliaryProcessSupplement {
 public:
     virtual void initialize(const NetworkProcessCreationParameters&)
     {
@@ -40,5 +39,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // NetworkProcessSupplement_h

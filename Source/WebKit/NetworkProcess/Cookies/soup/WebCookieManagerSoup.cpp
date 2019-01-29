@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
-#include "ChildProcess.h"
 #include "NetworkProcess.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>

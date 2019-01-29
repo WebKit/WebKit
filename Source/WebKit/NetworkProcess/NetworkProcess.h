@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "AuxiliaryProcess.h"
 #include "CacheModel.h"
-#include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
@@ -100,7 +100,7 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkProcess : public ChildProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
+class NetworkProcess : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
 #if ENABLE(INDEXED_DATABASE)
     , public WebCore::IDBServer::IDBBackingStoreTemporaryFileHandler
 #endif
@@ -108,7 +108,7 @@ class NetworkProcess : public ChildProcess, private DownloadManager::Client, pub
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
 public:
-    NetworkProcess(ChildProcessInitializationParameters&&);
+    NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
     static constexpr ProcessType processType = ProcessType::Network;
 
@@ -310,10 +310,10 @@ private:
     void platformPrepareToSuspend(CompletionHandler<void()>&&);
     void platformProcessDidResume();
 
-    // ChildProcess
-    void initializeProcess(const ChildProcessInitializationParameters&) override;
-    void initializeProcessName(const ChildProcessInitializationParameters&) override;
-    void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) override;
+    // AuxiliaryProcess
+    void initializeProcess(const AuxiliaryProcessInitializationParameters&) override;
+    void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
+    void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
     bool shouldTerminate() override;
 

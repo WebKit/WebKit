@@ -27,9 +27,9 @@
 
 namespace WebKit {
 
-class ChildProcess;
+class NetworkProcess;
 
-void initializeSecItemShim(ChildProcess&);
+void initializeSecItemShim(NetworkProcess&);
 
 } // namespace WebKit
 

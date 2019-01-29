@@ -26,7 +26,7 @@
 #pragma once
 
 #include "APIWebsiteDataStore.h"
-#include "ChildProcessProxy.h"
+#include "AuxiliaryProcessProxy.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
 #include "LegacyCustomProtocolManagerProxy.h"
 #endif
@@ -65,7 +65,7 @@ struct NetworkProcessCreationParameters;
 class WebUserContentControllerProxy;
 struct WebsiteData;
 
-class NetworkProcessProxy final : public ChildProcessProxy, private ProcessThrottlerClient {
+class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
     explicit NetworkProcessProxy(WebProcessPool&);
     ~NetworkProcessProxy();
@@ -153,7 +153,7 @@ public:
     void removeSession(PAL::SessionID);
 
 private:
-    // ChildProcessProxy
+    // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;

@@ -583,8 +583,8 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         PluginProcess/unix/PluginProcessUnix.cpp
 
         Shared/ActivityAssertion.cpp
+        Shared/AuxiliaryProcess.cpp
         Shared/BlobDataFileReferenceWithSandboxExtension.cpp
-        Shared/ChildProcess.cpp
         Shared/ShareableBitmap.cpp
         Shared/WebCoreArgumentCoders.cpp
         Shared/WebEvent.cpp
@@ -619,7 +619,7 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         Shared/soup/WebCoreArgumentCodersSoup.cpp
 
-        Shared/unix/ChildProcessMain.cpp
+        Shared/unix/AuxiliaryProcessMain.cpp
 
         UIProcess/Launcher/ProcessLauncher.cpp
 
@@ -640,11 +640,11 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp
         WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 
+        ${DERIVED_SOURCES_WEBKIT_DIR}/AuxiliaryProcessMessageReceiver.cpp
         ${DERIVED_SOURCES_WEBKIT_DIR}/PluginControllerProxyMessageReceiver.cpp
         ${DERIVED_SOURCES_WEBKIT_DIR}/PluginProcessMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/WebProcessConnectionMessageReceiver.cpp
         ${DERIVED_SOURCES_WEBKIT_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/ChildProcessMessageReceiver.cpp
+        ${DERIVED_SOURCES_WEBKIT_DIR}/WebProcessConnectionMessageReceiver.cpp
     )
 
     add_executable(WebKitPluginProcess2 ${PluginProcessGTK2_SOURCES})

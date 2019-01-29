@@ -30,7 +30,7 @@
 #include "APIPageGroupHandle.h"
 #include "APIPageHandle.h"
 #include "AuthenticationManager.h"
-#include "ChildProcessMessages.h"
+#include "AuxiliaryProcessMessages.h"
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
@@ -223,7 +223,7 @@ WebProcess::~WebProcess()
 {
 }
 
-void WebProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
+void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
     WTF::setProcessPrivileges({ });
 
@@ -234,10 +234,10 @@ void WebProcess::initializeProcess(const ChildProcessInitializationParameters& p
 
 void WebProcess::initializeConnection(IPC::Connection* connection)
 {
-    ChildProcess::initializeConnection(connection);
+    AuxiliaryProcess::initializeConnection(connection);
 
     // We call _exit() directly from the background queue in case the main thread is unresponsive
-    // and ChildProcess::didClose() does not get called.
+    // and AuxiliaryProcess::didClose() does not get called.
     connection->setDidCloseOnConnectionWorkQueueCallback(callExit);
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
@@ -661,7 +661,7 @@ void WebProcess::terminate()
 
     platformTerminate();
 
-    ChildProcess::terminate();
+    AuxiliaryProcess::terminate();
 }
 
 void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
@@ -682,8 +682,8 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
         return;
     }
 
-    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
-        ChildProcess::didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, decoder);
         return;
     }
 
@@ -1328,15 +1328,15 @@ void WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 }
 
 #if !PLATFORM(COCOA)
-void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
 {
 }
 
-void WebProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
+void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 
-void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
+void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }
 

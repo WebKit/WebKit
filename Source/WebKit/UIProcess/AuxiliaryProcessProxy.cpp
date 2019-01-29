@@ -24,19 +24,19 @@
  */
 
 #include "config.h"
-#include "ChildProcessProxy.h"
+#include "AuxiliaryProcessProxy.h"
 
-#include "ChildProcessMessages.h"
+#include "AuxiliaryProcessMessages.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-ChildProcessProxy::ChildProcessProxy(bool alwaysRunsAtBackgroundPriority)
+AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority)
     : m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
 {
 }
 
-ChildProcessProxy::~ChildProcessProxy()
+AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 {
     if (m_connection)
         m_connection->invalidate();
@@ -47,7 +47,7 @@ ChildProcessProxy::~ChildProcessProxy()
     }
 }
 
-void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
+void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processIdentifier = m_processIdentifier;
 
@@ -81,7 +81,7 @@ void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchO
     platformGetLaunchOptions(launchOptions);
 }
 
-void ChildProcessProxy::connect()
+void AuxiliaryProcessProxy::connect()
 {
     ASSERT(!m_processLauncher);
     ProcessLauncher::LaunchOptions launchOptions;
@@ -89,7 +89,7 @@ void ChildProcessProxy::connect()
     m_processLauncher = ProcessLauncher::create(this, launchOptions);
 }
 
-void ChildProcessProxy::terminate()
+void AuxiliaryProcessProxy::terminate()
 {
 #if PLATFORM(COCOA)
     if (m_connection && m_connection->kill())
@@ -101,18 +101,18 @@ void ChildProcessProxy::terminate()
         m_processLauncher->terminateProcess();
 }
 
-ChildProcessProxy::State ChildProcessProxy::state() const
+AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
 {
     if (m_processLauncher && m_processLauncher->isLaunching())
-        return ChildProcessProxy::State::Launching;
+        return AuxiliaryProcessProxy::State::Launching;
 
     if (!m_connection)
-        return ChildProcessProxy::State::Terminated;
+        return AuxiliaryProcessProxy::State::Terminated;
 
-    return ChildProcessProxy::State::Running;
+    return AuxiliaryProcessProxy::State::Running;
 }
 
-bool ChildProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions)
+bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions)
 {
     switch (state()) {
     case State::Launching:
@@ -130,37 +130,37 @@ bool ChildProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, Optio
     return false;
 }
 
-void ChildProcessProxy::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcessProxy::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void ChildProcessProxy::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
+void AuxiliaryProcessProxy::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
-void ChildProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
+void AuxiliaryProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
-void ChildProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiverName)
+void AuxiliaryProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiverName)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-bool ChildProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+bool AuxiliaryProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool ChildProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
+bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
+void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
 
@@ -181,7 +181,7 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     m_pendingMessages.clear();
 }
 
-void ChildProcessProxy::shutDownProcess()
+void AuxiliaryProcessProxy::shutDownProcess()
 {
     switch (state()) {
     case State::Launching:
@@ -206,25 +206,25 @@ void ChildProcessProxy::shutDownProcess()
     processWillShutDown(*m_connection);
 
     if (canSendMessage())
-        send(Messages::ChildProcess::ShutDown(), 0);
+        send(Messages::AuxiliaryProcess::ShutDown(), 0);
 
     m_connection->invalidate();
     m_connection = nullptr;
 }
 
-void ChildProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
+void AuxiliaryProcessProxy::setProcessSuppressionEnabled(bool processSuppressionEnabled)
 {
 #if PLATFORM(COCOA)
     if (state() != State::Running)
         return;
 
-    connection()->send(Messages::ChildProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
+    connection()->send(Messages::AuxiliaryProcess::SetProcessSuppressionEnabled(processSuppressionEnabled), 0);
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
 }
 
-void ChildProcessProxy::connectionWillOpen(IPC::Connection&)
+void AuxiliaryProcessProxy::connectionWillOpen(IPC::Connection&)
 {
 }
 

@@ -26,7 +26,7 @@
 #import "config.h"
 
 #if PLATFORM(MAC) || PLATFORM(IOSMAC)
-#import "ChildProcess.h"
+#import "AuxiliaryProcess.h"
 
 #import "CodeSigning.h"
 #import "QuarantineSPI.h"
@@ -114,7 +114,7 @@ struct CachedSandboxHeader {
 // byte N
 
 struct SandboxInfo {
-    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const ChildProcess::ProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
+    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const AuxiliaryProcess::ProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
         : parentDirectoryPath { parentDirectoryPath }
         , directoryPath { directoryPath }
         , filePath { filePath }
@@ -132,7 +132,7 @@ struct SandboxInfo {
     const String& filePath;
     const SandboxParametersPtr& sandboxParameters;
     const CString& header;
-    const ChildProcess::ProcessType& processType;
+    const AuxiliaryProcess::ProcessType& processType;
     const SandboxInitializationParameters& initializationParameters;
     const String& profileOrProfilePath;
     const bool isProfilePath;
@@ -149,13 +149,13 @@ static void initializeTimerCoalescingPolicy()
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 }
 
-void ChildProcess::launchServicesCheckIn()
+void AuxiliaryProcess::launchServicesCheckIn()
 {
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
 }
 
-void ChildProcess::platformInitialize()
+void AuxiliaryProcess::platformInitialize()
 {
     initializeTimerCoalescingPolicy();
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
@@ -211,14 +211,14 @@ static Optional<Vector<char>> fileContents(const String& path, bool shouldLock =
 #if USE(APPLE_INTERNAL_SDK)
 // These strings must match the last segment of the "com.apple.rootless.storage.<this part must match>" entry in each
 // process's restricted entitlements file (ex. Configurations/Networking-OSX-restricted.entitlements).
-constexpr const char* processStorageClass(ChildProcess::ProcessType type)
+constexpr const char* processStorageClass(AuxiliaryProcess::ProcessType type)
 {
     switch (type) {
-    case ChildProcess::ProcessType::WebContent:
+    case AuxiliaryProcess::ProcessType::WebContent:
         return "WebKitWebContentSandbox";
-    case ChildProcess::ProcessType::Network:
+    case AuxiliaryProcess::ProcessType::Network:
         return "WebKitNetworkingSandbox";
-    case ChildProcess::ProcessType::Plugin:
+    case AuxiliaryProcess::ProcessType::Plugin:
         return "WebKitPluginSandbox";
     }
 }
@@ -266,18 +266,18 @@ static String sandboxDataVaultParentDirectory()
     return resolvedPath;
 }
 
-static String sandboxDirectory(ChildProcess::ProcessType processType, const String& parentDirectory)
+static String sandboxDirectory(AuxiliaryProcess::ProcessType processType, const String& parentDirectory)
 {
     StringBuilder directory;
     directory.append(parentDirectory);
     switch (processType) {
-    case ChildProcess::ProcessType::WebContent:
+    case AuxiliaryProcess::ProcessType::WebContent:
         directory.append("/com.apple.WebKit.WebContent.Sandbox");
         break;
-    case ChildProcess::ProcessType::Network:
+    case AuxiliaryProcess::ProcessType::Network:
         directory.append("/com.apple.WebKit.Networking.Sandbox");
         break;
-    case ChildProcess::ProcessType::Plugin:
+    case AuxiliaryProcess::ProcessType::Plugin:
         directory.append("/com.apple.WebKit.Plugin.Sandbox");
         break;
     }
@@ -534,7 +534,7 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     return true;
 }
 
-static bool applySandbox(const ChildProcessInitializationParameters& parameters, const SandboxInitializationParameters& sandboxInitializationParameters, const String& dataVaultParentDirectory)
+static bool applySandbox(const AuxiliaryProcessInitializationParameters& parameters, const SandboxInitializationParameters& sandboxInitializationParameters, const String& dataVaultParentDirectory)
 {
     String profileOrProfilePath;
     bool isProfilePath;
@@ -547,7 +547,7 @@ static bool applySandbox(const ChildProcessInitializationParameters& parameters,
 #if USE(CACHE_COMPILED_SANDBOX)
     // The plugin process's DARWIN_USER_TEMP_DIR and DARWIN_USER_CACHE_DIR sandbox parameters are randomized so
     // so the compiled sandbox should not be cached because it won't be reused.
-    if (parameters.processType == ChildProcess::ProcessType::Plugin)
+    if (parameters.processType == AuxiliaryProcess::ProcessType::Plugin)
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
 
     SandboxParametersPtr sandboxParameters { sandbox_create_params() };
@@ -595,7 +595,7 @@ static bool applySandbox(const ChildProcessInitializationParameters& parameters,
 #endif // USE(CACHE_COMPILED_SANDBOX)
 }
 
-static void initializeSandboxParameters(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+static void initializeSandboxParameters(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Verify user directory suffix.
     if (sandboxParameters.userDirectorySuffix().isNull()) {
@@ -650,7 +650,7 @@ static void initializeSandboxParameters(const ChildProcessInitializationParamete
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
 }
 
-void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     TraceScope traceScope(InitializeSandboxStart, InitializeSandboxEnd);
 
@@ -680,7 +680,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 }
 
 #if USE(APPKIT)
-void ChildProcess::stopNSAppRunLoop()
+void AuxiliaryProcess::stopNSAppRunLoop()
 {
     ASSERT([NSApp isRunning]);
     [NSApp stop:nil];
@@ -691,7 +691,7 @@ void ChildProcess::stopNSAppRunLoop()
 #endif
 
 #if !PLATFORM(IOSMAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
-void ChildProcess::stopNSRunLoop()
+void AuxiliaryProcess::stopNSRunLoop()
 {
     ASSERT([NSRunLoop mainRunLoop]);
     [[NSRunLoop mainRunLoop] performBlock:^{
@@ -701,13 +701,13 @@ void ChildProcess::stopNSRunLoop()
 #endif
 
 #if PLATFORM(IOSMAC)
-void ChildProcess::platformStopRunLoop()
+void AuxiliaryProcess::platformStopRunLoop()
 {
     XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }
 #endif
 
-void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
+void AuxiliaryProcess::setQOS(int latencyQOS, int throughputQOS)
 {
     if (!latencyQOS && !throughputQOS)
         return;
@@ -721,7 +721,7 @@ void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
 }
 
 #if PLATFORM(MAC)
-bool ChildProcess::isSystemWebKit()
+bool AuxiliaryProcess::isSystemWebKit()
 {
     static bool isSystemWebKit = [] {
         return [[webKit2Bundle() bundlePath] hasPrefix:@"/System/"];

@@ -95,8 +95,8 @@ endif
 
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
+    AuxiliaryProcess \
     CacheStorageEngineConnection \
-    ChildProcess \
     DownloadProxy \
     DrawingArea \
     DrawingAreaProxy \

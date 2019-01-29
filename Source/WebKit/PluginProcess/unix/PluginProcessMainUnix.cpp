@@ -30,7 +30,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
@@ -53,7 +53,7 @@ namespace WebKit {
 static LazyNeverDestroyed<WebCore::XErrorTrapper> xErrorTrapper;
 #endif
 
-class PluginProcessMain final: public ChildProcessMainBase {
+class PluginProcessMain final: public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
@@ -88,13 +88,13 @@ public:
 #endif
 
         m_parameters.extraInitializationData.add("plugin-path", argv[3]);
-        return ChildProcessMainBase::parseCommandLine(argc, argv);
+        return AuxiliaryProcessMainBase::parseCommandLine(argc, argv);
     }
 };
 
 int PluginProcessMainUnix(int argc, char** argv)
 {
-    return ChildProcessMain<PluginProcess, PluginProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<PluginProcess, PluginProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

@@ -96,7 +96,7 @@ Shared/linux/WebMemorySamplerLinux.cpp
 Shared/soup/WebCoreArgumentCodersSoup.cpp
 Shared/soup/WebErrorsSoup.cpp
 
-Shared/unix/ChildProcessMain.cpp
+Shared/unix/AuxiliaryProcessMain.cpp
 
 UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/DefaultUndoController.cpp

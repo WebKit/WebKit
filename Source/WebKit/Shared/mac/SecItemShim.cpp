@@ -29,7 +29,7 @@
 #if ENABLE(SEC_ITEM_SHIM)
 
 #include "BlockingResponseMap.h"
-#include "ChildProcess.h"
+#include "NetworkProcess.h"
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
 #include "SecItemShimLibrary.h"
@@ -58,7 +58,11 @@ extern "C" void _CFURLConnectionSetFrameworkStubs(const struct _CFNFrameworksStu
 
 namespace WebKit {
 
-static ChildProcess* sharedProcess;
+static WeakPtr<NetworkProcess>& globalNetworkProcess()
+{
+    static NeverDestroyed<WeakPtr<NetworkProcess>> networkProcess;
+    return networkProcess.get();
+}
 
 static WorkQueue& workQueue()
 {
@@ -74,11 +78,14 @@ static WorkQueue& workQueue()
 
 static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type requestType, CFDictionaryRef query, CFDictionaryRef attributesToMatch = 0)
 {
+    if (!globalNetworkProcess())
+        return WTF::nullopt;
+
     Optional<SecItemResponseData> response;
 
     BinarySemaphore semaphore;
 
-    sharedProcess->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
+    globalNetworkProcess()->parentProcessConnection()->sendWithReply(Messages::SecItemShimProxy::SecItemRequest(SecItemRequestData(requestType, query, attributesToMatch)), 0, workQueue(), [&response, &semaphore](auto reply) {
         if (reply)
             response = WTFMove(std::get<0>(*reply));
 
@@ -134,9 +141,9 @@ static OSStatus webSecItemDelete(CFDictionaryRef query)
     return response->resultCode();
 }
 
-void initializeSecItemShim(ChildProcess& process)
+void initializeSecItemShim(NetworkProcess& process)
 {
-    sharedProcess = &process;
+    globalNetworkProcess() = makeWeakPtr(process);
 
 #if PLATFORM(IOS_FAMILY)
     struct _CFNFrameworksStubs stubs = {

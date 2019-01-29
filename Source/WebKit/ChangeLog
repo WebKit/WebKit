@@ -1,3 +1,313 @@
+2019-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Rename ChildProcess to AuxiliaryProcess
+        https://bugs.webkit.org/show_bug.cgi?id=193943
+
+        Reviewed by Andy Estes.
+
+        "Child" implies that there is a parent, but I'm about to introduce a type of NetworkProcess that
+        doesn't always have a parent, and may have many UIProcesses that it is the auxiliary for.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm:
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>):
+        (WebKit::initializeChildProcess<NetworkProcess>): Deleted.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::callExitSoon):
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::initializeConnection):
+        (WebKit::NetworkProcess::terminate):
+        (WebKit::NetworkProcess::initializeProcess):
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessSupplement.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::deleteOldVersions):
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcess):
+        (WebKit::NetworkProcess::initializeProcessName):
+        (WebKit::NetworkProcess::initializeSandbox):
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>):
+        (WebKit::NetworkProcessMainUnix):
+        (WebKit::initializeChildProcess<NetworkProcess>): Deleted.
+        * NetworkProcess/watchos/NetworkProximityManager.h:
+        * NetworkProcess/watchos/NetworkProximityManager.mm:
+        (WebKit::NetworkProximityManager::NetworkProximityManager):
+        * NetworkProcess/win/NetworkProcessMainWin.cpp:
+        (WebKit::initializeAuxiliaryProcess<NetworkProcess>):
+        (WebKit::NetworkProcessMainWin):
+        (WebKit::initializeChildProcess<NetworkProcess>): Deleted.
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initializeProcess):
+        (WebKit::PluginProcess::initializeConnection):
+        (WebKit::PluginProcess::didReceiveMessage):
+        (WebKit::PluginProcess::initializeProcessName):
+        (WebKit::PluginProcess::initializeSandbox):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        (WebKit::PluginProcess::initializeProcessName):
+        (WebKit::PluginProcess::initializeSandbox):
+        (WebKit::PluginProcess::stopRunLoop):
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::PluginProcessMainUnix):
+        * PluginProcess/unix/PluginProcessUnix.cpp:
+        (WebKit::PluginProcess::platformInitializeProcess):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::AuthenticationManager):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/AuxiliaryProcess.cpp: Copied from Source/WebKit/Shared/ChildProcess.cpp.
+        (WebKit::AuxiliaryProcess::AuxiliaryProcess):
+        (WebKit::AuxiliaryProcess::~AuxiliaryProcess):
+        (WebKit::AuxiliaryProcess::didClose):
+        (WebKit::AuxiliaryProcess::initialize):
+        (WebKit::AuxiliaryProcess::setProcessSuppressionEnabled):
+        (WebKit::AuxiliaryProcess::initializeProcess):
+        (WebKit::AuxiliaryProcess::initializeProcessName):
+        (WebKit::AuxiliaryProcess::initializeConnection):
+        (WebKit::AuxiliaryProcess::addMessageReceiver):
+        (WebKit::AuxiliaryProcess::removeMessageReceiver):
+        (WebKit::AuxiliaryProcess::disableTermination):
+        (WebKit::AuxiliaryProcess::enableTermination):
+        (WebKit::AuxiliaryProcess::messageSenderConnection):
+        (WebKit::AuxiliaryProcess::messageSenderDestinationID):
+        (WebKit::AuxiliaryProcess::terminationTimerFired):
+        (WebKit::AuxiliaryProcess::stopRunLoop):
+        (WebKit::AuxiliaryProcess::platformStopRunLoop):
+        (WebKit::AuxiliaryProcess::terminate):
+        (WebKit::AuxiliaryProcess::shutDown):
+        (WebKit::AuxiliaryProcess::registerURLSchemeServiceWorkersCanHandle const):
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        (WebKit::AuxiliaryProcess::didReceiveMemoryPressureEvent):
+        (WebKit::ChildProcess::ChildProcess): Deleted.
+        (WebKit::ChildProcess::~ChildProcess): Deleted.
+        (WebKit::ChildProcess::didClose): Deleted.
+        (WebKit::ChildProcess::initialize): Deleted.
+        (WebKit::ChildProcess::setProcessSuppressionEnabled): Deleted.
+        (WebKit::ChildProcess::initializeProcess): Deleted.
+        (WebKit::ChildProcess::initializeProcessName): Deleted.
+        (WebKit::ChildProcess::initializeConnection): Deleted.
+        (WebKit::ChildProcess::addMessageReceiver): Deleted.
+        (WebKit::ChildProcess::removeMessageReceiver): Deleted.
+        (WebKit::ChildProcess::disableTermination): Deleted.
+        (WebKit::ChildProcess::enableTermination): Deleted.
+        (WebKit::ChildProcess::messageSenderConnection): Deleted.
+        (WebKit::ChildProcess::messageSenderDestinationID): Deleted.
+        (WebKit::ChildProcess::terminationTimerFired): Deleted.
+        (WebKit::ChildProcess::stopRunLoop): Deleted.
+        (WebKit::ChildProcess::platformStopRunLoop): Deleted.
+        (WebKit::ChildProcess::terminate): Deleted.
+        (WebKit::ChildProcess::shutDown): Deleted.
+        (WebKit::ChildProcess::registerURLSchemeServiceWorkersCanHandle const): Deleted.
+        (WebKit::ChildProcess::platformInitialize): Deleted.
+        (WebKit::ChildProcess::initializeSandbox): Deleted.
+        (WebKit::ChildProcess::didReceiveInvalidMessage): Deleted.
+        (WebKit::ChildProcess::didReceiveMemoryPressureEvent): Deleted.
+        * Shared/AuxiliaryProcess.h: Copied from Source/WebKit/Shared/ChildProcess.h.
+        (WebKit::ChildProcess::parentProcessConnection const): Deleted.
+        (WebKit::ChildProcess::messageReceiverMap): Deleted.
+        (WebKit::ChildProcess::setTerminationTimeout): Deleted.
+        (WebKit::ChildProcess::shouldOverrideQuarantine): Deleted.
+        * Shared/AuxiliaryProcess.messages.in: Copied from Source/WebKit/Shared/ChildProcess.messages.in.
+        * Shared/AuxiliaryProcessSupplement.h: Copied from Source/WebKit/Shared/ChildProcessSupplement.h.
+        (WebKit::AuxiliaryProcessSupplement::~AuxiliaryProcessSupplement):
+        (WebKit::ChildProcessSupplement::~ChildProcessSupplement): Deleted.
+        (WebKit::ChildProcessSupplement::initializeConnection): Deleted.
+        * Shared/ChildProcess.cpp: Removed.
+        * Shared/ChildProcess.h: Removed.
+        * Shared/ChildProcess.messages.in: Removed.
+        * Shared/ChildProcessSupplement.h: Removed.
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm: Copied from Source/WebKit/Shared/Cocoa/ChildProcessCocoa.mm.
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        (WebKit::ChildProcess::didReceiveInvalidMessage): Deleted.
+        * Shared/Cocoa/ChildProcessCocoa.mm: Removed.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::initializeAuxiliaryProcess):
+        (WebKit::XPCServiceInitializer):
+        (WebKit::initializeChildProcess): Deleted.
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::hysteresisUpdated):
+        (WebKit::m_childProcessType): Deleted.
+        * Shared/WebSQLiteDatabaseTracker.h:
+        * Shared/ios/AuxiliaryProcessIOS.mm: Copied from Source/WebKit/Shared/ios/ChildProcessIOS.mm.
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        (WebKit::AuxiliaryProcess::setQOS):
+        (WebKit::AuxiliaryProcess::platformStopRunLoop):
+        (WebKit::ChildProcess::platformInitialize): Deleted.
+        (WebKit::ChildProcess::initializeSandbox): Deleted.
+        (WebKit::ChildProcess::setQOS): Deleted.
+        (WebKit::ChildProcess::platformStopRunLoop): Deleted.
+        * Shared/ios/ChildProcessIOS.mm: Removed.
+        * Shared/mac/AuxiliaryProcessMac.mm: Copied from Source/WebKit/Shared/mac/ChildProcessMac.mm.
+        (WebKit::SandboxInfo::SandboxInfo):
+        (WebKit::AuxiliaryProcess::launchServicesCheckIn):
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        (WebKit::processStorageClass):
+        (WebKit::sandboxDirectory):
+        (WebKit::applySandbox):
+        (WebKit::initializeSandboxParameters):
+        (WebKit::AuxiliaryProcess::initializeSandbox):
+        (WebKit::AuxiliaryProcess::stopNSAppRunLoop):
+        (WebKit::AuxiliaryProcess::stopNSRunLoop):
+        (WebKit::AuxiliaryProcess::platformStopRunLoop):
+        (WebKit::AuxiliaryProcess::setQOS):
+        (WebKit::AuxiliaryProcess::isSystemWebKit):
+        (WebKit::ChildProcess::launchServicesCheckIn): Deleted.
+        (WebKit::ChildProcess::platformInitialize): Deleted.
+        (WebKit::ChildProcess::initializeSandbox): Deleted.
+        (WebKit::ChildProcess::stopNSAppRunLoop): Deleted.
+        (WebKit::ChildProcess::stopNSRunLoop): Deleted.
+        (WebKit::ChildProcess::platformStopRunLoop): Deleted.
+        (WebKit::ChildProcess::setQOS): Deleted.
+        (WebKit::ChildProcess::isSystemWebKit): Deleted.
+        * Shared/mac/ChildProcessMac.mm: Removed.
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::globalNetworkProcess):
+        (WebKit::sendSecItemRequest):
+        (WebKit::initializeSecItemShim):
+        * Shared/mac/SecItemShim.h:
+        * Shared/unix/AuxiliaryProcessMain.cpp: Copied from Source/WebKit/Shared/unix/ChildProcessMain.cpp.
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine):
+        (WebKit::ChildProcessMainBase::parseCommandLine): Deleted.
+        * Shared/unix/AuxiliaryProcessMain.h: Copied from Source/WebKit/Shared/unix/ChildProcessMain.h.
+        (WebKit::AuxiliaryProcessMainBase::takeInitializationParameters):
+        (WebKit::initializeAuxiliaryProcess):
+        (WebKit::AuxiliaryProcessMain):
+        (WebKit::ChildProcessMainBase::platformInitialize): Deleted.
+        (WebKit::ChildProcessMainBase::platformFinalize): Deleted.
+        (WebKit::ChildProcessMainBase::takeInitializationParameters): Deleted.
+        (WebKit::initializeChildProcess): Deleted.
+        (WebKit::ChildProcessMain): Deleted.
+        * Shared/unix/ChildProcessMain.cpp: Removed.
+        * Shared/unix/ChildProcessMain.h: Removed.
+        * Shared/win/AuxiliaryProcessMainWin.cpp: Copied from Source/WebKit/Shared/win/ChildProcessMainWin.cpp.
+        (WebKit::AuxiliaryProcessMainBase::parseCommandLine):
+        (WebKit::ChildProcessMainBase::parseCommandLine): Deleted.
+        * Shared/win/ChildProcessMainWin.cpp: Removed.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        * UIProcess/AuxiliaryProcessProxy.cpp: Copied from Source/WebKit/UIProcess/ChildProcessProxy.cpp.
+        (WebKit::AuxiliaryProcessProxy::AuxiliaryProcessProxy):
+        (WebKit::AuxiliaryProcessProxy::~AuxiliaryProcessProxy):
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        (WebKit::AuxiliaryProcessProxy::connect):
+        (WebKit::AuxiliaryProcessProxy::terminate):
+        (WebKit::AuxiliaryProcessProxy::state const):
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        (WebKit::AuxiliaryProcessProxy::addMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::removeMessageReceiver):
+        (WebKit::AuxiliaryProcessProxy::dispatchMessage):
+        (WebKit::AuxiliaryProcessProxy::dispatchSyncMessage):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        (WebKit::AuxiliaryProcessProxy::shutDownProcess):
+        (WebKit::AuxiliaryProcessProxy::setProcessSuppressionEnabled):
+        (WebKit::AuxiliaryProcessProxy::connectionWillOpen):
+        (WebKit::ChildProcessProxy::ChildProcessProxy): Deleted.
+        (WebKit::ChildProcessProxy::~ChildProcessProxy): Deleted.
+        (WebKit::ChildProcessProxy::getLaunchOptions): Deleted.
+        (WebKit::ChildProcessProxy::connect): Deleted.
+        (WebKit::ChildProcessProxy::terminate): Deleted.
+        (WebKit::ChildProcessProxy::state const): Deleted.
+        (WebKit::ChildProcessProxy::sendMessage): Deleted.
+        (WebKit::ChildProcessProxy::addMessageReceiver): Deleted.
+        (WebKit::ChildProcessProxy::removeMessageReceiver): Deleted.
+        (WebKit::ChildProcessProxy::dispatchMessage): Deleted.
+        (WebKit::ChildProcessProxy::dispatchSyncMessage): Deleted.
+        (WebKit::ChildProcessProxy::didFinishLaunching): Deleted.
+        (WebKit::ChildProcessProxy::shutDownProcess): Deleted.
+        (WebKit::ChildProcessProxy::setProcessSuppressionEnabled): Deleted.
+        (WebKit::ChildProcessProxy::connectionWillOpen): Deleted.
+        * UIProcess/AuxiliaryProcessProxy.h: Copied from Source/WebKit/UIProcess/ChildProcessProxy.h.
+        (WebKit::AuxiliaryProcessProxy::send):
+        (WebKit::AuxiliaryProcessProxy::sendSync):
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+        (WebKit::ChildProcessProxy::send): Deleted.
+        (WebKit::ChildProcessProxy::sendSync): Deleted.
+        (WebKit::ChildProcessProxy::connection const): Deleted.
+        (WebKit::ChildProcessProxy::hasConnection const): Deleted.
+        (WebKit::ChildProcessProxy::processIdentifier const): Deleted.
+        (WebKit::ChildProcessProxy::canSendMessage const): Deleted.
+        (WebKit::ChildProcessProxy::coreProcessIdentifier const): Deleted.
+        (WebKit::ChildProcessProxy::platformGetLaunchOptions): Deleted.
+        (WebKit::ChildProcessProxy::sendWithAsyncReply): Deleted.
+        * UIProcess/ChildProcessProxy.cpp: Removed.
+        * UIProcess/ChildProcessProxy.h: Removed.
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::DownloadProxyMap):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+        (WebKit::PluginProcessProxy::sendMemoryPressureEvent):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendMemoryPressureEvent):
+        (WebKit::WebProcessPool::registerURLSchemeServiceWorkersCanHandle):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::maybeShutDown):
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        (WebKit::WebProcessProxy::shouldTerminate):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::canTerminateChildProcess): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UnifiedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+        (WebKit::WebProcess::initializeConnection):
+        (WebKit::WebProcess::terminate):
+        (WebKit::WebProcess::didReceiveMessage):
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::initializeSandbox):
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcessSupplement.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+        (WebKit::WebProcess::stopRunLoop):
+        (WebKit::WebProcess::initializeSandbox):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainUnix):
+        * WebProcess/win/WebProcessMainWin.cpp:
+        (WebKit::WebProcessMainWin):
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        (WebKit::WebProcessMainUnix):
+
 2019-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION(r240553): [iOS] Crash in ScrollingTree::updateTreeFromStateNode when attempting to log in to icloud.com

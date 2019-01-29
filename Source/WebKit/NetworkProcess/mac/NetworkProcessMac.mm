@@ -51,7 +51,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
+void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 #if PLATFORM(MAC) && !PLATFORM(IOSMAC)
     // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
@@ -62,7 +62,7 @@ void NetworkProcess::initializeProcess(const ChildProcessInitializationParameter
     launchServicesCheckIn();
 }
 
-void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if !PLATFORM(IOSMAC)
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
@@ -85,7 +85,7 @@ void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo&
     [NSURLRequest setAllowsSpecificHTTPSCertificate:(__bridge NSArray *)certificateInfo.certificateChain() forHost:(NSString *)host];
 }
 
-void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
+void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
 {
     // Need to overide the default, because service has a different bundle ID.
 #if WK_API_ENABLED
@@ -96,7 +96,7 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
 
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
 
-    ChildProcess::initializeSandbox(parameters, sandboxParameters);
+    AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChildProcess_h
-#define ChildProcess_h
+#pragma once
 
 #include "Connection.h"
 #include "MessageReceiverMap.h"
@@ -39,10 +38,10 @@
 namespace WebKit {
 
 class SandboxInitializationParameters;
-struct ChildProcessInitializationParameters;
+struct AuxiliaryProcessInitializationParameters;
 
-class ChildProcess : protected IPC::Connection::Client, public IPC::MessageSender {
-    WTF_MAKE_NONCOPYABLE(ChildProcess);
+class AuxiliaryProcess : protected IPC::Connection::Client, public IPC::MessageSender {
+    WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
 
 public:
     enum class ProcessType : uint8_t {
@@ -51,7 +50,7 @@ public:
         Plugin
     };
 
-    void initialize(const ChildProcessInitializationParameters&);
+    void initialize(const AuxiliaryProcessInitializationParameters&);
 
     // disable and enable termination of the process. when disableTermination is called, the
     // process won't terminate unless a corresponding disableTermination call is made.
@@ -81,14 +80,14 @@ public:
 #endif
 
 protected:
-    explicit ChildProcess();
-    virtual ~ChildProcess();
+    explicit AuxiliaryProcess();
+    virtual ~AuxiliaryProcess();
 
     void setTerminationTimeout(Seconds seconds) { m_terminationTimeout = seconds; }
 
-    virtual void initializeProcess(const ChildProcessInitializationParameters&);
-    virtual void initializeProcessName(const ChildProcessInitializationParameters&);
-    virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&);
+    virtual void initializeProcess(const AuxiliaryProcessInitializationParameters&);
+    virtual void initializeProcessName(const AuxiliaryProcessInitializationParameters&);
+    virtual void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&);
     virtual void initializeConnection(IPC::Connection*);
 
     virtual bool shouldTerminate() = 0;
@@ -137,7 +136,7 @@ private:
     // after a given period of time.
     unsigned m_terminationCounter;
 
-    RunLoop::Timer<ChildProcess> m_terminationTimer;
+    RunLoop::Timer<AuxiliaryProcess> m_terminationTimer;
 
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -149,13 +148,13 @@ private:
 #endif
 };
 
-struct ChildProcessInitializationParameters {
+struct AuxiliaryProcessInitializationParameters {
     String uiProcessName;
     String clientIdentifier;
     Optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
-    ChildProcess::ProcessType processType;
+    AuxiliaryProcess::ProcessType processType;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> priorityBoostMessage;
 #endif
@@ -163,4 +162,3 @@ struct ChildProcessInitializationParameters {
 
 } // namespace WebKit
 
-#endif // ChildProcess_h

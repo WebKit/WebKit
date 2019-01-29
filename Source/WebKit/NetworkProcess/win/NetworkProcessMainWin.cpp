@@ -26,20 +26,20 @@
 #include "config.h"
 #include "NetworkProcessMainWin.h"
 
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 #include "NetworkProcess.h"
 
 namespace WebKit {
 
 template<>
-void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters&& parameters)
+void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationParameters&& parameters)
 {
     static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
 }
 
 int NetworkProcessMainWin(int argc, char** argv)
 {
-    return ChildProcessMain<NetworkProcess, ChildProcessMainBase>(argc, argv);
+    return AuxiliaryProcessMain<NetworkProcess, AuxiliaryProcessMainBase>(argc, argv);
 }
 
 } // namespace WebKit

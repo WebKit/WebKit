@@ -27,9 +27,9 @@
 #include "AuthenticationManager.h"
 
 #include "AuthenticationManagerMessages.h"
-#include "ChildProcess.h"
 #include "Download.h"
 #include "DownloadProxyMessages.h"
+#include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "PendingDownload.h"
 #include "WebCoreArgumentCoders.h"
@@ -60,7 +60,7 @@ const char* AuthenticationManager::supplementName()
     return "AuthenticationManager";
 }
 
-AuthenticationManager::AuthenticationManager(ChildProcess& process)
+AuthenticationManager::AuthenticationManager(NetworkProcess& process)
     : m_process(process)
 {
     m_process.addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);

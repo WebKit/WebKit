@@ -27,7 +27,7 @@
 #include "config.h"
 #include "NetworkProcess.h"
 
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 #include "NetworkProcessMainUnix.h"
 #include <WebCore/NetworkStorageSession.h>
 
@@ -35,7 +35,7 @@ namespace WebKit {
 
 static RefPtr<NetworkProcess> globalNetworkProcess;
 
-class NetworkProcessMain final: public ChildProcessMainBase {
+class NetworkProcessMain final: public AuxiliaryProcessMainBase {
 public:
     void platformFinalize() override
     {
@@ -46,7 +46,7 @@ public:
 };
 
 template<>
-void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters&& parameters)
+void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationParameters&& parameters)
 {
     static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
     globalNetworkProcess = &networkProcess.get();
@@ -54,7 +54,7 @@ void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters
     
 int NetworkProcessMainUnix(int argc, char** argv)
 {
-    return ChildProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

@@ -72,7 +72,7 @@ static uint64_t generateCallbackID()
 }
 
 NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
-    : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
+    : AuxiliaryProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -103,7 +103,7 @@ NetworkProcessProxy::~NetworkProcessProxy()
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     launchOptions.processType = ProcessLauncher::ProcessType::Network;
-    ChildProcessProxy::getLaunchOptions(launchOptions);
+    AuxiliaryProcessProxy::getLaunchOptions(launchOptions);
 
     if (processPool().shouldMakeNextNetworkProcessLaunchFailForTesting()) {
         processPool().setShouldMakeNextNetworkProcessLaunchFailForTesting(false);
@@ -149,7 +149,7 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 DownloadProxy* NetworkProcessProxy::createDownloadProxy(const ResourceRequest& resourceRequest)
 {
     if (!m_downloadProxyMap)
-        m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
+        m_downloadProxyMap = std::make_unique<DownloadProxyMap>(*this);
 
     return m_downloadProxyMap->createDownloadProxy(m_processPool, resourceRequest);
 }
@@ -334,7 +334,7 @@ void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
 {
-    ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
         networkProcessCrashed();

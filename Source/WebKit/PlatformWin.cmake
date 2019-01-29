@@ -26,7 +26,7 @@ list(APPEND WebKit_SOURCES
 
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
 
-    Shared/win/ChildProcessMainWin.cpp
+    Shared/win/AuxiliaryProcessMainWin.cpp
     Shared/win/NativeWebKeyboardEventWin.cpp
     Shared/win/NativeWebMouseEventWin.cpp
     Shared/win/NativeWebTouchEventWin.cpp

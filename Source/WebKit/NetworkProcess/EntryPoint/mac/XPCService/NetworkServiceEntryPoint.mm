@@ -41,7 +41,7 @@ public:
 };
 
 template<>
-void initializeChildProcess<NetworkProcess>(ChildProcessInitializationParameters&& parameters)
+void initializeAuxiliaryProcess<NetworkProcess>(AuxiliaryProcessInitializationParameters&& parameters)
 {
     static NeverDestroyed<NetworkProcess> networkProcess(WTFMove(parameters));
 }

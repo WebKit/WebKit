@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DownloadProxyMap.h"
 
-#include "ChildProcessProxy.h"
+#include "AuxiliaryProcessProxy.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "MessageReceiverMap.h"
@@ -34,8 +34,8 @@
 
 namespace WebKit {
 
-DownloadProxyMap::DownloadProxyMap(ChildProcessProxy* process)
-    : m_process(process)
+DownloadProxyMap::DownloadProxyMap(NetworkProcessProxy& process)
+    : m_process(&process)
 {
 }
 

@@ -7,10 +7,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AutomationFrontendDispatchers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AutomationFrontendDispatchers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AutomationProtocolObjects.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AuxiliaryProcessMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/AuxiliaryProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/CacheStorageEngineConnectionMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/CacheStorageEngineConnectionMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/ChildProcessMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/ChildProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp

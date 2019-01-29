@@ -105,7 +105,7 @@ Shared/linux/WebMemorySamplerLinux.cpp
 Shared/soup/WebCoreArgumentCodersSoup.cpp @no-unify
 Shared/soup/WebErrorsSoup.cpp
 
-Shared/unix/ChildProcessMain.cpp @no-unify
+Shared/unix/AuxiliaryProcessMain.cpp @no-unify
 
 UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/BackingStore.cpp

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AuthenticationManager_h
-#define AuthenticationManager_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
@@ -46,9 +45,9 @@ class Credential;
 
 namespace WebKit {
 
-class ChildProcess;
 class Download;
 class DownloadID;
+class NetworkProcess;
 class WebFrame;
 
 enum class AuthenticationChallengeDisposition : uint8_t;
@@ -57,7 +56,7 @@ using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChalleng
 class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver, public CanMakeWeakPtr<AuthenticationManager> {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
-    explicit AuthenticationManager(ChildProcess&);
+    explicit AuthenticationManager(NetworkProcess&);
 
     static const char* supplementName();
 
@@ -88,11 +87,9 @@ private:
 
     Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 
-    ChildProcess& m_process;
+    NetworkProcess& m_process;
 
     HashMap<uint64_t, Challenge> m_challenges;
 };
 
 } // namespace WebKit
-
-#endif // AuthenticationManager_h

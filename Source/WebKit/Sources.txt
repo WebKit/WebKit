@@ -100,9 +100,9 @@ PluginProcess/WebProcessConnection.cpp @no-unify
 // TODO: The files here marked @no-unify should be unified once GTK's PluginProcess2 is removed.
 Shared/ActivityAssertion.cpp @no-unify
 Shared/AsyncRequest.cpp
+Shared/AuxiliaryProcess.cpp @no-unify
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp @no-unify
 Shared/CacheModel.cpp
-Shared/ChildProcess.cpp @no-unify
 Shared/ContextMenuContextData.cpp
 Shared/EditorState.cpp
 Shared/FontInfo.cpp
@@ -219,8 +219,8 @@ Shared/Plugins/Netscape/PluginInformation.cpp @no-unify
 
 Shared/WebsiteData/WebsiteData.cpp
 
+UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
-UIProcess/ChildProcessProxy.cpp
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp

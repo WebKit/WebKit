@@ -28,7 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ChildProcessMessages.h"
+#include "AuxiliaryProcessMessages.h"
 #include "PluginProcessConnectionManagerMessages.h"
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
@@ -88,7 +88,7 @@ PluginProcessProxy::~PluginProcessProxy()
 void PluginProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     platformGetLaunchOptionsWithAttributes(launchOptions, m_pluginProcessAttributes);
-    ChildProcessProxy::getLaunchOptions(launchOptions);
+    AuxiliaryProcessProxy::getLaunchOptions(launchOptions);
 }
 
 void PluginProcessProxy::processWillShutDown(IPC::Connection& connection)
@@ -157,7 +157,7 @@ void PluginProcessProxy::sendMemoryPressureEvent(bool isCritical)
     if (state() == State::Launching)
         return;
 
-    m_connection->send(Messages::ChildProcess::DidReceiveMemoryPressureEvent(isCritical), 0);
+    m_connection->send(Messages::AuxiliaryProcess::DidReceiveMemoryPressureEvent(isCritical), 0);
 }
 #endif
 

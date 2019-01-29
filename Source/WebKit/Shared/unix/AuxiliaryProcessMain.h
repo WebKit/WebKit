@@ -23,23 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ChildProcessMain.h"
+#pragma once
 
-#include <WebCore/ProcessIdentifier.h>
-#include <stdlib.h>
+#include "AuxiliaryProcess.h"
+#include "WebKit2Initialize.h"
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
-bool ChildProcessMainBase::parseCommandLine(int argc, char** argv)
-{
-    ASSERT(argc >= 3);
-    if (argc < 3)
-        return false;
+class AuxiliaryProcessMainBase {
+public:
+    virtual bool platformInitialize() { return true; }
+    virtual bool parseCommandLine(int argc, char** argv);
+    virtual void platformFinalize() { }
 
-    m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
-    m_parameters.connectionIdentifier = atoi(argv[2]);
-    return true;
+    AuxiliaryProcessInitializationParameters&& takeInitializationParameters() { return WTFMove(m_parameters); }
+
+protected:
+    AuxiliaryProcessInitializationParameters m_parameters;
+};
+
+template<typename AuxiliaryProcessType>
+void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
+{
+    AuxiliaryProcessType::singleton().initialize(WTFMove(parameters));
+}
+
+template<typename AuxiliaryProcessType, typename AuxiliaryProcessMainType>
+int AuxiliaryProcessMain(int argc, char** argv)
+{
+    AuxiliaryProcessMainType auxiliaryMain;
+
+    if (!auxiliaryMain.platformInitialize())
+        return EXIT_FAILURE;
+
+    InitializeWebKit2();
+
+    if (!auxiliaryMain.parseCommandLine(argc, argv))
+        return EXIT_FAILURE;
+
+    initializeAuxiliaryProcess<AuxiliaryProcessType>(auxiliaryMain.takeInitializationParameters());
+    RunLoop::run();
+    auxiliaryMain.platformFinalize();
+
+    return EXIT_SUCCESS;
 }
 
 } // namespace WebKit

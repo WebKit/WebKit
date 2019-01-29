@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcessProxy_h
-#define PluginProcessProxy_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-#include "ChildProcessProxy.h"
+#include "AuxiliaryProcessProxy.h"
 #include "Connection.h"
 #include "PluginModuleInfo.h"
 #include "PluginProcess.h"
@@ -66,7 +65,7 @@ int pluginProcessLatencyQOS();
 int pluginProcessThroughputQOS();
 #endif
 
-class PluginProcessProxy final : public ChildProcessProxy, public ThreadSafeRefCounted<PluginProcessProxy> {
+class PluginProcessProxy final : public AuxiliaryProcessProxy, public ThreadSafeRefCounted<PluginProcessProxy> {
 public:
     static Ref<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
     ~PluginProcessProxy();
@@ -183,5 +182,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // PluginProcessProxy_h

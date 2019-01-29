@@ -27,7 +27,7 @@
 #include "config.h"
 #include "WebProcessMainUnix.h"
 
-#include "ChildProcessMain.h"
+#include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
 #include <WebCore/SoupNetworkSession.h>
 #include <gtk/gtk.h>
@@ -41,7 +41,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-class WebProcessMain final: public ChildProcessMainBase {
+class WebProcessMain final: public AuxiliaryProcessMainBase {
 public:
     bool platformInitialize() override
     {
@@ -64,7 +64,7 @@ public:
 
 int WebProcessMainUnix(int argc, char** argv)
 {
-    return ChildProcessMain<WebProcess, WebProcessMain>(argc, argv);
+    return AuxiliaryProcessMain<WebProcess, WebProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

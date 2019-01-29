@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChildProcessSupplement_h
-#define ChildProcessSupplement_h
+#pragma once
 
 namespace IPC {
 class Connection;
@@ -32,9 +31,9 @@ class Connection;
 
 namespace WebKit {
 
-class ChildProcessSupplement {
+class AuxiliaryProcessSupplement {
 public:
-    virtual ~ChildProcessSupplement()
+    virtual ~AuxiliaryProcessSupplement()
     {
     }
 
@@ -44,5 +43,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // ChildProcessSupplement_h

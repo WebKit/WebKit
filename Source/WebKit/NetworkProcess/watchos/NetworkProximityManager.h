@@ -46,7 +46,7 @@ class ResourceRequest;
 
 namespace WebKit {
 
-class ChildProcess;
+class NetworkProcess;
 class NetworkDataTaskCocoa;
 enum class NetworkProximityRecommendation : uint8_t;
 
@@ -70,7 +70,7 @@ class NetworkProximityManager final : public NetworkProcessSupplement, private N
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(NetworkProximityManager);
 public:
-    explicit NetworkProximityManager(ChildProcess&);
+    explicit NetworkProximityManager(NetworkProcess&);
     ~NetworkProximityManager();
 
     static const char* supplementName();

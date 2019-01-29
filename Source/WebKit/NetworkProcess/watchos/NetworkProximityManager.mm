@@ -30,6 +30,7 @@
 
 #import "Logging.h"
 #import "NetworkDataTaskCocoa.h"
+#import "NetworkProcess.h"
 #import "NetworkProcessCreationParameters.h"
 #import <IDS/IDS.h>
 #import <WirelessCoexManager/WRM_iRATInterface.h>
@@ -77,7 +78,7 @@ enum class NetworkProximityRecommendation : uint8_t {
     WiFi,
 };
 
-NetworkProximityManager::NetworkProximityManager(ChildProcess&)
+NetworkProximityManager::NetworkProximityManager(NetworkProcess&)
     : m_idsService { adoptNS([[IDSService alloc] initWithService:@"com.apple.private.alloy.webkitnetworking"]) }
     , m_idsServiceDelegate { adoptNS([[WKProximityServiceDelegate alloc] init]) }
     , m_recommendationQueue { adoptOSObject(dispatch_queue_create("WebKit Network Proximity Recommendation Queue", DISPATCH_QUEUE_SERIAL)) }

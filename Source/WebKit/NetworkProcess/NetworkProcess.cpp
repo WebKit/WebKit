@@ -30,7 +30,7 @@
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuthenticationManager.h"
-#include "ChildProcessMessages.h"
+#include "AuxiliaryProcessMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMessages.h"
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -115,7 +115,7 @@ static void callExitSoon(IPC::Connection*)
     // the process will exit forcibly.
     auto watchdogDelay = 10_s;
 
-    WorkQueue::create("com.apple.WebKit.ChildProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
+    WorkQueue::create("com.apple.WebKit.NetworkProcess.WatchDogQueue")->dispatchAfter(watchdogDelay, [] {
         // We use _exit here since the watchdog callback is called from another thread and we don't want
         // global destructors or atexit handlers to be called from this thread while the main thread is busy
         // doing its thing.
@@ -124,7 +124,7 @@ static void callExitSoon(IPC::Connection*)
     });
 }
 
-NetworkProcess::NetworkProcess(ChildProcessInitializationParameters&& parameters)
+NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
     : m_downloadManager(*this)
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
@@ -203,8 +203,8 @@ void NetworkProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return;
 
-    if (decoder.messageReceiverName() == Messages::ChildProcess::messageReceiverName()) {
-        ChildProcess::didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::AuxiliaryProcess::messageReceiverName()) {
+        AuxiliaryProcess::didReceiveMessage(connection, decoder);
         return;
     }
 
@@ -359,7 +359,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
 void NetworkProcess::initializeConnection(IPC::Connection* connection)
 {
-    ChildProcess::initializeConnection(connection);
+    AuxiliaryProcess::initializeConnection(connection);
 
     // We give a chance for didClose() to get called on the main thread but forcefully call _exit() after a delay
     // in case the main thread is unresponsive or didClose() takes too long.
@@ -1817,7 +1817,7 @@ void NetworkProcess::logDiagnosticMessageWithValue(uint64_t webPageID, const Str
 void NetworkProcess::terminate()
 {
     platformTerminate();
-    ChildProcess::terminate();
+    AuxiliaryProcess::terminate();
 }
 
 void NetworkProcess::processDidTransitionToForeground()
@@ -2275,15 +2275,15 @@ void NetworkProcess::requestCacheStorageSpace(PAL::SessionID sessionID, const Cl
 }
 
 #if !PLATFORM(COCOA)
-void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
+void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }
 
-void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters&)
+void NetworkProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
 {
 }
 
-void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&)
+void NetworkProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {
 }
 
