@@ -398,9 +398,6 @@ bool BlockFormattingContext::MarginCollapse::marginsCollapseThrough(const Layout
     if (!downcast<Container>(layoutBox).hasInFlowChild())
         return !establishesBlockFormattingContext(layoutBox);
 
-    if (Quirks::needsStretching(layoutState, layoutBox))
-        return false;
-
     if (layoutBox.establishesFormattingContext()) {
         if (layoutBox.establishesInlineFormattingContext()) {
             // If we get here through margin estimation, we don't necessarily have an actual state for this layout box since
