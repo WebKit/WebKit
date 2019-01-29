@@ -42,6 +42,7 @@ public:
 };
 
 struct GPUVertexInputDescriptor {
+    unsigned long inputSlot;
     unsigned long stride;
     GPUInputStepModeEnum stepMode;
 };

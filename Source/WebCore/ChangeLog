@@ -1,3 +1,21 @@
+2019-01-29  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix and add validation to WebGPURenderPipeline and MTLVertexDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=193926
+        <rdar://problem/47327648>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update vertex input to properly utilize inputSlot and shaderLocation fields, and add some validation.
+
+        Test: webgpu/vertex-buffer-triangle-strip.html
+
+        * Modules/webgpu/WebGPUVertexInputDescriptor.idl: 
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setInputStateForPipelineDescriptor): Properly retain Metal types.
+        (WebCore::GPURenderPipeline::create): Provide error logging for MTLRenderPipelineState creation.
+
 2019-01-29  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelists to Run Script build phases

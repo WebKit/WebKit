@@ -15,52 +15,46 @@ using namespace metal;
 struct VertexIn
 {
     float4 position [[attribute(0)]];
+    float green [[attribute(1)]];
 };
 
 struct VertexOut
 {
     float4 position [[position]];
+    float4 color;
 };
 
 vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
 {
     VertexOut vOut;
     vOut.position = vertexIn.position;
+    vOut.color = float4(0, vertexIn.green, 0, 1);
     return vOut;
 }
 
-fragment float4 fragment_main()
+fragment float4 fragment_main(VertexOut v [[stage_in]])
 {
-    return float4(0.0, 1.0, 0.0, 1.0);
+    return v.color;
 }
 `
 
 function createVertexBuffer(device) {
-    const bufferSize = 4 * 4 * 4;
+    const bufferSize = 4 * 5 * 4;
     const buffer = device.createBuffer({ size: bufferSize, usage: WebGPUBufferUsage.MAP_WRITE });
     
-    let arrayBuffer = buffer.mapping;
-    let floatArray = new Float32Array(arrayBuffer);
+    let floatArray = new Float32Array(buffer.mapping);
 
-    floatArray[0] = -1;
-    floatArray[1] = 1;
-    floatArray[2] = 0;
-    floatArray[3] = 1;
+    const vertices = [
+        // float4 xyzw, float g
+        -1, 1, 0, 1, 1,
+        -1, -1, 0, 1, 1,
+        1, 1, 0, 1, 1,
+        1, -1, 0, 1, 1
+    ];
 
-    floatArray[4] = -1;
-    floatArray[5] = -1;
-    floatArray[6] = 0;
-    floatArray[7] = 1;
-
-    floatArray[8] = 1;
-    floatArray[9] = 1;
-    floatArray[10] = 0;
-    floatArray[11] = 1;
-
-    floatArray[12] = 1;
-    floatArray[13] = -1;
-    floatArray[14] = 0;
-    floatArray[15] = 1;
+    for (let i = 0; i < vertices.length; ++i) {
+        floatArray[i] = vertices[i];
+    }
 
     return buffer;
 }
@@ -73,9 +67,15 @@ function createInputStateDescriptor() {
             inputSlot: 0,
             offset: 0,
             format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+        }, {
+            shaderLocation: 1,
+            inputSlot: 0,
+            offset: 4 * 4,
+            format: WebGPUVertexFormat.FLOAT_R32
         }],
         inputs: [{
-            stride: 4 * 4,
+            inputSlot: 0,
+            stride: 4 * 5,
             stepMode: WebGPUInputStepMode.VERTEX
         }]
     }

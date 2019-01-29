@@ -118,42 +118,56 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
 #endif
     auto mtlVertexDescriptor = adoptNS([MTLVertexDescriptor new]);
 
-    // Populate vertex attributes, if any.
     const auto& attributes = descriptor.inputState.attributes;
 
-    // FIXME: What kind of validation is needed here?
-    MTLVertexAttributeDescriptorArray *attributeArray = mtlVertexDescriptor.get().attributes;
+    auto attributeArray = retainPtr(mtlVertexDescriptor.get().attributes);
 
     for (size_t i = 0; i < attributes.size(); ++i) {
+        auto location = attributes[i].shaderLocation;
+        // Maximum number of vertex attributes to be supported by Web GPU.
+        if (location > 16) {
+            LOG(WebGPU, "%s: Invalid shaderLocation %lu for vertex attribute!", functionName, location);
+            return false;
+        }
+        // Maximum number of vertex buffers supported.
+        if (attributes[i].inputSlot > 16) {
+            LOG(WebGPU, "%s: Invalid inputSlot %lu for vertex attribute %lu!", functionName, attributes[i].inputSlot, location);
+            return false;
+        }
         auto mtlFormat = validateAndConvertVertexFormatToMTLVertexFormat(attributes[i].format);
         if (!mtlFormat) {
-            LOG(WebGPU, "%s: Invalid WebGPUVertexFormatEnum for vertex attribute!", functionName);
+            LOG(WebGPU, "%s: Invalid WebGPUVertexFormatEnum for vertex attribute %lu!", functionName, location);
             return false;
         }
 
-        MTLVertexAttributeDescriptor *mtlAttributeDesc = [attributeArray objectAtIndexedSubscript:i];
-        mtlAttributeDesc.format = *mtlFormat;
-        mtlAttributeDesc.offset = attributes[i].offset;
-        mtlAttributeDesc.bufferIndex = attributes[i].inputSlot;
-        [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc atIndexedSubscript:i];
+        auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
+        mtlAttributeDesc.get().format = *mtlFormat;
+        mtlAttributeDesc.get().offset = attributes[i].offset; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
+        mtlAttributeDesc.get().bufferIndex = attributes[i].inputSlot;
+        [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc.get() atIndexedSubscript:location];
     }
 
-    // Populate vertex buffer layouts, if any.
     const auto& inputs = descriptor.inputState.inputs;
 
-    MTLVertexBufferLayoutDescriptorArray *layoutArray = mtlVertexDescriptor.get().layouts;
+    auto layoutArray = retainPtr(mtlVertexDescriptor.get().layouts);
 
     for (size_t j = 0; j < inputs.size(); ++j) {
-        auto mtlStepFunction = validateAndConvertStepModeToMTLStepFunction(inputs[j].stepMode);
-        if (!mtlStepFunction) {
-            LOG(WebGPU, "%s: Invalid WebGPUInputStepMode for vertex input!", functionName);
+        auto slot = inputs[j].inputSlot;
+        if (inputs[j].inputSlot > 16) {
+            LOG(WebGPU, "%s: Invalid inputSlot %d for vertex buffer!", functionName, slot);
             return false;
         }
 
-        MTLVertexBufferLayoutDescriptor *mtlLayoutDesc = [layoutArray objectAtIndexedSubscript:j];
-        mtlLayoutDesc.stepFunction = *mtlStepFunction;
-        mtlLayoutDesc.stride = inputs[j].stride;
-        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc atIndexedSubscript:j];
+        auto mtlStepFunction = validateAndConvertStepModeToMTLStepFunction(inputs[j].stepMode);
+        if (!mtlStepFunction) {
+            LOG(WebGPU, "%s: Invalid WebGPUInputStepMode for vertex buffer at slot %lu!", functionName, slot);
+            return false;
+        }
+
+        auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:slot]);
+        mtlLayoutDesc.get().stepFunction = *mtlStepFunction;
+        mtlLayoutDesc.get().stride = inputs[j].stride;
+        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc.get() atIndexedSubscript:slot];
     }
 
     mtlDescriptor.vertexDescriptor = mtlVertexDescriptor.get();
@@ -183,8 +197,16 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    if (!setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor)
-        || !setInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor))
+    bool didSetFunctions = false, didSetInputState = false;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    didSetFunctions = setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor);
+    didSetInputState = setInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!didSetFunctions || !didSetInputState)
         return nullptr;
 
     // FIXME: Get the pixelFormat as configured for the context/CAMetalLayer.
@@ -194,14 +216,15 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:nil]);
+    NSError *error = [NSError errorWithDomain:@"com.apple.WebKit.GPU" code:1 userInfo:nil];
+    pipeline = adoptNS([device.platformDevice() newRenderPipelineStateWithDescriptor:mtlDescriptor.get() error:&error]);
+    if (!pipeline)
+        LOG(WebGPU, "%s: %s!", functionName, error.localizedDescription.UTF8String);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!pipeline) {
-        LOG(WebGPU, "%s: Error creating MTLRenderPipelineState!", functionName);
+    if (!pipeline)
         return nullptr;
-    }
 
     return adoptRef(new GPURenderPipeline(WTFMove(pipeline), WTFMove(descriptor)));
 }
