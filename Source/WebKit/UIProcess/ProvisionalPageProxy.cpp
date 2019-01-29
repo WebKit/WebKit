@@ -284,6 +284,13 @@ void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIde
     m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, handle);
 }
 
+#if PLATFORM(COCOA)
+void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
+{
+    m_accessibilityToken = data.vector();
+}
+#endif
+
 void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
@@ -294,14 +301,18 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessage::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacy::name()
         || decoder.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
-#if PLATFORM(COCOA)
-        || decoder.messageName() == Messages::WebPageProxy::RegisterWebProcessAccessibilityToken::name()
-#endif
         )
     {
         m_page.didReceiveMessage(connection, decoder);
         return;
     }
+
+#if PLATFORM(COCOA)
+    if (decoder.messageName() == Messages::WebPageProxy::RegisterWebProcessAccessibilityToken::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::RegisterWebProcessAccessibilityToken>(decoder, this, &ProvisionalPageProxy::registerWebProcessAccessibilityToken);
+        return;
+    }
+#endif
 
     if (decoder.messageName() == Messages::WebPageProxy::StartURLSchemeTask::name()) {
         IPC::handleMessage<Messages::WebPageProxy::StartURLSchemeTask>(decoder, this, &ProvisionalPageProxy::startURLSchemeTask);
