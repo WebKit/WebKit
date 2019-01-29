@@ -96,9 +96,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
 
     updateLayerHostingContext();
     setColorSpace(parameters.colorSpace);
-
-    if (!parameters.isProcessSwap)
-        attach();
 }
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
@@ -106,11 +103,23 @@ TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
     invalidateLayerFlushRunLoopObserver();
 }
 
-void TiledCoreAnimationDrawingArea::attach()
+void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded()
 {
-    LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_layerHostingContext->contextID();
-    m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+    if (!m_rootLayer)
+        return;
+
+    if (!m_needsSendEnterAcceleratedCompositingMode)
+        return;
+    m_needsSendEnterAcceleratedCompositingMode = false;
+
+    // Let the first commit complete before sending.
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+        LayerTreeContext layerTreeContext;
+        layerTreeContext.contextID = m_layerHostingContext->contextID();
+        m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+    });
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay()
@@ -502,8 +511,10 @@ void TiledCoreAnimationDrawingArea::flushLayers()
             m_pendingCallbackIDs.clear();
         }
 
-        if (didFlushAllFrames)
+        if (didFlushAllFrames) {
+            sendEnterAcceleratedCompositingModeIfNeeded();
             invalidateLayerFlushRunLoopObserver();
+        }
 
         if (m_isThrottlingLayerFlushes)
             startLayerFlushThrottlingTimer();
