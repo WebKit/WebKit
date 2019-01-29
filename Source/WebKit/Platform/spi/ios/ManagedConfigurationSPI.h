@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <wtf/SoftLinking.h>
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -38,6 +37,12 @@ WTF_EXTERN_C_BEGIN
 WTF_EXTERN_C_END
 
 #else
+
+WTF_EXTERN_C_BEGIN
+
+extern NSString * const MCFeatureDefinitionLookupAllowed;
+
+WTF_EXTERN_C_END
 
 typedef enum MCRestrictedBoolType {
     MCRestrictedBoolExplicitNo = 1 << 1,
@@ -53,14 +58,4 @@ typedef enum MCRestrictedBoolType {
 
 #endif
 
-WTF_EXTERN_C_BEGIN
-
-extern NSString * const MCFeatureDefinitionLookupAllowed;
-
-WTF_EXTERN_C_END
-
-SOFT_LINK_PRIVATE_FRAMEWORK(ManagedConfiguration);
-SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
-SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
-
-#define MCFeatureDefinitionLookupAllowed getMCFeatureDefinitionLookupAllowed()
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)

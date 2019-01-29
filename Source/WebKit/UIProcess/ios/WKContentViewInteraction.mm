@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #import "EditingRange.h"
 #import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
-#import "ManagedConfigurationSPI.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -102,7 +101,6 @@
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/TextStream.h>
@@ -132,6 +130,15 @@
 #if ENABLE(POINTER_EVENTS)
 #import "RemoteScrollingCoordinatorProxy.h"
 #import <WebCore/TouchAction.h>
+#endif
+
+#if !PLATFORM(IOSMAC)
+#import "ManagedConfigurationSPI.h"
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(ManagedConfiguration);
+SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
+SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -2672,7 +2679,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
             return NO;
 
 #if !PLATFORM(IOSMAC)
-        if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
+        if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
             
@@ -2684,7 +2691,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
             return NO;
 
 #if !PLATFORM(IOSMAC)
-        if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
+        if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
             return NO;
 #endif
 
@@ -2833,7 +2840,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)_defineForWebView:(id)sender
 {
 #if !PLATFORM(IOSMAC)
-    if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:MCFeatureDefinitionLookupAllowed] == MCRestrictedBoolExplicitNo)
+    if ([[getMCProfileConnectionClass() sharedConnection] effectiveBoolValueForSetting:getMCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
         return;
 #endif
 

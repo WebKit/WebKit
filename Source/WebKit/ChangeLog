@@ -1,3 +1,22 @@
+2019-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        Move soft-linking of ManagedConfiguration.framework out of ManagedConfigurationSPI.h
+        <https://webkit.org/b/193868>
+
+        Reviewed by Daniel Bates.
+
+        * Platform/spi/ios/ManagedConfigurationSPI.h:
+        - Remove soft-linking code from header.
+        - Add PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC) guard.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView _defineForWebView:]):
+        - Add soft-linking code formerly in ManagedConfigurationSPI.h.
+        - Change MCFeatureDefinitionLookupAllowed to use soft-link
+          function getMCFeatureDefinitionLookupAllowed() to remove the
+          #define.
+
 2019-01-28  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r240348): Loading netflix home page panics device
