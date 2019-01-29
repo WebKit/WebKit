@@ -1,3 +1,13 @@
+2019-01-28  Jon Lee  <jonlee@apple.com>
+
+        Update Screen Capture preference
+        https://bugs.webkit.org/show_bug.cgi?id=193947
+        rdar://problem/47620199
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/WebPreferences.yaml:
+
 2019-01-28  Andy Estes  <aestes@apple.com>
 
         [watchOS] Enable Parental Controls content filtering
