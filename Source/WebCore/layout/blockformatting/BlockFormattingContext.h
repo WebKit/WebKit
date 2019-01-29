@@ -53,7 +53,7 @@ public:
 
 private:
     void layoutFormattingContextRoot(FloatingContext&, const Box&) const;
-    void placeInFlowPositionedChildren(const Container&) const;
+    void placeInFlowPositionedChildren(const Box&) const;
 
     void computeWidthAndMargin(const Box&) const;
     void computeHeightAndMargin(const Box&) const;

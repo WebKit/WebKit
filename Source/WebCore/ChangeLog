@@ -1,5 +1,22 @@
 2019-01-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Do not ignore next sibling box while laying out BFC.
+        https://bugs.webkit.org/show_bug.cgi?id=193954
+
+        Reviewed by Antti Koivisto.
+
+        When a block box has no child (<img style="display: block">), we should not ignore the next sibling (move the container check to the function to keep layout logic simple)
+        Also inFlowNonReplacedWidthAndMargin() is called through inFlowReplacedWidthAndMargin() to compute margins.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layout const):
+        (WebCore::Layout::BlockFormattingContext::placeInFlowPositionedChildren const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+
+2019-01-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Remove quirk from MarginCollapse::marginsCollapseThrough
         https://bugs.webkit.org/show_bug.cgi?id=193948
 

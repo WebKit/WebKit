@@ -105,12 +105,9 @@ void BlockFormattingContext::layout() const
             // Formatting root boxes are special-cased and they don't come here.
             ASSERT(!layoutBox.establishesFormattingContext());
             computeHeightAndMargin(layoutBox);
-            if (!is<Container>(layoutBox))
-                continue;
-            auto& container = downcast<Container>(layoutBox);
             // Move in-flow positioned children to their final position.
-            placeInFlowPositionedChildren(container);
-            if (auto* nextSibling = container.nextInFlowOrFloatingSibling()) {
+            placeInFlowPositionedChildren(layoutBox);
+            if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
                 layoutQueue.append(nextSibling);
                 break;
             }
@@ -147,18 +144,22 @@ void BlockFormattingContext::layoutFormattingContextRoot(FloatingContext& floati
     formattingContext->layoutOutOfFlowDescendants(layoutBox);
 }
 
-void BlockFormattingContext::placeInFlowPositionedChildren(const Container& container) const
+void BlockFormattingContext::placeInFlowPositionedChildren(const Box& layoutBox) const
 {
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &container);
-    for (auto& layoutBox : childrenOfType<Box>(container)) {
-        if (!layoutBox.isInFlowPositioned())
+    if (!is<Container>(layoutBox))
+        return;
+
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: move in-flow positioned children -> parent: " << &layoutBox);
+    auto& container = downcast<Container>(layoutBox);
+    for (auto& childBox : childrenOfType<Box>(container)) {
+        if (!childBox.isInFlowPositioned())
             continue;
 
-        auto computeInFlowPositionedPosition = [&](auto& layoutBox) {
+        auto computeInFlowPositionedPosition = [&]() {
             auto& layoutState = this->layoutState();
-            auto positionOffset = Geometry::inFlowPositionedPositionOffset(layoutState, layoutBox);
+            auto positionOffset = Geometry::inFlowPositionedPositionOffset(layoutState, childBox);
 
-            auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+            auto& displayBox = layoutState.displayBoxForLayoutBox(childBox);
             auto topLeft = displayBox.topLeft();
 
             topLeft.move(positionOffset);
@@ -166,9 +167,9 @@ void BlockFormattingContext::placeInFlowPositionedChildren(const Container& cont
             displayBox.setTopLeft(topLeft);
         };
 
-        computeInFlowPositionedPosition(layoutBox);
+        computeInFlowPositionedPosition();
     }
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &container);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "End: move in-flow positioned children -> parent: " << &layoutBox);
 }
 
 void BlockFormattingContext::computeStaticPosition(const FloatingContext& floatingContext, const Box& layoutBox) const
