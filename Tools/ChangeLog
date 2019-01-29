@@ -1,3 +1,15 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab
+        https://bugs.webkit.org/show_bug.cgi?id=193932
+        <rdar://problem/47598947>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-29  Zalan Bujtas  <zalan@apple.com>
 
         Adding new passing LFC tests.
