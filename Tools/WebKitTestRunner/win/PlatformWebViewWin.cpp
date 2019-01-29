@@ -67,20 +67,20 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
 {
     registerWindowClass();
 
-    RECT viewRect = {0, 0, 800, 600};
     m_window = ::CreateWindowEx(
         WS_EX_TOOLWINDOW,
         hostWindowClassName,
         testRunnerWindowName,
-        WS_OVERLAPPEDWINDOW,
-        -viewRect.right,
-        -viewRect.bottom,
-        viewRect.right,
-        viewRect.bottom,
+        WS_POPUP,
+        CW_USEDEFAULT,
+        0,
+        0,
+        0,
         0,
         0,
         GetModuleHandle(0),
         0);
+    RECT viewRect = { };
     m_view = WKViewCreate(viewRect, configuration, m_window);
     WKViewSetIsInWindow(m_view, true);
 
@@ -95,14 +95,10 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode)
 {
-    ::SetWindowPos(
-        WKViewGetWindow(m_view),
-        0,
-        0,
-        0,
-        width,
-        height,
-        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+    WKRect frame = { };
+    frame.size.width = width;
+    frame.size.height = height;
+    setWindowFrame(frame);
 }
 
 WKPageRef PlatformWebView::page()
@@ -133,13 +129,25 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
 {
     ::SetWindowPos(
-        m_window,
+        WKViewGetWindow(m_view),
         0,
-        frame.origin.x,
-        frame.origin.y,
+        0,
+        0,
         frame.size.width,
         frame.size.height,
-        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+        SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS);
+
+    UINT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS;
+    if (m_options.shouldShowWebView)
+        flags |= SWP_NOMOVE;
+    ::SetWindowPos(
+        m_window,
+        0,
+        -frame.size.width,
+        -frame.size.height,
+        frame.size.width,
+        frame.size.height,
+        flags);
 }
 
 void PlatformWebView::didInitializeClients()

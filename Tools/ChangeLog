@@ -1,3 +1,29 @@
+2019-01-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitTestRunner] Error: test and reference images have different sizes. Test image is 784x561, reference image is 800x600
+        https://bugs.webkit.org/show_bug.cgi?id=193891
+
+        Reviewed by Ross Kirsling.
+
+        There were three problems in window sizes of WebView and the host window.
+        1. The sizes of pixel image output were incorrect.
+        2. The host window is going to appear after window.resize was invoked.
+        3. window.resize resized only the host window, not WebView.
+
+        This change solves them with a following approach.
+        a. PlatformWebView::PlatformWebView creates the initial host window as zero size.
+        b. Changes the host window style from WS_OVERLAPPEDWINDOW to WS_POPUP
+           as well as DumpRenderTree in order to match the client area and the window area.
+        c. PlatformWebView::resizeTo simply calls PlatformWebView::setWindowFrame as well as Mac port and GTK port.
+        d. PlatformWebView::setWindowFrame changes both window sizes.
+        e. PlatformWebView::setWindowFrame moves the host window to the out side of screen if m_options.shouldShowWebView.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::PlatformWebView): Create the host window
+        and WebView as zero size. Use WS_POPUP instead of WS_OVERLAPPEDWINDOW.
+        (WTR::PlatformWebView::resizeTo): Calls PlatformWebView::setWindowFrame.
+        (WTR::PlatformWebView::setWindowFrame): Change both window sizes.
+
 2019-01-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add method to save Step data to database
