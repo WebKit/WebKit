@@ -124,7 +124,7 @@ public:
         m_supplements.add(T::supplementName(), std::make_unique<T>(*this));
     }
 
-    void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
+    void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess&);
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();

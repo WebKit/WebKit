@@ -1,3 +1,32 @@
+2019-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Change NetworkConnectionToWebProcess* to NetworkConnectionToWebProcess& where possible
+        https://bugs.webkit.org/show_bug.cgi?id=193974
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerFileBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURLOptionallyFileBacked):
+        (WebKit::NetworkBlobRegistry::registerBlobURLForSlice):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+        (WebKit::NetworkBlobRegistry::blobSize):
+        (WebKit::NetworkBlobRegistry::connectionToWebProcessDidClose):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::registerFileBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLForSlice):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.h:
+
 2019-01-29  Youenn Fablet  <youenn@apple.com>
 
         Adopt new SPI to evaluate server certificate trust

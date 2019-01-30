@@ -184,9 +184,9 @@ NetworkProximityManager& NetworkProcess::proximityManager()
 }
 #endif
 
-void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess* connection)
+void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {
-    size_t vectorIndex = m_webProcessConnections.find(connection);
+    size_t vectorIndex = m_webProcessConnections.find(&connection);
     ASSERT(vectorIndex != notFound);
 
     m_webProcessConnections.remove(vectorIndex);

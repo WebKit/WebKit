@@ -46,17 +46,17 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& singleton();
 
-    void registerFileBlobURL(NetworkConnectionToWebProcess*, const URL&, const String& path, RefPtr<SandboxExtension>&&, const String& contentType);
-    void registerBlobURL(NetworkConnectionToWebProcess*, const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURL(NetworkConnectionToWebProcess*, const URL&, const URL& srcURL, bool shouldBypassConnectionCheck);
-    void registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess*, const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
-    void registerBlobURLForSlice(NetworkConnectionToWebProcess*, const URL&, const URL& srcURL, int64_t start, int64_t end);
-    void unregisterBlobURL(NetworkConnectionToWebProcess*, const URL&);
-    uint64_t blobSize(NetworkConnectionToWebProcess*, const URL&);
+    void registerFileBlobURL(NetworkConnectionToWebProcess&, const URL&, const String& path, RefPtr<SandboxExtension>&&, const String& contentType);
+    void registerBlobURL(NetworkConnectionToWebProcess&, const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
+    void registerBlobURL(NetworkConnectionToWebProcess&, const URL&, const URL& srcURL, bool shouldBypassConnectionCheck);
+    void registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess&, const URL&, const URL& srcURL, const String& fileBackedPath, const String& contentType);
+    void registerBlobURLForSlice(NetworkConnectionToWebProcess&, const URL&, const URL& srcURL, int64_t start, int64_t end);
+    void unregisterBlobURL(NetworkConnectionToWebProcess&, const URL&);
+    uint64_t blobSize(NetworkConnectionToWebProcess&, const URL&);
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
     void writeBlobToFilePath(const URL& blobURL, const String& path, CompletionHandler<void(bool success)>&&);
 
-    void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
+    void connectionToWebProcessDidClose(NetworkConnectionToWebProcess&);
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess&, const URL&);
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const URL&);
