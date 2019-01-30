@@ -1,3 +1,11 @@
+2019-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Expand tests coverage.
+
+        Unreviewed test gardening.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-01-30  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Add openjpeg support
