@@ -1,3 +1,17 @@
+2019-01-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Sandbox fails to compile on 10.12
+        https://bugs.webkit.org/show_bug.cgi?id=194035
+        <rdar://problem/47651260>
+
+        Reviewed by Brent Fulgham.
+
+        This was caused by the commit <https://trac.webkit.org/changeset/239994>, which is only valid for
+        10.14 and later.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-01-29  Conrad Shultz  <conrad_shultz@apple.com>
 
         Ensure image picker sourceType is set before cameraDevice

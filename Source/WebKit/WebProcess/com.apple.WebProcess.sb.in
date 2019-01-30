@@ -609,8 +609,10 @@
 #endif
 )
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 ;; <rdar://problem/47268166>
 (allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 (deny mach-lookup (with no-log)
