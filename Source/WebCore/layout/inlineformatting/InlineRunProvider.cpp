@@ -182,8 +182,15 @@ unsigned InlineRunProvider::moveToNextBreakablePosition(const InlineItem& inline
     };
 
     auto& style = inlineItem.style();
-    auto nextBreakablePosition = findNextBreakablePosition(inlineItem.textContent(), style, currentItemPosition);
-    return nextBreakablePosition - currentItemPosition;
+    auto textLength = inlineItem.textContent().length();
+    ASSERT(textLength);
+    while (currentItemPosition < textLength - 1) {
+        auto nextBreakablePosition = findNextBreakablePosition(inlineItem.textContent(), style, currentItemPosition);
+        if (nextBreakablePosition != currentItemPosition)
+            return nextBreakablePosition - currentItemPosition;
+        ++currentItemPosition;
+    }
+    return textLength;
 }
 
 }

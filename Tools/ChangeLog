@@ -1,5 +1,14 @@
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] nextBreakablePosition returns the same position on hyphen characters
+        https://bugs.webkit.org/show_bug.cgi?id=194001
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
+2019-01-30  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Use the used margin values in outOfFlowReplacedVerticalGeometry consistently
         https://bugs.webkit.org/show_bug.cgi?id=194020
 

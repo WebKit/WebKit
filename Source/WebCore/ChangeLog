@@ -1,3 +1,15 @@
+2019-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] nextBreakablePosition returns the same position on hyphen characters
+        https://bugs.webkit.org/show_bug.cgi?id=194001
+
+        Reviewed by Antti Koivisto.
+
+        Skip to the next position manually. This is exactly what we do in simple line layout.
+
+        * layout/inlineformatting/InlineRunProvider.cpp:
+        (WebCore::Layout::InlineRunProvider::moveToNextBreakablePosition):
+
 2019-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add some basic geometry information to the scrolling tree
