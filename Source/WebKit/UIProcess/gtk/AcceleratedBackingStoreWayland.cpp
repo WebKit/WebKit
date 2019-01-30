@@ -58,6 +58,11 @@ AcceleratedBackingStoreWayland::AcceleratedBackingStoreWayland(WebPageProxy& web
 AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland()
 {
     WaylandCompositor::singleton().unregisterWebPage(m_webPage);
+
+#if GTK_CHECK_VERSION(3, 16, 0)
+    if (m_gdkGLContext && m_gdkGLContext.get() == gdk_gl_context_get_current())
+        gdk_gl_context_clear_current();
+#endif
 }
 
 void AcceleratedBackingStoreWayland::tryEnsureGLContext()

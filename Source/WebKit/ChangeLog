@@ -1,3 +1,15 @@
+2019-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Wayland] REGRESSION(r240712): Clear the GL context if it's the current one on dispose
+        https://bugs.webkit.org/show_bug.cgi?id=194024
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes a crash in gdk_gl_context_dispose().
+
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::~AcceleratedBackingStoreWayland):
+
 2019-01-30  Antti Koivisto  <antti@apple.com>
 
         Crash in WebKit::RemoteLayerTreePropertyApplier::updateChildren
