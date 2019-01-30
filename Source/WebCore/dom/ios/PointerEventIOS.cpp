@@ -77,8 +77,8 @@ PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& e
     double azimuthAngle = event.azimuthAngleAtIndex(index);
     double altitudeAngle = event.altitudeAngleAtIndex(index);
 
-    m_tiltX = round(sin(azimuthAngle) * cos(altitudeAngle) * 90);
-    m_tiltY = round(cos(azimuthAngle) * cos(altitudeAngle) * 90);
+    m_tiltX = round(cos(azimuthAngle) * cos(altitudeAngle) * 90);
+    m_tiltY = round(sin(azimuthAngle) * cos(altitudeAngle) * 90);
 }
 
 } // namespace WebCore

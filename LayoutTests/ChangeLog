@@ -1,3 +1,13 @@
+2019-01-30  Dean Jackson  <dino@apple.com>
+
+        PointerEvents - tiltX and tiltY are reversed
+        https://bugs.webkit.org/show_bug.cgi?id=194032
+        <rdar://problem/47674184>
+
+        Reviewed by Jon Lee.
+
+        * pointerevents/ios/pointer-events-dispatch-on-stylus.html:
+
 2019-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add some basic geometry information to the scrolling tree

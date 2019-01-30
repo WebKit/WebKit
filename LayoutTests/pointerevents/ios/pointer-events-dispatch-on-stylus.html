@@ -23,8 +23,8 @@ target_test((target, test) => {
         assert_equals(event.clientY, 50);
         assert_equals(event.pointerType, "pen");
         assert_equals(event.pressure, 0.75);
-        assert_approx_equals(event.tiltX, 20, 1);
-        assert_approx_equals(event.tiltY, 75, 1);
+        assert_approx_equals(event.tiltX, 75, 1);
+        assert_approx_equals(event.tiltY, 20, 1);
         test.done();
     });
     ui.beginStylus({ x: 50, y: 50, pressure: 0.75, azimuthAngle: fifteenDegrees, altitudeAngle: thirtyDegrees });

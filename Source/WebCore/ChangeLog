@@ -1,3 +1,15 @@
+2019-01-30  Dean Jackson  <dino@apple.com>
+
+        PointerEvents - tiltX and tiltY are reversed
+        https://bugs.webkit.org/show_bug.cgi?id=194032
+        <rdar://problem/47674184>
+
+        Reviewed by Jon Lee.
+
+        I got tiltX and tiltY the wrong way around.
+
+        * dom/ios/PointerEventIOS.cpp: Flip the values.
+
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] nextBreakablePosition returns the same position on hyphen characters
