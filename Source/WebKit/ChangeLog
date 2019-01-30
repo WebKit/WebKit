@@ -1,3 +1,13 @@
+2019-01-29  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Ensure image picker sourceType is set before cameraDevice
+        https://bugs.webkit.org/show_bug.cgi?id=193998
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+
 2019-01-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Load hang can occur on history navigation
