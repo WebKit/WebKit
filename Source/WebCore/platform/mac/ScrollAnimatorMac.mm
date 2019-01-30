@@ -804,8 +804,8 @@ void ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary()
     m_scrollableArea.setConstrainsScrollingToContentEdge(true);
 
     ScrollPosition currentScrollPosition = m_scrollableArea.scrollPosition();
-    ScrollPosition constainedPosition = m_scrollableArea.constrainScrollPosition(currentScrollPosition);
-    immediateScrollBy(constainedPosition - currentScrollPosition);
+    ScrollPosition constrainedPosition = m_scrollableArea.constrainScrollPosition(currentScrollPosition);
+    immediateScrollBy(constrainedPosition - currentScrollPosition);
 
     m_scrollableArea.setConstrainsScrollingToContentEdge(currentlyConstrainsToContentEdge);
 }

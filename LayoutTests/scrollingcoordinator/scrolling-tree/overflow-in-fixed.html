@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Check that overflow is nested inside fixed
+    </title>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
+
+        function doTest() {
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .fixed {
+            position: fixed;
+            background-color: silver;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed">
+        <div class="scrolling-content">Scrolling content</div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

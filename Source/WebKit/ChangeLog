@@ -1,3 +1,18 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add nodes to the scrolling tree in z-index order.
+        https://bugs.webkit.org/show_bug.cgi?id=192529
+        <rdar://problem/47402708>
+
+        Reviewed by Dean Jackson.
+
+        FrameHosting nodes have layers, so need to update them.
+
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2019-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Change NetworkConnectionToWebProcess* to NetworkConnectionToWebProcess& where possible

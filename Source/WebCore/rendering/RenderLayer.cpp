@@ -603,7 +603,7 @@ void RenderLayer::setParent(RenderLayer* parent)
 
     if (m_parent && !renderer().renderTreeBeingDestroyed())
         compositor().layerWillBeRemoved(*m_parent, *this);
-    
+
     m_parent = parent;
 
     if (m_parent && !renderer().renderTreeBeingDestroyed())
@@ -5913,8 +5913,13 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 
 void RenderLayer::clearBacking(bool layerBeingDestroyed)
 {
-    if (m_backing && !renderer().renderTreeBeingDestroyed())
+    if (!m_backing)
+        return;
+
+    if (!renderer().renderTreeBeingDestroyed())
         compositor().layerBecameNonComposited(*this);
+    
+    m_backing->willBeDestroyed();
     m_backing = nullptr;
 
     if (!layerBeingDestroyed)

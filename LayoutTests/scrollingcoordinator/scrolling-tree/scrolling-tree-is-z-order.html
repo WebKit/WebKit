@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that the scrolling tree is in z-order.</title>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest() {
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+
+                if (window.internals)
+                    document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        .fixed {
+            position: fixed;
+            background-color: silver;
+            border: 1px solid black;
+            width: 200px;
+            height: 150px;            
+        }
+        
+        #second {
+            left: 100px;
+            top: 100px;
+        }
+
+        #third {
+            left: 150px;
+            top: 50px;
+        }
+        
+        .changed #first {
+            z-index: 2;
+        }
+
+        .changed #third {
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed" id="first">First</div>
+    <div class="fixed" id="second">Second</div>
+    <div class="fixed" id="third">Third</div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

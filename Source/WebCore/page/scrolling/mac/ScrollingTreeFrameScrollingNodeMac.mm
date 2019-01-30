@@ -361,8 +361,8 @@ void ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer()
 void ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary()
 {
     FloatPoint currentScrollPosition = scrollPosition();
-    FloatPoint constainedPosition = currentScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
-    immediateScrollBy(constainedPosition - currentScrollPosition);
+    FloatPoint constrainedPosition = currentScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    immediateScrollBy(constrainedPosition - currentScrollPosition);
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const

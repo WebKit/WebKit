@@ -15,7 +15,16 @@ Inner scrolling content
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (behavior for fixed 0)
-  (children 0
+  (children 1
+    (Overflow scrolling node
+      (scrollable area size 425 325)
+      (contents size 425 1040)
+      (scrollable area parameters 
+        (horizontal scroll elasticity 1)
+        (vertical scroll elasticity 1)
+        (horizontal scrollbar mode 0)
+        (vertical scrollbar mode 0))
+    )
   )
 )
 

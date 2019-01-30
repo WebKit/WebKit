@@ -236,6 +236,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 
 RenderLayerBacking::~RenderLayerBacking()
 {
+    // Note that m_owningLayer->backing() is null here.
     updateAncestorClippingLayer(false);
     updateChildClippingStrategy(false);
     updateDescendantClippingLayer(false);
@@ -244,8 +245,18 @@ RenderLayerBacking::~RenderLayerBacking()
     updateBackgroundLayer(false);
     updateMaskingLayer(false, false);
     updateScrollingLayers(false);
-    detachFromScrollingCoordinator({ ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained, ScrollCoordinationRole::FrameHosting });
+    
+    ASSERT(!m_viewportConstrainedNodeID);
+    ASSERT(!m_scrollingNodeID);
+    ASSERT(!m_frameHostingNodeID);
+
     destroyGraphicsLayers();
+}
+
+void RenderLayerBacking::willBeDestroyed()
+{
+    ASSERT(m_owningLayer.backing() == this);
+    compositor().removeFromScrollCoordinatedLayers(m_owningLayer);
 }
 
 void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
@@ -1246,8 +1257,6 @@ void RenderLayerBacking::updateGeometry()
 
     if (subpixelOffsetFromRendererChanged(oldSubpixelOffsetFromRenderer, m_subpixelOffsetFromRenderer, deviceScaleFactor()) && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
-
-    compositor().updateScrollCoordinatedStatus(m_owningLayer, { RenderLayerCompositor::ScrollingNodeChangeFlags::Layer, RenderLayerCompositor::ScrollingNodeChangeFlags::LayerGeometry });
 }
 
 void RenderLayerBacking::updateAfterDescendants()
@@ -1643,12 +1652,8 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
         }
     }
     
-    if (layerChanged) {
+    if (layerChanged)
         m_graphicsLayer->setNeedsDisplay();
-
-        if (m_backgroundLayerPaintsFixedRootBackground)
-            compositor().fixedRootBackgroundLayerChanged();
-    }
     
     return layerChanged;
 }
@@ -1765,6 +1770,23 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         compositor().didAddScrollingLayer(m_owningLayer);
     
     return true;
+}
+
+OptionSet<ScrollCoordinationRole> RenderLayerBacking::coordinatedScrollingRoles() const
+{
+    auto& compositor = this->compositor();
+
+    OptionSet<ScrollCoordinationRole> coordinationRoles;
+    if (compositor.isViewportConstrainedFixedOrStickyLayer(m_owningLayer))
+        coordinationRoles.add(ScrollCoordinationRole::ViewportConstrained);
+
+    if (compositor.useCoordinatedScrollingForLayer(m_owningLayer))
+        coordinationRoles.add(ScrollCoordinationRole::Scrolling);
+
+    if (compositor.isLayerForIFrameWithScrollCoordinatedContents(m_owningLayer))
+        coordinationRoles.add(ScrollCoordinationRole::FrameHosting);
+
+    return coordinationRoles;
 }
 
 void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole> roles)

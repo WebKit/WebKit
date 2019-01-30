@@ -1,3 +1,24 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add nodes to the scrolling tree in z-index order.
+        https://bugs.webkit.org/show_bug.cgi?id=192529
+        <rdar://problem/47402708>
+
+        Reviewed by Dean Jackson.
+        
+        New testcases for z-order of sibling fixed layers, and the correct nesting of scrolling tree nodes
+        for a position:fixed which is also overflow:scroll.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed.html: Added.
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order.html: Added.
+
 2019-01-29  Truitt Savell  <tsavell@apple.com>
 
         Updating expectations for two compositing/repaint/iframes/ tests

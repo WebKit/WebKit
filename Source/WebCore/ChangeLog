@@ -1,3 +1,88 @@
+2019-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add nodes to the scrolling tree in z-index order.
+        https://bugs.webkit.org/show_bug.cgi?id=192529
+        <rdar://problem/47402708>
+
+        Reviewed by Dean Jackson.
+
+        We currently add nodes to the scrolling tree via RenderLayerBacking::updateGeometry() and some other places.
+        This is sub-optimal, because we don't readily know the scrolling ancestor at these times, so have to do RenderLayer
+        walks to find them.
+
+        With this change we update the scrolling tree during the RenderLayerCompositor::updateBackingAndHierarchy()
+        tree walk, storing state along the way so we always know our scrolling tree ancestor, and the sibling index
+        (which makes it so that the scrolling tree correctly reflects layer z-order).
+
+        The reattachSubframeScrollLayers() code path is removed, since we can now reliably parent frame nodes via FrameHosting
+        nodes in their parent document.
+
+        There is also some minor cleanup around RenderLayerBacking teardown; it used to be the case that cleanup in ~RenderLayerBacking
+        was hard because the backing was already disconnected from its owning RenderLayer, so I added RenderLayerBacking::willBeDestroyed()
+        to do work that requires that layer->backing() is still valid. This allows for fewer callsites for detachFromScrollingCoordinator().
+
+        updateScrollCoordinatedLayersAfterFlushIncludingSubframes() is now iOS-only because it's only relevant for iOS WK1,
+        and m_scrollCoordinatedLayers can be moved to LegacyWebKitScrollingLayerCoordinator.
+
+        Tests: scrollingcoordinator/scrolling-tree/overflow-in-fixed.html
+               scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order.html
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::insertNode):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::~ScrollingTreeNode):
+        * platform/Logging.cpp:
+        (WebCore::initializeLogChannelsIfNecessary):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setParent):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::willBeDestroyed):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateBackgroundLayer):
+        (WebCore::RenderLayerBacking::coordinatedScrollingRoles const):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::frameHostingNodeForFrame):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::clearBackingForLayerIncludingDescendants):
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayerWithRole):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForViewportConstrainedRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForFrameHostingRole):
+        (WebCore::RenderLayerCompositor::willRemoveScrollingLayerWithBacking):
+        (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::addScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::removeLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::addViewportConstrainedLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::removeViewportConstrainedLayer):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush): Deleted.
+        (WebCore::RenderLayerCompositor::setCompositingParent): Deleted. This was always called with a null parentLayer, so was a no-op.
+        (WebCore::RenderLayerCompositor::removeCompositedChildren): Deleted.
+        (WebCore::RenderLayerCompositor::fixedRootBackgroundLayerChanged): Deleted. The work happens via didChangePlatformLayerForLayer() now.
+        (WebCore::canCoordinateScrollingForLayer): Deleted.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus): Deleted.
+        (WebCore::enclosingScrollingNodeID): Deleted.
+        (WebCore::scrollCoordinatedAncestorInParentOfFrame): Deleted.
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers): Deleted.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame): Deleted.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-29  Brent Fulgham  <bfulgham@apple.com>
 
         Make sure we have a frame before trying to access its loader 

@@ -64,6 +64,9 @@ public:
     void layerWillBeDestroyed();
 #endif
 
+    // Do cleanup while layer->backing() is still valid.
+    void willBeDestroyed();
+
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
     void updateConfigurationAfterStyleChange();
@@ -100,13 +103,15 @@ public:
 
     bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
     void setRequiresBackgroundLayer(bool);
-    
+
     bool hasScrollingLayer() const { return m_scrollingLayer != nullptr; }
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
+    OptionSet<ScrollCoordinationRole> coordinatedScrollingRoles() const;
+
     void detachFromScrollingCoordinator(OptionSet<ScrollCoordinationRole>);
-    
+
     ScrollingNodeID scrollingNodeIDForRole(ScrollCoordinationRole role) const
     {
         switch (role) {
@@ -119,7 +124,7 @@ public:
         }
         return 0;
     }
-    
+
     void setScrollingNodeIDForRole(ScrollingNodeID nodeID, ScrollCoordinationRole role)
     {
         switch (role) {
@@ -135,7 +140,7 @@ public:
             break;
         }
     }
-    
+
     ScrollingNodeID scrollingNodeIDForChildren() const
     {
         return m_frameHostingNodeID ? m_frameHostingNodeID : (m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID);
