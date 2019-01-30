@@ -1,3 +1,28 @@
+2019-01-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Make global static variables "const" as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=194015
+
+        Reviewed by Mark Lam.
+
+        Some of global static variables are not "const". For example, `static const char* name = ...`
+        is not constant variable. We should make it `static const char* const name = ...`.
+
+        * Scripts/wkbuiltins/builtins_generate_combined_header.py:
+        (generate_externs_for_object):
+        * Scripts/wkbuiltins/builtins_generate_separate_header.py:
+        (generate_externs_for_object):
+        * Scripts/wkbuiltins/builtins_generator.py:
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_data):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::additionBlindedConstant):
+        * b3/air/AirFormTable.h:
+        * b3/air/opcode_generator.rb:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+        * tools/CodeProfile.cpp:
+        * tools/CodeProfile.h:
+
 2019-01-29  Keith Miller  <keith_miller@apple.com>
 
         Remove default constructor from LLIntPrototypeLoadAdaptiveStructureWatchpoint

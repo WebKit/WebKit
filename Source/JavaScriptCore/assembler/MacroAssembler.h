@@ -1559,7 +1559,7 @@ public:
     BlindedImm32 additionBlindedConstant(Imm32 imm)
     {
         // The addition immediate may be used as a pointer offset. Keep aligned based on "imm".
-        static uint32_t maskTable[4] = { 0xfffffffc, 0xffffffff, 0xfffffffe, 0xffffffff };
+        static const uint32_t maskTable[4] = { 0xfffffffc, 0xffffffff, 0xfffffffe, 0xffffffff };
 
         uint32_t baseValue = imm.asTrustedImm32().m_value;
         uint32_t key = keyForConstant(baseValue) & maskTable[baseValue & 3];

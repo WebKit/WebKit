@@ -699,7 +699,7 @@ writeH("OpcodeUtils") {
     outp.puts "{"
     outp.puts "    size_t numOperands = args.size();"
     outp.puts "    size_t formOffset = (numOperands - 1) * numOperands / 2;"
-    outp.puts "    uint8_t* formBase = g_formTable + kind.opcode * #{formTableWidth} + formOffset;"
+    outp.puts "    const uint8_t* formBase = g_formTable + kind.opcode * #{formTableWidth} + formOffset;"
     outp.puts "    for (size_t i = 0; i < numOperands; ++i) {"
     outp.puts "        uint8_t form = formBase[i];"
     outp.puts "        ASSERT(!(form & (1 << formInvalidShift)));"
@@ -822,7 +822,7 @@ writeH("OpcodeGenerated") {
     outp.puts "} // namespace WTF"
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     
-    outp.puts "uint8_t g_formTable[#{$opcodes.size * formTableWidth}] = {"
+    outp.puts "const uint8_t g_formTable[#{$opcodes.size * formTableWidth}] = {"
     $opcodes.values.each {
         | opcode |
         overloads = [nil] * (maxNumOperands + 1)

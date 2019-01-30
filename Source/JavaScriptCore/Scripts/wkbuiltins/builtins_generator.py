@@ -143,7 +143,7 @@ class BuiltinsGenerator:
         lines.append("const JSC::ConstructAbility s_%(codeName)sConstructAbility = JSC::ConstructAbility::%(canConstruct)s;" % data);
         lines.append("const int s_%(codeName)sLength = %(embeddedSourceLength)d;" % data);
         lines.append("static const JSC::Intrinsic s_%(codeName)sIntrinsic = JSC::%(intrinsic)s;" % data);
-        lines.append("const char* s_%(codeName)s =\n%(embeddedSource)s\n;" % data);
+        lines.append("const char* const s_%(codeName)s =\n%(embeddedSource)s\n;" % data);
         return '\n'.join(lines)
 
     # Helper methods.

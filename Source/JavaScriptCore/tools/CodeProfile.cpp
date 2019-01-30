@@ -36,7 +36,7 @@
 namespace JSC {
 
 // Map from CodeType enum to a corresponding name.
-const char* CodeProfile::s_codeTypeNames[CodeProfile::NumberOfCodeTypes] = {
+static const char* const s_codeTypeNames[CodeProfile::NumberOfCodeTypes] = {
     "[[EngineCode]]",
     "[[GlobalThunk]]",
     "[[RegExpCode]]",

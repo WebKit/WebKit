@@ -125,7 +125,7 @@ class FunctionExecutable;
                 'codeName': BuiltinsGenerator.mangledNameForFunction(function) + 'Code',
             }
 
-            lines.append("""extern const char* s_%(codeName)s;
+            lines.append("""extern const char* const s_%(codeName)s;
 extern const int s_%(codeName)sLength;
 extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;""" % function_args)
 

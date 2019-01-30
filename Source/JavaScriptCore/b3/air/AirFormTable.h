@@ -43,7 +43,7 @@ static const uint8_t formInvalidShift = 7;
 
 #define INVALID_INST_FORM (1 << formInvalidShift)
 
-JS_EXPORT_PRIVATE extern uint8_t g_formTable[];
+JS_EXPORT_PRIVATE extern const uint8_t g_formTable[];
 
 inline Arg::Role decodeFormRole(uint8_t value)
 {
