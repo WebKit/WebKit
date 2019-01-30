@@ -52,6 +52,8 @@ enum {
 
 // FIXME: Move to NSWindowSPI.h.
 @interface NSWindow ()
+- (void)_setWindowResolution:(CGFloat)resolution;
+// FIXME: Remove once the variant above exists on all platforms we need (cf. rdar://problem/47614795).
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 @end
 
@@ -238,7 +240,10 @@ void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
     if (currentScale == newScale)
         return;
 
-    [m_window _setWindowResolution:newScale displayIfChanged:YES];
+    if ([m_window respondsToSelector:@selector(_setWindowResolution:)])
+        [m_window _setWindowResolution:newScale];
+    else
+        [m_window _setWindowResolution:newScale displayIfChanged:YES];
 #if WK_API_ENABLED
     [m_view _setOverrideDeviceScaleFactor:newScale];
 #endif

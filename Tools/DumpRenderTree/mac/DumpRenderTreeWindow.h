@@ -39,6 +39,9 @@
 
 @interface NSWindow (Details)
 
+- (void)_setWindowResolution:(CGFloat)resolution;
+
+// FIXME: Remove once the variant above exists on all platforms we need (cf. rdar://problem/47614795).
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 
 @end

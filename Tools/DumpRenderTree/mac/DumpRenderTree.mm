@@ -1619,7 +1619,11 @@ static void changeWindowScaleIfNeeded(const char* testPathOrUR)
         return;
     // When the new scale factor is set on the window first, WebView doesn't see it as a new scale and stops propagating the behavior change to WebCore::Page.
     gTestRunner->setBackingScaleFactor(requiredScaleFactor);
-    [[[mainFrame webView] window] _setWindowResolution:requiredScaleFactor displayIfChanged:YES];
+    NSWindow *window = [[mainFrame webView] window];
+    if ([window respondsToSelector:@selector(_setWindowResolution:)])
+        [window _setWindowResolution:requiredScaleFactor];
+    else
+        [window _setWindowResolution:requiredScaleFactor displayIfChanged:YES];
 }
 #endif
 
