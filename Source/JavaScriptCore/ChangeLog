@@ -1,3 +1,17 @@
+2019-01-30  Keith Miller  <keith_miller@apple.com>
+
+        mul32 should convert powers of 2 to an lshift
+        https://bugs.webkit.org/show_bug.cgi?id=193957
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::mul32):
+        * assembler/testmasm.cpp:
+        (JSC::int32Operands):
+        (JSC::testMul32WithImmediates):
+        (JSC::run):
+
 2019-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make disassembler data structures constant read-only data
