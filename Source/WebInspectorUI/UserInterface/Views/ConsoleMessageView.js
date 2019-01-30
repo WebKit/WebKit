@@ -358,7 +358,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                 if (result === WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound || result === WI.RemoteObject.SourceCodeLocationPromise.MissingObjectId)
                     return;
 
-                var link = this._linkifyLocation(result.sourceCode.url, result.lineNumber, result.columnNumber);
+                var link = this._linkifyLocation(result.sourceCode.sourceURL || result.sourceCode.url, result.lineNumber, result.columnNumber);
                 link.classList.add("console-message-location");
 
                 if (this._element.hasChildNodes())
