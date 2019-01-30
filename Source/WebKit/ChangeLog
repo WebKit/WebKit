@@ -1,3 +1,19 @@
+2019-01-30  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebKit::RemoteLayerTreePropertyApplier::updateChildren
+        https://bugs.webkit.org/show_bug.cgi?id=193897
+        <rdar://problem/47427750>
+
+        Reviewed by Simon Fraser.
+
+        There has been some null pointer crashes where we fail to find a remote layer tree node that matches
+        the transaction properties.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::updateChildren):
+
+        Null check the nodes.
+
 2019-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add some basic geometry information to the scrolling tree
