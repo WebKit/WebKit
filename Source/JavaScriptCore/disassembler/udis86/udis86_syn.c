@@ -37,7 +37,7 @@
  * Register Table - Order Matters (types.h)!
  *
  */
-const char* ud_reg_tab[] = 
+const char* const ud_reg_tab[] = 
 {
   "al",   "cl",   "dl",   "bl",
   "ah",   "ch",   "dh",   "bh",

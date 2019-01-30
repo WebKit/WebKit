@@ -64,7 +64,7 @@ struct OpcodeGroupInitializer {
 #define OPCODE_GROUP_ENTRY(groupIndex, groupClass) \
 { groupIndex, groupClass::mask, groupClass::pattern, groupClass::format }
 
-static OpcodeGroupInitializer opcodeGroupList[] = {
+static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreRegisterPair),
     OPCODE_GROUP_ENTRY(0x08, A64DOpcodeLoadStoreExclusive),
     OPCODE_GROUP_ENTRY(0x09, A64DOpcodeLoadStoreRegisterPair),

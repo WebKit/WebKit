@@ -249,7 +249,7 @@ class UdItabGenerator:
 
     def genOpcodeTablesLookupIndex(self):
         self.ItabC.write( "\n\n"  );
-        self.ItabC.write( "struct ud_lookup_table_list_entry ud_lookup_table_list[] = {\n" )
+        self.ItabC.write( "const struct ud_lookup_table_list_entry ud_lookup_table_list[] = {\n" )
         for table in self.tables.getTableList():
             f0 = self.getTableName(table) + ","
             f1 = table.label() + ","
@@ -260,7 +260,7 @@ class UdItabGenerator:
 
 
     def genInsnTable( self ):
-        self.ItabC.write( "struct ud_itab_entry ud_itab[] = {\n" );
+        self.ItabC.write( "const struct ud_itab_entry ud_itab[] = {\n" );
         for insn in self.tables.getInsnList():
             opr_c = [ "O_NONE", "O_NONE", "O_NONE", "O_NONE" ]
             pfx_c = []
@@ -293,7 +293,7 @@ class UdItabGenerator:
     def genMnemonicsList(self):
         mnemonics = self.getMnemonicsList()
         self.ItabC.write( "\n\n"  );
-        self.ItabC.write( "const char* ud_mnemonics_str[] = {\n    " )
+        self.ItabC.write( "const char* const ud_mnemonics_str[] = {\n    " )
         self.ItabC.write( ",\n    ".join( [ "\"%s\"" % m for m in mnemonics ] ) )
         self.ItabC.write( "\n};\n" )
  
@@ -323,7 +323,7 @@ class UdItabGenerator:
         self.ItabH.write( enum )
         self.ItabH.write( "\n" )
 
-        self.ItabH.write( "extern const char * ud_mnemonics_str[];\n" )
+        self.ItabH.write( "extern const char * const ud_mnemonics_str[];\n" )
 
         self.ItabH.write( "\n#endif /* UD_ITAB_H */\n" )
     

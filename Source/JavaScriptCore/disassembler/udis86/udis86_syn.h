@@ -31,7 +31,7 @@
 # include <stdarg.h>
 #endif /* __UD_STANDALONE__ */
 
-extern const char* ud_reg_tab[];
+extern const char* const ud_reg_tab[];
 
 uint64_t ud_syn_rel_target(struct ud*, struct ud_operand*);
 

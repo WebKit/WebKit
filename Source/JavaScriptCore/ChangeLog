@@ -1,5 +1,26 @@
 2019-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Make disassembler data structures constant read-only data
+        https://bugs.webkit.org/show_bug.cgi?id=194041
+
+        Reviewed by Mark Lam.
+
+        Bunch of disassembler data structures are not marked "const", which prevents the loader to put them in read-only region.
+        This patch makes them "const".
+
+        * disassembler/ARM64/A64DOpcode.cpp:
+        * disassembler/udis86/ud_itab.py:
+        (UdItabGenerator.genOpcodeTablesLookupIndex):
+        (UdItabGenerator.genInsnTable):
+        (UdItabGenerator.genMnemonicsList):
+        (genItabH):
+        * disassembler/udis86/udis86_decode.h:
+        * disassembler/udis86/udis86_syn.c:
+        * disassembler/udis86/udis86_syn.h:
+        * disassembler/udis86/udis86_types.h:
+
+2019-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, update the builtin test results
         https://bugs.webkit.org/show_bug.cgi?id=194015
 
