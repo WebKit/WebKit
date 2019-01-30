@@ -446,11 +446,11 @@ public:
 
     // SuspendedPageProxy management.
     void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
-    void removeAllSuspendedPagesForPage(WebPageProxy&);
+    void removeAllSuspendedPagesForPage(WebPageProxy&, WebProcessProxy* = nullptr);
     void closeFailedSuspendedPagesForPage(WebPageProxy&);
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(SuspendedPageProxy&);
     void removeSuspendedPage(SuspendedPageProxy&);
-    bool hasSuspendedPageFor(WebProcessProxy&) const;
+    bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy* = nullptr) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
 
     void didReachGoodTimeToPrewarm();

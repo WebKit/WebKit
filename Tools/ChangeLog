@@ -1,3 +1,15 @@
+2019-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Load hang can occur on history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=194030
+        <rdar://problem/47656939>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Expand tests coverage.

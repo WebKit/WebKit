@@ -1,3 +1,33 @@
+2019-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Load hang can occur on history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=194030
+        <rdar://problem/47656939>
+
+        Reviewed by Antti Koivisto.
+
+        We do not support having more than one WebPage in a WebProcess with the same page ID. As a result,
+        if we decide to reuse an existing process on process-swap, we need to make sure that we either use
+        its suspended page (when possible, meaning that it is for the right HistoryItem / page) or we need
+        make sure we drop the existing suspended page for this process / pagePID combination, so that the
+        WebPage on WebProcess side gets closed before we attempt to do the new load.
+
+        We were doing this correctly in 2 places in WebProcessPool::processForNavigationInternal() but failed
+        to do so in a third place, when doing back to a HistoryItem which does not have a SuspendedPage but
+        whose process is still alive (presumably because it is kept alive by another suspended page). This
+        patch fixes this third place to remove any suspended page in the process for the current page before
+        reusing the process. An assertion was also added to the call site in
+        WebPageProxy::receivedNavigationPolicyDecision() to make sure we catch this more easily in the
+        future.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::removeAllSuspendedPagesForPage):
+        (WebKit::WebProcessPool::hasSuspendedPageFor const):
+        * UIProcess/WebProcessPool.h:
+
 2019-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Wayland] REGRESSION(r240712): Clear the GL context if it's the current one on dispose
