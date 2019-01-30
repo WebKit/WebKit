@@ -2248,7 +2248,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
 
     // Prevent the callout bar from showing when tapping on the datalist button.
 #if ENABLE(DATALIST_ELEMENT)
-    if (is<HTMLInputElement>(*hitNode)) {
+    if (is<HTMLInputElement>(hitNode)) {
         const HTMLInputElement& input = downcast<HTMLInputElement>(*hitNode);
         if (input.list()) {
             HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active);

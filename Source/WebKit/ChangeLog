@@ -1,3 +1,15 @@
+2019-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Nullptr crash in WebPage::getPositionInformation dereferencing an input element for data list
+        https://bugs.webkit.org/show_bug.cgi?id=193996
+
+        Reviewed by Wenson Hsieh.
+
+        Added a missing nullptr check.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2019-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add nodes to the scrolling tree in z-index order.
