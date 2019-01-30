@@ -824,6 +824,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetWebSQLDisabled(preferences, false);
 
+    m_serverTrustEvaluationCallbackCallsCount = 0;
+
     platformResetPreferencesToConsistentValues();
 }
 
@@ -2060,6 +2062,8 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
         // Any non-empty credential signals to accept the server trust. Since the cross-platform API
         // doesn't expose a way to create a credential from server trust, we use a password credential.
 
+        m_serverTrustEvaluationCallbackCallsCount++;
+
         WKRetainPtr<WKCredentialRef> credential = adoptWK(WKCredentialCreate(toWK("accept server trust").get(), toWK("").get(), kWKCredentialPersistenceNone));
         WKAuthenticationDecisionListenerUseCredential(decisionListener, credential.get());
         return;
@@ -3223,6 +3227,12 @@ bool TestController::keyExistsInKeychain(const String&, const String&)
 {
     return false;
 }
+
+bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
+{
+    return false;
+}
+
 #endif
 
 void TestController::sendDisplayConfigurationChangedMessageForTesting()

@@ -405,4 +405,13 @@ void TestController::allowCacheStorageQuotaIncrease()
 #endif
 }
 
+bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
+{
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+    return true;
+#else
+    return false;
+#endif
+}
+
 } // namespace WTR

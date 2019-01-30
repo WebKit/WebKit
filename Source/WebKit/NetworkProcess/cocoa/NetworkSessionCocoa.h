@@ -62,6 +62,8 @@ public:
 
     static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
 
+    void continueDidReceiveChallenge(const WebCore::AuthenticationChallenge&, NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&&);
+
 private:
     NetworkSessionCocoa(NetworkProcess&, NetworkSessionCreationParameters&&);
 

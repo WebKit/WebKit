@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Certificate validation in Network Process</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+async function doTest()
+{
+    assert_true(!!window.testRunner, "Test requires testRunner");
+
+    if (!window.testRunner.canDoServerTrustEvaluationInNetworkProcess)
+        return;
+
+    window.testRunner.setAllowsAnySSLCertificate(false);
+    // This should trigger network process server trust evaluation.
+    window.testRunner.setCanHandleHTTPSServerTrustEvaluation(false);
+
+    // Crash network process to make sure we create new HTTPS connections.
+    window.testRunner.terminateNetworkProcess();
+
+    const currentCallbackCounts = window.testRunner.serverTrustEvaluationCallbackCallsCount;
+
+    const iframe = await with_iframe("https://localhost:8443");
+    iframe.remove();
+
+    assert_equals(window.testRunner.serverTrustEvaluationCallbackCallsCount - currentCallbackCounts, 1);
+}
+
+doTest().then(done, (e) => { assert_unreached("test failed: " + e); done(); });
+
+</script>
+</body>
+</html>

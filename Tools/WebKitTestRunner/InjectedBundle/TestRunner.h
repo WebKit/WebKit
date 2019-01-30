@@ -481,6 +481,10 @@ public:
     void cleanUpKeychain(JSStringRef attrLabel);
     bool keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicationTagBase64);
 
+    void setCanHandleHTTPSServerTrustEvaluation(bool canHandle);
+    bool canDoServerTrustEvaluationInNetworkProcess();
+    unsigned long serverTrustEvaluationCallbackCallsCount();
+
 private:
     TestRunner();
 

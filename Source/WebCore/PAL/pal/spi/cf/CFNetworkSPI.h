@@ -231,6 +231,12 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 #endif
 
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+@interface NSURLSession (SPI)
++ (void)_strictTrustEvaluate:(NSURLAuthenticationChallenge *)challenge queue:(dispatch_queue_t)queue completionHandler:(void (^)(NSURLAuthenticationChallenge *challenge, OSStatus trustResult))cb;
+@end
+#endif
+
 extern NSString * const NSURLAuthenticationMethodOAuth;
 
 #endif // defined(__OBJC__)

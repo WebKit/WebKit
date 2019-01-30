@@ -1,3 +1,13 @@
+2019-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Adopt new SPI to evaluate server certificate trust
+        https://bugs.webkit.org/show_bug.cgi?id=193355
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/ssl/certificate-validation-expected.txt: Added.
+        * http/tests/ssl/certificate-validation.html: Added.
+
 2019-01-29  Shawn Roberts  <sroberts@apple.com>
 
         [ Mac WK2 ] Layout Test http/tests/cache-storage/cache-clearing-origin.https.html is flaky

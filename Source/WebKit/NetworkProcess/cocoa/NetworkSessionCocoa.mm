@@ -521,6 +521,30 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
         completionHandler(proposedResponse);
 }
 
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+static bool canNSURLSessionTrustEvaluate()
+{
+    return [NSURLSession respondsToSelector:@selector(_strictTrustEvaluate: queue: completionHandler:)];
+}
+
+static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NSURLAuthenticationChallenge *challenge, OSStatus trustResult, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential)>&& completionHandler)
+{
+    if (trustResult == noErr) {
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
+        return;
+    }
+
+    session->continueDidReceiveChallenge(challenge, taskIdentifier, networkDataTask, [completionHandler = WTFMove(completionHandler), secTrust = retainPtr(challenge.protectionSpace.serverTrust)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+        // FIXME: UIProcess should send us back non nil credentials but the credential IPC encoder currently only serializes ns credentials for username/password.
+        if (disposition == WebKit::AuthenticationChallengeDisposition::UseCredential && !credential.nsCredential()) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust: secTrust.get()]);
+            return;
+        }
+        completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+    });
+}
+#endif
+
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
     if (!_session) {
@@ -543,61 +567,23 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
             return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
-        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation())
-            return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
-    }
-
-    if (auto* networkDataTask = [self existingTask:task]) {
-        WebCore::AuthenticationChallenge authenticationChallenge(challenge);
-        auto completionHandlerCopy = Block_copy(completionHandler);
-        auto sessionID = _session->sessionID();
-        auto challengeCompletionHandler = [networkProcess = makeRef(_session->networkProcess()), completionHandlerCopy, sessionID, authenticationChallenge, taskIdentifier, partition = networkDataTask->partition()](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
-        {
-#if !LOG_DISABLED
-            LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %d", taskIdentifier, disposition);
-#else
-            UNUSED_PARAM(taskIdentifier);
-#endif
-#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-            UNUSED_PARAM(sessionID);
-            UNUSED_PARAM(authenticationChallenge);
-#else
-            if (credential.persistence() == WebCore::CredentialPersistenceForSession && authenticationChallenge.protectionSpace().isPasswordBased()) {
-
-                WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistenceNone);
-                URL urlToStore;
-                if (authenticationChallenge.failureResponse().httpStatusCode() == 401)
-                    urlToStore = authenticationChallenge.failureResponse().url();
-                if (auto storageSession = networkProcess->storageSession(sessionID))
-                    storageSession->credentialStorage().set(partition, nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
-                else
-                    ASSERT_NOT_REACHED();
-
-                completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), nonPersistentCredential.nsCredential());
-            } else
-#endif
-                completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
-            Block_release(completionHandlerCopy);
-        };
-        networkDataTask->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
-    } else {
-        auto downloadID = _session->downloadID(taskIdentifier);
-        if (downloadID.downloadID()) {
-            if (auto* download = _session->networkProcess().downloadManager().download(downloadID)) {
-                // Received an authentication challenge for a download being resumed.
-                WebCore::AuthenticationChallenge authenticationChallenge { challenge };
-                auto completionHandlerCopy = Block_copy(completionHandler);
-                auto challengeCompletionHandler = [completionHandlerCopy, authenticationChallenge](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
-                    completionHandlerCopy(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
-                    Block_release(completionHandlerCopy);
-                };
-                download->didReceiveChallenge(challenge, WTFMove(challengeCompletionHandler));
+        if (!_session->networkProcess().canHandleHTTPSServerTrustEvaluation()) {
+#if HAVE(CFNETWORK_NSURLSESSION_STRICTRUSTEVALUATE)
+            if (canNSURLSessionTrustEvaluate()) {
+                auto* networkDataTask = [self existingTask:task];
+                auto decisionHandler = makeBlockPtr([_session = _session.copyRef(), completionHandler = makeBlockPtr(completionHandler), taskIdentifier, networkDataTask = RefPtr<NetworkDataTaskCocoa>(networkDataTask)](NSURLAuthenticationChallenge *challenge, OSStatus trustResult) mutable {
+                    processServerTrustEvaluation(_session.get(), challenge, trustResult, taskIdentifier, networkDataTask.get(), WTFMove(completionHandler));
+                });
+                [NSURLSession _strictTrustEvaluate:challenge queue:[NSOperationQueue mainQueue].underlyingQueue completionHandler:decisionHandler.get()];
                 return;
             }
+#endif
+            return completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
         }
-        LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
-        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
     }
+    _session->continueDidReceiveChallenge(challenge, taskIdentifier, [self existingTask:task], [completionHandler = makeBlockPtr(completionHandler)] (WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+        completionHandler(toNSURLSessionAuthChallengeDisposition(disposition), credential.nsCredential());
+    });
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
@@ -1051,6 +1037,54 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
     RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
 
     return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
+}
+
+void NetworkSessionCocoa::continueDidReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
+{
+    if (!networkDataTask) {
+        auto downloadID = this->downloadID(taskIdentifier);
+        if (downloadID.downloadID()) {
+            if (auto* download = networkProcess().downloadManager().download(downloadID)) {
+                WebCore::AuthenticationChallenge authenticationChallenge { challenge };
+                // Received an authentication challenge for a download being resumed.
+                download->didReceiveChallenge(authenticationChallenge, WTFMove(completionHandler));
+                return;
+            }
+        }
+        LOG(NetworkSession, "%llu didReceiveChallenge completionHandler (cancel)", taskIdentifier);
+        completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+        return;
+    }
+
+    auto sessionID = this->sessionID();
+    WebCore::AuthenticationChallenge authenticationChallenge { challenge };
+    auto challengeCompletionHandler = [completionHandler = WTFMove(completionHandler), networkProcess = makeRef(networkProcess()), sessionID, authenticationChallenge, taskIdentifier, partition = networkDataTask->partition()](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) mutable {
+#if !LOG_DISABLED
+        LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %d", taskIdentifier, disposition);
+#else
+        UNUSED_PARAM(taskIdentifier);
+#endif
+#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
+        UNUSED_PARAM(sessionID);
+        UNUSED_PARAM(authenticationChallenge);
+#else
+        if (credential.persistence() == WebCore::CredentialPersistenceForSession && authenticationChallenge.protectionSpace().isPasswordBased()) {
+            WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistenceNone);
+            URL urlToStore;
+            if (authenticationChallenge.failureResponse().httpStatusCode() == 401)
+                urlToStore = authenticationChallenge.failureResponse().url();
+            if (auto storageSession = networkProcess->storageSession(sessionID))
+                storageSession->credentialStorage().set(partition, nonPersistentCredential, authenticationChallenge.protectionSpace(), urlToStore);
+            else
+                ASSERT_NOT_REACHED();
+
+            completionHandler(disposition, nonPersistentCredential);
+            return;
+        }
+#endif
+        completionHandler(disposition, credential);
+    };
+    networkDataTask->didReceiveChallenge(WTFMove(authenticationChallenge), WTFMove(challengeCompletionHandler));
 }
 
 }

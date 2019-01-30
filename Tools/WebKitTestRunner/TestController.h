@@ -281,6 +281,9 @@ public:
     UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
 #endif
 
+    bool canDoServerTrustEvaluationInNetworkProcess() const;
+    uint64_t serverTrustEvaluationCallbackCallsCount() const { return m_serverTrustEvaluationCallbackCallsCount; }
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -534,6 +537,8 @@ private:
         { }
     };
     HashMap<uint64_t, AbandonedDocumentInfo> m_abandonedDocumentInfo;
+
+    uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
 };
 
 struct TestCommand {

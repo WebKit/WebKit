@@ -1,3 +1,20 @@
+2019-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Adopt new SPI to evaluate server certificate trust
+        https://bugs.webkit.org/show_bug.cgi?id=193355
+
+        Reviewed by Alex Christensen.
+
+        Use new SPI provided in NSURLSession to evaluate server certificates.
+        If successful, let loading proceed as usual.
+        Otherwise, go to the UIProcess to ask for a decision on continuing the load or not.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (canNSURLSessionTrustEvaluate):
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+
 2019-01-29  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build
