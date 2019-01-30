@@ -253,12 +253,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let initialValues = new Map;
 
-        if (window.CSSAgent) {
-            let group = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
-            group.addSetting(WI.settings.experimentalEnableChangesPanel, WI.UIString("Enable Changes Panel"));
-            experimentalSettingsView.addSeparator();
-        }
-
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
@@ -289,7 +283,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
-        listenForChange(WI.settings.experimentalEnableChangesPanel);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
 

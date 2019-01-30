@@ -1,5 +1,19 @@
 2019-01-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Enabled Changes panel in Elements tab by default
+        https://bugs.webkit.org/show_bug.cgi?id=193986
+        <rdar://problem/47647683>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+2019-01-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles: enable computed style cascades by default
         https://bugs.webkit.org/show_bug.cgi?id=193983
         <rdar://problem/47645821>
