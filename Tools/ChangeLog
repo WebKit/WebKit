@@ -1,3 +1,17 @@
+2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: ProcessSwap.DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted Failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193977
+        <rdar://problem/47643716>
+
+        Reviewed by Geoff Garen.
+
+        Update API test to address flakiness on iOS. Instead of doing the last navigation after receiving the
+        didStartProvisionalLoad, do we right after we answer the navigation policy request. Flakiness was due
+        to the previous provisional committing *before* we make the last load. 
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-01-29  Youenn Fablet  <youenn@apple.com>
 
         Adopt new SPI to evaluate server certificate trust

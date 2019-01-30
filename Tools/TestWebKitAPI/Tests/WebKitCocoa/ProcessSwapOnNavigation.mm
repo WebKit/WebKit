@@ -2448,6 +2448,8 @@ TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
+    [webView configuration].preferences.safeBrowsingEnabled = NO;
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
     [webView loadRequest:request];
 
@@ -2456,14 +2458,14 @@ TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
 
     auto webkitPID = [webView _webProcessIdentifier];
 
-    didStartProvisionalLoad = false;
+    delegate->decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        decisionHandler(WKNavigationActionPolicyAllow);
+
+        delegate->decidePolicyForNavigationAction = nil;
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]]];
+    };
+
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&didStartProvisionalLoad);
-    didStartProvisionalLoad = false;
-
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
