@@ -130,8 +130,6 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
-    void writeBlobToFilePath(const URL&, const String& path, CompletionHandler<void(bool)>&&);
-
     void processReadyToSuspend();
     
     void sendProcessDidTransitionToForeground();

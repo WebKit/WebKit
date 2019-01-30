@@ -80,8 +80,6 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-    WriteBlobToFilePath(URL blobURL, String path, WebKit::SandboxExtension::Handle handle) -> (bool success) Async
-
     PreconnectTo(URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

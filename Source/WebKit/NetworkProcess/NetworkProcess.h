@@ -365,8 +365,6 @@ private:
     void syncAllCookies();
     void didSyncAllCookies();
 
-    void writeBlobToFilePath(const URL&, const String& path, SandboxExtension::Handle&&, CompletionHandler<void(bool)>&&);
-
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);

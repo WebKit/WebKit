@@ -5786,14 +5786,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
                 callback(destinationURL, nil);
             else
                 callback(nil, fileWrapperError);
-        } else if (!info.blobURL.isEmpty()) {
-            RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised blob at path: %@", session.get(), destinationURL.path);
-            strongSelf->_page->writeBlobToFilePath(info.blobURL, destinationURL.path, [protectedURL = retainPtr(destinationURL), protectedCallback = makeBlockPtr(callback)] (bool success) {
-                if (success)
-                    protectedCallback(protectedURL.get(), nil);
-                else
-                    protectedCallback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
-            });
         } else
             callback(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
 

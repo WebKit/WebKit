@@ -8456,16 +8456,6 @@ Ref<API::Attachment> WebPageProxy::ensureAttachment(const String& identifier)
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::writeBlobToFilePath(const URL& url, const String& path, Function<void(bool success)>&& callback)
-{
-    if (!isValid()) {
-        callback(false);
-        return;
-    }
-
-    m_process->processPool().ensureNetworkProcess().writeBlobToFilePath(url, path, WTFMove(callback));
-}
-
 #if ENABLE(APPLICATION_MANIFEST)
 void WebPageProxy::getApplicationManifest(Function<void(const Optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&& callbackFunction)
 {

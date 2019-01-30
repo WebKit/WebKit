@@ -1403,8 +1403,6 @@ public:
     void getApplicationManifest(Function<void(const Optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
 #endif
 
-    void writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&&);
-
     WebPreferencesStore preferencesStore() const;
 
     void setDefersLoadingForTesting(bool);

@@ -947,18 +947,6 @@ void NetworkProcessProxy::sendProcessDidResume()
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
 
-void NetworkProcessProxy::writeBlobToFilePath(const URL& url, const String& path, CompletionHandler<void(bool)>&& completionHandler)
-{
-    if (!canSendMessage()) {
-        completionHandler(false);
-        return;
-    }
-
-    SandboxExtension::Handle handleForWriting;
-    SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, handleForWriting);
-    sendWithAsyncReply(Messages::NetworkProcess::WriteBlobToFilePath(url, path, handleForWriting), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::processReadyToSuspend()
 {
     m_throttler.processReadyToSuspend();

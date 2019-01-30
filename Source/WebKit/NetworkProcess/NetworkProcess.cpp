@@ -559,21 +559,6 @@ void NetworkProcess::destroySession(const PAL::SessionID& sessionID)
 #endif
 }
 
-void NetworkProcess::writeBlobToFilePath(const URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, CompletionHandler<void(bool)>&& completionHandler)
-{
-    auto extension = SandboxExtension::create(WTFMove(handleForWriting));
-    if (!extension) {
-        completionHandler(false);
-        return;
-    }
-
-    extension->consume();
-    NetworkBlobRegistry::singleton().writeBlobToFilePath(url, path, [extension = WTFMove(extension), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
-        extension->revoke();
-        completionHandler(success);
-    });
-}
-
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {

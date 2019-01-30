@@ -1,3 +1,27 @@
+2019-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused NetworkProcessProxy::writeBlobToFilePath
+        https://bugs.webkit.org/show_bug.cgi?id=193990
+
+        Reviewed by Wenson Hsieh.
+
+        This code was only used in code that was introduced in r235202
+        but that has since been refactored to not use blobs.  Its tests still pass.
+        This removes the only UIProcess-controlled code that uses NetworkBlobRegistry::singleton.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::writeBlobToFilePath): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::writeToURLForFilePromiseProvider):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::writeBlobToFilePath): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::writeBlobToFilePath): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2019-01-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: expose a way of determining if a detached frontend is for a remote target

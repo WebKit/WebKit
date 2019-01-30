@@ -4093,9 +4093,7 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
         return;
     }
 
-    m_page->writeBlobToFilePath(blobURL, fileURL.path, [protectedCompletionHandler = makeBlockPtr(completionHandler)] (bool success) {
-        protectedCompletionHandler(success ? nil : webKitUnknownError());
-    });
+    completionHandler(webKitUnknownError());
 }
 
 NSDragOperation WebViewImpl::dragSourceOperationMask(NSDraggingSession *, NSDraggingContext context)
