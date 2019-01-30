@@ -1,3 +1,21 @@
+2019-01-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] add more source buffer logging
+        https://bugs.webkit.org/show_bug.cgi?id=193995
+        <rdar://problem/47650399>
+
+        Reviewed by Jon Lee.
+
+        No new tests, no functional change.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState):
+        (WebCore::SourceBufferPrivateAVFObjC::setReadyState):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::willSeek):
+        (WebCore::SourceBufferPrivateAVFObjC::setDecompressionSession):
+
 2019-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add nodes to the scrolling tree in z-index order.

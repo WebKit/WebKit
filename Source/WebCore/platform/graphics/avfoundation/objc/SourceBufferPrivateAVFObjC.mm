@@ -756,6 +756,7 @@ void SourceBufferPrivateAVFObjC::abort()
 
 void SourceBufferPrivateAVFObjC::resetParserState()
 {
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::resetParserState(%p)", this);
     m_parserStateWasReset = true;
     m_discardSamplesUntilNextInitializationSegment = true;
 }
@@ -816,6 +817,8 @@ MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 
 void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::setReadyState(%p) - readyState = %i", this, (int)readyState);
+
     if (m_mediaSource)
         m_mediaSource->player()->setReadyState(readyState);
 }
@@ -838,6 +841,9 @@ bool SourceBufferPrivateAVFObjC::hasAudio() const
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSourceAVFObjC* track)
 {
     int trackID = track->trackID();
+
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::trackDidChangeEnabled(%p) - video trackID = %i, selected = %s", this, trackID, track->selected() ? "true" : "false");
+
     if (!track->selected() && m_enabledVideoTrackID == trackID) {
         m_enabledVideoTrackID = -1;
         [m_parser setShouldProvideMediaData:NO forTrackID:trackID];
@@ -861,6 +867,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSou
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC* track)
 {
     int trackID = track->trackID();
+
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::trackDidChangeEnabled(%p) - audio trackID = %i, enabled = %s", this, trackID, track->enabled() ? "true" : "false");
 
     if (!track->enabled()) {
         ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1104,16 +1112,23 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         if (m_decompressionSession)
             m_decompressionSession->enqueueSample(platformSample.sample.cmSampleBuffer);
 
-        if (m_displayLayer) {
-            if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
-                CMSampleBufferRef rawSampleCopy;
-                CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
-                auto sampleCopy = adoptCF(rawSampleCopy);
-                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
-                [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
-            } else
-                [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-        }
+        if (!m_displayLayer)
+            return;
+
+        if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
+            LOG(MediaSource, "SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(%p) - adding buffer attachment", this);
+
+            CMSampleBufferRef rawSampleCopy;
+            CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
+            auto sampleCopy = adoptCF(rawSampleCopy);
+            CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
+            [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
+#if PLATFORM(IOS_FAMILY)
+            m_mediaSource->player()->setHasAvailableVideoFrame(true);
+#endif
+        } else
+            [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+
     } else {
         auto renderer = m_audioRenderers.get(trackID);
         [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
@@ -1161,6 +1176,7 @@ MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& 
 
 void SourceBufferPrivateAVFObjC::willSeek()
 {
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::willSeek(%p)", this);
     flush();
 }
 
@@ -1249,6 +1265,8 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
 {
     if (m_decompressionSession == decompressionSession)
         return;
+
+    LOG(MediaSource, "SourceBufferPrivateAVFObjC::setDecompressionSession(%p)", this);
 
     if (m_decompressionSession) {
         m_decompressionSession->stopRequestingMediaData();
