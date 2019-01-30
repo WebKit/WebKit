@@ -1,3 +1,13 @@
+2019-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Role=switch not returning correct accessibilityValue
+        https://bugs.webkit.org/show_bug.cgi?id=194006
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/ios-simulator/role-switch-expected.txt: Added.
+        * accessibility/ios-simulator/role-switch.html: Added.
+
 2019-01-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Manage failures in the imported WPT tests,

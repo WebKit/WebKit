@@ -1,3 +1,17 @@
+2019-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Role=switch not returning correct accessibilityValue
+        https://bugs.webkit.org/show_bug.cgi?id=194006
+
+        Reviewed by Joanmarie Diggs.
+
+        Return the toggle state of a role=switch element.        
+
+        Test: accessibility/ios-simulator/role-switch.html
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityValue]):
+
 2019-01-29  Rob Buis  <rbuis@igalia.com>
 
         Align with Fetch on data: URLs

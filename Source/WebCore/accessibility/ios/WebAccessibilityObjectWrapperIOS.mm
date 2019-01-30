@@ -1404,7 +1404,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return value;
     
     AccessibilityRole role = m_object->roleValue();
-    if (m_object->isCheckboxOrRadio() || role == AccessibilityRole::MenuItemCheckbox || role == AccessibilityRole::MenuItemRadio) {
+    if (m_object->isCheckboxOrRadio() || role == AccessibilityRole::MenuItemCheckbox || role == AccessibilityRole::MenuItemRadio || role == AccessibilityRole::Switch) {
         switch (m_object->checkboxOrRadioValue()) {
         case AccessibilityButtonState::Off:
             return [NSString stringWithFormat:@"%d", 0];
