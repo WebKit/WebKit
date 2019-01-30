@@ -45,10 +45,10 @@ extern const char s_JSCCombinedCode[];
 extern const unsigned s_JSCCombinedCodeLength;
 
 /* InternalClashingNames */
-extern const char* s_internalClashingNamesIsReadableStreamLockedCode;
+extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
-extern const char* s_internalClashingNamesIsReadableStreamLockedCode;
+extern const char* const s_internalClashingNamesIsReadableStreamLockedCode;
 extern const int s_internalClashingNamesIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility;
 
@@ -125,14 +125,14 @@ const unsigned s_JSCCombinedCodeLength = 142;
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_internalClashingNamesIsReadableStreamLockedCode =
+const char* const s_internalClashingNamesIsReadableStreamLockedCode =
 s_JSCCombinedCode + 0
 ;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_internalClashingNamesIsReadableStreamLockedCode =
+const char* const s_internalClashingNamesIsReadableStreamLockedCode =
 s_JSCCombinedCode + 71
 ;
 

@@ -44,7 +44,7 @@ class FunctionExecutable;
 namespace WebCore {
 
 /* AnotherGuardedInternalBuiltin */
-extern const char* s_anotherGuardedInternalBuiltinLetsFetchCode;
+extern const char* const s_anotherGuardedInternalBuiltinLetsFetchCode;
 extern const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength;
 extern const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility;
 
@@ -206,7 +206,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 83;
 static const JSC::Intrinsic s_anotherGuardedInternalBuiltinLetsFetchCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_anotherGuardedInternalBuiltinLetsFetchCode =
+const char* const s_anotherGuardedInternalBuiltinLetsFetchCode =
     "(function ()\n" \
     "{\n" \
     "   \"use strict\";\n" \

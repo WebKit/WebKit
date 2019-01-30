@@ -45,7 +45,7 @@ class FunctionExecutable;
 namespace WebCore {
 
 /* ArbitraryConditionalGuard */
-extern const char* s_arbitraryConditionalGuardIsReadableStreamLockedCode;
+extern const char* const s_arbitraryConditionalGuardIsReadableStreamLockedCode;
 extern const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility;
 
@@ -176,7 +176,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_arbitraryConditionalGuardIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_arbitraryConditionalGuardIsReadableStreamLockedCode =
+const char* const s_arbitraryConditionalGuardIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \

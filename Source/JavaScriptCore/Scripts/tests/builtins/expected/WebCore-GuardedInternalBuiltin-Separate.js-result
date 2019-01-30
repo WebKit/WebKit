@@ -45,7 +45,7 @@ class FunctionExecutable;
 namespace WebCore {
 
 /* GuardedInternalBuiltin */
-extern const char* s_guardedInternalBuiltinIsReadableStreamLockedCode;
+extern const char* const s_guardedInternalBuiltinIsReadableStreamLockedCode;
 extern const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_guardedInternalBuiltinIsReadableStreamLockedCodeConstructAbility;
 
@@ -208,7 +208,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_guardedInternalBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_guardedInternalBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
+const char* const s_guardedInternalBuiltinIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \

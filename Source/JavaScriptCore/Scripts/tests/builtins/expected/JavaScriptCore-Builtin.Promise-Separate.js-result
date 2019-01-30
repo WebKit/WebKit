@@ -40,10 +40,10 @@ class FunctionExecutable;
 namespace JSC {
 
 /* Builtin.Promise */
-extern const char* s_builtinPromiseRejectPromiseCode;
+extern const char* const s_builtinPromiseRejectPromiseCode;
 extern const int s_builtinPromiseRejectPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility;
-extern const char* s_builtinPromiseFulfillPromiseCode;
+extern const char* const s_builtinPromiseFulfillPromiseCode;
 extern const int s_builtinPromiseFulfillPromiseCodeLength;
 extern const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility;
 
@@ -117,7 +117,7 @@ namespace JSC {
 const JSC::ConstructAbility s_builtinPromiseRejectPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinPromiseRejectPromiseCodeLength = 413;
 static const JSC::Intrinsic s_builtinPromiseRejectPromiseCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_builtinPromiseRejectPromiseCode =
+const char* const s_builtinPromiseRejectPromiseCode =
     "(function (promise, reason)\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -137,7 +137,7 @@ const char* s_builtinPromiseRejectPromiseCode =
 const JSC::ConstructAbility s_builtinPromiseFulfillPromiseCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinPromiseFulfillPromiseCodeLength = 412;
 static const JSC::Intrinsic s_builtinPromiseFulfillPromiseCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_builtinPromiseFulfillPromiseCode =
+const char* const s_builtinPromiseFulfillPromiseCode =
     "(function (promise, value)\n" \
     "{\n" \
     "    \"use strict\";\n" \

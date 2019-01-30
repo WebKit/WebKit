@@ -39,10 +39,10 @@ class FunctionExecutable;
 namespace JSC {
 
 /* BuiltinConstructor */
-extern const char* s_builtinConstructorOfCode;
+extern const char* const s_builtinConstructorOfCode;
 extern const int s_builtinConstructorOfCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility;
-extern const char* s_builtinConstructorFromCode;
+extern const char* const s_builtinConstructorFromCode;
 extern const int s_builtinConstructorFromCodeLength;
 extern const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility;
 
@@ -115,7 +115,7 @@ namespace JSC {
 const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinConstructorOfCodeLength = 294;
 static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_builtinConstructorOfCode =
+const char* const s_builtinConstructorOfCode =
     "(function ()\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -133,7 +133,7 @@ const char* s_builtinConstructorOfCode =
 const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const int s_builtinConstructorFromCodeLength = 2046;
 static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
-const char* s_builtinConstructorFromCode =
+const char* const s_builtinConstructorFromCode =
     "(function (items )\n" \
     "{\n" \
     "    \"use strict\";\n" \

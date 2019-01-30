@@ -1,3 +1,22 @@
+2019-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, update the builtin test results
+        https://bugs.webkit.org/show_bug.cgi?id=194015
+
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+
 2019-01-30  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Make global static variables "const" as much as possible
