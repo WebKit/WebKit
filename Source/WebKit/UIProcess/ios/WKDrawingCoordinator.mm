@@ -36,9 +36,6 @@
 
 #import "PencilKitSoftLink.h"
 
-@interface WKDrawingCoordinator () <PKRulerHostingDelegate>
-@end
-
 @implementation WKDrawingCoordinator {
     __weak WKContentView *_contentView;
 

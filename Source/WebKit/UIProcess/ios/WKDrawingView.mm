@@ -29,6 +29,8 @@
 #if HAVE(PENCILKIT)
 
 #import "EditableImageController.h"
+#import "WKContentViewInteraction.h"
+#import "WKDrawingCoordinator.h"
 #import "WKInkPickerView.h"
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>

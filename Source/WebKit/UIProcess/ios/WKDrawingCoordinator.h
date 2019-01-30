@@ -25,13 +25,14 @@
 
 #if HAVE(PENCILKIT)
 
+#import "PencilKitSPI.h"
 #import <WebCore/GraphicsLayer.h>
 
 OBJC_CLASS PKInk;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKInkPickerView;
 
-@interface WKDrawingCoordinator : NSObject
+@interface WKDrawingCoordinator : NSObject <PKRulerHostingDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithContentView:(WKContentView *)contentView;

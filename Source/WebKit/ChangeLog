@@ -1,3 +1,11 @@
+2019-01-29  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * UIProcess/ios/WKDrawingCoordinator.h:
+        * UIProcess/ios/WKDrawingCoordinator.mm:
+        * UIProcess/ios/WKDrawingView.mm:
+
 2019-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused NetworkProcessProxy::writeBlobToFilePath
