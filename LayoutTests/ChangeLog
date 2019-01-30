@@ -1,3 +1,10 @@
+2019-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Skip the resourceLoadStatistics tests
+        since that feature is still not yet enabled for the port.
+
 2019-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add nodes to the scrolling tree in z-index order.
