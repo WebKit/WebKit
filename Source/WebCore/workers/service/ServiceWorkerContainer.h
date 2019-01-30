@@ -77,28 +77,26 @@ public:
     void addRegistration(ServiceWorkerRegistration&);
     void removeRegistration(ServiceWorkerRegistration&);
 
-    ServiceWorkerJob* job(ServiceWorkerJobIdentifier identifier) { return m_jobMap.get(identifier); }
+    ServiceWorkerJob* job(ServiceWorkerJobIdentifier);
 
     void startMessages();
-
-    void ref() final { refEventTarget(); }
-    void deref() final { derefEventTarget(); }
 
     bool isStopped() const { return m_isStopped; };
 
     bool isAlwaysOnLoggingAllowed() const;
 
 private:
-    void scheduleJob(Ref<ServiceWorkerJob>&&);
+    void scheduleJob(std::unique_ptr<ServiceWorkerJob>&&);
 
     void jobFailedWithException(ServiceWorkerJob&, const Exception&) final;
     void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved) final;
     void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) final;
     void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) final;
     void jobFinishedLoadingScript(ServiceWorkerJob&, const String& script, const ContentSecurityPolicyResponseHeaders&, const String& referrerPolicy) final;
-    void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, Optional<Exception>&&) final;
+    void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, Exception&&) final;
 
-    void jobDidFinish(ServiceWorkerJob&);
+    void notifyFailedFetchingScript(ServiceWorkerJob&, const ResourceError&);
+    void destroyJob(ServiceWorkerJob&);
 
     void didFinishGetRegistrationRequest(uint64_t requestIdentifier, Optional<ServiceWorkerRegistrationData>&&);
     void didFinishGetRegistrationsRequest(uint64_t requestIdentifier, Vector<ServiceWorkerRegistrationData>&&);
@@ -121,7 +119,12 @@ private:
     NavigatorBase& m_navigator;
 
     RefPtr<SWClientConnection> m_swConnection;
-    HashMap<ServiceWorkerJobIdentifier, Ref<ServiceWorkerJob>> m_jobMap;
+
+    struct OngoingJob {
+        std::unique_ptr<ServiceWorkerJob> job;
+        RefPtr<PendingActivity<ServiceWorkerContainer>> pendingActivity;
+    };
+    HashMap<ServiceWorkerJobIdentifier, OngoingJob> m_jobMap;
 
     bool m_isStopped { false };
     HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;

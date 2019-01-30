@@ -1,3 +1,59 @@
+2019-01-30  Youenn Fablet  <youenn@apple.com>
+
+        Refactor ServiceWorkerJob management by ServiceWorkerContainer to make it more memory safe
+        https://bugs.webkit.org/show_bug.cgi?id=193747
+        <rdar://problem/47498196>
+
+        Reviewed by Chris Dumez.
+
+        Make ServiceWorkerJob be no longer ref counted.
+        Instead its lifetime is fully controlled by ServiceWorkerContainer.
+
+        Make sure that a failing load will remove the job from ServiceWorkerContainer job map.
+        This allows to ensure that these jobs do not stay forever.
+        Before the patch, the jobs map was never cleared, which is creating a ref cycle whenever a job is not succesful.
+
+        Before the patch, unsetPendingActivity was only called for successful jobs finishing.
+        In case of failing loads, ServiceWorkerContainer would leak.
+        Make sure that setPendingActivity/unsetPendingActivity is balanced by storing
+        a pending activity in the job map next to the job.
+
+        When ServiceWorkerContainer is stopped, notify that all jobs are cancelled to NetworkProcess.
+        This makes these jobs in NetworkProcess-side to not stay until the corresponding WebProcess is gone.
+
+        Simplify ServiceWorkerJob promise rejection handling so that it is clear when promise is rejected and when it is not.
+        Update type of exception to be SecurityError when load fails due to AccessControl.
+
+        Covered by existing tests.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobDidFinish):
+        (WebCore::ServiceWorkerContainer::stop):
+        (WebCore::ServiceWorkerContainer::job):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::failedWithException):
+        (WebCore::ServiceWorkerJob::resolvedWithRegistration):
+        (WebCore::ServiceWorkerJob::resolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerJob::startScriptFetch):
+        (WebCore::ServiceWorkerJob::didReceiveResponse):
+        (WebCore::ServiceWorkerJob::notifyFinished):
+        (WebCore::ServiceWorkerJob::cancelPendingLoad):
+        * workers/service/ServiceWorkerJob.h:
+        (WebCore::ServiceWorkerJob::hasPromise const):
+        (WebCore::ServiceWorkerJob::takePromise):
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+
 2019-01-30  Dean Jackson  <dino@apple.com>
 
         PointerEvents - tiltX and tiltY are reversed
