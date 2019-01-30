@@ -25,7 +25,7 @@
 
 #include "VideoProcessingSoftLink.h"
 
-#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
+#if ENABLE_VCP_ENCODER
 
 #include "rtc_base/logging.h"
 #import <dlfcn.h>
@@ -67,12 +67,12 @@
 }
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(webrtc, VideoProcessing)
-SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VPModuleInitialize, void, (), ())
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionSetProperty, OSStatus, (VCPCompressionSessionRef session, CFStringRef key, CFTypeRef value), (session, key, value))
 SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionGetPixelBufferPool, CVPixelBufferPoolRef, (VCPCompressionSessionRef session), (session))
 SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionEncodeFrame, OSStatus, (VCPCompressionSessionRef session, CVImageBufferRef buffer, CMTime timestamp, CMTime time, CFDictionaryRef dictionary, void* data, VTEncodeInfoFlags* flags), (session, buffer, timestamp, time, dictionary, data, flags))
 SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionCreate, OSStatus, (CFAllocatorRef allocator1, int32_t value1 , int32_t value2, CMVideoCodecType type, CFDictionaryRef dictionary1, CFDictionaryRef dictionary2, CFAllocatorRef allocator3, VTCompressionOutputCallback callback, void* data, VCPCompressionSessionRef* session), (allocator1, value1, value2, type, dictionary1, dictionary2, allocator3, callback, data, session))
 SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VCPCompressionSessionInvalidate, void, (VCPCompressionSessionRef session), (session))
+SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VPModuleInitialize, void, (), ())
 
-#endif // ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
+#endif // ENABLE_VCP_ENCODER

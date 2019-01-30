@@ -40,72 +40,7 @@
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
-#if ENABLE_VCP_VTB_ENCODER
-
-void testCompressionOutputCallback(void *, void *, OSStatus, VTEncodeInfoFlags, CMSampleBufferRef)
-{
-}
-
-static bool isSupportingH264RTVCValue = false;
-bool isSupportingH264RTVC()
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        const size_t attributesSize = 3;
-        CFTypeRef keys[attributesSize] = {
-#if defined(WEBRTC_IOS)
-            kCVPixelBufferOpenGLESCompatibilityKey,
-#elif defined(WEBRTC_MAC)
-            kCVPixelBufferOpenGLCompatibilityKey,
-#endif
-            kCVPixelBufferIOSurfacePropertiesKey,
-            kCVPixelBufferPixelFormatTypeKey
-        };
-        CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
-        int64_t pixelFormatType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
-        CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType);
-        CFTypeRef values[attributesSize] = {kCFBooleanTrue, ioSurfaceValue, pixelFormat};
-        CFDictionaryRef sourceAttributes = CreateCFTypeDictionary(keys, values, attributesSize);
-
-        CFRelease(ioSurfaceValue);
-        CFRelease(pixelFormat);
-
-        CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-#if !defined(WEBRTC_IOS)
-        auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
-        // Currently hw accl is supported above 360p on mac, below 360p
-        // the compression session will be created with hw accl disabled.
-        CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, useHardwareEncoder);
-        CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, useHardwareEncoder);
-#endif
-        CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
-
-        int usageValue = 1;
-        auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-        CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
-        CFRelease(usage);
-
-        CFDictionarySetValue(encoderSpecs, kVTVideoEncoderList_EncoderID, CFSTR("com.apple.videotoolbox.videoencoder.h264.rtvc"));
-
-        CompressionSessionRef compressionSession = nullptr;
-        OSStatus status = VTCompressionSessionCreate(nullptr, 320, 240, kCMVideoCodecType_H264,
-            encoderSpecs, sourceAttributes, nullptr, testCompressionOutputCallback, nullptr, reinterpret_cast<VTCompressionSessionRef*>(&compressionSession));
-
-        if (compressionSession) {
-            CompressionSessionInvalidate(compressionSession);
-            CFRelease(compressionSession);
-        }
-
-        CFRelease(sourceAttributes);
-        CFRelease(encoderSpecs);
-
-        isSupportingH264RTVCValue = status == noErr;
-    });
-    return isSupportingH264RTVCValue;
-}
-#endif
-
-#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS) && !ENABLE_VCP_VTB_ENCODER
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
 static inline bool isStandardFrameSize(int32_t width, int32_t height)
 {
     // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
@@ -673,7 +608,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFRelease(pixelFormat);
     pixelFormat = nullptr;
   }
-  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #if !defined(WEBRTC_IOS)
   auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
@@ -683,15 +618,11 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 #endif
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
 
-#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
+#if ENABLE_VCP_ENCODER
   int usageValue = 1;
   auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
   CFRelease(usage);
-#endif
-#if ENABLE_VCP_VTB_ENCODER
-    if (isSupportingH264RTVC())
-        CFDictionarySetValue(encoderSpecs, kVTVideoEncoderList_EncoderID, CFSTR("com.apple.videotoolbox.videoencoder.h264.rtvc"));
 #endif
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
@@ -732,7 +663,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   } else {
     RTC_LOG(LS_INFO) << "Compression session created with hw accl disabled";
 
-#if !ENABLE_VCP_ENCODER && !ENABLE_VCP_VTB_ENCODER && !defined(WEBRTC_IOS)
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
     if (!isStandardFrameSize(_width, _height)) {
       _disableEncoding = true;
       RTC_LOG(LS_ERROR) << "Using H264 software encoder with non standard size is not supported";

@@ -30,7 +30,6 @@
 #if ENABLE_VCP_ENCODER
 
 #define CompressionSessionRef VCPCompressionSessionRef
-
 #define CompressionSessionSetProperty webrtc::VCPCompressionSessionSetProperty
 #define CompressionSessionGetPixelBufferPool webrtc::VCPCompressionSessionGetPixelBufferPool
 #define CompressionSessionEncodeFrame webrtc::VCPCompressionSessionEncodeFrame
@@ -38,23 +37,9 @@
 #define kCodecTypeH264 kVCPCodecType4CC_H264
 #define CompressionSessionInvalidate webrtc::VCPCompressionSessionInvalidate
 
-#elif ENABLE_VCP_VTB_ENCODER
-
-bool isSupportingH264RTVC();
-
-#define CompressionSessionRef VCPCompressionSessionRef
-
-#define CompressionSessionSetProperty(compressionSession, ...) (isSupportingH264RTVC() ? VTSessionSetProperty(reinterpret_cast<VTCompressionSessionRef>(compressionSession), __VA_ARGS__) : webrtc::VCPCompressionSessionSetProperty(compressionSession, __VA_ARGS__))
-#define CompressionSessionGetPixelBufferPool(compressionSession, ...) (isSupportingH264RTVC() ? VTCompressionSessionGetPixelBufferPool(reinterpret_cast<VTCompressionSessionRef>(compressionSession), __VA_ARGS__) : webrtc::VCPCompressionSessionSetProperty(compressionSession, __VA_ARGS__))
-#define CompressionSessionEncodeFrame(compressionSession, ...) (isSupportingH264RTVC() ? VTCompressionSessionEncodeFrame(reinterpret_cast<VTCompressionSessionRef>(compressionSession), __VA_ARGS__) : webrtc::VCPCompressionSessionEncodeFrame(compressionSession, __VA_ARGS__))
-#define CompressionSessionCreate(a, b, c, d, e, f, g, h, i, compressionSession) (isSupportingH264RTVC() ? VTCompressionSessionCreate(a, b, c, d, e, f, g, h, i, reinterpret_cast<VTCompressionSessionRef*>(compressionSession)) : webrtc::VCPCompressionSessionCreate(a, b, c, d, e, f, g, h, i, compressionSession))
-#define kCodecTypeH264 (isSupportingH264RTVC() ? kCMVideoCodecType_H264 : kVCPCodecType4CC_H264)
-#define CompressionSessionInvalidate(compressionSession) (isSupportingH264RTVC() ? VTCompressionSessionInvalidate(reinterpret_cast<VTCompressionSessionRef>(compressionSession)) : webrtc::VCPCompressionSessionInvalidate(compressionSession))
-
 #else
 
 #define CompressionSessionRef VTCompressionSessionRef
-
 #define CompressionSessionSetProperty VTSessionSetProperty
 #define CompressionSessionGetPixelBufferPool VTCompressionSessionGetPixelBufferPool
 #define CompressionSessionEncodeFrame VTCompressionSessionEncodeFrame
