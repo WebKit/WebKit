@@ -214,11 +214,12 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     statistics.mostRecentUserInteractionTime = newTime;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    if (auto* opener = document.frame()->loader().opener()) {
-        if (auto* openerDocument = opener->document()) {
-            if (auto* openerFrame = openerDocument->frame()) {
-                if (auto openerPageID = openerFrame->loader().client().pageID()) {
-                    requestStorageAccessUnderOpener(domain, openerPageID.value(), *openerDocument);
+    if (auto* frame = document.frame()) {
+        if (auto* opener = frame->loader().opener()) {
+            if (auto* openerDocument = opener->document()) {
+                if (auto* openerFrame = openerDocument->frame()) {
+                    if (auto openerPageID = openerFrame->loader().client().pageID())
+                        requestStorageAccessUnderOpener(domain, openerPageID.value(), *openerDocument);
                 }
             }
         }

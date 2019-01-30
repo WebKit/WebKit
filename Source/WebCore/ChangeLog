@@ -1,3 +1,14 @@
+2019-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Make sure we have a frame before trying to access its loader 
+        https://bugs.webkit.org/show_bug.cgi?id=193985
+        <rdar://problem/47618239>
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+
 2019-01-29  Andy Estes  <aestes@apple.com>
 
         Try to fix the watchOS build.
