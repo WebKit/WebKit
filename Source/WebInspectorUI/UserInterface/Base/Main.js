@@ -2017,18 +2017,6 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         }
     }
 
-    function createContainer(parent, title) {
-        let container = parent.appendChild(document.createElement("div"));
-        container.classList.add("container");
-
-        if (title) {
-            let titleElement = container.appendChild(document.createElement("div"));
-            titleElement.textContent = title;
-        }
-
-        return container;
-    }
-
     function createCheckbox(container, label, setting, value) {
         if (!setting)
             return;
@@ -2058,16 +2046,20 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         WI._deviceSettingsPopover.present(calculateTargetFrame(), preferredEdges);
     };
 
-    let contentElement = document.createElement("div");
+    let contentElement = document.createElement("table");
     contentElement.classList.add("device-settings-content");
 
-    let userAgentContainer = contentElement.appendChild(document.createElement("label"));
-    userAgentContainer.textContent = WI.UIString("User Agent:");
+    let userAgentRow = contentElement.appendChild(document.createElement("tr"));
 
-    let userAgentValueContainer = userAgentContainer.appendChild(document.createElement("span"));
-    userAgentValueContainer.classList.add("user-agent-value");
+    let userAgentTitle = userAgentRow.appendChild(document.createElement("td"));
+    userAgentTitle.textContent = WI.UIString("User Agent:");
 
-    let userAgentSelect = userAgentValueContainer.appendChild(document.createElement("select"));
+    let userAgentValue = userAgentRow.appendChild(document.createElement("td"));
+    userAgentValue.classList.add("user-agent");
+
+    let userAgentValueSelect = userAgentValue.appendChild(document.createElement("select"));
+
+    let userAgentValueInput = null;
 
     const userAgents = [
         [
@@ -2105,7 +2097,7 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
 
     for (let group of userAgents) {
         for (let {name, value} of group) {
-            let optionElement = userAgentSelect.appendChild(document.createElement("option"));
+            let optionElement = userAgentValueSelect.appendChild(document.createElement("option"));
             optionElement.value = value;
             optionElement.textContent = name;
 
@@ -2114,42 +2106,43 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         }
 
         if (group !== userAgents.lastValue)
-            userAgentSelect.appendChild(document.createElement("hr"));
+            userAgentValueSelect.appendChild(document.createElement("hr"));
     }
 
-    let userAgentInput = null;
-
     function showUserAgentInput() {
-        if (userAgentInput)
+        if (userAgentValueInput)
             return;
 
-        userAgentInput = userAgentValueContainer.appendChild(document.createElement("input"));
-        userAgentInput.value = userAgentInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
-        userAgentInput.addEventListener("click", (clickEvent) => {
+        userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
+        userAgentValueInput.value = userAgentValueInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
+        userAgentValueInput.addEventListener("click", (clickEvent) => {
             clickEvent.preventDefault();
         });
-        userAgentInput.addEventListener("change", (inputEvent) => {
-            applyOverriddenUserAgent(userAgentInput.value, true);
+        userAgentValueInput.addEventListener("change", (inputEvent) => {
+            applyOverriddenUserAgent(userAgentValueInput.value, true);
         });
+
+        WI._deviceSettingsPopover.update();
     }
 
     if (selectedOptionElement)
-        userAgentSelect.value = selectedOptionElement.value;
+        userAgentValueSelect.value = selectedOptionElement.value;
     else if (WI._overridenDeviceUserAgent) {
-        userAgentSelect.value = "other";
+        userAgentValueSelect.value = "other";
         showUserAgentInput();
     }
 
-    userAgentSelect.addEventListener("change", () => {
-        let value = userAgentSelect.value;
+    userAgentValueSelect.addEventListener("change", () => {
+        let value = userAgentValueSelect.value;
         if (value === "other") {
             showUserAgentInput();
-            userAgentInput.selectionStart = userAgentInput.selectionEnd = 0;
-            userAgentInput.focus();
+            userAgentValueInput.select();
         } else {
-            if (userAgentInput) {
-                userAgentInput.remove();
-                userAgentInput = null;
+            if (userAgentValueInput) {
+                userAgentValueInput.remove();
+                userAgentValueInput = null;
+
+                WI._deviceSettingsPopover.update();
             }
 
             applyOverriddenUserAgent(value);
@@ -2187,13 +2180,18 @@ WI._handleDeviceSettingsToolbarButtonClicked = function(event)
         if (!group.columns.some((column) => column.some((item) => item.setting)))
             continue;
 
-        let container = createContainer(contentElement, group.name);
+        let settingsGroupRow = contentElement.appendChild(document.createElement("tr"));
 
-        let columnContainer = container.appendChild(document.createElement("div"));
-        columnContainer.classList.add("columns");
+        let settingsGroupTitle = settingsGroupRow.appendChild(document.createElement("td"));
+        settingsGroupTitle.textContent = group.name;
+
+        let settingsGroupValue = settingsGroupRow.appendChild(document.createElement("td"));
+
+        let settingsGroupItemContainer = settingsGroupValue.appendChild(document.createElement("div"));
+        settingsGroupItemContainer.classList.add("container");
 
         for (let column of group.columns) {
-            let columnElement = columnContainer.appendChild(document.createElement("div"));
+            let columnElement = settingsGroupItemContainer.appendChild(document.createElement("div"));
             columnElement.classList.add("column");
 
             for (let item of column)

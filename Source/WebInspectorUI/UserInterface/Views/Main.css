@@ -388,66 +388,48 @@ body[dir=rtl] .go-to-arrow {
 }
 
 .device-settings-content {
-    padding: 8px;
+    padding: 0 4px;
+    border-collapse: separate;
+    border-spacing: 4px 8px;
+}
+
+.device-settings-content > tr > td:first-child {
+    text-align: end;
+    vertical-align: top;
 }
 
 .device-settings-content .container {
-    margin-top: 8px;
-}
-
-.device-settings-content .columns {
     display: flex;
 }
 
-.device-settings-content .columns > .column {
+.device-settings-content .container > * + * {
+    -webkit-margin-start: 8px;
+}
+
+.device-settings-content .column {
     display: flex;
     flex-direction: column;
 }
 
-.device-settings-content .columns > .column + .column {
-    -webkit-margin-start: 20px;
+.device-settings-content .user-agent select {
+    display: block;
+    margin: -2px 0 0;
 }
 
-.device-settings-content .user-agent-value {
-    display: inline-block;
-    position: relative;
+.device-settings-content .user-agent input {
+    display: block;
+    width: 100%;
+    margin: 6px 0 0;
 }
 
-.device-settings-content .user-agent-value > select {
-    -webkit-margin-start: 4px;
+.device-settings-content label + label {
+    margin-top: 4px;
 }
 
-.device-settings-content .user-agent-value > input {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    margin: 0;
-    -webkit-margin-start: 5px;
-    -webkit-margin-before: 3px;
-    -webkit-margin-after: 3px;
-    -webkit-padding-start: 7px;
-    -webkit-padding-end: 9px;
-    background-color: white;
-    border: none;
-    -webkit-border-top-left-radius: 3px;
-    -webkit-border-bottom-left-radius: 3px;
-    outline: none;
-    pointer-events: all;
-
-    --offset-end: 17px;
-}
-
-body[dir=ltr] .device-settings-content .user-agent-value > input {
-    right: var(--offset-end);
-}
-
-body[dir=rtl] .device-settings-content .user-agent-value > input {
-    left: var(--offset-end);
-}
 
 .device-settings-content label > input {
+    margin: 0;
+    -webkit-margin-start: 0.5px;
     -webkit-margin-end: 4px;
 }
 

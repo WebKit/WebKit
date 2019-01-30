@@ -1,5 +1,35 @@
 2019-01-30  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: change style of device settings override popover content
+        https://bugs.webkit.org/show_bug.cgi?id=194049
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WI._handleDeviceSettingsToolbarButtonClicked):
+        (WI._handleDeviceSettingsToolbarButtonClicked.showUserAgentInput):
+        (WI._handleDeviceSettingsToolbarButtonClicked.createContainer): Deleted.
+        * UserInterface/Views/Main.css:
+        (.device-settings-content):
+        (.device-settings-content > tr > td:first-child): Added.
+        (.device-settings-content .container):
+        (.device-settings-content .container > * + *): Added.
+        (.device-settings-content .column): Added.
+        (.device-settings-content .user-agent select): Added.
+        (.device-settings-content .user-agent input): Added.
+        (.device-settings-content label + label): Added.
+        (.device-settings-content label > input): Added.
+        (.device-settings-content .columns): Deleted.
+        (.device-settings-content .columns > .column): Deleted.
+        (.device-settings-content .columns > .column + .column): Deleted.
+        (.device-settings-content .user-agent-value): Deleted.
+        (.device-settings-content .user-agent-value > select): Deleted.
+        (.device-settings-content .user-agent-value > input): Deleted.
+        (body[dir=ltr] .device-settings-content .user-agent-value > input): Deleted.
+        (body[dir=rtl] .device-settings-content .user-agent-value > input): Deleted.
+
+2019-01-30  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: null is not an object (evaluating 'url.startsWith')
         https://bugs.webkit.org/show_bug.cgi?id=194029
 
