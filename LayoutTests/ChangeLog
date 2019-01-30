@@ -1,3 +1,13 @@
+2019-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use the used margin values in outOfFlowReplacedVerticalGeometry consistently
+        https://bugs.webkit.org/show_bug.cgi?id=194020
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/absolute-position-with-margin-auto-simple-expected.html: Added.
+        * fast/block/block-only/absolute-position-with-margin-auto-simple.html: Added.
+
 2019-01-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support color well on iOS

@@ -1,3 +1,17 @@
+2019-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use the used margin values in outOfFlowReplacedVerticalGeometry consistently
+        https://bugs.webkit.org/show_bug.cgi?id=194020
+
+        Reviewed by Antti Koivisto.
+
+        Check the used margin variables whether we already computed before/after values.
+
+        Test: fast/block/block-only/absolute-position-with-margin-auto-simple.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+
 2019-01-30  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support color well on iOS

@@ -554,7 +554,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto isStaticallyPositioned = !top && !bottom;
     auto height = inlineReplacedHeightAndMargin(layoutState, layoutBox, usedHeight).height;
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
-    UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
+    Optional<LayoutUnit> usedMarginBefore;
+    Optional<LayoutUnit> usedMarginAfter;
     auto paddingTop = displayBox.paddingTop().valueOr(0);
     auto paddingBottom = displayBox.paddingBottom().valueOr(0);
     auto borderTop = displayBox.borderTop();
@@ -567,32 +568,34 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
 
     if (!bottom) {
         // #2
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedMarginBefore = computedVerticalMargin.before.valueOr(0);
+        usedMarginAfter = usedMarginBefore;
     }
 
-    if (!computedVerticalMargin.before && !computedVerticalMargin.after) {
+    if (!usedMarginBefore && !usedMarginAfter) {
         // #3
         auto marginBeforeAndAfter = containingBlockHeight - (*top + borderTop + paddingTop + height + paddingBottom + borderBottom + *bottom);
-        usedVerticalMargin = { marginBeforeAndAfter / 2, marginBeforeAndAfter / 2 };
+        usedMarginBefore = marginBeforeAndAfter / 2;
+        usedMarginAfter = usedMarginBefore;
     }
 
     // #4
     if (!top)
-        top = containingBlockHeight - (usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
+        top = containingBlockHeight - (*usedMarginBefore + borderTop + paddingTop + height + paddingBottom + borderBottom + *usedMarginAfter + *bottom);
 
     if (!bottom)
-        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after);
+        bottom = containingBlockHeight - (*top + *usedMarginBefore + borderTop + paddingTop + height + paddingBottom + borderBottom + *usedMarginAfter);
 
-    if (!computedVerticalMargin.before)
-        usedVerticalMargin.before = containingBlockHeight - (*top + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
+    if (!usedMarginBefore)
+        usedMarginBefore = containingBlockHeight - (*top + borderTop + paddingTop + height + paddingBottom + borderBottom + *usedMarginAfter + *bottom);
 
-    if (!computedVerticalMargin.after)
-        usedVerticalMargin.after = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + *bottom);
+    if (!usedMarginAfter)
+        usedMarginAfter = containingBlockHeight - (*top + *usedMarginBefore + borderTop + paddingTop + height + paddingBottom + borderBottom + *bottom);
 
     // #5
-    auto boxHeight = *top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom;
+    auto boxHeight = *top + *usedMarginBefore + borderTop + paddingTop + height + paddingBottom + borderBottom + *usedMarginAfter + *bottom;
     if (boxHeight > containingBlockHeight)
-        bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + height + paddingBottom + borderBottom + usedVerticalMargin.after); 
+        bottom = containingBlockHeight - (*top + *usedMarginBefore + borderTop + paddingTop + height + paddingBottom + borderBottom + *usedMarginAfter); 
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
@@ -602,8 +605,12 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
         *bottom += containingBlockPaddingVerticalEdge;
     }
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << usedVerticalMargin.before << "px, "  << usedVerticalMargin.after << "px) layoutBox(" << &layoutBox << ")");
-    return { *top, *bottom, { height, usedVerticalMargin } };
+    ASSERT(top);
+    ASSERT(bottom);
+    ASSERT(usedMarginBefore);
+    ASSERT(usedMarginAfter);
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Height][Margin] -> out-of-flow replaced -> top(" << *top << "px) bottom("  << *bottom << "px) height(" << height << "px) margin(" << *usedMarginBefore << "px, "  << *usedMarginAfter << "px) layoutBox(" << &layoutBox << ")");
+    return { *top, *bottom, { height, { *usedMarginBefore, *usedMarginAfter } } };
 }
 
 HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry(const LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedWidth)
