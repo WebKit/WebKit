@@ -1,3 +1,16 @@
+2019-01-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r240708.
+        https://bugs.webkit.org/show_bug.cgi?id=194022
+
+        It broke WPE build (Requested by KaL on #webkit).
+
+        Reverted changeset:
+
+        "[WPE] Bump font related dependencies to match the GTK+ port"
+        https://bugs.webkit.org/show_bug.cgi?id=194017
+        https://trac.webkit.org/changeset/240708
+
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] nextBreakablePosition returns the same position on hyphen characters
