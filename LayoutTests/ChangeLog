@@ -1,5 +1,16 @@
 2019-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening. Adding some test failure expectations and
+        rebasing a few baselines.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css2.1/t1508-c527-font-06-b-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-04-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-05-expected.txt:
+        * platform/wpe/fast/dom/52776-expected.txt:
+
+2019-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening.
 
         * platform/wpe/TestExpectations: Skip the resourceLoadStatistics tests
