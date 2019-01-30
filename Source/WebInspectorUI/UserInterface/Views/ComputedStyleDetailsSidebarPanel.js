@@ -28,8 +28,5 @@ WI.ComputedStyleDetailsSidebarPanel = class ComputedStyleDetailsSidebarPanel ext
     constructor()
     {
         super("style-computed", WI.UIString("Computed"), WI.ComputedStyleDetailsPanel);
-
-        if (WI.settings.experimentalEnableComputedStyleCascades.value)
-            this.element.classList.add("computed-with-traces");
     }
 };

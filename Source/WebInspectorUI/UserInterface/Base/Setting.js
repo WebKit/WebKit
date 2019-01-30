@@ -152,7 +152,6 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
-    experimentalEnableComputedStyleCascades: new WI.Setting("experimental-enable-computed-style-cascades", false),
     experimentalEnableChangesPanel: new WI.Setting("experimental-enable-changes-panel", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),

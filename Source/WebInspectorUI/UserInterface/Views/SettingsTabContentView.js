@@ -255,7 +255,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         if (window.CSSAgent) {
             let group = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
-            group.addSetting(WI.settings.experimentalEnableComputedStyleCascades, WI.UIString("Enable Computed Style Cascades"));
             group.addSetting(WI.settings.experimentalEnableChangesPanel, WI.UIString("Enable Changes Panel"));
             experimentalSettingsView.addSeparator();
         }
@@ -290,7 +289,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
-        listenForChange(WI.settings.experimentalEnableComputedStyleCascades);
         listenForChange(WI.settings.experimentalEnableChangesPanel);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);

@@ -45,9 +45,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             return;
         }
 
-        if (WI.settings.experimentalEnableComputedStyleCascades.value)
-            this._computedStyleSection.styleTraces = this._computePropertyTraces(this.nodeStyles.uniqueOrderedStyles);
-
+        this._computedStyleSection.styleTraces = this._computePropertyTraces(this.nodeStyles.uniqueOrderedStyles);
         this._computedStyleSection.style = this.nodeStyles.computedStyle;
 
         this._variablesTextEditor.style = this.nodeStyles.computedStyle;
@@ -103,17 +101,9 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
         computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
 
-        if (WI.settings.experimentalEnableComputedStyleCascades.value) {
-            this._computedStyleSection = new WI.ComputedStyleSection(this);
-            this._computedStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideVariables;
-            this._computedStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
-        } else {
-            this._computedStyleSection = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
-            this._computedStyleSection.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables;
-            this._computedStyleSection.sortPropertiesByName = true;
-            this._computedStyleSection.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
-        }
-
+        this._computedStyleSection = new WI.ComputedStyleSection(this);
+        this._computedStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideVariables;
+        this._computedStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
         this._computedStyleSection.showsImplicitProperties = this._computedStyleShowAllSetting.value;
         this._computedStyleSection.alwaysShowPropertyNames = ["display", "width", "height"];
         this._computedStyleSection.hideFilterNonMatchingProperties = true;

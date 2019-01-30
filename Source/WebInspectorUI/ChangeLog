@@ -1,3 +1,31 @@
+2019-01-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: enable computed style cascades by default
+        https://bugs.webkit.org/show_bug.cgi?id=193983
+        <rdar://problem/47645821>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.computed-style-properties):
+        (.computed-style-properties .property .go-to-arrow):
+        (.details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content)):
+        (.details-section.computed-style-properties > .content):
+        (@media (prefers-color-scheme: dark)):
+        (.computed-with-traces .computed-style-properties): Deleted.
+        (.computed-with-traces .details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content)): Deleted.
+        (.computed-with-traces .details-section.computed-style-properties > .content): Deleted.
+        (.computed-with-traces .computed-style-properties .property .go-to-arrow): Deleted.
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
 2019-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary promise rejection handlers now that we use the global onunhandledrejection handler
