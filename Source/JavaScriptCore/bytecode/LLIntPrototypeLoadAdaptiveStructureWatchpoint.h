@@ -33,7 +33,6 @@ namespace JSC {
 
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint : public Watchpoint {
 public:
-    LLIntPrototypeLoadAdaptiveStructureWatchpoint() = default;
     LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, OpGetById::Metadata&);
 
     void install(VM&);
