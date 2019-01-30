@@ -1,3 +1,15 @@
+2019-01-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        CachedBytecode's move constructor should not call `freeDataIfOwned`
+        https://bugs.webkit.org/show_bug.cgi?id=194045
+
+        Reviewed by Mark Lam.
+
+        That might result in freeing a garbage value
+
+        * parser/SourceProvider.h:
+        (JSC::CachedBytecode::CachedBytecode):
+
 2019-01-30  Keith Miller  <keith_miller@apple.com>
 
         mul32 should convert powers of 2 to an lshift

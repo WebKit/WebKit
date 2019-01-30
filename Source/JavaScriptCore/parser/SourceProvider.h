@@ -67,7 +67,10 @@ namespace JSC {
 
         CachedBytecode(CachedBytecode&& other)
         {
-            *this = WTFMove(other);
+            m_owned = other.m_owned;
+            m_size = other.m_size;
+            m_data = other.m_data;
+            other.m_owned = false;
         }
 
         CachedBytecode& operator=(CachedBytecode&& other)
