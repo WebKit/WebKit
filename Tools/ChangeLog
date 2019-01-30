@@ -1,3 +1,14 @@
+2019-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Bump font related dependencies to match the GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=194017
+
+        Reviewed by Žan Doberšek.
+
+        * wpe/jhbuild.modules:
+        * wpe/patches/cairo-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch: Added.
+        * wpe/patches/icudata-stdlibs.patch: Added.
+
 2019-01-29  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Update window scale API usage
