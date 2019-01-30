@@ -34,6 +34,7 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/PlatformDisplayWayland.h>
 #include <WebCore/Region.h>
+#include <gtk/gtk.h>
 #include <wayland-server-protocol.h>
 #include <wtf/UUID.h>
 
@@ -146,12 +147,6 @@ IntSize WaylandCompositor::Buffer::size() const
 WaylandCompositor::Surface::Surface()
     : m_image(EGL_NO_IMAGE_KHR)
 {
-    glGenTextures(1, &m_texture);
-    glBindTexture(GL_TEXTURE_2D, m_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 WaylandCompositor::Surface::~Surface()
@@ -168,11 +163,6 @@ WaylandCompositor::Surface::~Surface()
 
     if (m_buffer)
         m_buffer->unuse();
-
-    if (m_image != EGL_NO_IMAGE_KHR)
-        eglDestroyImage(PlatformDisplay::sharedDisplay().eglDisplay(), m_image);
-
-    glDeleteTextures(1, &m_texture);
 }
 
 void WaylandCompositor::Surface::setWebPage(WebPageProxy* webPage)
@@ -182,11 +172,30 @@ void WaylandCompositor::Surface::setWebPage(WebPageProxy* webPage)
         flushFrameCallbacks();
         gtk_widget_remove_tick_callback(m_webPage->viewWidget(), m_tickCallbackID);
         m_tickCallbackID = 0;
+
+        if (m_webPage->makeGLContextCurrent()) {
+            if (m_image != EGL_NO_IMAGE_KHR)
+                eglDestroyImage(PlatformDisplay::sharedDisplay().eglDisplay(), m_image);
+            if (m_texture)
+                glDeleteTextures(1, &m_texture);
+        }
+
+        m_image = EGL_NO_IMAGE_KHR;
+        m_texture = 0;
     }
 
     m_webPage = webPage;
     if (!m_webPage)
         return;
+
+    if (m_webPage->makeGLContextCurrent()) {
+        glGenTextures(1, &m_texture);
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
 
     m_tickCallbackID = gtk_widget_add_tick_callback(m_webPage->viewWidget(), [](GtkWidget*, GdkFrameClock*, gpointer userData) -> gboolean {
         auto* surface = static_cast<Surface*>(userData);
@@ -232,7 +241,10 @@ void WaylandCompositor::Surface::requestFrame(struct wl_resource* resource)
 
 bool WaylandCompositor::Surface::prepareTextureForPainting(unsigned& texture, IntSize& textureSize)
 {
-    if (m_image == EGL_NO_IMAGE_KHR)
+    if (!m_texture || m_image == EGL_NO_IMAGE_KHR)
+        return false;
+
+    if (!m_webPage || !m_webPage->makeGLContextCurrent())
         return false;
 
     glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -263,7 +275,7 @@ void WaylandCompositor::Surface::flushPendingFrameCallbacks()
 
 void WaylandCompositor::Surface::commit()
 {
-    if (!m_webPage) {
+    if (!m_webPage || !m_webPage->makeGLContextCurrent()) {
         makePendingBufferCurrent();
         flushPendingFrameCallbacks();
         return;
@@ -400,11 +412,11 @@ bool WaylandCompositor::initializeEGL()
         return false;
     }
 
-    m_eglContext = GLContext::createOffscreenContext();
-    if (!m_eglContext)
+    std::unique_ptr<WebCore::GLContext> eglContext = GLContext::createOffscreenContext();
+    if (!eglContext)
         return false;
 
-    if (!m_eglContext->makeContextCurrent())
+    if (!eglContext->makeContextCurrent())
         return false;
 
 #if USE(OPENGL_ES)

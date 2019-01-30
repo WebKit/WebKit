@@ -1579,6 +1579,13 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
         webkitWebViewBase->priv->acceleratedBackingStore->update(LayerTreeContext());
 }
 
+bool webkitWebViewBaseMakeGLContextCurrent(WebKitWebViewBase* webkitWebViewBase)
+{
+    if (webkitWebViewBase->priv->acceleratedBackingStore)
+        return webkitWebViewBase->priv->acceleratedBackingStore->makeContextCurrent();
+    return false;
+}
+
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
     // Queue a resize to ensure the new DrawingAreaProxy is resized.

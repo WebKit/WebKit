@@ -1,3 +1,52 @@
+2019-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] gdk_cairo_draw_from_gl() in AcceleratedBackingStoreWayland fails in GtkInspector's magnifier
+        https://bugs.webkit.org/show_bug.cgi?id=193903
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that the GL context used by WaylandCompositor can't share resources with the one used by GTK+
+        when painting with gdk_cairo_draw_from_gl(). Accelerated compositing in Wayland works only because
+        WaylandCompositor makes the context current only once on initialization. So, when we render the first frame on
+        accelerated compositing mode, GTK+ is rendering in non-GL mode, and switches to the GL mode when
+        gdk_cairo_draw_from_gl() is called. Since GTK+ didn't have a GL context yet, the first frame is always rendered
+        by GTK+ using the software fallback (glReadPixels). The thing is that the first time gdk_cairo_draw_from_gl() is
+        called, GTK+ creates a GL context for painting that is made current, and it will remain the current one
+        forever. The first frame fails to render with "GL_INVALID_OPERATION in glBindTexture(non-gen name)" because the
+        texture created in WaylandCompositor GL context can't be accessed from GTK+ GL context. The following frames are
+        handled with the GTK+ GL context. I would say this works by casuality and it could be the cause of other
+        accelerated compositing issues in Wayland.
+
+        We need to create our own GdkGLContext for the WebView, and use that in the WaylandCompositor. When the
+        GdkGLContext is created, the GTK+ GL context for painting is used as a shared context, ensuring that resources
+        created in the new context will be accessible from the painting one.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseMakeGLContextCurrent): Call AcceleratedBackingStore::makeContextCurrent().
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/AcceleratedBackingStore.h:
+        (WebKit::AcceleratedBackingStore::makeContextCurrent): New virtual method only implemented by Wayland backend.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::tryEnsureGLContext): Try to create a GL context with
+        gdk_window_create_gl_context(), falling back to a WebCore::GLContext if it fails or GTK+ version is not new enough.
+        (WebKit::AcceleratedBackingStoreWayland::makeContextCurrent): Make the GL context current.
+        (WebKit::AcceleratedBackingStoreWayland::paint): Check if we have a GdkGLContext before trying to use gdk_cairo_draw_from_gl().
+        (WebKit::AcceleratedBackingStoreWayland::canGdkUseGL const): Deleted.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::Surface): Move the texture creation to setWebPage(), since we need the
+        WebView GL context.
+        (WebKit::WaylandCompositor::Surface::~Surface): Move the code to destroy GL resources to setWebPage().
+        (WebKit::WaylandCompositor::Surface::setWebPage): Create the texture when a new page is set and destroy GL
+        resources when unset.
+        (WebKit::WaylandCompositor::Surface::prepareTextureForPainting): Make WebView GL context current.
+        (WebKit::WaylandCompositor::Surface::commit): Ditto.
+        (WebKit::WaylandCompositor::initializeEGL): Use a temporary GLContext.
+        * UIProcess/gtk/WaylandCompositor.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::makeGLContextCurrent): Call webkitWebViewBaseMakeGLContextCurrent().
+
 2019-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Nullptr crash in WebPage::getPositionInformation dereferencing an input element for data list

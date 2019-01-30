@@ -31,6 +31,13 @@
 
 #include <WebCore/RefPtrCairo.h>
 #include <gtk/gtk.h>
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GdkGLContext GdkGLContext;
+
+namespace WebCore {
+class GLContext;
+}
 
 namespace WebKit {
 
@@ -42,16 +49,20 @@ public:
     static std::unique_ptr<AcceleratedBackingStoreWayland> create(WebPageProxy&);
     ~AcceleratedBackingStoreWayland();
 
-#if GTK_CHECK_VERSION(3, 16, 0)
-    bool canGdkUseGL() const;
-#endif
-
 private:
     AcceleratedBackingStoreWayland(WebPageProxy&);
 
+    void tryEnsureGLContext();
+
     bool paint(cairo_t*, const WebCore::IntRect&) override;
+    bool makeContextCurrent() override;
 
     RefPtr<cairo_surface_t> m_surface;
+    bool m_glContextInitialized { false };
+#if GTK_CHECK_VERSION(3, 16, 0)
+    GRefPtr<GdkGLContext> m_gdkGLContext;
+#endif
+    std::unique_ptr<WebCore::GLContext> m_glContext;
 };
 
 } // namespace WebKit

@@ -154,4 +154,9 @@ void WebPageProxy::getCenterForZoomGesture(const WebCore::IntPoint& centerInView
 }
 #endif
 
+bool WebPageProxy::makeGLContextCurrent()
+{
+    return webkitWebViewBaseMakeGLContextCurrent(WEBKIT_WEB_VIEW_BASE(viewWidget()));
+}
+
 } // namespace WebKit
