@@ -1,3 +1,13 @@
+2019-01-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support color well on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194010
+
+        Reviewed by Joanmarie Diggs.
+
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::stringAttributeValue):
+
 2019-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Bump font related dependencies to match the GTK+ port

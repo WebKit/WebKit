@@ -82,6 +82,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)_accessibilityIsStrongPasswordField;
 - (CGRect)accessibilityVisibleContentRect;
 - (NSString *)accessibilityTextualContext;
+- (NSString *)accessibilityRoleDescription;
+- (NSString *)accessibilityColorStringValue;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -357,7 +359,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 {
     if (JSStringIsEqualToUTF8CString(attribute, "AXPlaceholderValue"))
         return [[m_element accessibilityPlaceholderValue] createJSStringRef];
-    
+
+    if (JSStringIsEqualToUTF8CString(attribute, "AXRoleDescription"))
+        return [[m_element accessibilityRoleDescription] createJSStringRef];
+
+    if (JSStringIsEqualToUTF8CString(attribute, "AXColorStringDescription"))
+        return [[m_element accessibilityColorStringValue] createJSStringRef];
+
     if (JSStringIsEqualToUTF8CString(attribute, "AXARIACurrent"))
         return [[m_element accessibilityARIACurrentStatus] createJSStringRef];
 

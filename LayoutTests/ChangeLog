@@ -1,5 +1,15 @@
 2019-01-30  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Support color well on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194010
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/ios-simulator/color-well-expected.txt: Added.
+        * accessibility/ios-simulator/color-well.html: Added.
+
+2019-01-30  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Role=switch not returning correct accessibilityValue
         https://bugs.webkit.org/show_bug.cgi?id=194006
 

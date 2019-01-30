@@ -967,6 +967,9 @@
 /* HTTP result code string */
 "client error" = "client error";
 
+/* accessibility role description for a color well */
+"color well" = "color well";
+
 /* An ARIA accessibility group that acts as a region of complementary information. */
 "complementary" = "complementary";
 
