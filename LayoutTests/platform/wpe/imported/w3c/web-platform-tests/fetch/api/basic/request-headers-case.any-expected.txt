@@ -1,0 +1,4 @@
+
+PASS Multiple headers with the same name, different case (THIS-is-A-test first) 
+FAIL Multiple headers with the same name, different case (THIS-IS-A-TEST first) assert_regexp_match: expected object "/THIS-IS-A-TEST: 1, 2/" but got "Host: localhost:8800\r\nReferer: http://localhost:8800/fetch/api/basic/request-headers-case.any.html\r\nAccept: */*\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.0 Safari/605.1.15\r\nTHIS-is-A-test: 1, 2\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: en-US\r\nConnection: Keep-Alive\r\n"
+

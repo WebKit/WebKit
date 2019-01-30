@@ -1,5 +1,5 @@
 
-FAIL formdata with blob assert_equals: expected "\nkey=blob:text/x-value:5," but got "\nkey=blob:text/x-value:0,"
-FAIL formdata with named blob assert_equals: expected "\nkey=blob.txt:text/x-value:5," but got "\nkey=blob.txt:text/x-value:0,"
+PASS formdata with blob 
+PASS formdata with named blob 
 PASS formdata.append() should throw if value is string and file name is given 
 

@@ -1,3 +1,39 @@
+2019-01-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Manage failures in the imported WPT tests,
+        adding a few failure expectations but mostly rebaselining the tests
+        to match their current status.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers-case.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode.any.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/request/request-keepalive-quota-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/content-type: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/content-type/script.window-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/http-cache/cc-request-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/nosniff: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/resource-timing: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/resource-timing/resource_timing.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-blob-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-expected.txt:
+
 2019-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Adding some test failure expectations and

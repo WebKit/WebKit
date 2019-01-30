@@ -1,0 +1,16 @@
+
+PASS Response.redirected should be false on not-redirected responses 
+PASS Redirect 301 with GET 
+PASS Redirect 301 with POST 
+PASS Redirect 301 with HEAD 
+PASS Redirect 302 with GET 
+PASS Redirect 302 with POST 
+PASS Redirect 302 with HEAD 
+PASS Redirect 303 with GET 
+PASS Redirect 303 with POST 
+PASS Redirect 303 with HEAD 
+PASS Redirect 307 with GET 
+PASS Redirect 307 with POST (string body) 
+FAIL Redirect 307 with POST (blob body) assert_equals: request body expected "it's me the blob! and more blob!" but got ""
+PASS Redirect 307 with HEAD 
+

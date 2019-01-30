@@ -1,6 +1,6 @@
 
 PASS empty formdata 
 PASS formdata with string 
-FAIL formdata with named string assert_equals: expected "\nkey=kv.txt:text/plain:5," but got "\nkey=kv.txt:text/plain:0,"
+PASS formdata with named string 
 PASS formdata from form 
 
