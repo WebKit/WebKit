@@ -21,6 +21,7 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=2 height=2)
                   (scrollOffset (366,0))
+                  (anchor 0.00 0.00)
                   (bounds 766.00 205.00)
                   (drawsContent 1)
                   (children 1

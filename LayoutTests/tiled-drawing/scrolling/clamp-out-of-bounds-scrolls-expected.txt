@@ -3,6 +3,7 @@ Attempted scroll to -5000, 0
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -22,6 +23,7 @@ Attempted scroll to 0, -5000
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -41,6 +43,7 @@ Attempted scroll to -5000, -5000
 (Frame scrolling node
   (scrollable area size 785 585)
   (contents size 5008 5021)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -62,6 +65,7 @@ Attempted scroll to 10000, 0
   (contents size 5008 5021)
   (requested scroll position 4223 0)
   (requested scroll position represents programmatic scroll 1)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -83,6 +87,7 @@ Attempted scroll to 0, 10000
   (contents size 5008 5021)
   (requested scroll position 0 4436)
   (requested scroll position represents programmatic scroll 1)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)
@@ -104,6 +109,7 @@ Attempted scroll to 10000, 10000
   (contents size 5008 5021)
   (requested scroll position 4223 4436)
   (requested scroll position represents programmatic scroll 1)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 2)
     (vertical scroll elasticity 2)

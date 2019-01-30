@@ -3918,6 +3918,71 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
     return newNodeID;
 }
 
+void RenderLayerCompositor::computeFrameScrollingGeometry(ScrollingCoordinator::ScrollingGeometry& scrollingGeometry) const
+{
+    auto& frameView = m_renderView.frameView();
+
+    if (m_renderView.frame().isMainFrame())
+        scrollingGeometry.parentRelativeScrollableRect = frameView.frameRect();
+    else
+        scrollingGeometry.parentRelativeScrollableRect = LayoutRect({ }, LayoutSize(frameView.size()));
+
+    scrollingGeometry.scrollOrigin = frameView.scrollOrigin();
+    scrollingGeometry.scrollableAreaSize = frameView.visibleContentRect().size();
+    scrollingGeometry.contentSize = frameView.totalContentsSize();
+    scrollingGeometry.reachableContentSize = frameView.totalContentsSize();
+#if ENABLE(CSS_SCROLL_SNAP)
+    frameView.updateSnapOffsets();
+    updateScrollSnapPropertiesWithFrameView(frameView);
+#endif
+}
+
+void RenderLayerCompositor::computeFrameHostingGeometry(const RenderLayer& layer, const RenderLayer* ancestorLayer, ScrollingCoordinator::ScrollingGeometry& scrollingGeometry) const
+{
+    // FIXME: ancestorLayer needs to be always non-null, so should become a reference.
+    if (ancestorLayer) {
+        LayoutRect scrollableRect;
+        if (is<RenderBox>(layer.renderer()))
+            scrollableRect = downcast<RenderBox>(layer.renderer()).paddingBoxRect();
+
+        auto offset = layer.convertToLayerCoords(ancestorLayer, scrollableRect.location()); // FIXME: broken for columns.
+        scrollableRect.setLocation(offset);
+        scrollingGeometry.parentRelativeScrollableRect = scrollableRect;
+    }
+}
+
+void RenderLayerCompositor::computeOverflowScrollingGeometry(const RenderLayer& layer, const RenderLayer* ancestorLayer, ScrollingCoordinator::ScrollingGeometry& scrollingGeometry) const
+{
+    // FIXME: ancestorLayer needs to be always non-null, so should become a reference.
+    if (ancestorLayer) {
+        LayoutRect scrollableRect;
+        if (is<RenderBox>(layer.renderer()))
+            scrollableRect = downcast<RenderBox>(layer.renderer()).paddingBoxRect();
+
+        auto offset = layer.convertToLayerCoords(ancestorLayer, scrollableRect.location()); // FIXME: broken for columns.
+        scrollableRect.setLocation(offset);
+        scrollingGeometry.parentRelativeScrollableRect = scrollableRect;
+    }
+
+    scrollingGeometry.scrollOrigin = layer.scrollOrigin();
+    scrollingGeometry.scrollPosition = layer.scrollPosition();
+    scrollingGeometry.scrollableAreaSize = layer.visibleSize();
+    scrollingGeometry.contentSize = layer.contentsSize();
+    scrollingGeometry.reachableContentSize = layer.scrollableContentsSize();
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (auto* offsets = layer.horizontalSnapOffsets())
+        scrollingGeometry.horizontalSnapOffsets = *offsets;
+    if (auto* offsets = layer.verticalSnapOffsets())
+        scrollingGeometry.verticalSnapOffsets = *offsets;
+    if (auto* ranges = layer.horizontalSnapOffsetRanges())
+        scrollingGeometry.horizontalSnapOffsetRanges = *ranges;
+    if (auto* ranges = layer.verticalSnapOffsetRanges())
+        scrollingGeometry.verticalSnapOffsetRanges = *ranges;
+    scrollingGeometry.currentHorizontalSnapPointIndex = layer.currentHorizontalSnapPointIndex();
+    scrollingGeometry.currentVerticalSnapPointIndex = layer.currentVerticalSnapPointIndex();
+#endif
+}
+
 ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(RenderLayer& layer, ScrollingTreeState& treeState, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
@@ -3926,7 +3991,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
 
     if (layer.isRenderViewLayer()) {
         FrameView& frameView = m_renderView.frameView();
-        ASSERT(scrollingCoordinator->coordinatesScrollingForFrameView(frameView));
+        ASSERT_UNUSED(frameView, scrollingCoordinator->coordinatesScrollingForFrameView(frameView));
 
         newNodeID = attachScrollingNode(*m_renderView.layer(), m_renderView.frame().isMainFrame() ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe, treeState);
 
@@ -3940,15 +4005,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
-            // FIXME(https://webkit.org/b/172917): Pass parentRelativeScrollableRect?
-            scrollingGeometry.scrollOrigin = frameView.scrollOrigin();
-            scrollingGeometry.scrollableAreaSize = frameView.visibleContentRect().size();
-            scrollingGeometry.contentSize = frameView.totalContentsSize();
-            scrollingGeometry.reachableContentSize = frameView.totalContentsSize();
-#if ENABLE(CSS_SCROLL_SNAP)
-            frameView.updateSnapOffsets();
-            scrollingCoordinator->updateScrollSnapPropertiesWithFrameView(frameView);
-#endif
+            computeFrameScrollingGeometry(scrollingGeometry);
             scrollingCoordinator->setScrollingNodeGeometry(newNodeID, scrollingGeometry);
         }
     } else {
@@ -3961,26 +4018,10 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         if (changes & ScrollingNodeChangeFlags::Layer)
             scrollingCoordinator->setNodeLayers(newNodeID, layer.backing()->scrollingLayer(), layer.backing()->scrollingContentsLayer());
 
-        if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
+        if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
+            RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
-            // FIXME(https://webkit.org/b/172917): Pass parentRelativeScrollableRect?
-            scrollingGeometry.scrollOrigin = layer.scrollOrigin();
-            scrollingGeometry.scrollPosition = layer.scrollPosition();
-            scrollingGeometry.scrollableAreaSize = layer.visibleSize();
-            scrollingGeometry.contentSize = layer.contentsSize();
-            scrollingGeometry.reachableContentSize = layer.scrollableContentsSize();
-#if ENABLE(CSS_SCROLL_SNAP)
-            if (const Vector<LayoutUnit>* offsets = layer.horizontalSnapOffsets())
-                scrollingGeometry.horizontalSnapOffsets = *offsets;
-            if (const Vector<LayoutUnit>* offsets = layer.verticalSnapOffsets())
-                scrollingGeometry.verticalSnapOffsets = *offsets;
-            if (const Vector<ScrollOffsetRange<LayoutUnit>>* ranges = layer.horizontalSnapOffsetRanges())
-                scrollingGeometry.horizontalSnapOffsetRanges = *ranges;
-            if (const Vector<ScrollOffsetRange<LayoutUnit>>* ranges = layer.verticalSnapOffsetRanges())
-                scrollingGeometry.verticalSnapOffsetRanges = *ranges;
-            scrollingGeometry.currentHorizontalSnapPointIndex = layer.currentHorizontalSnapPointIndex();
-            scrollingGeometry.currentVerticalSnapPointIndex = layer.currentVerticalSnapPointIndex();
-#endif
+            computeOverflowScrollingGeometry(layer, scrollingAncestorLayer, scrollingGeometry);
             scrollingCoordinator->setScrollingNodeGeometry(newNodeID, scrollingGeometry);
         }
     }
@@ -4000,6 +4041,13 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
 
     if (changes & ScrollingNodeChangeFlags::Layer)
         scrollingCoordinator->setNodeLayers(newNodeID, layer.backing()->graphicsLayer());
+
+    if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
+        RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
+        ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
+        computeFrameHostingGeometry(layer, scrollingAncestorLayer, scrollingGeometry);
+        scrollingCoordinator->setScrollingNodeGeometry(newNodeID, scrollingGeometry);
+    }
 
     return newNodeID;
 }
@@ -4123,7 +4171,7 @@ RefPtr<DisplayRefreshMonitor> RenderLayerCompositor::createDisplayRefreshMonitor
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)
+void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView) const
 {
     if (auto* coordinator = scrollingCoordinator())
         coordinator->updateScrollSnapPropertiesWithFrameView(frameView);

@@ -34,6 +34,7 @@
               (contentsScale 2.00)
               (children 1
                 (GraphicsLayer
+                  (anchor 0.00 0.00)
                   (bounds 300.00 400.00)
                   (drawsContent 1)
                   (visible rect 0.00, 0.00 300.00 x 200.00)
@@ -66,6 +67,7 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -80,6 +82,7 @@
     (Overflow scrolling node
       (scrollable area size 300 200)
       (contents size 300 400)
+      (parent relative scrollable rect at (8,13) size 300x200)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

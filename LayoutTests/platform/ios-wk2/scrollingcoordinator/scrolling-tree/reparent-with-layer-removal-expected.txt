@@ -5,6 +5,7 @@ Inner scrolling content
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 1041)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -19,6 +20,7 @@ Inner scrolling content
     (Overflow scrolling node
       (scrollable area size 440 340)
       (contents size 440 1040)
+      (parent relative scrollable rect at (70,102) size 440x340)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

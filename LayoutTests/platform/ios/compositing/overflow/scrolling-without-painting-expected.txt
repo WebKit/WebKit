@@ -20,6 +20,7 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,25))
+                  (anchor 0.00 0.00)
                   (bounds 200.00 1025.00)
                 )
               )

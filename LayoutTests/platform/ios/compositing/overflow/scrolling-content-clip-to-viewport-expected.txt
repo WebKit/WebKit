@@ -13,6 +13,7 @@
               (bounds 320.00 340.00)
               (children 1
                 (GraphicsLayer
+                  (anchor 0.00 0.00)
                   (bounds 320.00 1224.00)
                   (drawsContent 1)
                 )

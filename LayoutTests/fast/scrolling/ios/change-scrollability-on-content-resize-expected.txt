@@ -86,6 +86,7 @@
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=5 height=5)
+                      (anchor 0.00 0.00)
                       (bounds 200.00 400.00)
                       (drawsContent 1)
                       (visible rect 0.00, 0.00 200.00 x 200.00)
@@ -117,6 +118,7 @@
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=5 height=5)
+                      (anchor 0.00 0.00)
                       (bounds 200.00 400.00)
                       (drawsContent 1)
                       (visible rect 0.00, 0.00 200.00 x 200.00)
@@ -140,6 +142,7 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -154,6 +157,7 @@
     (Overflow scrolling node
       (scrollable area size 200 200)
       (contents size 200 400)
+      (parent relative scrollable rect at (260,10) size 200x200)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
@@ -163,6 +167,7 @@
     (Overflow scrolling node
       (scrollable area size 200 200)
       (contents size 200 400)
+      (parent relative scrollable rect at (260,260) size 200x200)
       (scrollable area parameters 
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)

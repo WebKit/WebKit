@@ -1,3 +1,46 @@
+2019-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some basic geometry information to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=194002
+        rdar://problem/47656294
+
+        Reviewed by Antti Koivisto.
+
+        To allow hit-testing in the scrolling tree, store a parent-relative scrollable
+        rect in "scrolling" and "frame hosting" nodes. This is a rect whose size is the size
+        of the scrollable area, and whose origin is relative to the parent scrolling tree node.
+        
+        Frame hosting nodes need this rect because they take care of the geometry offset between
+        an iframe and its scrolling tree ancestor in the parent document.
+        
+        Based on a patch by Frédéric Wang in bug 172917.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeGeometry):
+        * page/scrolling/ScrollingStateFrameHostingNode.cpp:
+        (WebCore::ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode):
+        (WebCore::ScrollingStateFrameHostingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateFrameHostingNode::setParentRelativeScrollableRect):
+        (WebCore::ScrollingStateFrameHostingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateFrameHostingNode.h:
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp:
+        (WebCore::ScrollingTreeFrameHostingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameHostingNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeFrameHostingNode.h:
+        (WebCore::ScrollingTreeFrameHostingNode::parentRelativeScrollableRect const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeFrameScrollingGeometry const):
+        (WebCore::RenderLayerCompositor::computeFrameHostingGeometry const):
+        (WebCore::RenderLayerCompositor::computeOverflowScrollingGeometry const):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForFrameHostingRole):
+        (WebCore::RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView const):
+        (WebCore::RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Use the used margin values in outOfFlowReplacedVerticalGeometry consistently

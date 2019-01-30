@@ -397,6 +397,9 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
+    IntSize visibleSize() const override;
+    IntSize contentsSize() const override;
+
     int scrollWidth() const;
     int scrollHeight() const;
 
@@ -1030,8 +1033,6 @@ private:
     void setScrollOffset(const ScrollOffset&) override;
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
-    IntSize visibleSize() const override;
-    IntSize contentsSize() const override;
     IntSize overhangAmount() const override;
     IntPoint lastKnownMousePosition() const override;
     bool isHandlingWheelEvent() const override;

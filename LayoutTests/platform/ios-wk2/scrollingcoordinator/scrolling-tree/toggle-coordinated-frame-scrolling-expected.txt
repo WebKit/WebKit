@@ -5,6 +5,7 @@ Scrolling tree on non-scrollable
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 645)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -17,10 +18,12 @@ Scrolling tree on non-scrollable
   (behavior for fixed 0)
   (children 1
     (Frame hosting node
+      (parent relative scrollable rect at (30,30) size 600x500)
       (children 1
         (Frame scrolling node
           (scrollable area size 600 500)
           (contents size 600 1024)
+          (parent relative scrollable rect at (0,0) size 600x500)
           (scrollable area parameters 
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
@@ -33,10 +36,12 @@ Scrolling tree on non-scrollable
           (behavior for fixed 0)
           (children 1
             (Frame hosting node
+              (parent relative scrollable rect at (10,54) size 500x400)
               (children 1
                 (Frame scrolling node
                   (scrollable area size 500 400)
                   (contents size 500 1024)
+                  (parent relative scrollable rect at (0,0) size 500x400)
                   (scrollable area parameters 
                     (horizontal scroll elasticity 1)
                     (vertical scroll elasticity 1)
@@ -62,7 +67,8 @@ Scrolling tree on scrollable
 
 (Frame scrolling node
   (scrollable area size 800 600)
-  (contents size 800 1445)
+  (contents size 800 1515)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -71,14 +77,16 @@ Scrolling tree on scrollable
   (visual viewport enabled 1)
   (layout viewport at (0,0) size 800x600)
   (min layout viewport origin (0,0))
-  (max layout viewport origin (0,845))
+  (max layout viewport origin (0,915))
   (behavior for fixed 0)
   (children 1
     (Frame hosting node
+      (parent relative scrollable rect at (30,30) size 600x500)
       (children 1
         (Frame scrolling node
           (scrollable area size 600 500)
           (contents size 600 500)
+          (parent relative scrollable rect at (0,0) size 600x500)
           (scrollable area parameters 
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
@@ -91,10 +99,12 @@ Scrolling tree on scrollable
           (behavior for fixed 0)
           (children 1
             (Frame hosting node
+              (parent relative scrollable rect at (10,54) size 500x400)
               (children 1
                 (Frame scrolling node
                   (scrollable area size 500 400)
                   (contents size 500 1024)
+                  (parent relative scrollable rect at (0,0) size 500x400)
                   (scrollable area parameters 
                     (horizontal scroll elasticity 1)
                     (vertical scroll elasticity 1)

@@ -35,6 +35,7 @@
               (contentsScale 2.00)
               (children 1
                 (GraphicsLayer
+                  (anchor 0.00 0.00)
                   (bounds 300.00 510.00)
                   (drawsContent 1)
                   (visible rect 0.00, 13.00 300.00 x 287.00)
@@ -62,6 +63,7 @@
                           (children 1
                             (GraphicsLayer
                               (offsetFromRenderer width=5 height=5)
+                              (anchor 0.00 0.00)
                               (bounds 270.00 610.00)
                               (drawsContent 1)
                               (visible rect 0.00, 0.00 200.00 x 245.00)

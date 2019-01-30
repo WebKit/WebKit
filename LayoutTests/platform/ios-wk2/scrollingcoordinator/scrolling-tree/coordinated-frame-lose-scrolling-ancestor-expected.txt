@@ -2,6 +2,7 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 1016)
+  (parent relative scrollable rect at (0,0) size 800x600)
   (scrollable area parameters 
     (horizontal scroll elasticity 1)
     (vertical scroll elasticity 1)
@@ -14,10 +15,12 @@
   (behavior for fixed 0)
   (children 1
     (Frame hosting node
+      (parent relative scrollable rect at (37,39) size 500x300)
       (children 1
         (Frame scrolling node
           (scrollable area size 500 300)
           (contents size 500 420)
+          (parent relative scrollable rect at (0,0) size 500x300)
           (scrollable area parameters 
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
@@ -32,6 +35,7 @@
             (Overflow scrolling node
               (scrollable area size 400 300)
               (contents size 400 1760)
+              (parent relative scrollable rect at (10,10) size 400x300)
               (scrollable area parameters 
                 (horizontal scroll elasticity 1)
                 (vertical scroll elasticity 1)

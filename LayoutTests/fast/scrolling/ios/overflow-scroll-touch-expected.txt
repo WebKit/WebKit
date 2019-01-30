@@ -23,6 +23,7 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,50))
+                  (anchor 0.00 0.00)
                   (bounds 200.00 400.00)
                   (drawsContent 1)
                 )
@@ -44,6 +45,7 @@
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (scrollOffset (0,50))
+                  (anchor 0.00 0.00)
                   (bounds 200.00 400.00)
                   (drawsContent 1)
                 )

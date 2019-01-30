@@ -181,6 +181,7 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
 void ArgumentCoder<ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const ScrollingStateFrameHostingNode& node)
 {
     encoder << static_cast<const ScrollingStateNode&>(node);
+    // ParentRelativeScrollableRect isn't used so we don't encode it.
 }
 
 void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)

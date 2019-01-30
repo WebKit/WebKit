@@ -352,7 +352,7 @@ public:
     void updateRootContentLayerClipping();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateScrollSnapPropertiesWithFrameView(const FrameView&);
+    void updateScrollSnapPropertiesWithFrameView(const FrameView&) const;
 #endif
 
     // For testing.
@@ -496,6 +496,10 @@ private:
     
     FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer&) const;
     StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer&) const;
+
+    void computeFrameScrollingGeometry(ScrollingCoordinator::ScrollingGeometry&) const;
+    void computeFrameHostingGeometry(const RenderLayer&, const RenderLayer* ancestorLayer, ScrollingCoordinator::ScrollingGeometry&) const;
+    void computeOverflowScrollingGeometry(const RenderLayer&, const RenderLayer* ancestorLayer, ScrollingCoordinator::ScrollingGeometry&) const;
 
     bool requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;

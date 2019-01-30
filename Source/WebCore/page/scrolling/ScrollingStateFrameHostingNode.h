@@ -40,11 +40,22 @@ public:
 
     virtual ~ScrollingStateFrameHostingNode();
 
+    enum ChangedProperty {
+        ParentRelativeScrollableRect = NumStateNodeBits
+    };
+
+    const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
+    WEBCORE_EXPORT void setParentRelativeScrollableRect(const LayoutRect&);
+
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
 private:
     ScrollingStateFrameHostingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFrameHostingNode(const ScrollingStateFrameHostingNode&, ScrollingStateTree&);
+
+    void setAllPropertiesChanged() override;
+
+    LayoutRect m_parentRelativeScrollableRect;
 };
 
 } // namespace WebCore

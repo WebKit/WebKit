@@ -46,6 +46,7 @@ ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(ScrollingStateTre
 
 ScrollingStateFrameHostingNode::ScrollingStateFrameHostingNode(const ScrollingStateFrameHostingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateNode(stateNode, adoptiveTree)
+    , m_parentRelativeScrollableRect(stateNode.parentRelativeScrollableRect())
 {
 }
 
@@ -56,10 +57,29 @@ Ref<ScrollingStateNode> ScrollingStateFrameHostingNode::clone(ScrollingStateTree
     return adoptRef(*new ScrollingStateFrameHostingNode(*this, adoptiveTree));
 }
 
+void ScrollingStateFrameHostingNode::setAllPropertiesChanged()
+{
+    setPropertyChangedBit(ParentRelativeScrollableRect);
+
+    ScrollingStateNode::setAllPropertiesChanged();
+}
+
+void ScrollingStateFrameHostingNode::setParentRelativeScrollableRect(const LayoutRect& parentRelativeScrollableRect)
+{
+    if (m_parentRelativeScrollableRect == parentRelativeScrollableRect)
+        return;
+
+    m_parentRelativeScrollableRect = parentRelativeScrollableRect;
+    setPropertyChanged(ParentRelativeScrollableRect);
+}
+
 void ScrollingStateFrameHostingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "Frame hosting node";
     ScrollingStateNode::dumpProperties(ts, behavior);
+
+    if (!m_parentRelativeScrollableRect.isEmpty())
+        ts.dumpProperty("parent relative scrollable rect", m_parentRelativeScrollableRect);
 }
 
 } // namespace WebCore

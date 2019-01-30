@@ -1,3 +1,85 @@
+2019-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some basic geometry information to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=194002
+        rdar://problem/47656294
+
+        Reviewed by Antti Koivisto.
+        
+        New test results with "parent relative scrollable rect" output and 0,0 anchorPoints.
+
+        * compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+        * fast/scrolling/ios/change-scrollability-on-content-resize-expected.txt:
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested-expected.txt:
+        * fast/scrolling/ios/overflow-scroll-touch-expected.txt:
+        * fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt:
+        * fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * platform/ios/compositing/overflow/overflow-auto-with-touch-expected.txt:
+        * platform/ios/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt:
+        * platform/ios/compositing/overflow/overflow-overlay-with-touch-expected.txt:
+        * platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios/compositing/overflow/scrolling-without-painting-expected.txt:
+        * platform/ios/compositing/overflow/textarea-scroll-touch-expected.txt:
+        * platform/ios/compositing/overflow/updating-scrolling-content-expected.txt:
+        * platform/ios/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * platform/ios/compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ios/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios/fast/scrolling/ios/textarea-scroll-touch-expected.txt:
+        * platform/ios/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-in-overflow-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-in-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/nested-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/percentage-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2019-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Use the used margin values in outOfFlowReplacedVerticalGeometry consistently
