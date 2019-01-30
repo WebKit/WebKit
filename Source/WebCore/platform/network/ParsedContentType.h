@@ -47,7 +47,8 @@ WEBCORE_EXPORT bool isValidContentType(const String&, Mode = Mode::MimeSniff);
 // FIXME: add support for comments.
 class ParsedContentType {
 public:
-    explicit ParsedContentType(const String&, Mode = Mode::MimeSniff);
+    static Optional<ParsedContentType> create(const String&, Mode = Mode::MimeSniff);
+    ParsedContentType(ParsedContentType&&) = default;
 
     String mimeType() const { return m_mimeType; }
     String charset() const;
@@ -57,8 +58,10 @@ public:
     size_t parameterCount() const;
 
 private:
-    template<class ReceiverType>
-    friend bool parseContentType(const String&, ReceiverType&, Mode);
+    ParsedContentType(const String&);
+    ParsedContentType(const ParsedContentType&) = delete;
+    ParsedContentType& operator=(ParsedContentType const&) = delete;
+    bool parseContentType(Mode);
     void setContentType(const SubstringRange&, Mode);
     void setContentTypeParameter(const String&, const String&, Mode);
 

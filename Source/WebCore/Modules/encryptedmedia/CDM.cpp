@@ -433,12 +433,12 @@ Optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabilitiesFor
             return WTF::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
-        if (!isValidContentType(requestedCapability.contentType, Mode::Rfc2045))
+        Optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
+        if (!contentType)
             continue;
 
         // 3.5. Let container be the container type specified by content type.
-        ParsedContentType contentType { requestedCapability.contentType };
-        String container = contentType.mimeType();
+        String container = contentType->mimeType();
 
         // 3.6. If the user agent does not support container, continue to the next iteration. The case-sensitivity
         //      of string comparisons is determined by the appropriate RFC.
@@ -446,8 +446,8 @@ Optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabilitiesFor
         // 3.8. If the user agent does not recognize one or more parameters, continue to the next iteration.
         // 3.9. Let media types be the set of codecs and codec constraints specified by parameters. The case-sensitivity
         //      of string comparisons is determined by the appropriate RFC or other specification.
-        String codecs = contentType.parameterValueForName("codecs");
-        if (contentType.parameterCount() > (codecs.isEmpty() ? 0 : 1))
+        String codecs = contentType->parameterValueForName("codecs");
+        if (contentType->parameterCount() > (codecs.isEmpty() ? 0 : 1))
             continue;
 
         // 3.10. If media types is empty:
@@ -467,7 +467,7 @@ Optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabilitiesFor
         //       combination of container, media types, robustness and local accumulated configuration in combination
         //       with restrictions:
         MediaEngineSupportParameters parameters;
-        parameters.type = ContentType(contentType.mimeType());
+        parameters.type = ContentType(contentType->mimeType());
         if (!MediaPlayer::supportsType(parameters)) {
             // Try with Media Source:
             parameters.isMediaSource = true;

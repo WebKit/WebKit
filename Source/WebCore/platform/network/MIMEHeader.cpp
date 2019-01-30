@@ -87,13 +87,19 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
-        ParsedContentType parsedContentType(mimeParametersIterator->value, Mode::Rfc2045);
-        mimeHeader->m_contentType = parsedContentType.mimeType();
+        String contentType, charset, multipartType, endOfPartBoundary;
+        if (auto parsedContentType = ParsedContentType::create(mimeParametersIterator->value)) {
+            contentType = parsedContentType->mimeType();
+            charset = parsedContentType->charset().stripWhiteSpace();
+            multipartType = parsedContentType->parameterValueForName("type");
+            endOfPartBoundary = parsedContentType->parameterValueForName("boundary");
+        }
+        mimeHeader->m_contentType = contentType;
         if (!mimeHeader->isMultipart())
-            mimeHeader->m_charset = parsedContentType.charset().stripWhiteSpace();
+            mimeHeader->m_charset = charset;
         else {
-            mimeHeader->m_multipartType = parsedContentType.parameterValueForName("type");
-            mimeHeader->m_endOfPartBoundary = parsedContentType.parameterValueForName("boundary");
+            mimeHeader->m_multipartType = multipartType;
+            mimeHeader->m_endOfPartBoundary = endOfPartBoundary;
             if (mimeHeader->m_endOfPartBoundary.isNull()) {
                 LOG_ERROR("No boundary found in multipart MIME header.");
                 return nullptr;

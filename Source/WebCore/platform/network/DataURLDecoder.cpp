@@ -28,6 +28,7 @@
 
 #include "DecodeEscapeSequences.h"
 #include "HTTPParsers.h"
+#include "ParsedContentType.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include <wtf/MainThread.h>
@@ -47,18 +48,9 @@ static WorkQueue& decodeQueue()
 
 static Result parseMediaType(const String& mediaType)
 {
-    auto mimeType = extractMIMETypeFromMediaType(mediaType);
-    auto charset = extractCharsetFromMediaType(mediaType);
-
-    // https://tools.ietf.org/html/rfc2397
-    // If <mediatype> is omitted, it defaults to text/plain;charset=US-ASCII. As a shorthand,
-    // "text/plain" can be omitted but the charset parameter supplied.
-    if (mimeType.isEmpty()) {
-        mimeType = "text/plain"_s;
-        if (charset.isEmpty())
-            charset = "US-ASCII"_s;
-    }
-    return { mimeType, charset, !mediaType.isEmpty() ? mediaType : "text/plain;charset=US-ASCII", nullptr };
+    if (Optional<ParsedContentType> parsedContentType = ParsedContentType::create(mediaType))
+        return { parsedContentType->mimeType(), parsedContentType->charset(), mediaType, nullptr };
+    return { "text/plain"_s, "US-ASCII"_s, "text/plain;charset=US-ASCII"_s, nullptr };
 }
 
 struct DecodeTask {
@@ -87,6 +79,9 @@ public:
         auto header = StringView(urlString).substring(strlen(dataString), headerEnd - strlen(dataString));
         isBase64 = header.endsWithIgnoringASCIICase(StringView(base64String));
         auto mediaType = (isBase64 ? header.substring(0, header.length() - strlen(base64String)) : header).toString();
+        mediaType = mediaType.stripWhiteSpace();
+        if (mediaType.startsWith(';'))
+            mediaType.insert("text/plain", 0);
         result = parseMediaType(mediaType);
 
         return true;

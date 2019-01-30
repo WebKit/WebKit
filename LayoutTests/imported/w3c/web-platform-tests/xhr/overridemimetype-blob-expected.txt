@@ -51,7 +51,7 @@ PASS 46) MIME types need to be parsed and serialized:
 PASS 47) MIME types need to be parsed and serialized: / 
 PASS 48) MIME types need to be parsed and serialized: bogus 
 PASS 49) MIME types need to be parsed and serialized: bogus/ 
-FAIL 50) MIME types need to be parsed and serialized: bogus/  assert_equals: expected "application/octet-stream" but got "bogus/"
+PASS 50) MIME types need to be parsed and serialized: bogus/  
 PASS 51) MIME types need to be parsed and serialized: bogus/bogus/; 
 PASS 52) MIME types need to be parsed and serialized: </> 
 PASS 53) MIME types need to be parsed and serialized: (/) 
