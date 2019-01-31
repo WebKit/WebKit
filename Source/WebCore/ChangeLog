@@ -1,3 +1,18 @@
+2019-01-31  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Momentum scrolling stops abruptly before websites end
+        https://bugs.webkit.org/show_bug.cgi?id=193350
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't immediately set velocity to 0 when position reaches upper or bottom limit.
+        Instead, set it to the overshot distance, so that position exactly matches upper
+        or lower limit on the next frame, and then clamp velocity to 0 using the existing
+        mechanism.
+
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::PerAxisData::animateScroll):
+
 2019-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix incorrect string format

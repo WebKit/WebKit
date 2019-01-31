@@ -89,12 +89,14 @@ bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
     m_velocity = -decelFriction * m_coef2 * exponentialPart;
 
     if (m_position < m_lower) {
+        m_velocity = m_lower - m_position;
         m_position = m_lower;
-        m_velocity = 0;
     } else if (m_position > m_upper) {
+        m_velocity = m_upper - m_position;
         m_position = m_upper;
-        m_velocity = 0;
-    } else if (fabs(m_velocity) < 1 || (lastTime && fabs(m_position - lastPosition) < 1)) {
+    }
+
+    if (fabs(m_velocity) < 1 || (lastTime && fabs(m_position - lastPosition) < 1)) {
         m_position = round(m_position);
         m_velocity = 0;
     }
