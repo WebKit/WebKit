@@ -1,3 +1,12 @@
+2019-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix GCC build after r240730
+        https://bugs.webkit.org/show_bug.cgi?id=194041
+        <rdar://problem/47680981>
+
+        * disassembler/udis86/ud_itab.py:
+        (UdItabGenerator.genOpcodeTablesLookupIndex):
+
 2019-01-30  Tadeu Zagallo  <tzagallo@apple.com>
 
         testapi's `testBytecodeCache` does not need to run the code twice
