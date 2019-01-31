@@ -1,3 +1,20 @@
+2019-01-30  Keith Rollin  <krollin@apple.com>
+
+        Add default constructor for NetworkActivityTracker
+        https://bugs.webkit.org/show_bug.cgi?id=194058
+        <rdar://problem/47685457>
+
+        Reviewed by Chris Dumez.
+
+        ResourceNetworkActivityTracker has a default constructor. It also has
+        a NetworkActivityTracker data member, which does not have a default
+        constructor. This will cause some compilers to complain -- they can't
+        default-create a ResourceNetworkActivityTracker because they can't
+        default-create its data members. Address this by adding a default
+        constructor for NetworkActivityTracker.
+
+        * NetworkProcess/NetworkActivityTracker.h:
+
 2019-01-30  Daniel Steffen  <dsteffen@apple.com>
 
         <rdar://problem/29471922> Safari should switch from the legacy denap SPI to handling vouchers
