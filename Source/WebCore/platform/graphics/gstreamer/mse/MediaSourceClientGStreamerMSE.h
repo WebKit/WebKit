@@ -60,7 +60,7 @@ public:
 private:
     MediaSourceClientGStreamerMSE(MediaPlayerPrivateGStreamerMSE&);
 
-    MediaPlayerPrivateGStreamerMSE* m_playerPrivate;
+    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     MediaTime m_duration;
 };
 

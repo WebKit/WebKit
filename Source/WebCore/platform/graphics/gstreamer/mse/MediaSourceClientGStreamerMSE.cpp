@@ -45,7 +45,7 @@ Ref<MediaSourceClientGStreamerMSE> MediaSourceClientGStreamerMSE::create(MediaPl
 }
 
 MediaSourceClientGStreamerMSE::MediaSourceClientGStreamerMSE(MediaPlayerPrivateGStreamerMSE& playerPrivate)
-    : m_playerPrivate(&playerPrivate)
+    : m_playerPrivate(playerPrivate)
     , m_duration(MediaTime::invalidTime())
 {
     ASSERT(WTF::isMainThread());
@@ -60,14 +60,14 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamerMSE::addSourceBuffer(Ref
 {
     ASSERT(WTF::isMainThread());
 
-    ASSERT(m_playerPrivate->m_playbackPipeline);
+    ASSERT(m_playerPrivate.m_playbackPipeline);
     ASSERT(sourceBufferPrivate);
 
-    RefPtr<AppendPipeline> appendPipeline = adoptRef(new AppendPipeline(*this, *sourceBufferPrivate, *m_playerPrivate));
+    RefPtr<AppendPipeline> appendPipeline = adoptRef(new AppendPipeline(*this, *sourceBufferPrivate, m_playerPrivate));
     GST_TRACE("Adding SourceBuffer to AppendPipeline: this=%p sourceBuffer=%p appendPipeline=%p", this, sourceBufferPrivate.get(), appendPipeline.get());
-    m_playerPrivate->m_appendPipelinesMap.add(sourceBufferPrivate, appendPipeline);
+    m_playerPrivate.m_appendPipelinesMap.add(sourceBufferPrivate, appendPipeline);
 
-    return m_playerPrivate->m_playbackPipeline->addSourceBuffer(sourceBufferPrivate);
+    return m_playerPrivate.m_playbackPipeline->addSourceBuffer(sourceBufferPrivate);
 }
 
 const MediaTime& MediaSourceClientGStreamerMSE::duration()
@@ -86,7 +86,7 @@ void MediaSourceClientGStreamerMSE::durationChanged(const MediaTime& duration)
         return;
 
     m_duration = duration;
-    m_playerPrivate->durationChanged();
+    m_playerPrivate.durationChanged();
 }
 
 void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
@@ -95,7 +95,7 @@ void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> s
 
     GST_DEBUG("aborting");
 
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
+    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
 
     ASSERT(appendPipeline);
 
@@ -108,7 +108,7 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
 
     GST_DEBUG("resetting parser state");
 
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
+    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
 
     ASSERT(appendPipeline);
 
@@ -123,7 +123,7 @@ void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
 
     ASSERT(m_playerPrivate);
 
-    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
+    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
 
     ASSERT(appendPipeline);
 
@@ -143,21 +143,21 @@ void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStr
 {
     ASSERT(WTF::isMainThread());
 
-    m_playerPrivate->markEndOfStream(status);
+    m_playerPrivate.markEndOfStream(status);
 }
 
 void MediaSourceClientGStreamerMSE::removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
 {
     ASSERT(WTF::isMainThread());
 
-    ASSERT(m_playerPrivate->m_playbackPipeline);
+    ASSERT(m_playerPrivate.m_playbackPipeline);
 
     // Remove the AppendPipeline from the map. This should cause its destruction since there should be no alive
     // references at this point.
-    ASSERT(m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate)->hasOneRef());
-    m_playerPrivate->m_appendPipelinesMap.remove(sourceBufferPrivate);
+    ASSERT(m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate)->hasOneRef());
+    m_playerPrivate.m_appendPipelinesMap.remove(sourceBufferPrivate);
 
-    m_playerPrivate->m_playbackPipeline->removeSourceBuffer(sourceBufferPrivate);
+    m_playerPrivate.m_playbackPipeline->removeSourceBuffer(sourceBufferPrivate);
 }
 
 void MediaSourceClientGStreamerMSE::flush(AtomicString trackId)
@@ -165,29 +165,29 @@ void MediaSourceClientGStreamerMSE::flush(AtomicString trackId)
     ASSERT(WTF::isMainThread());
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
-    if (!m_playerPrivate->m_seeking)
-        m_playerPrivate->m_playbackPipeline->flush(trackId);
+    if (!m_playerPrivate.m_seeking)
+        m_playerPrivate.m_playbackPipeline->flush(trackId);
 }
 
 void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample)
 {
     ASSERT(WTF::isMainThread());
 
-    m_playerPrivate->m_playbackPipeline->enqueueSample(WTFMove(sample));
+    m_playerPrivate.m_playbackPipeline->enqueueSample(WTFMove(sample));
 }
 
 void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomicString& trackId)
 {
     ASSERT(WTF::isMainThread());
 
-    m_playerPrivate->m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
+    m_playerPrivate.m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
 }
 
 GRefPtr<WebKitMediaSrc> MediaSourceClientGStreamerMSE::webKitMediaSrc()
 {
     ASSERT(WTF::isMainThread());
 
-    WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(m_playerPrivate->m_source.get());
+    WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(m_playerPrivate.m_source.get());
 
     ASSERT(WEBKIT_IS_MEDIA_SRC(source));
 

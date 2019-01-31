@@ -1,3 +1,29 @@
+2019-01-31  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Use reference instead of pointer in m_playerPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=194091
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Since the pointer is initialized with the class, it's never null and
+        never changes, it's preferrable to use a reference instead of a
+        pointer.
+
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::MediaSourceClientGStreamerMSE):
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::durationChanged):
+        (WebCore::MediaSourceClientGStreamerMSE::abort):
+        (WebCore::MediaSourceClientGStreamerMSE::resetParserState):
+        (WebCore::MediaSourceClientGStreamerMSE::append):
+        (WebCore::MediaSourceClientGStreamerMSE::markEndOfStream):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        (WebCore::MediaSourceClientGStreamerMSE::flush):
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        (WebCore::MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued):
+        (WebCore::MediaSourceClientGStreamerMSE::webKitMediaSrc):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+
 2019-01-31  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Momentum scrolling stops abruptly before websites end
