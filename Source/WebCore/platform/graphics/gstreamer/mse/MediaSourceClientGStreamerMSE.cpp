@@ -121,8 +121,6 @@ void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
 
     GST_DEBUG("Appending %zu bytes", data.size());
 
-    ASSERT(m_playerPrivate);
-
     RefPtr<AppendPipeline> appendPipeline = m_playerPrivate.m_appendPipelinesMap.get(sourceBufferPrivate);
 
     ASSERT(appendPipeline);
