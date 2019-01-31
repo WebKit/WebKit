@@ -331,9 +331,11 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     ASSERT(targetList.size() <= 1);
     if (targetList.isEmpty()) {
         m_target = Target();
-        m_connectionID = 0;
-        if (m_dbusConnection)
-            g_dbus_connection_close(m_dbusConnection.get(), nullptr, nullptr, nullptr);
+        if (m_connectionID) {
+            if (m_dbusConnection)
+                g_dbus_connection_close(m_dbusConnection.get(), nullptr, nullptr, nullptr);
+            m_connectionID = 0;
+        }
         return;
     }
 
