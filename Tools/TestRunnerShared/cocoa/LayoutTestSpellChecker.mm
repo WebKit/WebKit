@@ -162,7 +162,7 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p type=%tu range=[%tu, %tu] replacement='%@'>", self.class, self, _type, _range.location, _range.location + _range.length, _replacement.get()];
+    return [NSString stringWithFormat:@"<%@ %p type=%llu range=[%tu, %tu] replacement='%@'>", self.class, self, _type, _range.location, _range.location + _range.length, _replacement.get()];
 }
 
 @end
