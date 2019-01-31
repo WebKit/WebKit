@@ -670,7 +670,7 @@ void WebFrameLoaderClient::dispatchWillClose()
 #endif
 }
 
-void WebFrameLoaderClient::dispatchDidStartProvisionalLoad(CompletionHandler<void()>&& completionHandler)
+void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     ASSERT(!m_webFrame->_private->provisionalURL);
     m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
@@ -687,7 +687,6 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad(CompletionHandler<voi
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didStartProvisionalLoadForFrameFunc)
         CallFrameLoadDelegate(implementations->didStartProvisionalLoadForFrameFunc, webView, @selector(webView:didStartProvisionalLoadForFrame:), m_webFrame.get());
-    completionHandler();
 }
 
 static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.

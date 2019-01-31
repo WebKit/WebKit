@@ -1215,20 +1215,19 @@ void FrameLoader::started()
         frame->loader().m_isComplete = false;
 }
 
-void FrameLoader::prepareForLoadStart(CompletionHandler<void()>&& completionHandler)
+void FrameLoader::prepareForLoadStart()
 {
     RELEASE_LOG_IF_ALLOWED("prepareForLoadStart: Starting frame load (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 
     m_progressTracker->progressStarted();
-    m_client.dispatchDidStartProvisionalLoad([this, protectedFrame = makeRef(m_frame), completionHandler = WTFMove(completionHandler)] () mutable {
-        if (AXObjectCache::accessibilityEnabled()) {
-            if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
-                AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadType::Reload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
-                cache->frameLoadingEventNotification(&m_frame, loadingEvent);
-            }
+    m_client.dispatchDidStartProvisionalLoad();
+
+    if (AXObjectCache::accessibilityEnabled()) {
+        if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
+            AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadType::Reload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
+            cache->frameLoadingEventNotification(&m_frame, loadingEvent);
         }
-        completionHandler();
-    });
+    }
 }
 
 void FrameLoader::setupForReplace()
@@ -3439,25 +3438,24 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             return;
         }
         
-        prepareForLoadStart([this, protectedFrame = WTFMove(protectedFrame)] {
+        prepareForLoadStart();
 
-            // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
-            // so we need to null check it again.
-            if (!m_provisionalDocumentLoader) {
-                RELEASE_LOG_IF_ALLOWED("prepareForLoadStart completionHandler: Frame load canceled #2 (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-                return;
-            }
-            
-            DocumentLoader* activeDocLoader = activeDocumentLoader();
-            if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
-                RELEASE_LOG_IF_ALLOWED("prepareForLoadStart completionHandler: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-                return;
-            }
-            
-            m_loadingFromCachedPage = false;
+        // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
+        // so we need to null check it again.
+        if (!m_provisionalDocumentLoader) {
+            RELEASE_LOG_IF_ALLOWED("prepareForLoadStart completionHandler: Frame load canceled #2 (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+            return;
+        }
+        
+        DocumentLoader* activeDocLoader = activeDocumentLoader();
+        if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
+            RELEASE_LOG_IF_ALLOWED("prepareForLoadStart completionHandler: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+            return;
+        }
+        
+        m_loadingFromCachedPage = false;
 
-            m_provisionalDocumentLoader->startLoadingMainResource();
-        });
+        m_provisionalDocumentLoader->startLoadingMainResource();
     };
     
     if (!formState) {
@@ -3599,20 +3597,20 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 
 void FrameLoader::loadProvisionalItemFromCachedPage()
 {
-    prepareForLoadStart([this, protectedFrame = makeRef(m_frame)] {
-        DocumentLoader* provisionalLoader = provisionalDocumentLoader();
-        LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
+    DocumentLoader* provisionalLoader = provisionalDocumentLoader();
+    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
 
-        m_loadingFromCachedPage = true;
-        
-        // Should have timing data from previous time(s) the page was shown.
-        ASSERT(provisionalLoader->timing().startTime());
-        provisionalLoader->resetTiming();
-        provisionalLoader->timing().markStartTime();
-        
-        provisionalLoader->setCommitted(true);
-        commitProvisionalLoad();
-    });
+    prepareForLoadStart();
+
+    m_loadingFromCachedPage = true;
+    
+    // Should have timing data from previous time(s) the page was shown.
+    ASSERT(provisionalLoader->timing().startTime());
+    provisionalLoader->resetTiming();
+    provisionalLoader->timing().markStartTime();
+    
+    provisionalLoader->setCommitted(true);
+    commitProvisionalLoad();
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const URL& url) const

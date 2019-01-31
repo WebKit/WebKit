@@ -389,7 +389,7 @@ private:
 
     void loadInSameDocument(const URL&, SerializedScriptValue* stateObject, bool isNewNavigation);
 
-    void prepareForLoadStart(CompletionHandler<void()>&&);
+    void prepareForLoadStart();
     void provisionalLoadStarted();
 
     void willTransitionToCommitted();

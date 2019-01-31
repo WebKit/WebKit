@@ -1,3 +1,13 @@
+2019-01-31  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r238819 which is unneeded and caused a performance regression.
+        https://bugs.webkit.org/show_bug.cgi?id=192272
+        <rdar://problem/46664625>
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ParserYieldTokenPlugIn.mm:
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:didCommitLoadForFrame:]):
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:willStartProvisionalLoadForFrame:completionHandler:]): Deleted.
+
 2019-01-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         Formalize WebKitAdditions mechanism of LoadOptimizer

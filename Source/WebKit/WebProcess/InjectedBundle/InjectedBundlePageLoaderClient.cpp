@@ -81,14 +81,14 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
     m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string().impl()), toAPI(userData), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, CompletionHandler<void(RefPtr<API::Object>&&)>&& completionHandler)
+void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
 {
     if (!m_client.didStartProvisionalLoadForFrame)
-        return completionHandler(nullptr);
+        return;
 
     WKTypeRef userDataToPass = nullptr;
     m_client.didStartProvisionalLoadForFrame(toAPI(&page), toAPI(&frame), &userDataToPass, m_client.base.clientInfo);
-    completionHandler(adoptRef(toImpl(userDataToPass)));
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
 void InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)

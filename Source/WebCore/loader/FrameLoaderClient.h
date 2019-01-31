@@ -173,7 +173,7 @@ public:
     virtual void dispatchDidPopStateWithinPage() = 0;
     virtual void dispatchWillClose() = 0;
     virtual void dispatchDidReceiveIcon() { }
-    virtual void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&&) = 0;
+    virtual void dispatchDidStartProvisionalLoad() = 0;
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
     virtual void dispatchDidCommitLoad(Optional<HasInsecureContent>) = 0;
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&) = 0;

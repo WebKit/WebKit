@@ -419,13 +419,12 @@ void WebFrameLoaderClient::dispatchWillClose()
         frameLoadDelegate->willCloseFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidStartProvisionalLoad(CompletionHandler<void()>&& completionHandler)
+void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
         frameLoadDelegate->didStartProvisionalLoadForFrame(webView, m_webFrame);
-    completionHandler();
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
