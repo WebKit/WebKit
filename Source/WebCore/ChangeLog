@@ -1,3 +1,23 @@
+2019-01-31  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Requesting PiP from two different WebViews gets PiP window "stuck"
+        https://bugs.webkit.org/show_bug.cgi?id=194099
+        <rdar://problem/47271323>
+
+        Reviewed by Eric Carlson.
+
+        When a different client requests the PiP window, the PiP framework will call -pipDidClose: without
+        first calling -pipActionStop:. This leaves the internal fullscreen state in a confused state where
+        the WebView will attempt to re-enter PiP once it gets focus, and can lead to a state where the two
+        WebViews will constantly try to steal PiP from one another, ad infinitum.
+
+        When receiving a notification that the PiP window closed when our internal state tells us that the
+        close was not requested, notify the client that PiP mode was exited, allowing them to set their
+        expected state to a correct and sane value.
+
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (-[WebVideoFullscreenInterfaceMacObjC pipDidClose:]):
+
 2019-01-31  Keith Rollin  <krollin@apple.com>
 
         WebCore::WHLSL::AST::Expression copy constructor needs to be be default, not delete
