@@ -1,3 +1,21 @@
+2019-01-31  Keith Rollin  <krollin@apple.com>
+
+        WebCore::WHLSL::AST::Expression copy constructor needs to be be default, not delete
+        https://bugs.webkit.org/show_bug.cgi?id=194055
+        <rdar://problem/47684570>
+
+        Reviewed by Myles C. Maxfield.
+
+        WebCore::WHLSL::AST::Expression has a deleted copy constructor.
+        EnumerationMemberLiteral, a subclass, has a default copy constructor.
+        Some compilers may complain that the latter's c'tor can't access the
+        former's, because it doesn't exist. Fix this by marking Expression's
+        c'tor as default.
+
+        No new tests since there should be no observable behavior difference.
+
+        * Modules/webgpu/WHLSL/AST/WHLSLExpression.h:
+
 2019-01-31  Alex Christensen  <achristensen@webkit.org>
 
         Revert r238819 which is unneeded and caused a performance regression.

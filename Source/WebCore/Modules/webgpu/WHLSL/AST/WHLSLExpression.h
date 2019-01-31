@@ -49,7 +49,7 @@ public:
 
     virtual ~Expression() = default;
 
-    Expression(const Expression&) = delete;
+    Expression(const Expression&) = default;
     Expression(Expression&&) = default;
 
     Expression& operator=(const Expression&) = default;
