@@ -183,7 +183,38 @@ public:
 
     DECLARE_INFO;
 
-    InferredValue* singletonFunction() { return m_singletonFunction.get(); }
+    InferredValue* singletonFunction()
+    {
+        if (VM::canUseJIT())
+            return m_singletonFunction.get();
+        return nullptr;
+    }
+
+    void notifyCreation(VM& vm, JSValue value, const char* reason)
+    {
+        if (VM::canUseJIT()) {
+            singletonFunction()->notifyWrite(vm, value, reason);
+            return;
+        }
+        switch (m_singletonFunctionState) {
+        case ClearWatchpoint:
+            m_singletonFunctionState = IsWatched;
+            return;
+        case IsWatched:
+            m_singletonFunctionState = IsInvalidated;
+            return;
+        case IsInvalidated:
+            return;
+        }
+    }
+
+    bool singletonFunctionHasBeenInvalidated()
+    {
+        if (VM::canUseJIT())
+            return singletonFunction()->hasBeenInvalidated();
+        return m_singletonFunctionState == IsInvalidated;
+    }
+
     // Cached poly proto structure for the result of constructing this executable.
     Structure* cachedPolyProtoStructure() { return m_cachedPolyProtoStructure.get(); }
     void setCachedPolyProtoStructure(VM& vm, Structure* structure) { m_cachedPolyProtoStructure.set(vm, this, structure); }
@@ -212,7 +243,10 @@ private:
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
-    WriteBarrier<InferredValue> m_singletonFunction;
+    union {
+        WriteBarrier<InferredValue> m_singletonFunction;
+        WatchpointState m_singletonFunctionState;
+    };
     WriteBarrier<Structure> m_cachedPolyProtoStructure;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 };

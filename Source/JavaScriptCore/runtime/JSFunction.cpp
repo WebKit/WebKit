@@ -84,7 +84,7 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSFunction* result = createImpl(vm, executable, scope, structure);
-    executable->singletonFunction()->notifyWrite(vm, result, "Allocating a function");
+    executable->notifyCreation(vm, result, "Allocating a function");
     return result;
 }
 

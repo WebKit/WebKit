@@ -65,7 +65,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
         if (Options::forcePolyProto())
             isPolyProto = true;
         else
-            isPolyProto = executable->ensurePolyProtoWatchpoint().hasBeenInvalidated() && executable->singletonFunction()->hasBeenInvalidated();
+            isPolyProto = executable->ensurePolyProtoWatchpoint().hasBeenInvalidated() && executable->singletonFunctionHasBeenInvalidated();
     }
 
     unsigned inlineCapacity = 0;

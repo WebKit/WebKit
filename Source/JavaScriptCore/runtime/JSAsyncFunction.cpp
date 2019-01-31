@@ -55,14 +55,14 @@ JSAsyncFunction* JSAsyncFunction::createImpl(VM& vm, FunctionExecutable* executa
 JSAsyncFunction* JSAsyncFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
     JSAsyncFunction* asyncFunction = createImpl(vm, executable, scope, scope->globalObject(vm)->asyncFunctionStructure());
-    executable->singletonFunction()->notifyWrite(vm, asyncFunction, "Allocating an async function");
+    executable->notifyCreation(vm, asyncFunction, "Allocating an async function");
     return asyncFunction;
 }
 
 JSAsyncFunction* JSAsyncFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSAsyncFunction* asyncFunction = createImpl(vm, executable, scope, structure);
-    executable->singletonFunction()->notifyWrite(vm, asyncFunction, "Allocating an async function");
+    executable->notifyCreation(vm, asyncFunction, "Allocating an async function");
     return asyncFunction;
 }
 

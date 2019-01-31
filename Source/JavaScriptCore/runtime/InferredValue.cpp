@@ -35,6 +35,7 @@ const ClassInfo InferredValue::s_info = { "InferredValue", nullptr, nullptr, nul
 
 InferredValue* InferredValue::create(VM& vm)
 {
+    ASSERT(VM::canUseJIT());
     InferredValue* result = new (NotNull, allocateCell<InferredValue>(vm.heap)) InferredValue(vm);
     result->finishCreation(vm);
     return result;

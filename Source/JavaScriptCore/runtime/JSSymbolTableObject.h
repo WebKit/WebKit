@@ -66,7 +66,8 @@ protected:
     void setSymbolTable(VM& vm, SymbolTable* symbolTable)
     {
         ASSERT(!m_symbolTable);
-        symbolTable->singletonScope()->notifyWrite(vm, this, "Allocated a scope");
+        if (auto* singletonScope = symbolTable->singletonScope())
+            singletonScope->notifyWrite(vm, this, "Allocated a scope");
         m_symbolTable.set(vm, this, symbolTable);
     }
     

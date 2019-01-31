@@ -1,3 +1,44 @@
+2019-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use InferredValue in non-JIT configuration
+        https://bugs.webkit.org/show_bug.cgi?id=194084
+
+        Reviewed by Saam Barati.
+
+        InferredValue is not meaningful if our VM is non-JIT configuration. InferredValue is used to watch the instantiation of the  FunctionExecutable's
+        JSFunction and SymbolTable's JSScope to explore the chance of folding them into constants in DFG and FTL. If it is instantiated only once, we can
+        put a watchpoint and fold it into this constant. But if JIT is disabled, we do not need to care it.
+        Even in non-JIT configuration, we still use InferredValue for FunctionExecutable to determine whether the given FunctionExecutable is preferable
+        target for poly proto. If JSFunction for the FunctionExecutable is used as a constructor and instantiated more than once, poly proto Structure
+        seems appropriate for objects created by this JSFunction. But at that time, only thing we would like to know is that whether JSFunction for this
+        FunctionExecutable is instantiated multiple times. This does not require the full feature of InferredValue, WatchpointState is enough.
+        To summarize, since nobody uses InferredValue feature in non-JIT configuration, we should not create it.
+
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::finishCreation):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionExecutable.h:
+        * runtime/InferredValue.cpp:
+        (JSC::InferredValue::create):
+        * runtime/JSAsyncFunction.cpp:
+        (JSC::JSAsyncFunction::create):
+        * runtime/JSAsyncGeneratorFunction.cpp:
+        (JSC::JSAsyncGeneratorFunction::create):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSGeneratorFunction.cpp:
+        (JSC::JSGeneratorFunction::create):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::JSSymbolTableObject::setSymbolTable):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2019-01-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][JSC] Changing ud_opcode.py should trigger invoking ud_opcode.py

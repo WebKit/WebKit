@@ -34,7 +34,7 @@ namespace JSC {
 inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
     VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    ASSERT(executable->singletonFunction()->hasBeenInvalidated());
+    ASSERT(executable->singletonFunctionHasBeenInvalidated());
     return createImpl(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(vm), executable));
 }
 

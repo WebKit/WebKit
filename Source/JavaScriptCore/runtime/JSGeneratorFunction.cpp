@@ -60,7 +60,7 @@ JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* exe
 JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSGeneratorFunction* generatorFunction = createImpl(vm, executable, scope, structure);
-    executable->singletonFunction()->notifyWrite(vm, generatorFunction, "Allocating a generator function");
+    executable->notifyCreation(vm, generatorFunction, "Allocating a generator function");
     return generatorFunction;
 }
 

@@ -58,7 +58,10 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
 void FunctionExecutable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    m_singletonFunction.set(vm, this, InferredValue::create(vm));
+    if (VM::canUseJIT())
+        m_singletonFunction.set(vm, this, InferredValue::create(vm));
+    else
+        m_singletonFunctionState = ClearWatchpoint;
 }
 
 void FunctionExecutable::destroy(JSCell* cell)
@@ -88,7 +91,8 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_codeBlockForCall);
     visitor.append(thisObject->m_codeBlockForConstruct);
     visitor.append(thisObject->m_unlinkedExecutable);
-    visitor.append(thisObject->m_singletonFunction);
+    if (VM::canUseJIT())
+        visitor.append(thisObject->m_singletonFunction);
     visitor.append(thisObject->m_cachedPolyProtoStructure);
 }
 
