@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollingTreeScrollingNodeDelegate.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNode.h"
 
@@ -66,4 +66,4 @@ const IntPoint& ScrollingTreeScrollingNodeDelegate::scrollOrigin() const
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)

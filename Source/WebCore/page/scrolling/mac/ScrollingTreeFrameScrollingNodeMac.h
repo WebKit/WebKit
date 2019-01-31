@@ -27,17 +27,17 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "ScrollController.h"
 #include "ScrollbarThemeMac.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingTreeFrameScrollingNode.h"
+#include "ScrollingTreeScrollingNodeDelegateMac.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode, private ScrollControllerClient {
+class WEBCORE_EXPORT ScrollingTreeFrameScrollingNodeMac : public ScrollingTreeFrameScrollingNode {
 public:
     static Ref<ScrollingTreeFrameScrollingNode> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeMac();
@@ -53,19 +53,6 @@ protected:
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-    // ScrollController member functions.
-    bool allowsHorizontalStretching(const PlatformWheelEvent&) override;
-    bool allowsVerticalStretching(const PlatformWheelEvent&) override;
-    IntSize stretchAmount() override;
-    bool pinnedInDirection(const FloatSize&) override;
-    bool canScrollHorizontally() override;
-    bool canScrollVertically() override;
-    bool shouldRubberBandInDirection(ScrollDirection) override;
-    void immediateScrollBy(const FloatSize&) override;
-    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) override;
-    void stopSnapRubberbandTimer() override;
-    void adjustScrollPositionToBoundsIfNecessary() override;
-
     FloatPoint scrollPosition() const override;
     void setScrollPosition(const FloatPoint&) override;
     void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
@@ -79,26 +66,9 @@ protected:
 
     void updateMainFramePinState(const FloatPoint& scrollPosition);
 
-    bool isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent&, ScrollEventAxis);
-
-    void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
-    void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
-
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    FloatPoint scrollOffset() const override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
-    float pageScaleFactor() const override;
-    void startScrollSnapTimer() override;
-    void stopScrollSnapTimer() override;
-    LayoutSize scrollExtent() const override;
-    FloatSize viewportSize() const override;
-#endif
-
     unsigned exposedUnfilledArea() const;
 
 private:
-    ScrollController m_scrollController;
-
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
@@ -109,9 +79,11 @@ private:
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
     FloatPoint m_probableMainThreadScrollPosition;
+    
+    ScrollingTreeScrollingNodeDelegateMac m_delegate;
+    
     bool m_lastScrollHadUnfilledPixels { false };
     bool m_hadFirstUpdate { false };
-    bool m_expectsWheelEventTestTrigger { false };
 };
 
 } // namespace WebCore

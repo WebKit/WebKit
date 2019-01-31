@@ -33,18 +33,15 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingTreeNode.h"
 
-#if PLATFORM(IOS_FAMILY)
-class ScrollingTreeScrollingNodeDelegate;
-#endif
-
 namespace WebCore {
 
 class ScrollingTree;
 class ScrollingStateScrollingNode;
 
 class ScrollingTreeScrollingNode : public ScrollingTreeNode {
-#if PLATFORM(IOS_FAMILY)
     friend class ScrollingTreeScrollingNodeDelegate;
+#if PLATFORM(MAC)
+    friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
 
 public:
@@ -58,6 +55,9 @@ public:
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) = 0;
     WEBCORE_EXPORT virtual void setScrollPosition(const FloatPoint&);
     WEBCORE_EXPORT virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
+
+    void scrollBy(const FloatSize&);
+    void scrollByWithoutContentEdgeConstraints(const FloatSize&);
 
     virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) = 0;
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
@@ -109,6 +109,8 @@ protected:
 
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
 
+    bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
+
     WEBCORE_EXPORT LayoutPoint parentToLocalPoint(LayoutPoint) const override;
     WEBCORE_EXPORT LayoutPoint localToContentsPoint(LayoutPoint) const override;
 
@@ -128,6 +130,7 @@ private:
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
+    bool m_expectsWheelEventTestTrigger { false };
 };
 
 } // namespace WebCore

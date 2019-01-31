@@ -25,20 +25,17 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING)
+
+#include "ScrollingTreeScrollingNode.h"
 
 namespace WebCore {
-
-class FloatPoint;
-class FloatSize;
-class IntPoint;
-class ScrollingTreeScrollingNode;
-class ScrollingTree;
 
 class ScrollingTreeScrollingNodeDelegate {
 public:
     WEBCORE_EXPORT explicit ScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode&);
     WEBCORE_EXPORT virtual ~ScrollingTreeScrollingNodeDelegate();
+
     ScrollingTreeScrollingNode& scrollingNode() { return m_scrollingNode; }
     const ScrollingTreeScrollingNode& scrollingNode() const { return m_scrollingNode; }
 
@@ -49,10 +46,23 @@ protected:
     WEBCORE_EXPORT const FloatSize& reachableContentsSize();
     WEBCORE_EXPORT const IntPoint& scrollOrigin() const;
 
+    FloatPoint scrollPosition() const { return m_scrollingNode.scrollPosition(); }
+    FloatPoint minimumScrollPosition() const { return m_scrollingNode.minimumScrollPosition(); }
+    FloatPoint maximumScrollPosition() const { return m_scrollingNode.maximumScrollPosition(); }
+
+    FloatSize scrollableAreaSize() const { return m_scrollingNode.scrollableAreaSize(); }
+    FloatSize totalContentsSize() const { return m_scrollingNode.totalContentsSize(); }
+
+    bool hasEnabledHorizontalScrollbar() const { return m_scrollingNode.hasEnabledHorizontalScrollbar(); }
+    bool hasEnabledVerticalScrollbar() const { return m_scrollingNode.hasEnabledVerticalScrollbar(); }
+
+    ScrollElasticity horizontalScrollElasticity() const { return m_scrollingNode.horizontalScrollElasticity(); }
+    ScrollElasticity verticalScrollElasticity() const { return m_scrollingNode.verticalScrollElasticity(); }
+
 private:
     ScrollingTreeScrollingNode& m_scrollingNode;
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING)

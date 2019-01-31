@@ -29,6 +29,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateTree.h"
+#include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include <wtf/text/TextStream.h>
 
@@ -69,6 +70,11 @@ void ScrollingTreeNode::removeChild(ScrollingTreeNode& node)
 
     for (auto& child : *m_children)
         child->removeChild(node);
+}
+
+bool ScrollingTreeNode::isRootNode() const
+{
+    return m_scrollingTree.rootNode() == this;
 }
 
 void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

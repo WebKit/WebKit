@@ -1,3 +1,110 @@
+2019-01-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Generalize ScrollingTreeScrollingNodeDelegate for use in macOS too, add a macOS subclass for frame/overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=194080
+
+        Reviewed by Antti Koivisto.
+
+        To share code between ScrollingTreeFrameScrollingNodeMac and ScrollingTreeOverflowScrollingNodeMac, build ScrollingTreeScrollingNodeDelegate
+        for macOS too, and add some helper functions to ScrollingTreeScrollingNodeDelegate.
+
+        Add a macOS subclass, ScrollingTreeScrollingNodeDelegateMac, which takes over the basic scrolling, rubber-banding
+        and scroll snapping functionality from ScrollingTreeFrameScrollingNodeMac. The delegate owns the ScrollController and
+        implements ScrollControllerClient.
+
+        ScrollingTreeFrameScrollingNodeMac now owns a ScrollingTreeScrollingNodeDelegateMac. A future patch
+        will add one to ScrollingTreeOverflowScrollingNodeMac.
+
+        No behavior change.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollBy): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollByWithoutContentEdgeConstraints): Deleted.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::frameScaleFactor const):
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::isRootNode const):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::scrollBy):
+        (WebCore::ScrollingTreeScrollingNode::scrollByWithoutContentEdgeConstraints):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::expectsWheelEventTestTrigger const):
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp:
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.h:
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollPosition const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::minimumScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::maximumScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollableAreaSize const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::totalContentsSize const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::hasEnabledHorizontalScrollbar const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::hasEnabledVerticalScrollbar const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::horizontalScrollElasticity const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::verticalScrollElasticity const):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::minimumScrollPosition const):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition const):
+        (WebCore::newGestureIsStarting): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::isAlreadyPinnedInDirectionOfGesture): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::allowsHorizontalStretching): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::allowsVerticalStretching): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stretchAmount): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::pinnedInDirection): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::canScrollHorizontally): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::canScrollVertically): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::shouldRubberBandInDirection): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollBy): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollByWithoutContentEdgeConstraints): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stopSnapRubberbandTimer): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustScrollPositionToBoundsIfNecessary): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollOffset const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::immediateScrollOnAxis): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::pageScaleFactor const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::startScrollSnapTimer): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollExtent const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::viewportSize const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::deferTestsForReason const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::removeTestDeferralForReason const): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h: Copied from Source/WebCore/page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm: Added.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateScrollSnapPoints):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::setActiveScrollSnapIndexForAxis):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexDidChange const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isScrollSnapInProgress const):
+        (WebCore::newGestureIsStarting):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stretchAmount):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollHorizontally):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::canScrollVertically):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollBy):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopSnapRubberbandTimer):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollOffset const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::pageScaleFactor const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::startScrollSnapTimer):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopScrollSnapTimer):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollExtent const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::viewportSize const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::removeTestDeferralForReason const):
+
 2019-01-31  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Requesting PiP from two different WebViews gets PiP window "stuck"
