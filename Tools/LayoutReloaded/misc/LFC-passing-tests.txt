@@ -421,6 +421,14 @@ css2.1/20110323/absolute-replaced-height-007.htm
 css2.1/20110323/absolute-replaced-height-011.htm
 css2.1/20110323/absolute-replaced-height-012.htm
 css2.1/20110323/absolute-replaced-height-014.htm
+css2.1/20110323/absolute-replaced-height-018.htm
+css2.1/20110323/absolute-replaced-height-019.htm
+css2.1/20110323/absolute-replaced-height-021.htm
+css2.1/20110323/absolute-replaced-height-025.htm
+css2.1/20110323/absolute-replaced-height-026.htm
+css2.1/20110323/block-replaced-height-004.htm
+css2.1/20110323/block-replaced-height-005.htm
+css2.1/20110323/block-replaced-height-007.htm
 css2.1/t0402-c71-fwd-parsing-00-f.html
 css2.1/t0402-c71-fwd-parsing-01-f.html
 css2.1/t0402-c71-fwd-parsing-03-f.html

@@ -554,8 +554,8 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto isStaticallyPositioned = !top && !bottom;
     auto height = inlineReplacedHeightAndMargin(layoutState, layoutBox, usedHeight).height;
     auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
-    Optional<LayoutUnit> usedMarginBefore;
-    Optional<LayoutUnit> usedMarginAfter;
+    Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
+    Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
     auto paddingTop = displayBox.paddingTop().valueOr(0);
     auto paddingBottom = displayBox.paddingBottom().valueOr(0);
     auto borderTop = displayBox.borderTop();
@@ -642,8 +642,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
     auto isStaticallyPositioned = !left && !right;
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
-    Optional<LayoutUnit> usedMarginStart;
-    Optional<LayoutUnit> usedMarginEnd;
+    Optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
+    Optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedWidthAndMargin(layoutState, layoutBox, usedWidth).width;
     auto paddingLeft = displayBox.paddingLeft().valueOr(0);
     auto paddingRight = displayBox.paddingRight().valueOr(0);

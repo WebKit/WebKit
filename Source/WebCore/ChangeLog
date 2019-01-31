@@ -1,5 +1,18 @@
 2019-01-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Margin before/after/start/end initial value is 0 and not auto.
+        https://bugs.webkit.org/show_bug.cgi?id=194090
+
+        Reviewed by Antti Koivisto.
+
+        Don't treat it like auto.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+
+2019-01-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Use the used margin values in outOfFlowReplacedHorizontalGeometry consistently
         https://bugs.webkit.org/show_bug.cgi?id=194074
 
