@@ -527,6 +527,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
             if (!weakThis)
                 return;
 
+            sessionIdentifierChanged(m_session.get().contentProtectionSessionIdentifier);
+
             if (error && m_requestLicenseCallback)
                 m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
             else if (m_requestLicenseCallback)
@@ -630,13 +632,15 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVC
 
 void CDMInstanceSessionFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessionIdentifier)
 {
-    if (!sessionIdentifier) {
-        m_sessionId = emptyString();
-        return;
-    }
+    String sessionId = emptyString();
+    if (sessionIdentifier)
+        sessionId = adoptNS([[NSString alloc] initWithData:sessionIdentifier encoding:NSUTF8StringEncoding]).get();
 
-    auto sessionIdentifierString = adoptNS([[NSString alloc] initWithData:sessionIdentifier encoding:NSUTF8StringEncoding]);
-    m_sessionId = sessionIdentifierString.get();
+    if (m_sessionId == sessionId)
+        return;
+
+    m_sessionId = sessionId;
+    m_client->sessionIdChanged(m_sessionId);
 }
 
 static auto requestStatusToCDMStatus(AVContentKeyRequestStatus status)

@@ -671,6 +671,11 @@ void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&
     enqueueMessage(messageType, message);
 }
 
+void MediaKeySession::sessionIdChanged(const String& sessionId)
+{
+    m_sessionId = sessionId;
+}
+
 void MediaKeySession::updateExpiration(double)
 {
     notImplemented();

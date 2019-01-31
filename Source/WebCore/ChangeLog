@@ -1,3 +1,26 @@
+2019-01-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][EME] persistent-usage-record data not issued after MediaKeySession.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=193984
+
+        Reviewed by Eric Carlson.
+
+        MediaKeySession.sessionId is empty during the CDMInstance->requestLicense success callback handler. The
+        KVO notification that AVContentKeySession.contentProtectionSessionIdentifier changed isn't called until
+        after the -[AVContentKeyRequest makeStreamingContentKeyRequestDataForApp:contentIdentifier:options:completionHandler:]
+        completion handler is called.
+
+        Explicitly ask for the -contentProtectionSessionIdentifier inside that handler, and just in case the sessionID
+        changes after that, add a new client callback method to notify the MediaKeySession that the ID has changed.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::sessionIdChanged):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * platform/encryptedmedia/CDMInstanceSession.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::nextRequest):
+
 2019-01-30  Keith Rollin  <krollin@apple.com>
 
         FloatWithRect has invalid and inaccessible default constructor
