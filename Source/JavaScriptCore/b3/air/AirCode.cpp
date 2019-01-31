@@ -97,6 +97,11 @@ Code::~Code()
 {
 }
 
+void Code::emitDefaultPrologue(CCallHelpers& jit)
+{
+    defaultPrologueGenerator(jit, *this);
+}
+
 void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
 {
     regsInPriorityOrderImpl(bank) = regs;

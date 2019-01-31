@@ -55,7 +55,7 @@ protected:
     RegisterSet extraEarlyClobberedRegs(Air::Inst&) final;
     RegisterSet extraClobberedRegs(Air::Inst&) final;
 
-    // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many some
+    // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many
     // subclasses that implement that.
     void forEachArgImpl(
         unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,

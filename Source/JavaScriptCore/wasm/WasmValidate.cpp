@@ -83,7 +83,7 @@ public:
     typedef Vector<ExpressionType, 1> ExpressionList;
     typedef FunctionParser<Validate>::ControlEntry ControlEntry;
 
-    static const ExpressionType emptyExpression = Void;
+    static constexpr ExpressionType emptyExpression() { return Void; }
 
     template <typename ...Args>
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const

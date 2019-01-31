@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
+#include "WasmAirIRGenerator.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmBinding.h"
 #include "WasmCallee.h"
@@ -271,7 +272,11 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
 
         m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
         TierUpCount* tierUp = Options::useBBQTierUpChecks() ? &m_tierUpCounts[functionIndex] : nullptr;
-        auto parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
+        Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
+        if (Options::wasmBBQUsesAir())
+            parseAndCompileResult = parseAndCompileAir(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
+        else
+            parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
 
         if (UNLIKELY(!parseAndCompileResult)) {
             auto locker = holdLock(m_lock);

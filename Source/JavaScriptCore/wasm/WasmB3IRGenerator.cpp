@@ -161,7 +161,7 @@ public:
     typedef ControlData::ResultList ResultList;
     typedef FunctionParser<B3IRGenerator>::ControlEntry ControlEntry;
 
-    static constexpr ExpressionType emptyExpression = nullptr;
+    static constexpr ExpressionType emptyExpression() { return nullptr; }
 
     typedef String ErrorType;
     typedef Unexpected<ErrorType> UnexpectedResult;

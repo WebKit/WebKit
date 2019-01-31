@@ -335,6 +335,8 @@ public:
     RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
     
     WeakRandom& weakRandom() { return m_weakRandom; }
+
+    void emitDefaultPrologue(CCallHelpers&);
     
 private:
     friend class ::JSC::B3::Procedure;

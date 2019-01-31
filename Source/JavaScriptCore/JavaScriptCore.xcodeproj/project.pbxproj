@@ -874,9 +874,11 @@
 		521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */; };
 		5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5250D2D01E8DA05A0029A932 /* WasmThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		525C0DDA1E935847002184CD /* WasmCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 525C0DD81E935847002184CD /* WasmCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */; };
 		52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F8D1A031009006A306D /* BasicBlockLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52678F911A04177C006A306D /* ControlFlowProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52678F901A04177C006A306D /* ControlFlowProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		526AC4B71E977C5D003500E1 /* WasmCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3358,6 +3360,8 @@
 		526AC4B41E977C5D003500E1 /* WasmCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCodeBlock.cpp; sourceTree = "<group>"; };
 		526AC4B51E977C5D003500E1 /* WasmCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCodeBlock.h; sourceTree = "<group>"; };
 		527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeType.cpp; sourceTree = "<group>"; };
+		52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmAirIRGenerator.cpp; sourceTree = "<group>"; };
+		52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmAirIRGenerator.h; sourceTree = "<group>"; };
 		52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FunctionHasExecutedCache.h; sourceTree = "<group>"; };
 		52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionHasExecutedCache.cpp; sourceTree = "<group>"; };
 		52B310FE1975B4240080857C /* TypeLocationCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeLocationCache.cpp; sourceTree = "<group>"; };
@@ -6434,6 +6438,8 @@
 				AD2FCB8A1DB5840000B3E736 /* js */,
 				53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */,
 				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
+				52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */,
+				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
 				53CA73071EA533D80076049D /* WasmBBQPlan.cpp */,
 				53CA73081EA533D80076049D /* WasmBBQPlan.h */,
 				53F8D1FF1E8387D400D21116 /* WasmBBQPlanInlines.h */,
@@ -8529,6 +8535,7 @@
 				436E54531C468E7400B5AF73 /* B3LegalizeMemoryOffsets.h in Headers */,
 				0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */,
 				4319DA041C1BE40D001D260B /* B3LowerMacrosAfterOptimizations.h in Headers */,
+				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				0FEC851E1BDACDAC0080FF74 /* B3LowerToAir.h in Headers */,
 				43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */,
 				0FEC85201BDACDAC0080FF74 /* B3MemoryValue.h in Headers */,
@@ -10540,6 +10547,7 @@
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,
 				536B315F1F71C5990037FC33 /* UnifiedSource1.cpp in Sources */,
 				536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */,
+				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
 				536B31571F71C5990037FC33 /* UnifiedSource2.cpp in Sources */,
 				530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */,
 				536B31581F71C5990037FC33 /* UnifiedSource3.cpp in Sources */,

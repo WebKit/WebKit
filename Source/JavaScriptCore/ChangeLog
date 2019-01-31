@@ -1,3 +1,270 @@
+2019-01-30  Saam barati  <sbarati@apple.com>
+
+        [WebAssembly] Change BBQ to generate Air IR
+        https://bugs.webkit.org/show_bug.cgi?id=191802
+        <rdar://problem/47651718>
+
+        Reviewed by Keith Miller.
+
+        This patch adds a new Wasm compiler for the BBQ tier. Instead
+        of compiling using  B3-01, we now generate Air code directly.
+        The goal of doing this was to speed up compile times for Wasm
+        programs.
+        
+        This patch provides us with a 20-30% compile time speedup. However, I
+        have ideas on how to improve compile times even further. For example,
+        we should probably implement a faster running register allocator:
+        https://bugs.webkit.org/show_bug.cgi?id=194036
+        
+        We can also improve on the code we generate.
+        We should emit better code for Switch: https://bugs.webkit.org/show_bug.cgi?id=194053
+        And we should do better instruction selection in various
+        areas: https://bugs.webkit.org/show_bug.cgi?id=193999
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3StackmapSpecial.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::emitDefaultPrologue):
+        * b3/air/AirCode.h:
+        * b3/air/AirTmp.h:
+        (JSC::B3::Air::Tmp::Tmp):
+        * runtime/Options.h:
+        * wasm/WasmAirIRGenerator.cpp: Added.
+        (JSC::Wasm::ConstrainedTmp::ConstrainedTmp):
+        (JSC::Wasm::TypedTmp::TypedTmp):
+        (JSC::Wasm::TypedTmp::operator== const):
+        (JSC::Wasm::TypedTmp::operator!= const):
+        (JSC::Wasm::TypedTmp::operator bool const):
+        (JSC::Wasm::TypedTmp::operator Tmp const):
+        (JSC::Wasm::TypedTmp::operator Arg const):
+        (JSC::Wasm::TypedTmp::tmp const):
+        (JSC::Wasm::TypedTmp::type const):
+        (JSC::Wasm::AirIRGenerator::ControlData::ControlData):
+        (JSC::Wasm::AirIRGenerator::ControlData::dump const):
+        (JSC::Wasm::AirIRGenerator::ControlData::type const):
+        (JSC::Wasm::AirIRGenerator::ControlData::signature const):
+        (JSC::Wasm::AirIRGenerator::ControlData::hasNonVoidSignature const):
+        (JSC::Wasm::AirIRGenerator::ControlData::targetBlockForBranch):
+        (JSC::Wasm::AirIRGenerator::ControlData::convertIfToBlock):
+        (JSC::Wasm::AirIRGenerator::ControlData::resultForBranch const):
+        (JSC::Wasm::AirIRGenerator::emptyExpression):
+        (JSC::Wasm::AirIRGenerator::fail const):
+        (JSC::Wasm::AirIRGenerator::setParser):
+        (JSC::Wasm::AirIRGenerator::toTmpVector):
+        (JSC::Wasm::AirIRGenerator::validateInst):
+        (JSC::Wasm::AirIRGenerator::extractArg):
+        (JSC::Wasm::AirIRGenerator::append):
+        (JSC::Wasm::AirIRGenerator::appendEffectful):
+        (JSC::Wasm::AirIRGenerator::newTmp):
+        (JSC::Wasm::AirIRGenerator::g32):
+        (JSC::Wasm::AirIRGenerator::g64):
+        (JSC::Wasm::AirIRGenerator::f32):
+        (JSC::Wasm::AirIRGenerator::f64):
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::addPatchpoint):
+        (JSC::Wasm::AirIRGenerator::emitPatchpoint):
+        (JSC::Wasm::AirIRGenerator::emitCheck):
+        (JSC::Wasm::AirIRGenerator::emitCCall):
+        (JSC::Wasm::AirIRGenerator::moveOpForValueType):
+        (JSC::Wasm::AirIRGenerator::instanceValue):
+        (JSC::Wasm::AirIRGenerator::fixupPointerPlusOffset):
+        (JSC::Wasm::AirIRGenerator::restoreWasmContextInstance):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::emitThrowException):
+        (JSC::Wasm::AirIRGenerator::addLocal):
+        (JSC::Wasm::AirIRGenerator::addConstant):
+        (JSC::Wasm::AirIRGenerator::addArguments):
+        (JSC::Wasm::AirIRGenerator::getLocal):
+        (JSC::Wasm::AirIRGenerator::addUnreachable):
+        (JSC::Wasm::AirIRGenerator::addGrowMemory):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        (JSC::Wasm::AirIRGenerator::setLocal):
+        (JSC::Wasm::AirIRGenerator::getGlobal):
+        (JSC::Wasm::AirIRGenerator::setGlobal):
+        (JSC::Wasm::AirIRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::sizeOfLoadOp):
+        (JSC::Wasm::AirIRGenerator::emitLoadOp):
+        (JSC::Wasm::AirIRGenerator::load):
+        (JSC::Wasm::sizeOfStoreOp):
+        (JSC::Wasm::AirIRGenerator::emitStoreOp):
+        (JSC::Wasm::AirIRGenerator::store):
+        (JSC::Wasm::AirIRGenerator::addSelect):
+        (JSC::Wasm::AirIRGenerator::emitTierUpCheck):
+        (JSC::Wasm::AirIRGenerator::addLoop):
+        (JSC::Wasm::AirIRGenerator::addTopLevel):
+        (JSC::Wasm::AirIRGenerator::addBlock):
+        (JSC::Wasm::AirIRGenerator::addIf):
+        (JSC::Wasm::AirIRGenerator::addElse):
+        (JSC::Wasm::AirIRGenerator::addElseToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addBranch):
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+        (JSC::Wasm::AirIRGenerator::endBlock):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::unify):
+        (JSC::Wasm::AirIRGenerator::unifyValuesWithBlock):
+        (JSC::Wasm::AirIRGenerator::dump):
+        (JSC::Wasm::AirIRGenerator::origin):
+        (JSC::Wasm::parseAndCompileAir):
+        (JSC::Wasm::AirIRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::AirIRGenerator::emitModOrDiv):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32DivS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32RemS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32DivU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32RemU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64DivS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64RemS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64DivU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64RemU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Ctz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Ctz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Popcnt>):
+        (JSC::Wasm::AirIRGenerator::addOp<F64ConvertUI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32ConvertUI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Nearest>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Nearest>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Trunc>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Trunc>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        (JSC::Wasm::AirIRGenerator::addShift):
+        (JSC::Wasm::AirIRGenerator::addIntegerSub):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointAbs):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointBinOp):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Ceil>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Le>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32DemoteF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Min>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Ne>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Lt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Max>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Clz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Copysign>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64ConvertUI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32ReinterpretI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64And>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Ne>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Gt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Sqrt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Ge>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64GtS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64GtU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Eqz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Div>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Add>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Or>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32LeU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32LeS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Ne>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Clz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32And>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32LtU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Abs>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32LtS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Copysign>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32ConvertSI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Lt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64ConvertSI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Le>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Ge>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32ConvertUI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32GeU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Ceil>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32GeS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Floor>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Xor>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Abs>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Min>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32ReinterpretF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Add>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Or>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64LtU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64LtS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64ConvertSI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Xor>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64GeU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Mul>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Sub>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64PromoteF32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Add>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64GeS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ExtendUI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Ne>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64ReinterpretI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Eq>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Floor>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32ConvertSI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Eqz>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ReinterpretF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ShrU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Sqrt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Shl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Gt>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32WrapI64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotl>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32Rotr>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32GtU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64ExtendSI32>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32GtS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Neg>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Max>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64LeU>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64LeS>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64Add>):
+        * wasm/WasmAirIRGenerator.h: Added.
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emptyExpression):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmCallingConvention.cpp:
+        (JSC::Wasm::jscCallingConventionAir):
+        (JSC::Wasm::wasmCallingConventionAir):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::CallingConvention):
+        (JSC::Wasm::CallingConvention::marshallArgumentImpl const):
+        (JSC::Wasm::CallingConvention::marshallArgument const):
+        (JSC::Wasm::CallingConventionAir::CallingConventionAir):
+        (JSC::Wasm::CallingConventionAir::prologueScratch const):
+        (JSC::Wasm::CallingConventionAir::marshallArgumentImpl const):
+        (JSC::Wasm::CallingConventionAir::marshallArgument const):
+        (JSC::Wasm::CallingConventionAir::headerSizeInBytes):
+        (JSC::Wasm::CallingConventionAir::loadArguments const):
+        (JSC::Wasm::CallingConventionAir::setupCall const):
+        (JSC::Wasm::nextJSCOffset):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::emptyExpression):
+
 2019-01-30  Robin Morisset  <rmorisset@apple.com>
 
         Object.keys can now lead to a PhantomNewArrayBuffer, OSR exit from the FTL should know how to materialize a NewArrayBuffer in that case

@@ -333,10 +333,10 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
             args.uncheckedAppend(m_expressionStack[i]);
         m_expressionStack.shrink(firstArgumentIndex);
 
-        ExpressionType result = Context::emptyExpression;
+        ExpressionType result = Context::emptyExpression();
         WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, calleeSignature, args, result));
 
-        if (result != Context::emptyExpression)
+        if (result != Context::emptyExpression())
             m_expressionStack.append(result);
 
         return { };
@@ -362,10 +362,10 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
             args.uncheckedAppend(m_expressionStack[i]);
         m_expressionStack.shrink(firstArgumentIndex);
 
-        ExpressionType result = Context::emptyExpression;
+        ExpressionType result = Context::emptyExpression();
         WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(calleeSignature, args, result));
 
-        if (result != Context::emptyExpression)
+        if (result != Context::emptyExpression())
             m_expressionStack.append(result);
 
         return { };
@@ -409,7 +409,7 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
     case Br:
     case BrIf: {
         uint32_t target;
-        ExpressionType condition = Context::emptyExpression;
+        ExpressionType condition = Context::emptyExpression();
         WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
         WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
         if (m_currentOpcode == BrIf)

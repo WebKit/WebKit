@@ -44,7 +44,7 @@ class Code;
 
 class Tmp {
 public:
-    Tmp()
+    constexpr Tmp()
         : m_value(0)
     {
     }

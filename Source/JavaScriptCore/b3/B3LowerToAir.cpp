@@ -3366,8 +3366,8 @@ private:
             Tmp returnValueFPR = Tmp(FPRInfo::returnValueFPR);
             switch (value->type()) {
             case Void:
-                // It's impossible for a void value to be used as a child. If we did want to have a
-                // void return, we'd introduce a different opcode, like ReturnVoid.
+                // It's impossible for a void value to be used as a child. We use RetVoid
+                // for void returns.
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Int32:
