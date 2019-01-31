@@ -243,7 +243,7 @@ public:
 
     GraphicsLayer* scrollLayer() const { return m_scrollLayer.get(); }
     GraphicsLayer* clipLayer() const { return m_clipLayer.get(); }
-    GraphicsLayer* rootContentLayer() const { return m_rootContentLayer.get(); }
+    GraphicsLayer* rootContentsLayer() const { return m_rootContentsLayer.get(); }
 
     GraphicsLayer* layerForClipping() const {  return m_clipLayer ? m_clipLayer.get() : m_scrollLayer.get();  }
 
@@ -534,7 +534,7 @@ private:
     
 private:
     RenderView& m_renderView;
-    RefPtr<GraphicsLayer> m_rootContentLayer;
+    RefPtr<GraphicsLayer> m_rootContentsLayer;
     Timer m_updateCompositingLayersTimer;
 
     ChromeClient::CompositingTriggerFlags m_compositingTriggers { static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers) };

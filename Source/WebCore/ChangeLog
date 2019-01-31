@@ -1,3 +1,67 @@
+2019-01-31  Antti Koivisto  <antti@apple.com>
+
+        Call the frame main contents layer "rootContentsLayer" consistently.
+        https://bugs.webkit.org/show_bug.cgi?id=194089
+
+        Reviewed by Simon Fraser.
+
+        This is currently called "rootContentLayer" in the compositor and "scrolledContentsLayer" in the scrolling tree.
+        We want to reserve term "scrolledContentsLayer" to mean the direct child layer of the  scroll container layer
+        without any positioning oddities (which this isn't).
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        (WebCore::AsyncScrollingCoordinator::setNodeLayers):
+
+        Set the rootContentsLayer for frame. It is only used by the Mac frame scrolling code.
+
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::rootContentsLayerForFrameView):
+        (WebCore::ScrollingCoordinator::rootContentLayerForFrameView): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setNodeLayers):
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateFrameScrollingNode::setRootContentsLayer):
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+
+        Introduce rootContentLayer for frames only.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+
+        Switch to using rootContentsLayer.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::updateRootContentLayerClipping):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::rootGraphicsLayer const):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+
+        Pass rootContentsLayer separately for frames only.
+        Pass null as frame scrolledContentsLayer until these are rearranged (it is not used).
+
+        * rendering/RenderLayerCompositor.h:
+
 2019-01-31  Keith Rollin  <krollin@apple.com>
 
         GCGamepad is deprecated

@@ -129,7 +129,7 @@ public:
     virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return 0; }
     virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
-    virtual void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr) { }
+    virtual void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr, GraphicsLayer* /*rootContentsLayer*/ = nullptr) { }
 
     struct ScrollingGeometry {
         LayoutRect parentRelativeScrollableRect;
@@ -189,7 +189,7 @@ protected:
     GraphicsLayer* scrollLayerForFrameView(FrameView&);
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView&);
     GraphicsLayer* insetClipLayerForFrameView(FrameView&);
-    GraphicsLayer* rootContentLayerForFrameView(FrameView&);
+    GraphicsLayer* rootContentsLayerForFrameView(FrameView&);
     GraphicsLayer* contentShadowLayerForFrameView(FrameView&);
     GraphicsLayer* headerLayerForFrameView(FrameView&);
     GraphicsLayer* footerLayerForFrameView(FrameView&);

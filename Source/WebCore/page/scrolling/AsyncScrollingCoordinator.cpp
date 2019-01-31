@@ -227,7 +227,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
 
     auto* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollLayerID()));
     node->setLayer(scrollLayerForFrameView(frameView));
-    node->setScrolledContentsLayer(rootContentLayerForFrameView(frameView));
+    node->setRootContentsLayer(rootContentsLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
     node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
     node->setContentShadowLayer(contentShadowLayerForFrameView(frameView));
@@ -420,7 +420,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     auto* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
     auto* insetClipLayer = insetClipLayerForFrameView(frameView);
     auto* contentShadowLayer = contentShadowLayerForFrameView(frameView);
-    auto* scrolledContentsLayer = rootContentLayerForFrameView(frameView);
+    auto* rootContentsLayer = rootContentsLayerForFrameView(frameView);
     auto* headerLayer = headerLayerForFrameView(frameView);
     auto* footerLayer = footerLayerForFrameView(frameView);
 
@@ -445,8 +445,8 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
             insetClipLayer->setPosition(positionForInsetClipLayer);
         if (contentShadowLayer)
             contentShadowLayer->setPosition(positionForContentsLayer);
-        if (scrolledContentsLayer)
-            scrolledContentsLayer->setPosition(positionForContentsLayer);
+        if (rootContentsLayer)
+            rootContentsLayer->setPosition(positionForContentsLayer);
         if (headerLayer)
             headerLayer->setPosition(positionForHeaderLayer);
         if (footerLayer)
@@ -459,8 +459,8 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
             insetClipLayer->syncPosition(positionForInsetClipLayer);
         if (contentShadowLayer)
             contentShadowLayer->syncPosition(positionForContentsLayer);
-        if (scrolledContentsLayer)
-            scrolledContentsLayer->syncPosition(positionForContentsLayer);
+        if (rootContentsLayer)
+            rootContentsLayer->syncPosition(positionForContentsLayer);
         if (headerLayer)
             headerLayer->syncPosition(positionForHeaderLayer);
         if (footerLayer)
@@ -573,7 +573,7 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
     insertNode(ScrollingNodeType::MainFrame, frameView.scrollLayerID(), 0, 0);
 }
 
-void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer)
+void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, GraphicsLayer* rootContentsLayer)
 {
     auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     ASSERT(node);
@@ -584,12 +584,14 @@ void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLa
 
     if (is<ScrollingStateScrollingNode>(node)) {
         auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
+        // FIXME: Currently unused.
         scrollingNode.setScrolledContentsLayer(scrolledContentsLayer);
-    
+
         if (is<ScrollingStateFrameScrollingNode>(node)) {
             auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
             frameScrollingNode.setInsetClipLayer(insetClipLayer);
             frameScrollingNode.setCounterScrollingLayer(counterScrollingLayer);
+            frameScrollingNode.setRootContentsLayer(rootContentsLayer);
         }
     }
 }

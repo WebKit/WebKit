@@ -287,10 +287,10 @@ GraphicsLayer* ScrollingCoordinator::contentShadowLayerForFrameView(FrameView& f
 #endif
 }
 
-GraphicsLayer* ScrollingCoordinator::rootContentLayerForFrameView(FrameView& frameView)
+GraphicsLayer* ScrollingCoordinator::rootContentsLayerForFrameView(FrameView& frameView)
 {
     if (auto* renderView = frameView.frame().contentRenderer())
-        return renderView->compositor().rootContentLayer();
+        return renderView->compositor().rootContentsLayer();
     return nullptr;
 }
 

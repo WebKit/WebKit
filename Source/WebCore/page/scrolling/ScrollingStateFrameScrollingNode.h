@@ -49,6 +49,7 @@ public:
         FrameScaleFactor = NumScrollingStateNodeBits,
         EventTrackingRegion,
         ReasonsForSynchronousScrolling,
+        RootContentsLayer,
         ScrolledContentsLayer,
         CounterScrollingLayer,
         InsetClipLayer,
@@ -99,6 +100,9 @@ public:
 
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
+
+    const LayerRepresentation& rootContentsLayer() const { return m_rootContentsLayer; }
+    WEBCORE_EXPORT void setRootContentsLayer(const LayerRepresentation&);
 
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
@@ -152,6 +156,7 @@ private:
 
     void setAllPropertiesChanged() override;
 
+    LayerRepresentation m_rootContentsLayer;
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
     LayerRepresentation m_contentShadowLayer;

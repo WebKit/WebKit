@@ -105,8 +105,8 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer))
+        m_rootContentsLayer = scrollingStateNode.rootContentsLayer();
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
@@ -442,11 +442,11 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
         m_counterScrollingLayer.get().position = fixedPositionRect.location();
 
     float topContentInset = this->topContentInset();
-    if (m_insetClipLayer && m_scrolledContentsLayer && topContentInset) {
+    if (m_insetClipLayer && m_rootContentsLayer && topContentInset) {
         m_insetClipLayer.get().position = FloatPoint(m_insetClipLayer.get().position.x, FrameView::yPositionForInsetClipLayer(position, topContentInset));
-        m_scrolledContentsLayer.get().position = FrameView::positionForRootContentLayer(position, scrollOrigin(), topContentInset, headerHeight());
+        m_rootContentsLayer.get().position = FrameView::positionForRootContentLayer(position, scrollOrigin(), topContentInset, headerHeight());
         if (m_contentShadowLayer)
-            m_contentShadowLayer.get().position = m_scrolledContentsLayer.get().position;
+            m_contentShadowLayer.get().position = m_rootContentsLayer.get().position;
     }
 
     if (m_headerLayer || m_footerLayer) {

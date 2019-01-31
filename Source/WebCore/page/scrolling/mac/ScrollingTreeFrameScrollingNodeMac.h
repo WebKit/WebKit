@@ -100,7 +100,7 @@ private:
     ScrollController m_scrollController;
 
     RetainPtr<CALayer> m_scrollLayer;
-    RetainPtr<CALayer> m_scrolledContentsLayer;
+    RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_insetClipLayer;
     RetainPtr<CALayer> m_contentShadowLayer;
