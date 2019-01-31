@@ -529,7 +529,7 @@ static void runJITThreadLimitTests()
     auto testDFG = [] {
         unsigned defaultNumberOfThreads = JSC::Options::numberOfDFGCompilerThreads();
         unsigned targetNumberOfThreads = 1;
-        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfDFGCompilerThreads:1];
+        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfDFGCompilerThreads:targetNumberOfThreads];
         checkResult(@"Initial number of DFG threads should be the value provided through Options", initialNumberOfThreads == defaultNumberOfThreads);
         unsigned updatedNumberOfThreads = [JSVirtualMachine setNumberOfDFGCompilerThreads:initialNumberOfThreads];
         checkResult(@"Number of DFG threads should have been updated", updatedNumberOfThreads == targetNumberOfThreads);
@@ -538,7 +538,7 @@ static void runJITThreadLimitTests()
     auto testFTL = [] {
         unsigned defaultNumberOfThreads = JSC::Options::numberOfFTLCompilerThreads();
         unsigned targetNumberOfThreads = 3;
-        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfFTLCompilerThreads:1];
+        unsigned initialNumberOfThreads = [JSVirtualMachine setNumberOfFTLCompilerThreads:targetNumberOfThreads];
         checkResult(@"Initial number of FTL threads should be the value provided through Options", initialNumberOfThreads == defaultNumberOfThreads);
         unsigned updatedNumberOfThreads = [JSVirtualMachine setNumberOfFTLCompilerThreads:initialNumberOfThreads];
         checkResult(@"Number of FTL threads should have been updated", updatedNumberOfThreads == targetNumberOfThreads);
