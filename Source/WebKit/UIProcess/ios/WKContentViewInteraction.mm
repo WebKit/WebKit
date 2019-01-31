@@ -741,7 +741,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self _registerPreview];
 #endif
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
+    [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
+
     _showingTextStyleOptions = NO;
 
     // FIXME: This should be called when we get notified that loading has completed.
@@ -1115,7 +1118,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     // FIXME: Maybe we should call resignFirstResponder on the superclass
     // and do nothing if the return value is NO.
 
-    _resigningFirstResponder = YES;
+    SetForScope<BOOL> resigningFirstResponderScope { _resigningFirstResponder, YES };
+
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
@@ -1127,12 +1131,17 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     
     _inputViewUpdateDeferrer = nullptr;
 
+    // If the user explicitly dismissed the keyboard then we will lose first responder
+    // status only to gain it back again. Just don't resign in that case.
+    if (_keyboardDidRequestDismissal) {
+        _keyboardDidRequestDismissal = NO;
+        return NO;
+    }
+
     bool superDidResign = [super resignFirstResponder];
 
     if (superDidResign)
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
-
-    _resigningFirstResponder = NO;
 
     return superDidResign;
 }
@@ -2787,6 +2796,13 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 {
     _showingTextStyleOptions = NO;
     [_textSelectionAssistant hideTextStyleOptions];
+}
+
+- (void)_keyboardDidRequestDismissal:(NSNotification *)notification
+{
+    if (![self isFirstResponder])
+        return;
+    _keyboardDidRequestDismissal = YES;
 }
 
 - (void)copyForWebView:(id)sender

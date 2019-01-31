@@ -1,3 +1,37 @@
+2019-01-30  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r238635): Text area fails to re-focus after dismissal of keyboard on support.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=193987
+        <rdar://problem/47230785>
+
+        Reviewed by Tim Horton.
+
+        It is unnecessary to relinquish first responder status when a user explicitly dismissing
+        the keyboard. Moreover, doing so prevents key commands from being intercepted when a
+        hardware keyboard is subsequently attached.
+        
+        Following r238635 a page becomes focused (accepting of keyboard input) and defocused
+        when the WKContentView becomes first responder and resigns first responder, respectively.
+        When a user explicitly dismisses the keyboard by tapping Done (iPhone) or the hide keyboard
+        button (iPad) then UIKit tells WKContentView to resign its first responder status only
+        to make its superview, WKWebView, first responder. When a person subsequently taps on the
+        page again, the WKContentView requests to become the first responder. However changes to
+        page focus are not guaranteed to be sent to the WebProcess immediately (WebPageProxy::activityStateDidChange()
+        will schedule an update). In particular, they are not guaranteed to be sent before the
+        WebProcess is told about a tap. Therefore, the WebProcess has out-of-date information on
+        focus state of the page. Instead we should detect when WKWebView is being asked to resign
+        as a result of the keyboard dismissal and refuse the request, taking care to end the current
+        editing session, blur the focused element, and dismiss the on-screen keyboard.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose some SPI.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]): Register to receive notifications whenever a user
+        explicitly dismisses the keyboard.
+        (-[WKContentView resignFirstResponderForWebView]): If we are being asked to resign as a
+        result of a user explicitly dismissing the keyboard then refuse to resign.
+        (-[WKContentView _keyboardDidRequestDismissal:]): Update state, if applicable.
+
 2019-01-30  Keith Rollin  <krollin@apple.com>
 
         Add default constructor for NetworkActivityTracker
