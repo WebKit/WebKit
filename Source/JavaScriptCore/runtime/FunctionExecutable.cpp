@@ -53,6 +53,10 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     m_parametersStartOffset = unlinkedExecutable->parametersStartOffset();
     m_typeProfilingStartOffset = unlinkedExecutable->typeProfilingStartOffset();
     m_typeProfilingEndOffset = unlinkedExecutable->typeProfilingEndOffset();
+    if (VM::canUseJIT())
+        new (&m_singletonFunction) WriteBarrier<InferredValue>();
+    else
+        m_singletonFunctionState = ClearWatchpoint;
 }
 
 void FunctionExecutable::finishCreation(VM& vm)
@@ -60,8 +64,6 @@ void FunctionExecutable::finishCreation(VM& vm)
     Base::finishCreation(vm);
     if (VM::canUseJIT())
         m_singletonFunction.set(vm, this, InferredValue::create(vm));
-    else
-        m_singletonFunctionState = ClearWatchpoint;
 }
 
 void FunctionExecutable::destroy(JSCell* cell)

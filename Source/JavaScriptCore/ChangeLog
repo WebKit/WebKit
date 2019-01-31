@@ -1,5 +1,16 @@
 2019-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up after r240796
+
+        Initialize WriteBarrier<InferredValue> in the constructor. Otherwise, GC can see the broken one
+        when allocating InferredValue in FunctionExecutable::finishCreation.
+
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::finishCreation):
+
+2019-01-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Do not use InferredValue in non-JIT configuration
         https://bugs.webkit.org/show_bug.cgi?id=194084
 
