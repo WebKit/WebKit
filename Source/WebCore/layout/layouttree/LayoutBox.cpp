@@ -46,6 +46,11 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
         m_replaced = std::make_unique<Replaced>(*this);
 }
 
+Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style)
+    : Box(attributes, WTFMove(style), BaseTypeFlag::BoxFlag)
+{
+}
+
 Box::~Box()
 {
 }

@@ -1,3 +1,12 @@
+2019-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Add support for block level replaced box.
+        https://bugs.webkit.org/show_bug.cgi?id=194071
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-01-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Fix WebKitTestRunner's testPath with Windows full paths

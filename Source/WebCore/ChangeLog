@@ -1,3 +1,17 @@
+2019-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Add support for block level replaced box.
+        https://bugs.webkit.org/show_bug.cgi?id=194071
+
+        Reviewed by Antti Koivisto.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+        (WebCore::Layout::outputLayoutBox):
+
 2019-01-31  Chris Fleizach  <cfleizach@apple.com>
 
         ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification

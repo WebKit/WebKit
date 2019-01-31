@@ -77,7 +77,7 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
                 return Box::ElementAttributes { Box::ElementType::TableFooterGroup };
             if (element->hasTagName(HTMLNames::tfootTag))
                 return Box::ElementAttributes { Box::ElementType::TableFooterGroup };
-            if (element->hasTagName(HTMLNames::imgTag))
+            if (element->hasTagName(HTMLNames::imgTag) || element->hasTagName(HTMLNames::iframeTag))
                 return Box::ElementAttributes { Box::ElementType::Replaced };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
@@ -92,7 +92,11 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
             downcast<InlineBox>(*box).setTextContent(downcast<RenderText>(child).originalText());
         } else if (is<RenderReplaced>(child)) {
             auto& renderer = downcast<RenderReplaced>(child);
-            box = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            auto display = renderer.style().display();
+            if (display == DisplayType::Block)
+                box = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            else
+                box = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
         } else if (is<RenderElement>(child)) {
             auto& renderer = downcast<RenderElement>(child);
             auto display = renderer.style().display();
@@ -176,7 +180,9 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const Disp
         if (!layoutBox.parent())
             stream << "initial ";
         stream << "block container";
-    } else
+    } else if (layoutBox.isBlockLevelBox())
+        stream << "block box";
+    else
         stream << "box";
     // FIXME: Inline text runs don't create display boxes yet.
     if (displayBox) {
