@@ -1,3 +1,19 @@
+2019-01-31  Darin Adler  <darin@apple.com>
+
+        Simplify and streamline code that creates an appropriate document based on MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=193756
+
+        Reviewed by Chris Dumez.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument): Use equalLettersIgnoringASCIICase rather
+        than == for all the MIME type checks. Use MIMETypeRegistry::isSupportedImageMIMEType
+        instead of Image::supportsType. Rearranged checks so that all the combinations that
+        that take precedence over plug-ins are checked first, fixing some unimportant edge
+        cases where the plug-in database is initialized and doesn't need to be. Straightened
+        out the logic for various special types so that the checks are more independent from
+        each other and hence easier to understand.
+
 2019-01-31  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Unreviewed debug build fix, obsolete assert

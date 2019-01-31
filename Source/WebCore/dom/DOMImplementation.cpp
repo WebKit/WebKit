@@ -133,65 +133,59 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 
 Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame, const URL& url)
 {
-    // FIXME: Confusing to have this here with public DOM APIs for creating documents. This is different enough that it should perhaps be moved.
-    // FIXME: This function is doing case insensitive comparisons on MIME types. Should do equalLettersIgnoringASCIICase instead.
+    // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
+    // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,
+    // because of the analogy with HTMLElementFactory.
 
-    // Plugins cannot take HTML and XHTML from us, and we don't even need to initialize the plugin database for those.
-    if (type == "text/html")
+    // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
+    if (equalLettersIgnoringASCIICase(type, "text/html"))
         return HTMLDocument::create(frame, url);
-    if (type == "application/xhtml+xml")
+    if (equalLettersIgnoringASCIICase(type, "application/xhtml+xml"))
         return XMLDocument::createXHTML(frame, url);
+    if (equalLettersIgnoringASCIICase(type, "text/plain"))
+        return TextDocument::create(frame, url);
+    bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(type);
+    if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(type))
+        return ImageDocument::create(*frame, url);
 
-#if ENABLE(FTPDIR)
-    // Plugins cannot take FTP from us either
-    if (type == "application/x-ftp-directory")
-        return FTPDirectoryDocument::create(frame, url);
-#endif
-
-    // If we want to useImageDocumentForSubframePDF, we'll let that override plugin support.
+    // The "image documents for subframe PDFs" mode will override a PDF plug-in.
     if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF())
         return ImageDocument::create(*frame, url);
 
-    PluginData* pluginData = nullptr;
-    auto allowedPluginTypes = PluginData::OnlyApplicationPlugins;
-    if (frame && frame->page()) {
-        if (frame->loader().subframeLoader().allowPlugins())
-            allowedPluginTypes = PluginData::AllPlugins;
-
-        pluginData = &frame->page()->pluginData();
-    }
-
-    // PDF is one image type for which a plugin can override built-in support.
-    // We do not want QuickTime to take over all image types, obviously.
-    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(type) && pluginData && pluginData->supportsWebVisibleMimeType(type, allowedPluginTypes))
-        return PluginDocument::create(frame, url);
-    if (Image::supportsType(type))
-        return ImageDocument::create(*frame, url);
-
 #if ENABLE(VIDEO)
-    // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
-    // Key system is not applicable here.
     MediaEngineSupportParameters parameters;
-    parameters.type = ContentType(type);
+    parameters.type = ContentType { type };
     parameters.url = url;
     if (MediaPlayer::supportsType(parameters))
         return MediaDocument::create(frame, url);
 #endif
 
-    // Everything else except text/plain can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
-    // Disallowing plug-ins to use text/plain prevents plug-ins from hijacking a fundamental type that the browser is expected to handle,
-    // and also serves as an optimization to prevent loading the plug-in database in the common case.
-    if (type != "text/plain" && ((pluginData && pluginData->supportsWebVisibleMimeType(type, allowedPluginTypes)) || (frame && frame->loader().client().shouldAlwaysUsePluginDocument(type))))
+#if ENABLE(FTPDIR)
+    if (equalLettersIgnoringASCIICase(type, "application/x-ftp-directory"))
+        return FTPDirectoryDocument::create(frame, url);
+#endif
+
+    if (frame && frame->loader().client().shouldAlwaysUsePluginDocument(type))
         return PluginDocument::create(frame, url);
+
+    // The following is the relatively costly lookup that requires initializing the plug-in database.
+    if (frame && frame->page()) {
+        auto allowedPluginTypes = frame->loader().subframeLoader().allowPlugins()
+            ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
+        if (frame->page()->pluginData().supportsWebVisibleMimeType(type, allowedPluginTypes))
+            return PluginDocument::create(frame, url);
+    }
+
+    // Items listed here, after the plug-in checks, can be overridden by plug-ins.
+    // For example, plug-ins can take over support for PDF or SVG.
+    if (frame && isImage)
+        return ImageDocument::create(*frame, url);
     if (MIMETypeRegistry::isTextMIMEType(type))
         return TextDocument::create(frame, url);
-
-    if (type == "image/svg+xml")
+    if (equalLettersIgnoringASCIICase(type, "image/svg+xml"))
         return SVGDocument::create(frame, url);
-
     if (MIMETypeRegistry::isXMLMIMEType(type))
         return XMLDocument::create(frame, url);
-
     return HTMLDocument::create(frame, url);
 }
 
