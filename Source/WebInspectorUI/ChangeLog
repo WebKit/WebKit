@@ -1,3 +1,104 @@
+2019-01-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Memory Timeline View should be responsive / resizable
+        https://bugs.webkit.org/show_bug.cgi?id=153758
+        <rdar://problem/24444320>
+
+        Reviewed by Joseph Pecoraro.
+
+        Leverage the SVG `viewBox` (which was misspelled) to scale the graphs when the width of the
+        container changes. The `viewBox` used is equal to the total amount of time that is visible.
+
+        Make `WI.LineChart` (and its container classes) into subclasses of `WI.View` to leverage the
+        existing layout system.
+
+        Prevent any work from being done when resizing, as this is now handled by CSS/SVG.
+
+        * UserInterface/Views/LineChart.js:
+        (WI.LineChart):
+        (WI.LineChart.prototype.set size):
+        (WI.LineChart.prototype.addPoint):
+        (WI.LineChart.prototype.clear):
+        (WI.LineChart.prototype.layout):
+        (WI.LineChart.prototype.get element): Deleted.
+        (WI.LineChart.prototype.get points): Deleted.
+        (WI.LineChart.prototype.needsLayout): Deleted.
+        (WI.LineChart.prototype.updateLayout): Deleted.
+
+        * UserInterface/Views/CPUUsageView.js:
+        (WI.CPUUsageView):
+        (WI.CPUUsageView.prototype.clear):
+        (WI.CPUUsageView.prototype.updateChart): Added.
+        (WI.CPUUsageView.prototype.get element): Deleted.
+        (WI.CPUUsageView.prototype.layoutWithDataPoints): Deleted.
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view):
+        (.cpu-usage-view > .details):
+        (.cpu-usage-view > .graph, .cpu-usage-view > .graph > .line-chart, .cpu-usage-view > .graph > .line-chart > svg): Added.
+        (.cpu-usage-view > .graph): Deleted.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype.layout.layoutView):
+        (WI.CPUTimelineView.prototype.layout.layoutView.xScale):
+        (WI.CPUTimelineView.prototype.layout.layoutView.yScale):
+        * UserInterface/Views/CPUTimelineView.css:
+        (body .timeline-view.cpu): Added.
+        (.timeline-view.cpu > .content):
+        (.timeline-view.cpu): Deleted.
+
+        * UserInterface/Views/MemoryCategoryView.js:
+        (WI.MemoryCategoryView):
+        (WI.MemoryCategoryView.prototype.clear):
+        (WI.MemoryCategoryView.prototype.updateChart): Added.
+        (WI.MemoryCategoryView.prototype.get element): Deleted.
+        (WI.MemoryCategoryView.prototype.layoutWithDataPoints): Deleted.
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view):
+        (.memory-category-view > .details):
+        (.memory-category-view > .graph, .memory-category-view > .graph > .line-chart, .memory-category-view > .graph > .line-chart > svg): Added.
+        (.memory-category-view > .graph): Deleted.
+
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.layout):
+        (WI.MemoryTimelineView.prototype.layout.layoutCategoryView):
+        (WI.MemoryTimelineView.prototype.layout.layoutCategoryView.xScale):
+        (WI.MemoryTimelineView.prototype.layout.layoutCategoryView.yScale):
+        (WI.MemoryTimelineView.prototype._initializeCategoryViews):
+        (WI.MemoryTimelineView.prototype._initializeCategoryViews.appendLegendRow):
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory > .content > .overview):
+        (.timeline-view.memory > .content > .overview > .divider):
+        (.timeline-view.memory > .content > .overview .total-usage, .timeline-view.memory > .content > .overview .max-percentage, .timeline-view.memory > .content > .overview .legend .size): Added.
+        (.timeline-view.memory .legend):
+        (.timeline-view.memory .legend .row): Added.
+        (.timeline-view.memory .legend .row + .row): Added.
+        (.timeline-view.memory .legend .swatch): Addd.
+        (.timeline-view.memory .legend .swatch.javascript): Addd.
+        (.timeline-view.memory .legend .swatch.images): Addd.
+        (.timeline-view.memory .legend .swatch.layers): Addd.
+        (.timeline-view.memory .legend .swatch.page): Addd.
+        (.timeline-view.memory .legend .swatch.current): Addd.
+        (.timeline-view.memory > .content): Deleted.
+        (.timeline-view.memory > .content > .overview .total-usage, .timeline-view.memory > .content > .overview .max-percentage):
+        (body[dir=ltr] .timeline-view.memory .legend): Deleted.
+        (body[dir=rtl] .timeline-view.memory .legend): Deleted.
+        (.timeline-view.memory .legend > .row): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch): Deleted.
+        (body[dir=ltr] .timeline-view.memory .legend > .row > .swatch): Deleted.
+        (body[dir=rtl] .timeline-view.memory .legend > .row > .swatch): Deleted.
+        (.timeline-view.memory .legend > .row > p): Deleted.
+        (body[dir=ltr] .timeline-view.memory .legend > .row > :matches(.label, .size)): Deleted.
+        (body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size)): Deleted.
+        (.timeline-view.memory .legend > .row > .label): Deleted.
+        (.timeline-view.memory .legend > .row > .size): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch.javascript): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch.images): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch.layers): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch.page): Deleted.
+        (.timeline-view.memory .legend > .row > .swatch.current): Deleted.
+
 2019-01-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Changes: group CSS rules by resource

@@ -23,35 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CPUUsageView = class CPUUsageView
+WI.CPUUsageView = class CPUUsageView extends WI.View
 {
     constructor()
     {
-        this._element = document.createElement("div");
-        this._element.classList.add("cpu-usage-view");
+        super();
 
-        this._detailsElement = this._element.appendChild(document.createElement("div"));
+        this.element.classList.add("cpu-usage-view");
+
+        this._detailsElement = this.element.appendChild(document.createElement("div"));
         this._detailsElement.classList.add("details");
 
-        this._detailsAverageElement = this._detailsElement.appendChild(document.createElement("span"));        
+        this._detailsAverageElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
         this._detailsMaxElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
         this._detailsMinElement = this._detailsElement.appendChild(document.createElement("span"));
         this._updateDetails(NaN, NaN);
 
-        this._graphElement = this._element.appendChild(document.createElement("div"));
+        this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
 
-        // FIXME: <https://webkit.org/b/153758> Web Inspector: Memory / CPU Timeline Views should be responsive / resizable
-        let size = new WI.Size(800, 150);
-        this._chart = new WI.LineChart(size);
+        this._chart = new WI.LineChart;
+        this.addSubview(this._chart);
         this._graphElement.appendChild(this._chart.element);
     }
 
     // Public
-
-    get element() { return this._element; }
 
     clear()
     {
@@ -61,23 +59,27 @@ WI.CPUUsageView = class CPUUsageView
         this._updateDetails(NaN, NaN);
 
         this._chart.clear();
-        this._chart.needsLayout();
     }
 
-    layoutWithDataPoints(dataPoints, lastTime, minSize, maxSize, averageSize, xScale, yScale)
+    updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale)
     {
-        console.assert(minSize >= 0);
-        console.assert(maxSize >= 0);
-        console.assert(minSize <= maxSize);
+        console.assert(size instanceof WI.Size);
+        console.assert(min >= 0);
+        console.assert(max >= 0);
+        console.assert(min <= max);
+        console.assert(min <= average && average <= max);
 
-        this._updateDetails(minSize, maxSize, averageSize);
+        this._updateDetails(min, max, average);
+
         this._chart.clear();
+        this._chart.size = size;
+        this._chart.needsLayout();
 
         if (!dataPoints.length)
             return;
 
         // Ensure an empty graph is empty.
-        if (!maxSize)
+        if (!max)
             return;
 
         // Extend the first data point to the start so it doesn't look like we originate at zero size.
@@ -94,11 +96,9 @@ WI.CPUUsageView = class CPUUsageView
 
         // Extend the last data point to the end time.
         let lastDataPoint = dataPoints.lastValue;
-        let lastX = Math.floor(xScale(lastTime));
+        let lastX = Math.floor(xScale(visibleEndTime));
         let lastY = yScale(lastDataPoint.size);
         this._chart.addPoint(lastX, lastY);
-
-        this._chart.updateLayout();
     }
 
     // Private

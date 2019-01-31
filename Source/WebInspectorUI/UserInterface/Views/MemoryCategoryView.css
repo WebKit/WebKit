@@ -25,10 +25,13 @@
 
 .memory-category-view {
     display: flex;
+    width: 100%;
+    height: 76px; /* Keep this in sync with memoryCategoryViewHeight + 1 (for border-bottom) */
     border-bottom: 1px solid var(--border-color);
 }
 
 .memory-category-view > .details {
+    flex-shrink: 0;
     width: 150px;
     padding-top: 10px;
     font-family: -webkit-system-font, sans-serif;
@@ -51,11 +54,14 @@ body[dir=rtl] .memory-category-view > .details {
     color: var(--text-color);
 }
 
-.memory-category-view > .graph {
-    position: relative;
-    bottom: -3px;
-}
 
 body[dir=rtl] .memory-category-view > .graph {
     transform: scaleX(-1);
+}
+
+.memory-category-view > .graph,
+.memory-category-view > .graph > .line-chart,
+.memory-category-view > .graph > .line-chart > svg {
+    width: 100%;
+    height: 100%;
 }

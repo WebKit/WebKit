@@ -27,13 +27,8 @@
     overflow: scroll;
 }
 
-.timeline-view.memory > .content {
-    width: 970px;
-    margin: 10px auto;
-}
-
 .timeline-view.memory > .content > .overview {
-    padding-bottom: 10px;
+    padding: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
@@ -90,8 +85,7 @@ body[dir=rtl] .timeline-view.memory > .content > .details > .timeline-ruler {
 }
 
 .timeline-view.memory > .content > .overview > .divider {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 0 5px;
 
     --memory-timeline-view-overview-divider-border-end: 1px solid var(--border-color);
 }
@@ -105,91 +99,56 @@ body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
 }
 
 .timeline-view.memory > .content > .overview .total-usage,
-.timeline-view.memory > .content > .overview .max-percentage {
+.timeline-view.memory > .content > .overview .max-percentage,
+.timeline-view.memory > .content > .overview .legend .size {
     margin: auto;
     color: var(--text-color-secondary);
 }
 
 .timeline-view.memory .legend {
+    -webkit-padding-start: 20px;
     text-align: start;
-
-    --memory-timeline-view-legent-padding-start: 20px;
 }
 
-body[dir=ltr] .timeline-view.memory .legend {
-    padding-left: var(--memory-timeline-view-legent-padding-start);
+.timeline-view.memory .legend .row {
+    display: flex;
 }
 
-body[dir=rtl] .timeline-view.memory .legend {
-    padding-right: var(--memory-timeline-view-legent-padding-start);
+.timeline-view.memory .legend .row + .row {
+    margin-top: 4px;
 }
 
-.timeline-view.memory .legend > .row {
-    position: relative;
-    width: 100px;
-    height: 27px;
-
-    --memory-timeline-view-legend-row-offset-start: 20px;
-}
-
-.timeline-view.memory .legend > .row > .swatch {
-    position: absolute;
-    top: 1px;
+.timeline-view.memory .legend .swatch {
     width: 1em;
     height: 1em;
+    margin-top: 1px;
+    -webkit-margin-end: 8px;
 }
 
-body[dir=ltr] .timeline-view.memory .legend > .row > .swatch {
-    left: 0;
-}
-
-body[dir=rtl] .timeline-view.memory .legend > .row > .swatch {
-    right: 0;
-}
-
-.timeline-view.memory .legend > .row > p {
-    margin: 0;
-}
-
-body[dir=ltr] .timeline-view.memory .legend > .row > :matches(.label, .size) {
-    left: var(--memory-timeline-view-legend-row-offset-start);
-}
-
-body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size) {
-    right: var(--memory-timeline-view-legend-row-offset-start);
-}
-
-.timeline-view.memory .legend > .row > .label {
-    position: absolute;
-    top: 0;
-}
-
-.timeline-view.memory .legend > .row > .size {
-    position: absolute;
-    top: 12px;
-    color: var(--text-color-secondary);
-}
-
-.timeline-view.memory .legend > .row > .swatch.javascript {
+.timeline-view.memory .legend .swatch.javascript {
     border: 1px solid var(--memory-javascript-stroke-color);
     background: var(--memory-javascript-fill-color);
 }
 
-.timeline-view.memory .legend > .row > .swatch.images {
+.timeline-view.memory .legend .swatch.images {
     border: 1px solid var(--memory-images-stroke-color);
     background: var(--memory-images-fill-color);
 }
 
-.timeline-view.memory .legend > .row > .swatch.layers {
+.timeline-view.memory .legend .swatch.layers {
     border: 1px solid var(--memory-layers-stroke-color);
     background: var(--memory-layers-fill-color);
 }
 
-.timeline-view.memory .legend > .row > .swatch.page {
+.timeline-view.memory .legend .swatch.page {
     border: 1px solid var(--memory-page-stroke-color);
     background: var(--memory-page-fill-color);
 }
 
+.timeline-view.memory .legend .swatch.current {
+    border: 1px solid var(--memory-max-comparison-stroke-color);
+    background: var(--memory-max-comparison-fill-color);
+}
 
 .timeline-view.memory .circle-chart > svg > path.javascript,
 .memory-category-view.javascript .line-chart > svg > path {
@@ -213,11 +172,6 @@ body[dir=rtl] .timeline-view.memory .legend > .row > :matches(.label, .size) {
 .memory-category-view.page .line-chart > svg > path {
     stroke: var(--memory-page-stroke-color);
     fill: var(--memory-page-fill-color);
-}
-
-.timeline-view.memory .legend > .row > .swatch.current {
-    border: 1px solid var(--memory-max-comparison-stroke-color);
-    background: var(--memory-max-comparison-fill-color);
 }
 
 .timeline-view.memory .circle-chart > svg > path.current {

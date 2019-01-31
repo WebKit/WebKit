@@ -33,29 +33,29 @@
 // - There is a single path for line.
 //
 //  <div class="line-chart">
-//      <svg width="800" height="75" viewbox="0 0 800 75">
+//      <svg width="800" height="75" viewBox="0 0 800 75">
 //          <path d="..."/>
 //      </svg>
 //  </div>
 
-WI.LineChart = class LineChart
+WI.LineChart = class LineChart extends WI.View
 {
-    constructor(size)
+    constructor()
     {
-        this._element = document.createElement("div");
-        this._element.classList.add("line-chart");
+        super();
 
-        this._chartElement = this._element.appendChild(createSVGElement("svg"));
+        this.element.classList.add("line-chart");
+
+        this._chartElement = this.element.appendChild(createSVGElement("svg"));
+        this._chartElement.setAttribute("preserveAspectRatio", "none");
+
         this._pathElement = this._chartElement.appendChild(createSVGElement("path"));
 
         this._points = [];
-        this.size = size;
+        this._size = null;
     }
 
     // Public
-
-    get element() { return this._element; }
-    get points() { return this._points; }
 
     get size()
     {
@@ -64,11 +64,14 @@ WI.LineChart = class LineChart
 
     set size(size)
     {
+        if (this._size && this._size.equals(size))
+            return;
+
         this._size = size;
 
-        this._chartElement.setAttribute("width", size.width);
-        this._chartElement.setAttribute("height", size.height);
-        this._chartElement.setAttribute("viewbox", `0 0 ${size.width} ${size.height}`);
+        this._chartElement.setAttribute("viewBox", `0 0 ${size.width} ${size.height}`);
+
+        this.needsLayout();
     }
 
     addPoint(x, y)
@@ -81,20 +84,15 @@ WI.LineChart = class LineChart
         this._points = [];
     }
 
-    needsLayout()
+    // Protected
+
+    layout()
     {
-        if (this._scheduledLayoutUpdateIdentifier)
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
 
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
-    }
-
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
+        if (!this._size)
+            return;
 
         let pathComponents = [];
         pathComponents.push(`M 0 ${this._size.height}`);

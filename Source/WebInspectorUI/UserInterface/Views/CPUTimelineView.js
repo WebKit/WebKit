@@ -53,6 +53,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         detailsSubtitleElement.textContent = WI.UIString("CPU Usage");
 
         this._cpuUsageView = new WI.CPUUsageView;
+        this.addSubview(this._cpuUsageView);
         this._detailsContainerElement.appendChild(this._cpuUsageView.element);
 
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
@@ -93,13 +94,19 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     layout()
     {
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
+            return;
+
         // Always update timeline ruler.
         this._timelineRuler.zeroTime = this.zeroTime;
         this._timelineRuler.startTime = this.startTime;
         this._timelineRuler.endTime = this.endTime;
 
+        const cpuUsageViewHeight = 75; // Keep this in sync with .cpu-usage-view
+
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
+        let secondsPerPixel = this._timelineRuler.secondsPerPixel;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
 
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
@@ -115,12 +122,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         // FIXME: Left chart.
         // FIXME: Right chart.
-
-        // FIXME: <https://webkit.org/b/153758> Web Inspector: Memory / CPU Timeline Views should be responsive / resizable
-        const cpuUsageViewWidth = 800;
-        const cpuUsageViewHeight = 150;
-
-        let secondsPerPixel = (graphEndTime - graphStartTime) / cpuUsageViewWidth;
 
         let dataPoints = [];
         let max = -Infinity;
@@ -164,11 +165,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             function xScale(time) {
                 return (time - graphStartTime) / secondsPerPixel;
             }
-            function yScale(size) {
-                return cpuUsageViewHeight - (((size - graphMin) / graphMax) * cpuUsageViewHeight);
+
+            let size = new WI.Size(xScale(graphEndTime), cpuUsageViewHeight);
+
+            function yScale(value) {
+                return size.height - (((value - graphMin) / graphMax) * size.height);
             }
 
-            view.layoutWithDataPoints(dataPoints, visibleEndTime, min, max, average, xScale, yScale);
+            view.updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale);
         }
 
         layoutView(this._cpuUsageView, {dataPoints, min, max, average});
