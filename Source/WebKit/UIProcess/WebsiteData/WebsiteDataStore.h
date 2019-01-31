@@ -204,7 +204,6 @@ public:
 #endif
 
 #if USE(CURL)
-    void platformSetParameters(WebsiteDataStoreParameters&);
     void setNetworkProxySettings(WebCore::CurlProxySettings&&);
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
 #endif
@@ -248,6 +247,10 @@ private:
     void platformInitialize();
     void platformDestroy();
     static void platformRemoveRecentSearches(WallTime);
+
+#if USE(CURL) || USE(SOUP)
+    void platformSetNetworkParameters(WebsiteDataStoreParameters&);
+#endif
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t count = std::numeric_limits<size_t>::max(), bool ensureAPoolExists = true) const;
 

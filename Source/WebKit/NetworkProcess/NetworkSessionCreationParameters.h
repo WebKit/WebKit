@@ -66,6 +66,10 @@ struct NetworkSessionCreationParameters {
     URL httpProxy;
     URL httpsProxy;
 #endif
+#if USE(SOUP)
+    String cookiePersistentStoragePath;
+    uint32_t cookiePersistentStorageType { 0 };
+#endif
 #if USE(CURL)
     String cookiePersistentStorageFile;
     WebCore::CurlProxySettings proxySettings;

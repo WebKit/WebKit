@@ -166,8 +166,12 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     g_return_if_fail(filename);
     g_return_if_fail(!webkit_website_data_manager_is_ephemeral(manager->priv->dataManager));
 
+    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    if (sessionID.isEphemeral())
+        return;
+
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
-        processPool->supplement<WebCookieManagerProxy>()->setCookiePersistentStorage(String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
+        processPool->supplement<WebCookieManagerProxy>()->setCookiePersistentStorage(sessionID, String::fromUTF8(filename), toSoupCookiePersistentStorageType(storage));
 }
 
 /**

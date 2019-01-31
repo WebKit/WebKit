@@ -218,6 +218,7 @@ UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp @no-unify
 
 UIProcess/WebStorage/StorageManager.cpp
 
+UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
 UIProcess/cairo/BackingStoreCairo.cpp @no-unify

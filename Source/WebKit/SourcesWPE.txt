@@ -191,6 +191,7 @@ UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
 UIProcess/WebStorage/StorageManager.cpp
 
+UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
 UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp

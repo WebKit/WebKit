@@ -42,6 +42,6 @@
     void StopObservingCookieChanges(PAL::SessionID sessionID)
 
 #if USE(SOUP)
-    SetCookiePersistentStorage(String storagePath, uint32_t storageType)
+    SetCookiePersistentStorage(PAL::SessionID sessionID, String storagePath, uint32_t storageType)
 #endif
 }

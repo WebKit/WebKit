@@ -72,8 +72,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << defaultDataStoreParameters;
 #if USE(SOUP)
-    encoder << cookiePersistentStoragePath;
-    encoder << cookiePersistentStorageType;
     encoder.encodeEnum(cookieAcceptPolicy);
     encoder << ignoreTLSErrors;
     encoder << languages;
@@ -172,10 +170,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     result.defaultDataStoreParameters = WTFMove(*defaultDataStoreParameters);
 
 #if USE(SOUP)
-    if (!decoder.decode(result.cookiePersistentStoragePath))
-        return false;
-    if (!decoder.decode(result.cookiePersistentStorageType))
-        return false;
     if (!decoder.decodeEnum(result.cookieAcceptPolicy))
         return false;
     if (!decoder.decode(result.ignoreTLSErrors))

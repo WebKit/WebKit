@@ -1,3 +1,50 @@
+2019-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Move cookiePersistentStoragePath and cookiePersistentStorageType from NetworkProcess to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=194075
+
+        Reviewed by Alex Christensen.
+
+        Move cookiePersistentStoragePath and cookiePersistentStorageType from NetworkProcess to
+        NetworkSession to reduce globals. This removes two of the six soup-specific variables in
+        NetworkProcessCreationParameters
+
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup):
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_set_persistent_storage):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::WebCookieManagerProxy):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        (WebKit::WebsiteDataStore::platformSetParameters): Deleted.
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage):
+        (WebKit::WebCookieManagerProxy::getCookiePersistentStorage const):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2019-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Crash in InteractiveUpdateHandler set by ViewGestureController::beginSwipeGesture

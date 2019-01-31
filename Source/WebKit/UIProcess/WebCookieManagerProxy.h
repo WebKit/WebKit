@@ -32,6 +32,7 @@
 #include "WebCookieManagerProxyClient.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 #if USE(SOUP)
@@ -97,8 +98,8 @@ public:
     void unregisterObserver(PAL::SessionID, Observer&);
 
 #if USE(SOUP)
-    void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
-    void getCookiePersistentStorage(String& storagePath, uint32_t& storageType) const;
+    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, uint32_t storageType);
+    void getCookiePersistentStorage(PAL::SessionID, String& storagePath, uint32_t& storageType) const;
 #endif
 
     using API::Object::ref;
@@ -139,8 +140,8 @@ private:
     WebCookieManagerProxyClient m_client;
 
 #if USE(SOUP)
-    String m_cookiePersistentStoragePath;
-    SoupCookiePersistentStorageType m_cookiePersistentStorageType;
+    using CookiePersistentStorageMap = HashMap<PAL::SessionID, std::pair<String, SoupCookiePersistentStorageType>>;
+    CookiePersistentStorageMap m_cookiePersistentStorageMap;
 #endif
 };
 

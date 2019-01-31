@@ -36,7 +36,6 @@
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "StorageManager.h"
-#include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -2061,7 +2060,6 @@ void WebsiteDataStore::clearPendingCookies()
 #if !PLATFORM(COCOA)
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
-    // FIXME: Implement cookies.
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters.sessionID = m_sessionID;
 
@@ -2079,9 +2077,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
-#if USE(CURL)
-    platformSetParameters(parameters);
-#endif
+    platformSetNetworkParameters(parameters);
 
     return parameters;
 }

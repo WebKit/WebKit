@@ -44,6 +44,9 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 #if PLATFORM(COCOA)
         , { }, { }, { }, false, { }, { }, { }
 #endif
+#if USE(SOUP)
+        , { }, 0
+#endif
 #if USE(CURL)
         , { }, { }
 #endif
@@ -64,6 +67,10 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << loadThrottleLatency;
     encoder << httpProxy;
     encoder << httpsProxy;
+#endif
+#if USE(SOUP)
+    encoder << cookiePersistentStoragePath;
+    encoder << cookiePersistentStorageType;
 #endif
 #if USE(CURL)
     encoder << cookiePersistentStorageFile;
@@ -125,7 +132,19 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!httpsProxy)
         return WTF::nullopt;
 #endif
-    
+
+#if USE(SOUP)
+    Optional<String> cookiePersistentStoragePath;
+    decoder >> cookiePersistentStoragePath;
+    if (!cookiePersistentStoragePath)
+        return WTF::nullopt;
+
+    Optional<uint32_t> cookiePersistentStorageType;
+    decoder >> cookiePersistentStorageType;
+    if (!cookiePersistentStorageType)
+        return WTF::nullopt;
+#endif
+
 #if USE(CURL)
     Optional<String> cookiePersistentStorageFile;
     decoder >> cookiePersistentStorageFile;
@@ -165,6 +184,10 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*loadThrottleLatency)
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)
+#endif
+#if USE(SOUP)
+        , WTFMove(*cookiePersistentStoragePath)
+        , WTFMove(*cookiePersistentStorageType)
 #endif
 #if USE(CURL)
         , WTFMove(*cookiePersistentStorageFile)

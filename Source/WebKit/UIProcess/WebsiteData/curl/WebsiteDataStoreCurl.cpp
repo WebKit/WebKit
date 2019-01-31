@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void WebsiteDataStore::platformSetParameters(WebsiteDataStoreParameters& parameters)
+void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
     parameters.networkSessionParameters.proxySettings = m_proxySettings;
 }

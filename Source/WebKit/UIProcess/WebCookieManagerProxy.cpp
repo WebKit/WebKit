@@ -51,9 +51,6 @@ Ref<WebCookieManagerProxy> WebCookieManagerProxy::create(WebProcessPool* process
 
 WebCookieManagerProxy::WebCookieManagerProxy(WebProcessPool* processPool)
     : WebContextSupplement(processPool)
-#if USE(SOUP)
-    , m_cookiePersistentStorageType(SoupCookiePersistentStorageSQLite)
-#endif
 {
     WebContextSupplement::processPool()->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), *this);
 }

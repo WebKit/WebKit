@@ -120,10 +120,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     m_cache = NetworkCache::Cache::open(*this, m_diskCacheDirectory, cacheOptions);
 
-    if (!parameters.cookiePersistentStoragePath.isEmpty()) {
-        supplement<WebCookieManager>()->setCookiePersistentStorage(parameters.cookiePersistentStoragePath,
-            parameters.cookiePersistentStorageType);
-    }
     supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(parameters.cookieAcceptPolicy, OptionalCallbackID());
 
     if (!parameters.languages.isEmpty())

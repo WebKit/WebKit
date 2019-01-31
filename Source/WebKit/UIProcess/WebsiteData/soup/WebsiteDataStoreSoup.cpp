@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2019 Metrological Group B.V.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +25,20 @@
  */
 
 #include "config.h"
-#include "WebCookieManagerProxy.h"
+#include "WebsiteDataStore.h"
 
-#include "WebCookieManagerMessages.h"
+#include "WebCookieManagerProxy.h"
 #include "WebProcessPool.h"
+#include "WebsiteDataStoreParameters.h"
 
 namespace WebKit {
 
-void WebCookieManagerProxy::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, uint32_t storageType)
+void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
-    m_cookiePersistentStorageMap.set(sessionID, std::make_pair(storagePath, static_cast<SoupCookiePersistentStorageType>(storageType)));
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookiePersistentStorage(sessionID, storagePath, storageType));
-}
+    auto& networkSessionParameters = parameters.networkSessionParameters;
 
-void WebCookieManagerProxy::getCookiePersistentStorage(PAL::SessionID sessionID, String& storagePath, uint32_t& storageType) const
-{
-    auto pair = m_cookiePersistentStorageMap.get(sessionID);
-    storagePath = pair.first;
-    storageType = static_cast<uint32_t>(pair.second);
+    if (auto* processPool = processPoolForCookieStorageOperations())
+        processPool->supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(m_sessionID, networkSessionParameters.cookiePersistentStoragePath, networkSessionParameters.cookiePersistentStorageType);
 }
 
 }

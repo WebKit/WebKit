@@ -42,6 +42,9 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
     networkStorageSession().setCookieObserverHandler([this] {
         this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
     });
+
+    if (!parameters.cookiePersistentStoragePath.isEmpty())
+        this->networkProcess().supplement<WebCookieManager>()->setCookiePersistentStorage(m_sessionID, parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
 }
 
 NetworkSessionSoup::~NetworkSessionSoup()

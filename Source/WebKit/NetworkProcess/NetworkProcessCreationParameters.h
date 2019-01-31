@@ -87,8 +87,6 @@ struct NetworkProcessCreationParameters {
     WebsiteDataStoreParameters defaultDataStoreParameters;
     
 #if USE(SOUP)
-    String cookiePersistentStoragePath;
-    uint32_t cookiePersistentStorageType { 0 };
     HTTPCookieAcceptPolicy cookieAcceptPolicy { HTTPCookieAcceptPolicyAlways };
     bool ignoreTLSErrors { false };
     Vector<String> languages;
