@@ -1,3 +1,13 @@
+2019-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use the used margin values in outOfFlowReplacedHorizontalGeometry consistently
+        https://bugs.webkit.org/show_bug.cgi?id=194074
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/absolute-position-with-margin-auto-simple2-expected.html: Added.
+        * fast/block/block-only/absolute-position-with-margin-auto-simple2.html: Added.
+
 2019-01-31  Chris Fleizach  <cfleizach@apple.com>
 
         ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification

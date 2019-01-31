@@ -642,7 +642,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     auto right = computedValueIfNotAuto(style.logicalRight(), containingBlockWidth);
     auto isStaticallyPositioned = !left && !right;
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
-    UsedHorizontalMargin usedHorizontalMargin;
+    Optional<LayoutUnit> usedMarginStart;
+    Optional<LayoutUnit> usedMarginEnd;
     auto width = inlineReplacedWidthAndMargin(layoutState, layoutBox, usedWidth).width;
     auto paddingLeft = displayBox.paddingLeft().valueOr(0);
     auto paddingRight = displayBox.paddingRight().valueOr(0);
@@ -660,49 +661,53 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     if (!left || !right) {
         // #2
-        usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+        usedMarginStart = computedHorizontalMargin.start.valueOr(0);
+        usedMarginEnd = computedHorizontalMargin.end.valueOr(0);
     }
 
-    if (!computedHorizontalMargin.start && !computedHorizontalMargin.end) {
+    if (!usedMarginStart && !usedMarginEnd) {
         // #3
         auto marginStartAndEnd = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
-        if (marginStartAndEnd >= 0)
-            usedHorizontalMargin = { marginStartAndEnd / 2, marginStartAndEnd / 2 };
-        else {
+        if (marginStartAndEnd >= 0) {
+            usedMarginStart = marginStartAndEnd / 2;
+            usedMarginEnd = usedMarginStart;
+        } else {
             if (isLeftToRightDirection) {
-                usedHorizontalMargin.start = 0_lu;
-                usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
+                usedMarginStart = 0_lu;
+                usedMarginEnd = containingBlockWidth - (*left + *usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
             } else {
-                usedHorizontalMargin.end = 0_lu;
-                usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+                usedMarginEnd = 0_lu;
+                usedMarginStart = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd + *right);
             }
         }
     }
 
     // #4
     if (!left)
-        left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+        left = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd + *right);
 
     if (!right)
-        right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end);
+        right = containingBlockWidth - (*left + *usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd);
 
-    if (!computedHorizontalMargin.start)
-        usedHorizontalMargin.start = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+    if (!usedMarginStart)
+        usedMarginStart = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd + *right);
 
-    if (!computedHorizontalMargin.end)
-        usedHorizontalMargin.end = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
+    if (!usedMarginEnd)
+        usedMarginEnd = containingBlockWidth - (*left + *usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
 
-    auto boxWidth = (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+    auto boxWidth = (*left + *usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd + *right);
     if (boxWidth > containingBlockWidth) {
         // #5 Over-constrained?
         if (isLeftToRightDirection)
-            right = containingBlockWidth - (*left + usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end);
+            right = containingBlockWidth - (*left + *usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd);
         else
-            left = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + width + paddingRight + borderRight + usedHorizontalMargin.end + *right);
+            left = containingBlockWidth - (*usedMarginStart + borderLeft + paddingLeft + width + paddingRight + borderRight + *usedMarginEnd + *right);
     }
 
     ASSERT(left);
     ASSERT(right);
+    ASSERT(usedMarginStart);
+    ASSERT(usedMarginEnd);
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
@@ -712,8 +717,8 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
         *right += containingBlockPaddingVerticalEdge;
     }
 
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << usedHorizontalMargin.start << "px, "  << usedHorizontalMargin.end << "px) layoutBox(" << &layoutBox << ")");
-    return { *left, *right, { width, usedHorizontalMargin, computedHorizontalMargin } };
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position][Width][Margin] -> out-of-flow replaced -> left(" << *left << "px) right("  << *right << "px) width(" << width << "px) margin(" << *usedMarginStart << "px, "  << *usedMarginEnd << "px) layoutBox(" << &layoutBox << ")");
+    return { *left, *right, { width, { *usedMarginStart, *usedMarginEnd }, computedHorizontalMargin } };
 }
 
 HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState& layoutState, const Box& layoutBox, Optional<LayoutUnit> usedHeight)

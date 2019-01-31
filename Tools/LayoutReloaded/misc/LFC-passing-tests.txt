@@ -83,6 +83,7 @@ fast/block/block-only/non-auto-top-bottom-height-with-margins.html
 fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html
 fast/block/block-only/abs-pos-with-border-padding-and-float-child-expected.html
 fast/block/block-only/absolute-position-with-margin-auto-simple.html
+fast/block/block-only/absolute-position-with-margin-auto-simple2.html
 fast/block/basic/002.html
 fast/block/basic/003.html
 fast/block/basic/004.html

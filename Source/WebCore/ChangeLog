@@ -1,5 +1,19 @@
 2019-01-31  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Use the used margin values in outOfFlowReplacedHorizontalGeometry consistently
+        https://bugs.webkit.org/show_bug.cgi?id=194074
+
+        Reviewed by Antti Koivisto.
+
+        Check the used margin variables whether we already computed start/end values.
+
+        Test: fast/block/block-only/absolute-position-with-margin-auto-simple2.html
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+
+2019-01-31  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Add support for block level replaced box.
         https://bugs.webkit.org/show_bug.cgi?id=194071
 
