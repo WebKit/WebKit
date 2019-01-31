@@ -92,8 +92,11 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 
 SuspendedPageProxy::~SuspendedPageProxy()
 {
-    if (m_readyToUnsuspendHandler)
-        m_readyToUnsuspendHandler(nullptr);
+    if (m_readyToUnsuspendHandler) {
+        RunLoop::main().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
+            readyToUnsuspendHandler(nullptr);
+        });
+    }
 
     if (m_suspensionState == SuspensionState::Resumed)
         return;
