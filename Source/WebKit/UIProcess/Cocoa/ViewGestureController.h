@@ -179,6 +179,7 @@ private:
         void pause() { m_paused = true; }
         void resume();
         bool isPaused() const { return m_paused; }
+        bool hasRemovalCallback() const { return !!m_removalCallback; }
 
         bool eventOccurred(Events);
         bool cancelOutstandingEvent(Events);

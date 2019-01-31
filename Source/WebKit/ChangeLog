@@ -1,3 +1,29 @@
+2019-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Crash in InteractiveUpdateHandler set by ViewGestureController::beginSwipeGesture
+        https://bugs.webkit.org/show_bug.cgi?id=194083
+
+        Reviewed by Tim Horton.
+
+        We think this crash is a regression from r236966. Prior to r236966, we could only called
+        removeSwipeSnapshot() only when m_provisionalOrSameDocumentLoadCallback was set but now
+        we can call it either when m_snapshotRemovalTracker::start was called, or it had been reset.
+        This can result in m_webPageProxyForBackForwardListForCurrentSwipe getting cleared before
+        InteractiveUpdateHandler is called by UIGestureRecognizer, resulting in the crash.
+
+        This patch tries to restore the behavior prior to r236966 by only invoking removeSwipeSnapshot()
+        when SnapshotRemovalTracker has a valid removal callback set.
+
+        Unfortunately no new tests since there is no reproducible test case, and neither API tests
+        nor layout tests seem to have the capability to trigger swipe gestures via UIGestureRecognizer,
+        which is required for this crash to occur. Notably, back-forward swipe tests I enabled in
+        r240765 bypass UIKit and emulates the action instead.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::hasRemovalCallback const):
+
 2019-01-30  Benjamin Poulain  <benjamin@webkit.org>
 
         <rdar://problem/47570443> Responsiveness timers are too expensive for frequent events
