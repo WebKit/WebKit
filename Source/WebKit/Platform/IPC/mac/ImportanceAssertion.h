@@ -28,12 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <libproc_internal.h>
-#endif
-
-extern "C" int proc_denap_assertion_begin_with_msg(mach_msg_header_t*, uint64_t *);
-extern "C" int proc_denap_assertion_complete(uint64_t);
+#include <mach/message.h>
 
 namespace IPC {
 
@@ -42,18 +37,25 @@ class ImportanceAssertion {
 
 public:
     explicit ImportanceAssertion(mach_msg_header_t* header)
-        : m_assertion(0)
+        : m_voucher(0)
     {
-        proc_denap_assertion_begin_with_msg(header, &m_assertion);
+        if (MACH_MSGH_BITS_HAS_VOUCHER(header->msgh_bits)) {
+            m_voucher = header->msgh_voucher_port;
+            header->msgh_voucher_port = MACH_VOUCHER_NULL;
+            header->msgh_bits &= ~(MACH_MSGH_BITS_VOUCHER_MASK | MACH_MSGH_BITS_RAISEIMP);
+        }
     }
 
     ~ImportanceAssertion()
     {
-        proc_denap_assertion_complete(m_assertion);
+        if (m_voucher) {
+            kern_return_t kr = mach_voucher_deallocate(m_voucher);
+            ASSERT_UNUSED(kr, !kr);
+        }
     }
 
 private:
-    uint64_t m_assertion;
+    mach_voucher_t m_voucher;
 };
 
 }

@@ -1,3 +1,19 @@
+2019-01-30  Daniel Steffen  <dsteffen@apple.com>
+
+        <rdar://problem/29471922> Safari should switch from the legacy denap SPI to handling vouchers
+        https://bugs.webkit.org/show_bug.cgi?id=193992
+
+        Reviewed by Geoffrey Garen.
+
+        The denap SPI is deprecated.
+        The new way of staying out of AppNap is through a voucher.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::readFromMachPort):
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        (IPC::ImportanceAssertion::ImportanceAssertion):
+        (IPC::ImportanceAssertion::~ImportanceAssertion):
+
 2019-01-30  Chris Dumez  <cdumez@apple.com>
 
         Fix crashes when trying to ref the CallbackAggregator in NetworkProcess
