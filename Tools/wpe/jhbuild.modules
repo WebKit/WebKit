@@ -16,6 +16,7 @@
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
+      <dep package="icu"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="woff2"/>
       <dep package="libwpe"/>
@@ -49,6 +50,8 @@
       href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="wpewebkit"
       href="https://wpewebkit.org/releases/"/>
+  <repository type="tarball" name="webkitgtk-jhbuild-mirror"
+      href="http://webkitgtk.org/jhbuild_mirror/"/>
 
   <cmake id="brotli">
     <branch repo="github.com" module="google/brotli.git" checkoutdir="brotli" tag="v1.0.1"/>
@@ -88,6 +91,9 @@
   </meson>
 
   <autotools id="libpsl">
+    <dependencies>
+      <dep package="icu"/>
+    </dependencies>
     <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
             version="0.20.2"
             repo="github-tarball"
@@ -119,9 +125,9 @@
 
   <autotools id="freetype6" autogen-sh="configure"
         autogenargs="--with-harfbuzz=no">
-    <branch module="freetype/freetype-2.8.tar.bz2" version="2.8"
+    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
             repo="savannah.gnu.org"
-            hash="sha256:a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b"/>
+            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure"
@@ -130,33 +136,42 @@
     <dependencies>
       <dep package="freetype6"/>
     </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.12.4.tar.bz2" version="2.12.4"
+    <branch module="software/fontconfig/release/fontconfig-2.13.1.tar.bz2" version="2.13.1"
             repo="freedesktop.org"
-            hash="sha256:668293fcc4b3c59765cdee5cee05941091c0879edcc24dfec5455ef83912e45c"/>
+            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
   </autotools>
 
   <autotools id="harfbuzz" autogen-sh="configure"
-        autogenargs="--with-cairo=no --with-glib=yes --with-freetype=yes --with-fontconfig=yes">
+        autogenargs="--with-cairo=no --with-glib=yes --with-freetype=yes --with-fontconfig=yes --with-icu=yes">
     <dependencies>
       <dep package="glib"/>
       <dep package="freetype6"/>
       <dep package="fontconfig"/>
+      <dep package="icu"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-1.3.3.tar.bz2"
-            version="1.3.3"
-            checkoutdir="harfbuzz-1.3.3"
+    <branch module="software/harfbuzz/release/harfbuzz-2.2.0.tar.bz2"
+            version="2.2.0"
+            checkoutdir="harfbuzz-2.2.0"
             repo="freedesktop.org"
-            hash="sha256:2620987115a4122b47321610dccbcc18f7f121115fd7b88dc8a695c8b66cb3c9"
-            md5sum="97ae15a72a93f1f27324a2b8d9bd3b1d">
+            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
+  </autotools>
+
+  <autotools id="icu"
+             autogen-sh="./source/configure"
+             autogenargs="--disable-samples --enable-weak-threads">
+    <branch module="icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
+            repo="webkitgtk-jhbuild-mirror"
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
+      <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>
 
   <autotools id="pixman"
              autogen-sh="configure"
              autogenargs="--enable-gtk=no">
-    <branch module="releases/pixman-0.32.6.tar.gz" version="0.32.6"
+    <branch module="releases/pixman-0.34.0.tar.gz" version="0.34.0"
             repo="cairographics.org"
-            hash="sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904"/>
+            hash="sha1:a1b1683c1a55acce9d928fea1ab6ceb79142ddc7"/>
   </autotools>
 
   <autotools id="cairo"
@@ -167,9 +182,12 @@
       <dep package="fontconfig"/>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="releases/cairo-1.14.8.tar.xz" version="1.14.8"
+    <branch module="releases/cairo-1.16.0.tar.xz" version="1.16.0"
             repo="cairographics.org"
-            hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
+            hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
+      <!-- See https://gitlab.freedesktop.org/cairo/cairo/merge_requests/5 -->
+      <patch file="cairo-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <cmake id="libwpe">
