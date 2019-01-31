@@ -60,8 +60,7 @@ async function setUpContexts(canvas) {
 
     shouldBeDefined(window.webgpu);
     
-    // FIXME: requestAdapter should take a WebGPUAdapterDescriptor.
-    adapter = await window.webgpu.requestAdapter({});
+    adapter = await window.webgpu.requestAdapter();
     if (!adapter) {
         testFailed("Could not create default WebGPUAdapter!")
         return;

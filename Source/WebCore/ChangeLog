@@ -1,3 +1,33 @@
+2019-01-31  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUAdapterDescriptor -> GPURequestAdapterOptions and take powerPreference into account
+        https://bugs.webkit.org/show_bug.cgi?id=194068
+        <rdar://problem/47680215>
+
+        Reviewed by Dean Jackson.
+        
+        Per the Web GPU IDL, WebGPUAdapterDescriptor is now known as GPURequestAdapterOptions and is optional.
+        In addition, Web GPU now actually attempts to return an integrated GPU when a low-power adapter is requested.
+
+        Test: adapter-options.html
+
+        * Modules/webgpu/GPURequestAdapterOptions.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUAdapterDescriptor.idl.
+        * Modules/webgpu/WebGPU.cpp:
+        (WebCore::WebGPU::requestAdapter const):
+        * Modules/webgpu/WebGPU.h:
+        * Modules/webgpu/WebGPU.idl:
+        * Modules/webgpu/WebGPUAdapter.cpp:
+        (WebCore::WebGPUAdapter::create):
+        (WebCore::WebGPUAdapter::WebGPUAdapter):
+        * Modules/webgpu/WebGPUAdapter.h:
+        (WebCore::WebGPUAdapter::options const):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::create):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPURequestAdapterOptions.h: Renamed from Source/WebCore/Modules/webgpu/WebGPUAdapterDescriptor.h.
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::create):
+
 2019-01-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         Formalize WebKitAdditions mechanism of LoadOptimizer

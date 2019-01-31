@@ -1,3 +1,21 @@
+2019-01-31  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUAdapterDescriptor -> GPURequestAdapterOptions and take powerPreference into account
+        https://bugs.webkit.org/show_bug.cgi?id=194068
+        <rdar://problem/47680215>
+
+        Reviewed by Dean Jackson.
+
+        Add simple test to create device with all options. Update helper functions for other Web GPU
+        tests to request different adapters. (No change in test behavior expected.)
+
+        * webgpu/adapter-options-expected.txt: Added.
+        * webgpu/adapter-options.html: Added.
+        * webgpu/js/basic-webgpu-functions.js:
+        (async.setUpContexts): Update to use no adapter request argument at all. 
+        * webgpu/js/webgpu-functions.js:
+        (async.getBasicDevice): Update to request the low-power adapter.
+
 2019-01-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Use the used margin values in outOfFlowReplacedHorizontalGeometry consistently

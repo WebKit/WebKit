@@ -1,6 +1,5 @@
 async function getBasicDevice() {
-    // FIXME: requestAdapter should take a WebGPUAdapterDescriptor.
-    const adapter = await window.webgpu.requestAdapter({});
+    const adapter = await window.webgpu.requestAdapter({ powerPreference: "low-power" });
     const device = adapter.createDevice();
     return device;
 }

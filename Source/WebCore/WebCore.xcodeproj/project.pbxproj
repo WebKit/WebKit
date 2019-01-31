@@ -13948,8 +13948,7 @@
 		D0232B5821CB49B7009483B9 /* GPUBindGroupLayoutMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUBindGroupLayoutMetal.mm; sourceTree = "<group>"; };
 		D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayout.h; sourceTree = "<group>"; };
 		D02B83ED21C8397A00F85473 /* WebGPUBindGroupLayoutDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroupLayoutDescriptor.idl; sourceTree = "<group>"; };
-		D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUAdapterDescriptor.h; sourceTree = "<group>"; };
-		D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUAdapterDescriptor.idl; sourceTree = "<group>"; };
+		D02C26922181416D00D818E4 /* GPURequestAdapterOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPURequestAdapterOptions.idl; sourceTree = "<group>"; };
 		D02F854E21682A4A0088EE74 /* WebMetalCommandQueue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalCommandQueue.idl; sourceTree = "<group>"; };
 		D02F855021682A560088EE74 /* WebMetalComputeCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebMetalComputeCommandEncoder.idl; sourceTree = "<group>"; };
 		D02F855121682A560088EE74 /* WebMetalComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMetalComputePipelineState.h; sourceTree = "<group>"; };
@@ -14043,6 +14042,7 @@
 		D063AE4721C06626000E6A35 /* WebGPUInputStepMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUInputStepMode.idl; sourceTree = "<group>"; };
 		D063AE4821C066DB000E6A35 /* WebGPUIndexFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUIndexFormat.h; sourceTree = "<group>"; };
 		D063AE4921C066DB000E6A35 /* WebGPUIndexFormat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUIndexFormat.idl; sourceTree = "<group>"; };
+		D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURequestAdapterOptions.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
 		D07DEAB70A36554A00CA30F8 /* InsertListCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InsertListCommand.cpp; sourceTree = "<group>"; };
@@ -18464,6 +18464,7 @@
 				D03211CE21AC954E00763CF2 /* GPURenderPassEncoder.h */,
 				312FF8B921A4C2EF00EB199D /* GPURenderPipeline.h */,
 				312FF8BC21A4C2F000EB199D /* GPURenderPipelineDescriptor.h */,
+				D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */,
 				312FF8BB21A4C2F000EB199D /* GPUShaderModule.h */,
 				312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */,
 				312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */,
@@ -26031,14 +26032,13 @@
 				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,
 				D03C849E21FFCF000002227F /* GPUCompareFunction.idl */,
 				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
+				D02C26922181416D00D818E4 /* GPURequestAdapterOptions.idl */,
 				D00F5947216EFE54000D71DB /* WebGPU.cpp */,
 				D00F5946216EFE54000D71DB /* WebGPU.h */,
 				D00F5948216EFE54000D71DB /* WebGPU.idl */,
 				D00F5950216FFAC2000D71DB /* WebGPUAdapter.cpp */,
 				D00F594F216FFAC2000D71DB /* WebGPUAdapter.h */,
 				D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */,
-				D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */,
-				D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */,
 				D0BE106121E6C0EB00E42A89 /* WebGPUBindGroup.cpp */,
 				D0BE106021E6C0EB00E42A89 /* WebGPUBindGroup.h */,
 				D0BE106221E6C0EB00E42A89 /* WebGPUBindGroup.idl */,

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPURequestAdapterOptions.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
@@ -35,23 +36,35 @@
 
 namespace WebCore {
 
-RefPtr<GPUDevice> GPUDevice::create()
+RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options)
 {
-    PlatformDeviceSmartPtr device;
+    PlatformDeviceSmartPtr devicePtr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    device = adoptNS(MTLCreateSystemDefaultDevice()); // FIXME: Take WebGPUPowerPreference into account.
+    
+    if (options && options->powerPreference == GPURequestAdapterOptions::PowerPreference::LowPower) {
+        auto devices = adoptNS(MTLCopyAllDevices());
+        
+        for (id <MTLDevice> device : devices.get()) {
+            if (device.lowPower) {
+                devicePtr = retainPtr(device);
+                break;
+            }
+        }
+    }
+    
+    if (!devicePtr)
+        devicePtr = adoptNS(MTLCreateSystemDefaultDevice());
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!device) {
+    if (!devicePtr) {
         LOG(WebGPU, "GPUDevice::GPUDevice(): Unable to create GPUDevice!");
         return nullptr;
     }
 
-    LOG(WebGPU, "GPUDevice::GPUDevice(): MTLDevice is %p", device.get());
-    return adoptRef(new GPUDevice(WTFMove(device)));
+    LOG(WebGPU, "GPUDevice::GPUDevice(): MTLDevice is %p", devicePtr.get());
+    return adoptRef(new GPUDevice(WTFMove(devicePtr)));
 }
 
 GPUDevice::GPUDevice(PlatformDeviceSmartPtr&& device)

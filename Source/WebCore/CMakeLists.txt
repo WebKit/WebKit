@@ -464,9 +464,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/DOMWindowWebGPU.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
+    Modules/webgpu/GPURequestAdapterOptions.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
-    Modules/webgpu/WebGPUAdapterDescriptor.idl
     Modules/webgpu/WebGPUBindGroup.idl
     Modules/webgpu/WebGPUBindGroupBinding.idl
     Modules/webgpu/WebGPUBindGroupDescriptor.idl

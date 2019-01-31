@@ -29,5 +29,5 @@
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
 ] interface WebGPU {
-    Promise<WebGPUAdapter> requestAdapter(WebGPUAdapterDescriptor desc);
+    Promise<WebGPUAdapter> requestAdapter(optional GPURequestAdapterOptions options);
 };

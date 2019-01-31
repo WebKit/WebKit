@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset=utf-8>
+<title>Create GPUDevices from various options.</title>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+promise_test(async () => {
+    const defaultAdapter = await webgpu.requestAdapter();
+    const device = defaultAdapter.createDevice();
+
+    assert_true(device instanceof WebGPUDevice, "Default device successfully created.");
+}, "Create the default device.");
+
+promise_test(async () => {
+    const lowPowerAdapter = await webgpu.requestAdapter({ powerPreference: "low-power" });
+    const device = lowPowerAdapter.createDevice();
+
+    assert_true(device instanceof WebGPUDevice, "Device successfully created using low-power option.");
+}, "Create a device with a low-power option.");
+
+promise_test(async () => {
+    const highPerfAdapter = await webgpu.requestAdapter({ powerPreference: "high-performance" });
+    const device = highPerfAdapter.createDevice();
+
+    assert_true(device instanceof WebGPUDevice, "Device successfully created using high-performance option.");
+}, "Create a device with a high-performance option.");
+</script>
+</body>

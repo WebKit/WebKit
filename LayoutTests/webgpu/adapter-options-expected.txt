@@ -1,0 +1,5 @@
+
+PASS Create the default device. 
+PASS Create a device with a low-power option. 
+PASS Create a device with a high-performance option. 
+

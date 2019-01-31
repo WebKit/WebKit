@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURequestAdapterOptions.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -35,18 +37,18 @@ namespace WebCore {
 class ScriptExecutionContext;
 class WebGPUDevice;
 
-struct WebGPUAdapterDescriptor;
-
 class WebGPUAdapter : public RefCounted<WebGPUAdapter> {
 public:
-    static Ref<WebGPUAdapter> create(const WebGPUAdapterDescriptor&);
+    static Ref<WebGPUAdapter> create(Optional<GPURequestAdapterOptions>&&);
 
     RefPtr<WebGPUDevice> createDevice();
+    
+    Optional<GPURequestAdapterOptions> options() const { return m_options; }
 
 private:
-    WebGPUAdapter(const WebGPUAdapterDescriptor&);
+    explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);
 
-    const WebGPUAdapterDescriptor& m_descriptor;
+    Optional<GPURequestAdapterOptions> m_options;
 };
 
 } // namespace WebCore

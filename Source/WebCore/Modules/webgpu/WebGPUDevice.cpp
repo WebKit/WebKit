@@ -58,7 +58,7 @@ namespace WebCore {
 
 RefPtr<WebGPUDevice> WebGPUDevice::create(Ref<WebGPUAdapter>&& adapter)
 {
-    if (auto device = GPUDevice::create()) // FIXME: Take adapter into account when creating m_device.
+    if (auto device = GPUDevice::create(adapter->options()))
         return adoptRef(new WebGPUDevice(WTFMove(adapter), device.releaseNonNull()));
     return nullptr;
 }

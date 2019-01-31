@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUQueue.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -50,11 +51,12 @@ struct GPUBindGroupLayoutDescriptor;
 struct GPUBufferDescriptor;
 struct GPUPipelineLayoutDescriptor;
 struct GPURenderPipelineDescriptor;
+struct GPURequestAdapterOptions;
 struct GPUShaderModuleDescriptor;
 
 class GPUDevice : public RefCounted<GPUDevice> {
 public:
-    static RefPtr<GPUDevice> create();
+    static RefPtr<GPUDevice> create(Optional<GPURequestAdapterOptions>&&);
 
     RefPtr<GPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
 

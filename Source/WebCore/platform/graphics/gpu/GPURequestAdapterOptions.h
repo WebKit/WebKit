@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,17 +22,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-enum WebGPUPowerPreference {
-    "default",
-    "low-power",
-    "high-performance"
-};
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUAdapterDescriptor {
-    WebGPUPowerPreference powerPreference = "default";
+#if ENABLE(WEBGPU)
+
+namespace WebCore {
+
+struct GPURequestAdapterOptions {
+    enum class PowerPreference {
+        LowPower,
+        HighPerformance
+    };
+    
+    PowerPreference powerPreference;
 };
+    
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

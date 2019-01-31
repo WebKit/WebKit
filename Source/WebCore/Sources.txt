@@ -2770,6 +2770,7 @@ JSGeoposition.cpp
 JSGlobalCrypto.cpp
 JSGlobalEventHandlers.cpp
 JSGlobalPerformance.cpp
+JSGPURequestAdapterOptions.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp
 JSHTMLAppletElement.cpp
@@ -3294,7 +3295,6 @@ JSWaveShaperNode.cpp
 JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
-JSWebGPUAdapterDescriptor.cpp
 JSWebGPUBindGroup.cpp
 JSWebGPUBindGroupBinding.cpp
 JSWebGPUBindGroupDescriptor.cpp
