@@ -147,11 +147,13 @@ void GameControllerGamepad::setupAsGamepad()
 
     m_id = makeString(String(m_gcController.get().vendorName), " Gamepad"_s);
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN // GCGamepad
     m_gamepad.get().valueChangedHandler = ^(GCGamepad *, GCControllerElement *) {
         m_lastUpdateTime = MonotonicTime::now();
         GameControllerGamepadProvider::singleton().gamepadHadInput(*this, m_hadButtonPresses);
         m_hadButtonPresses = false;
     };
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     m_buttonValues.resize(6);
     m_buttonValues[0] = m_extendedGamepad.get().buttonA.value;

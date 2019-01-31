@@ -1,3 +1,19 @@
+2019-01-31  Keith Rollin  <krollin@apple.com>
+
+        GCGamepad is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=194056
+        <rdar://problem/47685010>
+
+        Reviewed by Brady Eidson.
+
+        GCGamepad is deprecated, resulting in compiler warnings. Address this
+        for now by employing ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+
+        No new tests since there should be no observable behavior difference.
+
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        (WebCore::GameControllerGamepad::setupAsGamepad):
+
 2019-01-31  Darin Adler  <darin@apple.com>
 
         Simplify and streamline code that creates an appropriate document based on MIME type
