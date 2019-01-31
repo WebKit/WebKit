@@ -1,5 +1,28 @@
 2019-01-31  Alicia Boya García  <aboya@igalia.com>
 
+        [MSE][GStreamer] Remove unused GstFlowReturn in AppendPipeline methods
+        https://bugs.webkit.org/show_bug.cgi?id=194067
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A couple methods in AppendPipeline were returning GstFlowReturn
+        despite there being no codepath (sans assertions) where values other
+        than GST_FLOW_OK are returned.
+
+        Therefore, it makes sense to just make these methods return void.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::pushNewBuffer):
+        (WebCore::AppendPipeline::handleAppsinkNewSampleFromStreamingThread):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::append):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::append):
+
+2019-01-31  Alicia Boya García  <aboya@igalia.com>
+
         [MSE][GStreamer] Remove if (m_playerPrivate) from MediaSourceClientGStreamerMSE
         https://bugs.webkit.org/show_bug.cgi?id=194069
 

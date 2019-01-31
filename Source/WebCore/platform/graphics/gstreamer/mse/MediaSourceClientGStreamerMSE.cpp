@@ -115,14 +115,13 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
     appendPipeline->resetParserState();
 }
 
-bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, Vector<unsigned char>&& data)
+void MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, Vector<unsigned char>&& data)
 {
     ASSERT(WTF::isMainThread());
 
     GST_DEBUG("Appending %zu bytes", data.size());
 
-    if (!m_playerPrivate)
-        return false;
+    ASSERT(m_playerPrivate);
 
     RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
 
@@ -137,7 +136,7 @@ bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
             delete static_cast<Vector<unsigned char>*>(data);
         }));
 
-    return appendPipeline->pushNewBuffer(WTFMove(buffer)) == GST_FLOW_OK;
+    appendPipeline->pushNewBuffer(WTFMove(buffer));
 }
 
 void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStreamStatus status)

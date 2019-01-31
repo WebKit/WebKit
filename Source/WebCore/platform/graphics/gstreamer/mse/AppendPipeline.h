@@ -49,7 +49,7 @@ public:
     AppendPipeline(Ref<MediaSourceClientGStreamerMSE>, Ref<SourceBufferPrivateGStreamer>, MediaPlayerPrivateGStreamerMSE&);
     virtual ~AppendPipeline();
 
-    GstFlowReturn pushNewBuffer(GRefPtr<GstBuffer>&&);
+    void pushNewBuffer(GRefPtr<GstBuffer>&&);
     void resetParserState();
     Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
@@ -65,7 +65,7 @@ private:
 
     gint id();
 
-    GstFlowReturn handleAppsinkNewSampleFromStreamingThread(GstElement*);
+    void handleAppsinkNewSampleFromStreamingThread(GstElement*);
 
     // Takes ownership of caps.
     void parseDemuxerSrcPadCaps(GstCaps*);
