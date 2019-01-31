@@ -715,7 +715,9 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
 static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
 {
     ASSERT(cache);
-
+    if (!cache)
+        return nil;
+    
     auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
     if (!textMarkerData)
         return nil;
@@ -1113,6 +1115,9 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
 
 static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
 {
+    if (!cache)
+        return nil;
+    
     id startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
     id endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
     return textMarkerRangeFromMarkers(startTextMarker, endTextMarker);

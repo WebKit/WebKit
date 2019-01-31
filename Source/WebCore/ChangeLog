@@ -1,3 +1,21 @@
+2019-01-31  Chris Fleizach  <cfleizach@apple.com>
+
+        ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification
+        https://bugs.webkit.org/show_bug.cgi?id=189094
+        <rdar://problem/43853526>
+
+        Reviewed by Zalan Bujtas.
+
+        Protect against access to objects and cache's that can be removed while an object is still in memory.
+
+        Unskipped flaky tests on mac-wk2.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (textMarkerForVisiblePosition):
+        (textMarkerRangeFromVisiblePositions):
+
 2019-01-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) History navigations to twitter.com lead to a 403 HTTP error

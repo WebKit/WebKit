@@ -408,9 +408,11 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (id wrapper = object->wrapper())
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 
-    AXPostNotificationWithUserInfo(rootWebArea()->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo);
-    if (rootWebArea()->wrapper() != object->wrapper())
-        AXPostNotificationWithUserInfo(object->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo);
+    if (auto root = rootWebArea()) {
+        AXPostNotificationWithUserInfo(rootWebArea()->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo);
+        if (root->wrapper() != object->wrapper())
+            AXPostNotificationWithUserInfo(object->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo);
+    }
 
     [userInfo release];
 }
