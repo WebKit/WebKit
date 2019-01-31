@@ -189,7 +189,7 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         if (nodeID == m_latchedNodeID)
             clearLatchedNode();
         
-        LOG(Scrolling, "ScrollingTree::commitTreeState - removing unvisited node %llu", nodeID);
+        LOG(Scrolling, "ScrollingTree::commitTreeState - removing unvisited node %" PRIu64, nodeID);
         m_nodeMap.remove(nodeID);
     }
 }

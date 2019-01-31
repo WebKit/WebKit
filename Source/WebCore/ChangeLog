@@ -1,3 +1,12 @@
+2019-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix incorrect string format
+        https://bugs.webkit.org/show_bug.cgi?id=193907
+        <rdar://problem/47604080>
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+
 2019-01-30  Simon Fraser  <simon.fraser@apple.com>
 
         [Mac] Implement basic hit testing in the scrolling tree
