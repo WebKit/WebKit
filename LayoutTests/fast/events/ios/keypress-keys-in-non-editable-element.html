@@ -41,11 +41,8 @@ tests.push(new TestKeyPressDispatchedFor("enter"));
 tests.push(new TestKeyPressDispatchedFor("escape"));
 tests.push(new TestKeyPressDispatchedFor("return"));
 
-// The forward delete key is mapped to the delete key on iOS and dispatches a keypress event.
-// On Mac it is treated as its own key and does not dispatch a keypress event.
-tests.push(new TestKeyPressDispatchedFor("forwardDelete"));
-
 // Special keys: KeyPress should not be dispatched.
+tests.push(new TestKeyPressNotDispatchedFor("forwardDelete"));
 tests.push(new TestKeyPressNotDispatchedFor("upArrow"));
 tests.push(new TestKeyPressNotDispatchedFor("downArrow"));
 tests.push(new TestKeyPressNotDispatchedFor("leftArrow"));
@@ -53,7 +50,7 @@ tests.push(new TestKeyPressNotDispatchedFor("rightArrow"));
 tests.push(new TestKeyPressNotDispatchedFor("clear"));
 tests.push(new TestKeyPressNotDispatchedFor("end"));
 tests.push(new TestKeyPressNotDispatchedFor("home"));
-tests.push(new TestKeyPressNotDispatchedFor("insert"));
+// FIXME: Test that keypress is not dispatched for "insert" once <rdar://problem/47128940> is fixed.
 tests.push(new TestKeyPressNotDispatchedFor("leftAlt"));
 tests.push(new TestKeyPressNotDispatchedFor("leftCommand"));
 tests.push(new TestKeyPressNotDispatchedFor("leftControl"));
@@ -64,7 +61,8 @@ tests.push(new TestKeyPressNotDispatchedFor("rightAlt"));
 tests.push(new TestKeyPressNotDispatchedFor("rightCommand"));
 tests.push(new TestKeyPressNotDispatchedFor("rightControl"));
 tests.push(new TestKeyPressNotDispatchedFor("rightShift"));
-for (let i = 1; i <= 24; ++i)
+// FIXME: Check function keys up to F24 once <rdar://problem/47128940> is fixed.
+for (let i = 1; i <= 16; ++i)
     tests.push(new TestKeyPressNotDispatchedFor("F" + i));
 
 function nextKeyPress()
