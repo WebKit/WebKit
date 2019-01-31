@@ -1,3 +1,10 @@
+2019-01-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed speculative WPE build fix.
+
+        * CMakeLists.txt: Include the WebKitCommon file, as is normally done in
+        standalone CMakeLists.txt files.
+
 2019-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] WebDriver: race condition when session starts

@@ -1,3 +1,4 @@
+include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "WebDriver")
 
 set(WebDriver_INCLUDE_DIRECTORIES
