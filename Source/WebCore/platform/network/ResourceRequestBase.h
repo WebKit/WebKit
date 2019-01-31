@@ -57,7 +57,7 @@ class ResourceResponse;
 class ResourceRequestBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ResourceRequest isolatedCopy() const;
+    WEBCORE_EXPORT ResourceRequest isolatedCopy() const;
     WEBCORE_EXPORT void setAsIsolatedCopy(const ResourceRequest&);
 
     WEBCORE_EXPORT bool isNull() const;

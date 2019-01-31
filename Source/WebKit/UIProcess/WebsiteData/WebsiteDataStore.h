@@ -52,6 +52,10 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebsiteDataStoreAdditions.h>
+#endif
+
 namespace WebCore {
 class SecurityOrigin;
 }
@@ -59,7 +63,6 @@ class SecurityOrigin;
 namespace WebKit {
 
 class AuthenticatorManager;
-class LoadOptimizer;
 class SecKeyProxyStore;
 class StorageManager;
 class DeviceIdHashSaltStorage;
@@ -227,7 +230,7 @@ public:
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
 
 #if HAVE(LOAD_OPTIMIZER)
-    LoadOptimizer& loadOptimizer() { return m_loadOptimizer.get(); }
+WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_1
 #endif
 
 private:
@@ -306,10 +309,6 @@ private:
 #endif
 
     UniqueRef<WebsiteDataStoreClient> m_client;
-
-#if HAVE(LOAD_OPTIMIZER)
-    UniqueRef<LoadOptimizer> m_loadOptimizer;
-#endif
 };
 
 }

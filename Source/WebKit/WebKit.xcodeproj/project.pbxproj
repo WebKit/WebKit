@@ -1024,7 +1024,6 @@
 		57597EBD218184900037F924 /* CtapHidAuthenticator.h in Headers */ = {isa = PBXBuildFile; fileRef = 57597EBB2181848F0037F924 /* CtapHidAuthenticator.h */; };
 		5772F206217DBD6A0056BF2C /* HidService.h in Headers */ = {isa = PBXBuildFile; fileRef = 5772F204217DBD6A0056BF2C /* HidService.h */; };
 		578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */; };
-		57900B4021F8F9B8008317DE /* LoadOptimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 57900B3E21F8F9B8008317DE /* LoadOptimizer.h */; };
 		57AC8F50217FEED90055438C /* HidConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 57AC8F4E217FEED90055438C /* HidConnection.h */; };
 		57B4B46020B504AC00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 57B4B45E20B504AB00D4AD79 /* ClientCertificateAuthenticationXPCConstants.h */; };
 		57DCED6E2142EE5E0016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57DCED6B2142EAE20016B847 /* WebAuthenticatorCoordinatorMessageReceiver.cpp */; };
@@ -3375,8 +3374,6 @@
 		5772F204217DBD6A0056BF2C /* HidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidService.h; sourceTree = "<group>"; };
 		5772F205217DBD6A0056BF2C /* HidService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidService.mm; sourceTree = "<group>"; };
 		578DC2972155A0010074E815 /* LocalAuthenticationSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAuthenticationSoftLink.h; sourceTree = "<group>"; };
-		57900B3E21F8F9B8008317DE /* LoadOptimizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadOptimizer.h; sourceTree = "<group>"; };
-		57900B3F21F8F9B8008317DE /* LoadOptimizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadOptimizer.mm; sourceTree = "<group>"; };
 		57AC8F4E217FEED90055438C /* HidConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HidConnection.h; sourceTree = "<group>"; };
 		57AC8F4F217FEED90055438C /* HidConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HidConnection.mm; sourceTree = "<group>"; };
 		57B4B45D20B504AB00D4AD79 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
@@ -5317,8 +5314,6 @@
 				51C0C9731DDD74F00032CAD3 /* IconLoadingDelegate.mm */,
 				7A821F4B1E2F664800604577 /* LegacyCustomProtocolManagerClient.h */,
 				7A821F4D1E2F679E00604577 /* LegacyCustomProtocolManagerClient.mm */,
-				57900B3E21F8F9B8008317DE /* LoadOptimizer.h */,
-				57900B3F21F8F9B8008317DE /* LoadOptimizer.mm */,
 				411286EF21C8A90C003A8550 /* MediaCaptureUtilities.h */,
 				411286F021C8A90D003A8550 /* MediaCaptureUtilities.mm */,
 				1ABC3DF41899E437004F0626 /* NavigationState.h */,
@@ -9122,7 +9117,6 @@
 				413075AD1DE85F580039EC69 /* LibWebRTCSocket.h in Headers */,
 				41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */,
 				413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */,
-				57900B4021F8F9B8008317DE /* LoadOptimizer.h in Headers */,
 				2D1087611D2C573E00B85F82 /* LoadParameters.h in Headers */,
 				578DC2982155A0020074E815 /* LocalAuthenticationSoftLink.h in Headers */,
 				57DCEDAC214C60270016B847 /* LocalAuthenticator.h in Headers */,

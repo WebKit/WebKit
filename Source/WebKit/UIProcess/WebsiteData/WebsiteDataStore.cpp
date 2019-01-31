@@ -56,10 +56,6 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 
-#if HAVE(LOAD_OPTIMIZER)
-#include "LoadOptimizer.h"
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginProcessManager.h"
 #endif
@@ -104,10 +100,10 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-#if HAVE(LOAD_OPTIMIZER)
-    , m_loadOptimizer(makeUniqueRef<LoadOptimizer>())
-#endif
 {
+#if HAVE(LOAD_OPTIMIZER)
+WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_2
+#endif
     WTF::setProcessPrivileges(allPrivileges());
     maybeRegisterWithSessionIDMap();
     platformInitialize();
@@ -125,10 +121,10 @@ WebsiteDataStore::WebsiteDataStore(PAL::SessionID sessionID)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
     , m_client(makeUniqueRef<WebsiteDataStoreClient>())
-#if HAVE(LOAD_OPTIMIZER)
-    , m_loadOptimizer(makeUniqueRef<LoadOptimizer>())
-#endif
 {
+#if HAVE(LOAD_OPTIMIZER)
+WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_2
+#endif
     maybeRegisterWithSessionIDMap();
     platformInitialize();
 

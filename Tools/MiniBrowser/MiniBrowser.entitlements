@@ -5,7 +5,9 @@
 	<key>com.apple.security.device.usb</key>
 	<true/>
 	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
-	<string>com.apple.Safari.SafeBrowsing.Service</string>
+	<array>
+		<string>com.apple.Safari.SafeBrowsing.Service</string>
+	</array>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
 	<key>com.apple.security.network.client</key>

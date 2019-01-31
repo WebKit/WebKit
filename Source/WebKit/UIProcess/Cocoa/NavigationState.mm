@@ -37,7 +37,6 @@
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
-#import "LoadOptimizer.h"
 #import "Logging.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
@@ -77,6 +76,10 @@
 
 #if HAVE(APP_LINKS)
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/NavigationStateAdditions.mm>
 #endif
 
 #if USE(QUICK_LOOK)
@@ -465,29 +468,32 @@ bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy
 }
 #endif
 
+#if !USE(APPLE_INTERNAL_SDK)
+static void tryOptimizingLoad(const WebCore::ResourceRequest&, WebPageProxy&, Function<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+#endif
+
 static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, WTF::Function<void(bool)>&& completionHandler)
 {
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
-        auto* localCompletionHandler = new WTF::Function<void (bool)>(WTFMove(completionHandler));
-        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
-            dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
-                (*localCompletionHandler)(success);
-                delete localCompletionHandler;
+        auto callback = makeBlockPtr([request = navigationAction->request().isolatedCopy(), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *) mutable {
+            RunLoop::main().dispatch([request = request.isolatedCopy(), weakPage, completionHandler = WTFMove(completionHandler), success]() mutable {
+                if (!success && weakPage) {
+                    tryOptimizingLoad(request, *weakPage, WTFMove(completionHandler));
+                    return;
+                }
+                completionHandler(success);
             });
-        }];
+        });
+        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:callback.get()];
         return;
     }
 #endif
 
-#if HAVE(LOAD_OPTIMIZER)
-    if (LoadOptimizer::canOptimizeLoad(navigationAction->request().url())) {
-        page.websiteDataStore().loadOptimizer().optimizeLoad(navigationAction->request(), page, WTFMove(completionHandler));
-        return;
-    }
-#endif
-
-    completionHandler(false);
+    tryOptimizingLoad(navigationAction->request(), page, WTFMove(completionHandler));
 }
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
