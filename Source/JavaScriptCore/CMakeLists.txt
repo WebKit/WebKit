@@ -162,6 +162,8 @@ foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
 endforeach ()
 
 set(UDIS_GEN_DEP
+    disassembler/udis86/optable.xml
+    disassembler/udis86/ud_itab.py
     disassembler/udis86/ud_opcode.py
 )
 
