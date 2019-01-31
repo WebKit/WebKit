@@ -1745,7 +1745,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         m_scrollingLayer->setMasksToBounds(true);
 
         // Inner layer which renders the content that scrolls.
-        m_scrollingContentsLayer = createGraphicsLayer("scrolled Contents");
+        m_scrollingContentsLayer = createGraphicsLayer("scrolled contents");
         m_scrollingContentsLayer->setDrawsContent(true);
         m_scrollingContentsLayer->setAnchorPoint({ });
 

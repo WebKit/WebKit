@@ -1,5 +1,29 @@
 2019-01-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Basic scrollability for async overflow scrolling on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=194093
+
+        Reviewed by Antti Koivisto.
+
+        Give a ScrollingTreeOverflowScrollingNodeMac a ScrollingTreeScrollingNodeDelegateMac and have it keep track
+        of its layers so basic scrolling works for async overflow scroll.
+
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::create):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::ScrollingTreeOverflowScrollingNodeMac):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::scrollPosition const):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+
+2019-01-31  Simon Fraser  <simon.fraser@apple.com>
+
         Generalize ScrollingTreeScrollingNodeDelegate for use in macOS too, add a macOS subclass for frame/overflow scrolling
         https://bugs.webkit.org/show_bug.cgi?id=194080
 
