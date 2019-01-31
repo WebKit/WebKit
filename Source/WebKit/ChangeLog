@@ -1,5 +1,16 @@
 2019-01-31  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Disable permissive call logging in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=194061
+
+        Reviewed by Alexey Proskuryakov.
+
+        Strict call filtering should be reenabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-01-31  Per Arne Vollan  <pvollan@apple.com>
+
         [macOS] Crash when control-clicking or copying text rendered with a web font
         https://bugs.webkit.org/show_bug.cgi?id=193913
         <rdar://problem/47541039>
