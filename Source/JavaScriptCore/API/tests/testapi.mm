@@ -2002,6 +2002,7 @@ static void testBytecodeCache()
         [bazSource writeToURL:bazPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
 
         auto block = ^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
+            JSC::Options::forceDiskCache() = true;
             if ([identifier isEqualToObject:@"file:///directory/bar.js"])
                 [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:fooPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:fooCachePath]]];
             else if ([identifier isEqualToObject:@"file:///foo.js"])
@@ -2013,7 +2014,6 @@ static void testBytecodeCache()
         };
 
         @autoreleasepool {
-            JSC::Options::forceDiskCache() = true;
             auto *context = [JSContextFetchDelegate contextWithBlockForFetch:block];
             context.moduleLoaderDelegate = context;
             JSValue *promise = [context evaluateScript:@"import('../otherDirectory/baz.js');" withSourceURL:[NSURL fileURLWithPath:@"/directory" isDirectory:YES]];
