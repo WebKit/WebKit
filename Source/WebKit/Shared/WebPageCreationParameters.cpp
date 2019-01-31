@@ -60,6 +60,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << canRunModal;
     encoder << deviceScaleFactor;
     encoder << viewScaleFactor;
+    encoder << textZoomFactor;
+    encoder << pageZoomFactor;
     encoder << topContentInset;
     encoder << mediaVolume;
     encoder << muted;
@@ -195,6 +197,10 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.deviceScaleFactor))
         return WTF::nullopt;
     if (!decoder.decode(parameters.viewScaleFactor))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.textZoomFactor))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.pageZoomFactor))
         return WTF::nullopt;
     if (!decoder.decode(parameters.topContentInset))
         return WTF::nullopt;

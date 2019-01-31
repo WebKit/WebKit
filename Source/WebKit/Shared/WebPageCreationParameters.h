@@ -106,6 +106,9 @@ struct WebPageCreationParameters {
     float deviceScaleFactor;
     float viewScaleFactor;
 
+    double textZoomFactor { 1 };
+    double pageZoomFactor { 1 };
+
     float topContentInset;
     
     float mediaVolume;

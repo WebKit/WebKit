@@ -1,3 +1,33 @@
+2019-01-31  Chris Dumez  <cdumez@apple.com>
+
+        Page zoom level is lost after a process swap or a crash
+        https://bugs.webkit.org/show_bug.cgi?id=194105
+        <rdar://problem/47610781>
+
+        Reviewed by Alex Christensen.
+
+        Previously, when the client would call setPageAndTextZoomFactors() on the WebPageProxy,
+        we would update the WebPageProxy's corresponding data members and send an IPC to the
+        WebProcess to apply the zoom factors.
+
+        The issue is that on process crash or process-swap, we never communicate those zoom factors
+        to the new WebProcess. Even if the client were to call setPageAndTextZoomFactors() with
+        the same factors again, it would be a no-op since the WebPageProxy's data members already
+        reflect the expected values.
+
+        To address the issue, pass both the page zoom and the text zoom factors to the WebProcess
+        via WebPageCreationParameters. This way, there is no need to send an extra IPC and we're
+        sure the WebPageProxy's factors are properly applied to the WebPage on WebContent process
+        side upon creation (whether after a crash or a process swap).
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+
 2019-01-31  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Disable permissive call logging in sandbox

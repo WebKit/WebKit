@@ -6773,6 +6773,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();
     parameters.viewScaleFactor = m_viewScaleFactor;
+    parameters.textZoomFactor = m_textZoomFactor;
+    parameters.pageZoomFactor = m_pageZoomFactor;
     parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
     parameters.muted = m_mutedState;
