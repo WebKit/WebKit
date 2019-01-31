@@ -475,7 +475,13 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
         const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex).ptr();
-        RELEASE_ASSERT(currentInstruction->is<OpNewArrayBuffer>());
+        if (!currentInstruction->is<OpNewArrayBuffer>()) {
+            // This case can happen if Object.keys, an OpCall is first converted into a NewArrayBuffer which is then converted into a PhantomNewArrayBuffer.
+            // There is no need to update the array allocation profile in that case.
+            RELEASE_ASSERT(currentInstruction->is<OpCall>());
+            Structure* structure = exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(immutableButterfly->indexingMode());
+            return CommonSlowPaths::allocateNewArrayBuffer(vm, structure, immutableButterfly);
+        }
         auto newArrayBuffer = currentInstruction->as<OpNewArrayBuffer>();
         ArrayAllocationProfile* profile = &newArrayBuffer.metadata(codeBlock).m_arrayAllocationProfile;
 

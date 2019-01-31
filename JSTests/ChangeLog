@@ -1,3 +1,15 @@
+2019-01-30  Robin Morisset  <rmorisset@apple.com>
+
+        Object.keys can now lead to a PhantomNewArrayBuffer, OSR exit from the FTL should know how to materialize a NewArrayBuffer in that case
+        https://bugs.webkit.org/show_bug.cgi?id=194050
+        <rdar://problem/47595592>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/object-keys-osr-exit.js: Added.
+        (foo):
+        (catch):
+
 2019-01-29  Mark Lam  <mark.lam@apple.com>
 
         ValueRecovery::recover() should purify NaN values it recovers.
