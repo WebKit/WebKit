@@ -1608,7 +1608,7 @@
 		51F645691F4539B900B54DED /* ServiceWorkerJobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645661F45399F00B54DED /* ServiceWorkerJobData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F6456A1F4539C000B54DED /* ServiceWorkerJobType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645651F45399F00B54DED /* ServiceWorkerJobType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645941F4A684F00B54DED /* SWServerRegistration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51F645D51FECDBCE00B54DED /* Process.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645D31FECDBC800B54DED /* Process.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F645D51FECDBCE00B54DED /* ProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645D31FECDBC800B54DED /* ProcessIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645E01FF4594E00B54DED /* MessagePortIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645DE1FF4594B00B54DED /* MessagePortIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F798EC1BE880D3008AE491 /* IDBIndexInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F886C01F32923100C193EF /* JSNavigatorServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886BF1F32920700C193EF /* JSNavigatorServiceWorker.h */; };
@@ -14012,6 +14012,10 @@
 		D03211CF21AC954E00763CF2 /* GPUProgrammablePassEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProgrammablePassEncoder.h; sourceTree = "<group>"; };
 		D03211D021AC954F00763CF2 /* GPURenderPassDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURenderPassDescriptor.h; sourceTree = "<group>"; };
 		D036DD8D208FFC0C00F9F4B2 /* WebGLCompressedTextureASTC.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLCompressedTextureASTC.idl; sourceTree = "<group>"; };
+		D03C849A21FFC6670002227F /* GPUDepthStencilStateDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUDepthStencilStateDescriptor.h; sourceTree = "<group>"; };
+		D03C849C21FFC7FC0002227F /* GPUCompareFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCompareFunction.h; sourceTree = "<group>"; };
+		D03C849E21FFCF000002227F /* GPUCompareFunction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCompareFunction.idl; sourceTree = "<group>"; };
+		D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDepthStencilStateDescriptor.idl; sourceTree = "<group>"; };
 		D045AD1D2168230B000A6E9B /* WebMetalLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMetalLayer.mm; sourceTree = "<group>"; };
 		D045AD1E21682449000A6E9B /* JSWebMetalRenderPassAttachmentDescriptorCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebMetalRenderPassAttachmentDescriptorCustom.cpp; sourceTree = "<group>"; };
 		D045AD1F21682449000A6E9B /* JSWebMetalRenderingContextCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebMetalRenderingContextCustom.cpp; sourceTree = "<group>"; };
@@ -18443,6 +18447,8 @@
 				D0D8648721B64CAA003C983C /* GPUBufferDescriptor.h */,
 				D001D9AB21B0C7BF0023B9BC /* GPUColor.h */,
 				312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */,
+				D03C849C21FFC7FC0002227F /* GPUCompareFunction.h */,
+				D03C849A21FFC6670002227F /* GPUDepthStencilStateDescriptor.h */,
 				312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */,
 				312FF8BE21A4C2F100EB199D /* GPUDevice.h */,
 				D0D8649921BA1B1F003C983C /* GPUInputStateDescriptor.h */,
@@ -26023,6 +26029,8 @@
 				D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */,
 				D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */,
 				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,
+				D03C849E21FFCF000002227F /* GPUCompareFunction.idl */,
+				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
 				D00F5947216EFE54000D71DB /* WebGPU.cpp */,
 				D00F5946216EFE54000D71DB /* WebGPU.h */,
 				D00F5948216EFE54000D71DB /* WebGPU.idl */,
@@ -31047,6 +31055,7 @@
 				BCBB8AB913F1AFB000734DF0 /* PODInterval.h in Headers */,
 				BCBB8ABA13F1AFB000734DF0 /* PODIntervalTree.h in Headers */,
 				BCBB8ABB13F1AFB000734DF0 /* PODRedBlackTree.h in Headers */,
+				71B5AB2621F1D9F400376E5C /* PointerCaptureController.h in Headers */,
 				317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */,
 				B2B1F7170D00CAA8004AEA64 /* PointerEventsHitRules.h in Headers */,
 				3FF813A71DBA8640009BF001 /* PointerLockController.h in Headers */,
@@ -31071,7 +31080,7 @@
 				A10DBF4718F92317000D70C6 /* PreviewLoaderClient.h in Headers */,
 				E4605FEC2166480900E53046 /* PrewarmInformation.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
-				51F645D51FECDBCE00B54DED /* Process.h in Headers */,
+				51F645D51FECDBCE00B54DED /* ProcessIdentifier.h in Headers */,
 				A8EA7EBC0A1945D000A8EF5F /* ProcessingInstruction.h in Headers */,
 				E42050172141901B0066EF3B /* ProcessWarming.h in Headers */,
 				E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */,
@@ -31968,7 +31977,6 @@
 				26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
-				71B5AB2621F1D9F400376E5C /* PointerCaptureController.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
 				0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */,
 				B2C3DA340D006C1D00EF6F26 /* TextBoundaries.h in Headers */,
@@ -32824,7 +32832,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9787CB41F5F5C6600C551C6 /* AccessibilityMediaObject.cpp in Sources */,
-				6B0A07F321FA4B5C00D57391 /* AdClickAttribution.cpp in Sources */,
 				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,

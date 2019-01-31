@@ -80,7 +80,15 @@ PlatformProgrammablePassEncoder *GPURenderPassEncoder::platformPassEncoder() con
 
 void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    if (pipeline->depthStencilState())
+        [m_platformRenderPassEncoder setDepthStencilState:pipeline->depthStencilState()];
+
     [m_platformRenderPassEncoder setRenderPipelineState:pipeline->platformRenderPipeline()];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
     m_pipeline = WTFMove(pipeline);
 }
 

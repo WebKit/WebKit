@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,29 +22,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "GPUDepthStencilStateDescriptor.h"
-#include "GPURenderPipelineDescriptor.h"
-#include "WebGPUInputStateDescriptor.h"
-#include "WebGPUPipelineDescriptorBase.h"
-#include "WebGPUPipelineStageDescriptor.h"
-
-namespace WebCore {
-
-struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
-    using PrimitiveTopology = GPURenderPipelineDescriptor::PrimitiveTopology;
-
-    WebGPUPipelineStageDescriptor vertexStage;
-    WebGPUPipelineStageDescriptor fragmentStage;
-    PrimitiveTopology primitiveTopology;
-    GPUDepthStencilStateDescriptor depthStencilState;
-    WebGPUInputStateDescriptor inputState;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] enum GPUCompareFunction {
+    "never",
+    "less",
+    "equal",
+    "less-equal",
+    "greater",
+    "not-equal",
+    "greater-equal",
+    "always"
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

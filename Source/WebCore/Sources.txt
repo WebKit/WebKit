@@ -2762,6 +2762,8 @@ JSFillMode.cpp
 JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSGPUCompareFunction.cpp
+JSGPUDepthStencilStateDescriptor.cpp
 JSGainNode.cpp
 JSGeolocation.cpp
 JSGeoposition.cpp
@@ -3303,8 +3305,8 @@ JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
 JSWebGPUBufferDescriptor.cpp
 JSWebGPUBufferUsage.cpp
-JSWebGPUCommandBuffer.cpp
 JSWebGPUColor.cpp
+JSWebGPUCommandBuffer.cpp
 JSWebGPUDevice.cpp
 JSWebGPUIndexFormat.cpp
 JSWebGPUInputStateDescriptor.cpp

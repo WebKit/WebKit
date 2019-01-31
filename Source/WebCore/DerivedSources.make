@@ -372,6 +372,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
+    $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
+    $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \

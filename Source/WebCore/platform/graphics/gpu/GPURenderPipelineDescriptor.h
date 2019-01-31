@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUDepthStencilStateDescriptor.h"
 #include "GPUInputStateDescriptor.h"
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineStageDescriptor.h"
@@ -44,11 +45,12 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
         TriangleStrip
     };
 
-    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, GPUPipelineStageDescriptor&& fragment, PrimitiveTopology topology, GPUInputStateDescriptor&& input)
+    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, GPUPipelineStageDescriptor&& fragment, PrimitiveTopology topology, GPUDepthStencilStateDescriptor&& depth, GPUInputStateDescriptor&& input)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , vertexStage(WTFMove(vertex))
         , fragmentStage(WTFMove(fragment))
         , primitiveTopology(topology)
+        , depthStencilState(WTFMove(depth))
         , inputState(WTFMove(input))
     {
     }
@@ -56,6 +58,7 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
     GPUPipelineStageDescriptor vertexStage;
     GPUPipelineStageDescriptor fragmentStage;
     PrimitiveTopology primitiveTopology;
+    GPUDepthStencilStateDescriptor depthStencilState;
     GPUInputStateDescriptor inputState;
 };
 

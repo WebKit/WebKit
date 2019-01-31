@@ -36,6 +36,75 @@
 
 namespace WebCore {
 
+static Optional<MTLCompareFunction> validateAndConvertDepthCompareFunctionToMtl(GPUCompareFunction func)
+{
+    switch (func) {
+    case GPUCompareFunction::Never:
+        return MTLCompareFunctionNever;
+    case GPUCompareFunction::Less:
+        return MTLCompareFunctionLess;
+    case GPUCompareFunction::Equal:
+        return MTLCompareFunctionEqual;
+    case GPUCompareFunction::LessEqual:
+        return MTLCompareFunctionLessEqual;
+    case GPUCompareFunction::Greater:
+        return MTLCompareFunctionGreater;
+    case GPUCompareFunction::NotEqual:
+        return MTLCompareFunctionNotEqual;
+    case GPUCompareFunction::GreaterEqual:
+        return MTLCompareFunctionGreaterEqual;
+    case GPUCompareFunction::Always:
+        return MTLCompareFunctionAlways;
+    default:
+        return WTF::nullopt;
+    }
+}
+
+static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const char* const functionName, const GPUDepthStencilStateDescriptor& descriptor, const GPUDevice& device)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+    RetainPtr<MTLDepthStencilDescriptor> mtlDescriptor;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    mtlDescriptor = adoptNS([MTLDepthStencilDescriptor new]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!mtlDescriptor) {
+        LOG(WebGPU, "%s: Unable to create MTLDepthStencilDescriptor!", functionName);
+        return nullptr;
+    }
+
+    auto mtlDepthCompare = validateAndConvertDepthCompareFunctionToMtl(descriptor.depthCompare);
+    if (!mtlDepthCompare) {
+        LOG(WebGPU, "%s: Invalid GPUCompareFunction in GPUDepthStencilStateDescriptor!", functionName);
+        return nullptr;
+    }
+
+    mtlDescriptor.get().depthCompareFunction = *mtlDepthCompare;
+    mtlDescriptor.get().depthWriteEnabled = descriptor.depthWriteEnabled;
+
+    // FIXME: Implement back/frontFaceStencil.
+
+    RetainPtr<MTLDepthStencilState> state;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    state = adoptNS([device.platformDevice() newDepthStencilStateWithDescriptor:mtlDescriptor.get()]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!state) {
+        LOG(WebGPU, "%s: Error creating MTLDepthStencilState!", functionName);
+        return nullptr;
+    }
+
+    return state;
+}
+
 static bool setFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
 {
 #if LOG_DISABLED
@@ -175,15 +244,8 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
     return true;
 }
 
-RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPURenderPipelineDescriptor&& descriptor)
+static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
 {
-    const char* const functionName = "GPURenderPipeline::create()";
-
-    if (!device.platformDevice()) {
-        LOG(WebGPU, "%s: Invalid GPUDevice!", functionName);
-        return nullptr;
-    }
-
     RetainPtr<MTLRenderPipelineDescriptor> mtlDescriptor;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -212,7 +274,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
     // FIXME: Get the pixelFormat as configured for the context/CAMetalLayer.
     mtlDescriptor.get().colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
 
-    PlatformRenderPipelineSmartPtr pipeline;
+    RetainPtr<MTLRenderPipelineState> pipeline;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -223,14 +285,31 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
+    return pipeline;
+}
+
+RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPURenderPipelineDescriptor&& descriptor)
+{
+    const char* const functionName = "GPURenderPipeline::create()";
+
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "%s: Invalid GPUDevice!", functionName);
+        return nullptr;
+    }
+
+    // Depth Stencil state is separate from the render pipeline state in Metal.
+    auto depthStencil = tryCreateMtlDepthStencilState(functionName, descriptor.depthStencilState, device);
+
+    auto pipeline = tryCreateMtlRenderPipelineState(functionName, descriptor, device);
     if (!pipeline)
         return nullptr;
 
-    return adoptRef(new GPURenderPipeline(WTFMove(pipeline), WTFMove(descriptor)));
+    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), WTFMove(descriptor)));
 }
 
-GPURenderPipeline::GPURenderPipeline(PlatformRenderPipelineSmartPtr&& pipeline, GPURenderPipelineDescriptor&& descriptor)
-    : m_platformRenderPipeline(WTFMove(pipeline))
+GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPURenderPipelineDescriptor&& descriptor)
+    : m_depthStencilState(WTFMove(depthStencil))
+    , m_platformRenderPipeline(WTFMove(pipeline))
     , m_layout(WTFMove(descriptor.layout))
     , m_primitiveTopology(descriptor.primitiveTopology)
 {

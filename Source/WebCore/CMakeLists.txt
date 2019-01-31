@@ -462,6 +462,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdriver/NavigatorWebDriver.idl
 
     Modules/webgpu/DOMWindowWebGPU.idl
+    Modules/webgpu/GPUCompareFunction.idl
+    Modules/webgpu/GPUDepthStencilStateDescriptor.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl

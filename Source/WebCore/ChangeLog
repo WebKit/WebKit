@@ -1,3 +1,49 @@
+2019-01-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Support GPUDepthStencilStateDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=194048
+        <rdar://problem/46289645>
+
+        Reviewed by Dean Jackson.
+
+        Implement GPUDepthStencilStateDescriptor to specify a MTLDepthStencilState that is set on the command encoder.
+
+        Existing tests cover changes to pipeline. Behavior does not change as DepthStencilState has no effect 
+        without a depth texture attached.
+
+        New interface files added:
+        * Modules/webgpu/GPUCompareFunction.idl:
+        * Modules/webgpu/GPUDepthStencilStateDescriptor.idl:
+        * platform/graphics/gpu/GPUCompareFunction.h:
+        * platform/graphics/gpu/GPUDepthStencilStateDescriptor.h:
+
+        Modifications:
+        * Modules/webgpu/WebGPUDevice.cpp: Include depthStencilState when creating pipeline.
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Add depthStencilState to the descriptor.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl: Ditto.
+        * platform/graphics/gpu/GPURenderPipeline.h: Ditto.
+        (WebCore::GPURenderPipeline::depthStencilState const): Getter.
+        (WebCore::GPURenderPipeline::platformRenderPipeline const):
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Update constructor to take depthStencilState.
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm: Setting pipeline also sets the included depthStencilState.
+        (WebCore::GPURenderPassEncoder::setPipeline):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Convert DepthStencilStateDescriptor to MTLDepthStencilState.
+        (WebCore::validateAndConvertDepthCompareFunctionToMtl):
+        (WebCore::tryCreateMtlDepthStencilState):
+        (WebCore::tryCreateMtlRenderPipelineState): Refactored logic out of GPURenderPipeline::create.
+        (WebCore::GPURenderPipeline::create):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+
+        Added symbols for CompareFunction, DepthStencilStateDescriptor to the project:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/webgpu/WebGPUDevice.idl: Cleaned up IDL to match current version.
+
 2019-01-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa][EME] persistent-usage-record data not issued after MediaKeySession.remove()
