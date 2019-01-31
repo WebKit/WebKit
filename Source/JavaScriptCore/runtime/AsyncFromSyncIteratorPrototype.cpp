@@ -31,32 +31,36 @@
 #include "JSCInlines.h"
 #include "JSObject.h"
 
+#include "AsyncFromSyncIteratorPrototype.lut.h"
+
 namespace JSC {
 
-const ClassInfo AsyncFromSyncIteratorPrototype::s_info = { "AsyncFromSyncIterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncFromSyncIteratorPrototype) };
+const ClassInfo AsyncFromSyncIteratorPrototype::s_info = { "AsyncFromSyncIterator", &Base::s_info, &asyncFromSyncIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(AsyncFromSyncIteratorPrototype) };
 
 AsyncFromSyncIteratorPrototype::AsyncFromSyncIteratorPrototype(VM& vm, Structure* structure)
-    : JSC::JSNonFinalObject(vm, structure)
+    : Base(vm, structure)
 {
 }
 
-void AsyncFromSyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
+/* Source for AsyncFromSyncIteratorPrototype.lut.h
+@begin asyncFromSyncIteratorPrototypeTable
+  next      JSBuiltin    DontEnum|Function 1
+  return    JSBuiltin    DontEnum|Function 1
+  throw     JSBuiltin    DontEnum|Function 1
+@end
+*/
+
+void AsyncFromSyncIteratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     didBecomePrototype();
-
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", asyncFromSyncIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("return", asyncFromSyncIteratorPrototypeReturnCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("throw", asyncFromSyncIteratorPrototypeThrowCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-AsyncFromSyncIteratorPrototype* AsyncFromSyncIteratorPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+AsyncFromSyncIteratorPrototype* AsyncFromSyncIteratorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
     AsyncFromSyncIteratorPrototype* prototype = new (NotNull, allocateCell<AsyncFromSyncIteratorPrototype>(vm.heap)) AsyncFromSyncIteratorPrototype(vm, structure);
-    prototype->finishCreation(vm, globalObject);
-    vm.heap.addFinalizer(prototype, destroy);
-
+    prototype->finishCreation(vm);
     return prototype;
 }
 

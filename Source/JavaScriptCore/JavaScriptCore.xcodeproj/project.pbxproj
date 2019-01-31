@@ -1764,6 +1764,7 @@
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
 		E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4702,6 +4703,7 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
+		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFromSyncIteratorPrototype.lut.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
@@ -6341,6 +6343,7 @@
 				0F6183351C45F3B60072450B /* AirOpcodeUtils.h */,
 				996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */,
 				996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */,
+				E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */,
 				8B3BF5E31E3D365A0076A87A /* AsyncGeneratorPrototype.lut.h */,
 				996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */,
 				6514F21718B3E1670098FF8B /* Bytecodes.h */,
@@ -6436,10 +6439,10 @@
 			isa = PBXGroup;
 			children = (
 				AD2FCB8A1DB5840000B3E736 /* js */,
-				53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */,
-				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
 				52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */,
 				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
+				53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */,
+				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
 				53CA73071EA533D80076049D /* WasmBBQPlan.cpp */,
 				53CA73081EA533D80076049D /* WasmBBQPlan.h */,
 				53F8D1FF1E8387D400D21116 /* WasmBBQPlanInlines.h */,
@@ -8469,6 +8472,7 @@
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
 				8B6016F61F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h in Headers */,
+				E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */,
 				5B70CFE21DB69E6600EC23F9 /* AsyncFunctionConstructor.h in Headers */,
 				5B70CFE01DB69E6600EC23F9 /* AsyncFunctionPrototype.h in Headers */,
 				8BC0648B1E1ABA9400B2B8CA /* AsyncGeneratorFunctionConstructor.h in Headers */,
@@ -8535,7 +8539,6 @@
 				436E54531C468E7400B5AF73 /* B3LegalizeMemoryOffsets.h in Headers */,
 				0F338E1E1BF286EA0013C88F /* B3LowerMacros.h in Headers */,
 				4319DA041C1BE40D001D260B /* B3LowerMacrosAfterOptimizations.h in Headers */,
-				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				0FEC851E1BDACDAC0080FF74 /* B3LowerToAir.h in Headers */,
 				43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */,
 				0FEC85201BDACDAC0080FF74 /* B3MemoryValue.h in Headers */,
@@ -9763,6 +9766,7 @@
 				0F5AE2C41DF4F2800066EFE1 /* VMInlines.h in Headers */,
 				FE3022D71E42857300BAC493 /* VMInspector.h in Headers */,
 				FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */,
+				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
 				53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */,
 				53F8D2001E8387D400D21116 /* WasmBBQPlanInlines.h in Headers */,
@@ -10547,7 +10551,6 @@
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,
 				536B315F1F71C5990037FC33 /* UnifiedSource1.cpp in Sources */,
 				536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */,
-				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
 				536B31571F71C5990037FC33 /* UnifiedSource2.cpp in Sources */,
 				530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */,
 				536B31581F71C5990037FC33 /* UnifiedSource3.cpp in Sources */,
@@ -10695,6 +10698,7 @@
 				530A66C21FA3E78B0026A545 /* UnifiedSource143.cpp in Sources */,
 				530A66C31FA3E78B0026A545 /* UnifiedSource144.cpp in Sources */,
 				530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */,
+				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

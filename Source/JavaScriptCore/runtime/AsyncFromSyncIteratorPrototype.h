@@ -31,6 +31,7 @@ namespace JSC {
 class AsyncFromSyncIteratorPrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     DECLARE_INFO;
 
@@ -41,11 +42,9 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    protected:
-    void finishCreation(VM&, JSGlobalObject*);
-        
-    private:
+private:
     AsyncFromSyncIteratorPrototype(VM&, Structure*);
+    void finishCreation(VM&);
 };
     
 } // namespace JSC

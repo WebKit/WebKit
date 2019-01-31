@@ -60,6 +60,7 @@ set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
     runtime/ArrayIteratorPrototype.cpp
+    runtime/AsyncFromSyncIteratorPrototype.cpp
     runtime/AsyncGeneratorPrototype.cpp
     runtime/BigIntConstructor.cpp
     runtime/BigIntPrototype.cpp

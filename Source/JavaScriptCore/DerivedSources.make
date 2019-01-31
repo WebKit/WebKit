@@ -134,6 +134,7 @@ JSCBuiltins.h: $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) 
 # Perfect hash lookup tables for JavaScript classes.
 
 OBJECT_LUT_HEADERS = \
+    AsyncFromSyncIteratorPrototype.lut.h \
     ArrayConstructor.lut.h \
     ArrayIteratorPrototype.lut.h \
     AsyncGeneratorPrototype.lut.h \
