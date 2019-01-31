@@ -1215,7 +1215,7 @@ static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID ses
 
 void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, uint64_t callbackID)
 {
-    struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void (WebsiteData)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
         {
@@ -1437,7 +1437,7 @@ void NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersi
 {
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
-    struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
         {
@@ -1569,7 +1569,7 @@ void NetworkProcess::topPrivatelyControlledDomainsWithWebsiteData(PAL::SessionID
 {
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
     
-    struct CallbackAggregator final : public RefCounted<CallbackAggregator> {
+    struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(CompletionHandler<void(HashSet<String>&&)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
         {

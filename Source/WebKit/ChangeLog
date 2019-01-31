@@ -1,3 +1,17 @@
+2019-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Fix crashes when trying to ref the CallbackAggregator in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=194054
+
+        Reviewed by Brent Fulgham.
+
+        The callback aggregators should be ThreadSafeRefCounted since they are passed to other threads.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::NetworkProcess::topPrivatelyControlledDomainsWithWebsiteData):
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
