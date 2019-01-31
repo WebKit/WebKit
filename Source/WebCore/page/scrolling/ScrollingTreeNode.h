@@ -40,6 +40,7 @@ namespace WebCore {
 class ScrollingStateFixedNode;
 class ScrollingStateScrollingNode;
 class ScrollingTreeFrameScrollingNode;
+class ScrollingTreeScrollingNode;
 
 class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
 public:
@@ -64,6 +65,7 @@ public:
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
 
     Vector<RefPtr<ScrollingTreeNode>>* children() { return m_children.get(); }
+    const Vector<RefPtr<ScrollingTreeNode>>* children() const { return m_children.get(); }
 
     void appendChild(Ref<ScrollingTreeNode>&&);
     void removeChild(ScrollingTreeNode&);
@@ -71,6 +73,10 @@ public:
     WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNodeIncludingSelf();
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
+
+    virtual LayoutPoint parentToLocalPoint(LayoutPoint point) const { return point; }
+    virtual LayoutPoint localToContentsPoint(LayoutPoint point) const { return point; }
+    virtual ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const;
 
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);

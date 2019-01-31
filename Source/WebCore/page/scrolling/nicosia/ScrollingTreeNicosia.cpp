@@ -31,6 +31,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "ScrollingTreeFixedNode.h"
+#include "ScrollingTreeFrameHostingNode.h"
 #include "ScrollingTreeFrameScrollingNodeNicosia.h"
 #include "ScrollingTreeStickyNode.h"
 
@@ -52,6 +53,8 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
         return ScrollingTreeFrameScrollingNodeNicosia::create(*this, nodeType, nodeID);
+    case ScrollingNodeType::FrameHosting:
+        return ScrollingTreeFrameHostingNode::create(*this, nodeID);
     case ScrollingNodeType::Overflow:
         // Should not be reached -- caught by ASSERT_NOT_REACHED() below.
         break;

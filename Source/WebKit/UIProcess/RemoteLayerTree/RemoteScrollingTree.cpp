@@ -59,16 +59,16 @@ RemoteScrollingTree::~RemoteScrollingTree()
 {
 }
 
-ScrollingTree::EventResult RemoteScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult RemoteScrollingTree::tryToHandleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (shouldHandleWheelEventSynchronously(wheelEvent))
-        return SendToMainThread;
+        return ScrollingEventResult::SendToMainThread;
 
     if (willWheelEventStartSwipeGesture(wheelEvent))
-        return DidNotHandleEvent;
+        return ScrollingEventResult::DidNotHandleEvent;
 
     handleWheelEvent(wheelEvent);
-    return DidHandleEvent;
+    return ScrollingEventResult::DidHandleEvent;
 }
 
 #if PLATFORM(MAC)

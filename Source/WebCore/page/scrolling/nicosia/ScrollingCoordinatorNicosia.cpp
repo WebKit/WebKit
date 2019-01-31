@@ -67,9 +67,9 @@ void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-bool ScrollingCoordinatorNicosia::handleWheelEvent(FrameView&, const PlatformWheelEvent&)
+ScrollingEventResult ScrollingCoordinatorNicosia::handleWheelEvent(FrameView&, const PlatformWheelEvent&)
 {
-    return false;
+    return ScrollingEventResult::DidNotHandleEvent;
 }
 
 void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()

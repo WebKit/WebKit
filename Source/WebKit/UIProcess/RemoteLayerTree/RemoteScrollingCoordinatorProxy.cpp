@@ -151,8 +151,8 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
 
 bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    ScrollingTree::EventResult result = m_scrollingTree->tryToHandleWheelEvent(event);
-    return result == ScrollingTree::DidHandleEvent; // FIXME: handle other values.
+    ScrollingEventResult result = m_scrollingTree->tryToHandleWheelEvent(event);
+    return result == ScrollingEventResult::DidHandleEvent; // FIXME: handle other values.
 }
 
 void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)

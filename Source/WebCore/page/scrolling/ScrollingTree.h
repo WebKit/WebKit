@@ -50,19 +50,17 @@ public:
     WEBCORE_EXPORT ScrollingTree();
     WEBCORE_EXPORT virtual ~ScrollingTree();
 
-    enum EventResult {
-        DidNotHandleEvent,
-        DidHandleEvent,
-        SendToMainThread
-    };
-    
     virtual bool isThreadedScrollingTree() const { return false; }
     virtual bool isRemoteScrollingTree() const { return false; }
     virtual bool isScrollingTreeIOS() const { return false; }
 
     bool visualViewportEnabled() const { return m_visualViewportEnabled; }
 
-    virtual EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
+    // This implies that we'll do hit-testing in the scrolling tree.
+    bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
+    void setAsyncFrameOrOverflowScrollingEnabled(bool);
+
+    virtual ScrollingEventResult tryToHandleWheelEvent(const PlatformWheelEvent&) = 0;
     WEBCORE_EXPORT bool shouldHandleWheelEventSynchronously(const PlatformWheelEvent&);
     
     void setMainFrameIsRubberBanding(bool);
@@ -160,7 +158,7 @@ protected:
     void setMainFrameScrollPosition(FloatPoint);
     void setVisualViewportEnabled(bool b) { m_visualViewportEnabled = b; }
 
-    WEBCORE_EXPORT virtual void handleWheelEvent(const PlatformWheelEvent&);
+    WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
 private:
     using OrphanScrollingNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingTreeNode>>;
@@ -196,6 +194,7 @@ private:
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_isHandlingProgrammaticScroll { false };
     bool m_visualViewportEnabled { false };
+    bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
     
 } // namespace WebCore

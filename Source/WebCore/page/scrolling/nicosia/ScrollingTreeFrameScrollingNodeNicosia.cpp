@@ -44,8 +44,9 @@ ScrollingTreeFrameScrollingNodeNicosia::ScrollingTreeFrameScrollingNodeNicosia(S
 
 ScrollingTreeFrameScrollingNodeNicosia::~ScrollingTreeFrameScrollingNodeNicosia() = default;
 
-void ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent&)
+ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(const PlatformWheelEvent&)
 {
+    return ScrollingEventResult::DidNotHandleEvent;
 }
 
 FloatPoint ScrollingTreeFrameScrollingNodeNicosia::scrollPosition() const

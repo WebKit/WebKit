@@ -38,13 +38,13 @@ public:
     WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeRemoteMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteMac();
 
-    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
+    bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
 private:
     ScrollingTreeFrameScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
 
     void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
-    void handleWheelEvent(const WebCore::PlatformWheelEvent&) override;
+    WebCore::ScrollingEventResult handleWheelEvent(const WebCore::PlatformWheelEvent&) override;
     void setScrollLayerPosition(const WebCore::FloatPoint& position, const WebCore::FloatRect& layoutViewport) override;
 
     std::unique_ptr<ScrollerPairMac> m_scrollerPair;

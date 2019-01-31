@@ -122,10 +122,10 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
         if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
             scrollingTree->setCanRubberBandState(canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom);
 
-        ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
+        ScrollingEventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
 
-        if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
-            sendDidReceiveEvent(pageID, wheelEvent, result == ScrollingTree::DidHandleEvent);
+        if (result == ScrollingEventResult::DidHandleEvent || result == ScrollingEventResult::DidNotHandleEvent) {
+            sendDidReceiveEvent(pageID, wheelEvent, result == ScrollingEventResult::DidHandleEvent);
             return;
         }
     }

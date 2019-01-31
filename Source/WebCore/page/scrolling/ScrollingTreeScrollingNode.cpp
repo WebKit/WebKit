@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "Logging.h"
 #include "ScrollingStateScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
@@ -131,6 +132,35 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
 {
     FloatPoint contentSizePoint(totalContentsSize());
     return FloatPoint(contentSizePoint - scrollableAreaSize()).expandedTo(FloatPoint());
+}
+
+bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wheelEvent) const
+{
+    FloatPoint oldScrollPosition = scrollPosition();
+    FloatPoint newScrollPosition = oldScrollPosition + FloatSize(wheelEvent.deltaX(), -wheelEvent.deltaY());
+    newScrollPosition = newScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    return newScrollPosition == oldScrollPosition;
+}
+
+LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) const
+{
+    return point - toLayoutSize(parentRelativeScrollableRect().location());
+}
+
+LayoutPoint ScrollingTreeScrollingNode::localToContentsPoint(LayoutPoint point) const
+{
+    return point + LayoutPoint(scrollPosition());
+}
+
+ScrollingTreeScrollingNode* ScrollingTreeScrollingNode::scrollingNodeForPoint(LayoutPoint parentPoint) const
+{
+    if (auto* node = ScrollingTreeNode::scrollingNodeForPoint(parentPoint))
+        return node;
+
+    if (parentRelativeScrollableRect().contains(parentPoint))
+        return const_cast<ScrollingTreeScrollingNode*>(this);
+
+    return nullptr;
 }
 
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

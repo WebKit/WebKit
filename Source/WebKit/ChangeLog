@@ -1,3 +1,25 @@
+2019-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [Mac] Implement basic hit testing in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=172917
+        <rdar://problem/34215516>
+
+        Reviewed by Antti Koivisto.
+
+        Changed return types, "using namespace WebCore" in ScrollingTreeFrameScrollingNodeRemoteMac.cpp.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.h:
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm:
+        (WebKit::ScrollerPairMac::handleWheelEvent):
+        (WebKit::ScrollerPairMac::handleMouseEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h:
+
 2019-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Move cookiePersistentStoragePath and cookiePersistentStorageType from NetworkProcess to NetworkSession

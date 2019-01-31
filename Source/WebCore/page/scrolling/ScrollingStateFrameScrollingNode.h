@@ -64,6 +64,7 @@ public:
         TopContentInset,
         FixedElementsLayoutRelativeToFrame,
         VisualViewportEnabled,
+        AsyncFrameOrOverflowScrollingEnabled,
         LayoutViewport,
         MinLayoutViewportOrigin,
         MaxLayoutViewportOrigin,
@@ -127,11 +128,15 @@ public:
     const LayerRepresentation& horizontalScrollbarLayer() const { return m_horizontalScrollbarLayer; }
     WEBCORE_EXPORT void setHorizontalScrollbarLayer(const LayerRepresentation&);
 
+    // These are more like Settings, and should probably move to the Scrolling{State}Tree itself.
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
     bool visualViewportEnabled() const { return m_visualViewportEnabled; };
     WEBCORE_EXPORT void setVisualViewportEnabled(bool);
+
+    bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
+    void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
 #if PLATFORM(MAC)
     NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
@@ -176,6 +181,7 @@ private:
     bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
     bool m_fixedElementsLayoutRelativeToFrame { false };
     bool m_visualViewportEnabled { false };
+    bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
 
 } // namespace WebCore

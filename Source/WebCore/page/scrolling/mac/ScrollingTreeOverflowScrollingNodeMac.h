@@ -51,7 +51,7 @@ private:
 
     void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
 
-    void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
+    ScrollingEventResult handleWheelEvent(const WebCore::PlatformWheelEvent&) override { return ScrollingEventResult::DidNotHandleEvent; }
 };
 
 } // namespace WebKit

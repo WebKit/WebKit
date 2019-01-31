@@ -184,10 +184,10 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
         updateMainFramePinState(scrollPosition());
 }
 
-void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     if (!canHaveScrollbars())
-        return;
+        return ScrollingEventResult::DidNotHandleEvent;
 
     if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseBegan) {
         [m_verticalScrollerImp setUsePresentationValue:YES];
@@ -215,6 +215,9 @@ void ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const PlatformWheelEve
 #endif
     scrollingTree().setOrClearLatchedNode(wheelEvent, scrollingNodeID());
     scrollingTree().handleWheelEventPhase(wheelEvent.phase());
+    
+    // FIXME: This needs to return whether the event was handled.
+    return ScrollingEventResult::DidHandleEvent;
 }
 
 // FIXME: We should find a way to share some of the code from newGestureIsStarting(), isAlreadyPinnedInDirectionOfGesture(),

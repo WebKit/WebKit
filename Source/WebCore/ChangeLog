@@ -1,3 +1,81 @@
+2019-01-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [Mac] Implement basic hit testing in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=172917
+        <rdar://problem/34215516>
+
+        Reviewed by Antti Koivisto.
+
+        First steps to getting hit testing of scrolling nodes in the scrolling tree. Based on patch
+        by Frédéric Wang.
+
+        First we pipe the "async scrolling enabled" setting through to the ScrollingTree via
+        the root node (like the other settings; weird, but that's how it's done). For now,
+        we hit test in the scrolling tree if either async overflow or frame scrolling are enabled
+        (it's hard to deal with one without the other).
+
+        Nodes in the scrolling tree implement scrollingNodeForPoint() to implement hit testing.
+        Two helper functions exist to simplify coordinate conversion: parentToLocalPoint()
+        and localToContentsPoint(). Child nodes are hit-testing in reverse order to find nodes
+        hightest in Z first. Only scrolling nodes are returned (not sure if we'll ever need
+        to hit-test non-scrolling nodes). Nodes use parentRelativeScrollableRect and scroll positions
+        to do these point mappings.
+
+        handleWheelEvent() is changed to return a ScrollingEventResult.
+
+        Latching is not correct with this change when async frame scrolling is enabled. That needs
+        to be fixed separately.
+
+        No tests yet; for ease of testing, I'd like to add an Internals API to hit-test the
+        scrolling tree, rather than doing eventSender stuff everywhere.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::asyncFrameOrOverflowScrollingEnabled const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::asyncFrameOrOverflowScrollingEnabled const):
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp:
+        (WebCore::ScrollingTreeFrameHostingNode::parentToLocalPoint const):
+        * page/scrolling/ScrollingTreeFrameHostingNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::parentToLocalPoint const):
+        (WebCore::ScrollingTreeFrameScrollingNode::localToContentsPoint const):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::scrollingNodeForPoint const):
+        * page/scrolling/ScrollingTreeNode.h:
+        (WebCore::ScrollingTreeNode::children const):
+        (WebCore::ScrollingTreeNode::parentToLocalPoint const):
+        (WebCore::ScrollingTreeNode::localToContentsPoint const):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::scrollLimitReached const):
+        (WebCore::ScrollingTreeScrollingNode::parentToLocalPoint const):
+        (WebCore::ScrollingTreeScrollingNode::localToContentsPoint const):
+        (WebCore::ScrollingTreeScrollingNode::scrollingNodeForPoint const):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEvent):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::handleWheelEvent):
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+
 2019-01-31  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove unused GstFlowReturn in AppendPipeline methods

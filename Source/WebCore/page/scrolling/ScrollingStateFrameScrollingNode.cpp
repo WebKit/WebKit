@@ -64,6 +64,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
     , m_visualViewportEnabled(stateNode.visualViewportEnabled())
+    , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
 {
     if (hasChangedProperty(CounterScrollingLayer))
         setCounterScrollingLayer(stateNode.counterScrollingLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -114,6 +115,7 @@ void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(TopContentInset);
     setPropertyChangedBit(FixedElementsLayoutRelativeToFrame);
     setPropertyChangedBit(VisualViewportEnabled);
+    setPropertyChangedBit(AsyncFrameOrOverflowScrollingEnabled);
     setPropertyChangedBit(LayoutViewport);
     setPropertyChangedBit(MinLayoutViewportOrigin);
     setPropertyChangedBit(MaxLayoutViewportOrigin);
@@ -292,6 +294,15 @@ void ScrollingStateFrameScrollingNode::setVisualViewportEnabled(bool visualViewp
     
     m_visualViewportEnabled = visualViewportEnabled;
     setPropertyChanged(VisualViewportEnabled);
+}
+
+void ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
+{
+    if (enabled == m_asyncFrameOrOverflowScrollingEnabled)
+        return;
+    
+    m_asyncFrameOrOverflowScrollingEnabled = enabled;
+    setPropertyChanged(AsyncFrameOrOverflowScrollingEnabled);
 }
 
 #if !PLATFORM(MAC)

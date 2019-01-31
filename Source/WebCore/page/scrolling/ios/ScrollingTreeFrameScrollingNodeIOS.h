@@ -46,7 +46,7 @@ protected:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    void handleWheelEvent(const PlatformWheelEvent&) override { }
+    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     FloatPoint scrollPosition() const override;
     void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;

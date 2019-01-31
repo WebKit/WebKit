@@ -45,8 +45,8 @@ private:
     bool isScrollingTreeIOS() const final { return true; }
 
     // No wheel events on iOS
-    void handleWheelEvent(const PlatformWheelEvent&) final { }
-    EventResult tryToHandleWheelEvent(const PlatformWheelEvent&) final { return DidNotHandleEvent; }
+    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) final { return ScrollingEventResult::DidNotHandleEvent; }
+    ScrollingEventResult tryToHandleWheelEvent(const PlatformWheelEvent&) final { return ScrollingEventResult::DidNotHandleEvent; }
 
     void invalidate() final;
 

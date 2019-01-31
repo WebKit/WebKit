@@ -98,6 +98,21 @@ void ScrollingTreeNode::dump(TextStream& ts, ScrollingStateTreeAsTextBehavior be
     }
 }
 
+ScrollingTreeScrollingNode* ScrollingTreeNode::scrollingNodeForPoint(LayoutPoint parentPoint) const
+{
+    LayoutPoint localPoint = parentToLocalPoint(parentPoint);
+    LayoutPoint contentsPoint = localToContentsPoint(localPoint);
+
+    if (children()) {
+        for (auto iterator = children()->rbegin(), end = children()->rend(); iterator != end; iterator++) {
+            if (auto node = (**iterator).scrollingNodeForPoint(contentsPoint))
+                return node;
+        }
+    }
+
+    return nullptr;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

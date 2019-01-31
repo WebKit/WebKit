@@ -96,6 +96,11 @@ void ScrollingTreeFrameScrollingNodeIOS::commitStateAfterChildren(const Scrollin
         setScrollPosition(scrollingStateNode.requestedScrollPosition());
 }
 
+ScrollingEventResult ScrollingTreeFrameScrollingNodeIOS::handleWheelEvent(const PlatformWheelEvent&)
+{
+    return ScrollingEventResult::DidNotHandleEvent;
+}
+
 FloatPoint ScrollingTreeFrameScrollingNodeIOS::scrollPosition() const
 {
     if (shouldUpdateScrollLayerPositionSynchronously())

@@ -65,6 +65,8 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
 
         const EventNames& names = eventNames();
         IntPoint roundedPosition = roundedIntPoint(position);
+
+        // Event regions are affected by page scale, so no need to map through scale.
         bool isSynchronousDispatchRegion = m_eventTrackingRegions.trackingTypeForPoint(names.wheelEvent, roundedPosition) == TrackingType::Synchronous
             || m_eventTrackingRegions.trackingTypeForPoint(names.mousewheelEvent, roundedPosition) == TrackingType::Synchronous;
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::shouldHandleWheelEventSynchronously: wheelEvent at " << wheelEvent.position() << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
@@ -83,10 +85,41 @@ void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, 
         clearLatchedNode();
 }
 
-void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    if (m_rootNode)
-        downcast<ScrollingTreeScrollingNode>(*m_rootNode).handleWheelEvent(wheelEvent);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree " << this << " handleWheelEvent (async scrolling enabled: " << asyncFrameOrOverflowScrollingEnabled() << ")");
+
+    if (!asyncFrameOrOverflowScrollingEnabled()) {
+        if (m_rootNode)
+            downcast<ScrollingTreeScrollingNode>(*m_rootNode).handleWheelEvent(wheelEvent);
+        return ScrollingEventResult::DidNotHandleEvent;
+    }
+
+    if (hasLatchedNode()) {
+        auto* node = nodeForID(latchedNode());
+        if (is<ScrollingTreeScrollingNode>(node))
+            return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
+    }
+
+    if (m_rootNode) {
+        auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
+
+        FloatPoint position = wheelEvent.position();
+        ScrollingTreeNode* node = frameScrollingNode.scrollingNodeForPoint(LayoutPoint(position));
+
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position << "\n");
+
+        while (node) {
+            if (is<ScrollingTreeScrollingNode>(*node)) {
+                auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
+                // FIXME: this needs to consult latching logic.
+                if (scrollingNode.handleWheelEvent(wheelEvent) == ScrollingEventResult::DidHandleEvent)
+                    return ScrollingEventResult::DidHandleEvent;
+            }
+            node = node->parent();
+        }
+    }
+    return ScrollingEventResult::DidNotHandleEvent;
 }
 
 void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)
@@ -115,14 +148,15 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
 {
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
     
-    LOG(Scrolling, "\nScrollingTree::commitTreeState");
+    LOG(Scrolling, "\nScrollingTree %p commitTreeState", this);
     
     auto* rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)
             || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)
-            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled))) {
+            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled)
+            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))) {
         LockHolder lock(m_mutex);
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
@@ -133,6 +167,9 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled))
             m_visualViewportEnabled = scrollingStateTree->rootStateNode()->visualViewportEnabled();
+
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))
+            m_asyncFrameOrOverflowScrollingEnabled = scrollingStateTree->rootStateNode()->asyncFrameOrOverflowScrollingEnabled();
     }
     
     bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
@@ -221,6 +258,12 @@ ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
         return nullptr;
 
     return m_nodeMap.get(nodeID);
+}
+
+void ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
+{
+    LockHolder lock(m_mutex);
+    m_asyncFrameOrOverflowScrollingEnabled = enabled;
 }
 
 void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom)

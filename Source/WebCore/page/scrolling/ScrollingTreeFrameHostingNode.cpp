@@ -66,6 +66,11 @@ void ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange(const Scroll
         child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
 }
 
+LayoutPoint ScrollingTreeFrameHostingNode::parentToLocalPoint(LayoutPoint point) const
+{
+    return point - toLayoutSize(parentRelativeScrollableRect().location());
+}
+
 void ScrollingTreeFrameHostingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "frame hosting node";

@@ -82,19 +82,19 @@ void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
     m_scrollingStateTreeCommitterTimer.stop();
 }
 
-bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEvent& wheelEvent)
+ScrollingEventResult ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEvent& wheelEvent)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
-        return false;
+        return ScrollingEventResult::DidNotHandleEvent;
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent] {
         threadedScrollingTree->handleWheelEvent(wheelEvent);
     });
-    return true;
+    return ScrollingEventResult::DidHandleEvent;
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()

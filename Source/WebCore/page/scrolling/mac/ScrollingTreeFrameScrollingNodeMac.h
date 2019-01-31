@@ -51,7 +51,7 @@ protected:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    void handleWheelEvent(const PlatformWheelEvent&) override;
+    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     // ScrollController member functions.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) override;

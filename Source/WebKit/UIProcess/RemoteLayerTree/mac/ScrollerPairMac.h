@@ -52,8 +52,8 @@ public:
     ScrollerMac& verticalScroller() { return m_verticalScroller; }
     ScrollerMac& horizontalScroller() { return m_horizontalScroller; }
 
-    void handleWheelEvent(const WebCore::PlatformWheelEvent&);
-    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
+    bool handleWheelEvent(const WebCore::PlatformWheelEvent&);
+    bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
     void updateValues();
 

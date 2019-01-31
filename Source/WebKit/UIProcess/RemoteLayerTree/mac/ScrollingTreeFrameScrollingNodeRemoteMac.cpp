@@ -32,9 +32,10 @@
 #include "ScrollerPairMac.h"
 
 namespace WebKit {
+using namespace WebCore;
 
-ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac(WebCore::ScrollingTree& tree, WebCore::ScrollingNodeType nodeType, WebCore::ScrollingNodeID nodeID)
-    : WebCore::ScrollingTreeFrameScrollingNodeMac(tree, nodeType, nodeID)
+ScrollingTreeFrameScrollingNodeRemoteMac::ScrollingTreeFrameScrollingNodeRemoteMac(ScrollingTree& tree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+    : ScrollingTreeFrameScrollingNodeMac(tree, nodeType, nodeID)
     , m_scrollerPair(std::make_unique<ScrollerPairMac>(*this))
 {
 }
@@ -43,42 +44,42 @@ ScrollingTreeFrameScrollingNodeRemoteMac::~ScrollingTreeFrameScrollingNodeRemote
 {
 }
 
-Ref<ScrollingTreeFrameScrollingNodeRemoteMac> ScrollingTreeFrameScrollingNodeRemoteMac::create(WebCore::ScrollingTree& tree, WebCore::ScrollingNodeType nodeType, WebCore::ScrollingNodeID nodeID)
+Ref<ScrollingTreeFrameScrollingNodeRemoteMac> ScrollingTreeFrameScrollingNodeRemoteMac::create(ScrollingTree& tree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     return adoptRef(*new ScrollingTreeFrameScrollingNodeRemoteMac(tree, nodeType, nodeID));
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
+void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(stateNode);
-    const auto& scrollingStateNode = downcast<WebCore::ScrollingStateFrameScrollingNode>(stateNode);
+    ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(stateNode);
+    const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(WebCore::ScrollingStateFrameScrollingNode::VerticalScrollbarLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::VerticalScrollbarLayer))
         m_scrollerPair->verticalScroller().setHostLayer(scrollingStateNode.verticalScrollbarLayer());
 
-    if (scrollingStateNode.hasChangedProperty(WebCore::ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
         m_scrollerPair->horizontalScroller().setHostLayer(scrollingStateNode.horizontalScrollbarLayer());
 
     m_scrollerPair->updateValues();
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::setScrollLayerPosition(const WebCore::FloatPoint& position, const WebCore::FloatRect& layoutViewport)
+void ScrollingTreeFrameScrollingNodeRemoteMac::setScrollLayerPosition(const FloatPoint& position, const FloatRect& layoutViewport)
 {
     ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(position, layoutViewport);
 
     m_scrollerPair->updateValues();
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent)
+ScrollingEventResult ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(wheelEvent);
 
-    m_scrollerPair->handleWheelEvent(wheelEvent);
+    return m_scrollerPair->handleWheelEvent(wheelEvent) ? ScrollingEventResult::DidHandleEvent : ScrollingEventResult::DidNotHandleEvent;
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const WebCore::PlatformMouseEvent& mouseEvent)
+bool ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)
 {
-    m_scrollerPair->handleMouseEvent(mouseEvent);
+    return m_scrollerPair->handleMouseEvent(mouseEvent);
 }
 
 }

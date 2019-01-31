@@ -141,7 +141,7 @@ ScrollerPairMac::~ScrollerPairMac()
     [m_scrollerImpPair setDelegate:nil];
 }
 
-void ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
+bool ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
 {
     switch (event.phase()) {
     case WebCore::PlatformWheelEventPhaseBegan:
@@ -158,15 +158,19 @@ void ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
     default:
         break;
     }
+    // FIXME: this needs to return whether the event was handled.
+    return true;
 }
 
-void ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
+bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 {
     if (event.type() != WebCore::PlatformEvent::MouseMoved)
-        return;
+        return false;
 
     m_lastKnownMousePosition = event.position();
     [m_scrollerImpPair mouseMovedInContentArea];
+    // FIXME: this needs to return whether the event was handled.
+    return true;
 }
 
 void ScrollerPairMac::updateValues()

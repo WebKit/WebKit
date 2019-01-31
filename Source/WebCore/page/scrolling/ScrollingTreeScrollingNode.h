@@ -55,7 +55,7 @@ public:
 
     WEBCORE_EXPORT void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
-    virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
+    virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) = 0;
     WEBCORE_EXPORT virtual void setScrollPosition(const FloatPoint&);
     WEBCORE_EXPORT virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
 
@@ -78,6 +78,9 @@ public:
 #endif
 
     bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
+
+    bool scrollLimitReached(const PlatformWheelEvent&) const;
+    WEBCORE_EXPORT ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const override;
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
@@ -105,6 +108,9 @@ protected:
     bool hasEnabledVerticalScrollbar() const { return m_scrollableAreaParameters.hasEnabledVerticalScrollbar; }
 
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
+
+    WEBCORE_EXPORT LayoutPoint parentToLocalPoint(LayoutPoint) const override;
+    WEBCORE_EXPORT LayoutPoint localToContentsPoint(LayoutPoint) const override;
 
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
