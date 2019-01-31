@@ -24,52 +24,88 @@
  */
 
 .sidebar > .panel.changes-panel {
-    padding: 8px 10px;
     white-space: pre-wrap;
     overflow-y: auto;
 }
 
-.sidebar > .panel.changes-panel:not(.empty) {
+.sidebar > .panel.changes-panel .css-rule {
+    padding-top: var(--css-declaration-vertical-padding);
     font: 11px Menlo, monospace;
+    background-color: var(--background-color-code);
     -webkit-user-select: text;
 }
 
-.sidebar > .panel.changes-panel.empty {
-    text-align: center;
+.sidebar > .panel.selected.changes-panel.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.changes-panel ins {
+.changes-panel .resource-section {
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+}
+
+.changes-panel .resource-section > .header {
+    position: -webkit-sticky;
+    top: 0;
+    z-index: var(--z-index-header);
+    padding: 4px 8px;
+    background-color: var(--panel-background-color);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.changes-panel .resource-section > .header > a:hover {
+    color: var(--text-color);
+}
+
+.sidebar > .panel.changes-panel .selector-line,
+.sidebar > .panel.changes-panel .close-brace {
+    padding-left: var(--css-declaration-horizontal-padding);
+}
+
+.changes-panel .css-property-line > .property {
+    display: inline;
+}
+
+.changes-panel .css-property-line.unchanged {
+    opacity: 0.5;
+}
+
+.changes-panel .css-property-line.added {
     color: hsl(90, 61%, 25%);
-    background-color: hsl(70, 65%, 85%);
-    text-decoration: none;
+    background-color: hsl(70, 90%, 86%);
 }
 
-.changes-panel del {
+.changes-panel .css-property-line.removed {
     color: hsl(0, 100%, 35%);
-    background-color: hsl(5, 78%, 91%);
-    text-decoration: none;
+    background-color: hsl(5, 100%, 94%);
 }
 
-.changes-panel del.css-property::before {
-    content: "- ";
+.changes-panel .css-property-line.removed::before {
+    content: "-";
     position: absolute;
+    left: var(--css-declaration-horizontal-padding);
     pointer-events: none;
 }
 
-.changes-panel ins.css-property::before {
-    content: "+ ";
+.changes-panel .css-property-line.added::before {
+    content: "+";
     position: absolute;
+    left: var(--css-declaration-horizontal-padding);
     pointer-events: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    .changes-panel ins {
+    .changes-panel .css-property-line.added {
         color: hsl(70, 64%, 70%);
         background-color: hsl(89, 40%, 19%);
     }
 
-    .changes-panel del {
+    .changes-panel .css-property-line.removed {
         color: hsl(0, 84%, 75%);
-        background-color: hsl(5, 40%, 25%);
+        background-color: hsl(5, 40%, 28%);
     }
 }

@@ -76,45 +76,90 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.Deta
 
         this.element.classList.toggle("empty", !cssRules.length);
         if (!cssRules.length) {
-            this.element.textContent = WI.UIString("CSS hasn't been modified.");
+            this.element.textContent = WI.UIString("No CSS Changes");
             return;
         }
 
-        let indent = WI.indentString();
-
-        let appendPropertyElement = (tagName, text) => {
-            let propertyElement = document.createElement(tagName);
-            propertyElement.className = "css-property";
-            propertyElement.append(indent, text);
-            this.element.append(propertyElement, "\n");
-        };
-
+        let rulesForStylesheet = new Map();
         for (let cssRule of cssRules) {
-            let selectorElement = document.createElement("span");
-            selectorElement.append(cssRule.selectorText, " {\n");
-            this.element.append(selectorElement);
+            let cssRules = rulesForStylesheet.get(cssRule.ownerStyleSheet);
+            if (!cssRules) {
+                cssRules = [];
+                rulesForStylesheet.set(cssRule.ownerStyleSheet, cssRules);
+            }
+            cssRules.push(cssRule);
+        }
 
-            let initialCSSProperties = cssRule.initialState.style.visibleProperties;
-            let cssProperties = cssRule.style.visibleProperties;
+        for (let [styleSheet, cssRules] of rulesForStylesheet) {
+            let resourceSection = this.element.appendChild(document.createElement("section"));
+            resourceSection.classList.add("resource-section");
 
-            Array.diffArrays(initialCSSProperties, cssProperties, (cssProperty, action) => {
-                if (action === 0) {
-                    if (cssProperty.modified) {
-                        appendPropertyElement("del", cssProperty.initialState.formattedText);
-                        appendPropertyElement("ins", cssProperty.formattedText);
-                    } else
-                        appendPropertyElement("span", cssProperty.formattedText);
-                } else if (action === 1)
-                    appendPropertyElement("ins", cssProperty.formattedText);
-                else if (action === -1)
-                    appendPropertyElement("del", cssProperty.formattedText);
-            });
+            let resourceHeader = resourceSection.appendChild(document.createElement("div"));
+            resourceHeader.classList.add("header");
+            resourceHeader.append(this._createLocationLink(styleSheet));
 
-            this.element.append("}\n\n");
+            for (let cssRule of cssRules)
+                resourceSection.append(this._createRuleElement(cssRule));
         }
     }
 
     // Private
+
+    _createRuleElement(cssRule)
+    {
+        let ruleElement = document.createElement("div");
+        ruleElement.classList.add("css-rule");
+
+        let selectorElement = ruleElement.appendChild(document.createElement("span"));
+        selectorElement.classList.add("selector-line");
+        selectorElement.append(cssRule.selectorText, " {\n");
+
+        let appendProperty = (cssProperty, className) => {
+            let propertyLineElement = ruleElement.appendChild(document.createElement("div"));
+            propertyLineElement.classList.add("css-property-line", className);
+            let stylePropertyView = new WI.SpreadsheetStyleProperty(null, cssProperty, {readOnly: true});
+            propertyLineElement.append(WI.indentString(), stylePropertyView.element, "\n");
+        };
+
+        let initialCSSProperties = cssRule.initialState.style.visibleProperties;
+        let cssProperties = cssRule.style.visibleProperties;
+
+        Array.diffArrays(initialCSSProperties, cssProperties, (cssProperty, action) => {
+            if (action === 0) {
+                if (cssProperty.modified) {
+                    appendProperty(cssProperty.initialState, "removed");
+                    appendProperty(cssProperty, "added");
+                } else
+                    appendProperty(cssProperty, "unchanged");
+            } else if (action === 1)
+                appendProperty(cssProperty, "added");
+            else if (action === -1)
+                appendProperty(cssProperty, "removed");
+        });
+
+        let closeBraceElement = document.createElement("span");
+        closeBraceElement.className = "close-brace";
+        closeBraceElement.textContent = "}";
+
+        ruleElement.append(closeBraceElement, "\n");
+        return ruleElement;
+    }
+
+    _createLocationLink(styleSheet)
+    {
+        const options = {
+            nameStyle: WI.SourceCodeLocation.NameStyle.Short,
+            columnStyle: WI.SourceCodeLocation.ColumnStyle.Hidden,
+            dontFloat: true,
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+
+        const lineNumber = 0;
+        const columnNumber = 0;
+        let sourceCodeLocation = styleSheet.createSourceCodeLocation(lineNumber, columnNumber);
+        return WI.createSourceCodeLocationLink(sourceCodeLocation, options);
+    }
 
     _mainResourceDidChange(event)
     {

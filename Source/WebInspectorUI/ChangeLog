@@ -1,3 +1,43 @@
+2019-01-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Changes: group CSS rules by resource
+        https://bugs.webkit.org/show_bug.cgi?id=193940
+        <rdar://problem/47617785>
+
+        Reviewed by Matt Baker.
+
+        Create resource sections with source links in their headers.
+
+        Also:
+        - Use read-only WI.SpreadsheetStyleProperty to display inline swatches for colors;
+        - Make the red and green background span the entire width of the panel.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ChangesDetailsSidebarPanel.css:
+        (.sidebar > .panel.changes-panel):
+        (.sidebar > .panel.changes-panel .css-rule):
+        (.sidebar > .panel.selected.changes-panel.empty):
+        (.changes-panel .resource-section):
+        (.changes-panel .resource-section > .header):
+        (.changes-panel .resource-section > .header > a:hover):
+        (.sidebar > .panel.changes-panel .selector-line,):
+        (.changes-panel .css-property-line > .property):
+        (.changes-panel .css-property-line.unchanged):
+        (.changes-panel .css-property-line.added):
+        (.changes-panel .css-property-line.removed):
+        (.changes-panel .css-property-line.removed::before):
+        (.changes-panel .css-property-line.added::before):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.layout):
+        (WI.ChangesDetailsSidebarPanel.prototype._createRuleElement):
+        (WI.ChangesDetailsSidebarPanel.prototype._createLocationLink):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        Allow passing `null` as a delegate.
+
 2019-01-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: change style of device settings override popover content

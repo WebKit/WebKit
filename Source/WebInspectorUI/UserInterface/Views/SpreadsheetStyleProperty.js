@@ -488,14 +488,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._handleValueChange();
         }, this);
 
-        if (typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
+        if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
                 this._swatchActive = true;
                 this._delegate.stylePropertyInlineSwatchActivated();
             });
         }
 
-        if (typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
+        if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, () => {
                 this._swatchActive = false;
                 this._delegate.stylePropertyInlineSwatchDeactivated();
