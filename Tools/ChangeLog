@@ -1,3 +1,12 @@
+2019-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Replace High Sierra LLINT CLoop bot due to hardware failure
+        https://bugs.webkit.org/show_bug.cgi?id=194066
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2019-01-30  Keith Rollin  <krollin@apple.com>
 
         [NSDragItem init] is unavailable

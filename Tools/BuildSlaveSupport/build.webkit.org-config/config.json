@@ -20,7 +20,7 @@
                     { "name": "bot157", "platform": "mac-highsierra" },
                     { "name": "bot163", "platform": "mac-highsierra" },
                     { "name": "bot182", "platform": "mac-highsierra" },
-                    { "name": "bot186", "platform": "mac-highsierra" },
+                    { "name": "bot187", "platform": "mac-highsierra" },
                     { "name": "bot194", "platform": "mac-highsierra" },
                     { "name": "bot197", "platform": "mac-highsierra" },
                     { "name": "bot205", "platform": "mac-highsierra" },
@@ -163,7 +163,7 @@
                     },
                     { "name": "Apple High Sierra LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "highsierra-cloop-debug",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot186"]
+                      "slavenames": ["bot187"]
                     },
                     { "name": "Apple High Sierra Debug Test262 (Tests)", "type": "Test262", "builddir": "highsierra-debug-tests-test262",
                       "platform": "mac-highsierra", "configuration": "debug", "architectures": ["x86_64"],
