@@ -1,3 +1,51 @@
+2019-01-30  Benjamin Poulain  <benjamin@webkit.org>
+
+        <rdar://problem/47570443> Responsiveness timers are too expensive for frequent events
+        https://bugs.webkit.org/show_bug.cgi?id=194003
+
+        Reviewed by Geoffrey Garen.
+
+        The problem here is specific to wheel events.
+
+        For every wheel event, we start a responsiveness timer and send
+        a ping to the WebProcess. When the WebProcess respond, we stop the timer.
+
+        The cost of setting up the timers adds up since we get many events.
+
+        The first step to improve the situation was to switch ResponsivenessTimer
+        to WebCore::Timer. Since WebCore::Timer reuse the same CFRunLoopTimerRef,
+        we save the allocation/deallocation, insertion in the event loop, etc.
+
+        Using WebCore::Timer saves some instructions but we were still hitting
+        the kernel at 120hz to set up then kill each timer.
+        The second improvement of the patch is to avoid that by not killing the timer
+        when we hear back from the WebProcess.
+
+        Instead of killing the timer, we let it run and ignore the result.
+        When the next event comes, we reschedule the existing timer.
+        This brings down the timers to 60Hz, the same rate as the events.
+
+        The very last event does time out. In that case, we have a bad idle wake up:
+        we wake up a sleeping CPU do do nothing.
+        In the case of wheel events, this is fine since we saved a bunch of CPU already.
+        For all the other cases, I kept the normal operating mode to avoid the idle wake.
+
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+        (WebKit::ResponsivenessTimer::invalidate):
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::start):
+        (WebKit::ResponsivenessTimer::startWithLazyStop):
+        (WebKit::ResponsivenessTimer::stop):
+        (WebKit::ResponsivenessTimer::processTerminated):
+        (WebKit::ResponsivenessTimer::~ResponsivenessTimer): Deleted.
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendWheelEvent):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::isResponsiveWithLazyStop):
+        * UIProcess/WebProcessProxy.h:
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] REGRESSION (r238635): Text area fails to re-focus after dismissal of keyboard on support.apple.com
