@@ -906,7 +906,6 @@ class CachedSymbolTable : public CachedObject<SymbolTable> {
 public:
     void encode(Encoder& encoder, const SymbolTable& symbolTable)
     {
-        ASSERT(!symbolTable.m_rareData);
         m_map.encode(encoder, symbolTable.m_map);
         m_maxScopeOffset = symbolTable.m_maxScopeOffset;
         m_usesNonStrictEval = symbolTable.m_usesNonStrictEval;
@@ -935,8 +934,6 @@ private:
     unsigned m_usesNonStrictEval : 1;
     unsigned m_nestedLexicalScope : 1;
     unsigned m_scopeType : 3;
-    // FIXME: do we need to cached this eventually?
-    // CachedPtr<SymbolTableRareData> rareData;
     CachedPtr<CachedScopedArgumentsTable> m_arguments;
 };
 
