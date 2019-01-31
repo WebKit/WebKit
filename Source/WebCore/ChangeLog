@@ -1,3 +1,21 @@
+2019-01-30  Keith Rollin  <krollin@apple.com>
+
+        FloatWithRect has invalid and inaccessible default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=194057
+        <rdar://problem/47685211>
+
+        Reviewed by Zalan Bujtas.
+
+        FloatWithRect has a default constructor declared as 'default'. This
+        constructor is invalid because FloatWithRect has a data member that's
+        a reference that will not get initialized with this constructor. Since
+        it's invalid, and since it's private and not accessed by anything,
+        remove this constructor.
+
+        No new tests since there should be no observable behavior difference.
+
+        * rendering/line/LineLayoutState.h:
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

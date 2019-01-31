@@ -54,8 +54,6 @@ public:
     void adjustRect(const LayoutRect& rect) { m_rect = rect; }
 
 private:
-    FloatWithRect() = default;
-    
     FloatWithRect(RenderBox& renderer)
         : m_renderer(renderer)
         , m_rect(LayoutRect(renderer.x() - renderer.marginLeft(), renderer.y() - renderer.marginTop(), renderer.width() + renderer.horizontalMarginExtent(), renderer.height() + renderer.verticalMarginExtent()))
