@@ -1,3 +1,14 @@
+2019-01-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline time range selection sometimes shows 0.000, should be just 0
+        https://bugs.webkit.org/show_bug.cgi?id=194108
+        <rdar://problem/47714273>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Utilities.js:
+        Check under epsilon for the zero case.
+
 2019-01-31  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION(r?): Web Inspector: Clicking on text doesn't move text caret when editing innerHTML/tagName/attribute

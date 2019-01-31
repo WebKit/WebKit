@@ -26,6 +26,7 @@ PASS: normal resolution of greater than 1min but sub 1hr should be minutes
 PASS: normal resolution of greater than 1hr but sub 1 day should be hrs
 PASS: normal resolution of greater than 1 day should be days
 PASS: normal resolution of greater than 1 day should be days
+PASS: normal resolution of super small value should be ms with no decimals
 PASS: high resolution of 0ms should be ms with no decimals
 PASS: high resolution of sub 1ms should be ms with decimals
 PASS: high resolution of sub 10ms should be ms with decimals
@@ -35,6 +36,7 @@ PASS: high resolution of greater than 1s should be seconds with decimals
 PASS: high resolution of greater than 1s should be seconds with decimals
 PASS: high resolution of greater than 1s should be seconds with decimals
 PASS: high resolution greater than 1s should be seconds with decimals
+PASS: high resolution of super small value should be ms with no decimals
 
 -- Running test case: Number.bytesToString
 PASS: normal resolution of sub 1k should be bytes

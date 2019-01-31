@@ -1156,11 +1156,11 @@ Object.defineProperty(Number, "secondsToString",
 {
     value(seconds, higherResolution)
     {
-        let ms = seconds * 1000;
-        if (!ms)
-            return WI.UIString("%.0fms").format(0);
-
         const epsilon = 0.0001;
+
+        let ms = seconds * 1000;
+        if (ms < epsilon)
+            return WI.UIString("%.0fms").format(0);
 
         if (Math.abs(ms) < (10 + epsilon)) {
             if (higherResolution)

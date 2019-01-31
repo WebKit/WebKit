@@ -5,6 +5,9 @@
 <script>
 function test()
 {
+    // This is the floating point precision error value from: `0.3 - 0.2 - 0.1`
+    const superSmallValue = -2.7755575615628914e-17;
+
     let suite = InspectorTest.createSyncSuite("NumberUtilities");
 
     suite.addTestCase({
@@ -44,6 +47,7 @@ function test()
             InspectorTest.expectEqual(Number.secondsToString(12345, false), "3.4hrs", "normal resolution of greater than 1hr but sub 1 day should be hrs");
             InspectorTest.expectEqual(Number.secondsToString(123456, false), "1.4 days", "normal resolution of greater than 1 day should be days");
             InspectorTest.expectEqual(Number.secondsToString(1234567, false), "14.3 days", "normal resolution of greater than 1 day should be days");
+            InspectorTest.expectEqual(Number.secondsToString(superSmallValue, false), "0ms", "normal resolution of super small value should be ms with no decimals");
 
             // High resolution.
             InspectorTest.expectEqual(Number.secondsToString(0, true), "0ms", "high resolution of 0ms should be ms with no decimals");
@@ -55,6 +59,7 @@ function test()
             InspectorTest.expectEqual(Number.secondsToString(30.123456, true), "30.12s", "high resolution of greater than 1s should be seconds with decimals");
             InspectorTest.expectEqual(Number.secondsToString(60.123456, true), "60.12s", "high resolution of greater than 1s should be seconds with decimals");
             InspectorTest.expectEqual(Number.secondsToString(100.123456, true), "100.12s", "high resolution greater than 1s should be seconds with decimals");
+            InspectorTest.expectEqual(Number.secondsToString(superSmallValue, true), "0ms", "high resolution of super small value should be ms with no decimals");
 
             return true;
         }
