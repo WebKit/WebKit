@@ -10,7 +10,7 @@
      small print element. The element's content is the `this` value of the
      function invocation, coerced to a string.
  es6id: B.2.3.11
- ---*/
+---*/
 
 assert.sameValue('_'.small(), '<small>_</small>');
 assert.sameValue('<'.small(), '<small><</small>');

@@ -23,8 +23,8 @@ var numberingSystems = [
 ];
 var testData = {
     // Ref tc39/ecma402#128
-    "123.44500": "123.44",
-    "-123.44500": "-123.44",
+    "123.44500": "123.45",
+    "-123.44500": "-123.45",
 };
 
 testNumberFormat(locales, numberingSystems,

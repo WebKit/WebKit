@@ -7,7 +7,7 @@ description: >
   IteratedObject.
 features:
   - Symbol.iterator
- ---*/
+---*/
 
 var set = new Set();
 set.add(1);

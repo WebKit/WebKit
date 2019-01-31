@@ -5,7 +5,7 @@
   description: >
       Returns an iterator that's already done if Set is empty.
   es6id: 23.2.3.10
- ---*/
+---*/
 
 var set = new Set();
 var iterator = set.values();

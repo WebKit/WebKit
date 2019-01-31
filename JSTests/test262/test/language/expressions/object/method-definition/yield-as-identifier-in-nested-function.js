@@ -8,7 +8,7 @@
   features: [generators]
   es6id: 12.1.1
   flags: [noStrict]
- ---*/
+---*/
 
 var result;
 var obj = {

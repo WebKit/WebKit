@@ -10,7 +10,7 @@
      strikethrough element. The element's content is the `this` value of the
      function invocation, coerced to a string.
  es6id: B.2.3.12
- ---*/
+---*/
 
 assert.sameValue('_'.strike(), '<strike>_</strike>');
 assert.sameValue('<'.strike(), '<strike><</strike>');

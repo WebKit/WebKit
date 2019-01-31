@@ -10,7 +10,7 @@
      bold element. The element's content is the `this` value of the function
      invocation, coerced to a string.
  es6id: B.2.3.5
- ---*/
+---*/
 
 assert.sameValue('_'.bold(), '<b>_</b>');
 assert.sameValue('<'.bold(), '<b><</b>');

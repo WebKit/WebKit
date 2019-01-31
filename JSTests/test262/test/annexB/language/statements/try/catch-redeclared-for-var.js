@@ -3,12 +3,11 @@
 /*---
 esid: sec-variablestatements-in-catch-blocks
 es6id: B.3.5
-description: Re-declaration of catch parameter (for-in statement)
+description: Re-declaration of catch parameter (for statement)
 info: |
     It is a Syntax Error if any element of the BoundNames of CatchParameter
-    also occurs in the VarDeclaredNames of Block, unless that element is only
-    bound by a VariableStatement or the VariableDeclarationList of a for
-    statement, or the ForBinding of a for-in statement.
+    also occurs in the VarDeclaredNames of Block, unless CatchParameter is
+    CatchParameter : BindingIdentifier.
 ---*/
 
 var before, during, after;

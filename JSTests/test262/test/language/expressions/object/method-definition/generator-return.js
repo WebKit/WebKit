@@ -6,7 +6,7 @@
       `return` is a valid statement within generator function bodies.
   features: [generators]
   es6id: 14.4
- ---*/
+---*/
 
 var result;
 var obj = {

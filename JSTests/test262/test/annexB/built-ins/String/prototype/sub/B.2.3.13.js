@@ -10,7 +10,7 @@
      subscript element. The element's content is the `this` value of the
      function invocation, coerced to a string.
  es6id: B.2.3.13
- ---*/
+---*/
 
 assert.sameValue('_'.sub(), '<sub>_</sub>');
 assert.sameValue('<'.sub(), '<sub><</sub>');

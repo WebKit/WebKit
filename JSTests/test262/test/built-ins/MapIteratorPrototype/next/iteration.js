@@ -6,7 +6,7 @@ description: >
   The method should return a valid iterator with the context as the
   IteratedObject.
 features: [Symbol.iterator]
- ---*/
+---*/
 
 var map = new Map();
 map.set(1, 11);

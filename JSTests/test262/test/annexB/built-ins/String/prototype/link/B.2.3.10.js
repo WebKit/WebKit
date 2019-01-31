@@ -11,7 +11,7 @@
      invocation, coerced to a string. If specified, the first argument will be
      coerced to a string, escaped, and set as the element's `href` attribute.
  es6id: B.2.3.10
- ---*/
+---*/
 
 assert.sameValue('_'.link('b'), '<a href="b">_</a>');
 assert.sameValue('<'.link('<'), '<a href="<"><</a>');

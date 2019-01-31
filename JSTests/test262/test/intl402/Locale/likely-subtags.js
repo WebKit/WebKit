@@ -37,9 +37,6 @@ const testDataMaximal = {
     "und-419": "es-Latn-419",
     "und-150": "ru-Cyrl-RU",
     "und-AT": "de-Latn-AT",
-
-    // privateuse only.
-    "x-private": "x-private",
 };
 
 const testDataMinimal = {
@@ -65,9 +62,6 @@ const testDataMinimal = {
     "es-Latn-419": "es-419",
     "ru-Cyrl-RU": "ru",
     "de-Latn-AT": "de-AT",
-
-    // privateuse only.
-    "x-private": "x-private",
 };
 
 // Add variants, extensions, and privateuse subtags and ensure they don't
@@ -105,3 +99,8 @@ for (const [tag, minimal] of Object.entries(testDataMinimal)) {
                          `"${input}".minimize() should be "${output}"`);
     }
 }
+
+// privateuse only.
+// "x" in "x-private" does not match unicode_language_subtag
+// unicode_language_subtag = alpha{2,3} | alpha{5,8};
+assert.throws(RangeError, () => new Intl.Locale("x-private"));

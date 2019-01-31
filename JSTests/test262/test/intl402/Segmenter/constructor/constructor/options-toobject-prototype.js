@@ -13,11 +13,8 @@ features: [Intl.Segmenter]
 ---*/
 
 Object.defineProperties(Object.prototype, {
-  "lineBreakStyle": {
-    value: "loose",
-  },
   "granularity": {
-    value: "line",
+    value: "word",
   },
 })
 
@@ -32,8 +29,6 @@ const optionsArguments = [
 for (const options of optionsArguments) {
   const segmenter = new Intl.Segmenter([], options);
   const resolvedOptions = segmenter.resolvedOptions();
-  assert.sameValue(resolvedOptions.lineBreakStyle, "loose",
-    `options argument ${String(options)} should yield the correct value for "lineBreakStyle"`);
-  assert.sameValue(resolvedOptions.granularity, "line",
+  assert.sameValue(resolvedOptions.granularity, "word",
     `options argument ${String(options)} should yield the correct value for "granularity"`);
 }

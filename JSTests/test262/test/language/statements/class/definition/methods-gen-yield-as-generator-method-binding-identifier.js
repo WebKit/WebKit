@@ -7,7 +7,7 @@
       strict mode.
   features: [generators]
   es6id: 12.1.1
- ---*/
+---*/
 
 var iter, result;
 class A {

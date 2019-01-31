@@ -6,7 +6,7 @@
       The method should return a valid iterator with the context as the
       IteratedObject.
   es6id: 23.2.3.10
- ---*/
+---*/
 
 var set = new Set();
 set.add(1);

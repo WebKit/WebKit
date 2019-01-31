@@ -10,7 +10,7 @@
      teletype text element. The element's content is the `this` value of the
      function invocation, coerced to a string.
  es6id: B.2.3.6
- ---*/
+---*/
 
 assert.sameValue('_'.fixed(), '<tt>_</tt>');
 assert.sameValue('<'.fixed(), '<tt><</tt>');

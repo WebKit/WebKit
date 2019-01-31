@@ -17,6 +17,17 @@ skip:
     - Symbol.matchAll
     # https://bugs.webkit.org/show_bug.cgi?id=174931
     - regexp-lookbehind
+
+    - class-fields-public
+    - class-fields-private
+    - class-methods-private
+    - class-static-fields-public
+    - class-static-fields-private
+    - class-static-methods-private
+    - Intl.ListFormat
+    - Intl.Locale
+    - Intl.RelativeTimeFormat
+    - Intl.Segmenter
   files:
     - test/built-ins/Array/prototype/reverse/length-exceeding-integer-limit-with-object.js
     - test/built-ins/Array/prototype/unshift/length-near-integer-limit.js

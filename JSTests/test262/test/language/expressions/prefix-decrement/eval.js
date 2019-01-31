@@ -2,9 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 11.4.5-2-1-s
-esid: sec-prefix-decrement-operator
-description: Strict Mode - SyntaxError is thrown for --eval
+esid: sec-update-expressions
+description: >
+  It is an early Syntax Error if AssignmentTargetType of UnaryExpression is strict. (eval)
+info: |
+
+  sec-identifiers-static-semantics-assignmenttargettype
+
+    If this IdentifierReference is contained in strict mode code and StringValue of Identifier is "eval" or  "arguments", return strict.
+
+  sec-update-expressions-static-semantics-early-errors
+
+    UpdateExpression: -- UnaryExpression
+
+    It is an early Syntax Error if AssignmentTargetType of UnaryExpression is strict.
+
 flags: [onlyStrict]
 negative:
   phase: parse

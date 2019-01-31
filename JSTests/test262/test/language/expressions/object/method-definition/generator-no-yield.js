@@ -7,7 +7,7 @@
       `yield` expression.
   features: [generators]
   es6id: 14.4
- ---*/
+---*/
 
 var result;
 var obj = {

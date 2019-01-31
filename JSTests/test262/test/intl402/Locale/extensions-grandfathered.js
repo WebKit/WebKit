@@ -7,69 +7,21 @@ description: >
     Verifies handling of options with grandfathered tags.
 info: |
     ApplyOptionsToTag( tag, options )
+    ...
+    2. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
 
-    ...
-    9. If tag matches neither the privateuse nor the grandfathered production, then
-    ...
+    IsStructurallyValidLanguageTag ( locale )
 
-    ApplyUnicodeExtensionToTag( tag, options, relevantExtensionKeys )
+    The IsStructurallyValidLanguageTag abstract operation verifies that the
+    locale argument (which must be a String value)
 
-    ...
-    2. If tag matches the privateuse or the grandfathered production, then
-        a. Let result be a new Record.
-        b. Repeat for each element key of relevantExtensionKeys in List order,
-            i. Set result.[[<key>]] to undefined.
-        c. Set result.[[locale]] to tag.
-        d. Return result.
-    ...
-    7. Repeat for each element key of relevantExtensionKeys in List order,
-        e. Let optionsValue be options.[[<key>]].
-        f. If optionsValue is not undefined, then
-            ii. Let value be optionsValue.
-            iv. Else,
-                1. Append the Record{[[Key]]: key, [[Value]]: value} to keywords.
-    ...
+    represents a well-formed Unicode BCP 47 Locale Identifier" as specified in
+    Unicode Technical Standard 35 section 3.2, or successor,
 
 features: [Intl.Locale]
 ---*/
 
 const testData = [
-    // Irregular grandfathered without modern replacement.
-    {
-        tag: "i-default",
-        options: {
-            language: "fr",
-            script: "Cyrl",
-            region: "DE",
-            numberingSystem: "latn",
-        },
-        canonical: "fr-Cyrl-DE-u-nu-latn",
-    },
-
-    // Irregular grandfathered with modern replacement.
-    {
-        tag: "en-gb-oed",
-        options: {
-            language: "fr",
-            script: "Cyrl",
-            region: "US",
-            numberingSystem: "latn",
-        },
-        canonical: "fr-Cyrl-US-oxendict-u-nu-latn",
-    },
-
-    // Regular grandfathered without modern replacement.
-    {
-        tag: "cel-gaulish",
-        options: {
-            language: "fr",
-            script: "Cyrl",
-            region: "FR",
-            numberingSystem: "latn",
-        },
-        canonical: "fr-Cyrl-FR-u-nu-latn",
-    },
-
     // Regular grandfathered with modern replacement.
     {
         tag: "art-lojban",
@@ -91,3 +43,13 @@ for (const {tag, options, canonical} of testData) {
         assert.sameValue(loc[name], value);
     }
 }
+
+assert.throws(RangeError, () =>
+    new Intl.Locale("i-default",
+      {language: "fr", script: "Cyrl", region: "DE", numberingSystem: "latn"}
+      ));
+
+assert.throws(RangeError, () =>
+    new Intl.Locale("en-gb-oed",
+      {language: "fr", script: "Cyrl", region: "US", numberingSystem: "latn"}
+      ));

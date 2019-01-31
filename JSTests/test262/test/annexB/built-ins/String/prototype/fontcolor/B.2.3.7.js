@@ -12,7 +12,7 @@
      will be coerced to a string, escaped, and set as the element's `color`
      attribute.
  es6id: B.2.3.7
- ---*/
+---*/
 
 assert.sameValue('_'.fontcolor('b'), '<font color="b">_</font>');
 assert.sameValue('<'.fontcolor('<'), '<font color="<"><</font>');

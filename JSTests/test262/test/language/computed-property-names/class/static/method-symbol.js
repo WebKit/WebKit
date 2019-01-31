@@ -24,8 +24,8 @@ assert(
   "`compareArray(Object.keys(C), [])` returns `true`"
 );
 assert(
-  compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'a', 'c', 'name']),
-  "`compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'a', 'c', 'name'])` returns `true`"
+  compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'c']),
+  "`compareArray(Object.getOwnPropertyNames(C), ['length', 'prototype', 'name', 'a', 'c'])` returns `true`"
 );
 assert(
   compareArray(Object.getOwnPropertySymbols(C), [sym1, sym2]),

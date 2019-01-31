@@ -8,8 +8,7 @@ info: |
     Intl.Segmenter ([ locales [ , options ]])
 
     7. Let matcher be ? GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
-    9. Let lineBreakStyle be ? GetOption(options, "lineBreakStyle", "string", « "strict", "normal", "loose" », "normal").
-    13. Let granularity be ? GetOption(options, "granularity", "string", « "grapheme", "word", "sentence", "line" », "grapheme").
+    11. Let granularity be ? GetOption(options, "granularity", "string", « "grapheme", "word", "sentence" », "grapheme").
 includes: [compareArray.js]
 features: [Intl.Segmenter]
 ---*/
@@ -49,8 +48,6 @@ new Intl.Segmenter([], {
 assert.compareArray(callOrder, [
   "localeMatcher",
   "localeMatcher toString",
-  "lineBreakStyle",
-  "lineBreakStyle toString",
   "granularity",
   "granularity toString",
 ]);

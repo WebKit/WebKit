@@ -6,7 +6,7 @@
       Newlines terminate `yield` expressions.
   features: [generators]
   es6id: 14.4
- ---*/
+---*/
 
 var iter, result;
 var obj = {

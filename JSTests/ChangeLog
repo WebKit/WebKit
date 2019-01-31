@@ -1,3 +1,16 @@
+2019-01-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Import latest Test262 updates.
+
+        Rubber-stamped by Keith Miller.
+
+        * test262.yaml: Deleted.
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/:
+        * test262/test262-Revision.txt:
+
 2019-01-30  Robin Morisset  <rmorisset@apple.com>
 
         Object.keys can now lead to a PhantomNewArrayBuffer, OSR exit from the FTL should know how to materialize a NewArrayBuffer in that case

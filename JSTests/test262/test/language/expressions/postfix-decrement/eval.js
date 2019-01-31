@@ -2,11 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 11.3.2-2-2-s
-esid: sec-postfix-decrement-operator
+esid: sec-update-expressions
 description: >
-    Strict Mode - SyntaxError is thrown if the identifier 'eval'
-    appear as a PostfixExpression(eval--)
+  It is an early Syntax Error if AssignmentTargetType of LeftHandSideExpression is strict. (eval)
+info: |
+
+  sec-identifiers-static-semantics-assignmenttargettype
+
+    If this IdentifierReference is contained in strict mode code and StringValue of Identifier is "eval" or  "arguments", return strict.
+
+  sec-update-expressions-static-semantics-early-errors
+
+    UpdateExpression: LeftHandSideExpression --
+
+    It is an early Syntax Error if AssignmentTargetType of LeftHandSideExpression is strict.
+
 flags: [onlyStrict]
 negative:
   phase: parse

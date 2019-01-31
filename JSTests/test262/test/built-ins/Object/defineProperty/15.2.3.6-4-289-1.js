@@ -11,7 +11,7 @@ description: >
  redefined in 'O' with all correct attribute values (10.6
  [[DefineOwnProperty]] step 3)
 includes: [propertyHelper.js]
- ---*/
+---*/
 
 ;
 (function(a, b, c) {

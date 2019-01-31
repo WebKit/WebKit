@@ -12,7 +12,7 @@
      will be coerced to a string, escaped, and set as the element's `size`
      attribute.
  es6id: B.2.3.8
- ---*/
+---*/
 
 assert.sameValue('_'.fontsize('b'), '<font size="b">_</font>');
 assert.sameValue('<'.fontsize('<'), '<font size="<"><</font>');

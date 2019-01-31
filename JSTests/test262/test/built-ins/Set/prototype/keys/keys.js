@@ -6,7 +6,7 @@
       The initial value of the keys property is the same function object as the
       initial value of the values property.
   es6id: 23.2.3.8
- ---*/
+---*/
 
 assert.sameValue(
   Set.prototype.keys,

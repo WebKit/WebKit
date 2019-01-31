@@ -10,7 +10,7 @@
      big element. The element's content is the `this` value of the function
      invocation, coerced to a string.
  es6id: B.2.3.3
- ---*/
+---*/
 
 assert.sameValue('_'.big(), '<big>_</big>');
 assert.sameValue('<'.big(), '<big><</big>');

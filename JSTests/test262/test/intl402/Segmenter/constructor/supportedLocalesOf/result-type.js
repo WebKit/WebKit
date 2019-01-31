@@ -21,14 +21,13 @@ assert.sameValue(Object.isExtensible(result), true,
 assert.notSameValue(result.length, 0);
 for (let i = 0; i < result.length; ++i) {
   verifyProperty(result, String(i), {
-    "writable": false,
+    "writable": true,
     "enumerable": true,
-    "configurable": false,
+    "configurable": true,
   });
 }
 
 verifyProperty(result, "length", {
-  "writable": false,
   "enumerable": false,
   "configurable": false,
 });

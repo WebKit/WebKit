@@ -11,6 +11,5 @@ flags: [onlyStrict]
 ---*/
 
 $DONOTEVALUATE();
-throw NotEarlyError;
-for (var a = 0 in {});
 
+for (var a = 0 in {});

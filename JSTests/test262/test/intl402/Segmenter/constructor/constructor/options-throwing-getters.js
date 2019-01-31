@@ -11,7 +11,6 @@ function CustomError() {}
 
 const options = [
   "localeMatcher",
-  "lineBreakStyle",
   "granularity",
 ];
 

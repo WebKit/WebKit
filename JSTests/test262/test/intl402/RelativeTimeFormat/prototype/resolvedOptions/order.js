@@ -14,6 +14,7 @@ const expected = [
   "locale",
   "style",
   "numeric",
+  "numberingSystem",
 ];
 
 assert.compareArray(Object.getOwnPropertyNames(options), expected);

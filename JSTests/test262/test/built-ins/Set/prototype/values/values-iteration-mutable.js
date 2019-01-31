@@ -8,7 +8,7 @@
       accessible via iteration. When an item is added to the set after the
       iterator is "done", the new item should not be accessible via iteration.
   es6id: 23.2.3.10
- ---*/
+---*/
 
 var set = new Set();
 set.add(1);

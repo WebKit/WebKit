@@ -7,7 +7,7 @@
       within generator function bodies.
   features: [generators]
   es6id: 12.1.1
- ---*/
+---*/
 
 var result;
 var obj = {

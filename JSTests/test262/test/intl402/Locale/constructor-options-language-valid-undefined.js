@@ -13,10 +13,17 @@ info: |
     12. Set tag to ? ApplyOptionsToTag(tag, options).
 
     ApplyOptionsToTag( tag, options )
+
+    2. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
     ...
-    9. If tag matches neither the privateuse nor the grandfathered production, then
-        b. If language is not undefined, then
-            i. Set tag to tag with the substring corresponding to the language production replaced by the string language.
+
+    IsStructurallyValidLanguageTag ( locale )
+
+    The IsStructurallyValidLanguageTag abstract operation verifies that the
+    locale argument (which must be a String value)
+
+    represents a well-formed Unicode BCP 47 Locale Identifier" as specified in
+    Unicode Technical Standard 35 section 3.2, or successor,
 
 features: [Intl.Locale]
 ---*/
@@ -33,8 +40,4 @@ assert.sameValue(
   `new Intl.Locale('en-US', {language: undefined}).toString() returns "en-US"`
 );
 
-assert.sameValue(
-  new Intl.Locale('en-els', {language: undefined}).toString(),
-  'en-els',
-  `new Intl.Locale('en-els', {language: undefined}).toString() returns "en-els"`
-);
+assert.throws(RangeError, () => new Intl.Locale('en-els', {language: undefined}));

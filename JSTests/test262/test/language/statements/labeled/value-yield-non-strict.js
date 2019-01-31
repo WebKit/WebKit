@@ -7,6 +7,6 @@
       used as a label.
   es6id: 12.1.1
   flags: [noStrict]
- ---*/
+---*/
 
 yield: 1;

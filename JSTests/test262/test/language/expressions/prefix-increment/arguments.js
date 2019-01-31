@@ -2,9 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 11.4.4-2-2-s
-esid: sec-prefix-increment-operator
-description: Strict Mode - SyntaxError is thrown for ++arguments
+esid: sec-update-expressions
+description: >
+  It is an early Syntax Error if AssignmentTargetType of UnaryExpression is strict. (arguments)
+info: |
+
+  sec-identifiers-static-semantics-assignmenttargettype
+
+    If this IdentifierReference is contained in strict mode code and StringValue of Identifier is "eval" or  "arguments", return strict.
+
+  sec-update-expressions-static-semantics-early-errors
+
+    UpdateExpression: ++ UnaryExpression
+
+    It is an early Syntax Error if AssignmentTargetType of UnaryExpression is strict.
+
 flags: [onlyStrict]
 negative:
   phase: parse

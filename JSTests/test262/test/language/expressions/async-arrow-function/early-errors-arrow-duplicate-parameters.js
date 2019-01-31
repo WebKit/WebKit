@@ -3,13 +3,30 @@
 
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
-esid: pending
-description: >
-  If strict mode, early error rules for StrictFormalParameters are applied
+esid: sec-async-arrow-function-definitions
+description: Formal parameters may not contain duplicates
+info: |
+  # 14.2 Arrow Function Definitions
+
+  When the production
+
+    ArrowParameters:CoverParenthesizedExpressionAndArrowParameterList
+
+  is recognized the following grammar is used to refine the interpretation
+  of CoverParenthesizedExpressionAndArrowParameterList:
+
+    ArrowFormalParameters[Yield, Await]:
+      (UniqueFormalParameters[?Yield, ?Await])
+
+  # 14.1.2 Static Semantics: Early Errors
+
+  UniqueFormalParameters:FormalParameters
+
+  - It is a Syntax Error if BoundNames of FormalParameters contains any
+    duplicate elements.
 negative:
   phase: parse
   type: SyntaxError
-flags: [onlyStrict]
 ---*/
 
 $DONOTEVALUATE();

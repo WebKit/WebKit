@@ -14,18 +14,23 @@ info: |
 
     ApplyOptionsToTag( tag, options )
     ...
-    9. If tag matches neither the privateuse nor the grandfathered production, then
-        b. If language is not undefined, then
-            i. Set tag to tag with the substring corresponding to the language production replaced by the string language.
+    2. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
+    3. Let language be ? GetOption(options, "language", "string", undefined, undefined).
+    4. If language is not undefined, then
+       a. If language does not match the unicode_language_subtag production, throw a RangeError exception.
+
+    IsStructurallyValidLanguageTag ( locale )
+
+    The IsStructurallyValidLanguageTag abstract operation verifies that the
+    locale argument (which must be a String value)
+
+    represents a well-formed Unicode BCP 47 Locale Identifier" as specified in
+    Unicode Technical Standard 35 section 3.2, or successor,
 
 features: [Intl.Locale]
 ---*/
 
 const validLanguageOptions = [
-  [null, 'null'],
-  ['zh-cmn', 'cmn'],
-  ['ZH-CMN', 'cmn'],
-  ['abcd', 'abcd'],
   [{ toString() { return 'de' } }, 'de'],
 ];
 for (const [language, expected] of validLanguageOptions) {
@@ -44,10 +49,18 @@ for (const [language, expected] of validLanguageOptions) {
     `new Intl.Locale('en-US', {language: "${language}"}).toString() returns "${expect}"`
   );
 
-  expect = expected || 'en-els';
-  assert.sameValue(
-    new Intl.Locale('en-els', {language}).toString(),
-    expect,
-    `new Intl.Locale('en-els', {language: "${language}"}).toString() returns "${expect}"`
-  );
+  assert.throws(RangeError, () => new Intl.Locale('en-els', {language}));
+
+}
+
+const invalidLanguageOptions = [
+    null,
+    'zh-cmn',
+    'ZH-CMN',
+    'abcd',
+];
+for (const language of invalidLanguageOptions) {
+  assert.throws(RangeError, () => new Intl.Locale('en', {language}));
+  assert.throws(RangeError, () => new Intl.Locale('en-US', {language}));
+  assert.throws(RangeError, () => new Intl.Locale('en-els', {language}));
 }

@@ -8,7 +8,7 @@ description: >
       CoverParenthesizedExpressionAndArrowParameterList[?Yield]
 
     12.14.5
-    ---*/
+   ---*/
 var af = ({x = 1}) => x;
 
 assert.sameValue(typeof af, "function");

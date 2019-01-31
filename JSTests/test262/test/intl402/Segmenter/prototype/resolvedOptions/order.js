@@ -9,13 +9,12 @@ features: [Intl.Segmenter]
 ---*/
 
 const options = new Intl.Segmenter([], {
-  "granularity": "line",
+  "granularity": "word",
 }).resolvedOptions();
 
 const expected = [
   "locale",
   "granularity",
-  "lineBreakStyle",
 ];
 
 assert.compareArray(Object.getOwnPropertyNames(options), expected);

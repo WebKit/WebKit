@@ -6,7 +6,7 @@
       `yield` is a valid expression within generator function bodies.
   features: [generators]
   es6id: 14.4
- ---*/
+---*/
 
 var iter, result;
 var obj = {
