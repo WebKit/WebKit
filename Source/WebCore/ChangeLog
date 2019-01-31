@@ -1,3 +1,27 @@
+2019-01-31  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][EME] Modern EME uses a different path for SecureStop data than Legacy EME
+        https://bugs.webkit.org/show_bug.cgi?id=193988
+
+        Reviewed by Jon Lee.
+
+        Modern EME is writing SecureStop data as a file at the same path as the
+        directory used by Legacy EME; meaning, when Modern EME attempts to write
+        to that file, it will fail because a directory exists at the same path.
+
+        Add a migration step to take care of those instances where Modern EME Secure
+        Stop data was already written to disk, and move that previously written data
+        to the correct file path.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::initializeWithConfiguration):
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSession):
+
 2019-01-31  Antti Koivisto  <antti@apple.com>
 
         Call the frame main contents layer "rootContentsLayer" consistently.

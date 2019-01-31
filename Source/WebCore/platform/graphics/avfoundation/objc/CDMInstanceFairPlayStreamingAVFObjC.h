@@ -66,7 +66,7 @@ public:
 
     const String& keySystem() const final;
 
-    NSURL *storageDirectory() const { return m_storageDirectory.get(); }
+    NSURL *storageURL() const { return m_storageURL.get(); }
     bool persistentStateAllowed() const { return m_persistentStateAllowed; }
     SharedBuffer* serverCertificate() const { return m_serverCertificate.get(); }
 
@@ -76,7 +76,7 @@ public:
 private:
     RefPtr<SharedBuffer> m_serverCertificate;
     bool m_persistentStateAllowed { true };
-    RetainPtr<NSURL> m_storageDirectory;
+    RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
 };
 
