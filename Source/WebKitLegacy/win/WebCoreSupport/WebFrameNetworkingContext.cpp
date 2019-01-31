@@ -84,6 +84,11 @@ NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 
     NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID(), base);
 
+#elif USE(CURL)
+    ASSERT(isMainThread());
+
+    NetworkStorageSessionMap::ensureSession(PAL::SessionID::legacyPrivateSessionID());
+
 #endif
     return *NetworkStorageSessionMap::storageSession(PAL::SessionID::legacyPrivateSessionID());
 }

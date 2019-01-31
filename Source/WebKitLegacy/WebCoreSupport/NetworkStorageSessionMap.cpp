@@ -106,6 +106,11 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
     }
 
     addResult.iterator->value = std::make_unique<WebCore::NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
+
+#elif USE(CURL)
+    globalSessionMap().ensure(sessionID, [sessionID] {
+        return std::make_unique<WebCore::NetworkStorageSession>(sessionID, nullptr);
+    });
 #endif
 }
 
