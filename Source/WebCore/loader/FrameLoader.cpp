@@ -1484,7 +1484,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
         }
     }
 
-    SetForScope<bool> currentLoadShouldBeTreatedAsContinuingLoadGuard(m_currentLoadShouldBeTreatedAsContinuingLoad, request.shouldTreatAsContinuingLoad());
+    SetForScope<LoadContinuingState> continuingLoadGuard(m_currentLoadContinuingState, request.shouldTreatAsContinuingLoad() ? LoadContinuingState::ContinuingWithRequest : LoadContinuingState::NotContinuing);
     load(loader.get());
 }
 
@@ -1518,7 +1518,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
         type = FrameLoadType::Same;
     } else if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.unreachableURL()) && isReload(m_loadType))
         type = m_loadType;
-    else if (m_loadType == FrameLoadType::RedirectWithLockedBackForwardList && ((!newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid()) || m_currentLoadShouldBeTreatedAsContinuingLoad))
+    else if (m_loadType == FrameLoadType::RedirectWithLockedBackForwardList && ((!newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid()) || shouldTreatCurrentLoadAsContinuingLoad()))
         type = FrameLoadType::RedirectWithLockedBackForwardList;
     else
         type = FrameLoadType::Standard;
@@ -1625,7 +1625,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     m_frame.navigationScheduler().cancel(NewLoadInProgress::Yes);
 
-    if (m_currentLoadShouldBeTreatedAsContinuingLoad) {
+    if (shouldTreatCurrentLoadAsContinuingLoad()) {
         continueLoadAfterNavigationPolicy(loader->request(), formState.get(), ShouldContinue::Yes, allowNavigationToInvalidURL);
         return;
     }
@@ -2853,7 +2853,8 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
 
 void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool isMainResource)
 {
-    if (m_currentLoadShouldBeTreatedAsContinuingLoad)
+    // If the request came from a previous process due to process-swap-on-navigation then we should not modify the request.
+    if (m_currentLoadContinuingState == LoadContinuingState::ContinuingWithRequest)
         return;
 
     // Don't set the cookie policy URL if it's already been set.
@@ -3683,7 +3684,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
     auto initiatedByMainFrame = InitiatedByMainFrame::Unknown;
 
-    SetForScope<bool> currentLoadShouldBeTreatedAsContinuingLoadGuard(m_currentLoadShouldBeTreatedAsContinuingLoad, shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes);
+    SetForScope<LoadContinuingState> continuingLoadGuard(m_currentLoadContinuingState, shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes ? LoadContinuingState::ContinuingWithHistoryItem : LoadContinuingState::NotContinuing);
 
     if (CachedPage* cachedPage = PageCache::singleton().get(item, m_frame.page())) {
         auto documentLoader = cachedPage->documentLoader();

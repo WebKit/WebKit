@@ -1,3 +1,38 @@
+2019-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) History navigations to twitter.com lead to a 403 HTTP error
+        https://bugs.webkit.org/show_bug.cgi?id=194023
+        <rdar://problem/47417981>
+
+        Reviewed by Geoffrey Garen.
+
+        The issue was caused by the 'isTopSite' flag not getting properly set on the network request
+        in case of a cross-site history navigation (with process-swap). As a result, twitter.com was
+        not getting its same-site lax cookies.
+
+        The 'isTopSite' flag normally gets set by FrameLoader::addExtraFieldsToRequest(), but we were
+        bypassing this method entirely when continuing a load in a new process after a swap. This was
+        intentional as the network request is normally already fully populated by the previous process
+        and we do not want the new process to modify the request in any way (e.g. we would not want to
+        add a Origin header back after it was removed by the previous process). However, in case of a
+        History navigation, we do not actually pass a request along from one process to another. Instead,
+        we pass a HistoryItem and then build a fresh new request from the HistoryItem in the new process.
+        In this case, we *want* addExtraFieldsToRequest() to be called on the new request, even though
+        we are technically continuing a load in a new process.
+
+        We thus address the issue by bypassing FrameLoader::addExtraFieldsToRequest() only if we're
+        continuing a load with a request and not when we're continuing a load with a HistoryItem.
+
+        Test: http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.php
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::addExtraFieldsToRequest):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::shouldTreatCurrentLoadAsContinuingLoad const):
+
 2019-01-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Support GPUDepthStencilStateDescriptor

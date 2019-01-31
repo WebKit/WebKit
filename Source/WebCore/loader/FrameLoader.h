@@ -406,6 +406,9 @@ private:
     bool isNavigationAllowed() const;
     bool isStopLoadingAllowed() const;
 
+    enum class LoadContinuingState : uint8_t { NotContinuing, ContinuingWithRequest, ContinuingWithHistoryItem };
+    bool shouldTreatCurrentLoadAsContinuingLoad() const { return m_currentLoadContinuingState != LoadContinuingState::NotContinuing; }
+
     Frame& m_frame;
     FrameLoaderClient& m_client;
 
@@ -474,7 +477,8 @@ private:
     Optional<ResourceRequestCachePolicy> m_overrideCachePolicyForTesting;
     Optional<ResourceLoadPriority> m_overrideResourceLoadPriorityForTesting;
     bool m_isStrictRawResourceValidationPolicyDisabledForTesting { false };
-    bool m_currentLoadShouldBeTreatedAsContinuingLoad { false };
+
+    LoadContinuingState m_currentLoadContinuingState { LoadContinuingState::NotContinuing };
 
     bool m_checkingLoadCompleteForDetachment { false };
 

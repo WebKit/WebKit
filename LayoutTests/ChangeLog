@@ -1,3 +1,17 @@
+2019-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) History navigations to twitter.com lead to a 403 HTTP error
+        https://bugs.webkit.org/show_bug.cgi?id=194023
+        <rdar://problem/47417981>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load-expected.txt: Added.
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.php: Added.
+        * http/tests/cookies/same-site/resources/navigate-back.html: Added.
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
