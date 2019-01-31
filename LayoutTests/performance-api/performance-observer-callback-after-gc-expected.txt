@@ -3,9 +3,7 @@ Ensure PerformanceObserver callback fires even if the JS does not keep the Perfo
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PerformanceObserver callback fired: 1 entries
 PASS mark1
-PerformanceObserver callback fired: 2 entries
 PASS mark2
 PASS mark3
 PASS successfullyParsed is true

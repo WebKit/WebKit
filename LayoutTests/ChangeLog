@@ -1,3 +1,17 @@
+2019-01-31  Chris Dumez  <cdumez@apple.com>
+
+        [ MacOS ] Layout Test performance-api/performance-observer-callback-after-gc.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191041
+        <rdar://problem/45649982>
+
+        Reviewed by Joseph Pecoraro.
+
+        Make the test print the same output no matter if the performance observer is notified once or
+        twice. What matters is that it is notified about 3 marks.
+
+        * performance-api/performance-observer-callback-after-gc-expected.txt:
+        * performance-api/performance-observer-callback-after-gc.html:
+
 2019-01-31  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] WebGPUAdapterDescriptor -> GPURequestAdapterOptions and take powerPreference into account
