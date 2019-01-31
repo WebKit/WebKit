@@ -1,3 +1,30 @@
+2019-01-31  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove if (m_playerPrivate) from MediaSourceClientGStreamerMSE
+        https://bugs.webkit.org/show_bug.cgi?id=194069
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        m_playerPrivate is non-NULL since MediaSourceClientGStreamerMSE
+        creation well until its destruction.
+
+        The only case that could make a NULL m_playerPrivate is
+        clearPlayerPrivate() but that method is not used anymore.
+
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::durationChanged):
+        (WebCore::MediaSourceClientGStreamerMSE::abort):
+        (WebCore::MediaSourceClientGStreamerMSE::resetParserState):
+        (WebCore::MediaSourceClientGStreamerMSE::markEndOfStream):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        (WebCore::MediaSourceClientGStreamerMSE::flush):
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        (WebCore::MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued):
+        (WebCore::MediaSourceClientGStreamerMSE::webKitMediaSrc):
+        (WebCore::MediaSourceClientGStreamerMSE::clearPlayerPrivate): Deleted.
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h:
+
 2019-01-31  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Avoid returning FLUSHING when it is not the case in GStreamerMediaStreamSource

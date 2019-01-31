@@ -60,9 +60,6 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamerMSE::addSourceBuffer(Ref
 {
     ASSERT(WTF::isMainThread());
 
-    if (!m_playerPrivate)
-        return MediaSourcePrivate::AddStatus::NotSupported;
-
     ASSERT(m_playerPrivate->m_playbackPipeline);
     ASSERT(sourceBufferPrivate);
 
@@ -89,8 +86,7 @@ void MediaSourceClientGStreamerMSE::durationChanged(const MediaTime& duration)
         return;
 
     m_duration = duration;
-    if (m_playerPrivate)
-        m_playerPrivate->durationChanged();
+    m_playerPrivate->durationChanged();
 }
 
 void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
@@ -98,9 +94,6 @@ void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> s
     ASSERT(WTF::isMainThread());
 
     GST_DEBUG("aborting");
-
-    if (!m_playerPrivate)
-        return;
 
     RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
 
@@ -114,9 +107,6 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
     ASSERT(WTF::isMainThread());
 
     GST_DEBUG("resetting parser state");
-
-    if (!m_playerPrivate)
-        return;
 
     RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
 
@@ -154,18 +144,12 @@ void MediaSourceClientGStreamerMSE::markEndOfStream(MediaSourcePrivate::EndOfStr
 {
     ASSERT(WTF::isMainThread());
 
-    if (!m_playerPrivate)
-        return;
-
     m_playerPrivate->markEndOfStream(status);
 }
 
 void MediaSourceClientGStreamerMSE::removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
 {
     ASSERT(WTF::isMainThread());
-
-    if (!m_playerPrivate)
-        return;
 
     ASSERT(m_playerPrivate->m_playbackPipeline);
 
@@ -182,7 +166,7 @@ void MediaSourceClientGStreamerMSE::flush(AtomicString trackId)
     ASSERT(WTF::isMainThread());
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
-    if (m_playerPrivate && !m_playerPrivate->m_seeking)
+    if (!m_playerPrivate->m_seeking)
         m_playerPrivate->m_playbackPipeline->flush(trackId);
 }
 
@@ -190,37 +174,25 @@ void MediaSourceClientGStreamerMSE::enqueueSample(Ref<MediaSample>&& sample)
 {
     ASSERT(WTF::isMainThread());
 
-    if (m_playerPrivate)
-        m_playerPrivate->m_playbackPipeline->enqueueSample(WTFMove(sample));
+    m_playerPrivate->m_playbackPipeline->enqueueSample(WTFMove(sample));
 }
 
 void MediaSourceClientGStreamerMSE::allSamplesInTrackEnqueued(const AtomicString& trackId)
 {
     ASSERT(WTF::isMainThread());
 
-    if (m_playerPrivate)
-        m_playerPrivate->m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
+    m_playerPrivate->m_playbackPipeline->allSamplesInTrackEnqueued(trackId);
 }
 
 GRefPtr<WebKitMediaSrc> MediaSourceClientGStreamerMSE::webKitMediaSrc()
 {
     ASSERT(WTF::isMainThread());
 
-    if (!m_playerPrivate)
-        return nullptr;
-
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(m_playerPrivate->m_source.get());
 
     ASSERT(WEBKIT_IS_MEDIA_SRC(source));
 
     return source;
-}
-
-void MediaSourceClientGStreamerMSE::clearPlayerPrivate()
-{
-    ASSERT(WTF::isMainThread());
-
-    m_playerPrivate = nullptr;
 }
 
 } // namespace WebCore.

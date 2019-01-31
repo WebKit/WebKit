@@ -54,8 +54,6 @@ public:
     void enqueueSample(Ref<MediaSample>&&);
     void allSamplesInTrackEnqueued(const AtomicString&);
 
-    void clearPlayerPrivate();
-
     const MediaTime& duration();
     GRefPtr<WebKitMediaSrc> webKitMediaSrc();
 
