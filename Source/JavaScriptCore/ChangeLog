@@ -1,3 +1,38 @@
+2019-01-30  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r239969. rdar://problem/47638452
+
+    Add option to JSC to dump memory footprint on script completion
+    https://bugs.webkit.org/show_bug.cgi?id=193422
+    
+    Reviewed by Mark Lam.
+    
+    Added the --footprint option to dump peak and current memory usage.  This uses the same
+    OS calls added in r2362362.
+    
+    * jsc.cpp:
+    (printUsageStatement):
+    (CommandLine::parseArguments):
+    (jscmain):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239969 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-14  Michael Saboff  <msaboff@apple.com>
+
+            Add option to JSC to dump memory footprint on script completion
+            https://bugs.webkit.org/show_bug.cgi?id=193422
+
+            Reviewed by Mark Lam.
+
+            Added the --footprint option to dump peak and current memory usage.  This uses the same
+            OS calls added in r2362362.
+
+            * jsc.cpp:
+            (printUsageStatement):
+            (CommandLine::parseArguments):
+            (jscmain):
+
 2019-01-28  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r240449. rdar://problem/47586886
