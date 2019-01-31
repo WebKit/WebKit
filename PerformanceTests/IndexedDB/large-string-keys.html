@@ -7,6 +7,10 @@
 var iterationCount = 20;
 var numberDeleted = 0;
 
+var quota = 500 * 1024 * 1024; //500MB
+if (window.testRunner)
+    testRunner.setIDBPerOriginQuota(quota);
+
 // Delete all databases for the test ahead of time.
 var databasePrefix = "large-string-keys-DB-";
 for (var i = 0; i < iterationCount + 1; ++i) {
