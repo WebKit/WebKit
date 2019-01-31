@@ -115,7 +115,7 @@
         [receiver setDraggingSource:_source.get().get()];
         [_filePromiseReceivers addObject:receiver.get()];
 
-        auto item = adoptNS([NSDraggingItem new]);
+        auto item = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:(id <NSPasteboardWriting>)receiver.get()]); // FIXME: <https://webkit.org/b/194060> Pass an object of the right type.
         [item setItem:receiver.get()];
 
         block(item.get(), 0, &stop);

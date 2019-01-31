@@ -1,3 +1,28 @@
+2019-01-30  Keith Rollin  <krollin@apple.com>
+
+        [NSDragItem init] is unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=194059
+        <rdar://problem/47685715>
+
+        Reviewed by Wenson Hsieh.
+
+        [NSDragItem init] is marked as NS_UNAVAILABLE. This affects
+        DumpRenderTree and TestWebKitAPI, which both try to create an
+        NSDragItem in a manner that invokes this method. Address this by using
+        -initWithPasteboardWriter instead.
+
+        Note that the parameter passed to initWithPasteboardWriter is likely
+        incorrect. In both cases, the object passed does not conform to
+        NSPasteboardWriting. However, with this fix, we're no worse off than
+        before, and can now perform builds with newer compilers and SDKs until
+        a real fix can be crafted. That work is tracked in
+        https://bugs.webkit.org/show_bug.cgi?id=194060
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        * TestWebKitAPI/mac/TestDraggingInfo.mm:
+        (-[TestDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
