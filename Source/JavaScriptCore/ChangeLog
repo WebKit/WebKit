@@ -1,3 +1,16 @@
+2019-01-30  Tadeu Zagallo  <tzagallo@apple.com>
+
+        testapi's `testBytecodeCache` does not need to run the code twice
+        https://bugs.webkit.org/show_bug.cgi?id=194046
+
+        Reviewed by Mark Lam.
+
+        Since we populate the cache eagerly (unlike the stress tests) we don't
+        need to run the code twice.
+
+        * API/tests/testapi.mm:
+        (testBytecodeCache):
+
 2019-01-30  Saam barati  <sbarati@apple.com>
 
         [WebAssembly] Change BBQ to generate Air IR
