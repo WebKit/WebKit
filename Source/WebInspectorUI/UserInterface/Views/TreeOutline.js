@@ -1012,10 +1012,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             return;
         }
 
-        if (!treeElement.canSelectOnMouseDown(event)) {
-            event.preventDefault();
+        if (!treeElement.canSelectOnMouseDown(event))
             return;
-        }
 
         let index = this._indexOfTreeElement(treeElement);
         if (isNaN(index))

@@ -1,3 +1,25 @@
+2019-01-31  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION(r?): Web Inspector: Clicking on text doesn't move text caret when editing innerHTML/tagName/attribute
+        https://bugs.webkit.org/show_bug.cgi?id=192652
+        <rdar://problem/46684612>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.canSelectOnMouseDown):
+        Call to Event.preventDefault() should be made here instead of at the
+        TreeOutline level.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.selectOnMouseDown): Deleted.
+        Remove dead code.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline._handleMouseDown):
+        Do not prevent default event handling when the item cannot be selected.
+        This matches TreeOutline behavior prior to introducing SelectionController.
+
 2019-01-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Memory Timeline View should be responsive / resizable
