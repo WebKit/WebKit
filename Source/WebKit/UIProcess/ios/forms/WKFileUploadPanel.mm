@@ -415,10 +415,10 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     ASSERT([UIImagePickerController isSourceTypeAvailable:sourceType]);
 
     _imagePicker = adoptNS([[UIImagePickerController alloc] init]);
-    [self _configureImagePicker:_imagePicker.get()];
     [_imagePicker setSourceType:sourceType];
     [_imagePicker setMediaTypes:[self _mediaTypesForPickerSourceType:sourceType]];
-    
+    [self _configureImagePicker:_imagePicker.get()];
+
     // Use a popover on the iPad if the source type is not the camera.
     // The camera will use a fullscreen, modal view controller.
     BOOL usePopover = currentUserInterfaceIdiomIsPad() && sourceType != UIImagePickerControllerSourceTypeCamera;
