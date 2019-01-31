@@ -438,7 +438,10 @@ static const CGFloat presentationElementRectPadding = 15;
         if (appLink) {
             NSString *title = WEB_UI_STRING("Open in Safari", "Title for Open in Safari Link action button");
             _WKElementAction *openInDefaultBrowserAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInDefaultBrowser title:title actionHandler:^(_WKActivatedElementInfo *) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                 [appLink openInWebBrowser:YES setAppropriateOpenStrategyAndWebBrowserState:nil completionHandler:^(BOOL success, NSError *error) { }];
+#pragma clang diagnostic pop
             }];
             [defaultActions addObject:openInDefaultBrowserAction];
 
@@ -446,7 +449,10 @@ static const CGFloat presentationElementRectPadding = 15;
             if (externalApplicationName) {
                 NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Open in “%@”", "Title for Open in External Application Link action button"), externalApplicationName];
                 _WKElementAction *openInExternalApplicationAction = [_WKElementAction _elementActionWithType:_WKElementActionTypeOpenInExternalApplication title:title actionHandler:^(_WKActivatedElementInfo *) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
                     [appLink openInWebBrowser:NO setAppropriateOpenStrategyAndWebBrowserState:nil completionHandler:^(BOOL success, NSError *error) { }];
+#pragma clang diagnostic pop
                 }];
                 [defaultActions addObject:openInExternalApplicationAction];
             }
