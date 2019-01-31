@@ -1139,8 +1139,8 @@ TEST(WebKit, WebsitePoliciesCustomJavaScriptUserAgent)
     [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
     [schemeHandler setTaskHandler:[](id <WKURLSchemeTask> task) {
         auto* userAgentString = [task.request valueForHTTPHeaderField:@"User-Agent"];
-        EXPECT_TRUE([userAgentString hasPrefix:@"Mozilla/5.0 (Macintosh;"]);
-        EXPECT_TRUE([userAgentString hasSuffix:@"(KHTML, like Gecko)"]);
+        EXPECT_TRUE([userAgentString hasPrefix:@"Mozilla/5.0 "]);
+        EXPECT_TRUE([userAgentString containsString:@"(KHTML, like Gecko)"]);
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
     [configuration preferences]._needsSiteSpecificQuirks = YES;

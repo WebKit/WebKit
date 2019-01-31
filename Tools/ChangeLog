@@ -1,3 +1,14 @@
+2019-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r240541): WebKit.WebsitePoliciesCustomJavaScriptUserAgent is failing since introduction on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193979
+
+        Reviewed by Wenson Hsieh.
+
+        Fix the test for iOS. Make the test work with iOS UA string.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+
 2019-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Replace High Sierra LLINT CLoop bot due to hardware failure
