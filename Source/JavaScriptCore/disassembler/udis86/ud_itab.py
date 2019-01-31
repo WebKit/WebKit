@@ -253,7 +253,7 @@ class UdItabGenerator:
         for table in self.tables.getTableList():
             f0 = self.getTableName(table) + ","
             f1 = table.label() + ","
-            f2 = "(const char* const)\"%s\"" % table.meta()
+            f2 = "\"%s\"" % table.meta()
             self.ItabC.write("    /* %03d */ { %s %s %s },\n" % 
                              (self.getTableIndex(table), f0, f1, f2))
         self.ItabC.write( "};" )
