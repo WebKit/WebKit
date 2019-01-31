@@ -1,3 +1,22 @@
+2019-01-31  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Avoid returning FLUSHING when it is not the case in GStreamerMediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=194087
+
+        Basically GstFlowCombiner was mostly designed for element that have 1 sinkpad and several srcpad
+        meaning that it makes sense that when any of the downstream pad is returning flushing, you should
+        return FLUSHING upstream. But in our case we have several sinkpads and FLUSHING should be returned
+        *only* if the internally linked srcpad is FLUSHING otherwise we might end up setting the upstream
+        source element task to PAUSED (because downstream returned flushing) on a branch that was not
+        flushing!
+
+        Reviewed by Philippe Normand.
+
+        This is a theorical race we can't really cover with tests.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcChain):
+
 2019-01-31  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Margin before/after/start/end initial value is 0 and not auto.

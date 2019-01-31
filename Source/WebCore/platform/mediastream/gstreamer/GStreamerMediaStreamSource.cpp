@@ -368,11 +368,14 @@ typedef struct {
 
 static GstFlowReturn webkitMediaStreamSrcChain(GstPad* pad, GstObject* parent, GstBuffer* buffer)
 {
-    GstFlowReturn result;
+    GstFlowReturn result, chain_result;
     GRefPtr<WebKitMediaStreamSrc> self = adoptGRef(WEBKIT_MEDIA_STREAM_SRC(gst_object_get_parent(parent)));
 
-    result = gst_flow_combiner_update_pad_flow(self.get()->flowCombiner, pad,
-        gst_proxy_pad_chain_default(pad, GST_OBJECT(self.get()), buffer));
+    chain_result = gst_proxy_pad_chain_default(pad, GST_OBJECT(self.get()), buffer);
+    result = gst_flow_combiner_update_pad_flow(self.get()->flowCombiner, pad, chain_result);
+
+    if (result == GST_FLOW_FLUSHING)
+        return chain_result;
 
     return result;
 }
