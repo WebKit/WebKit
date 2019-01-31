@@ -1,3 +1,17 @@
+2019-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Enable swipe tests on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194076
+
+        Reviewed by Geoffrey Garen.
+
+        Enabled tests in LayoutTests/swipe and added iOS specific results for the failing tests.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/swipe/basic-cached-back-swipe-expected.txt: Added.
+        * platform/ios/swipe/main-frame-pinning-requirement-expected.txt: Added.
+        * platform/ios/swipe/pushState-cached-back-swipe-expected.txt: Added.
+
 2019-01-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) History navigations to twitter.com lead to a 403 HTTP error

@@ -11,6 +11,7 @@ displaylists [ Pass ]
 http/tests/quicklook [ Pass ]
 media/ios [ Pass ]
 quicklook [ Pass ]
+swipe [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]

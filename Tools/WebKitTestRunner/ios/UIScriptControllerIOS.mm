@@ -822,18 +822,12 @@ void UIScriptController::beginBackSwipe(JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView _beginBackSwipeForTesting];
-
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    m_context->asyncTaskComplete(callbackID);
 }
 
 void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView _completeBackSwipeForTesting];
-
-    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    m_context->asyncTaskComplete(callbackID);
 }
 
 static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
