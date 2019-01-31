@@ -3538,19 +3538,6 @@ void WebPageProxy::getSamplingProfilerOutput(WTF::Function<void (const String&, 
     m_process->send(Messages::WebPage::GetSamplingProfilerOutput(callbackID), m_pageID);
 }
 
-void WebPageProxy::isWebProcessResponsive(WTF::Function<void (bool isWebProcessResponsive)>&& callbackFunction)
-{
-    if (!isValid()) {
-        RunLoop::main().dispatch([callbackFunction = WTFMove(callbackFunction)] {
-            bool isWebProcessResponsive = true;
-            callbackFunction(isWebProcessResponsive);
-        });
-        return;
-    }
-
-    m_process->isResponsive(WTFMove(callbackFunction));
-}
-
 #if ENABLE(MHTML)
 void WebPageProxy::getContentsAsMHTMLData(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)
 {

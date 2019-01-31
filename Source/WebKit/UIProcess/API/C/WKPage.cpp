@@ -2327,13 +2327,6 @@ void WKPageGetSamplingProfilerOutput(WKPageRef pageRef, void* context, WKPageGet
     toImpl(pageRef)->getSamplingProfilerOutput(toGenericCallbackFunction(context, callback));
 }
 
-void WKPageIsWebProcessResponsive(WKPageRef pageRef, void* context, WKPageIsWebProcessResponsiveFunction callback)
-{
-    toImpl(pageRef)->isWebProcessResponsive([context, callback](bool isWebProcessResponsive) {
-        callback(isWebProcessResponsive, context);
-    });
-}
-
 void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPageGetSelectionAsWebArchiveDataFunction callback)
 {
     toImpl(pageRef)->getSelectionAsWebArchiveData(toGenericCallbackFunction(context, callback));

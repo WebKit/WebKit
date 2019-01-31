@@ -945,7 +945,6 @@ public:
     void getContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
     void getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&&);
     void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
-    void isWebProcessResponsive(WTF::Function<void (bool isWebProcessResponsive)>&&);
 
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(Function<void (API::Data*, CallbackBase::Error)>&&);
