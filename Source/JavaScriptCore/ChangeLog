@@ -1,3 +1,17 @@
+2019-01-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Symbol should be in destructibleCellSpace
+        https://bugs.webkit.org/show_bug.cgi?id=194082
+
+        Reviewed by Saam Barati.
+
+        Because Symbol's member was not poisoned, we changed the subspace for Symbol from destructibleCellSpace
+        to cellJSValueOOBSpace. But the problem is cellJSValueOOBSpace is a space for cells which are not
+        destructible. As a result, Symbol::destroy is never called, and SymbolImpl is leaked. This patch makes
+        Symbol's space destructibleCellSpace to appropriately call the destructor.
+
+        * runtime/Symbol.h:
+
 2019-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r240755.

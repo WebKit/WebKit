@@ -36,12 +36,6 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
 
-    template<typename>
-    static CompleteSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.cellJSValueOOBSpace;
-    }
-
     DECLARE_EXPORT_INFO;
 
     static const bool needsDestruction = true;
