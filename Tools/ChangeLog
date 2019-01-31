@@ -1,3 +1,17 @@
+2019-01-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Fix WebKitTestRunner's testPath with Windows full paths
+        https://bugs.webkit.org/show_bug.cgi?id=194012
+
+        Reviewed by Alex Christensen.
+
+        updateTestOptionsFromTestHeader failed to open test files because
+        testPath returned wrong file paths. It returned a path "/C:/..."
+        if a URL "file:///C:/..." was given.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::testPath): Removed the first '/' if the path starts with something like "/C:/".
+
 2019-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Bump font related dependencies to match the GTK+ port

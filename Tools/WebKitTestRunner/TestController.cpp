@@ -1093,6 +1093,11 @@ static std::string testPath(WKURLRef url)
         auto path = adoptWK(WKURLCopyPath(url));
         auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
         auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
+#if OS(WINDOWS)
+        // Remove the first '/' if it starts with something like "/C:/".
+        if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
+            return std::string(buffer.data() + 1, length - 1);
+#endif
         return std::string(buffer.data(), length);
     }
     return std::string();
