@@ -133,10 +133,13 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let usage = record.usage;
 
             if (discontinuities.length && discontinuities[0].endTime < time) {
-                let discontinuity = discontinuities.shift();
-                dataPoints.push({time: discontinuity.startTime, size: 0});
-                dataPoints.push({time: discontinuity.endTime, size: 0});
-                dataPoints.push({time: discontinuity.endTime, size: usage});
+                let startDiscontinuity = discontinuities.shift();
+                let endDiscontinuity = startDiscontinuity;
+                while (discontinuities.length && discontinuities[0].endTime < time)
+                    endDiscontinuity = discontinuities.shift();
+                dataPoints.push({time: startDiscontinuity.startTime, size: 0});
+                dataPoints.push({time: endDiscontinuity.endTime, size: 0});
+                dataPoints.push({time: endDiscontinuity.endTime, size: usage});
             }
 
             dataPoints.push({time, size: usage});

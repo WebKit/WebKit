@@ -206,22 +206,27 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         for (let record of visibleRecords) {
             let time = record.startTime;
-            let discontinuity = null;
-            if (discontinuities.length && discontinuities[0].endTime < time)
-                discontinuity = discontinuities.shift();
+            let startDiscontinuity = null;
+            let endDiscontinuity = null;
+            if (discontinuities.length && discontinuities[0].endTime < time) {
+                startDiscontinuity = discontinuities.shift();
+                endDiscontinuity = startDiscontinuity;
+                while (discontinuities.length && discontinuities[0].endTime < time)
+                    endDiscontinuity = discontinuities.shift();
+            }
 
             for (let category of record.categories) {
                 let categoryData = categoryDataMap[category.type];
 
-                if (discontinuity) {
+                if (startDiscontinuity) {
                     if (categoryData.dataPoints.length) {
                         let previousDataPoint = categoryData.dataPoints.lastValue;
-                        categoryData.dataPoints.push({time: discontinuity.startTime, size: previousDataPoint.size});
+                        categoryData.dataPoints.push({time: startDiscontinuity.startTime, size: previousDataPoint.size});
                     }
 
-                    categoryData.dataPoints.push({time: discontinuity.startTime, size: 0});
-                    categoryData.dataPoints.push({time: discontinuity.endTime, size: 0});
-                    categoryData.dataPoints.push({time: discontinuity.endTime, size: category.size});
+                    categoryData.dataPoints.push({time: startDiscontinuity.startTime, size: 0});
+                    categoryData.dataPoints.push({time: endDiscontinuity.endTime, size: 0});
+                    categoryData.dataPoints.push({time: endDiscontinuity.endTime, size: category.size});
                 }
 
                 categoryData.dataPoints.push({time, size: category.size});
