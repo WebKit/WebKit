@@ -1,5 +1,19 @@
 2019-01-31  Jer Noble  <jer.noble@apple.com>
 
+        NSInvalidArgumentException in [WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]
+        https://bugs.webkit.org/show_bug.cgi?id=194123
+        <rdar://problem/47721094>
+
+        Reviewed by Eric Carlson.
+
+        According to crash logs, AVSampleBufferDisplayLayer.error can go from an NSError* to nil; when such a change is KVO'd,
+        the NSKeyValueChangeNewKey is a NSNull. Detect this state and bail out early.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]):
+
+2019-01-31  Jer Noble  <jer.noble@apple.com>
+
         [Cocoa][EME] AirPlaying a FairPlay-protected HLS stream fails to decrypt
         https://bugs.webkit.org/show_bug.cgi?id=194114
 

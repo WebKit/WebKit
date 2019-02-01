@@ -356,6 +356,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
         if ([keyPath isEqualToString:@"error"]) {
             RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
+            if ([error isKindOfClass:[NSNull class]])
+                return;
+
             callOnMainThread([parent = _parent, layer = WTFMove(layer), error = WTFMove(error)] {
                 if (parent)
                     parent->layerDidReceiveError(layer.get(), error.get());
@@ -373,6 +376,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
         ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
+        if ([error isKindOfClass:[NSNull class]])
+            return;
 
         ASSERT(_renderers.contains(renderer.get()));
         ASSERT([keyPath isEqualToString:@"error"]);
