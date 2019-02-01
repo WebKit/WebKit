@@ -27,7 +27,8 @@ from django.db import models
 
 class BuilderMapping(models.Model):
     builder_id = models.IntegerField(primary_key=True)
-    name = models.TextField()
+    builder_name = models.TextField()
+    display_name = models.TextField()
 
     def __str__(self):
         return "{}: {}".format(self.builder_id, self.name)
