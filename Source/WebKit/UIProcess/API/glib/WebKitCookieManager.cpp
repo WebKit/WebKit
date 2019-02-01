@@ -55,11 +55,16 @@ enum {
 };
 
 struct _WebKitCookieManagerPrivate {
+    PAL::SessionID sessionID() const
+    {
+        ASSERT(dataManager);
+        return webkitWebsiteDataManagerGetDataStore(dataManager).websiteDataStore().sessionID();
+    }
+
     ~_WebKitCookieManagerPrivate()
     {
-        auto sessionID = webkitWebsiteDataManagerGetDataStore(dataManager).websiteDataStore().sessionID();
         for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(dataManager))
-            processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(sessionID, nullptr);
+            processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(sessionID(), nullptr);
     }
 
     WebKitWebsiteDataManager* dataManager;
@@ -135,9 +140,8 @@ WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager* dataMan
 {
     WebKitCookieManager* manager = WEBKIT_COOKIE_MANAGER(g_object_new(WEBKIT_TYPE_COOKIE_MANAGER, nullptr));
     manager->priv->dataManager = dataManager;
-    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager)) {
-        processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(sessionID, [manager] {
+        processPool->supplement<WebCookieManagerProxy>()->setCookieObserverCallback(manager->priv->sessionID(), [manager] {
             g_signal_emit(manager, signals[CHANGED], 0);
         });
     }
@@ -166,7 +170,7 @@ void webkit_cookie_manager_set_persistent_storage(WebKitCookieManager* manager, 
     g_return_if_fail(filename);
     g_return_if_fail(!webkit_website_data_manager_is_ephemeral(manager->priv->dataManager));
 
-    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
+    auto sessionID = manager->priv->sessionID();
     if (sessionID.isEphemeral())
         return;
 
@@ -186,7 +190,7 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
     g_return_if_fail(WEBKIT_IS_COOKIE_MANAGER(manager));
 
     for (auto* processPool : webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager))
-        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error){});
+        processPool->supplement<WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(manager->priv->sessionID(), toHTTPCookieAcceptPolicy(policy), [](CallbackBase::Error) { });
 }
 
 /**
@@ -214,7 +218,7 @@ void webkit_cookie_manager_get_accept_policy(WebKitCookieManager* manager, GCanc
         return;
     }
 
-    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(PAL::SessionID::defaultSessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy, CallbackBase::Error) {
+    processPools[0]->supplement<WebCookieManagerProxy>()->getHTTPCookieAcceptPolicy(manager->priv->sessionID(), [task = WTFMove(task)](HTTPCookieAcceptPolicy policy, CallbackBase::Error) {
         g_task_return_int(task.get(), toWebKitCookieAcceptPolicy(policy));
     });
 }
@@ -260,12 +264,10 @@ void webkit_cookie_manager_add_cookie(WebKitCookieManager* manager, SoupCookie* 
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
 
-    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
-    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
-    processPools[0]->supplement<WebCookieManagerProxy>()->setCookie(sessionID, WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+    processPools[0]->supplement<WebCookieManagerProxy>()->setCookie(manager->priv->sessionID(), WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
         if (error != CallbackBase::Error::None) {
             // This can only happen in cases where the web process is not available,
             // consider the operation "cancelled" from the point of view of the client.
@@ -320,12 +322,10 @@ void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
 
-    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
-    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
-    processPools[0]->supplement<WebCookieManagerProxy>()->getCookies(sessionID, URL(URL(), String::fromUTF8(uri)), [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies, CallbackBase::Error error) {
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+    processPools[0]->supplement<WebCookieManagerProxy>()->getCookies(manager->priv->sessionID(), URL(URL(), String::fromUTF8(uri)), [task = WTFMove(task)](const Vector<WebCore::Cookie>& cookies, CallbackBase::Error error) {
         if (error != CallbackBase::Error::None) {
             // This can only happen in cases where the web process is not available,
             // consider the operation "cancelled" from the point of view of the client.
@@ -387,12 +387,10 @@ void webkit_cookie_manager_delete_cookie(WebKitCookieManager* manager, SoupCooki
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
 
-    auto sessionID = webkitWebsiteDataManagerGetDataStore(manager->priv->dataManager).websiteDataStore().sessionID();
-    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
-    processPools[0]->supplement<WebCookieManagerProxy>()->deleteCookie(sessionID, WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
+    const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
+    processPools[0]->supplement<WebCookieManagerProxy>()->deleteCookie(manager->priv->sessionID(), WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
         if (error != CallbackBase::Error::None) {
             // This can only happen in cases where the web process is not available,
             // consider the operation "cancelled" from the point of view of the client.

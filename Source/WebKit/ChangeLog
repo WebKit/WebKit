@@ -1,3 +1,24 @@
+2019-02-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Improve use of PAL::SessionID in WebKitCookieManager
+        https://bugs.webkit.org/show_bug.cgi?id=194092
+
+        Reviewed by Carlos Garcia Campos.
+
+        Always get it from the data store instead of assuming the default session ID, and add a
+        helper function for this.
+
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (_WebKitCookieManagerPrivate::sessionID const):
+        (_WebKitCookieManagerPrivate::~_WebKitCookieManagerPrivate):
+        (webkitCookieManagerCreate):
+        (webkit_cookie_manager_set_persistent_storage):
+        (webkit_cookie_manager_set_accept_policy):
+        (webkit_cookie_manager_get_accept_policy):
+        (webkit_cookie_manager_add_cookie):
+        (webkit_cookie_manager_get_cookies):
+        (webkit_cookie_manager_delete_cookie):
+
 2019-01-31  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Remove unnecessary member from NetworkStorageSession.
