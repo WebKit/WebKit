@@ -1,5 +1,13 @@
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Expand tests coverage (12 new tests -> 787)
+
+        Unreviewed test gardening.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
+2019-02-01  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Fix statically positioned replaced out-of-flow horizontal geometry
         https://bugs.webkit.org/show_bug.cgi?id=194163
 
