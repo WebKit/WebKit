@@ -1,3 +1,13 @@
+2019-02-01  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid assertion in DFG's compileDoubleRep().
+        https://bugs.webkit.org/show_bug.cgi?id=194130
+        <rdar://problem/47699474>
+
+        Reviewed by Saam Barati.
+
+        * stress/constant-fold-double-rep-into-double-constant.js: Added.
+
 2019-01-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Import latest Test262 updates.
