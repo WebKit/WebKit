@@ -38,29 +38,30 @@
 //   that the paths for lower sections overlap the paths for upper sections.
 //
 //  <div class="stacked-line-chart">
-//      <svg width="1000" height="100" viewbox="0 0 1000 100">
-//          <path class="section-class-name-1" d="..."/>
+//      <svg viewBox="0 0 1000 100">
 //          <path class="section-class-name-2" d="..."/>
+//          <path class="section-class-name-1" d="..."/>
 //      </svg>
 //  </div>
 
-WI.StackedLineChart = class StackedLineChart
+WI.StackedLineChart = class StackedLineChart extends WI.View
 {
-    constructor(size)
+    constructor()
     {
-        this._element = document.createElement("div");
-        this._element.classList.add("stacked-line-chart");
+        super();
 
-        this._chartElement = this._element.appendChild(createSVGElement("svg"));
+        this.element.classList.add("stacked-line-chart");
+
+        this._chartElement = this.element.appendChild(createSVGElement("svg"));
+        this._chartElement.setAttribute("preserveAspectRatio", "none");
+
         this._pathElements = [];
 
         this._points = [];
-        this.size = size;
+        this._size = null;
     }
 
     // Public
-
-    get element() { return this._element; }
 
     get size()
     {
@@ -69,11 +70,14 @@ WI.StackedLineChart = class StackedLineChart
 
     set size(size)
     {
+        if (this._size && this._size.equals(size))
+            return;
+
         this._size = size;
 
-        this._chartElement.setAttribute("width", size.width);
-        this._chartElement.setAttribute("height", size.height);
-        this._chartElement.setAttribute("viewbox", `0 0 ${size.width} ${size.height}`);
+        this._chartElement.setAttribute("viewBox", `0 0 ${size.width} ${size.height}`);
+
+        this.needsLayout();
     }
 
     initializeSections(sectionClassNames)
@@ -102,20 +106,17 @@ WI.StackedLineChart = class StackedLineChart
         this._points = [];
     }
 
-    needsLayout()
+    // Protected
+
+    layout()
     {
-        if (this._scheduledLayoutUpdateIdentifier)
+        super.layout();
+
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
 
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
-    }
-
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
+        if (!this._size)
+            return;
 
         let pathComponents = [];
         let length = this._pathElements.length;

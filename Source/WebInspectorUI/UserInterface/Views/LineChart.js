@@ -33,7 +33,7 @@
 // - There is a single path for line.
 //
 //  <div class="line-chart">
-//      <svg width="800" height="75" viewBox="0 0 800 75">
+//      <svg viewBox="0 0 800 75">
 //          <path d="..."/>
 //      </svg>
 //  </div>
@@ -88,6 +88,8 @@ WI.LineChart = class LineChart extends WI.View
 
     layout()
     {
+        super.layout();
+
         if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
 

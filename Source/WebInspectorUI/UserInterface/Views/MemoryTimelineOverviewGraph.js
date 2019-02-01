@@ -39,8 +39,9 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
 
         this._didInitializeCategories = false;
 
-        let size = new WI.Size(0, this.height);
-        this._chart = new WI.StackedLineChart(size);
+        this._chart = new WI.StackedLineChart;
+        this._chart.size = new WI.Size(0, this.height);
+        this.addSubview(this._chart);
         this.element.appendChild(this._chart.element);
 
         this._legendElement = this.element.appendChild(document.createElement("div"));

@@ -1,5 +1,26 @@
 2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make WI.StackedLineChart a WI.View subclass
+        https://bugs.webkit.org/show_bug.cgi?id=194119
+
+        Rubber-stamped by Devin Rousso.
+
+        * UserInterface/Views/LineChart.js:
+        (WI.LineChart.prototype.layout):
+        (WI.LineChart):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph):
+        * UserInterface/Views/StackedLineChart.js:
+        (WI.StackedLineChart):
+        (WI.StackedLineChart.prototype.set size):
+        (WI.StackedLineChart.prototype.layout):
+        (WI.StackedLineChart.prototype.get element): Deleted.
+        (WI.StackedLineChart.prototype.get points): Deleted.
+        (WI.StackedLineChart.prototype.needsLayout): Deleted.
+        (WI.StackedLineChart.prototype.updateLayout): Deleted.
+
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Make WI.CircleChart a WI.View subclass
         https://bugs.webkit.org/show_bug.cgi?id=194118
 
