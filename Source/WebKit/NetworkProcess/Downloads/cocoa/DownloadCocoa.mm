@@ -58,7 +58,7 @@ void Download::resume(const IPC::DataReference& resumeData, const String& path, 
     });
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:nsData.get() error:nil]);
     [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
-    auto dictionary = retainPtr([unarchiver decodeObjectOfClasses:plistClasses forKey:@"NSKeyedArchiveRootObjectKey"]);
+    auto dictionary = adoptNS(static_cast<NSMutableDictionary *>([[unarchiver decodeObjectOfClasses:plistClasses forKey:@"NSKeyedArchiveRootObjectKey"] mutableCopy]));
     [unarchiver finishDecoding];
     [dictionary setObject:static_cast<NSString*>(path) forKey:@"NSURLSessionResumeInfoLocalPath"];
     auto encoder = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
