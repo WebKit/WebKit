@@ -609,6 +609,9 @@ imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-ch
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
+# Font variations
+fast/text/variations [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -810,16 +813,10 @@ webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ 
 webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
 
 # Font variations
-Bug(WPE) animations/font-variations/font-stretch.html [ Timeout ]
-Bug(WPE) legacy-animation-engine/animations/font-variations/font-stretch.html [ Timeout ]
-Bug(WPE) animations/font-variations/font-style.html [ Timeout ]
-Bug(WPE) legacy-animation-engine/animations/font-variations/font-style.html [ Timeout ]
-Bug(WPE) animations/font-variations/font-variation-settings.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings.html [ Failure ]
-Bug(WPE) animations/font-variations/font-variation-settings-order.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings-order.html [ Failure ]
-Bug(WPE) animations/font-variations/font-variation-settings-unlike.html [ Failure ]
-Bug(WPE) legacy-animation-engine/animations/font-variations/font-variation-settings-unlike.html [ Failure ]
+webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
+webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
+webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
 # Unknown
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 webkit.org/b/120839 legacy-animation-engine/animations/cross-fade-background-image.html [ ImageOnlyFailure ]
