@@ -61,12 +61,9 @@ protected:
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;
 
-    CALayer *scrollLayer() const;
-
 private:
     void updateChildNodesAfterScroll(const FloatPoint&);
 
-    RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;

@@ -59,9 +59,6 @@ void ScrollingTreeFrameScrollingNodeIOS::commitStateBeforeChildren(const Scrolli
     
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_scrollLayer = scrollingStateNode.layer();
-
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode.counterScrollingLayer();
 
@@ -78,7 +75,7 @@ void ScrollingTreeFrameScrollingNodeIOS::commitStateBeforeChildren(const Scrolli
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
                 m_probableMainThreadScrollPosition = scrollingStateNode.requestedScrollPosition();
             else {
-                CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+                CGPoint scrollLayerPosition = scrolledContentsLayer().position;
                 m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
             }
         }
@@ -106,7 +103,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeIOS::scrollPosition() const
     if (shouldUpdateScrollLayerPositionSynchronously())
         return m_probableMainThreadScrollPosition;
 
-    return -m_scrollLayer.get().position;
+    return -scrolledContentsLayer().position;
 }
 
 void ScrollingTreeFrameScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
@@ -130,7 +127,7 @@ void ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeCons
 void ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect&)
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
-    [m_scrollLayer setPosition:-scrollPosition];
+    [scrolledContentsLayer() setPosition:-scrollPosition];
 
     updateChildNodesAfterScroll(scrollPosition);
 }
@@ -218,11 +215,6 @@ FloatPoint ScrollingTreeFrameScrollingNodeIOS::maximumScrollPosition() const
         position.setY(minimumScrollPosition().y());
 
     return position;
-}
-
-CALayer *ScrollingTreeFrameScrollingNodeIOS::scrollLayer() const
-{
-    return m_scrollLayer.get();
 }
 
 } // namespace WebCore

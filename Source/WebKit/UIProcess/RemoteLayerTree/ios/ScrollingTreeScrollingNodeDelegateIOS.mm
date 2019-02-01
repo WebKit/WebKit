@@ -194,17 +194,27 @@ void ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate()
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren(const ScrollingStateScrollingNode& scrollingStateNode)
 {
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_scrollLayer = scrollingStateNode.layer();
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)) {
+        RetainPtr<CALayer> layer;
+        layer = scrollingStateNode.scrollContainerLayer();
+        if ([[layer delegate] isKindOfClass:[UIScrollView self]])
+            m_scrollLayer = layer;
+    }
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
+    // FIMXE: ScrollContainerLayer should always be the UIScrollView layer.
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
+        RetainPtr<CALayer> layer;
+        layer = scrollingStateNode.scrolledContentsLayer();
+        if ([[layer delegate] isKindOfClass:[UIScrollView self]])
+            m_scrollLayer = layer;
+    }
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const ScrollingStateScrollingNode& scrollingStateNode)
 {
     SetForScope<bool> updatingChange(m_updatingFromStateNode, true);
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)
+        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)
@@ -213,7 +223,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
         ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
 
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)
+            || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
             if (!m_scrollViewDelegate)
                 m_scrollViewDelegate = adoptNS([[WKScrollingNodeScrollViewDelegate alloc] initWithScrollingTreeNodeDelegate:this]);
 

@@ -56,6 +56,7 @@ public:
         CurrentVerticalSnapOffsetIndex,
 #endif
         ExpectsWheelEventTestTrigger,
+        ScrollContainerLayer,
         ScrolledContentsLayer,
         NumScrollingStateNodeBits // This must remain at the last position.
     };
@@ -108,6 +109,9 @@ public:
     bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
     WEBCORE_EXPORT void setExpectsWheelEventTestTrigger(bool);
 
+    const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
+    WEBCORE_EXPORT void setScrollContainerLayer(const LayerRepresentation&);
+
     // This is a layer with the contents that move.
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
     WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
@@ -134,6 +138,7 @@ private:
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
+    LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;
     bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
     bool m_expectsWheelEventTestTrigger { false };

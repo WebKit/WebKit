@@ -1,3 +1,68 @@
+2019-02-01  Antti Koivisto  <antti@apple.com>
+
+        Don't use base layer() as the scroll layer in scrolling tree.
+        https://bugs.webkit.org/show_bug.cgi?id=194160
+
+        Reviewed by Simon Fraser.
+
+        Maintain scrollContainerLayer() and scrolledContentsLayer() separately in ScrollingTreeScrollingNode.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::setNodeLayers):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setNodeLayers):
+
+        Turn the long layer parameter list into a struct.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        (WebCore::ScrollingStateNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateNode::setLayer):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateScrollingNode::setScrollContainerLayer):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::scrollContainerLayer const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollContainerLayer const):
+        (WebCore::ScrollingTreeScrollingNode::scrolledContentsLayer const):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollPosition const):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::scrollLayer const): Deleted.
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::commitStateBeforeChildren):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollPosition const):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea const):
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::scrollPosition const):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition):
+        * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::commitStateBeforeChildren):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForViewportConstrainedRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForFrameHostingRole):
+
 2019-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r240698): fast/scrolling/sticky-to-fixed.html can cause a crash

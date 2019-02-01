@@ -226,7 +226,7 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
     auto* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID()));
-    node->setLayer(scrollLayerForFrameView(frameView));
+    node->setScrolledContentsLayer(scrollLayerForFrameView(frameView));
     node->setRootContentsLayer(rootContentsLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
     node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
@@ -573,25 +573,25 @@ void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frame
     insertNode(ScrollingNodeType::MainFrame, frameView.scrollingNodeID(), 0, 0);
 }
 
-void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, GraphicsLayer* layer, GraphicsLayer* scrolledContentsLayer, GraphicsLayer* counterScrollingLayer, GraphicsLayer* insetClipLayer, GraphicsLayer* rootContentsLayer)
+void AsyncScrollingCoordinator::setNodeLayers(ScrollingNodeID nodeID, const NodeLayers& nodeLayers)
 {
     auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     ASSERT(node);
     if (!node)
         return;
 
-    node->setLayer(layer);
+    node->setLayer(nodeLayers.layer);
 
     if (is<ScrollingStateScrollingNode>(node)) {
         auto& scrollingNode = downcast<ScrollingStateScrollingNode>(*node);
-        // FIXME: Currently unused.
-        scrollingNode.setScrolledContentsLayer(scrolledContentsLayer);
+        scrollingNode.setScrollContainerLayer(nodeLayers.scrollContainerLayer);
+        scrollingNode.setScrolledContentsLayer(nodeLayers.scrolledContentsLayer);
 
         if (is<ScrollingStateFrameScrollingNode>(node)) {
             auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
-            frameScrollingNode.setInsetClipLayer(insetClipLayer);
-            frameScrollingNode.setCounterScrollingLayer(counterScrollingLayer);
-            frameScrollingNode.setRootContentsLayer(rootContentsLayer);
+            frameScrollingNode.setInsetClipLayer(nodeLayers.insetClipLayer);
+            frameScrollingNode.setCounterScrollingLayer(nodeLayers.counterScrollingLayer);
+            frameScrollingNode.setRootContentsLayer(nodeLayers.rootContentsLayer);
         }
     }
 }

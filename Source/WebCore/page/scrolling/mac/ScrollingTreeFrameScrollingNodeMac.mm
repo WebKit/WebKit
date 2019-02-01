@@ -100,9 +100,6 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(stateNode);
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_scrollLayer = scrollingStateNode.layer();
-
     if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer))
         m_rootContentsLayer = scrollingStateNode.rootContentsLayer();
 
@@ -135,7 +132,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
                 m_probableMainThreadScrollPosition = scrollingStateNode.requestedScrollPosition();
             else {
-                CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+                CGPoint scrollLayerPosition = scrolledContentsLayer().position;
                 m_probableMainThreadScrollPosition = FloatPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
             }
         }
@@ -173,7 +170,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren(const Scrollin
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         setScrollPosition(scrollingStateNode.requestedScrollPosition());
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer)
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
         updateMainFramePinState(scrollPosition());
@@ -221,7 +218,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const
     if (shouldUpdateScrollLayerPositionSynchronously())
         return m_probableMainThreadScrollPosition;
 
-    return -m_scrollLayer.get().position;
+    return -scrolledContentsLayer().position;
 }
 
 void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
@@ -269,7 +266,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
 {
     ASSERT(!shouldUpdateScrollLayerPositionSynchronously());
 
-    m_scrollLayer.get().position = -position;
+    scrolledContentsLayer().position = -position;
 
     FloatRect visibleContentRect(position, scrollableAreaSize());
     FloatRect fixedPositionRect;
@@ -384,7 +381,7 @@ unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const
     Region paintedVisibleTiles;
 
     Deque<CALayer*> layerQueue;
-    layerQueue.append(m_scrollLayer.get());
+    layerQueue.append(scrolledContentsLayer());
     PlatformLayerList tiles;
 
     while (!layerQueue.isEmpty() && tiles.isEmpty()) {

@@ -53,7 +53,7 @@ ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
 
 void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
 {
-    if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer))
+    if (stateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
         m_scrollingNodeDelegate->resetScrollViewDelegate();
 
     ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);

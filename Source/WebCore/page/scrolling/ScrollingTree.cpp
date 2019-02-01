@@ -154,12 +154,12 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
     if (rootNode
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)
-            || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)
+            || rootNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled)
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))) {
         LockHolder lock(m_mutex);
 
-        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
             m_mainFrameScrollPosition = FloatPoint();
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion))

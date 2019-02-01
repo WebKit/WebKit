@@ -54,13 +54,7 @@ void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const Scro
 {
     ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        m_scrollLayer = scrollingStateNode.layer();
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-        m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
-
+    UNUSED_PARAM(scrollingStateNode);
     // FIXME: Scroll snap data.
 }
 
@@ -108,7 +102,7 @@ void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange(cons
 
 FloatPoint ScrollingTreeOverflowScrollingNodeMac::scrollPosition() const
 {
-    return -m_scrolledContentsLayer.get().position;
+    return -scrolledContentsLayer().position;
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
@@ -130,7 +124,7 @@ void ScrollingTreeOverflowScrollingNodeMac::setScrollPositionWithoutContentEdgeC
 
 void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& fixedPositionRect)
 {
-    m_scrolledContentsLayer.get().position = -scrollPosition;
+    scrolledContentsLayer().position = -scrollPosition;
     if (!m_children)
         return;
 

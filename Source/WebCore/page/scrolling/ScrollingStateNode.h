@@ -209,7 +209,7 @@ public:
 
     // FIXME: using an OptionSet<> for these and derived class bits would simplify code.
     enum {
-        ScrollLayer = 0,
+        Layer = 0,
         ChildNodes,
         NumStateNodeBits // This must remain at the last position.
     };

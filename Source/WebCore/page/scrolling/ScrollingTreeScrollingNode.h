@@ -111,6 +111,11 @@ protected:
 
     bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
 
+#if PLATFORM(COCOA)
+    CALayer *scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
+    CALayer *scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
+#endif
+
     WEBCORE_EXPORT LayoutPoint parentToLocalPoint(LayoutPoint) const override;
     WEBCORE_EXPORT LayoutPoint localToContentsPoint(LayoutPoint) const override;
 
@@ -131,6 +136,11 @@ private:
 #endif
     ScrollableAreaParameters m_scrollableAreaParameters;
     bool m_expectsWheelEventTestTrigger { false };
+
+#if PLATFORM(COCOA)
+    RetainPtr<CALayer> m_scrollContainerLayer;
+    RetainPtr<CALayer> m_scrolledContentsLayer;
+#endif
 };
 
 } // namespace WebCore

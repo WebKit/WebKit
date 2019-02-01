@@ -129,7 +129,15 @@ public:
     virtual ScrollingNodeID parentOfNode(ScrollingNodeID) const { return 0; }
     virtual Vector<ScrollingNodeID> childrenOfNode(ScrollingNodeID) const { return { }; }
 
-    virtual void setNodeLayers(ScrollingNodeID, GraphicsLayer* /*layer*/, GraphicsLayer* /*scrolledContentsLayer*/ = nullptr, GraphicsLayer* /*counterScrollingLayer*/ = nullptr, GraphicsLayer* /*insetClipLayer*/ = nullptr, GraphicsLayer* /*rootContentsLayer*/ = nullptr) { }
+    struct NodeLayers {
+        GraphicsLayer* layer { nullptr };
+        GraphicsLayer* scrollContainerLayer { nullptr };
+        GraphicsLayer* scrolledContentsLayer { nullptr };
+        GraphicsLayer* counterScrollingLayer { nullptr };
+        GraphicsLayer* insetClipLayer { nullptr };
+        GraphicsLayer* rootContentsLayer { nullptr };
+    };
+    virtual void setNodeLayers(ScrollingNodeID, const NodeLayers&) { }
 
     struct ScrollingGeometry {
         LayoutRect parentRelativeScrollableRect;

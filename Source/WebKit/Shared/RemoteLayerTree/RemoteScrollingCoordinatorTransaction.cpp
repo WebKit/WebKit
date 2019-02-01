@@ -90,7 +90,7 @@ void ArgumentCoder<ScrollingStateNode>::encode(Encoder& encoder, const Scrolling
     encoder << node.parentNodeID();
     encoder << node.changedProperties();
     
-    if (node.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+    if (node.hasChangedProperty(ScrollingStateNode::Layer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.layer());
 }
 
@@ -102,7 +102,7 @@ bool ArgumentCoder<ScrollingStateNode>::decode(Decoder& decoder, ScrollingStateN
         return false;
 
     node.setChangedProperties(changedProperties);
-    if (node.hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
+    if (node.hasChangedProperty(ScrollingStateNode::Layer)) {
         GraphicsLayer::PlatformLayerID layerID;
         if (!decoder.decode(layerID))
             return false;
@@ -141,6 +141,8 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::RequestedScrollPosition, requestedScrollPosition)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
 
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrollContainerLayer());
     if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
 }
@@ -236,6 +238,13 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
             return false;
 
         node.setRequestedScrollPosition(scrollPosition, representsProgrammaticScroll);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setScrollContainerLayer(layerID);
     }
 
     if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
@@ -514,6 +523,9 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
         ts.dumpProperty("requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
     }
 
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+        ts.dumpProperty("scroll-container-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrollContainerLayer()));
+
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
         ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 }
@@ -601,7 +613,7 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
 {
     ts.dumpProperty("type", node.nodeType());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Layer))
         ts.dumpProperty("layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
     
     switch (node.nodeType()) {

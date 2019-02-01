@@ -50,13 +50,16 @@ using namespace WebCore;
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
+        if (currNode->hasChangedProperty(ScrollingStateNode::Layer))
+            currNode->setLayer(layerTreeHost.layerForID(currNode->layer()));
+        
         switch (currNode->nodeType()) {
         case ScrollingNodeType::Overflow: {
             ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
-            
-            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                scrollingStateNode.setLayer(layerTreeHost.layerForID(scrollingStateNode.layer()));
-            
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+                scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(scrollingStateNode.scrollContainerLayer()));
+
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
                 scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode.scrolledContentsLayer()));
             break;
@@ -64,9 +67,9 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe: {
             ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
-            
-            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                scrollingStateNode.setLayer(layerTreeHost.layerForID(scrollingStateNode.layer()));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+                scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(scrollingStateNode.scrollContainerLayer()));
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
                 scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode.scrolledContentsLayer()));
@@ -85,8 +88,6 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
         case ScrollingNodeType::Fixed:
         case ScrollingNodeType::Sticky:
         case ScrollingNodeType::FrameHosting:
-            if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                currNode->setLayer(layerTreeHost.layerForID(currNode->layer()));
             break;
         }
     }

@@ -544,19 +544,22 @@ void RenderLayerCompositor::didChangePlatformLayerForLayer(RenderLayer& layer, c
 
     auto* backing = layer.backing();
     if (auto nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
-        scrollingCoordinator->setNodeLayers(nodeID, backing->graphicsLayer());
+        scrollingCoordinator->setNodeLayers(nodeID, { backing->graphicsLayer() });
 
     if (auto nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling)) {
         // FIXME: would be nice to not have to special-case the root.
+        ScrollingCoordinator::NodeLayers nodeLayers;
         if (layer.isRenderViewLayer()) {
-            // FIXME: Reorganize the layers and pass the scrolledContentsLayer.
-            scrollingCoordinator->setNodeLayers(nodeID, m_scrollLayer.get(), nullptr, fixedRootBackgroundLayer(), clipLayer(), m_rootContentsLayer.get());
+            // FIXME: Reorganize the layers and pass the scrollContainerLayer.
+            nodeLayers = { nullptr, nullptr, m_scrollLayer.get(), fixedRootBackgroundLayer(), clipLayer(), m_rootContentsLayer.get() };
         } else
-            scrollingCoordinator->setNodeLayers(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer());
+            nodeLayers = { layer.backing()->graphicsLayer(), backing->scrollingLayer(), backing->scrollingContentsLayer() };
+
+        scrollingCoordinator->setNodeLayers(nodeID, nodeLayers);
     }
 
     if (auto nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
-        scrollingCoordinator->setNodeLayers(nodeID, backing->graphicsLayer());
+        scrollingCoordinator->setNodeLayers(nodeID, { backing->graphicsLayer() });
 }
 
 void RenderLayerCompositor::didPaintBacking(RenderLayerBacking*)
@@ -3905,7 +3908,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
     LOG_WITH_STREAM(Compositing, stream << "Registering ViewportConstrained " << nodeType << " node " << newNodeID << " (layer " << layer.backing()->graphicsLayer()->primaryLayerID() << ") as child of " << treeState.parentNodeID.valueOr(0));
 
     if (changes & ScrollingNodeChangeFlags::Layer)
-        scrollingCoordinator->setNodeLayers(newNodeID, layer.backing()->graphicsLayer());
+        scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer() });
 
     if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
         switch (nodeType) {
@@ -4009,7 +4012,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         }
 
         if (changes & ScrollingNodeChangeFlags::Layer)
-            scrollingCoordinator->setNodeLayers(newNodeID, m_scrollLayer.get(), nullptr, fixedRootBackgroundLayer(), clipLayer(), m_rootContentsLayer.get());
+            scrollingCoordinator->setNodeLayers(newNodeID, { nullptr, nullptr, m_scrollLayer.get(), fixedRootBackgroundLayer(), clipLayer(), m_rootContentsLayer.get() });
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry) {
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
@@ -4024,7 +4027,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         }
         
         if (changes & ScrollingNodeChangeFlags::Layer)
-            scrollingCoordinator->setNodeLayers(newNodeID, layer.backing()->scrollingLayer(), layer.backing()->scrollingContentsLayer());
+            scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer(), layer.backing()->scrollingLayer(), layer.backing()->scrollingContentsLayer() });
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
             RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
@@ -4048,7 +4051,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
     }
 
     if (changes & ScrollingNodeChangeFlags::Layer)
-        scrollingCoordinator->setNodeLayers(newNodeID, layer.backing()->graphicsLayer());
+        scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer() });
 
     if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
         RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());

@@ -58,11 +58,6 @@ private:
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-
-    RetainPtr<CALayer> m_scrollLayer;
-    RetainPtr<CALayer> m_scrolledContentsLayer;
-
-
     ScrollingTreeScrollingNodeDelegateMac m_delegate;
 
 };
