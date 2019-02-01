@@ -80,6 +80,11 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this._maxUsage = -Infinity;
 
+        this.clear();
+    }
+
+    clear()
+    {
         this._cpuUsageView.clear();
     }
 
@@ -114,8 +119,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         // Don't include the record before the graph start if the graph start is within a gap.
         let includeRecordBeforeStart = !discontinuities.length || discontinuities[0].startTime > graphStartTime;
         let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
-        if (!visibleRecords.length)
+        if (!visibleRecords.length || (visibleRecords.length === 1 && visibleRecords[0].endTime < graphStartTime)) {
+            this.clear();
             return;
+        }
 
         // Update total usage chart with the last record's data.
         let lastRecord = visibleRecords.lastValue;

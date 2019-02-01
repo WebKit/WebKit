@@ -131,6 +131,11 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         this._maxSize = 0;
 
+        this.clear();
+    }
+
+    clear()
+    {
         this._cachedLegendRecord = null;
         this._cachedLegendMaxSize = undefined;
         this._cachedLegendCurrentSize = undefined;
@@ -183,8 +188,10 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         // FIXME: <https://webkit.org/b/153759> Web Inspector: Memory Timelines should better extend to future data
         let visibleRecords = this.representedObject.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
-        if (!visibleRecords.length)
+        if (!visibleRecords.length || (visibleRecords.length === 1 && visibleRecords[0].endTime < graphStartTime)) {
+            this.clear();
             return;
+        }
 
         // Update total usage chart with the last record's data.
         let lastRecord = visibleRecords.lastValue;

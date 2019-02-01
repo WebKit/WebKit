@@ -1,5 +1,25 @@
 2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline Detail Views do not reset properly when new time range selection contains nothing
+        https://bugs.webkit.org/show_bug.cgi?id=194115
+        <rdar://problem/47716693>
+
+        Rubber-stamped by Devin Rousso.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.reset):
+        (WI.CPUTimelineView.prototype.clear):
+        (WI.CPUTimelineView.prototype.layout):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView.prototype.reset):
+        (WI.MemoryTimelineView.prototype.clear):
+        (WI.MemoryTimelineView.prototype.layout):
+        When there are no visible records in the selected range clear our UI.
+        Introduce a `clear` method that clears the UI but keeps
+        non-range-specific values (e.g. maximums).
+
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline graphs have drawing issues with multiple discontinuities
         https://bugs.webkit.org/show_bug.cgi?id=194110
         <rdar://problem/47714356>
