@@ -27,6 +27,7 @@
 #include "WebCookieManager.h"
 
 #include "NetworkProcess.h"
+#include "SoupCookiePersistentStorageType.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
@@ -71,14 +72,14 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
     return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
 }
 
-void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, uint32_t storageType)
+void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, const String& storagePath, SoupCookiePersistentStorageType storageType)
 {
     GRefPtr<SoupCookieJar> jar;
     switch (storageType) {
-    case SoupCookiePersistentStorageText:
+    case SoupCookiePersistentStorageType::Text:
         jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().data(), FALSE));
         break;
-    case SoupCookiePersistentStorageSQLite:
+    case SoupCookiePersistentStorageType::SQLite:
         jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().data(), FALSE));
         break;
     default:

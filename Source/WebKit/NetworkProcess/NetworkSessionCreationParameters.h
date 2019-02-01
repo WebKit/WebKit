@@ -31,6 +31,10 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(SOUP)
+#include "SoupCookiePersistentStorageType.h"
+#endif
+
 #if USE(CURL)
 #include <WebCore/CurlProxySettings.h>
 #endif
@@ -48,7 +52,7 @@ extern "C" CFStringRef const WebKit2HTTPSProxyDefaultsKey;
 namespace WebKit {
 
 enum class AllowsCellularAccess : bool { No, Yes };
-    
+
 struct NetworkSessionCreationParameters {
     void encode(IPC::Encoder&) const;
     static Optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
@@ -68,7 +72,7 @@ struct NetworkSessionCreationParameters {
 #endif
 #if USE(SOUP)
     String cookiePersistentStoragePath;
-    uint32_t cookiePersistentStorageType { 0 };
+    SoupCookiePersistentStorageType cookiePersistentStorageType { SoupCookiePersistentStorageType::Text };
 #endif
 #if USE(CURL)
     String cookiePersistentStorageFile;

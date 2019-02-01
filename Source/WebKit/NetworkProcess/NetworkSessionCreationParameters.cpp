@@ -45,7 +45,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
         , { }, { }, { }, false, { }, { }, { }
 #endif
 #if USE(SOUP)
-        , { }, 0
+        , { }, SoupCookiePersistentStorageType::Text
 #endif
 #if USE(CURL)
         , { }, { }
@@ -139,7 +139,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!cookiePersistentStoragePath)
         return WTF::nullopt;
 
-    Optional<uint32_t> cookiePersistentStorageType;
+    Optional<SoupCookiePersistentStorageType> cookiePersistentStorageType;
     decoder >> cookiePersistentStorageType;
     if (!cookiePersistentStorageType)
         return WTF::nullopt;

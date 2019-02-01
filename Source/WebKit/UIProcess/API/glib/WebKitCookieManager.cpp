@@ -78,12 +78,12 @@ static inline SoupCookiePersistentStorageType toSoupCookiePersistentStorageType(
 {
     switch (kitStorage) {
     case WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT:
-        return SoupCookiePersistentStorageText;
+        return SoupCookiePersistentStorageType::Text;
     case WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE:
-        return SoupCookiePersistentStorageSQLite;
+        return SoupCookiePersistentStorageType::SQLite;
     default:
         ASSERT_NOT_REACHED();
-        return SoupCookiePersistentStorageText;
+        return SoupCookiePersistentStorageType::Text;
     }
 }
 

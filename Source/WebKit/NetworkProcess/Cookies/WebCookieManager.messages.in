@@ -42,6 +42,6 @@
     void StopObservingCookieChanges(PAL::SessionID sessionID)
 
 #if USE(SOUP)
-    SetCookiePersistentStorage(PAL::SessionID sessionID, String storagePath, uint32_t storageType)
+    void SetCookiePersistentStorage(PAL::SessionID sessionID, String storagePath, enum:bool WebKit::SoupCookiePersistentStorageType storageType)
 #endif
 }

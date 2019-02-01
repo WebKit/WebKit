@@ -98,8 +98,8 @@ public:
     void unregisterObserver(PAL::SessionID, Observer&);
 
 #if USE(SOUP)
-    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, uint32_t storageType);
-    void getCookiePersistentStorage(PAL::SessionID, String& storagePath, uint32_t& storageType) const;
+    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, SoupCookiePersistentStorageType);
+    void getCookiePersistentStorage(PAL::SessionID, String& storagePath, SoupCookiePersistentStorageType&) const;
 #endif
 
     using API::Object::ref;

@@ -1,3 +1,28 @@
+2019-02-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Improve use of SoupCookiePersistentStorageType
+        https://bugs.webkit.org/show_bug.cgi?id=194103
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn it into an enum class, and stop casting it to and from uint32_t.
+
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * Shared/soup/SoupCookiePersistentStorageType.h:
+        (): Deleted.
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage):
+        (WebKit::WebCookieManagerProxy::getCookiePersistentStorage const):
+
 2019-02-01  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Revert parts of r240811, since it causes kernel panics.

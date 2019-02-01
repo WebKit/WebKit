@@ -58,7 +58,7 @@ public:
     void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, OptionalCallbackID);
 
 #if USE(SOUP)
-    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, uint32_t storageType);
+    void setCookiePersistentStorage(PAL::SessionID, const String& storagePath, SoupCookiePersistentStorageType);
 #endif
 
     void notifyCookiesDidChange(PAL::SessionID);

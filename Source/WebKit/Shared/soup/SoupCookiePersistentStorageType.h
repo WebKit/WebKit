@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SoupCookiePersistentStorageType_h
-#define SoupCookiePersistentStorageType_h
+#pragma once
 
 namespace WebKit {
 
-enum SoupCookiePersistentStorageType {
-    SoupCookiePersistentStorageText,
-    SoupCookiePersistentStorageSQLite
+enum class SoupCookiePersistentStorageType : bool {
+    Text,
+    SQLite
 };
 
 } // namespace WebKit
-
-#endif // SoupCookiePersistentStorageType_h
