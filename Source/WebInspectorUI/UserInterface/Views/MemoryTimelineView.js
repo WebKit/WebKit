@@ -58,6 +58,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         let usageTooltip = WI.UIString("Breakdown of each memory category at the end of the selected time range");
         let usageChartContainerElement = createChartContainer(overviewElement, WI.UIString("Breakdown"), usageTooltip);
         this._usageCircleChart = new WI.CircleChart({size: 120, innerRadiusRatio: 0.5});
+        this.addSubview(this._usageCircleChart);
         usageChartContainerElement.appendChild(this._usageCircleChart.element);
         this._usageLegendElement = usageChartContainerElement.appendChild(document.createElement("div"));
         this._usageLegendElement.classList.add("legend", "usage");
@@ -68,6 +69,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         let maxComparisonTooltip = WI.UIString("Comparison of total memory size at the end of the selected time range to the maximum memory size in this recording");
         let maxComparisonChartContainerElement = createChartContainer(overviewElement, WI.UIString("Max Comparison"), maxComparisonTooltip);
         this._maxComparisonCircleChart = new WI.CircleChart({size: 120, innerRadiusRatio: 0.5});
+        this.addSubview(this._maxComparisonCircleChart);
         maxComparisonChartContainerElement.appendChild(this._maxComparisonCircleChart.element);
         this._maxComparisonLegendElement = maxComparisonChartContainerElement.appendChild(document.createElement("div"));
         this._maxComparisonLegendElement.classList.add("legend", "maximum");

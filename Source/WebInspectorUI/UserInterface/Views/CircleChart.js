@@ -37,7 +37,7 @@
 // - If you want to put something inside the middle of the chart you can use `centerElement`.
 //
 //  <div class="circle-chart">
-//      <svg width="120" height="120" viewbox="0 0 120 120">
+//      <svg width="120" height="120" viewBox="0 0 120 120">
 //          <path class="background" d="..."/>
 //          <path class="segment segment-class-name-1" d="..."/>
 //          <path class="segment segment-class-name-2" d="..."/>
@@ -46,42 +46,41 @@
 //      <div class="center"></div>
 //  </div>
 
-WI.CircleChart = class CircleChart
+WI.CircleChart = class CircleChart extends WI.View
 {
     constructor({size, innerRadiusRatio})
     {
+        super();
+
         this._data = [];
         this._size = size;
         this._radius = (size / 2) - 1;
         this._innerRadius = innerRadiusRatio ? Math.floor(this._radius * innerRadiusRatio) : 0;
 
-        this._element = document.createElement("div");
-        this._element.classList.add("circle-chart");
+        this.element.classList.add("circle-chart");
 
-        this._chartElement = this._element.appendChild(createSVGElement("svg"));
+        this._chartElement = this.element.appendChild(createSVGElement("svg"));
         this._chartElement.setAttribute("width", size);
         this._chartElement.setAttribute("height", size);
-        this._chartElement.setAttribute("viewbox", `0 0 ${size} ${size}`);
+        this._chartElement.setAttribute("viewBox", `0 0 ${size} ${size}`);
 
         this._pathElements = [];
         this._values = [];
         this._total = 0;
 
         let backgroundPath = this._chartElement.appendChild(createSVGElement("path"));
-        backgroundPath.setAttribute("d", this._createCompleteCirclePathData(this.size / 2, this._radius, this._innerRadius));
+        backgroundPath.setAttribute("d", this._createCompleteCirclePathData(this._size / 2, this._radius, this._innerRadius));
         backgroundPath.classList.add("background");
     }
 
     // Public
 
-    get element() { return this._element; }
-    get points() { return this._points; }
     get size() { return this._size; }
 
     get centerElement()
     {
         if (!this._centerElement) {
-            this._centerElement = this._element.appendChild(document.createElement("div"));
+            this._centerElement = this.element.appendChild(document.createElement("div"));
             this._centerElement.classList.add("center");
             this._centerElement.style.width = this._centerElement.style.height = this._radius + "px";
             this._centerElement.style.top = this._centerElement.style.left = (this._radius - this._innerRadius) + "px";
@@ -130,20 +129,14 @@ WI.CircleChart = class CircleChart
         this.values = new Array(this._values.length).fill(0);
     }
 
-    needsLayout()
+    // Protected
+
+    layout()
     {
-        if (this._scheduledLayoutUpdateIdentifier)
+        super.layout();
+
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
-    }
-
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
 
         if (!this._values.length)
             return;

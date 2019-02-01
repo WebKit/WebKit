@@ -1,5 +1,21 @@
 2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make WI.CircleChart a WI.View subclass
+        https://bugs.webkit.org/show_bug.cgi?id=194118
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CircleChart.js:
+        (WI.CircleChart.prototype.get centerElement):
+        (WI.CircleChart.prototype.layout):
+        (WI.CircleChart.prototype.get element): Deleted.
+        (WI.CircleChart.prototype.needsLayout): Deleted.
+        (WI.CircleChart.prototype.updateLayout): Deleted.
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView):
+
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline Detail Views do not reset properly when new time range selection contains nothing
         https://bugs.webkit.org/show_bug.cgi?id=194115
         <rdar://problem/47716693>
