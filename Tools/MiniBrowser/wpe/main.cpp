@@ -59,16 +59,32 @@ static const GOptionEntry commandLineOptions[] =
 
 class InputClient final : public WPEToolingBackends::ViewBackend::InputClient {
 public:
-    InputClient(GMainLoop* loop)
+    InputClient(GMainLoop* loop, WebKitWebView* webView)
         : m_loop(loop)
+        , m_webView(webView)
     {
     }
 
     bool dispatchKeyboardEvent(struct wpe_input_keyboard_event* event) override
     {
-        if (event->pressed && event->modifiers & wpe_input_keyboard_modifier_control && event->key_code == WPE_KEY_q) {
+        if (!event->pressed)
+            return false;
+
+        if (event->modifiers & wpe_input_keyboard_modifier_control && event->key_code == WPE_KEY_q) {
             g_main_loop_quit(m_loop);
             return true;
+        }
+
+        if (event->modifiers & wpe_input_keyboard_modifier_alt) {
+            if ((event->key_code == WPE_KEY_Left || event->key_code == WPE_KEY_KP_Left) && webkit_web_view_can_go_back(m_webView)) {
+                webkit_web_view_go_back(m_webView);
+                return true;
+            }
+
+            if ((event->key_code == WPE_KEY_Right || event->key_code == WPE_KEY_KP_Right) && webkit_web_view_can_go_forward(m_webView)) {
+                webkit_web_view_go_forward(m_webView);
+                return true;
+            }
         }
 
         return false;
@@ -76,6 +92,7 @@ public:
 
 private:
     GMainLoop* m_loop { nullptr };
+    WebKitWebView* m_webView { nullptr };
 };
 
 static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
@@ -140,12 +157,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    backend->setInputClient(std::make_unique<InputClient>(loop));
-
-    auto* viewBackend = webkit_web_view_backend_new(wpeBackend, [](gpointer data) {
-        delete static_cast<WPEToolingBackends::ViewBackend*>(data);
-    }, backend.release());
-
     auto* webContext = (privateMode || automationMode) ? webkit_web_context_new_ephemeral() : webkit_web_context_get_default();
 
     if (cookiesPolicy) {
@@ -180,6 +191,11 @@ int main(int argc, char *argv[])
         "enable-encrypted-media", TRUE,
         nullptr);
 
+    auto* backendPtr = backend.get();
+    auto* viewBackend = webkit_web_view_backend_new(wpeBackend, [](gpointer data) {
+        delete static_cast<WPEToolingBackends::ViewBackend*>(data);
+    }, backend.release());
+
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
         "web-context", webContext,
@@ -187,6 +203,8 @@ int main(int argc, char *argv[])
         "is-controlled-by-automation", automationMode,
         nullptr));
     g_object_unref(settings);
+
+    backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
