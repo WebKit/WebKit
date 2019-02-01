@@ -44,12 +44,12 @@ Replaced::Replaced(const Box& layoutBox)
 
 bool Replaced::hasIntrinsicWidth() const
 {
-    return m_layoutBox->style().logicalWidth().isIntrinsic();
+    return m_intrinsicSize || m_layoutBox->style().logicalWidth().isIntrinsic();
 }
 
 bool Replaced::hasIntrinsicHeight() const
 {
-    return m_layoutBox->style().logicalHeight().isIntrinsic();
+    return m_intrinsicSize || m_layoutBox->style().logicalHeight().isIntrinsic();
 }
 
 bool Replaced::hasIntrinsicRatio() const
@@ -60,12 +60,16 @@ bool Replaced::hasIntrinsicRatio() const
 LayoutUnit Replaced::intrinsicWidth() const
 {
     ASSERT(hasIntrinsicWidth());
+    if (m_intrinsicSize)
+        return m_intrinsicSize->width();
     return m_layoutBox->style().logicalWidth().value();
 }
 
 LayoutUnit Replaced::intrinsicHeight() const
 {
     ASSERT(hasIntrinsicHeight());
+    if (m_intrinsicSize)
+        return m_intrinsicSize->height();
     return m_layoutBox->style().logicalHeight().value();
 }
 

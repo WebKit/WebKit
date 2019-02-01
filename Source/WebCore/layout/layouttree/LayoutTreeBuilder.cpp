@@ -97,6 +97,9 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
                 box = std::make_unique<Box>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
             else
                 box = std::make_unique<InlineBox>(elementAttributes(renderer), RenderStyle::clone(renderer.style()));
+            // FIXME: We don't yet support all replaced elements.
+            if (box->replaced())
+                box->replaced()->setIntrinsicSize(renderer.intrinsicSize());
         } else if (is<RenderElement>(child)) {
             auto& renderer = downcast<RenderElement>(child);
             auto display = renderer.style().display();

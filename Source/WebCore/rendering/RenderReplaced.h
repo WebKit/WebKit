@@ -40,6 +40,8 @@ public:
     bool hasReplacedLogicalHeight() const;
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
+    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
+
 protected:
     RenderReplaced(Element&, RenderStyle&&);
     RenderReplaced(Element&, RenderStyle&&, const LayoutSize& intrinsicSize);
@@ -47,7 +49,6 @@ protected:
 
     void layout() override;
 
-    LayoutSize intrinsicSize() const final { return m_intrinsicSize; }
     void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const override;
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;

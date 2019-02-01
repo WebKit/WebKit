@@ -131,6 +131,8 @@ public:
     const RenderStyle& style() const { return m_style; }
 
     const Replaced* replaced() const { return m_replaced.get(); }
+    // FIXME: Temporary until after intrinsic size change is tracked by Replaced.
+    Replaced* replaced() { return m_replaced.get(); }
 
     void setParent(Container& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -147,7 +149,7 @@ private:
     Box* m_previousSibling { nullptr };
     Box* m_nextSibling { nullptr };
 
-    std::unique_ptr<const Replaced> m_replaced;
+    std::unique_ptr<Replaced> m_replaced;
 
     unsigned m_baseTypeFlags : 4;
 };
