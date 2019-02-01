@@ -50,7 +50,7 @@ public:
 
     virtual ~EnumerationMemberLiteral() = default;
 
-    explicit EnumerationMemberLiteral(const EnumerationMemberLiteral&) = default;
+    explicit EnumerationMemberLiteral(const EnumerationMemberLiteral&) = delete;
     EnumerationMemberLiteral(EnumerationMemberLiteral&&) = default;
 
     EnumerationMemberLiteral& operator=(const EnumerationMemberLiteral&) = delete;

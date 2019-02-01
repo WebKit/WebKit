@@ -49,10 +49,10 @@ public:
 
     virtual ~Expression() = default;
 
-    Expression(const Expression&) = default;
+    Expression(const Expression&) = delete;
     Expression(Expression&&) = default;
 
-    Expression& operator=(const Expression&) = default;
+    Expression& operator=(const Expression&) = delete;
     Expression& operator=(Expression&&) = default;
 
     const Lexer::Token& origin() const { return m_origin; }
