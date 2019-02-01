@@ -1,4 +1,0 @@
-
-PASS org.w3.clearkey test requestMediaKeySystemAccess() exceptions. 
-PASS org.w3.clearkey test MediaKeySystemAccess attribute syntax. 
-

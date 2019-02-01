@@ -1,8 +1,0 @@
-
-FAIL Touch::webkitRadiusX assert_false: Should not be supported on the prototype expected false got true
-FAIL Touch::webkitRadiusY assert_false: Should not be supported on the prototype expected false got true
-FAIL Touch::webkitRotationAngle assert_false: Should not be supported on the prototype expected false got true
-FAIL Touch::webkitForce assert_false: Should not be supported on the prototype expected false got true
-PASS TouchList::identifiedTouch 
-FAIL TouchEvent::initTouchEvent assert_false: Should not be supported on the prototype expected false got true
-

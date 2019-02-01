@@ -1,5 +1,70 @@
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed WPE gardening. Remove duplicated expectations.
+
+        Remove the platform specific expectations that match the generic ones.
+
+        * platform/wpe/animations/lineheight-animation-expected.txt: Removed.
+        * platform/wpe/animations/simultaneous-start-transform-expected.txt: Removed.
+        * platform/wpe/animations/width-using-ems-expected.txt: Removed.
+        * platform/wpe/fast/events/mouseover-mouseout-expected.txt: Removed.
+        * platform/wpe/fast/events/nested-window-event-expected.txt: Removed.
+        * platform/wpe/fast/events/window-events-bubble-expected.txt: Removed.
+        * platform/wpe/fast/events/window-events-bubble2-expected.txt: Removed.
+        * platform/wpe/fast/replaced/008-expected.txt: Removed.
+        * platform/wpe/fast/tokenizer/script_extra_close-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-check-initdata-type.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-event.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-events.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-immediately.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-playback.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-again-after-resetting-src.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-illegal-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-verification-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/touch-events/historical-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-blob-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/xhr/formdata-expected.txt: Removed.
+        * platform/wpe/legacy-animation-engine/animations/lineheight-animation-expected.txt: Removed.
+        * platform/wpe/legacy-animation-engine/animations/simultaneous-start-transform-expected.txt: Removed.
+        * platform/wpe/legacy-animation-engine/animations/width-using-ems-expected.txt: Removed.
+        * platform/wpe/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt: Removed.
+        * platform/wpe/svg/custom/pan-direction-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug149275-2-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/context/context-attributes-alpha-depth-stencil-antialias-expected.txt: Removed.
+        * platform/wpe/webgl/2.0.0/conformance/context/context-hidden-alpha-expected.txt: Removed.
+
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed WPE gardening. Rebaseline and update expectations after r240774.
 
         * platform/wpe/TestExpectations:

@@ -1,5 +1,0 @@
-
-PASS formdata with blob 
-PASS formdata with named blob 
-PASS formdata.append() should throw if value is string and file name is given 
-
