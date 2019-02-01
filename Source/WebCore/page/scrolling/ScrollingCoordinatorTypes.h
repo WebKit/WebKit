@@ -30,7 +30,6 @@
 namespace WebCore {
 
 typedef unsigned SynchronousScrollingReasons;
-typedef uint64_t ScrollingNodeID;
 
 enum class ScrollingNodeType : uint8_t {
     MainFrame,

@@ -893,7 +893,7 @@ TiledBacking* FrameView::tiledBacking() const
     return backing->tiledBacking();
 }
 
-uint64_t FrameView::scrollLayerID() const
+ScrollingNodeID FrameView::scrollingNodeID() const
 {
     RenderView* renderView = this->renderView();
     if (!renderView)

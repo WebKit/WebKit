@@ -193,6 +193,8 @@ enum class ScrollbarButtonPressAction {
     Scroll
 };
 
+using ScrollingNodeID = uint64_t;
+
 }
 
 #endif

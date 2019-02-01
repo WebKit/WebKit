@@ -143,7 +143,7 @@ public:
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }
     bool useDarkAppearanceForScrollbars() const;
 
-    virtual uint64_t scrollLayerID() const { return 0; }
+    virtual ScrollingNodeID scrollingNodeID() const { return 0; }
 
     // This getter will create a ScrollAnimator if it doesn't already exist.
     WEBCORE_EXPORT ScrollAnimator& scrollAnimator() const;

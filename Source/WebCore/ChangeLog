@@ -1,3 +1,39 @@
+2019-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Use ScrollingNodeID in more places, and improve the name of a ScrollableArea function that returns a ScrollingNodeID
+        https://bugs.webkit.org/show_bug.cgi?id=194126
+
+        Reviewed by Frédéric Wang.
+        
+        Change uint64_t ScrollableArea::scrollLayerID() to ScrollingNodeID ScrollableArea::scrollingNodeID()
+        and fix callers.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollingNodeID const):
+        (WebCore::FrameView::scrollLayerID const): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::updateExpectsWheelEventTestTriggerWithFrameView):
+        (WebCore::AsyncScrollingCoordinator::frameViewRootLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::frameViewForScrollingNode const):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        (WebCore::AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        (WebCore::AsyncScrollingCoordinator::setSynchronousScrollingReasons):
+        (WebCore::AsyncScrollingCoordinator::setActiveScrollSnapIndices):
+        (WebCore::AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView):
+        * page/scrolling/ScrollingCoordinatorTypes.h:
+        * platform/ScrollTypes.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollingNodeID const):
+        (WebCore::ScrollableArea::scrollLayerID const): Deleted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+
 2019-01-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Expressions can't be copyable

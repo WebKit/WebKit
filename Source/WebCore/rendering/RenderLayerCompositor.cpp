@@ -1966,7 +1966,7 @@ bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget& renderer)
 
     if (auto frameHostingNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting)) {
         auto* contentsRenderView = frameContentsRenderView(renderer);
-        if (auto frameRootScrollingNodeID = contentsRenderView->frameView().scrollLayerID()) {
+        if (auto frameRootScrollingNodeID = contentsRenderView->frameView().scrollingNodeID()) {
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->insertNode(ScrollingNodeType::Subframe, frameRootScrollingNodeID, frameHostingNodeID, 0);
         }
@@ -3579,7 +3579,7 @@ void RenderLayerCompositor::detachRootLayer()
         if (auto* ownerElement = m_renderView.document().ownerElement())
             ownerElement->scheduleInvalidateStyleAndLayerComposition();
 
-        if (auto frameRootScrollingNodeID = m_renderView.frameView().scrollLayerID()) {
+        if (auto frameRootScrollingNodeID = m_renderView.frameView().scrollingNodeID()) {
             if (auto* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->unparentNode(frameRootScrollingNodeID);
         }
