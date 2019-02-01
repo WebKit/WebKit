@@ -721,17 +721,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             let playing = false;
 
             function createDOMEventLine(domEvents, startTimestamp, endTimestamp) {
-                if (domEvents.lastValue.eventName === "ended")
+                if (WI.DOMNode.isStopEvent(domEvents.lastValue.eventName))
                     return;
 
                 for (let i = domEvents.length - 1; i >= 0; --i) {
                     let domEvent = domEvents[i];
-                    if (domEvent.eventName === "play" || domEvent.eventName === "playing") {
+                    if (WI.DOMNode.isPlayEvent(domEvent.eventName)) {
                         playing = true;
                         break;
                     }
 
-                    if (domEvent.eventName === "pause" || domEvent.eventName === "stall") {
+                    if (WI.DOMNode.isPauseEvent(domEvent.eventName)) {
                         playing = false;
                         break;
                     }

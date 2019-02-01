@@ -147,9 +147,16 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                     lowPowerArea.style.setProperty("width", percentOfTotalTime(lowPowerRange.endTimestamp - lowPowerRange.startTimestamp) + "%");
                 }
 
-                let graphPoint = graphCell.appendChild(document.createElement("div"));
-                graphPoint.classList.add("point");
-                graphPoint.style.setProperty(styleAttribute, `calc(${percentOfTotalTime(domEvent.timestamp - startTimestamp)}% - (var(--point-size) / 2))`);
+                let graphImage = graphCell.appendChild(document.createElement("img"));
+                graphImage.style.setProperty(styleAttribute, `calc(${percentOfTotalTime(domEvent.timestamp - startTimestamp)}% - (var(--img-size) / 2))`);
+                if (WI.DOMNode.isPlayEvent(domEvent.eventName))
+                    graphImage.src = "Images/EventPlay.svg";
+                else if (WI.DOMNode.isPauseEvent(domEvent.eventName))
+                    graphImage.src = "Images/EventPause.svg";
+                else if (WI.DOMNode.isStopEvent(domEvent.eventName))
+                    graphImage.src = "Images/EventStop.svg";
+                else
+                    graphImage.src = "Images/EventProcessing.svg";
             }
 
             let timeCell = rowElement.appendChild(document.createElement("td"));

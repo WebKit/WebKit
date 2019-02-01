@@ -156,6 +156,26 @@ WI.DOMNode = class DOMNode extends WI.Object
         }, []);
     }
 
+    static isPlayEvent(eventName)
+    {
+        return eventName === "play"
+            || eventName === "playing";
+    }
+
+    static isPauseEvent(eventName)
+    {
+        return eventName === "pause"
+            || eventName === "stall";
+    }
+
+    static isStopEvent(eventName)
+    {
+        return eventName === "emptied"
+            || eventName === "ended"
+            || eventName === "suspend";
+    }
+
+
     // Public
 
     get domEvents() { return this._domEvents; }

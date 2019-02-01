@@ -39,7 +39,7 @@
 }
 
 .dom-events-breakdown tr > :matches(th, td) {
-    padding: 2px 4px;
+    padding: 4px;
     text-align: start;
 }
 
@@ -51,22 +51,20 @@
 .dom-events-breakdown .graph {
     position: relative;
     width: 100%;
-    border-right: var(--point-size) solid transparent;
-    border-left: var(--point-size) solid transparent;
+    border-right: var(--img-size) solid transparent;
+    border-left: var(--img-size) solid transparent;
 
-    --point-size: 8px;
+    --img-size: 14px;
 }
 
-.dom-events-breakdown .graph > :matches(.point, .area) {
+.dom-events-breakdown .graph > :matches(img, .area) {
     position: absolute;
 }
 
-.dom-events-breakdown .graph > .point {
-    top: calc(50% - (var(--point-size) / 2));
-    width: var(--point-size);
-    height: var(--point-size);
-    background-color: var(--selected-background-color);
-    border-radius: 50%;
+.dom-events-breakdown .graph > img {
+    top: calc(50% - (var(--img-size) / 2));
+    width: var(--img-size);
+    height: var(--img-size);
 }
 
 .dom-events-breakdown .graph > .area {
@@ -87,7 +85,7 @@
 }
 
 .dom-events-breakdown .inherited > .name,
-.dom-events-breakdown .inherited > .graph > .point {
+.dom-events-breakdown .inherited > .graph > img {
     opacity: 0.5;
 }
 

@@ -1,3 +1,36 @@
+2019-02-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create icons for media event types instead of using a blue circle
+        https://bugs.webkit.org/show_bug.cgi?id=190381
+        <rdar://problem/45507995>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.isPlayEvent): Added.
+        (WI.DOMNode.isPauseEvent): Added.
+        (WI.DOMNode.isStopEvent): Added.
+
+        * UserInterface/Views/DOMEventsBreakdownView.js:
+        (WI.DOMEventsBreakdownView.prototype.layout):
+        * UserInterface/Views/DOMEventsBreakdownView.css:
+        (.dom-events-breakdown tr > :matches(th, td)):
+        (.dom-events-breakdown .graph):
+        (.dom-events-breakdown .graph > :matches(img, .area)): Added.
+        (.dom-events-breakdown .graph > img): Added.
+        (.dom-events-breakdown .inherited > .name, .dom-events-breakdown .inherited > .graph > img): Added.
+        (.dom-events-breakdown .graph > :matches(.point, .area)): Deleted.
+        (.dom-events-breakdown .graph > .point): Deleted.
+        (.dom-events-breakdown .inherited > .name, .dom-events-breakdown .inherited > .graph > .point): Deleted.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph.createDOMEventLine):
+
+        * UserInterface/Images/EventPause.svg: Added.
+        * UserInterface/Images/EventPlay.svg: Added.
+        * UserInterface/Images/EventProcessing.svg: Added.
+        * UserInterface/Images/EventStop.svg: Added.
+
 2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make WI.ColumnChart a WI.View subclass
