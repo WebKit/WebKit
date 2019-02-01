@@ -239,6 +239,10 @@ private:
     RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) override;
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+    void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
+#endif
+
     WKContentView *m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

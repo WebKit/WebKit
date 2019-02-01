@@ -38,27 +38,31 @@ class PointerCaptureController {
     WTF_MAKE_NONCOPYABLE(PointerCaptureController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit PointerCaptureController();
-
-    enum class ImplicitCapture : uint8_t { Yes, No };
+    explicit PointerCaptureController(Page&);
 
     ExceptionOr<void> setPointerCapture(Element*, int32_t);
-    ExceptionOr<void> releasePointerCapture(Element*, int32_t, ImplicitCapture implicit = ImplicitCapture::No);
+    ExceptionOr<void> releasePointerCapture(Element*, int32_t);
     bool hasPointerCapture(Element*, int32_t);
 
     void pointerLockWasApplied();
 
     void touchEndedOrWasCancelledForIdentifier(int32_t);
+    bool hasCancelledPointerEventForIdentifier(int32_t);
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
     void pointerEventWasDispatched(const PointerEvent&);
+    WEBCORE_EXPORT void cancelPointer(int32_t, const IntPoint&);
 
 private:
     struct CapturingData {
-        Element* pendingTargetOverride;
-        Element* targetOverride;
+        RefPtr<Element> pendingTargetOverride;
+        RefPtr<Element> targetOverride;
+        String pointerType;
+        bool cancelled { false };
     };
 
     void processPendingPointerCapture(const PointerEvent&);
+
+    Page& m_page;
     HashMap<int32_t, CapturingData> m_activePointerIdsToCapturingData;
 };
 

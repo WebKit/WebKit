@@ -52,6 +52,7 @@ OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSSet;
+OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS WKDrawingView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
@@ -477,6 +478,11 @@ public:
 #if HAVE(PENCILKIT)
     virtual RetainPtr<WKDrawingView> createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID) { return nullptr; }
 #endif
+
+#if ENABLE(POINTER_EVENTS)
+    virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
+#endif
+
 };
 
 } // namespace WebKit

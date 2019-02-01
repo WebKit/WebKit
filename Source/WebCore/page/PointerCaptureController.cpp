@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "Page.h"
@@ -36,7 +37,10 @@
 
 namespace WebCore {
 
-PointerCaptureController::PointerCaptureController() = default;
+PointerCaptureController::PointerCaptureController(Page& page)
+    : m_page(page)
+{
+}
 
 ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, int32_t pointerId)
 {
@@ -68,7 +72,7 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
     return { };
 }
 
-ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* capturingTarget, int32_t pointerId, ImplicitCapture implicit)
+ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* capturingTarget, int32_t pointerId)
 {
     // https://w3c.github.io/pointerevents/#releasing-pointer-capture
 
@@ -78,7 +82,7 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
     // 1. If the pointerId provided as the method's argument does not match any of the active pointers and these steps are not
     // being invoked as a result of the implicit release of pointer capture, then throw a DOMException with the name NotFoundError.
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
-    if (implicit == ImplicitCapture::No && iterator == m_activePointerIdsToCapturingData.end())
+    if (iterator == m_activePointerIdsToCapturingData.end())
         return Exception { NotFoundError };
 
     // 2. If hasPointerCapture is false for the Element with the specified pointerId, then terminate these steps.
@@ -124,6 +128,12 @@ void PointerCaptureController::touchEndedOrWasCancelledForIdentifier(int32_t poi
     m_activePointerIdsToCapturingData.remove(pointerId);
 }
 
+bool PointerCaptureController::hasCancelledPointerEventForIdentifier(int32_t pointerId)
+{
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
+}
+
 void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& event, EventTarget* target)
 {
     // https://w3c.github.io/pointerevents/#implicit-pointer-capture
@@ -142,7 +152,9 @@ void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& 
         return;
 
     auto pointerId = event.pointerId();
-    m_activePointerIdsToCapturingData.set(pointerId, CapturingData { });
+    CapturingData capturingData;
+    capturingData.pointerType = event.pointerType();
+    m_activePointerIdsToCapturingData.set(pointerId, capturingData);
     setPointerCapture(downcast<Element>(target), pointerId);
 }
 
@@ -169,6 +181,48 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
     }
 
     processPendingPointerCapture(event);
+}
+
+void PointerCaptureController::cancelPointer(int32_t pointerId, const IntPoint& documentPoint)
+{
+    // https://w3c.github.io/pointerevents/#the-pointercancel-event
+
+    // A user agent MUST fire a pointer event named pointercancel in the following circumstances:
+    //
+    // The user agent has determined that a pointer is unlikely to continue to produce events (for example, because of a hardware event).
+    // After having fired the pointerdown event, if the pointer is subsequently used to manipulate the page viewport (e.g. panning or zooming).
+    // Immediately before drag operation starts [HTML], for the pointer that caused the drag operation.
+    // After firing the pointercancel event, a user agent MUST also fire a pointer event named pointerout followed by firing a pointer event named pointerleave.
+
+    // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
+
+    // Immediately after firing the pointerup or pointercancel events, a user agent MUST clear the pending pointer capture target
+    // override for the pointerId of the pointerup or pointercancel event that was just dispatched, and then run Process Pending
+    // Pointer Capture steps to fire lostpointercapture if necessary. After running Process Pending Pointer Capture steps, if the
+    // pointer supports hover, user agent MUST also send corresponding boundary events necessary to reflect the current position of
+    // the pointer with no capture.
+
+    auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
+    if (iterator == m_activePointerIdsToCapturingData.end())
+        return;
+
+    auto& capturingData = iterator->value;
+    if (capturingData.cancelled)
+        return;
+
+    capturingData.pendingTargetOverride = nullptr;
+    capturingData.cancelled = true;
+
+    auto& target = capturingData.targetOverride;
+    if (!target)
+        target = m_page.mainFrame().eventHandler().hitTestResultAtPoint(documentPoint, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent).innerNonSharedElement();
+
+    if (!target)
+        return;
+
+    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType);
+    target->dispatchEvent(event);
+    processPendingPointerCapture(WTFMove(event));
 }
 
 void PointerCaptureController::processPendingPointerCapture(const PointerEvent& event)

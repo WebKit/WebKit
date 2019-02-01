@@ -56,7 +56,15 @@ public:
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 
-#if ENABLE(POINTER_EVENTS)
+    static Ref<PointerEvent> create(const AtomicString& type, int32_t pointerId, String pointerType)
+    {
+        Init initializer;
+        initializer.bubbles = true;
+        initializer.pointerId = pointerId;
+        initializer.pointerType = pointerType;
+        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
+    }
+
     static Ref<PointerEvent> createForPointerCapture(const AtomicString& type, const PointerEvent& pointerEvent)
     {
         Init initializer;
@@ -66,7 +74,6 @@ public:
         initializer.pointerType = pointerEvent.pointerType();
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
-#endif
 
     static Ref<PointerEvent> createForBindings()
     {

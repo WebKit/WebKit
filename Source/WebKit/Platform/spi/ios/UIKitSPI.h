@@ -1031,6 +1031,11 @@ typedef NSInteger UICompositingMode;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
+// FIXME: <rdar://problem/47714562>
+@interface UIWebTouchEventsGestureRecognizer ()
+@property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
+@end
+
 @interface UIPhysicalKeyboardEvent : UIPressesEvent
 @end
 

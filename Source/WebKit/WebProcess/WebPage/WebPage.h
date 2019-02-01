@@ -1240,6 +1240,10 @@ private:
     void touchEvent(const WebTouchEvent&);
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+    void cancelPointer(int32_t, const WebCore::IntPoint&);
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuHidden() { m_isShowingContextMenu = false; }
     void contextMenuForKeyEvent();

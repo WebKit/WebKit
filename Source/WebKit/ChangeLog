@@ -1,3 +1,54 @@
+2019-02-01  Antoine Quint  <graouts@apple.com>
+
+        Dispatch pointercancel events when content is panned or zoomed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193962
+        <rdar://problem/47629134>
+
+        Reviewed by Dean Jackson.
+
+        When a user-agent-provided interaction, such as panning or zooming on iOS, uses a set of touches, we should dispatch a pointercancel
+        event for the pointer ids of the touches involved. To facilitate this, we add a new method on WKContentView to cancel all the pointers
+        matching active touches for a provided UIGestureRecognizer through an async IPC call into the Web process using the new method
+        PointerCaptureController::cancelPointer().
+
+        * Platform/spi/ios/UIKitSPI.h: Add the necessary forward declaration for a necessary UIKit SPI allowing us to get the set of last-seen
+        UITouches by the identifier generated for the matching WebKit touch.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillBeginZooming:withView:]): Dispatch touchcancel events for all pointers involved in a pinch gesture on the
+        top-level UIScrollView.
+        (-[WKWebView _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]): Dispatch
+        touchcancel events for all pointers involved in a pan gesture on the top-level UIScrollView. We can infer this by looking at whether the
+        adjusted content offset, after accounting for the permitted touch actions, is different from the original content offset.
+        * UIProcess/PageClient.h: Expose a new virtual cancelPointersForGestureRecognizer() method which will allow the iOS implementation to
+        forward the call to WKContentViewInteraction.
+        (WebKit::PageClient::cancelPointersForGestureRecognizer):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h: Expose the WebPageProxy such that we may access it to cancel pointers for
+        a given gesture recognizer from within ScrollingTreeScrollingNodeDelegateIOS.
+        (WebKit::RemoteScrollingCoordinatorProxy::webPageProxy const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate _scrollView:adjustedOffsetForOffset:translation:startPoint:locationInView:horizontalVelocity:verticalVelocity:]):
+        Dispatch touchcancel events for all pointers involved in a pan gesture on a nested UIScrollView. We can infer this by looking at
+        whether the adjusted content offset, after accounting for the permitted touch actions, is different from the original content offset.
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillBeginZooming:withView:]): Dispatch touchcancel events for all pointers involved in a
+        pinch gesture on a nested UIScrollView.
+        (-[WKScrollingNodeScrollViewDelegate cancelPointersForGestureRecognizer:]):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::cancelPointersForGestureRecognizer):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::cancelPointer):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::cancelPointersForGestureRecognizer):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cancelPointersForGestureRecognizer:]): Obtain all active UITouch objects for the view and dispatch a pointercancel event,
+        through the WebPageProxy, for all touches associated with the provided gesture recognizer.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::cancelPointer):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-02-01  Jer Noble  <jer.noble@apple.com>
 
         Make the WebKit default for media source based on the WebCore default.

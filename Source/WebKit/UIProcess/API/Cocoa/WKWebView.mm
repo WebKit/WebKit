@@ -2551,6 +2551,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_contentView scrollViewWillStartPanOrPinchGesture];
     }
     [_contentView willStartZoomOrScroll];
+
+#if ENABLE(POINTER_EVENTS)
+    [_contentView cancelPointersForGestureRecognizer:scrollView.pinchGestureRecognizer];
+#endif
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -2635,14 +2639,21 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #if ENABLE(POINTER_EVENTS)
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
 {
-    if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis])
+    if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis]) {
+        [_contentView cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
         return offset;
+    }
 
     CGPoint adjustedContentOffset = CGPointMake(offset.x, offset.y);
     if ([_contentView preventsPanningInXAxis])
         adjustedContentOffset.x = start.x;
     if ([_contentView preventsPanningInYAxis])
         adjustedContentOffset.y = start.y;
+
+    if ((![_contentView preventsPanningInXAxis] && adjustedContentOffset.x != start.x)
+        || (![_contentView preventsPanningInYAxis] && adjustedContentOffset.y != start.y)) {
+        [_contentView cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
+    }
 
     return adjustedContentOffset;
 }

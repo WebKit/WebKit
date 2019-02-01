@@ -71,6 +71,7 @@ public:
     WebCore::ScrollingNodeID rootScrollingNodeID() const;
 
     const RemoteLayerTreeHost* layerTreeHost() const;
+    WebPageProxy& webPageProxy() const { return m_webPageProxy; }
 
     struct RequestedScrollInfo {
         bool requestsScrollPositionUpdate { };

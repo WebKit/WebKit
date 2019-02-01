@@ -67,6 +67,7 @@ public:
     void updateChildNodesAfterScroll(const WebCore::FloatPoint& scrollPosition);
 #if ENABLE(POINTER_EVENTS)
     Optional<TouchActionData> touchActionData() const;
+    void cancelPointersForGestureRecognizer(UIGestureRecognizer*);
 #endif
 
 private:

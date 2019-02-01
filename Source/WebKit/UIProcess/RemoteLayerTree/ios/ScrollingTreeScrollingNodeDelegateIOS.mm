@@ -43,6 +43,10 @@
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+#import "PageClient.h"
+#endif
+
 @implementation WKScrollingNodeScrollViewDelegate
 
 - (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate
@@ -141,8 +145,10 @@
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
 {
     auto touchActionData = _scrollingTreeNodeDelegate->touchActionData();
-    if (!touchActionData)
+    if (!touchActionData) {
+        [self cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
         return offset;
+    }
 
     auto touchActions = touchActionData->touchActions;
     if (touchActions == WebCore::TouchAction::Auto || touchActions == WebCore::TouchAction::Manipulation)
@@ -155,7 +161,22 @@
     if (!touchActions.contains(WebCore::TouchAction::PanY))
         adjustedContentOffset.y = start.y;
 
+    if ((touchActions.contains(WebCore::TouchAction::PanX) && adjustedContentOffset.x != start.x)
+        || (touchActions.contains(WebCore::TouchAction::PanY) && adjustedContentOffset.y != start.y)) {
+        [self cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
+    }
+
     return adjustedContentOffset;
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+    [self cancelPointersForGestureRecognizer:scrollView.pinchGestureRecognizer];
+}
+
+- (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+    _scrollingTreeNodeDelegate->cancelPointersForGestureRecognizer(gestureRecognizer);
 }
 #endif
 
@@ -344,6 +365,11 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(uns
 Optional<TouchActionData> ScrollingTreeScrollingNodeDelegateIOS::touchActionData() const
 {
     return downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy().touchActionDataForScrollNodeID(scrollingNode().scrollingNodeID());
+}
+
+void ScrollingTreeScrollingNodeDelegateIOS::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
+{
+    downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy().webPageProxy().pageClient().cancelPointersForGestureRecognizer(gestureRecognizer);
 }
 #endif
 

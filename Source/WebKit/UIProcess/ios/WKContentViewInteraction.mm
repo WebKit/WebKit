@@ -1146,6 +1146,22 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     return superDidResign;
 }
 
+#if ENABLE(POINTER_EVENTS)
+- (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+    // FIXME: <rdar://problem/47714562>
+    if (![_touchEventGestureRecognizer respondsToSelector:@selector(activeTouchesByIdentifier)])
+        return;
+
+    NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
+    for (NSNumber *touchIdentifier in activeTouches) {
+        UITouch *touch = [activeTouches objectForKey:touchIdentifier];
+        if ([touch.gestureRecognizers containsObject:gestureRecognizer])
+            _page->cancelPointer([touchIdentifier unsignedIntValue], WebCore::roundedIntPoint([touch locationInView:self]));
+    }
+}
+#endif
+
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     if (!_page->isValid())

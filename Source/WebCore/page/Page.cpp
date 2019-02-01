@@ -216,7 +216,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_userInputBridge(std::make_unique<UserInputBridge>(*this))
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageConfiguration.inspectorClient))
 #if ENABLE(POINTER_EVENTS)
-    , m_pointerCaptureController(std::make_unique<PointerCaptureController>())
+    , m_pointerCaptureController(std::make_unique<PointerCaptureController>(*this))
 #endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(std::make_unique<PointerLockController>(*this))

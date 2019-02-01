@@ -13,6 +13,7 @@
 'use strict';
 
 target_test((target, test) => {
+    target.style.touchAction = "none";
     const eventTracker = new EventTracker(target, ["pointerdown", "gotpointercapture", "pointermove", "pointerup", "lostpointercapture"]);
 
     const one = ui.finger();

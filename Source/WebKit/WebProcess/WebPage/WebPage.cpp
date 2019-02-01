@@ -190,6 +190,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/PointerCaptureController.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/Range.h>
@@ -2794,6 +2795,13 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
     bool handled = handleTouchEvent(touchEvent, m_page.get());
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
+}
+#endif
+
+#if ENABLE(POINTER_EVENTS)
+void WebPage::cancelPointer(int32_t pointerId, const WebCore::IntPoint& documentPoint)
+{
+    m_page->pointerCaptureController().cancelPointer(pointerId, documentPoint);
 }
 #endif
 

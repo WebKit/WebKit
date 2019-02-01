@@ -127,6 +127,10 @@ messages -> WebPage LegacyReceiver {
     TouchEvent(WebKit::WebTouchEvent event)
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+    CancelPointer(int32_t pointerId, WebCore::IntPoint documentPoint)
+#endif
+
 #if ENABLE(INPUT_TYPE_COLOR)
     DidEndColorPicker()
     DidChooseColor(WebCore::Color color)

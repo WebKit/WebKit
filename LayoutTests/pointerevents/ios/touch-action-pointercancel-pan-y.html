@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    document.body.style.width = "2000px";
+    document.body.style.height = "2000px";
+
+    target.style.touchAction = "pan-y";
+
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointermove", "pointerup", "pointercancel"]);
+
+    const one = ui.finger();
+    ui.sequence([
+        one.begin({ x: 150, y: 150 }),
+        one.move({ x: 150, y: 149 }),
+        one.move({ x: 150, y: 148 }),
+        one.move({ x: 150, y: 120 }),
+        one.move({ x: 150, y: 100 }),
+        one.end()
+    ]).then(() => {
+        eventTracker.assertMatchesEvents([
+            { type: "pointerdown" },
+            { type: "pointermove" },
+            { type: "pointermove" },
+            { type: "pointermove" },
+            { type: "pointercancel" }
+        ]);
+        test.done();
+    });
+}, "Testing that panning in the y-axis on an element with touch-action: pan-y triggers a pointercancel event.");
+
+</script>
+</body>
+</html>

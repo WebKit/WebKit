@@ -19,11 +19,13 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
     target.style.touchAction = "pan-y";
 
     ui.swipe({ x: 150, y: 150 }, { x: 50, y: 50 }).then(() => {
-        assert_equals(window.pageXOffset, 0, "The page was not scrolled in the x-axis.");
-        assert_not_equals(window.pageYOffset, 0, "The page was scrolled in the y-axis.");
-        test.done();
+        requestAnimationFrame(() => {
+            assert_equals(window.pageXOffset, 0, "The page was not scrolled in the x-axis.");
+            assert_not_equals(window.pageYOffset, 0, "The page was scrolled in the y-axis.");
+            test.done();
+        });
     });
-}, "Testing that setting touch-action: pan-x on an element prevents page scrolling in the x-axis.");
+}, "Testing that setting touch-action: pan-y on an element prevents page scrolling in the x-axis.");
 
 </script>
 </body>

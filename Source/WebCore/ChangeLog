@@ -1,3 +1,42 @@
+2019-02-01  Antoine Quint  <graouts@apple.com>
+
+        Dispatch pointercancel events when content is panned or zoomed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=193962
+        <rdar://problem/47629134>
+
+        Reviewed by Dean Jackson.
+
+        Expose two new methods on PointerCaptureController so that, given a pointer id, it can be established whether this pointer
+        has been cancelled, which is important because a cancelled pointer should no longer dispatch any further pointer events, and
+        to cancel a pointer.
+
+        Tests: pointerevents/ios/touch-action-pointercancel-pan-x.html
+               pointerevents/ios/touch-action-pointercancel-pan-y.html
+               pointerevents/ios/touch-action-pointercancel-pinch-zoom.html
+
+        * WebCore.xcodeproj/project.pbxproj: Make PointerCaptureController.h Private so that it can be imported from WebKit.
+        * dom/PointerEvent.h: Remove an unnecessary #if ENABLE(POINTER_EVENTS) since the entire file is already contained in one.
+        Then we add a new create() method that takes an event type, a pointer id and a pointer type (touch vs. pen) that we use
+        to create pointercancel events in PointerCaptureController::cancelPointer().
+        * page/Page.cpp:
+        (WebCore::Page::Page): Pass the Page as a parameter when creating the PointerCaptureController.
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::PointerCaptureController): Add a Page reference to the constructor since we'll need
+        the page to access its main frame's EventHandler to perform hit testing in case we do not have a capture target override
+        in cancelPointer().
+        (WebCore::PointerCaptureController::releasePointerCapture): Drive-by, remove the the implicit parameter since on iOS we
+        don't need to differentiate. We'll bring this back for the macOS work.
+        (WebCore::PointerCaptureController::hasCancelledPointerEventForIdentifier): New method we'll use when dispatching pointer
+        events to identify whether a pointer id has already been cancelled which will allow for _not_ dispatching any further
+        pointer events for this pointer id.
+        (WebCore::PointerCaptureController::pointerEventWillBeDispatched): Keep track of the pointer type so we can preserve it
+        when dispatching pointercancel events for a given pointer id.
+        (WebCore::PointerCaptureController::cancelPointer): Dispatch a pointercancel for the provided pointer id, using the capture
+        target override as the event's target, if there is one, and otherwise hit-testing at the provided location to figure out
+        what the target should be.
+        * page/PointerCaptureController.h: Switch the target overrides from Element* to RefPtr<Element> to ensure it may not be
+        deleted while we still need them. Existing code already ensures these get set to nullptr.
+
 2019-02-01  Jer Noble  <jer.noble@apple.com>
 
         Make the WebKit default for media source based on the WebCore default.

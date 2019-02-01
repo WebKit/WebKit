@@ -844,6 +844,13 @@ RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLaye
 }
 #endif
 
+#if ENABLE(POINTER_EVENTS)
+void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
+{
+    [m_contentView cancelPointersForGestureRecognizer:gestureRecognizer];
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
