@@ -1,3 +1,17 @@
+2019-01-31  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Remove unnecessary member from NetworkStorageSession.
+        https://bugs.webkit.org/show_bug.cgi?id=194137
+
+        Reviewed by Don Olmstead.
+
+        No new tests since there is no behavior change.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::context const): Deleted.
+
 2019-01-31  Jer Noble  <jer.noble@apple.com>
 
         NSInvalidArgumentException in [WebAVSampleBufferErrorListener observeValueForKeyPath:ofObject:change:context:]

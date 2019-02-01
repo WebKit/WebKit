@@ -58,9 +58,8 @@ static String defaultCookieJarPath()
 #endif
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
     : m_sessionID(sessionID)
-    , m_context(context)
     , m_cookieStorage(makeUniqueRef<CookieJarCurl>())
     , m_cookieDatabase(makeUniqueRef<CookieJarDB>(defaultCookieJarPath()))
 {
@@ -68,11 +67,6 @@ NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, Networkin
 
 NetworkStorageSession::~NetworkStorageSession()
 {
-}
-
-NetworkingContext* NetworkStorageSession::context() const
-{
-    return m_context.get();
 }
 
 void NetworkStorageSession::setCookieDatabase(UniqueRef<CookieJarDB>&& cookieDatabase)

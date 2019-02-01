@@ -54,13 +54,8 @@ WebCore::NetworkStorageSession* NetworkStorageSessionMap::storageSession(const P
 
 WebCore::NetworkStorageSession& NetworkStorageSessionMap::defaultStorageSession()
 {
-    if (!defaultNetworkStorageSession()) {
-#if USE(CURL)
-        defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), nullptr);
-#else
+    if (!defaultNetworkStorageSession())
         defaultNetworkStorageSession() = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
-#endif
-    }
     return *defaultNetworkStorageSession();
 }
 
@@ -109,7 +104,7 @@ void NetworkStorageSessionMap::ensureSession(const PAL::SessionID& sessionID, co
 
 #elif USE(CURL)
     globalSessionMap().ensure(sessionID, [sessionID] {
-        return std::make_unique<WebCore::NetworkStorageSession>(sessionID, nullptr);
+        return std::make_unique<WebCore::NetworkStorageSession>(sessionID);
     });
 #endif
 }

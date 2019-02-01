@@ -105,7 +105,7 @@ public:
     void getCredentialFromPersistentStorage(const ProtectionSpace&, GCancellable*, Function<void (Credential&&)>&& completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #elif USE(CURL)
-    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, NetworkingContext*);
+    WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID);
     ~NetworkStorageSession();
 
     const CookieJarCurl& cookieStorage() const { return m_cookieStorage; };
@@ -113,8 +113,6 @@ public:
     WEBCORE_EXPORT void setCookieDatabase(UniqueRef<CookieJarDB>&&);
 
     WEBCORE_EXPORT void setProxySettings(CurlProxySettings&&);
-
-    NetworkingContext* context() const;
 #else
     WEBCORE_EXPORT NetworkStorageSession(PAL::SessionID, NetworkingContext*);
     ~NetworkStorageSession();
@@ -169,8 +167,6 @@ private:
     mutable std::unique_ptr<SoupNetworkSession> m_session;
     Function<void ()> m_cookieObserverHandler;
 #elif USE(CURL)
-    RefPtr<NetworkingContext> m_context;
-
     UniqueRef<CookieJarCurl> m_cookieStorage;
     mutable UniqueRef<CookieJarDB> m_cookieDatabase;
 #else

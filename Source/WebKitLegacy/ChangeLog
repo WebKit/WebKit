@@ -1,5 +1,16 @@
 2019-01-31  Takashi Komori  <Takashi.Komori@sony.com>
 
+        [Curl] Remove unnecessary member from NetworkStorageSession.
+        https://bugs.webkit.org/show_bug.cgi?id=194137
+
+        Reviewed by Don Olmstead.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::defaultStorageSession):
+        (NetworkStorageSessionMap::ensureSession):
+
+2019-01-31  Takashi Komori  <Takashi.Komori@sony.com>
+
         [Curl] Fix DRT crash related to private browsing.
         https://bugs.webkit.org/show_bug.cgi?id=193816
 
