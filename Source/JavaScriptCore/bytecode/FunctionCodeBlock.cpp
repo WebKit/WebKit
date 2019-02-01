@@ -37,9 +37,4 @@ const ClassInfo FunctionCodeBlock::s_info = {
     CREATE_METHOD_TABLE(FunctionCodeBlock)
 };
 
-void FunctionCodeBlock::destroy(JSCell* cell)
-{
-    static_cast<FunctionCodeBlock*>(cell)->~FunctionCodeBlock();
-}
-
 } // namespace JSC

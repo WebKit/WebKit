@@ -191,6 +191,7 @@ public:
 
     static size_t estimatedSize(JSCell*, VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
+    static void destroy(JSCell*);
     void visitChildren(SlotVisitor&);
     void finalizeUnconditionally(VM&);
 

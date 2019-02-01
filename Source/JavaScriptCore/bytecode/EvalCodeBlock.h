@@ -41,7 +41,7 @@ public:
     template<typename>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.evalCodeBlockSpace.space;
+        return &vm.codeBlockSpace.space;
     }
 
     static EvalCodeBlock* create(VM* vm, CopyParsedBlockTag, EvalCodeBlock& other)
@@ -67,11 +67,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(CodeBlockType, StructureFlags), info());
     }
 
-    const Identifier& variable(unsigned index) { return unlinkedEvalCodeBlock()->variable(index); }
-    unsigned numVariables() { return unlinkedEvalCodeBlock()->numVariables(); }
-    const Identifier& functionHoistingCandidate(unsigned index) { return unlinkedEvalCodeBlock()->functionHoistingCandidate(index); }
-    unsigned numFunctionHoistingCandidates() { return unlinkedEvalCodeBlock()->numFunctionHoistingCandidates(); }
-    
+    UnlinkedEvalCodeBlock* unlinkedEvalCodeBlock() const { return jsCast<UnlinkedEvalCodeBlock*>(unlinkedCodeBlock()); }
+
 private:
     EvalCodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, EvalCodeBlock& other)
         : GlobalCodeBlock(vm, structure, CopyParsedBlock, other)
@@ -83,11 +80,7 @@ private:
         : GlobalCodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope, WTFMove(sourceProvider), 0, 1)
     {
     }
-    
-    static void destroy(JSCell*);
-
-private:
-    UnlinkedEvalCodeBlock* unlinkedEvalCodeBlock() const { return jsCast<UnlinkedEvalCodeBlock*>(unlinkedCodeBlock()); }
 };
+static_assert(sizeof(EvalCodeBlock) == sizeof(CodeBlock), "Subclasses of CodeBlock should be the same size to share IsoSubspace");
 
 } // namespace JSC

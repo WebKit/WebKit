@@ -1,5 +1,47 @@
 2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Unify CodeBlock IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=194167
+
+        Reviewed by Saam Barati.
+
+        When we move CodeBlock into its IsoSubspace, we create IsoSubspaces for each subclass of CodeBlock.
+        But this is not necessary since,
+
+        1. They do not override the classInfo methods.
+        2. sizeof(ProgramCodeBlock etc.) == sizeof(CodeBlock) since subclasses adds no additional fields.
+
+        Creating IsoSubspace for each subclass is costly in terms of memory. Especially, IsoSubspace for
+        ProgramCodeBlock is. We typically create only one ProgramCodeBlock, and it means the rest of the
+        MarkedBlock (16KB - sizeof(footer) - sizeof(ProgramCodeBlock)) is just wasted.
+
+        This patch unifies these IsoSubspaces into one.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::destroy):
+        * bytecode/CodeBlock.h:
+        * bytecode/EvalCodeBlock.cpp:
+        (JSC::EvalCodeBlock::destroy): Deleted.
+        * bytecode/EvalCodeBlock.h: We drop some utility functions in EvalCodeBlock and use UnlinkedEvalCodeBlock's one directly.
+        * bytecode/FunctionCodeBlock.cpp:
+        (JSC::FunctionCodeBlock::destroy): Deleted.
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/GlobalCodeBlock.h:
+        * bytecode/ModuleProgramCodeBlock.cpp:
+        (JSC::ModuleProgramCodeBlock::destroy): Deleted.
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.cpp:
+        (JSC::ProgramCodeBlock::destroy): Deleted.
+        * bytecode/ProgramCodeBlock.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::forEachCodeBlockSpace):
+
+2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, follow-up after r240859
         https://bugs.webkit.org/show_bug.cgi?id=194145
 

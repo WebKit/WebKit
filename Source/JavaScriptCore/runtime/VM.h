@@ -418,20 +418,14 @@ public:
         }
     };
     
-    SpaceAndFinalizerSet evalCodeBlockSpace;
-    SpaceAndFinalizerSet functionCodeBlockSpace;
-    SpaceAndFinalizerSet moduleProgramCodeBlockSpace;
-    SpaceAndFinalizerSet programCodeBlockSpace;
+    SpaceAndFinalizerSet codeBlockSpace;
 
     template<typename Func>
     void forEachCodeBlockSpace(const Func& func)
     {
         // This should not include webAssemblyCodeBlockSpace because this is about subsclasses of
         // JSC::CodeBlock.
-        func(evalCodeBlockSpace);
-        func(functionCodeBlockSpace);
-        func(moduleProgramCodeBlockSpace);
-        func(programCodeBlockSpace);
+        func(codeBlockSpace);
     }
 
     struct ScriptExecutableSpaceAndSet {

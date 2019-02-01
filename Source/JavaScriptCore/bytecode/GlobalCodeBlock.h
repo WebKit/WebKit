@@ -50,5 +50,6 @@ protected:
     {
     }
 };
+static_assert(sizeof(GlobalCodeBlock) == sizeof(CodeBlock), "Subclasses of CodeBlock should be the same size to share IsoSubspace");
 
 } // namespace JSC

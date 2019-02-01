@@ -42,7 +42,7 @@ public:
     template<typename>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.programCodeBlockSpace.space;
+        return &vm.codeBlockSpace.space;
     }
 
     static ProgramCodeBlock* create(VM* vm, CopyParsedBlockTag, ProgramCodeBlock& other)
@@ -79,8 +79,7 @@ private:
         : GlobalCodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope, WTFMove(sourceProvider), 0, firstLineColumnOffset)
     {
     }
-
-    static void destroy(JSCell*);
 };
+static_assert(sizeof(ProgramCodeBlock) == sizeof(CodeBlock), "Subclasses of CodeBlock should be the same size to share IsoSubspace");
 
 } // namespace JSC

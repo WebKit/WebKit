@@ -1385,6 +1385,11 @@ void CodeBlock::finalizeUnconditionally(VM&)
     VM::SpaceAndFinalizerSet::finalizerSetFor(*subspace()).remove(this);
 }
 
+void CodeBlock::destroy(JSCell* cell)
+{
+    static_cast<CodeBlock*>(cell)->~CodeBlock();
+}
+
 void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
 {
 #if ENABLE(JIT)
