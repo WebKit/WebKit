@@ -3365,6 +3365,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     Settings& settings = m_page->settings();
 
+    if (!settings.acceleratedCompositingEnabled()) {
+        RELEASE_LOG_IF_ALLOWED("%p - WebPage - acceleratedCompositingEnabled setting was false. WebKit cannot function in this mode; changing setting to true", this);
+        settings.setAcceleratedCompositingEnabled(true);
+    }
+
     bool requiresUserGestureForMedia = store.getBoolValueForKey(WebPreferencesKey::requiresUserGestureForMediaPlaybackKey());
     settings.setVideoPlaybackRequiresUserGesture(requiresUserGestureForMedia || store.getBoolValueForKey(WebPreferencesKey::requiresUserGestureForVideoPlaybackKey()));
     settings.setAudioPlaybackRequiresUserGesture(requiresUserGestureForMedia || store.getBoolValueForKey(WebPreferencesKey::requiresUserGestureForAudioPlaybackKey()));
