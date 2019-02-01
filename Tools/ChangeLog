@@ -1,5 +1,15 @@
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Show test results in minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=194150
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.show_results_html_file):
+
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] MiniBrowser: add ky bindings for back/forward navigation
         https://bugs.webkit.org/show_bug.cgi?id=194151
 
