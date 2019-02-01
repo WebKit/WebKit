@@ -1,3 +1,15 @@
+2019-02-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Fix statically positioned replaced out-of-flow horizontal geometry
+        https://bugs.webkit.org/show_bug.cgi?id=194163
+
+        Reviewed by Simon Fraser.
+
+        Fix a typo.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+
 2019-02-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html

@@ -711,7 +711,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
 
     // For out-of-flow elements the containing block is formed by the padding edge of the ancestor.
     // At this point the non-statically positioned value is in the coordinate system of the padding box. Let's convert it to border box coordinate system.
-    if (isStaticallyPositioned) {
+    if (!isStaticallyPositioned) {
         auto containingBlockPaddingVerticalEdge = containingBlockDisplayBox.paddingBoxLeft();
         *left += containingBlockPaddingVerticalEdge;
         *right += containingBlockPaddingVerticalEdge;
