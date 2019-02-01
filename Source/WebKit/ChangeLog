@@ -1,3 +1,12 @@
+2019-01-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r240805
+
+        This patch reverts the BlockPtr change since it breaks iOS builds.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryInterceptNavigation):
+
 2019-01-31  Chris Dumez  <cdumez@apple.com>
 
         Page zoom level is lost after a process swap or a crash

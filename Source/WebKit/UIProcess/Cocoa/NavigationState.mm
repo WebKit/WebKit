@@ -479,16 +479,20 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 {
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
-        auto callback = makeBlockPtr([request = navigationAction->request().isolatedCopy(), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *) mutable {
-            RunLoop::main().dispatch([request = request.isolatedCopy(), weakPage, completionHandler = WTFMove(completionHandler), success]() mutable {
-                if (!success && weakPage) {
-                    tryOptimizingLoad(request, *weakPage, WTFMove(completionHandler));
-                    return;
-                }
-                completionHandler(success);
-            });
+        auto* localCompletionHandler = new WTF::Function<void (bool)>([request = navigationAction->request().isolatedCopy(), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+            ASSERT(RunLoop::isMain());
+            if (!success && weakPage) {
+                tryOptimizingLoad(request, *weakPage, WTFMove(completionHandler));
+                return;
+            }
+            completionHandler(success);
         });
-        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:callback.get()];
+        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
+            dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
+                (*localCompletionHandler)(success);
+                delete localCompletionHandler;
+            });
+        }];
         return;
     }
 #endif
