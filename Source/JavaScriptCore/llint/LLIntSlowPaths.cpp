@@ -1448,8 +1448,6 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
             NativeCallFrameTracer tracer(&vm, execCallee);
             execCallee->setCallee(asObject(callee));
             vm.hostCallReturnValue = JSValue::decode(callData.native.function(execCallee));
-            
-            PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
             LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
         }
         
@@ -1470,8 +1468,6 @@ static SlowPathReturnType handleHostCall(ExecState* execCallee, JSValue callee, 
         NativeCallFrameTracer tracer(&vm, execCallee);
         execCallee->setCallee(asObject(callee));
         vm.hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
-
-        PoisonedMasmPtr::assertIsNotPoisoned(LLInt::getCodePtr(getHostCallReturnValue));
         LLINT_CALL_RETURN(execCallee, execCallee, LLInt::getCodePtr(getHostCallReturnValue), CFunctionPtrTag);
     }
     
@@ -1508,7 +1504,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, CodeSpecializationKin
             }
 
             assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
-            PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
             LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), JSEntryPtrTag);
         }
         RELEASE_AND_RETURN(throwScope, handleHostCall(execCallee, calleeAsValue, kind));
@@ -1559,7 +1554,6 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, CodeSpecializationKin
     }
 
     assertIsTaggedWith(codePtr.executableAddress(), JSEntryPtrTag);
-    PoisonedMasmPtr::assertIsNotPoisoned(codePtr.executableAddress());
     LLINT_CALL_RETURN(exec, execCallee, codePtr.executableAddress(), JSEntryPtrTag);
 }
 

@@ -305,7 +305,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_numBreakpoints(0)
     , m_unlinkedCode(*other.vm(), this, other.m_unlinkedCode.get())
     , m_ownerExecutable(*other.vm(), this, other.m_ownerExecutable.get())
-    , m_poisonedVM(other.m_poisonedVM)
+    , m_vm(other.m_vm)
     , m_instructions(other.m_instructions)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
     , m_instructionCount(other.m_instructionCount)
@@ -371,7 +371,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_numBreakpoints(0)
     , m_unlinkedCode(*vm, this, unlinkedCodeBlock)
     , m_ownerExecutable(*vm, this, ownerExecutable)
-    , m_poisonedVM(vm)
+    , m_vm(vm)
     , m_instructions(&unlinkedCodeBlock->instructions())
     , m_instructionsRawPointer(m_instructions->rawPointer())
     , m_thisRegister(unlinkedCodeBlock->thisRegister())
@@ -834,7 +834,7 @@ void CodeBlock::finishCreationCommon(VM& vm)
 
 CodeBlock::~CodeBlock()
 {
-    VM& vm = *m_poisonedVM;
+    VM& vm = *m_vm;
 
     vm.heap.codeBlockSet().remove(this);
     
@@ -894,7 +894,7 @@ void CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
 
 void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
-    VM& vm = *m_poisonedVM;
+    VM& vm = *m_vm;
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
     ExecState* exec = globalObject->globalExec();
@@ -1087,7 +1087,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
 {
     UNUSED_PARAM(visitor);
 
-    VM& vm = *m_poisonedVM;
+    VM& vm = *m_vm;
 
     if (jitType() == JITCode::InterpreterThunk) {
         const Vector<InstructionStream::Offset>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
@@ -1203,7 +1203,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
 
 void CodeBlock::finalizeLLIntInlineCaches()
 {
-    VM& vm = *m_poisonedVM;
+    VM& vm = *m_vm;
     const Vector<InstructionStream::Offset>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
 
     auto handleGetPutFromScope = [](auto& metadata) {
@@ -1921,7 +1921,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
 #endif // ENABLE(DFG_JIT)
 
-    VM& vm = *m_poisonedVM;
+    VM& vm = *m_vm;
     DeferGCForAWhile deferGC(*heap());
     
     // We want to accomplish two things here:
@@ -2762,8 +2762,8 @@ int CodeBlock::stackPointerOffset()
 
 size_t CodeBlock::predictedMachineCodeSize()
 {
-    VM* vm = m_poisonedVM.unpoisoned();
-    // This will be called from CodeBlock::CodeBlock before either m_poisonedVM or the
+    VM* vm = m_vm;
+    // This will be called from CodeBlock::CodeBlock before either m_vm or the
     // instructions have been initialized. It's OK to return 0 because what will really
     // matter is the recomputation of this value when the slow path is triggered.
     if (!vm)

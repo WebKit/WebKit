@@ -2411,8 +2411,7 @@ end)
 
 llintOpWithMetadata(op_profile_type, OpProfileType, macro (size, get, dispatch, metadata, return)
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(_g_CodeBlockPoison, t1, t2)
+    loadp CodeBlock::m_vm[t1], t1
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
 

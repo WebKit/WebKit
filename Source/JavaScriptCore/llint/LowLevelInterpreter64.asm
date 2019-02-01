@@ -80,7 +80,6 @@ macro dispatchAfterCall(size, opcodeStruct, dispatch)
     loadi ArgumentCount + TagOffset[cfr], PC
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructionsRawPointer[PB], PB
-    unpoison(_g_CodeBlockPoison, PB, t1)
     get(size, opcodeStruct, m_dst, t1)
     storeq r0, [cfr, t1, 8]
     metadata(size, opcodeStruct, t2, t1)
@@ -531,17 +530,16 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
         end)
 end
 
-macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scratch2)
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
     loadp CodeBlock[cfr], scratch
-    loadp CodeBlock::m_poisonedVM[scratch], scratch
-    unpoison(_g_CodeBlockPoison, scratch, scratch2)
+    loadp CodeBlock::m_vm[scratch], scratch
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
     loadp [scratch, structureIDThenStructure, PtrSize], structureIDThenStructure
 end
 
-macro loadStructureWithScratch(cell, structure, scratch, scratch2)
+macro loadStructureWithScratch(cell, structure, scratch)
     loadi JSCell::m_structureID[cell], structure
-    structureIDToStructureWithScratch(structure, scratch, scratch2)
+    structureIDToStructureWithScratch(structure, scratch)
 end
 
 # Entrypoints into the interpreter.
@@ -629,7 +627,6 @@ macro functionArityCheck(doneLabel, slowPath)
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_instructionsRawPointer[t1], PB
-    unpoison(_g_CodeBlockPoison, PB, t2)
     move 0, PC
     jmp doneLabel
 end
@@ -697,7 +694,7 @@ llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, 
     loadq [cfr, t0, 8], t0
     btqnz t0, tagMask, .opToThisSlow
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    loadStructureWithScratch(t0, t1, t2, t3)
+    loadStructureWithScratch(t0, t1, t2)
     metadata(t2, t3)
     loadp OpToThis::Metadata::m_cachedStructure[t2], t2
     bpneq t1, t2, .opToThisSlow
@@ -767,7 +764,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         move 0, t0
         jmp .done
     .masqueradesAsUndefined:
-        loadStructureWithScratch(t0, t2, t1, t3)
+        loadStructureWithScratch(t0, t2, t1)
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
         cpeq Structure::m_globalObject[t2], t0, t0
@@ -1185,7 +1182,7 @@ llintOpWithReturn(op_is_undefined, OpIsUndefined, macro (size, get, dispatch, re
     move ValueFalse, t1
     return(t1)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1, t5)
+    loadStructureWithScratch(t0, t3, t1)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
@@ -1356,7 +1353,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp OpPutById::Metadata::m_structureChain[t5], t3
     btpz t3, .opPutByIdTransitionDirect
 
-    structureIDToStructureWithScratch(t2, t1, t3)
+    structureIDToStructureWithScratch(t2, t1)
 
     # reload the StructureChain since we used t3 as a scratch above
     loadp OpPutById::Metadata::m_structureChain[t5], t3
@@ -1694,7 +1691,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         assertNotConstant(size, t0)
         loadq [cfr, t0, 8], t0
         btqnz t0, tagMask, .immediate
-        loadStructureWithScratch(t0, t2, t1, t3)
+        loadStructureWithScratch(t0, t2, t1)
         cellHandler(t2, JSCell::m_flags[t0], .target)
         dispatch()
 
@@ -1934,15 +1931,8 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, prologue)
         storei PC, ArgumentCount + TagOffset[cfr]
         storei t2, ArgumentCount + PayloadOffset[t3]
         move t3, sp
-        if POISON
-            loadp _g_JITCodePoison, t2
-            xorp %opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], t2
-            prepareCall(t2, t1, t3, t4, JSEntryPtrTag)
-            callTargetFunction(size, opcodeStruct, dispatch, t2, JSEntryPtrTag)
-        else
-            prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
-            callTargetFunction(size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], JSEntryPtrTag)
-        end
+        prepareCall(%opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], t2, t3, t4, JSEntryPtrTag)
+        callTargetFunction(size, opcodeStruct, dispatch, %opcodeStruct%::Metadata::m_callLinkInfo.machineCodeTarget[t5], JSEntryPtrTag)
 
     .opCallSlow:
         slowPathForCall(size, opcodeStruct, dispatch, slowPath, prepareCall)
@@ -1988,7 +1978,6 @@ commonOp(llint_op_catch, macro() end, macro (size)
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_metadata[PB], metadataTable
     loadp CodeBlock::m_instructionsRawPointer[PB], PB
-    unpoison(_g_CodeBlockPoison, PB, t2)
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
 
@@ -2065,21 +2054,16 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     move cfr, a0
     loadp Callee[cfr], t1
     loadp JSFunction::m_executable[t1], t1
-    unpoison(_g_JSFunctionPoison, t1, t2)
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        loadp _g_NativeCodePoison, t2
-        xorp executableOffsetToFunction[t1], t2
-        cloopCallNative t2
+        cloopCallNative executableOffsetToFunction[t1]
     else
         if X86_64_WIN
             subp 32, sp
             call executableOffsetToFunction[t1], JSEntryPtrTag
             addp 32, sp
         else
-            loadp _g_NativeCodePoison, t2
-            xorp executableOffsetToFunction[t1], t2
-            call t2, JSEntryPtrTag
+            call executableOffsetToFunction[t1], JSEntryPtrTag
         end
     end
 
@@ -2111,18 +2095,14 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     loadp Callee[cfr], t1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        loadp _g_NativeCodePoison, t2
-        xorp offsetOfFunction[t1], t2
-        cloopCallNative t2
+        cloopCallNative offsetOfFunction[t1]
     else
         if X86_64_WIN
             subp 32, sp
             call offsetOfFunction[t1], JSEntryPtrTag
             addp 32, sp
         else
-            loadp _g_NativeCodePoison, t2
-            xorp offsetOfFunction[t1], t2
-            call t2, JSEntryPtrTag
+            call offsetOfFunction[t1], JSEntryPtrTag
         end
     end
 
@@ -2234,7 +2214,7 @@ end)
 macro loadWithStructureCheck(opcodeStruct, get, slowPath)
     get(m_scope, t0)
     loadq [cfr, t0, 8], t0
-    loadStructureWithScratch(t0, t2, t1, t3)
+    loadStructureWithScratch(t0, t2, t1)
     loadp %opcodeStruct%::Metadata::m_structure[t5], t1
     bpneq t2, t1, slowPath
 end
@@ -2471,8 +2451,7 @@ end)
 
 llintOpWithMetadata(op_profile_type, OpProfileType, macro (size, get, dispatch, metadata, return)
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(_g_CodeBlockPoison, t1, t3)
+    loadp CodeBlock::m_vm[t1], t1
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
     # t2 is holding the pointer to the current log entry.

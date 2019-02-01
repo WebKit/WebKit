@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,6 @@
 #include "JITCode.h"
 #include "JITCodeMap.h"
 #include "JITMathICForwards.h"
-#include "JSCPoison.h"
 #include "JSCast.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
@@ -379,7 +378,7 @@ public:
     
     ExecutableToCodeBlockEdge* ownerEdge() const { return m_ownerEdge.get(); }
 
-    VM* vm() const { return m_poisonedVM.unpoisoned(); }
+    VM* vm() const { return m_vm; }
 
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
     VirtualRegister thisRegister() const { return m_thisRegister; }
@@ -521,7 +520,7 @@ public:
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().set(*m_poisonedVM, this, v);
+        m_constantRegisters.last().set(*m_vm, this, v);
         m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
         return result;
     }
@@ -547,7 +546,7 @@ public:
     const Vector<BitVector>& bitVectors() const { return m_unlinkedCode->bitVectors(); }
     const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 
-    Heap* heap() const { return &m_poisonedVM->heap; }
+    Heap* heap() const { return &m_vm->heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
     JSGlobalObject* globalObjectFor(CodeOrigin);
@@ -897,7 +896,7 @@ private:
     void replaceConstant(int index, JSValue value)
     {
         ASSERT(isConstantRegisterIndex(index) && static_cast<size_t>(index - FirstConstantRegisterIndex) < m_constantRegisters.size());
-        m_constantRegisters[index - FirstConstantRegisterIndex].set(*m_poisonedVM, this, value);
+        m_constantRegisters[index - FirstConstantRegisterIndex].set(*m_vm, this, value);
     }
 
     bool shouldVisitStrongly(const ConcurrentJSLocker&);
@@ -945,7 +944,7 @@ private:
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     WriteBarrier<ExecutableBase> m_ownerExecutable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
-    Poisoned<CodeBlockPoison, VM*> m_poisonedVM;
+    VM* m_vm;
 
     const InstructionStream* m_instructions;
     const void* m_instructionsRawPointer { nullptr };
@@ -954,24 +953,24 @@ private:
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
 
-    PoisonedRefPtr<CodeBlockPoison, SourceProvider> m_source;
+    RefPtr<SourceProvider> m_source;
     unsigned m_sourceOffset;
     unsigned m_firstLineColumnOffset;
 
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
-    PoisonedRefPtr<CodeBlockPoison, JITCode> m_jitCode;
+    RefPtr<JITCode> m_jitCode;
 #if !ENABLE(C_LOOP)
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
 #endif
 #if ENABLE(JIT)
-    PoisonedBag<CodeBlockPoison, StructureStubInfo> m_stubInfos;
-    PoisonedBag<CodeBlockPoison, JITAddIC> m_addICs;
-    PoisonedBag<CodeBlockPoison, JITMulIC> m_mulICs;
-    PoisonedBag<CodeBlockPoison, JITNegIC> m_negICs;
-    PoisonedBag<CodeBlockPoison, JITSubIC> m_subICs;
-    PoisonedBag<CodeBlockPoison, ByValInfo> m_byValInfos;
-    PoisonedBag<CodeBlockPoison, CallLinkInfo> m_callLinkInfos;
+    Bag<StructureStubInfo> m_stubInfos;
+    Bag<JITAddIC> m_addICs;
+    Bag<JITMulIC> m_mulICs;
+    Bag<JITNegIC> m_negICs;
+    Bag<JITSubIC> m_subICs;
+    Bag<ByValInfo> m_byValInfos;
+    Bag<CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
