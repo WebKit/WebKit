@@ -1802,16 +1802,21 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         if (!player()->keyNeeded(initData.ptr()))
             return false;
 #endif
-        m_keyURIToRequestMap.set(keyURI, avRequest);
+
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance)
-            return false;
+        if (m_cdmInstance) {
+            avRequest.contentInformationRequest.contentType = AVStreamingKeyDeliveryContentKeyType;
+            [avRequest finishLoading];
+            return true;
+        }
 
         RetainPtr<NSData> keyURIData = [keyURI dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
         m_keyID = SharedBuffer::create(keyURIData.get());
         player()->initializationDataEncountered("skd"_s, m_keyID->tryCreateArrayBuffer());
         setWaitingForKey(true);
 #endif
+        m_keyURIToRequestMap.set(keyURI, avRequest);
+
         return true;
     }
 

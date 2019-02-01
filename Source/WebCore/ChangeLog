@@ -1,3 +1,16 @@
+2019-01-31  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa][EME] AirPlaying a FairPlay-protected HLS stream fails to decrypt
+        https://bugs.webkit.org/show_bug.cgi?id=194114
+
+        Reviewed by Eric Carlson.
+
+        The AVAssetResourceLoaderDelegate must explicitly... delegate responsibility for FairPlay key
+        requests to the AVContentKeySession.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+
 2019-01-31  Megan Gardner  <megan_gardner@apple.com>
 
         Don't insert spaces at the beginning of a newline when using smart-copy-paste
