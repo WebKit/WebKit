@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// ColumnChart creates a single filled line chart.
+// ColumnChart creates a chart filled with singular columns.
 //
-// Initialize the chart with a size. You can then include a new bar
-// in the bar chart by providing an (x, y, w, h) via `addBar`.
+// Initialize the chart with a size. You can then include a new column
+// in the column chart by providing an (x, y, w, h) via `addColumn`.
 //
 // SVG:
 //
@@ -36,6 +36,7 @@
 //      <svg width="800" height="75" viewbox="0 0 800 75">
 //          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
 //          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
+//          ...
 //      </svg>
 //  </div>
 
@@ -44,18 +45,17 @@ WI.ColumnChart = class ColumnChart
     constructor(size)
     {
         this._element = document.createElement("div");
-        this._element.classList.add("bar-chart");
+        this._element.classList.add("column-chart");
 
         this._svgElement = this._element.appendChild(createSVGElement("svg"));
 
-        this._bars = [];
+        this._columns = [];
         this.size = size;
     }
 
     // Public
 
     get element() { return this._element; }
-    get bars() { return this._bars; }
 
     get size()
     {
@@ -71,14 +71,14 @@ WI.ColumnChart = class ColumnChart
         this._svgElement.setAttribute("viewbox", `0 0 ${size.width} ${size.height}`);
     }
 
-    addBar(x, y, width, height)
+    addColumn(x, y, width, height)
     {
-        this._bars.push({x, y, width, height});
+        this._columns.push({x, y, width, height});
     }
 
     clear()
     {
-        this._bars = [];
+        this._columns = [];
     }
 
     needsLayout()
@@ -98,7 +98,7 @@ WI.ColumnChart = class ColumnChart
 
         this._svgElement.removeChildren();
 
-        for (let {x, y, width, height} of this._bars) {
+        for (let {x, y, width, height} of this._columns) {
             let rect = this._svgElement.appendChild(createSVGElement("rect"));
             rect.setAttribute("width", width);
             rect.setAttribute("height", height);

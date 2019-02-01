@@ -116,7 +116,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             let h = Math.max(minimumDisplayHeight, yScale(record.usage));
             let x = xScale(record.startTime - (samplingRatePerSecond / 2));
             let y = height - h;
-            this._chart.addBar(x, y, w, h);
+            this._chart.addColumn(x, y, w, h);
         }
 
         this._chart.updateLayout();

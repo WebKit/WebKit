@@ -60,15 +60,7 @@ WI.StackedLineChart = class StackedLineChart
 
     // Public
 
-    get element()
-    {
-        return this._element;
-    }
-
-    get points()
-    {
-        return this._points;
-    }
+    get element() { return this._element; }
 
     get size()
     {

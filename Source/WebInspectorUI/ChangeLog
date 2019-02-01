@@ -1,3 +1,32 @@
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve API and documentation of ColumnChart
+        https://bugs.webkit.org/show_bug.cgi?id=193982
+
+        Reviewed by Devin Rousso.
+
+        This used to be named "BarChart". Convert remaining instances
+        of "bar" to "column" and clean up related things.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (body[dir=rtl] .timeline-overview-graph.cpu > .column-chart):
+        (.timeline-overview-graph.cpu > .column-chart > svg > rect):
+        (body[dir=rtl] .timeline-overview-graph.cpu > .bar-chart): Deleted.
+        (.timeline-overview-graph.cpu > .bar-chart > svg > rect): Deleted.
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/ColumnChart.js:
+        (WI.ColumnChart):
+        (WI.ColumnChart.prototype.get columns):
+        (WI.ColumnChart.prototype.addColumn):
+        (WI.ColumnChart.prototype.clear):
+        (WI.ColumnChart.prototype.updateLayout):
+        (WI.ColumnChart.prototype.get bars): Deleted.
+        (WI.ColumnChart.prototype.addBar): Deleted.
+        * UserInterface/Views/StackedLineChart.js:
+        (WI.StackedLineChart.prototype.get element):
+        (WI.StackedLineChart.prototype.get points):
+
 2019-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline time range selection sometimes shows 0.000, should be just 0

@@ -67,11 +67,11 @@ body[dir=rtl] .timeline-overview-graph.cpu > .legend {
     }
 }
 
-body[dir=rtl] .timeline-overview-graph.cpu > .bar-chart {
+body[dir=rtl] .timeline-overview-graph.cpu > .column-chart {
     transform: scaleX(-1);
 }
 
-.timeline-overview-graph.cpu > .bar-chart > svg > rect {
+.timeline-overview-graph.cpu > .column-chart > svg > rect {
     stroke: var(--cpu-stroke-color);
     fill: var(--cpu-fill-color);
 }
