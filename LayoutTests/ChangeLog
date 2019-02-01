@@ -1,5 +1,16 @@
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        ComplexText: Test fast/text/word-space-nbsp.html fails when using complex text path
+        https://bugs.webkit.org/show_bug.cgi?id=193279
+
+        Reviewed by Michael Catanzaro.
+
+        Remove test expectation.
+
+        * platform/gtk/TestExpectations:
+
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed WPE gardening. Remove duplicated expectations.
 
         Remove the platform specific expectations that match the generic ones.

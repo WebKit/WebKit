@@ -3681,7 +3681,6 @@ webkit.org/b/193627 editing/spelling/spelling-dots-position.html [ ImageOnlyFail
 
 webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
 webkit.org/b/193628 fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
-webkit.org/b/193628 fast/text/word-space-nbsp.html [ ImageOnlyFailure ]
 webkit.org/b/193628 imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
 webkit.org/b/193628 imported/blink/fast/text/wide-preformatted.html [ ImageOnlyFailure ]
 webkit.org/b/193628 imported/blink/fast/text/word-spacing-nbsp.html [ ImageOnlyFailure ]

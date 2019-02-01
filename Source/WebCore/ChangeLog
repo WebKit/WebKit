@@ -1,3 +1,15 @@
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ComplexText: Test fast/text/word-space-nbsp.html fails when using complex text path
+        https://bugs.webkit.org/show_bug.cgi?id=193279
+
+        Reviewed by Michael Catanzaro.
+
+        The fix applied in r135884 to WidthIterator should also be applied to ComplexTextController.
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adjust replaced element's intrinsic ratio
