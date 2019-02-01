@@ -1,3 +1,15 @@
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] MiniBrowser: use g_file_new_for_commandline_arg
+        https://bugs.webkit.org/show_bug.cgi?id=194146
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        It allows to open relative paths.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2019-01-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update flakiness dashboard configuration after recent queue changes

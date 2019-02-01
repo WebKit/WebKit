@@ -195,9 +195,13 @@ int main(int argc, char *argv[])
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    if (uriArguments)
-        webkit_web_view_load_uri(webView, uriArguments[0]);
-    else if (!automationMode)
+    if (uriArguments) {
+        GFile* file = g_file_new_for_commandline_arg(uriArguments[0]);
+        char* url = g_file_get_uri(file);
+        g_object_unref(file);
+        webkit_web_view_load_uri(webView, url);
+        g_free(url);
+    } else if (!automationMode)
         webkit_web_view_load_uri(webView, "https://wpewebkit.org");
 
     g_main_loop_run(loop);
