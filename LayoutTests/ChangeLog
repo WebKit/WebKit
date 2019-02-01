@@ -1,3 +1,31 @@
+2019-02-01  Megan Gardner  <megan_gardner@apple.com>
+
+        Rewrite and rebaseline smart copy paste tests to work on iOS and MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=194175
+
+        Reviewed by Megan Gardner.
+        Patch by Ryosuke Niwa.
+
+        Using the functions committed in 194070 Ryosuke wrote, make the
+        smart copy paste tests run on both iOS and MacOS. 
+        These tests will be turned on in 193786.
+
+        * editing/editing.js:
+        (runEditingTestWithCallbackLogging):
+        (runDumpAsTextEditingTest):
+        * editing/pasteboard/smart-paste-001.html:
+        * editing/pasteboard/smart-paste-002-expected.txt:
+        * editing/pasteboard/smart-paste-002.html:
+        * editing/pasteboard/smart-paste-003.html:
+        * editing/pasteboard/smart-paste-004.html:
+        * editing/pasteboard/smart-paste-005-expected.txt:
+        * editing/pasteboard/smart-paste-005.html:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-006.html:
+        * editing/pasteboard/smart-paste-007.html:
+        * editing/pasteboard/smart-paste-008.html:
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.txt:
+
 2019-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Consistent 1 sec hang when triggering modal alerts while handling synchronous touch events

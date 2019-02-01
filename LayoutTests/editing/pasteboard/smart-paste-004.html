@@ -39,10 +39,11 @@ test test
 </div>
 </div>
 <script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
-function editingTest() {
-    doubleClickAtSelectionStart();
+async function editingTest() {
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
     copyCommand();
     moveSelectionForwardByCharacterCommand();
     moveSelectionForwardByCharacterCommand();

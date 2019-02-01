@@ -40,11 +40,11 @@ test
 </div>
 </div>
 <script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
-function editingTest() {
-    extendSelectionForwardByWordCommand();
-    cutCommand();
+async function editingTest() {
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));    cutCommand();
     typeCharacterCommand('-');
     typeCharacterCommand('-');
     moveSelectionBackwardByCharacterCommand();

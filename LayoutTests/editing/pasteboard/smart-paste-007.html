@@ -16,15 +16,13 @@
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 
 <script>
 
-function editingTest() {
-    var target = document.getElementById('test');
-    var x = target.offsetLeft;
-    var y = target.offsetTop + target.offsetHeight / 2;
-    doubleClick(x, y);
+async function editingTest() {
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
     cutCommand();
     typeCharacterCommand('.');
     typeCharacterCommand('.');

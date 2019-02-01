@@ -6,16 +6,20 @@ if (window.testRunner)
 <p>A smart paste is performed into a selection starting in one block and ending in another.  Spaces should surround the pasted word.</p>
 <div id="test" contenteditable="true"><div>foo</div><div>x bar</div></div>
 
-<script type="text/javascript" src="../editing.js"></script>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
-var s = window.getSelection();
 var e = document.getElementById("test");
 
-setSelectionCommand(e, 0, e, 0);
-doubleClickAtSelectionStart();
-copyCommand();
-moveSelectionBackwardByCharacterCommand();
-moveSelectionForwardByCharacterCommand();
-extendSelectionForwardByLineCommand();
-pasteCommand();
+async function runTest() {
+    getSelection().setBaseAndExtent(e, 0, e, 0);
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
+    copyCommand();
+    moveSelectionBackwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    extendSelectionForwardByLineCommand();
+    pasteCommand();
+}
+
+UIHelper.wait(runTest());
 </script>

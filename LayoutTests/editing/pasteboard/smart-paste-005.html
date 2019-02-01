@@ -40,13 +40,11 @@ test
 </div>
 </div>
 <script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
-function editingTest() {
-    var target = document.getElementById('test');
-    var x = target.offsetLeft + target.offsetWidth / 2;
-    var y = target.offsetTop + target.offsetHeight / 2;
-    doubleClick(x, y);
+async function editingTest() {
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
     copyCommand();
     moveSelectionBackwardByWordCommand();
     moveSelectionForwardByCharacterCommand();
