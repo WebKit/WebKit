@@ -1,3 +1,24 @@
+2019-02-01  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Race-condition during scrolling thread creation
+        https://bugs.webkit.org/show_bug.cgi?id=194016
+
+        Reviewed by Saam Barati.
+
+        There is a threading issue during the initialization
+        of the scrolling thread caused by createThreadIfNeeded
+        locking only on the creation of the thread but not on
+        the initialization of the main loop, making it possible
+        for a thread to try to spin the main loop before it's
+        created.
+
+        Fix this by unconditionally waiting on the main loop
+        being created. This makes it necessary to always hold
+        the lock, even when the thread is already created.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+
 2019-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         Use ScrollingNodeID in more places, and improve the name of a ScrollableArea function that returns a ScrollingNodeID
