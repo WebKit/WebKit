@@ -1,3 +1,14 @@
+2019-02-01  Youenn Fablet  <youenn@apple.com>
+
+        API Test broken: TestWebKitAPI.WebKit2.GetUserMediaReprompt
+        https://bugs.webkit.org/show_bug.cgi?id=194155
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+        Revert use of async functions as it seems it cannot be evaluated from TestWebKitAPI.
+        Keep calling enumerateDevices to continue cover https://bugs.webkit.org/show_bug.cgi?id=194106.
+
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Adjust replaced element's intrinsic ratio
