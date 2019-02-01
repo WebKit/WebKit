@@ -124,6 +124,9 @@ webkit.org/b/190576 fast/mediastream/get-user-media-device-id.html [ Failure ]
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
+# This test requires an older version of ICU than we use
+webkit.org/b/193620 js/intl-numberformat.html [ Failure ]
+
 # Skip anything related to WebAuthN
 # ---------------------------------
 http/wpt/credential-management/ [ Skip ]

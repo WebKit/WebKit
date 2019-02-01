@@ -1,3 +1,10 @@
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed WPE gardening. Rebaseline and update expectations after r240774.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/font-weight-1-expected.txt:
+
 2019-01-31  Megan Gardner  <megan_gardner@apple.com>
 
         Don't insert spaces at the beginning of a newline when using smart-copy-paste

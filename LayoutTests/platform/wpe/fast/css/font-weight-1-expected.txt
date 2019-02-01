@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,2) size 27x44
           text run at (0,2) width 27: "A"
       RenderBlock {DIV} at (0,226) size 784x48
-        RenderText {#text} at (0,2) size 28x44
-          text run at (0,2) width 28: "A"
-      RenderBlock {DIV} at (0,274) size 784x48
         RenderText {#text} at (0,2) size 29x44
           text run at (0,2) width 29: "A"
+      RenderBlock {DIV} at (0,274) size 784x48
+        RenderText {#text} at (0,2) size 30x44
+          text run at (0,2) width 30: "A"
       RenderBlock {DIV} at (0,322) size 784x48
         RenderText {#text} at (0,2) size 31x44
           text run at (0,2) width 31: "A"
