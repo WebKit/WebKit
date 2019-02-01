@@ -284,9 +284,12 @@ public:
     bool canDoServerTrustEvaluationInNetworkProcess() const;
     uint64_t serverTrustEvaluationCallbackCallsCount() const { return m_serverTrustEvaluationCallbackCallsCount; }
 
+    void setShouldDismissJavaScriptAlertsAsynchronously(bool);
+    void handleJavaScriptAlert(WKPageRunJavaScriptAlertResultListenerRef);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
-    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
+    WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
     void initialize(int argc, const char* argv[]);
     void createWebViewWithOptions(const TestOptions&);
     void run();
@@ -539,6 +542,7 @@ private:
     HashMap<uint64_t, AbandonedDocumentInfo> m_abandonedDocumentInfo;
 
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
+    bool m_shouldDismissJavaScriptAlertsAsynchronously { false };
 };
 
 struct TestCommand {

@@ -2085,8 +2085,19 @@ static inline bool isAssistableElement(Element& node)
     return node.isContentEditable();
 }
 
-void WebPage::getPositionInformation(const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+void WebPage::getPositionInformation(const InteractionInformationRequest& request, CompletionHandler<void(InteractionInformationAtPosition&&)>&& reply)
 {
+    m_pendingSynchronousPositionInformationReply = WTFMove(reply);
+
+    auto information = positionInformation(request);
+
+    if (auto reply = WTFMove(m_pendingSynchronousPositionInformationReply))
+        reply(WTFMove(information));
+}
+
+InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
+{
+    InteractionInformationAtPosition info;
     info.request = request;
 
     FloatPoint adjustedPoint;
@@ -2262,14 +2273,13 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
     info.hasSelectionAtPosition = m_page->hasSelectionAtPosition(adjustedPoint);
 #endif
     info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
+
+    return info;
 }
 
 void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
 {
-    InteractionInformationAtPosition info;
-
-    getPositionInformation(request, info);
-    send(Messages::WebPageProxy::DidReceivePositionInformation(info));
+    send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
 }
 
 void WebPage::startInteractionWithElementAtPosition(const WebCore::IntPoint& point)

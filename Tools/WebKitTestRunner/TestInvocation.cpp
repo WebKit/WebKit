@@ -1539,6 +1539,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ShouldDismissJavaScriptAlertsAsynchronously")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setShouldDismissJavaScriptAlertsAsynchronously(WKBooleanGetValue(value));
+        return nullptr;
+    }
+
     ASSERT_NOT_REACHED();
     return nullptr;
 }

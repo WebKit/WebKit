@@ -647,7 +647,7 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(CallbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
-    void getPositionInformation(const InteractionInformationRequest&, InteractionInformationAtPosition&);
+    void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
     void stopInteraction();
@@ -1137,6 +1137,13 @@ public:
 
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
 
+    template<typename T>
+    bool sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
+    {
+        cancelGesturesBlockedOnSynchronousReplies();
+        return sendSync(WTFMove(message), WTFMove(reply), m_pageID, Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+    }
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1178,6 +1185,9 @@ private:
     void resetTextAutosizing();
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
     RefPtr<WebCore::Range> rangeForGranularityAtPoint(WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithFocusedElement);
+
+    void sendPositionInformation(InteractionInformationAtPosition&&);
+    InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
@@ -1234,7 +1244,7 @@ private:
     void keyEvent(const WebKeyboardEvent&);
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    void touchEventSync(const WebTouchEvent&, bool& handled);
+    void touchEventSync(const WebTouchEvent&, CompletionHandler<void(bool)>&&);
     void updatePotentialTapSecurityOrigin(const WebTouchEvent&, bool wasHandled);
 #elif ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
@@ -1493,6 +1503,8 @@ private:
 
     bool canShowMIMEType(const String&, const Function<bool(const String&, WebCore::PluginData::AllowedPluginTypes)>& supportsPlugin) const;
 
+    void cancelGesturesBlockedOnSynchronousReplies();
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1699,6 +1711,10 @@ private:
     RefPtr<WebCore::Element> m_focusedElement;
     bool m_hasPendingBlurNotification { false };
     bool m_hasPendingEditorStateUpdate { false };
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+    CompletionHandler<void(bool)> m_pendingSynchronousTouchEventReply;
+#endif
     
 #if PLATFORM(IOS_FAMILY)
     RefPtr<WebCore::Range> m_currentWordRange;
@@ -1744,6 +1760,8 @@ private:
     Optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
     double m_lastTransactionPageScaleFactor { 0 };
     uint64_t m_lastTransactionIDWithScaleChange { 0 };
+
+    CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;

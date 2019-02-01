@@ -448,6 +448,9 @@ public:
     // Open panel
     void setOpenPanelFiles(JSValueRef);
 
+    // Modal alerts
+    void setShouldDismissJavaScriptAlertsAsynchronously(bool);
+
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
 

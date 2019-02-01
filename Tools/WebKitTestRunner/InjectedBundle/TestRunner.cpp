@@ -2715,4 +2715,11 @@ unsigned long TestRunner::serverTrustEvaluationCallbackCallsCount()
     return WKUInt64GetValue(adoptWK(static_cast<WKUInt64Ref>(returnData)).get());
 }
 
+void TestRunner::setShouldDismissJavaScriptAlertsAsynchronously(bool shouldDismissAsynchronously)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("ShouldDismissJavaScriptAlertsAsynchronously"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(shouldDismissAsynchronously));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+
 } // namespace WTR

@@ -1763,7 +1763,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if ([self _hasValidOutstandingPositionInformationRequest:request])
         return connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->pageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 
-    _hasValidPositionInformation = _page->process().sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), _page->pageID(), 1_s);
+    bool receivedResponse = _page->process().sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), _page->pageID(), 1_s);
+    _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     
     // FIXME: We need to clean up these handlers in the event that we are not able to collect data, or if the WebProcess crashes.
     if (_hasValidPositionInformation)
@@ -2284,7 +2285,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     newInfo.mergeCompatibleOptionalInformation(_positionInformation);
 
     _positionInformation = newInfo;
-    _hasValidPositionInformation = YES;
+    _hasValidPositionInformation = _positionInformation.canBeValid;
     if (_actionSheetAssistant)
         [_actionSheetAssistant updateSheetPosition];
     [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];

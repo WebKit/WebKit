@@ -80,7 +80,7 @@ messages -> WebPage LegacyReceiver {
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) LegacySync
     RequestAutocorrectionContext(WebKit::CallbackID callbackID)
     GetAutocorrectionContext() -> (String beforeContext, String markedText, String selectedText, String afterContext, uint64_t location, uint64_t length) LegacySync
-    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) LegacySync
+    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Delayed
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
@@ -121,7 +121,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) LegacySync
+    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) Delayed
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)

@@ -1,3 +1,94 @@
+2019-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Consistent 1 sec hang when triggering modal alerts while handling synchronous touch events
+        https://bugs.webkit.org/show_bug.cgi?id=194140
+        <rdar://problem/47728098>
+
+        Reviewed by Tim Horton.
+
+        Currently, the UI process hangs when attempting to synchronously present modal UI from the web process while the
+        UI process is waiting for sync IPC in the web process. While we have logic to generally mitigate IPC deadlock in
+        this scenario by dispatching the web process' sync IPC immediately with the intention of allowing the web
+        process to finish processing sync IPC (and consequently unblock the UI process), this fails in the case where
+        the sync IPC message from the web process to the UI process requires main thread execution for an arbitrary
+        amount of time (for instance, modal alert dialogs). In this case, we'll end up in a state where we've handled
+        the web process' sync IPC in the UI process, yet we can't resume execution since the web process is still
+        blocked.
+
+        By far the most egregious scenario in which this manifests is during synchronous gesture recognizer IPC, i.e.
+        grabbing position information from the UI process, and handling touch events synchronously. Luckily, these are
+        also cases where (1) we know sync IPC may safely time out, and (2) the presentation of modal UI from the web
+        process should cause the gesture recognizers to fail anyways. As such, we can mitigate these scenarios in the
+        web process by responding to the these pending sync IPC messages *before* sending our own sync IPC to the UI
+        process.
+
+        Test: fast/events/touch/ios/show-modal-alert-during-touch-start.html
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        (WebKit::InteractionInformationAtPosition::invalidInformation):
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add a new flag to indicate whether an interaction information response can be valid. Interaction information
+        cannot be valid in the case where the interaction information request was interrupted by certain sync IPC
+        messages from the web process.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationIgnoreSynchronousMessagingTimeoutsForTesting):
+        (WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting):
+
+        Add some testing SPI to ignore sync IPC timeouts, for the purposes of testing. Rather than use the existing
+        Objective-C SPI in WKWebProcessPoolConfiguration, I decided to add C API plumbing for this flag, so that other
+        non-Cocoa ports may also support the new layout test option to ignore sync IPC timeouts.
+
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::print):
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        (WebKit::WebChromeClient::reachedApplicationCacheOriginQuota):
+
+        Cancel any pending sync IPC replies prior to sending sync IPC messages to the UI process which may result in
+        sync IPC deadlock, by using the new helper method, sendSyncWithDelayedReply, instead of just sendSync.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::cancelGesturesBlockedOnSynchronousReplies):
+
+        Add a helper to cancel pending sync messages coming in from the UI process that are being called from within
+        gesture recognizer delegate hooks.
+
+        (WebKit::WebPage::touchEventSync):
+        * WebProcess/WebPage/WebPage.h:
+
+        Add a new helper, sendSyncWithDelayedReply, to be used when sending a sync IPC message to the UI process that
+        cannot be immediately completed upon arrival. Importantly, this cancels pending sync replies, and also passes
+        IPC::SendSyncOption::InformPlatformProcessWillSuspend.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Change these from LegacySync to Delayed messages.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
+        Make this sync IPC handler (as well as WebPage::touchEventSync) store the IPC reply during the scope of the
+        method, and invoke the stored reply at the end of the method if it wasn't interrupted due to something calling
+        cancelGesturesBlockedOnSynchronousReplies().
+
+        (WebKit::WebPage::positionInformation):
+
+        Refactor getPositionInformation by pulling out the logic for building an InteractionInformationAtPosition into
+        a separate helper.
+
+        (WebKit::WebPage::requestPositionInformation):
+
 2019-02-01  David Quesada  <david_quesada@apple.com>
 
         Network Process crash when resuming downloads: '-[__NSDictionaryI setObject:forKey:]: unrecognized selector sent to instance %p'

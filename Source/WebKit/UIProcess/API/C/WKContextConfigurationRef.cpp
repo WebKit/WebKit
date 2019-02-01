@@ -138,6 +138,16 @@ void WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(WKContextC
     toImpl(configuration)->setFullySynchronousModeIsAllowedForTesting(allowed);
 }
 
+bool WKContextConfigurationIgnoreSynchronousMessagingTimeoutsForTesting(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->ignoreSynchronousMessagingTimeoutsForTesting();
+}
+
+void WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(WKContextConfigurationRef configuration, bool ignore)
+{
+    toImpl(configuration)->setIgnoreSynchronousMessagingTimeoutsForTesting(ignore);
+}
+
 WKArrayRef WKContextConfigurationCopyOverrideLanguages(WKContextConfigurationRef configuration)
 {
     return toAPI(&API::Array::createStringArray(toImpl(configuration)->overrideLanguages()).leakRef());

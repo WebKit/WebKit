@@ -262,6 +262,8 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "InteractionInformationAtPosition.h"
+#include "InteractionInformationRequest.h"
 #include "RemoteLayerTreeDrawingArea.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
@@ -2725,6 +2727,19 @@ void WebPage::requestFontAttributesAtSelectionStart(CallbackID callbackID)
     send(Messages::WebPageProxy::FontAttributesCallback(attributes, callbackID));
 }
 
+void WebPage::cancelGesturesBlockedOnSynchronousReplies()
+{
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
+        reply(true);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (auto reply = WTFMove(m_pendingSynchronousPositionInformationReply))
+        reply(InteractionInformationAtPosition::invalidInformation());
+#endif
+}
+
 #if ENABLE(TOUCH_EVENTS)
 static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 {
@@ -2746,13 +2761,19 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
     updatePotentialTapSecurityOrigin(touchEvent, handled);
 }
 
-void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
+void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
 {
+    m_pendingSynchronousTouchEventReply = WTFMove(reply);
+
     EventDispatcher::TouchEventQueue queuedEvents;
     WebProcess::singleton().eventDispatcher().getQueuedTouchEventsForPage(*this, queuedEvents);
     dispatchAsynchronousTouchEvents(queuedEvents);
 
+    bool handled = true;
     dispatchTouchEvent(touchEvent, handled);
+
+    if (auto reply = WTFMove(m_pendingSynchronousTouchEventReply))
+        reply(handled);
 }
 
 void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, bool wasHandled)

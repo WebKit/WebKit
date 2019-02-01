@@ -1,3 +1,17 @@
+2019-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Consistent 1 sec hang when triggering modal alerts while handling synchronous touch events
+        https://bugs.webkit.org/show_bug.cgi?id=194140
+        <rdar://problem/47728098>
+
+        Reviewed by Tim Horton.
+
+        Add a test that induces sync IPC deadlock by presenting a modal alert while handling touch start. This test
+        forces sync IPC timeouts to be disabled, and passes if we do not time out while handling a touch.
+
+        * fast/events/touch/ios/show-modal-alert-during-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/show-modal-alert-during-touch-start.html: Added.
+
 2019-02-01  Antoine Quint  <graouts@apple.com>
 
         Dispatch pointercancel events when content is panned or zoomed on iOS

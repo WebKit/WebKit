@@ -329,6 +329,9 @@ interface TestRunner {
     // Open panel
     void setOpenPanelFiles(object filesArray);
 
+    // Modal alerts
+    void setShouldDismissJavaScriptAlertsAsynchronously(boolean value);
+
     void setWebRTCMDNSICECandidatesEnabled(boolean value);
     void setWebRTCUnifiedPlanEnabled(boolean value);
     void setCustomUserAgent(DOMString userAgent);

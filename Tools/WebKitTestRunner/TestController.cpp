@@ -239,6 +239,11 @@ static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef fram
     TestController::singleton().handleUserMediaPermissionRequest(frame, userMediaDocumentOrigin, topLevelDocumentOrigin, permissionRequest);
 }
 
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo)
+{
+    TestController::singleton().handleJavaScriptAlert(listener);
+}
+
 static void checkUserMediaPermissionForOrigin(WKPageRef, WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionCheckRef checkRequest, const void*)
 {
     TestController::singleton().handleCheckOfUserMediaPermissionForOrigin(frame, userMediaDocumentOrigin, topLevelDocumentOrigin, checkRequest);
@@ -326,7 +331,7 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
         createOtherPage,
-        0, // runJavaScriptAlert
+        runJavaScriptAlert,
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         checkUserMediaPermissionForOrigin,
@@ -442,11 +447,12 @@ void TestController::initialize(int argc, const char* argv[])
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 }
 
-WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration() const
+WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions& options) const
 {
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
+    WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeoutsForTesting);
 
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
@@ -534,7 +540,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
 
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
-    auto contextConfiguration = generateContextConfiguration();
+    auto contextConfiguration = generateContextConfiguration(options);
 
     WKRetainPtr<WKMutableArrayRef> overrideLanguages = adoptWK(WKMutableArrayCreate());
     for (auto& language : options.overrideLanguages)
@@ -614,7 +620,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // runJavaScriptPrompt
         0, // mediaSessionMetadataDidChange
         createOtherPage,
-        0, // runJavaScriptAlert
+        runJavaScriptAlert,
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         checkUserMediaPermissionForOrigin,
@@ -824,8 +830,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetWebSQLDisabled(preferences, false);
 
-    m_serverTrustEvaluationCallbackCallsCount = 0;
-
     platformResetPreferencesToConsistentValues();
 }
 
@@ -957,6 +961,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     statisticsResetToConsistentState();
 
     m_didReceiveServerRedirectForProvisionalNavigation = false;
+    m_serverTrustEvaluationCallbackCallsCount = 0;
+    m_shouldDismissJavaScriptAlertsAsynchronously = false;
 
     // Reset main page back to about:blank
     m_doneResetting = false;
@@ -1278,6 +1284,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
         else if (key == "contentInset.top")
             testOptions.contentInsetTop = std::stod(value);
+        else if (key == "ignoreSynchronousMessagingTimeoutsForTesting")
+            testOptions.ignoreSynchronousMessagingTimeoutsForTesting = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -2328,6 +2336,25 @@ void TestController::setUserMediaPermission(bool enabled)
 void TestController::resetUserMediaPermission()
 {
     m_isUserMediaPermissionSet = false;
+}
+
+void TestController::setShouldDismissJavaScriptAlertsAsynchronously(bool value)
+{
+    m_shouldDismissJavaScriptAlertsAsynchronously = value;
+}
+
+void TestController::handleJavaScriptAlert(WKPageRunJavaScriptAlertResultListenerRef listener)
+{
+    if (!m_shouldDismissJavaScriptAlertsAsynchronously) {
+        WKPageRunJavaScriptAlertResultListenerCall(listener);
+        return;
+    }
+
+    WKRetain(listener);
+    callOnMainThread([listener] {
+        WKPageRunJavaScriptAlertResultListenerCall(listener);
+        WKRelease(listener);
+    });
 }
 
 class OriginSettings : public RefCounted<OriginSettings> {
