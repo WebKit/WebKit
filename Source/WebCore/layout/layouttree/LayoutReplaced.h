@@ -56,6 +56,8 @@ public:
     LayoutUnit intrinsicRatio() const;
 
 private:
+    bool hasAspectRatio() const;
+
     WeakPtr<const Box> m_layoutBox;
     Optional<LayoutSize> m_intrinsicSize;
     Optional<LayoutUnit> m_intrinsicRatio;

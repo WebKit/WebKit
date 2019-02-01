@@ -42,7 +42,7 @@ Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, BaseTypeFl
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags)
 {
-    if (m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Replaced)
+    if (isReplaced())
         m_replaced = std::make_unique<Replaced>(*this);
 }
 

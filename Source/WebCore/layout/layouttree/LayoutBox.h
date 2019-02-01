@@ -52,7 +52,8 @@ public:
         TableRowGroup,
         TableHeaderGroup,
         TableFooterGroup,
-        Replaced,
+        Image,
+        IFrame,
         GenericElement
     };
 
@@ -110,6 +111,9 @@ public:
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
     bool isTableCell() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableCell; }
+    bool isReplaced() const { return isImage() || isIFrame(); }
+    bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
+    bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }

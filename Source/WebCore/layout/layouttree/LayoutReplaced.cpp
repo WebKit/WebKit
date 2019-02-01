@@ -54,7 +54,9 @@ bool Replaced::hasIntrinsicHeight() const
 
 bool Replaced::hasIntrinsicRatio() const
 {
-    return m_layoutBox->style().aspectRatioType() == AspectRatioType::FromIntrinsic;
+    if (!hasAspectRatio())
+        return false;
+    return m_intrinsicSize || m_intrinsicRatio;
 }
 
 LayoutUnit Replaced::intrinsicWidth() const
@@ -75,9 +77,17 @@ LayoutUnit Replaced::intrinsicHeight() const
 
 LayoutUnit Replaced::intrinsicRatio() const
 {
-    ASSERT(hasIntrinsicRatio());
-    ASSERT_NOT_IMPLEMENTED_YET();
+    ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
+    if (m_intrinsicRatio)
+        return *m_intrinsicRatio;
+    if (m_intrinsicSize)
+        return m_intrinsicSize->width() / m_intrinsicSize->height();
     return 1;
+}
+
+bool Replaced::hasAspectRatio() const
+{
+    return m_layoutBox->isImage() || m_layoutBox->style().aspectRatioType() == AspectRatioType::FromIntrinsic;
 }
 
 }

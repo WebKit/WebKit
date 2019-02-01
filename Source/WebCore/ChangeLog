@@ -1,5 +1,28 @@
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Adjust replaced element's intrinsic ratio
+        https://bugs.webkit.org/show_bug.cgi?id=194154
+
+        Reviewed by Antti Koivisto.
+
+        Decouple image and iframe replaced types and set intrinsic ratio accordingly.
+
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isReplaced const):
+        (WebCore::Layout::Box::isIFrame const):
+        (WebCore::Layout::Box::isImage const):
+        * layout/layouttree/LayoutReplaced.cpp:
+        (WebCore::Layout::Replaced::hasIntrinsicRatio const):
+        (WebCore::Layout::Replaced::intrinsicRatio const):
+        (WebCore::Layout::Replaced::hasAspectRatio const):
+        * layout/layouttree/LayoutReplaced.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createSubTree):
+
+2019-02-01  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Set intrinsic size on Layout::Replaced
         https://bugs.webkit.org/show_bug.cgi?id=194139
 
