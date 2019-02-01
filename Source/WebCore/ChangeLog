@@ -1,3 +1,18 @@
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Memory timeline starts from zero when both CPU and Memory timeline are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=194111
+        <rdar://problem/47714555>
+
+        Rubber-stamped by Devin Rousso.
+
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::waitUntilObservers):
+        (WebCore::ResourceUsageThread::threadBody):
+        Wait a short period of time before the first listener registers
+        and we start sampling. This will allow multiple listeners to
+        register, each that wants different data.
+
 2019-02-01  Antti Koivisto  <antti@apple.com>
 
         Don't use base layer() as the scroll layer in scrolling tree.

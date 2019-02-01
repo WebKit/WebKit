@@ -78,8 +78,12 @@ void ResourceUsageThread::removeObserver(void* key)
 void ResourceUsageThread::waitUntilObservers()
 {
     LockHolder locker(m_lock);
-    while (m_observers.isEmpty())
+    while (m_observers.isEmpty()) {
         m_condition.wait(m_lock);
+
+        // Wait a bit after waking up for the first time.
+        WTF::sleep(10_ms);
+    }
 }
 
 void ResourceUsageThread::notifyObservers(ResourceUsageData&& data)
@@ -119,6 +123,9 @@ void ResourceUsageThread::createThreadIfNeeded()
 
 NO_RETURN void ResourceUsageThread::threadBody()
 {
+    // Wait a bit after waking up for the first time.
+    WTF::sleep(10_ms);
+    
     while (true) {
         // Only do work if we have observers.
         waitUntilObservers();
