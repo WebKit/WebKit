@@ -10,6 +10,7 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
 
+configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
 configure_file(wpe/wpe-webkit.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc @ONLY)
 configure_file(wpe/wpe-web-extension.pc.in ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}.pc @ONLY)
 
@@ -96,6 +97,7 @@ list(APPEND WebKit_DERIVED_SOURCES
 
 set(WPE_API_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitEnumTypes.h
+    ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitApplicationInfo.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitAuthenticationRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitAutomationSession.h
