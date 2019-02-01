@@ -1,3 +1,19 @@
+2019-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r240698): fast/scrolling/sticky-to-fixed.html can cause a crash
+        https://bugs.webkit.org/show_bug.cgi?id=194134
+        rdar://problem/47721210
+
+        Reviewed by Daniel Bates.
+
+        fast/scrolling/sticky-to-fixed.html changes the scrolling node type, which causes
+        scrollingCoordinator->insertNode() to return a different ScrollingNodeID to the one
+        passed in. We have to handle this, removing the node for the nodeID and unregistering
+        the layer with the old nodeID.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachScrollingNode):
+
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r239915): css3/font-feature-font-face-local.html failing on WPE
