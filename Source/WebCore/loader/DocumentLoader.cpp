@@ -645,13 +645,14 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (!didReceiveRedirectResponse)
         return completionHandler(WTFMove(newRequest));
 
-    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, ShouldContinue shouldContinue) mutable {
+    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
         m_waitingForNavigationPolicy = false;
-        switch (shouldContinue) {
-        case ShouldContinue::No:
+        switch (navigationPolicyDecision) {
+        case NavigationPolicyDecision::IgnoreLoad:
+        case NavigationPolicyDecision::StopAllLoads:
             stopLoadingForPolicyChange();
             break;
-        case ShouldContinue::Yes:
+        case NavigationPolicyDecision::ContinueLoad:
             break;
         }
 
@@ -935,6 +936,11 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
             static_cast<ResourceLoader*>(mainResourceLoader())->didFail(interruptedForPolicyChangeError());
         return;
     }
+    case PolicyAction::StopAllLoads:
+        ASSERT_NOT_REACHED();
+#if ASSERT_DISABLED
+        FALLTHROUGH;
+#endif
     case PolicyAction::Ignore:
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyIgnore(*m_frame, mainResourceLoader->identifier(), *this, m_response);

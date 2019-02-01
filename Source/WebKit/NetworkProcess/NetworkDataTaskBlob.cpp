@@ -312,6 +312,9 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
             m_buffer.resize(bufferSize);
             read();
             break;
+        case PolicyAction::StopAllLoads:
+            ASSERT_NOT_REACHED();
+            break;
         case PolicyAction::Ignore:
             break;
         case PolicyAction::Download:

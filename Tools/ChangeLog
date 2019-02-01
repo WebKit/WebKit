@@ -1,3 +1,15 @@
+2019-02-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+        https://bugs.webkit.org/show_bug.cgi?id=193740
+        <rdar://problem/47527267>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-01  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add display name field to BuilderMapping model

@@ -1,3 +1,25 @@
+2019-02-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+        https://bugs.webkit.org/show_bug.cgi?id=193740
+        <rdar://problem/47527267>
+
+        Reviewed by Alex Christensen.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        * loader/PolicyChecker.h:
+
 2019-02-01  Antoine Quint  <graouts@apple.com>
 
         Dispatch pointercancel events when content is panned or zoomed on iOS

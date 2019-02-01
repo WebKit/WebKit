@@ -2717,7 +2717,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         }
 
         if (processForNavigation.ptr() != &process()) {
-            policyAction = PolicyAction::Ignore;
+            policyAction = PolicyAction::StopAllLoads;
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else

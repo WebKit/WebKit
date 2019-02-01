@@ -57,10 +57,16 @@ enum class ShouldContinue {
     No
 };
 
+enum class NavigationPolicyDecision : uint8_t {
+    ContinueLoad,
+    IgnoreLoad,
+    StopAllLoads,
+};
+
 enum class PolicyDecisionMode { Synchronous, Asynchronous };
 
 using NewWindowPolicyDecisionFunction = CompletionHandler<void(const ResourceRequest&, WeakPtr<FormState>&&, const String& frameName, const NavigationAction&, ShouldContinue)>;
-using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, ShouldContinue)>;
+using NavigationPolicyDecisionFunction = CompletionHandler<void(ResourceRequest&&, WeakPtr<FormState>&&, NavigationPolicyDecision)>;
 
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);

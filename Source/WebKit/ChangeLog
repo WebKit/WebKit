@@ -1,3 +1,26 @@
+2019-02-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+        https://bugs.webkit.org/show_bug.cgi?id=193740
+        <rdar://problem/47527267>
+
+        Reviewed by Alex Christensen.
+
+        The issue was happening when the page is triggering a cross-site navigation while in the middle of parsing. This would cause us to
+        start a new provisional load in a new process before the previous process sends the DidFinishLoadForFrame() IPC to the UIProcess.
+        Getting such IPC after a provisional load has started would mess up our state machine and trip assertions.
+
+        This patch restores non-PSON behavior which is that the previous load in the old process now gets stopped so that no DidFinishLoadForFrame()
+        / DidFailLoadForFrame() gets sent. To achieve this behavior, I introduced a new "StopAllLoads" PolicyAction that we now send the old
+        process when the load is continuing in a new process, instead of sending it "Ignore".
+
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toNSURLSessionResponseDisposition):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2019-02-01  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; Respect the 'condition:' field in the WebPreferences.yaml when generating
