@@ -574,7 +574,7 @@ SpatialNavigationEnabled:
 
 MediaSourceEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: WebCore::Settings::platformDefaultMediaSourceEnabled()
   condition: ENABLE(MEDIA_SOURCE)
 
 ViewGestureDebuggingEnabled:

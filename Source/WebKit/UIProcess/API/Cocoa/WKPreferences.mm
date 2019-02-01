@@ -849,6 +849,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->itpDebugModeEnabled();
 }
 
+- (void)_setMediaSourceEnabled:(BOOL)enabled
+{
+    _preferences->setMediaSourceEnabled(enabled);
+}
+
+- (BOOL)_mediaSourceEnabled
+{
+    return _preferences->mediaSourceEnabled();
+}
+
 #if PLATFORM(MAC)
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {
@@ -1051,16 +1061,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_subpixelCSSOMElementMetricsEnabled
 {
     return _preferences->subpixelCSSOMElementMetricsEnabled();
-}
-
-- (void)_setMediaSourceEnabled:(BOOL)enabled
-{
-    _preferences->setMediaSourceEnabled(enabled);
-}
-
-- (BOOL)_mediaSourceEnabled
-{
-    return _preferences->mediaSourceEnabled();
 }
 
 - (void)_setViewGestureDebuggingEnabled:(BOOL)enabled

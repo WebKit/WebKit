@@ -117,7 +117,7 @@ public:
     WEBCORE_EXPORT static bool defaultDownloadableBinaryFontsEnabled();
 
 #if ENABLE(MEDIA_SOURCE)
-    static bool platformDefaultMediaSourceEnabled();
+    WEBCORE_EXPORT static bool platformDefaultMediaSourceEnabled();
 #endif
 
     static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
