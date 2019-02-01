@@ -30,7 +30,6 @@
 #include "WebPageProxy.h"
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/WlUniquePtr.h>
-#include <gtk/gtk.h>
 #include <wayland-server.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -40,10 +39,6 @@
 #include <wtf/text/WTFString.h>
 
 typedef void *EGLImageKHR;
-
-namespace WebCore {
-class GLContext;
-}
 
 namespace WebKit {
 
@@ -96,7 +91,7 @@ public:
 
         WeakPtr<Buffer> m_buffer;
         WeakPtr<Buffer> m_pendingBuffer;
-        unsigned m_texture;
+        unsigned m_texture { 0 };
         EGLImageKHR m_image;
         WebCore::IntSize m_imageSize;
         Vector<wl_resource*> m_pendingFrameCallbackList;
@@ -129,7 +124,6 @@ private:
     WebCore::WlUniquePtr<struct wl_global> m_compositorGlobal;
     WebCore::WlUniquePtr<struct wl_global> m_webkitgtkGlobal;
     GRefPtr<GSource> m_eventSource;
-    std::unique_ptr<WebCore::GLContext> m_eglContext;
     HashMap<WebPageProxy*, WeakPtr<Surface>> m_pageMap;
 };
 

@@ -46,6 +46,7 @@ public:
 
     virtual void update(const LayerTreeContext&) { }
     virtual bool paint(cairo_t*, const WebCore::IntRect&);
+    virtual bool makeContextCurrent() { return false; }
 
 protected:
     AcceleratedBackingStore(WebPageProxy&);
