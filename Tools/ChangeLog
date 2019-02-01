@@ -1,3 +1,16 @@
+2019-01-31  Youenn Fablet  <youenn@apple.com>
+
+        Add an API test to cover UIClient checkUserMediaPermissionForOrigin being nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=194106
+        <rdar://problem/47676333>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::didFinishNavigation):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2019-01-31  Chris Dumez  <cdumez@apple.com>
 
         Page zoom level is lost after a process swap or a crash

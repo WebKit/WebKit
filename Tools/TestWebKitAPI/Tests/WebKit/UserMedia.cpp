@@ -157,6 +157,44 @@ TEST(WebKit, OnDeviceChangeCrash)
     EXPECT_TRUE(!didCrash);
 }
 
+static bool didReceiveMessage;
+static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
+{
+    didReceiveMessage = true;
+}
+
+TEST(WebKit, EnumerateDevicesCrash)
+{
+    auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetMediaDevicesEnabled(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
+    WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
+    WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
+
+    WKPageUIClientV6 uiClient;
+    // We want uiClient.checkUserMediaPermissionForOrigin to be null.
+    memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.base.version = 6;
+
+    WKPageNavigationClientV3 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 3;
+    loaderClient.didFinishNavigation = didFinishNavigation;
+
+    PlatformWebView webView(context.get(), pageGroup.get());
+    WKPageSetPageUIClient(webView.page(), &uiClient.base);
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+
+    // Load a page doing enumerateDevices.
+    didReceiveMessage = false;
+    auto url = adoptWK(Util::createURLForResource("getUserMedia", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+    Util::run(&didReceiveMessage);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

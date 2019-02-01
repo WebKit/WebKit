@@ -5,15 +5,16 @@
 
             let stream = null;
 
-            function promptForCapture()
+            async function promptForCapture()
             {
-                navigator.mediaDevices.getUserMedia({ audio: false, video: true })
-                .then((s) => {
-                      stream = s;
-                      video.srcObject = stream;
-                      console.log("Got user media");
-                })
-                .catch((error) => console.log(`Failed with error: ${error}`));
+                try {
+                    await navigator.mediaDevices.enumerateDevices();
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+                    video.srcObject = stream;
+                    console.log("Got user media");
+                } catch(error) {
+                    console.log(`Failed with error: ${error}`);
+                }
             }
 
             function stop(kind)
