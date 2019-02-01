@@ -1,5 +1,16 @@
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r239915): css3/font-feature-font-face-local.html failing on WPE
+        https://bugs.webkit.org/show_bug.cgi?id=194008
+
+        Reviewed by Žan Doberšek.
+
+        Remove test expectation.
+
+        * platform/wpe/TestExpectations:
+
+2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Enable font variations
         https://bugs.webkit.org/show_bug.cgi?id=194148
 

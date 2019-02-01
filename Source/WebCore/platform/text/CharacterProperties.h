@@ -111,4 +111,9 @@ inline bool isDefaultIgnorableCodePoint(UChar32 character)
     return u_hasBinaryProperty(character, UCHAR_DEFAULT_IGNORABLE_CODE_POINT);
 }
 
+inline bool isControlCharacter(UChar32 character)
+{
+    return u_getIntPropertyValue(character, UCHAR_GENERAL_CATEGORY) == U_CONTROL_CHAR;
+}
+
 }

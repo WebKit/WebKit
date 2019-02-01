@@ -1547,8 +1547,6 @@ webkit.org/b/193517 imported/w3c/web-platform-tests/css/css-properties-values-ap
 
 webkit.org/b/193518 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 
-webkit.org/b/194008 css3/font-feature-font-face-local.html [ ImageOnlyFailure ]
-
 webkit.org/b/194009 fast/css/has-attachment.html [ Failure ]
 
 webkit.org/b/193629 fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]

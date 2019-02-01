@@ -71,7 +71,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 
         Glyph glyph = FcFreeTypeCharIndex(face, FontCascade::treatAsSpace(character) ? space : character);
         // If the font doesn't support a Default_Ignorable character, replace it with zero with space.
-        if (!glyph && isDefaultIgnorableCodePoint(character))
+        if (!glyph && (isDefaultIgnorableCodePoint(character) || isControlCharacter(character)))
             glyph = zeroWidthSpaceGlyph();
 
         if (!glyph)
