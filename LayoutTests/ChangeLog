@@ -1,3 +1,23 @@
+2019-01-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't insert spaces at the beginning of a newline when using smart-copy-paste
+        https://bugs.webkit.org/show_bug.cgi?id=194070
+
+        Add test for smart copy paste around newlines.
+        Rebaseline a test that is dependant on a console log that changes lines.
+        Add additional helper functions to ui-helper.js.
+
+        Reviewed by Tim Horton.
+
+        * editing/pasteboard/mac/copy-smartpaste-first-line-in-textarea-expected.txt: Added.
+        * editing/pasteboard/mac/copy-smartpaste-first-line-in-textarea.html: Added.
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+        * platform/mac/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.doubleClickAt):
+        (window.UIHelper.doubleClickAtThenDragTo):
+        (window.UIHelper.async.selectWordByDoubleTapOrClick):
+
 2019-01-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline time range selection sometimes shows 0.000, should be just 0

@@ -10,6 +10,25 @@ window.UIHelper = class UIHelper {
         return window.testRunner.isWebKit2;
     }
 
+    static doubleClickAt(x, y)
+    {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    static doubleClickAtThenDragTo(x1, y1, x2, y2)
+    {
+        eventSender.mouseMoveTo(x1, y1);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(x2, y2);
+        eventSender.mouseUp();
+    }
+
     static tapAt(x, y)
     {
         console.assert(this.isIOS());
@@ -102,6 +121,22 @@ window.UIHelper = class UIHelper {
         const x = element.offsetLeft + element.offsetWidth / 2;
         const y = element.offsetTop + element.offsetHeight / 2;
         return UIHelper.activateAt(x, y);
+    }
+
+    static async selectWordByDoubleTapOrClick(element, relativeX = 5, relativeY = 5)
+    {
+        const boundingRect = element.getBoundingClientRect();
+        const x = boundingRect.x + relativeX;
+        const y = boundingRect.y + relativeY;
+        if (this.isIOS()) {
+            await UIHelper.tapAt(x, y);
+            await UIHelper.doubleTapAt(x, y);
+            // This is only here to deal with async/sync copy/paste calls, so
+            // once <rdar://problem/16207002> is resolved, should be able to remove for faster tests.
+            await new Promise(resolve => testRunner.runUIScript("uiController.uiScriptComplete()", resolve));
+        } else {
+            await UIHelper.doubleClickAt(x, y);
+        }
     }
 
     static keyDown(key, modifiers=[])

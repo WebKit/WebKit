@@ -1,3 +1,18 @@
+2019-01-31  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't insert spaces at the beginning of a newline when using smart-copy-paste
+        https://bugs.webkit.org/show_bug.cgi?id=194070
+
+        Reviewed by Tim Horton.
+
+        If our inserted content end is at the beginning of a paragraph, do not insert a space.
+        Also, if our inserted content beginning is at the end of a paragraph, do not insert a space.
+
+        Test: editing/pasteboard/mac/copy-smartpaste-first-line-in-textarea.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+
 2019-01-31  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Build fix: disable MTLCopyAllDevices call on non-Mac platforms

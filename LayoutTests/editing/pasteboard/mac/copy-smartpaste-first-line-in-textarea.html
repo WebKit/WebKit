@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<textarea id="test" cols=50 rows=10>first
+second</textarea>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../editing.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<p id="console"></p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var textarea = document.querySelector('textarea');
+
+function selectFirstLineIncludingLineBreak() {
+    var element = document.getElementById("test");
+    const boundingRect = element.getBoundingClientRect();
+    const x = boundingRect.x + 5;
+    const y = boundingRect.y + 5;
+    UIHelper.doubleClickAtThenDragTo(x, y, x + boundingRect.width/2, y);
+}
+
+function copyPaste() {
+    document.execCommand('copy');
+    document.execCommand('paste');
+}
+
+var offsetAfterLineBreak = 6;
+shouldBe("selectFirstLineIncludingLineBreak(); copyPaste(); textarea.selectionEnd", "offsetAfterLineBreak");
+
+</script>
+</body>
+</html>

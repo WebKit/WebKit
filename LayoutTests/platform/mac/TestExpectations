@@ -11,6 +11,7 @@ displaylists [ Pass ]
 editing/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 media/mac [ Pass ]
+editing/pasteboard/mac [ Pass ]
 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
