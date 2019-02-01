@@ -54,6 +54,7 @@ localizedStrings["%s Fired"] = "%s Fired";
 localizedStrings["%s Prototype"] = "%s Prototype";
 localizedStrings["%s Result"] = "%s Result";
 localizedStrings["%s \u2013 %s"] = "%s \u2013 %s";
+localizedStrings["%s \u2013 %s (%s)"] = "%s \u2013 %s (%s)";
 localizedStrings["%s \u2014 %s"] = "%s \u2014 %s";
 localizedStrings["%s cannot be modified"] = "%s cannot be modified";
 localizedStrings["%s delay"] = "%s delay";

@@ -1,5 +1,18 @@
 2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline time range selection should show duration alongside start and end
+        https://bugs.webkit.org/show_bug.cgi?id=194109
+        <rdar://problem/47714279>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._updateTimeRangePathComponents):
+        Include the duration when not obvious.
+
+2019-02-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve API and documentation of ColumnChart
         https://bugs.webkit.org/show_bug.cgi?id=193982
 
