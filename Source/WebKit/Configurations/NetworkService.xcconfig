@@ -37,8 +37,8 @@ OTHER_CODE_SIGN_FLAGS = $(WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS);
 
 PRODUCT_NAME = com.apple.WebKit.Networking;
 PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
-INFOPLIST_FILE[sdk=iphone*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist;
-INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist;
+INFOPLIST_FILE[sdk=iphone*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist;
+INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-OSX.plist;
 
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(WK_RELOCATABLE_FRAMEWORKS_LDFLAGS);
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(BUILT_PRODUCTS_DIR)/SecItemShim.dylib;

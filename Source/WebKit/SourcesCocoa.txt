@@ -39,7 +39,7 @@ NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 
-NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm
+NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
 
 NetworkProcess/ios/NetworkProcessIOS.mm
 
@@ -81,7 +81,7 @@ Platform/mac/StringUtilities.mm
 
 Platform/unix/EnvironmentUtilities.cpp
 
-PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm @no-unify
+PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm @no-unify
 
 PluginProcess/mac/PluginControllerProxyMac.mm @no-unify
 PluginProcess/mac/PluginProcessMac.mm @no-unify
@@ -147,8 +147,8 @@ Shared/Cocoa/WKNSURLExtras.mm
 Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WKObject.mm
 
-Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
-Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm
+Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
+Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 
 Shared/ios/AuxiliaryProcessIOS.mm
 Shared/ios/InteractionInformationAtPosition.mm
@@ -493,7 +493,7 @@ WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoFullscreenManager.mm
 WebProcess/cocoa/WebProcessCocoa.mm
 
-WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
+WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm
 
 WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
 

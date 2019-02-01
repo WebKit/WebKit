@@ -1,3 +1,27 @@
+2019-02-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move XPCService entry points from mac directory to new Cocoa directory
+        https://bugs.webkit.org/show_bug.cgi?id=194129
+
+        Reviewed by Chris Dumez.
+
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/WebContentService.xcconfig:
+        * NetworkProcess/EntryPoint/Cocoa: Copied from Source/WebKit/NetworkProcess/EntryPoint/mac.
+        * NetworkProcess/EntryPoint/mac: Removed.
+        * PluginProcess/EntryPoint/Cocoa: Copied from Source/WebKit/PluginProcess/EntryPoint/mac.
+        * PluginProcess/EntryPoint/mac: Removed.
+        * Shared/EntryPointUtilities/Cocoa: Copied from Source/WebKit/Shared/EntryPointUtilities/mac.
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        * Shared/EntryPointUtilities/mac: Removed.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/EntryPoint/Cocoa: Copied from Source/WebKit/WebProcess/EntryPoint/mac.
+        * WebProcess/EntryPoint/mac: Removed.
+
 2019-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Consistent 1 sec hang when triggering modal alerts while handling synchronous touch events

@@ -8035,7 +8035,7 @@
 				BC82839616B47EC400A278FE /* XPCServiceMain.mm */,
 			);
 			name = XPCService;
-			path = mac/XPCService;
+			path = Cocoa/XPCService;
 			sourceTree = "<group>";
 		};
 		BC82837C16B45DA500A278FE /* EntryPoint */ = {
@@ -8061,7 +8061,7 @@
 				BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */,
 			);
 			name = XPCService;
-			path = mac/XPCService;
+			path = Cocoa/XPCService;
 			sourceTree = "<group>";
 		};
 		BC8283A216B4BD9100A278FE /* NetworkService */ = {
@@ -8080,7 +8080,7 @@
 				BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */,
 			);
 			name = XPCService;
-			path = mac/XPCService;
+			path = Cocoa/XPCService;
 			sourceTree = "<group>";
 		};
 		BC8283E916B4F8E200A278FE /* PluginService */ = {
@@ -8147,7 +8147,7 @@
 				BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */,
 			);
 			name = XPCService;
-			path = mac/XPCService;
+			path = Cocoa/XPCService;
 			sourceTree = "<group>";
 		};
 		BCACC43F16B24CAA00B6E092 /* WebContentService */ = {
