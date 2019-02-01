@@ -1,3 +1,10 @@
+2019-02-01  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; Respect the 'condition:' field in the WebPreferences.yaml when generating
+        WebPreferencesStoreDefaultsMap.cpp.
+
+        * page/SettingsBase.h:
+
 2019-02-01  Antoine Quint  <graouts@apple.com>
 
         Dispatch pointercancel events when content is panned or zoomed on iOS

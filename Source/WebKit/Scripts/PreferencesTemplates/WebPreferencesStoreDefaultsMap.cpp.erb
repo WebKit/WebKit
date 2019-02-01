@@ -48,7 +48,13 @@ WebPreferencesStore::ValueMap& WebPreferencesStore::defaults()
     static NeverDestroyed<ValueMap> defaults;
     if (defaults.get().isEmpty()) {
 <%- for @pref in @preferences do -%>
+<%- if @pref.condition -%>
+#if <%= @pref.condition %>
+<%- end -%>
         defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(<%= @pref.type %>(<%= @pref.defaultValue %>)));
+<%- if @pref.condition -%>
+#endif
+<%- end -%>
 <%- end -%>
     }
 
