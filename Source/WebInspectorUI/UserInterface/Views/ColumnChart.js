@@ -32,30 +32,30 @@
 //
 // - There is a single rect for each bar.
 //
-//  <div class="line-chart">
-//      <svg width="800" height="75" viewbox="0 0 800 75">
+//  <div class="column-chart">
+//      <svg viewBox="0 0 800 75">
 //          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
 //          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
 //          ...
 //      </svg>
 //  </div>
 
-WI.ColumnChart = class ColumnChart
+WI.ColumnChart = class ColumnChart extends WI.View
 {
     constructor(size)
     {
-        this._element = document.createElement("div");
-        this._element.classList.add("column-chart");
+        super();
 
-        this._svgElement = this._element.appendChild(createSVGElement("svg"));
+        this.element.classList.add("column-chart");
+
+        this._svgElement = this.element.appendChild(createSVGElement("svg"));
+        this._svgElement.setAttribute("preserveAspectRatio", "none");
 
         this._columns = [];
         this.size = size;
     }
 
     // Public
-
-    get element() { return this._element; }
 
     get size()
     {
@@ -66,9 +66,7 @@ WI.ColumnChart = class ColumnChart
     {
         this._size = size;
 
-        this._svgElement.setAttribute("width", size.width);
-        this._svgElement.setAttribute("height", size.height);
-        this._svgElement.setAttribute("viewbox", `0 0 ${size.width} ${size.height}`);
+        this._svgElement.setAttribute("viewBox", `0 0 ${size.width} ${size.height}`);
     }
 
     addColumn(x, y, width, height)
@@ -81,20 +79,14 @@ WI.ColumnChart = class ColumnChart
         this._columns = [];
     }
 
-    needsLayout()
+    // Protected
+
+    layout()
     {
-        if (this._scheduledLayoutUpdateIdentifier)
+        super.layout();
+
+        if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
-
-        this._scheduledLayoutUpdateIdentifier = requestAnimationFrame(this.updateLayout.bind(this));
-    }
-
-    updateLayout()
-    {
-        if (this._scheduledLayoutUpdateIdentifier) {
-            cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            this._scheduledLayoutUpdateIdentifier = undefined;
-        }
 
         this._svgElement.removeChildren();
 

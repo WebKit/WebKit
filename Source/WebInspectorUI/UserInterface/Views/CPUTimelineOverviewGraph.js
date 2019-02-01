@@ -39,6 +39,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
 
         let size = new WI.Size(0, this.height);
         this._chart = new WI.ColumnChart(size);
+        this.addSubview(this._chart);
         this.element.appendChild(this._chart.element);
 
         this._legendElement = this.element.appendChild(document.createElement("div"));
