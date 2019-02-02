@@ -116,6 +116,13 @@ protected:
         ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
     }
 
+    ~SymbolImpl()
+    {
+        if (m_owner != StringImpl::empty())
+            m_owner->deref();
+        m_owner = nullptr;
+    }
+
     // The pointer to the owner string should be immediately following after the StringImpl layout,
     // since we would like to align the layout of SymbolImpl to the one of BufferSubstring StringImpl.
     StringImpl* m_owner;

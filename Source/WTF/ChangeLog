@@ -1,3 +1,18 @@
+2019-02-02  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of WTF::StringImpl under SymbolImpl::createNullSymbol() (48 bytes) in com.apple.WebKit.WebContent running layout tests
+        <https://webkit.org/b/193291>
+        <rdar://problem/46655953>
+
+        Reviewed by Keith Miller.
+
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::~SymbolImpl): Fix the leak by implementing the
+        class destructor that calls StringImpl::deref() on `m_owner`.
+        Two of the three constructors leak the StringImpl when setting
+        `m_owner`, so we need to balance that by manually calling
+        deref().
+
 2018-12-16  Darin Adler  <darin@apple.com>
 
         Convert additional String::format clients to alternative approaches
