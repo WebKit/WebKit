@@ -553,7 +553,7 @@ void RenderLayerCompositor::didChangePlatformLayerForLayer(RenderLayer& layer, c
             // FIXME: Reorganize the layers and pass the scrollContainerLayer.
             nodeLayers = { nullptr, nullptr, m_scrollLayer.get(), fixedRootBackgroundLayer(), clipLayer(), m_rootContentsLayer.get() };
         } else
-            nodeLayers = { layer.backing()->graphicsLayer(), backing->scrollingLayer(), backing->scrollingContentsLayer() };
+            nodeLayers = { layer.backing()->graphicsLayer(), backing->scrollContainerLayer(), backing->scrolledContentsLayer() };
 
         scrollingCoordinator->setNodeLayers(nodeID, nodeLayers);
     }
@@ -4027,7 +4027,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         }
         
         if (changes & ScrollingNodeChangeFlags::Layer)
-            scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer(), layer.backing()->scrollingLayer(), layer.backing()->scrollingContentsLayer() });
+            scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer(), layer.backing()->scrollContainerLayer(), layer.backing()->scrolledContentsLayer() });
 
         if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
             RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
@@ -4235,7 +4235,8 @@ void LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers
             const RenderLayer* enclosingTouchScrollableLayer = nullptr;
             if (compositor.isAsyncScrollableStickyLayer(*layer, &enclosingTouchScrollableLayer) && enclosingTouchScrollableLayer) {
                 ASSERT(enclosingTouchScrollableLayer->isComposited());
-                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollingLayer()->platformLayer());
+                // what
+                stickyContainerMap.add(layer->backing()->graphicsLayer()->platformLayer(), enclosingTouchScrollableLayer->backing()->scrollContainerLayer()->platformLayer());
             }
         } else if (layer->renderer().isFixedPositioned())
             constraints = std::make_unique<FixedPositionViewportConstraints>(compositor.computeFixedViewportConstraints(*layer));
@@ -4273,7 +4274,7 @@ void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& la
 
     bool allowHorizontalScrollbar = !scrollbarHasDisplayNone(layer.horizontalScrollbar());
     bool allowVerticalScrollbar = !scrollbarHasDisplayNone(layer.verticalScrollbar());
-    m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer(),
+    m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer(),
         layer.scrollableContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
 
@@ -4296,7 +4297,7 @@ void LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers()
     for (auto* layer : m_scrollingLayers) {
         auto* backing = layer->backing();
         ASSERT(backing);
-        m_chromeClient.removeScrollingLayer(layer->renderer().element(), backing->scrollingLayer()->platformLayer(), backing->scrollingContentsLayer()->platformLayer());
+        m_chromeClient.removeScrollingLayer(layer->renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer());
     }
 }
 
@@ -4310,9 +4311,9 @@ void LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer(RenderLayer& la
 {
     m_scrollingLayersNeedingUpdate.remove(&layer);
     if (m_scrollingLayers.remove(&layer)) {
-        auto* scrollingLayer = backing.scrollingLayer()->platformLayer();
-        auto* contentsLayer = backing.scrollingContentsLayer()->platformLayer();
-        m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollingLayer, contentsLayer);
+        auto* scrollContainerLayer = backing.scrollContainerLayer()->platformLayer();
+        auto* scrolledContentsLayer = backing.scrolledContentsLayer()->platformLayer();
+        m_chromeClient.removeScrollingLayer(layer.renderer().element(), scrollContainerLayer, scrolledContentsLayer);
     }
 }
 

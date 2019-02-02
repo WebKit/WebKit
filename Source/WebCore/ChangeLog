@@ -1,3 +1,31 @@
+2019-02-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename "scrollingLayer" in RenderLayerBacking to "scrollContainerLayer" for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=194194
+
+        Rubber-stampted by Antti Koivisto.
+
+        Our desired terminology is "scrollContainerLayer" for the outer, clipping layer
+        for scrolling, and "scrolledContentsLayer" for the contents that move when you scroll.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::setLocationOfScrolledContents):
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::registerAllViewportConstrainedLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::unregisterAllScrollingLayers):
+        (WebCore::LegacyWebKitScrollingLayerCoordinator::removeScrollingLayer):
+
 2019-02-02  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Fix GPURenderPassEncoder::setVertexBuffers and allow overlapping indices with GPUBindGroups

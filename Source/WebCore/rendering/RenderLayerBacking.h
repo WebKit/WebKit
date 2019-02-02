@@ -104,9 +104,9 @@ public:
     bool requiresBackgroundLayer() const { return m_requiresBackgroundLayer; }
     void setRequiresBackgroundLayer(bool);
 
-    bool hasScrollingLayer() const { return m_scrollingLayer != nullptr; }
-    GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
-    GraphicsLayer* scrollingContentsLayer() const { return m_scrolledContentsLayer.get(); }
+    bool hasScrollingLayer() const { return m_scrollContainerLayer != nullptr; }
+    GraphicsLayer* scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
+    GraphicsLayer* scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
 
     OptionSet<ScrollCoordinationRole> coordinatedScrollingRoles() const;
 
@@ -385,7 +385,7 @@ private:
     RefPtr<GraphicsLayer> m_layerForVerticalScrollbar;
     RefPtr<GraphicsLayer> m_layerForScrollCorner;
 
-    RefPtr<GraphicsLayer> m_scrollingLayer; // Only used if the layer is using composited scrolling.
+    RefPtr<GraphicsLayer> m_scrollContainerLayer; // Only used if the layer is using composited scrolling.
     RefPtr<GraphicsLayer> m_scrolledContentsLayer; // Only used if the layer is using composited scrolling.
 
     LayoutRect m_compositedBounds;

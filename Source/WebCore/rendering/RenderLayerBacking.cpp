@@ -391,8 +391,8 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
     if (m_layerForScrollCorner)
         m_layerForScrollCorner->setShowDebugBorder(showBorder);
 
-    if (m_scrollingLayer)
-        m_scrollingLayer->setShowDebugBorder(showBorder);
+    if (m_scrollContainerLayer)
+        m_scrollContainerLayer->setShowDebugBorder(showBorder);
 
     if (m_scrolledContentsLayer) {
         m_scrolledContentsLayer->setShowDebugBorder(showBorder);
@@ -482,7 +482,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     GraphicsLayer::unparentAndClear(m_backgroundLayer);
     GraphicsLayer::unparentAndClear(m_childContainmentLayer);
     GraphicsLayer::unparentAndClear(m_childClippingMaskLayer);
-    GraphicsLayer::unparentAndClear(m_scrollingLayer);
+    GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
     GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
     GraphicsLayer::unparentAndClear(m_graphicsLayer);
 }
@@ -1090,7 +1090,7 @@ void RenderLayerBacking::updateGeometry()
         clipLayer->setSize(snappedClippingGraphicsLayer.m_snappedRect.size());
         clipLayer->setOffsetFromRenderer(toLayoutSize(clippingBox.location() - snappedClippingGraphicsLayer.m_snapDelta));
 
-        if (m_childClippingMaskLayer && !m_scrollingLayer) {
+        if (m_childClippingMaskLayer && !m_scrollContainerLayer) {
             m_childClippingMaskLayer->setSize(clipLayer->size());
             m_childClippingMaskLayer->setPosition(FloatPoint());
             m_childClippingMaskLayer->setOffsetFromRenderer(clipLayer->offsetFromRenderer());
@@ -1181,31 +1181,31 @@ void RenderLayerBacking::updateGeometry()
         reflectionBacking->graphicsLayer()->setReplicatedLayerPosition(FloatPoint(layerBounds.location() - reflectionLayerBounds.location()));
     }
 
-    if (m_scrollingLayer) {
+    if (m_scrollContainerLayer) {
         ASSERT(m_scrolledContentsLayer);
         auto& renderBox = downcast<RenderBox>(renderer());
         LayoutRect paddingBoxIncludingScrollbar = renderBox.paddingBoxRectIncludingScrollbar();
         ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
 
         // FIXME: need to do some pixel snapping here.
-        m_scrollingLayer->setPosition(FloatPoint(paddingBoxIncludingScrollbar.location() - compositedBounds().location()));
-        m_scrollingLayer->setSize(roundedIntSize(LayoutSize(renderBox.clientWidth(), renderBox.clientHeight())));
+        m_scrollContainerLayer->setPosition(FloatPoint(paddingBoxIncludingScrollbar.location() - compositedBounds().location()));
+        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(renderBox.clientWidth(), renderBox.clientHeight())));
 
         updateScrollOffset(scrollOffset);
 #if PLATFORM(IOS_FAMILY)
         m_scrolledContentsLayer->setPosition({ }); // FIXME: necessary?
 #endif
 
-        FloatSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
-        m_scrollingLayer->setOffsetFromRenderer(-toFloatSize(paddingBoxIncludingScrollbar.location()));
+        FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
+        m_scrollContainerLayer->setOffsetFromRenderer(-toFloatSize(paddingBoxIncludingScrollbar.location()));
 
         if (m_childClippingMaskLayer) {
-            m_childClippingMaskLayer->setPosition(m_scrollingLayer->position());
-            m_childClippingMaskLayer->setSize(m_scrollingLayer->size());
+            m_childClippingMaskLayer->setPosition(m_scrollContainerLayer->position());
+            m_childClippingMaskLayer->setSize(m_scrollContainerLayer->size());
             m_childClippingMaskLayer->setOffsetFromRenderer(-toFloatSize(paddingBoxIncludingScrollbar.location()));
         }
 
-        bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
+        bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollContainerLayer->offsetFromRenderer();
 
         IntSize scrollSize(m_owningLayer.scrollWidth(), m_owningLayer.scrollHeight());
         if (scrollSize != m_scrolledContentsLayer->size() || paddingBoxOffsetChanged)
@@ -1238,9 +1238,9 @@ void RenderLayerBacking::setLocationOfScrolledContents(ScrollOffset scrollOffset
 {
 #if PLATFORM(IOS_FAMILY)
     if (setOrSync == ScrollingLayerPositionAction::Sync)
-        m_scrollingLayer->syncBoundsOrigin(scrollOffset);
+        m_scrollContainerLayer->syncBoundsOrigin(scrollOffset);
     else
-        m_scrollingLayer->setBoundsOrigin(scrollOffset);
+        m_scrollContainerLayer->setBoundsOrigin(scrollOffset);
 #else
     if (setOrSync == ScrollingLayerPositionAction::Sync)
         m_scrolledContentsLayer->syncPosition(-scrollOffset);
@@ -1278,9 +1278,9 @@ void RenderLayerBacking::updateAfterDescendants()
     updateDrawsContent(contentsInfo);
 
     m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants());
-    if (m_scrollingLayer) {
-        m_scrollingLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
-        m_scrollingLayer->setUserInteractionEnabled(renderer().style().pointerEvents() != PointerEvents::None);
+    if (m_scrollContainerLayer) {
+        m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
+        m_scrollContainerLayer->setUserInteractionEnabled(renderer().style().pointerEvents() != PointerEvents::None);
     }
 }
 
@@ -1347,9 +1347,9 @@ void RenderLayerBacking::updateInternalHierarchy()
     if (m_childContainmentLayer)
         m_graphicsLayer->addChild(*m_childContainmentLayer);
 
-    if (m_scrollingLayer) {
+    if (m_scrollContainerLayer) {
         auto* superlayer = m_childContainmentLayer ? m_childContainmentLayer.get() : m_graphicsLayer.get();
-        superlayer->addChild(*m_scrollingLayer);
+        superlayer->addChild(*m_scrollContainerLayer);
     }
 
     // The clip for child layers does not include space for overflow controls, so they exist as
@@ -1390,10 +1390,10 @@ void RenderLayerBacking::updateDrawsContent()
 
 void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 {
-    if (m_scrollingLayer) {
+    if (m_scrollContainerLayer) {
         // We don't have to consider overflow controls, because we know that the scrollbars are drawn elsewhere.
         // m_graphicsLayer only needs backing store if the non-scrolling parts (background, outlines, borders, shadows etc) need to paint.
-        // m_scrollingLayer never has backing store.
+        // m_scrollContainerLayer never has backing store.
         // m_scrolledContentsLayer only needs backing store if the scrolled contents need to paint.
         bool hasNonScrollingPaintedContent = m_owningLayer.hasVisibleContent() && m_owningLayer.hasVisibleBoxDecorationsOrBackground();
         m_graphicsLayer->setDrawsContent(hasNonScrollingPaintedContent);
@@ -1738,14 +1738,14 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
 
 bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 {
-    if (needsScrollingLayers == !!m_scrollingLayer)
+    if (needsScrollingLayers == !!m_scrollContainerLayer)
         return false;
 
-    if (!m_scrollingLayer) {
+    if (!m_scrollContainerLayer) {
         // Outer layer which corresponds with the scroll view.
-        m_scrollingLayer = createGraphicsLayer("scrolling container", GraphicsLayer::Type::Scrolling);
-        m_scrollingLayer->setDrawsContent(false);
-        m_scrollingLayer->setMasksToBounds(true);
+        m_scrollContainerLayer = createGraphicsLayer("scrolling container", GraphicsLayer::Type::Scrolling);
+        m_scrollContainerLayer->setDrawsContent(false);
+        m_scrollContainerLayer->setMasksToBounds(true);
 
         // Inner layer which renders the content that scrolls.
         m_scrolledContentsLayer = createGraphicsLayer("scrolled contents");
@@ -1756,21 +1756,21 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         if (!m_foregroundLayer)
             paintPhase |= GraphicsLayerPaintForeground;
         m_scrolledContentsLayer->setPaintingPhase(paintPhase);
-        m_scrollingLayer->addChild(*m_scrolledContentsLayer);
+        m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);
     } else {
         compositor().willRemoveScrollingLayerWithBacking(m_owningLayer, *this);
 
-        willDestroyLayer(m_scrollingLayer.get());
+        willDestroyLayer(m_scrollContainerLayer.get());
         willDestroyLayer(m_scrolledContentsLayer.get());
         
-        GraphicsLayer::unparentAndClear(m_scrollingLayer);
+        GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
         GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
     }
 
     m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
     m_graphicsLayer->setNeedsDisplay(); // Because painting phases changed.
 
-    if (m_scrollingLayer)
+    if (m_scrollContainerLayer)
         compositor().didAddScrollingLayer(m_owningLayer);
     
     return true;
