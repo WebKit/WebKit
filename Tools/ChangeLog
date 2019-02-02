@@ -1,3 +1,15 @@
+2019-02-02  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of NSArray (4.25 Kbytes) in com.apple.WebKit.WebContent running WebKit layout tests on iOS Simulator
+        <https://webkit.org/b/194178>
+        <rdar://problem/47753473>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::uninstallFakeHelvetica): Pass nullptr into
+        CTFontManagerUnregisterFontsForURLs() to ignore any errors.
+
 2019-02-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Initialize ICB's style with fixed width/height.

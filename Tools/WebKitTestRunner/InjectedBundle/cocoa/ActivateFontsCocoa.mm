@@ -154,8 +154,7 @@ void uninstallFakeHelvetica()
         if ([[url lastPathComponent] hasPrefix:@"FakeHelvetica"])
             [fontsToRemove addObject:url];
     }
-    CFArrayRef errors = nullptr;
-    CTFontManagerUnregisterFontsForURLs(static_cast<CFArrayRef>(fontsToRemove), kCTFontManagerScopeProcess, &errors);
+    CTFontManagerUnregisterFontsForURLs(static_cast<CFArrayRef>(fontsToRemove), kCTFontManagerScopeProcess, nullptr);
 }
 
 }
