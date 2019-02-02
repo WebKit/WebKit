@@ -14151,6 +14151,9 @@
 		D0EACFAE219E30FD000FA75C /* WebGPUTextureFormatEnum.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUTextureFormatEnum.idl; sourceTree = "<group>"; };
 		D0EDA772143E303C0028E383 /* CachedRawResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRawResource.cpp; sourceTree = "<group>"; };
 		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
+		D0F75598220391C300118058 /* WHLSLVertexBufferIndexCalculator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLVertexBufferIndexCalculator.h; sourceTree = "<group>"; };
+		D0F75599220391C300118058 /* WHLSLVertexBufferIndexCalculator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLVertexBufferIndexCalculator.cpp; sourceTree = "<group>"; };
+		D0F7559F2203BA1400118058 /* GPULimits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULimits.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
 		D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoader.h; sourceTree = "<group>"; };
 		D2CDB5ED638F43AF86F07AA2 /* JSErrorEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorEventCustom.cpp; sourceTree = "<group>"; };
@@ -17215,6 +17218,8 @@
 				1CECB3C721F59C8700F44542 /* WHLSLNativeTypeWriter.h */,
 				1CECB3B121F2B98500F44542 /* WHLSLTypeNamer.cpp */,
 				1CECB3B021F2B98500F44542 /* WHLSLTypeNamer.h */,
+				D0F75599220391C300118058 /* WHLSLVertexBufferIndexCalculator.cpp */,
+				D0F75598220391C300118058 /* WHLSLVertexBufferIndexCalculator.h */,
 			);
 			path = Metal;
 			sourceTree = "<group>";
@@ -18457,6 +18462,7 @@
 				312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */,
 				312FF8BE21A4C2F100EB199D /* GPUDevice.h */,
 				D0D8649921BA1B1F003C983C /* GPUInputStateDescriptor.h */,
+				D0F7559F2203BA1400118058 /* GPULimits.h */,
 				312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */,
 				D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */,
 				D003288621C9A4E500622AA6 /* GPUPipelineLayout.h */,

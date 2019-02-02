@@ -33,7 +33,8 @@
 #import "GPURenderPassDescriptor.h"
 #import "GPURenderPipeline.h"
 #import "Logging.h"
-
+#import "WHLSLVertexBufferIndexCalculator.h"
+#import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -92,12 +93,21 @@ void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
     m_pipeline = WTFMove(pipeline);
 }
 
-void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<const GPUBuffer>>&& buffers, Vector<unsigned>&& offsets) 
+void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<const GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
     ASSERT(buffers.size() && offsets.size() == buffers.size());
-    // FIXME: Only worry about the first buffer for now, and treat startSlot as the index.
-    // FIXME: Replace with MTLRenderPassEncoder::setVertexBuffers.
-    [m_platformRenderPassEncoder setVertexBuffer:buffers[0]->platformBuffer() offset:offsets[0] atIndex:index];
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    auto mtlBuffers = buffers.map([] (const auto& buffer) {
+        return buffer->platformBuffer();
+    });
+
+    auto indexRanges = NSMakeRange(WHLSL::Metal::calculateVertexBufferIndex(index), buffers.size());
+
+    [m_platformRenderPassEncoder setVertexBuffers:mtlBuffers.data() offsets:(const NSUInteger *)offsets.data() withRange:indexRanges];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(PrimitiveTopology type)

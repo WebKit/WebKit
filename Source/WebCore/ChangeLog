@@ -1,3 +1,35 @@
+2019-02-02  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Fix GPURenderPassEncoder::setVertexBuffers and allow overlapping indices with GPUBindGroups
+        https://bugs.webkit.org/show_bug.cgi?id=194125
+
+        Reviewed by Myles C. Maxfield.
+
+        GPURenderPassEncoder::setVertexBuffers is now actually written to set all buffers provided. In addition,
+        shift vertex input buffer indices so that any resource bindings can bind vertex buffer resources to the same indices. 
+
+        Existing tests cover setVertexBuffers. Updated buffer-resource-triangles to assign bind groups and vertex buffers to the same index.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.cpp: Added.
+        (WebCore::WHLSL::Metal::calculateVertexBufferIndex): Simple shifting function for vertex input buffer indices.
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.h: Added.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const): Limit maximum bind group indices to 0 to 3.
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp: 
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers): Limit vertex input indices to 0 to 15.
+        * Modules/webgpu/WebGPURenderPassEncoder.h: Move IDL/bindings bug note to IDL file.
+        * Modules/webgpu/WebGPURenderPassEncoder.idl: Ditto.
+        * platform/graphics/gpu/GPULimits.h: Added. Home for Web GPU limits constants shared between files.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Change IDL/bindings bug workaround to unsigned long long to prevent narrowing compared to spec.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffers): Now properly calls Metal's setVertexBuffers. 
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setInputStateForPipelineDescriptor): Fix validation checks for vertex attribute numbers and vertex buffer indices. 
+
+        Add symbols to project:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         Async overflow scroll is jumpy on macOS if the main thread is busy

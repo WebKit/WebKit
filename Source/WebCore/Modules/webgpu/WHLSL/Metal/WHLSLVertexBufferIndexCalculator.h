@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,26 +22,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    JSGenerateToJSObject
-] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
-    // FIXME: (<rdar://problem/47717832>) Last argument should be sequence<unsigned long>, but bindings generates Vector<unsigned int>.
-    void setVertexBuffers(u32 startSlot, sequence<WebGPUBuffer> buffers, sequence<unsigned long long> offsets);
+#if ENABLE(WEBGPU)
 
-    void draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
+namespace WebCore {
 
-/* Not Yet Implemented
-    void setBlendColor(float r, float g, float b, float a);
-    void setIndexBuffer(WebGPUBuffer buffer, u32 offset);
+namespace WHLSL {
 
-    void drawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, i32 baseVertex, u32 firstInstance);
+namespace Metal {
 
-    // TODO add missing commands
-*/
-};
+unsigned long calculateVertexBufferIndex(unsigned long);
+
+} // namespace Metal
+
+} // namespace WHLSL
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

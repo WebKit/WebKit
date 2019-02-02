@@ -1,3 +1,14 @@
+2019-02-02  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Fix GPURenderPassEncoder::setVertexBuffers and allow overlapping indices with GPUBindGroups
+        https://bugs.webkit.org/show_bug.cgi?id=194125
+
+        Reviewed by Myles C. Maxfield.
+
+        Updated buffer-resource-triangles to assign bind groups and vertex buffers to the same index.
+
+        * webgpu/buffer-resource-triangles.html:
+
 2019-02-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Add missing case to out-of-flow non-replaced horizontal used margin value computation

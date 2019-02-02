@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPULimits.h"
 #include "GPUProgrammablePassEncoder.h"
 #include "GPURenderPassEncoder.h"
 #include "Logging.h"
@@ -46,10 +47,15 @@ WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&& crea
 {
 }
 
-void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned>&& offsets)
+void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
     if (buffers.isEmpty() || buffers.size() != offsets.size()) {
         LOG(WebGPU, "WebGPURenderPassEncoder::setVertexBuffers: Invalid number of buffers or offsets!");
+        return;
+    }
+
+    if (startSlot + buffers.size() > maxVertexBuffers) {
+        LOG(WebGPU, "WebGPURenderPassEncoder::setVertexBuffers: Invalid startSlot %lu for %lu buffers!", startSlot, buffers.size());
         return;
     }
 
@@ -57,7 +63,6 @@ void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<R
         return buffer->buffer();
     });
 
-    // FIXME: Use startSlot properly.
     m_passEncoder->setVertexBuffers(startSlot, WTFMove(gpuBuffers), WTFMove(offsets));
 }
 

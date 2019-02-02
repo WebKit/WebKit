@@ -53,7 +53,7 @@ public:
 
     void setPipeline(Ref<GPURenderPipeline>&&) final;
 
-    void setVertexBuffers(unsigned long, Vector<Ref<const GPUBuffer>>&&, Vector<unsigned>&&);
+    void setVertexBuffers(unsigned long, Vector<Ref<const GPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 
 private:

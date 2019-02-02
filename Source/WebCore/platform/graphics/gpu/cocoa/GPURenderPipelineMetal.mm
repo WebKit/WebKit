@@ -28,8 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPULimits.h"
 #import "Logging.h"
-
+#import "WHLSLVertexBufferIndexCalculator.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Optional.h>
@@ -194,12 +195,11 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
     for (size_t i = 0; i < attributes.size(); ++i) {
         auto location = attributes[i].shaderLocation;
         // Maximum number of vertex attributes to be supported by Web GPU.
-        if (location > 16) {
+        if (location >= 16) {
             LOG(WebGPU, "%s: Invalid shaderLocation %lu for vertex attribute!", functionName, location);
             return false;
         }
-        // Maximum number of vertex buffers supported.
-        if (attributes[i].inputSlot > 16) {
+        if (attributes[i].inputSlot >= maxVertexBuffers) {
             LOG(WebGPU, "%s: Invalid inputSlot %lu for vertex attribute %lu!", functionName, attributes[i].inputSlot, location);
             return false;
         }
@@ -212,7 +212,7 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
         auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
         mtlAttributeDesc.get().format = *mtlFormat;
         mtlAttributeDesc.get().offset = attributes[i].offset; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
-        mtlAttributeDesc.get().bufferIndex = attributes[i].inputSlot;
+        mtlAttributeDesc.get().bufferIndex = WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot);
         [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc.get() atIndexedSubscript:location];
     }
 
@@ -222,7 +222,7 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
 
     for (size_t j = 0; j < inputs.size(); ++j) {
         auto slot = inputs[j].inputSlot;
-        if (inputs[j].inputSlot > 16) {
+        if (slot >= maxVertexBuffers) {
             LOG(WebGPU, "%s: Invalid inputSlot %d for vertex buffer!", functionName, slot);
             return false;
         }
@@ -233,10 +233,11 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
             return false;
         }
 
-        auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:slot]);
+        auto convertedSlot = WHLSL::Metal::calculateVertexBufferIndex(slot);
+        auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedSlot]);
         mtlLayoutDesc.get().stepFunction = *mtlStepFunction;
         mtlLayoutDesc.get().stride = inputs[j].stride;
-        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc.get() atIndexedSubscript:slot];
+        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc.get() atIndexedSubscript:convertedSlot];
     }
 
     mtlDescriptor.vertexDescriptor = mtlVertexDescriptor.get();
