@@ -51,7 +51,11 @@ namespace Layout {
 
 std::unique_ptr<Container> TreeBuilder::createLayoutTree(const RenderView& renderView)
 {
-    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(WTF::nullopt, RenderStyle::clone(renderView.style())));
+    auto style = RenderStyle::clone(renderView.style());
+    style.setLogicalWidth(Length(renderView.width(), Fixed));
+    style.setLogicalHeight(Length(renderView.height(), Fixed));
+
+    std::unique_ptr<Container> initialContainingBlock(new BlockContainer(WTF::nullopt, WTFMove(style)));
     TreeBuilder::createSubTree(renderView, *initialContainingBlock);
     return initialContainingBlock;
 }

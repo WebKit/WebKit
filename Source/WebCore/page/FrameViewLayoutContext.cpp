@@ -59,7 +59,7 @@ static void layoutUsingFormattingContext(const RenderView& renderView)
     if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
         return;
     auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock, renderView.size());
+    auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock);
     layoutState->setInQuirksMode(renderView.document().inQuirksMode());
     layoutState->updateLayout();
     layoutState->verifyAndOutputMismatchingLayoutTree(renderView);

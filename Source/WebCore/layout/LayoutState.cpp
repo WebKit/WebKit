@@ -45,7 +45,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Container& initialContainingBlock, const LayoutSize& containerSize)
+LayoutState::LayoutState(const Container& initialContainingBlock)
     : m_initialContainingBlock(makeWeakPtr(initialContainingBlock))
 {
     // LayoutState is always initiated with the ICB.
@@ -59,8 +59,8 @@ LayoutState::LayoutState(const Container& initialContainingBlock, const LayoutSi
     displayBox.setBorder({ });
     displayBox.setPadding({ });
     displayBox.setTopLeft({ });
-    displayBox.setContentBoxHeight(containerSize.height());
-    displayBox.setContentBoxWidth(containerSize.width());
+    displayBox.setContentBoxHeight(initialContainingBlock.style().logicalHeight().value());
+    displayBox.setContentBoxWidth(initialContainingBlock.style().logicalWidth().value());
 
     m_formattingContextRootListForLayout.add(&initialContainingBlock);
 }

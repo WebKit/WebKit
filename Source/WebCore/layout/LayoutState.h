@@ -59,7 +59,7 @@ class FormattingState;
 class LayoutState {
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    LayoutState(const Container& initialContainingBlock, const LayoutSize&);
+    LayoutState(const Container& initialContainingBlock);
 
     void updateLayout();
     void styleChanged(const Box&, StyleDiff);

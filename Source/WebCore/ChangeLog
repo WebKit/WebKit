@@ -1,5 +1,21 @@
 2019-02-02  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Initialize ICB's style with fixed width/height.
+        https://bugs.webkit.org/show_bug.cgi?id=194188
+
+        Reviewed by Antti Koivisto.
+
+        Let's set ICB's logical width/height to Fixed so that it's available when we try to resolve a box's height
+        in FormattingContext::Geometry::computedHeightValue() by using the containing block's height (ICB in this case).
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutState.h:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutTree):
+
+2019-02-02  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add missing case to out-of-flow non-replaced horizontal used margin value computation
         https://bugs.webkit.org/show_bug.cgi?id=194185
 

@@ -504,8 +504,10 @@ css2.1/t0803-c5504-imrgn-l-00-b-ag.html
 css2.1/20110323/abspos-containing-block-initial-005a.htm
 css2.1/20110323/abspos-containing-block-initial-005c.htm
 css2.1/20110323/abspos-containing-block-initial-007.htm
+css2.1/20110323/abspos-containing-block-initial-009a.htm
 css2.1/20110323/abspos-containing-block-initial-009b.htm
 css2.1/20110323/abspos-containing-block-initial-009e.htm
+css2.1/20110323/abspos-containing-block-initial-009f.htm
 css2.1/t0803-c5504-mrgn-l-00-c-ag.html
 css2.1/t0803-c5504-mrgn-l-02-c.html
 css2.1/t0803-c5504-mrgn-l-03-c.html
