@@ -61,7 +61,7 @@ void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueReg
         
         ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =
-            u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles(locker).add(locker, key);
         jit.storeValue(regs, profile->specFailBucket(0));
         return;
     }
@@ -89,7 +89,7 @@ void MethodOfGettingAValueProfile::reportValue(JSValue value)
 
         ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =
-            u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles(locker).add(locker, key);
         *profile->specFailBucket(0) = JSValue::encode(value);
         return;
     }

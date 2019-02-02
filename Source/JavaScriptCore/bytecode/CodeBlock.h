@@ -249,6 +249,31 @@ public:
     void getICStatusMap(ICStatusMap& result);
     
 #if ENABLE(JIT)
+    struct JITData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        Bag<StructureStubInfo> m_stubInfos;
+        Bag<JITAddIC> m_addICs;
+        Bag<JITMulIC> m_mulICs;
+        Bag<JITNegIC> m_negICs;
+        Bag<JITSubIC> m_subICs;
+        Bag<ByValInfo> m_byValInfos;
+        Bag<CallLinkInfo> m_callLinkInfos;
+        SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
+        SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
+        SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
+        std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
+        JITCodeMap m_jitCodeMap;
+    };
+
+    JITData& ensureJITData(const ConcurrentJSLocker& locker)
+    {
+        if (LIKELY(m_jitData))
+            return *m_jitData;
+        return ensureJITDataSlow(locker);
+    }
+    JITData& ensureJITDataSlow(const ConcurrentJSLocker&);
+
     JITAddIC* addJITAddIC(ArithProfile*, const Instruction*);
     JITMulIC* addJITMulIC(ArithProfile*, const Instruction*);
     JITNegIC* addJITNegIC(ArithProfile*, const Instruction*);
@@ -267,8 +292,6 @@ public:
     JITSubIC* addMathIC(ArithProfile* profile, const Instruction* instruction) { return addJITSubIC(profile, instruction); }
 
     StructureStubInfo* addStubInfo(AccessType);
-    auto stubInfoBegin() { return m_stubInfos.begin(); }
-    auto stubInfoEnd() { return m_stubInfos.end(); }
 
     // O(n) operation. Use getStubInfoMap() unless you really only intend to get one
     // stub info.
@@ -277,14 +300,48 @@ public:
     ByValInfo* addByValInfo();
 
     CallLinkInfo* addCallLinkInfo();
-    auto callLinkInfosBegin() { return m_callLinkInfos.begin(); }
-    auto callLinkInfosEnd() { return m_callLinkInfos.end(); }
 
     // This is a slow function call used primarily for compiling OSR exits in the case
     // that there had been inlining. Chances are if you want to use this, you're really
     // looking for a CallLinkInfoMap to amortize the cost of calling this.
     CallLinkInfo* getCallLinkInfoForBytecodeIndex(unsigned bytecodeIndex);
     
+    void setJITCodeMap(JITCodeMap&& jitCodeMap)
+    {
+        ConcurrentJSLocker locker(m_lock);
+        ensureJITData(locker).m_jitCodeMap = WTFMove(jitCodeMap);
+    }
+    const JITCodeMap& jitCodeMap()
+    {
+        ConcurrentJSLocker locker(m_lock);
+        return ensureJITData(locker).m_jitCodeMap;
+    }
+
+    void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
+    Optional<CodeOrigin> findPC(void* pc);
+
+    RareCaseProfile* addRareCaseProfile(int bytecodeOffset);
+    RareCaseProfile* rareCaseProfileForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset);
+    unsigned rareCaseProfileCountForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset);
+
+    bool likelyToTakeSlowCase(int bytecodeOffset)
+    {
+        if (!hasBaselineJITProfiling())
+            return false;
+        ConcurrentJSLocker locker(m_lock);
+        unsigned value = rareCaseProfileCountForBytecodeOffset(locker, bytecodeOffset);
+        return value >= Options::likelyToTakeSlowCaseMinimumCount();
+    }
+
+    bool couldTakeSlowCase(int bytecodeOffset)
+    {
+        if (!hasBaselineJITProfiling())
+            return false;
+        ConcurrentJSLocker locker(m_lock);
+        unsigned value = rareCaseProfileCountForBytecodeOffset(locker, bytecodeOffset);
+        return value >= Options::couldTakeSlowCaseMinimumCount();
+    }
+
     // We call this when we want to reattempt compiling something with the baseline JIT. Ideally
     // the baseline JIT would not add data to CodeBlock, but instead it would put its data into
     // a newly created JITCode, which could be thrown away if we bail on JIT compilation. Then we
@@ -301,17 +358,6 @@ public:
 #endif // ENABLE(JIT)
 
     void linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo*);
-
-#if ENABLE(JIT)
-    void setJITCodeMap(JITCodeMap&& jitCodeMap)
-    {
-        m_jitCodeMap = WTFMove(jitCodeMap);
-    }
-    const JITCodeMap& jitCodeMap() const
-    {
-        return m_jitCodeMap;
-    }
-#endif
 
     const Instruction* outOfLineJumpTarget(const Instruction* pc);
     int outOfLineJumpOffset(const Instruction* pc);
@@ -442,27 +488,6 @@ public:
     template<typename Functor> void forEachObjectAllocationProfile(const Functor&);
     template<typename Functor> void forEachLLIntCallLinkInfo(const Functor&);
 
-    RareCaseProfile* addRareCaseProfile(int bytecodeOffset);
-    unsigned numberOfRareCaseProfiles() { return m_rareCaseProfiles.size(); }
-    RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset);
-    unsigned rareCaseProfileCountForBytecodeOffset(int bytecodeOffset);
-
-    bool likelyToTakeSlowCase(int bytecodeOffset)
-    {
-        if (!hasBaselineJITProfiling())
-            return false;
-        unsigned value = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
-        return value >= Options::likelyToTakeSlowCaseMinimumCount();
-    }
-
-    bool couldTakeSlowCase(int bytecodeOffset)
-    {
-        if (!hasBaselineJITProfiling())
-            return false;
-        unsigned value = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
-        return value >= Options::couldTakeSlowCaseMinimumCount();
-    }
-
     ArithProfile* arithProfileForBytecodeOffset(InstructionStream::Offset bytecodeOffset);
     ArithProfile* arithProfileForPC(const Instruction*);
 
@@ -499,7 +524,7 @@ public:
         return codeOrigins()[index.bits()];
     }
 
-    CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles()
+    CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles(const ConcurrentJSLocker&)
     {
         return m_lazyOperandValueProfiles;
     }
@@ -847,11 +872,6 @@ public:
 
     void ensureCatchLivenessIsComputedForBytecodeOffset(InstructionStream::Offset bytecodeOffset);
 
-#if ENABLE(JIT)
-    void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
-    Optional<CodeOrigin> findPC(void* pc);
-#endif
-
     bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }
 
     template<typename Metadata>
@@ -868,8 +888,9 @@ public:
 
 protected:
     void finalizeLLIntInlineCaches();
+#if ENABLE(JIT)
     void finalizeBaselineJITInlineCaches();
-
+#endif
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();
 #else
@@ -965,17 +986,7 @@ private:
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
 #endif
 #if ENABLE(JIT)
-    Bag<StructureStubInfo> m_stubInfos;
-    Bag<JITAddIC> m_addICs;
-    Bag<JITMulIC> m_mulICs;
-    Bag<JITNegIC> m_negICs;
-    Bag<JITSubIC> m_subICs;
-    Bag<ByValInfo> m_byValInfos;
-    Bag<CallLinkInfo> m_callLinkInfos;
-    SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
-    SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
-    std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
-    JITCodeMap m_jitCodeMap;
+    std::unique_ptr<JITData> m_jitData;
 #endif
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
@@ -984,7 +995,6 @@ private:
 #endif
     RefCountedArray<ValueProfile> m_argumentValueProfiles;
     Vector<std::unique_ptr<ValueProfileAndOperandBuffer>> m_catchProfiles;
-    SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
 
     // Constant Pool
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);

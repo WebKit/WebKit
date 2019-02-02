@@ -861,10 +861,11 @@ CodeBlock::~CodeBlock()
     // destructors.
 
 #if ENABLE(JIT)
-    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
-        StructureStubInfo* stub = *iter;
-        stub->aboutToDie();
-        stub->deref();
+    if (auto* jitData = m_jitData.get()) {
+        for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
+            stubInfo->aboutToDie();
+            stubInfo->deref();
+        }
     }
 #endif // ENABLE(JIT)
 }
@@ -1112,8 +1113,10 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (auto iter = m_stubInfos.begin(); !!iter; ++iter)
-            (*iter)->propagateTransitions(visitor);
+        if (auto* jitData = m_jitData.get()) {
+            for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
+                stubInfo->propagateTransitions(visitor);
+        }
     }
 #endif // ENABLE(JIT)
     
@@ -1350,18 +1353,25 @@ void CodeBlock::finalizeLLIntInlineCaches()
     });
 }
 
+#if ENABLE(JIT)
+CodeBlock::JITData& CodeBlock::ensureJITDataSlow(const ConcurrentJSLocker&)
+{
+    ASSERT(!m_jitData);
+    m_jitData = std::make_unique<JITData>();
+    return *m_jitData;
+}
+
 void CodeBlock::finalizeBaselineJITInlineCaches()
 {
-#if ENABLE(JIT)
-    for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
-        (*iter)->visitWeak(*vm());
+    if (auto* jitData = m_jitData.get()) {
+        for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
+            callLinkInfo->visitWeak(*vm());
 
-    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
-        StructureStubInfo& stubInfo = **iter;
-        stubInfo.visitWeakReferences(this);
+        for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
+            stubInfo->visitWeakReferences(this);
     }
-#endif
 }
+#endif
 
 void CodeBlock::finalizeUnconditionally(VM&)
 {
@@ -1394,12 +1404,14 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
 {
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (StructureStubInfo* stubInfo : m_stubInfos)
-            result.add(stubInfo->codeOrigin, ICStatus()).iterator->value.stubInfo = stubInfo;
-        for (CallLinkInfo* callLinkInfo : m_callLinkInfos)
-            result.add(callLinkInfo->codeOrigin(), ICStatus()).iterator->value.callLinkInfo = callLinkInfo;
-        for (ByValInfo* byValInfo : m_byValInfos)
-            result.add(CodeOrigin(byValInfo->bytecodeIndex), ICStatus()).iterator->value.byValInfo = byValInfo;
+        if (auto* jitData = m_jitData.get()) {
+            for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
+                result.add(stubInfo->codeOrigin, ICStatus()).iterator->value.stubInfo = stubInfo;
+            for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
+                result.add(callLinkInfo->codeOrigin(), ICStatus()).iterator->value.callLinkInfo = callLinkInfo;
+            for (ByValInfo* byValInfo : jitData->m_byValInfos)
+                result.add(CodeOrigin(byValInfo->bytecodeIndex), ICStatus()).iterator->value.byValInfo = byValInfo;
+        }
 #if ENABLE(DFG_JIT)
         if (JITCode::isOptimizingJIT(jitType())) {
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
@@ -1429,34 +1441,41 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
 StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType)
 {
     ConcurrentJSLocker locker(m_lock);
-    return m_stubInfos.add(accessType);
+    return ensureJITData(locker).m_stubInfos.add(accessType);
 }
 
 JITAddIC* CodeBlock::addJITAddIC(ArithProfile* arithProfile, const Instruction* instruction)
 {
-    return m_addICs.add(arithProfile, instruction);
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_addICs.add(arithProfile, instruction);
 }
 
 JITMulIC* CodeBlock::addJITMulIC(ArithProfile* arithProfile, const Instruction* instruction)
 {
-    return m_mulICs.add(arithProfile, instruction);
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_mulICs.add(arithProfile, instruction);
 }
 
 JITSubIC* CodeBlock::addJITSubIC(ArithProfile* arithProfile, const Instruction* instruction)
 {
-    return m_subICs.add(arithProfile, instruction);
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_subICs.add(arithProfile, instruction);
 }
 
 JITNegIC* CodeBlock::addJITNegIC(ArithProfile* arithProfile, const Instruction* instruction)
 {
-    return m_negICs.add(arithProfile, instruction);
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_negICs.add(arithProfile, instruction);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 {
-    for (StructureStubInfo* stubInfo : m_stubInfos) {
-        if (stubInfo->codeOrigin == codeOrigin)
-            return stubInfo;
+    ConcurrentJSLocker locker(m_lock);
+    if (auto* jitData = m_jitData.get()) {
+        for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
+            if (stubInfo->codeOrigin == codeOrigin)
+                return stubInfo;
+        }
     }
     return nullptr;
 }
@@ -1464,22 +1483,51 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
 ByValInfo* CodeBlock::addByValInfo()
 {
     ConcurrentJSLocker locker(m_lock);
-    return m_byValInfos.add();
+    return ensureJITData(locker).m_byValInfos.add();
 }
 
 CallLinkInfo* CodeBlock::addCallLinkInfo()
 {
     ConcurrentJSLocker locker(m_lock);
-    return m_callLinkInfos.add();
+    return ensureJITData(locker).m_callLinkInfos.add();
 }
 
 CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
 {
-    for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter) {
-        if ((*iter)->codeOrigin() == CodeOrigin(index))
-            return *iter;
+    ConcurrentJSLocker locker(m_lock);
+    if (auto* jitData = m_jitData.get()) {
+        for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos) {
+            if (callLinkInfo->codeOrigin() == CodeOrigin(index))
+                return callLinkInfo;
+        }
     }
     return nullptr;
+}
+
+RareCaseProfile* CodeBlock::addRareCaseProfile(int bytecodeOffset)
+{
+    ConcurrentJSLocker locker(m_lock);
+    auto& jitData = ensureJITData(locker);
+    jitData.m_rareCaseProfiles.append(RareCaseProfile(bytecodeOffset));
+    return &jitData.m_rareCaseProfiles.last();
+}
+
+RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset)
+{
+    if (auto* jitData = m_jitData.get()) {
+        return tryBinarySearch<RareCaseProfile, int>(
+            jitData->m_rareCaseProfiles, jitData->m_rareCaseProfiles.size(), bytecodeOffset,
+            getRareCaseProfileBytecodeOffset);
+    }
+    return nullptr;
+}
+
+unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(const ConcurrentJSLocker& locker, int bytecodeOffset)
+{
+    RareCaseProfile* profile = rareCaseProfileForBytecodeOffset(locker, bytecodeOffset);
+    if (profile)
+        return profile->m_counter;
+    return 0;
 }
 
 void CodeBlock::resetJITData()
@@ -1487,17 +1535,18 @@ void CodeBlock::resetJITData()
     RELEASE_ASSERT(!JITCode::isJIT(jitType()));
     ConcurrentJSLocker locker(m_lock);
     
-    // We can clear these because no other thread will have references to any stub infos, call
-    // link infos, or by val infos if we don't have JIT code. Attempts to query these data
-    // structures using the concurrent API (getICStatusMap and friends) will return nothing if we
-    // don't have JIT code.
-    m_stubInfos.clear();
-    m_callLinkInfos.clear();
-    m_byValInfos.clear();
-    
-    // We can clear this because the DFG's queries to these data structures are guarded by whether
-    // there is JIT code.
-    m_rareCaseProfiles.clear();
+    if (auto* jitData = m_jitData.get()) {
+        // We can clear these because no other thread will have references to any stub infos, call
+        // link infos, or by val infos if we don't have JIT code. Attempts to query these data
+        // structures using the concurrent API (getICStatusMap and friends) will return nothing if we
+        // don't have JIT code.
+        jitData->m_stubInfos.clear();
+        jitData->m_callLinkInfos.clear();
+        jitData->m_byValInfos.clear();
+        // We can clear this because the DFG's queries to these data structures are guarded by whether
+        // there is JIT code.
+        jitData->m_rareCaseProfiles.clear();
+    }
 }
 #endif
 
@@ -1540,8 +1589,10 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     });
 
 #if ENABLE(JIT)
-    for (ByValInfo* byValInfo : m_byValInfos)
-        visitor.append(byValInfo->cachedSymbol);
+    if (auto* jitData = m_jitData.get()) {
+        for (ByValInfo* byValInfo : jitData->m_byValInfos)
+            visitor.append(byValInfo->cachedSymbol);
+    }
 #endif
 
 #if ENABLE(DFG_JIT)
@@ -1786,7 +1837,10 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
     ConcurrentJSLocker locker(m_lock);
 
-    m_rareCaseProfiles.shrinkToFit();
+#if ENABLE(JIT)
+    if (auto* jitData = m_jitData.get())
+        jitData->m_rareCaseProfiles.shrinkToFit();
+#endif
     
     if (shrinkMode == EarlyShrink) {
         m_constantRegisters.shrinkToFit();
@@ -1803,13 +1857,17 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
 {
     noticeIncomingCall(callerFrame);
-    m_incomingCalls.push(incoming);
+    ConcurrentJSLocker locker(m_lock);
+    ensureJITData(locker).m_incomingCalls.push(incoming);
 }
 
 void CodeBlock::linkIncomingPolymorphicCall(ExecState* callerFrame, PolymorphicCallNode* incoming)
 {
     noticeIncomingCall(callerFrame);
-    m_incomingPolymorphicCalls.push(incoming);
+    {
+        ConcurrentJSLocker locker(m_lock);
+        ensureJITData(locker).m_incomingPolymorphicCalls.push(incoming);
+    }
 }
 #endif // ENABLE(JIT)
 
@@ -1818,10 +1876,17 @@ void CodeBlock::unlinkIncomingCalls()
     while (m_incomingLLIntCalls.begin() != m_incomingLLIntCalls.end())
         m_incomingLLIntCalls.begin()->unlink();
 #if ENABLE(JIT)
-    while (m_incomingCalls.begin() != m_incomingCalls.end())
-        m_incomingCalls.begin()->unlink(*vm());
-    while (m_incomingPolymorphicCalls.begin() != m_incomingPolymorphicCalls.end())
-        m_incomingPolymorphicCalls.begin()->unlink(*vm());
+    JITData* jitData = nullptr;
+    {
+        ConcurrentJSLocker locker(m_lock);
+        jitData = m_jitData.get();
+    }
+    if (jitData) {
+        while (jitData->m_incomingCalls.begin() != jitData->m_incomingCalls.end())
+            jitData->m_incomingCalls.begin()->unlink(*vm());
+        while (jitData->m_incomingPolymorphicCalls.begin() != jitData->m_incomingPolymorphicCalls.end())
+            jitData->m_incomingPolymorphicCalls.begin()->unlink(*vm());
+    }
 #endif // ENABLE(JIT)
 }
 
@@ -2573,7 +2638,7 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonAr
     }
     
 #if ENABLE(DFG_JIT)
-    m_lazyOperandValueProfiles.computeUpdatedPredictions(locker);
+    lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
 #endif
 }
 
@@ -2730,9 +2795,9 @@ void CodeBlock::dumpValueProfiles()
         dataLogF("\n");
     });
     dataLog("RareCaseProfile for ", *this, ":\n");
-    for (unsigned i = 0; i < numberOfRareCaseProfiles(); ++i) {
-        RareCaseProfile* profile = rareCaseProfile(i);
-        dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
+    if (auto* jitData = m_jitData.get()) {
+        for (RareCaseProfile* profile : jitData->m_rareCaseProfiles)
+            dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
 }
 #endif // ENABLE(VERBOSE_VALUE_PROFILE)
@@ -2939,27 +3004,6 @@ const Instruction* CodeBlock::outOfLineJumpTarget(const Instruction* pc)
     return m_instructions->at(offset + target).ptr();
 }
 
-RareCaseProfile* CodeBlock::addRareCaseProfile(int bytecodeOffset)
-{
-    m_rareCaseProfiles.append(RareCaseProfile(bytecodeOffset));
-    return &m_rareCaseProfiles.last();
-}
-
-RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeOffset(int bytecodeOffset)
-{
-    return tryBinarySearch<RareCaseProfile, int>(
-        m_rareCaseProfiles, m_rareCaseProfiles.size(), bytecodeOffset,
-        getRareCaseProfileBytecodeOffset);
-}
-
-unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
-{
-    RareCaseProfile* profile = rareCaseProfileForBytecodeOffset(bytecodeOffset);
-    if (profile)
-        return profile->m_counter;
-    return 0;
-}
-
 ArithProfile* CodeBlock::arithProfileForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
 {
     return arithProfileForPC(m_instructions->at(bytecodeOffset).ptr());
@@ -3080,20 +3124,25 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
 #if ENABLE(JIT)
 void CodeBlock::setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&& map) 
 { 
-    m_pcToCodeOriginMap = WTFMove(map);
+    ConcurrentJSLocker locker(m_lock);
+    ensureJITData(locker).m_pcToCodeOriginMap = WTFMove(map);
 }
 
 Optional<CodeOrigin> CodeBlock::findPC(void* pc)
 {
-    if (m_pcToCodeOriginMap) {
-        if (Optional<CodeOrigin> codeOrigin = m_pcToCodeOriginMap->findPC(pc))
-            return codeOrigin;
-    }
+    {
+        ConcurrentJSLocker locker(m_lock);
+        if (auto* jitData = m_jitData.get()) {
+            if (jitData->m_pcToCodeOriginMap) {
+                if (Optional<CodeOrigin> codeOrigin = jitData->m_pcToCodeOriginMap->findPC(pc))
+                    return codeOrigin;
+            }
 
-    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
-        StructureStubInfo* stub = *iter;
-        if (stub->containsPC(pc))
-            return Optional<CodeOrigin>(stub->codeOrigin);
+            for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
+                if (stubInfo->containsPC(pc))
+                    return Optional<CodeOrigin>(stubInfo->codeOrigin);
+            }
+        }
     }
 
     if (Optional<CodeOrigin> codeOrigin = m_jitCode->findPC(this, pc))
@@ -3195,24 +3244,26 @@ void CodeBlock::dumpMathICStats()
     double totalSubSize = 0.0;
 
     auto countICs = [&] (CodeBlock* codeBlock) {
-        for (JITAddIC* addIC : codeBlock->m_addICs) {
-            numAdds++;
-            totalAddSize += addIC->codeSize();
-        }
+        if (auto* jitData = codeBlock->m_jitData.get()) {
+            for (JITAddIC* addIC : jitData->m_addICs) {
+                numAdds++;
+                totalAddSize += addIC->codeSize();
+            }
 
-        for (JITMulIC* mulIC : codeBlock->m_mulICs) {
-            numMuls++;
-            totalMulSize += mulIC->codeSize();
-        }
+            for (JITMulIC* mulIC : jitData->m_mulICs) {
+                numMuls++;
+                totalMulSize += mulIC->codeSize();
+            }
 
-        for (JITNegIC* negIC : codeBlock->m_negICs) {
-            numNegs++;
-            totalNegSize += negIC->codeSize();
-        }
+            for (JITNegIC* negIC : jitData->m_negICs) {
+                numNegs++;
+                totalNegSize += negIC->codeSize();
+            }
 
-        for (JITSubIC* subIC : codeBlock->m_subICs) {
-            numSubs++;
-            totalSubSize += subIC->codeSize();
+            for (JITSubIC* subIC : jitData->m_subICs) {
+                numSubs++;
+                totalSubSize += subIC->codeSize();
+            }
         }
     };
     heap()->forEachCodeBlock(countICs);

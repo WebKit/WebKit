@@ -205,11 +205,11 @@ namespace JSC {
             return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
         
-        static void compileGetByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        static void compileGetByVal(const ConcurrentJSLocker& locker, VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
-            jit.privateCompileGetByVal(byValInfo, returnAddress, arrayMode);
+            jit.privateCompileGetByVal(locker, byValInfo, returnAddress, arrayMode);
         }
 
         static void compileGetByValWithCachedId(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, const Identifier& propertyName)
@@ -219,18 +219,18 @@ namespace JSC {
             jit.privateCompileGetByValWithCachedId(byValInfo, returnAddress, propertyName);
         }
 
-        static void compilePutByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        static void compilePutByVal(const ConcurrentJSLocker& locker, VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
-            jit.privateCompilePutByVal<OpPutByVal>(byValInfo, returnAddress, arrayMode);
+            jit.privateCompilePutByVal<OpPutByVal>(locker, byValInfo, returnAddress, arrayMode);
         }
         
-        static void compileDirectPutByVal(VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
+        static void compileDirectPutByVal(const ConcurrentJSLocker& locker, VM* vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
         {
             JIT jit(vm, codeBlock);
             jit.m_bytecodeOffset = byValInfo->bytecodeIndex;
-            jit.privateCompilePutByVal<OpPutByValDirect>(byValInfo, returnAddress, arrayMode);
+            jit.privateCompilePutByVal<OpPutByValDirect>(locker, byValInfo, returnAddress, arrayMode);
         }
 
         template<typename Op>
@@ -260,10 +260,10 @@ namespace JSC {
         void privateCompileSlowCases();
         CompilationResult privateCompile(JITCompilationEffort);
         
-        void privateCompileGetByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
+        void privateCompileGetByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
         void privateCompileGetByValWithCachedId(ByValInfo*, ReturnAddressPtr, const Identifier&);
         template<typename Op>
-        void privateCompilePutByVal(ByValInfo*, ReturnAddressPtr, JITArrayMode);
+        void privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
         template<typename Op>
         void privateCompilePutByValWithCachedId(ByValInfo*, ReturnAddressPtr, PutKind, const Identifier&);
 

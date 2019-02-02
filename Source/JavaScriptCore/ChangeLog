@@ -1,3 +1,91 @@
+2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Decouple JIT related data from CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=194187
+
+        Reviewed by Saam Barati.
+
+        CodeBlock holds bunch of data which is only used after JIT starts compiling it.
+        We have three types of data in CodeBlock.
+
+        1. The data which is always used. CodeBlock needs to hold it.
+        2. The data which is touched even in LLInt, but it is only meaningful in JIT tiers. The example is profiling.
+        3. The data which is used after the JIT compiler starts running for the given CodeBlock.
+
+        This patch decouples (3) from CodeBlock as CodeBlock::JITData. Even if we have bunch of CodeBlocks, only small
+        number of them gets JIT compilation. Always allocating (3) data enlarges the size of CodeBlock, leading to the
+        memory waste. Potentially we can decouple (2) in another data structure, but we first do (3) since (3) is beneficial
+        in both non-JIT and *JIT* modes.
+
+        JITData is created only when JIT compiler wants to use it. So it can be concurrently created and used, so it is guarded
+        by the lock of CodeBlock.
+
+        The size of CodeBlock is reduced from 512 to 352.
+
+        This patch improves memory footprint and gets 1.1% improvement in RAMification.
+
+            Footprint geomean: 36696503 (34.997 MB)
+            Peak Footprint geomean: 38595988 (36.808 MB)
+            Score: 37634263 (35.891 MB)
+
+            Footprint geomean: 37172768 (35.451 MB)
+            Peak Footprint geomean: 38978288 (37.173 MB)
+            Score: 38064824 (36.301 MB)
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::ensureJITDataSlow):
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::addStubInfo):
+        (JSC::CodeBlock::addJITAddIC):
+        (JSC::CodeBlock::addJITMulIC):
+        (JSC::CodeBlock::addJITSubIC):
+        (JSC::CodeBlock::addJITNegIC):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::addByValInfo):
+        (JSC::CodeBlock::addCallLinkInfo):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        (JSC::CodeBlock::addRareCaseProfile):
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::resetJITData):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::linkIncomingPolymorphicCall):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::dumpValueProfiles):
+        (JSC::CodeBlock::setPCToCodeOriginMap):
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::dumpMathICStats):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ensureJITData):
+        (JSC::CodeBlock::setJITCodeMap):
+        (JSC::CodeBlock::jitCodeMap):
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::lazyOperandValueProfiles):
+        (JSC::CodeBlock::stubInfoBegin): Deleted.
+        (JSC::CodeBlock::stubInfoEnd): Deleted.
+        (JSC::CodeBlock::callLinkInfosBegin): Deleted.
+        (JSC::CodeBlock::callLinkInfosEnd): Deleted.
+        (JSC::CodeBlock::jitCodeMap const): Deleted.
+        (JSC::CodeBlock::numberOfRareCaseProfiles): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue const):
+        (JSC::MethodOfGettingAValueProfile::reportValue):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        (JSC::tryGetByValOptimize):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+
 2018-12-16  Darin Adler  <darin@apple.com>
 
         Convert additional String::format clients to alternative approaches
