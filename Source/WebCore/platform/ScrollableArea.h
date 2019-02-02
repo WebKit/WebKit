@@ -333,7 +333,6 @@ protected:
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 
     friend class ScrollingCoordinator;
-    virtual GraphicsLayer* layerForScrolling() const { return nullptr; }
     virtual GraphicsLayer* layerForScrollCorner() const { return nullptr; }
 #if ENABLE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const { return nullptr; }

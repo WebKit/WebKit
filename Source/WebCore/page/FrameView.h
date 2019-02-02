@@ -729,7 +729,6 @@ private:
     ScrollableArea* enclosingScrollableArea() const final;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
     bool scrollAnimatorEnabled() const final;
-    GraphicsLayer* layerForScrolling() const final;
     GraphicsLayer* layerForScrollCorner() const final;
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const final;

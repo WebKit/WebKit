@@ -848,14 +848,6 @@ void FrameView::updateCompositingLayersAfterLayout()
     renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
 }
 
-GraphicsLayer* FrameView::layerForScrolling() const
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return nullptr;
-    return renderView->compositor().scrollLayer();
-}
-
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
 {
     RenderView* renderView = this->renderView();

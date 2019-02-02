@@ -1,3 +1,24 @@
+2019-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the unused layerForScrolling()
+        https://bugs.webkit.org/show_bug.cgi?id=194180
+
+        Reviewed by Zalan Bujtas.
+
+        Remove ScrollableArea::layerForScrolling() and derivations. This was unused.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layerForScrolling const): Deleted.
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::scrollLayerForScrollableArea): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::layerForScrolling const): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Fix statically positioned replaced out-of-flow horizontal geometry
