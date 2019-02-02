@@ -1,3 +1,20 @@
+2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove some of IsoSubspaces for JSFunction subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=194177
+
+        Reviewed by Saam Barati.
+
+        JSGeneratorFunction, JSAsyncFunction, and JSAsyncGeneratorFunction do not add any fields / classInfo methods.
+        We can share the IsoSubspace for JSFunction.
+
+        * runtime/JSAsyncFunction.h:
+        * runtime/JSAsyncGeneratorFunction.h:
+        * runtime/JSGeneratorFunction.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-02-01  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid assertion in DFG's compileDoubleRep().

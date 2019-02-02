@@ -69,7 +69,7 @@ public:
     template<typename CellType>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.generatorFunctionSpace;
+        return &vm.functionSpace;
     }
 
     DECLARE_EXPORT_INFO;
@@ -97,5 +97,6 @@ private:
 
     friend class LLIntOffsetsExtractor;
 };
+static_assert(sizeof(JSGeneratorFunction) == sizeof(JSFunction), "Some subclasses of JSFunction should be the same size to share IsoSubspace");
 
 } // namespace JSC

@@ -366,14 +366,11 @@ public:
     CompleteSubspace eagerlySweptDestructibleObjectSpace;
     CompleteSubspace segmentedVariableObjectSpace;
     
-    IsoSubspace asyncFunctionSpace;
-    IsoSubspace asyncGeneratorFunctionSpace;
     IsoSubspace boundFunctionSpace;
     IsoSubspace callbackFunctionSpace;
     IsoSubspace customGetterSetterFunctionSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;
-    IsoSubspace generatorFunctionSpace;
     IsoSubspace inferredValueSpace;
     IsoSubspace internalFunctionSpace;
     IsoSubspace nativeExecutableSpace;
