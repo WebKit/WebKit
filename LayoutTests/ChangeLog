@@ -1,3 +1,13 @@
+2019-02-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add missing case to out-of-flow non-replaced horizontal used margin value computation
+        https://bugs.webkit.org/show_bug.cgi?id=194185
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/absolute-position-left-right-margin-expected.html: Added.
+        * fast/block/block-only/absolute-position-left-right-margin.html: Added.
+
 2019-02-01  Megan Gardner  <megan_gardner@apple.com>
 
         Rewrite and rebaseline smart copy paste tests to work on iOS and MacOS

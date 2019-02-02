@@ -7,6 +7,7 @@ fast/block/block-only/absolute-left-auto.html
 fast/block/block-only/absolute-left-right-top-bottom-auto.html
 fast/block/block-only/absolute-nested2.html
 fast/block/block-only/absolute-nested.html
+fast/block/block-only/absolute-position-left-right-margin.html
 fast/block/block-only/absolute-position-min-max-height.html
 fast/block/block-only/absolute-position-min-max-width.html
 fast/block/block-only/absolute-position-when-containing-block-is-not-in-the-formatting-context2.html
