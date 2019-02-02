@@ -2292,17 +2292,16 @@ static String originUserVisibleName(WKSecurityOriginRef origin)
     if (!origin)
         return emptyString();
 
-    std::string host = toSTD(adoptWK(WKSecurityOriginCopyHost(origin))).c_str();
-    std::string protocol = toSTD(adoptWK(WKSecurityOriginCopyProtocol(origin))).c_str();
+    auto host = toWTFString(adoptWK(WKSecurityOriginCopyHost(origin)));
+    auto protocol = toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin)));
 
-    if (!host.length() || !protocol.length())
+    if (host.isEmpty() || protocol.isEmpty())
         return emptyString();
 
-    unsigned short port = WKSecurityOriginGetPort(origin);
-    if (port)
-        return String::format("%s://%s:%d", protocol.c_str(), host.c_str(), port);
+    if (int port = WKSecurityOriginGetPort(origin))
+        return makeString(protocol, "://", host, ':', port);
 
-    return String::format("%s://%s", protocol.c_str(), host.c_str());
+    return makeString(protocol, "://", host);
 }
 
 static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin)
@@ -2313,7 +2312,7 @@ static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, W
     if (topLevelDocumentOriginString.isEmpty())
         return userMediaDocumentOriginString;
 
-    return String::format("%s-%s", userMediaDocumentOriginString.utf8().data(), topLevelDocumentOriginString.utf8().data());
+    return makeString(userMediaDocumentOriginString, '-', topLevelDocumentOriginString);
 }
 
 static String userMediaOriginHash(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString)
@@ -2600,17 +2599,17 @@ void TestController::didNavigateWithNavigationData(WKNavigationDataRef navigatio
         return;
 
     // URL
-    WKRetainPtr<WKURLRef> urlWK = adoptWK(WKNavigationDataCopyURL(navigationData));
-    WKRetainPtr<WKStringRef> urlStringWK = adoptWK(WKURLCopyString(urlWK.get()));
+    auto url = adoptWK(WKNavigationDataCopyURL(navigationData));
+    auto urlString = toWTFString(adoptWK(WKURLCopyString(url.get())));
     // Title
-    WKRetainPtr<WKStringRef> titleWK = adoptWK(WKNavigationDataCopyTitle(navigationData));
+    auto title = toWTFString(adoptWK(WKNavigationDataCopyTitle(navigationData)));
     // HTTP method
-    WKRetainPtr<WKURLRequestRef> requestWK = adoptWK(WKNavigationDataCopyOriginalRequest(navigationData));
-    WKRetainPtr<WKStringRef> methodWK = adoptWK(WKURLRequestCopyHTTPMethod(requestWK.get()));
+    auto request = adoptWK(WKNavigationDataCopyOriginalRequest(navigationData));
+    auto method = toWTFString(adoptWK(WKURLRequestCopyHTTPMethod(request.get())));
 
     // FIXME: Determine whether the navigation was successful / a client redirect rather than hard-coding the message here.
-    m_currentInvocation->outputText(String::format("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was successful and was not a client redirect.\n",
-        toSTD(urlStringWK).c_str(), toSTD(titleWK).c_str(), toSTD(methodWK).c_str()));
+    m_currentInvocation->outputText(makeString("WebView navigated to url \"", urlString, "\" with title \"", title, "\" with HTTP equivalent method \"", method,
+        "\".  The navigation was successful and was not a client redirect.\n"));
 }
 
 void TestController::didPerformClientRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
@@ -2626,10 +2625,10 @@ void TestController::didPerformClientRedirect(WKURLRef sourceURL, WKURLRef desti
     if (!m_shouldLogHistoryClientCallbacks)
         return;
 
-    WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
-    WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
+    auto source = toWTFString(adoptWK(WKURLCopyString(sourceURL)));
+    auto destination = toWTFString(adoptWK(WKURLCopyString(destinationURL)));
 
-    m_currentInvocation->outputText(String::format("WebView performed a client redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+    m_currentInvocation->outputText(makeString("WebView performed a client redirect from \"", source, "\" to \"", destination, "\".\n"));
 }
 
 void TestController::didPerformServerRedirect(WKContextRef, WKPageRef, WKURLRef sourceURL, WKURLRef destinationURL, WKFrameRef frame, const void* clientInfo)
@@ -2645,10 +2644,10 @@ void TestController::didPerformServerRedirect(WKURLRef sourceURL, WKURLRef desti
     if (!m_shouldLogHistoryClientCallbacks)
         return;
 
-    WKRetainPtr<WKStringRef> sourceStringWK = adoptWK(WKURLCopyString(sourceURL));
-    WKRetainPtr<WKStringRef> destinationStringWK = adoptWK(WKURLCopyString(destinationURL));
+    auto source = toWTFString(adoptWK(WKURLCopyString(sourceURL)));
+    auto destination = toWTFString(adoptWK(WKURLCopyString(destinationURL)));
 
-    m_currentInvocation->outputText(String::format("WebView performed a server redirect from \"%s\" to \"%s\".\n", toSTD(sourceStringWK).c_str(), toSTD(destinationStringWK).c_str()));
+    m_currentInvocation->outputText(makeString("WebView performed a server redirect from \"", source, "\" to \"", destination, "\".\n"));
 }
 
 void TestController::didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef title, WKURLRef URL, WKFrameRef frame, const void* clientInfo)
@@ -2664,8 +2663,8 @@ void TestController::didUpdateHistoryTitle(WKStringRef title, WKURLRef URL, WKFr
     if (!m_shouldLogHistoryClientCallbacks)
         return;
 
-    WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(URL));
-    m_currentInvocation->outputText(String::format("WebView updated the title for history URL \"%s\" to \"%s\".\n", toSTD(urlStringWK).c_str(), toSTD(title).c_str()));
+    auto urlString = toWTFString(adoptWK(WKURLCopyString(URL)));
+    m_currentInvocation->outputText(makeString("WebView updated the title for history URL \"", urlString, "\" to \"", toWTFString(title), "\".\n"));
 }
 
 void TestController::setNavigationGesturesEnabled(bool value)

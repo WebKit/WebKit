@@ -50,6 +50,7 @@
 #include "StyleResolver.h"
 #include "Theme.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(3D_TRANSFORMS)
@@ -237,14 +238,16 @@ template<typename T, typename U> bool compareValue(T a, U b, MediaFeaturePrefix 
 }
 
 #if !LOG_DISABLED
+
 static String aspectRatioValueAsString(CSSValue* value)
 {
     if (!is<CSSAspectRatioValue>(value))
         return emptyString();
 
     auto& aspectRatio = downcast<CSSAspectRatioValue>(*value);
-    return String::format("%f/%f", aspectRatio.numeratorValue(), aspectRatio.denominatorValue());
+    return makeString(FormattedNumber::fixedWidth(aspectRatio.numeratorValue(), 6), '/', FormattedNumber::fixedWidth(aspectRatio.denominatorValue(), 6));
 }
+
 #endif
 
 static bool compareAspectRatioValue(CSSValue* value, int width, int height, MediaFeaturePrefix op)

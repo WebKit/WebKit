@@ -391,9 +391,17 @@ String Color::cssText() const
 String Color::nameForRenderTreeAsText() const
 {
     // FIXME: Handle ExtendedColors.
-    if (alpha() < 0xFF)
-        return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
-    return String::format("#%02X%02X%02X", red(), green(), blue());
+    if (alpha() < 0xFF) {
+        return makeString('#',
+            upperNibbleToASCIIHexDigit(red()), lowerNibbleToASCIIHexDigit(red()),
+            upperNibbleToASCIIHexDigit(green()), lowerNibbleToASCIIHexDigit(green()),
+            upperNibbleToASCIIHexDigit(blue()), lowerNibbleToASCIIHexDigit(blue()),
+            upperNibbleToASCIIHexDigit(alpha()), lowerNibbleToASCIIHexDigit(alpha()));
+    }
+    return makeString('#',
+        upperNibbleToASCIIHexDigit(red()), lowerNibbleToASCIIHexDigit(red()),
+        upperNibbleToASCIIHexDigit(green()), lowerNibbleToASCIIHexDigit(green()),
+        upperNibbleToASCIIHexDigit(blue()), lowerNibbleToASCIIHexDigit(blue()));
 }
 
 Color Color::light() const

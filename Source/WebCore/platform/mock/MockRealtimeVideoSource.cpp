@@ -358,11 +358,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
     FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
-    string = String::format("Requested frame rate: %.1f fps", frameRate());
+    string = makeString("Requested frame rate: ", FormattedNumber::fixedWidth(frameRate(), 1), " fps");
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
     statsLocation.move(0, m_statsFontSize);
-    string = String::format("Observed frame rate: %.1f fps", observedFrameRate());
+    string = makeString("Observed frame rate: ", FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps");
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
     auto size = this->size();

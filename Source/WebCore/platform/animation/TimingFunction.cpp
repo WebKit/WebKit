@@ -176,7 +176,7 @@ String TimingFunction::cssText() const
             return "ease-out";
         if (function.x1() == 0.42 && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
             return "ease-in-out";
-        return String::format("cubic-bezier(%g, %g, %g, %g)", function.x1(), function.y1(), function.x2(), function.y2());
+        return makeString("cubic-bezier(", function.x1(), ", ", function.y1(), ", ", function.x2(), ", ", function.y2(), ')');
     }
 
     if (m_type == TimingFunction::StepsFunction) {

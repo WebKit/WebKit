@@ -30,6 +30,7 @@
 
 #include "KeyedCoding.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -315,13 +316,13 @@ int IDBKeyData::compare(const IDBKeyData& other) const
 String IDBKeyData::loggingString() const
 {
     if (m_isNull)
-        return "<null>";
+        return "<null>"_s;
 
     String result;
 
     switch (m_type) {
     case IndexedDB::KeyType::Invalid:
-        return "<invalid>";
+        return "<invalid>"_s;
     case IndexedDB::KeyType::Array: {
         StringBuilder builder;
         builder.appendLiteral("<array> - { ");
@@ -337,21 +338,24 @@ String IDBKeyData::loggingString() const
     }
     case IndexedDB::KeyType::Binary: {
         StringBuilder builder;
-        builder.append("<binary> - ");
+        builder.appendLiteral("<binary> - ");
 
         auto* data = WTF::get<ThreadSafeDataBuffer>(m_value).data();
         if (!data) {
-            builder.append("(null)");
+            builder.appendLiteral("(null)");
             result = builder.toString();
             break;
         }
 
         size_t i = 0;
-        for (; i < 8 && i < data->size(); ++i)
-            builder.append(String::format("%02x", data->at(i)));
+        for (; i < 8 && i < data->size(); ++i) {
+            uint8_t byte = data->at(i);
+            builder.append(upperNibbleToLowercaseASCIIHexDigit(byte));
+            builder.append(lowerNibbleToLowercaseASCIIHexDigit(byte));
+        }
 
         if (data->size() > 8)
-            builder.append("...");
+            builder.appendLiteral("...");
 
         result = builder.toString();
         break;
@@ -360,13 +364,13 @@ String IDBKeyData::loggingString() const
         result = "<string> - " + WTF::get<String>(m_value);
         break;
     case IndexedDB::KeyType::Date:
-        return String::format("<date> - %f", WTF::get<double>(m_value));
+        return makeString("<date> - ", FormattedNumber::fixedWidth(WTF::get<double>(m_value), 6));
     case IndexedDB::KeyType::Number:
-        return String::format("<number> - %f", WTF::get<double>(m_value));
+        return makeString("<number> - ", FormattedNumber::fixedWidth(WTF::get<double>(m_value), 6));
     case IndexedDB::KeyType::Max:
-        return "<maximum>";
+        return "<maximum>"_s;
     case IndexedDB::KeyType::Min:
-        return "<minimum>";
+        return "<minimum>"_s;
     }
 
     if (result.length() > 150) {

@@ -41,6 +41,7 @@
 #include <wtf/GregorianDateTime.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -167,12 +168,12 @@ static String processFilesizeString(const String& size, bool isDirectory)
         return unknownFileSizeText();
 
     if (bytes < 1000000)
-        return String::format("%.2f KB", static_cast<float>(bytes)/1000);
+        return makeString(FormattedNumber::fixedWidth(bytes / 1000., 2), " KB");
 
     if (bytes < 1000000000)
-        return String::format("%.2f MB", static_cast<float>(bytes)/1000000);
+        return makeString(FormattedNumber::fixedWidth(bytes / 1000000., 2), " MB");
 
-    return String::format("%.2f GB", static_cast<float>(bytes)/1000000000);
+    return makeString(FormattedNumber::fixedWidth(bytes / 1000000000., 2), " GB");
 }
 
 static bool wasLastDayOfMonth(int year, int month, int day)

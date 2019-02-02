@@ -1,3 +1,62 @@
+2018-12-16  Darin Adler  <darin@apple.com>
+
+        Convert additional String::format clients to alternative approaches
+        https://bugs.webkit.org/show_bug.cgi?id=192746
+
+        Reviewed by Alexey Proskuryakov.
+
+        This round of conversions covers less-trivial cases such as floating
+        point numerals and hexadecimal. Not yet taking on pointer serialization
+        ("%p") or padding with spaces of zero digits, so call sites using those
+        have been left untouched.
+
+        In some cases these new idioms are a bit clumsy, and we could follow up
+        with additional convenience functions to make them more elegant.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString const): Use more ASCIILiteral and
+        more appendLiteral for efficiency. Use upperNibbleToLowercaseASCIIHexDigit,
+        lowerNibbleToLowercaseASCIIHexDigit, and also makeString and FormattedNumber.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::aspectRatioValueAsString): Use makeString and FormattedNumber.
+        Doing it this way makes it a little clearer that we have an unpleasant
+        use of fixed 6-digit precision here.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFilesizeString): Use makeString and FormattedNumber.
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties): Ditto.
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS const): Ditto.
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded): Ditto.
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::formatByteNumber): Ditto.
+        (WebCore::gcTimerString): Use String::number.
+        (WebCore::ResourceUsageOverlay::platformDraw): Use makeString and FormattedNumber.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::snapOffsetsToString): Removed some unnecessary copying in the for loop,
+        use appendLiteral, and use appendFixedWidthNumber.
+        (WebCore::snapOffsetRangesToString): Ditto.
+        (WebCore::snapPortOrAreaToString): Use makeString and FormattedNumber.
+
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::cssText const): Use makeString.
+
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyIdentifierForCharCode): Use makeString and the ASCIIHexDigit
+        functions.
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::nameForRenderTreeAsText const): Ditto.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText): Use makeString and FormattedNumber.
+
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::DateTimeStringBuilder::visitField): Use String::numberToStringFixedWidth.
+
 2019-02-01  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the unused layerForScrolling()

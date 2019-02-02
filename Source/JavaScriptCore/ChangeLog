@@ -1,3 +1,14 @@
+2018-12-16  Darin Adler  <darin@apple.com>
+
+        Convert additional String::format clients to alternative approaches
+        https://bugs.webkit.org/show_bug.cgi?id=192746
+
+        Reviewed by Alexey Proskuryakov.
+
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::stopTiming): Use makeString
+        and FormattedNumber::fixedWidth.
+
 2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove some of IsoSubspaces for JSFunction subclasses

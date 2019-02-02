@@ -404,7 +404,7 @@ void LocalAuthenticator::getAssertion()
         String::format("Log into %s with %s.", requestData().requestOptions.rpId.utf8().data(), selectedCredentialAttributes[(id)kSecAttrApplicationTag]),
         (__bridge SecAccessControlRef)selectedCredentialAttributes[(id)kSecAttrAccessControl],
         WTFMove(callback));
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserConsented(LocalConnection::UserConsent consent, LAContext *context, const Vector<uint8_t>& credentialId, const Vector<uint8_t>& userhandle)

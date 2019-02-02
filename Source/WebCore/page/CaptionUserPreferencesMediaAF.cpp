@@ -32,16 +32,12 @@
 #include "CaptionUserPreferencesMediaAF.h"
 
 #include "AudioTrackList.h"
-#if PLATFORM(WIN)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlElements.h"
 #include "TextTrackList.h"
-#include <wtf/URL.h>
 #include "UserStyleSheetTypes.h"
 #include "VTTCue.h"
 #include <algorithm>
@@ -49,11 +45,17 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebCoreThreadRun.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <pal/spi/win/CoreTextSPIWin.h>
 #endif
 
 #if COMPILER(MSVC)
@@ -62,6 +64,7 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
 
@@ -83,18 +86,19 @@
 SOFT_LINK_AVF_FRAMEWORK(CoreMedia)
 SOFT_LINK_AVF_FRAMEWORK_IMPORT_OPTIONAL(CoreMedia, MTEnableCaption2015Behavior, Boolean, ())
 
-#else
+#else // PLATFORM(WIN)
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
 
-#endif // PLATFORM(WIN)
+#endif // !PLATFORM(WIN)
 
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
 namespace WebCore {
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -105,6 +109,7 @@ static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCent
     });
 #endif
 }
+
 #endif
 
 CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
@@ -346,7 +351,7 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
         return emptyString();
 
     StringBuilder builder;
-    appendCSS(builder, CSSPropertyBorderRadius, String::format("%.02fpx", radius), behavior == kMACaptionAppearanceBehaviorUseValue);
+    appendCSS(builder, CSSPropertyBorderRadius, makeString(FormattedNumber::fixedWidth(radius, 2), "px"), behavior == kMACaptionAppearanceBehaviorUseValue);
     return builder.toString();
 }
 

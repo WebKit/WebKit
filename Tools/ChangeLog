@@ -1,3 +1,19 @@
+2018-12-16  Darin Adler  <darin@apple.com>
+
+        Convert additional String::format clients to alternative approaches
+        https://bugs.webkit.org/show_bug.cgi?id=192746
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::originUserVisibleName): Use makeString and reduce the use of std::string
+        as an intermediate in code that ultimately constructs a WTF::String.
+        (WTR::userMediaOriginHash): Use makeString.
+        (WTR::TestController::didNavigateWithNavigationData): More of the same.
+        (WTR::TestController::didPerformClientRedirect): Ditto.
+        (WTR::TestController::didPerformServerRedirect): Ditto.
+        (WTR::TestController::didUpdateHistoryTitle): Ditto.
+
 2019-02-01  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add unit test to verify builder keys

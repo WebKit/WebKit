@@ -494,7 +494,12 @@ String keyIdentifierForCharCode(unichar charCode)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            return String::format("U+%04X", toASCIIUpper(charCode));
+            UChar codeUnit = toASCIIUpper(charCode);
+            return makeString("U+",
+                upperNibbleToASCIIHexDigit(codeUnit >> 8),
+                lowerNibbleToASCIIHexDigit(codeUnit >> 8),
+                upperNibbleToASCIIHexDigit(codeUnit),
+                lowerNibbleToASCIIHexDigit(codeUnit));
     }
 }
 

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSizeFormatter.h"
 
+#include <wtf/text/StringConcatenateNumbers.h>
+
 #if !PLATFORM(COCOA)
 
 String fileSizeDescription(uint64_t size)
@@ -35,10 +37,10 @@ String fileSizeDescription(uint64_t size)
     if (size < 1000)
         return String::format("%tu bytes", size);
     if (size < 1000000)
-        return String::format("%.1f KB", size / 1000.);
+        return makeString(FormattedNumber::fixedWidth(size / 1000., 1), " KB");
     if (size < 1000000000)
-        return String::format("%.1f MB", size / 1000000.);
-    return String::format("%.1f GB", size / 1000000000.);
+        return makeString(FormattedNumber::fixedWidth(size / 1000000., 1), " MB");
+    return makeString(FormattedNumber::fixedWidth(size / 1000000000., 1), " GB");
 }
 
 #endif

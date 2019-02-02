@@ -40,6 +40,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -222,8 +223,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     
     if (mainHistory.m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
         if (stateObjectType == StateObjectType::Replace)
-            return Exception { SecurityError, String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
-        return Exception { SecurityError, String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan.seconds()) };
+            return Exception { SecurityError, makeString("Attempt to use history.replaceState() more than ", perStateObjectTimeSpanLimit, " times per ", FormattedNumber::fixedWidth(stateObjectTimeSpan.seconds(), 6), " seconds") };
+        return Exception { SecurityError, makeString("Attempt to use history.pushState() more than ", perStateObjectTimeSpanLimit, " times per ", FormattedNumber::fixedWidth(stateObjectTimeSpan.seconds(), 6), " seconds") };
     }
 
     Checked<unsigned> titleSize = title.length();

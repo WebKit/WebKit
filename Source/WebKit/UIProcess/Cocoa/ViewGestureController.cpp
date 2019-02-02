@@ -36,6 +36,7 @@
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringBuilder.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -368,7 +369,7 @@ void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
 
 void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds duration)
 {
-    log(String::format("(re)started watchdog timer for %.1f seconds", duration.seconds()));
+    log(makeString("(re)started watchdog timer for ", FormattedNumber::fixedWidth(duration.seconds(), 1), " seconds"));
     m_watchdogTimer.startOneShot(duration);
 }
 

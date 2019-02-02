@@ -30,9 +30,9 @@
  */
 
 #include "config.h"
+#include "VTTCue.h"
 
 #if ENABLE(VIDEO_TRACK)
-#include "VTTCue.h"
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -55,6 +55,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -227,7 +228,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
         // maintaining the relative positions of the boxes in boxes to each
         // other.
         setInlineStyleProperty(CSSPropertyTransform,
-            String::format("translate(-%.2f%%, -%.2f%%)", position.first, position.second));
+            makeString("translate(", FormattedNumber::fixedWidth(-position.first, 2), "%, ", FormattedNumber::fixedWidth(-position.second, 2), "%)"));
 
         setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
     }
