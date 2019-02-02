@@ -107,7 +107,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeMac::scrollPosition() const
 
 void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollPosition " << scrollPosition << " scrollPosition(): " << this->scrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollPosition " << scrollPosition << " from " << this->scrollPosition() << " (min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << ")");
 
     // Scroll deltas can be non-integral with some input devices, so scrollPosition may not be integral.
     // FIXME: when we support half-pixel scroll positions on Retina displays, this will need to round to half pixels.
@@ -124,6 +124,8 @@ void ScrollingTreeOverflowScrollingNodeMac::setScrollPositionWithoutContentEdgeC
 
 void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& fixedPositionRect)
 {
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition " << scrollPosition);
+
     scrolledContentsLayer().position = -scrollPosition;
     if (!m_children)
         return;

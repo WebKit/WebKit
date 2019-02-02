@@ -1,3 +1,54 @@
+2019-02-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Async overflow scroll is jumpy on macOS if the main thread is busy
+        https://bugs.webkit.org/show_bug.cgi?id=194184
+        <rdar://problem/47758655>
+
+        Reviewed by Antti Koivisto.
+
+        This change extends to macOS some existing overflow-scroll functionality for iOS.
+        When an async scroll is in process in the scroll thread (or UI process), we periodically
+        message back to the web process main thread with scroll position updates. These
+        can trigger post-scroll compositing updates, but we need to ensure that this update
+        doesn't clobber the scroll position of the native layers, which would trigger
+        stutters.
+
+        To do this we have the notion of a scroll position "sync" (ScrollingLayerPositionAction::Sync) which
+        pokes the new value into the GraphicsLayer (hence making visible rect computations work), but doesn't
+        propagate it to the platform layer. This patch wires up syncs for macOS during async overflow scrolling,
+        coming out of AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll().
+
+        In RenderLayerBacking, m_scrollingContentsLayer is renamed to m_scrolledContentsLayer, and I added
+        updateScrollOffset() and setLocationOfScrolledContents() to handle the set vs. sync, and to keep
+        the iOS vs macOS differences in one function. This allows for more code sharing in RenderLayerBacking::updateGeometry().
+
+        There's a confusing bit in the m_childClippingMaskLayer code (trac.webkit.org/178029) where the setOffsetFromRenderer()
+        just looks wrong; it should match m_scrollingLayer. This code is never hit for Cocoa, which never has m_childClippingMaskLayer.
+
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPosition): Logging
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition): Logging
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::scrollTo):
+        * rendering/RenderLayer.h: Rename m_requiresScrollBoundsOriginUpdate to m_requiresScrollPositionReconciliation
+        and make it available on all platforms. Just reorder m_adjustForIOSCaretWhenScrolling to reduce #ifdef nesting confusion.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::setLocationOfScrolledContents):
+        (WebCore::RenderLayerBacking::updateScrollOffset):
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        (WebCore::RenderLayerBacking::paintingPhaseForPrimaryLayer const):
+        (WebCore::RenderLayerBacking::parentForSublayers const):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::backingStoreMemoryEstimate const):
+        * rendering/RenderLayerBacking.h:
+
 2019-02-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Initialize ICB's style with fixed width/height.

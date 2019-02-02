@@ -106,7 +106,7 @@ public:
 
     bool hasScrollingLayer() const { return m_scrollingLayer != nullptr; }
     GraphicsLayer* scrollingLayer() const { return m_scrollingLayer.get(); }
-    GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
+    GraphicsLayer* scrollingContentsLayer() const { return m_scrolledContentsLayer.get(); }
 
     OptionSet<ScrollCoordinationRole> coordinatedScrollingRoles() const;
 
@@ -298,6 +298,9 @@ private:
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
+    
+    void updateScrollOffset(ScrollOffset);
+    void setLocationOfScrolledContents(ScrollOffset, ScrollingLayerPositionAction);
 
     void updateChildClippingStrategy(bool needsDescendantsClippingLayer);
 
@@ -383,7 +386,7 @@ private:
     RefPtr<GraphicsLayer> m_layerForScrollCorner;
 
     RefPtr<GraphicsLayer> m_scrollingLayer; // Only used if the layer is using composited scrolling.
-    RefPtr<GraphicsLayer> m_scrollingContentsLayer; // Only used if the layer is using composited scrolling.
+    RefPtr<GraphicsLayer> m_scrolledContentsLayer; // Only used if the layer is using composited scrolling.
 
     LayoutRect m_compositedBounds;
     LayoutSize m_subpixelOffsetFromRenderer; // This is the subpixel distance between the primary graphics layer and the associated renderer's bounds.

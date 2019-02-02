@@ -296,15 +296,13 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if PLATFORM(IOS_FAMILY)
-    , m_adjustForIOSCaretWhenScrolling(false)
-#endif
-#if PLATFORM(IOS_FAMILY)
 #if ENABLE(IOS_TOUCH_EVENTS)
     , m_registeredAsTouchEventListenerForScrolling(false)
 #endif
-    , m_inUserScroll(false)
-    , m_requiresScrollBoundsOriginUpdate(false)
+    , m_adjustForIOSCaretWhenScrolling(false)
 #endif
+    , m_inUserScroll(false)
+    , m_requiresScrollPositionReconciliation(false)
     , m_containsDirtyOverlayScrollbars(false)
     , m_updatingMarqueePosition(false)
 #if !ASSERT_DISABLED
@@ -2347,7 +2345,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     if (!box)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayer::scrollTo " << position);
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayer::scrollTo " << position << " from " << m_scrollPosition << " (in user scroll " << isInUserScroll() << ")");
 
     ScrollPosition newPosition = position;
     if (!box->isHTMLMarquee()) {
@@ -2374,12 +2372,12 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     }
     
     if (m_scrollPosition == newPosition) {
-#if PLATFORM(IOS_FAMILY)
-        if (m_requiresScrollBoundsOriginUpdate) {
+        // FIXME: Nothing guarantees we get a scrollTo() with an unchanged position at the end of a user gesture.
+        // The ScrollingCoordinator probably needs to message the main thread when a gesture ends.
+        if (requiresScrollPositionReconciliation()) {
             setNeedsCompositingGeometryUpdate();
             updateCompositingLayersAfterScroll();
         }
-#endif
         return;
     }
 
