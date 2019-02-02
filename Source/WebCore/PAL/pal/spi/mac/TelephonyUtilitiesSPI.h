@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,11 @@
 
 #if PLATFORM(MAC)
 
-#import <objc/runtime.h>
-#import <wtf/SoftLinking.h>
-
 @interface TUCall : NSObject
 @end
 
 @interface TUCall (Strings)
 + (NSString *)supplementalDialTelephonyCallString;
 @end
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
-SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,14 @@
 
 #import "StringUtilities.h"
 #import <WebCore/LocalizedStrings.h>
-#import <objc/runtime.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-#import <pal/spi/mac/TUCallSPI.h>
+#import <pal/spi/mac/TelephonyUtilitiesSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
+SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #endif
 
 namespace WebKit {

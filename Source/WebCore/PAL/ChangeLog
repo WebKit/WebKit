@@ -1,3 +1,17 @@
+2019-02-01  David Kilzer  <ddkilzer@apple.com>
+
+        Move soft-linking of TelephonyUtilities.framework out of TUCallSPI.h
+        <https://webkit.org/b/193866>
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        - Update for rename of TUCallSPI.h to TelephonyUtilitiesSPI.h.
+
+        * pal/spi/mac/TelephonyUtilitiesSPI.h: Rename from Source/WebCore/PAL/pal/spi/mac/TUCallSPI.h.
+        - Remove soft-linking code from header.
+
 2019-01-30  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

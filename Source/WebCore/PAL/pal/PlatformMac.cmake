@@ -88,7 +88,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/QuickDrawSPI.h
     spi/mac/QuickLookMacSPI.h
     spi/mac/SpeechSynthesisSPI.h
-    spi/mac/TUCallSPI.h
+    spi/mac/TelephonyUtilitiesSPI.h
 
     system/cocoa/SleepDisablerCocoa.h
 

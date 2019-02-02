@@ -96,7 +96,7 @@
 		0C77859E1F45130F00F4EBB6 /* PIPSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785851F45130F00F4EBB6 /* PIPSPI.h */; };
 		0C77859F1F45130F00F4EBB6 /* QTKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785861F45130F00F4EBB6 /* QTKitSPI.h */; };
 		0C7785A01F45130F00F4EBB6 /* QuickLookMacSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */; };
-		0C7785A11F45130F00F4EBB6 /* TUCallSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785881F45130F00F4EBB6 /* TUCallSPI.h */; };
+		0C7785A11F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */; };
 		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
 		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
 		0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */; };
@@ -250,7 +250,7 @@
 		0C7785851F45130F00F4EBB6 /* PIPSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PIPSPI.h; sourceTree = "<group>"; };
 		0C7785861F45130F00F4EBB6 /* QTKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitSPI.h; sourceTree = "<group>"; };
 		0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMacSPI.h; sourceTree = "<group>"; };
-		0C7785881F45130F00F4EBB6 /* TUCallSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUCallSPI.h; sourceTree = "<group>"; };
+		0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TelephonyUtilitiesSPI.h; sourceTree = "<group>"; };
 		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreMediaSoftLink.cpp; sourceTree = "<group>"; };
 		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreMediaSoftLink.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -481,7 +481,7 @@
 				A102658A1F56748C00B4C844 /* QuickDrawSPI.h */,
 				0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */,
 				A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */,
-				0C7785881F45130F00F4EBB6 /* TUCallSPI.h */,
+				0C7785881F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -779,7 +779,7 @@
 				31308B1420A21705003FB929 /* SystemPreviewSPI.h in Headers */,
 				A3AB6E581F3D1DDB009C14B1 /* SystemSleepListener.h in Headers */,
 				A3AB6E641F3D217F009C14B1 /* SystemSleepListenerMac.h in Headers */,
-				0C7785A11F45130F00F4EBB6 /* TUCallSPI.h in Headers */,
+				0C7785A11F45130F00F4EBB6 /* TelephonyUtilitiesSPI.h in Headers */,
 				2E1342CC215AA10A007199D2 /* UIKitSoftLink.h in Headers */,
 				0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */,
 				0C2DA1471F3BEB4900DBC317 /* URLFormattingSPI.h in Headers */,
