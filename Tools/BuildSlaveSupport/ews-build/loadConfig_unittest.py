@@ -23,6 +23,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import json
 import os
 import unittest
 
@@ -33,6 +34,16 @@ class ConfigDotJSONTest(unittest.TestCase):
     def test_configuration(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
         loadConfig.loadBuilderConfig({}, master_prefix_path=cwd)
+
+    def test_builder_keys(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        config = json.load(open(os.path.join(cwd, 'config.json')))
+        valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
+                              'defaultProperties', 'env', 'factory', 'locks', 'name', 'platform', 'properties', 'tags',
+                              'triggers', 'workernames', 'workerbuilddir']
+        for builder in config.get('builders', []):
+            for key in builder:
+                self.assertTrue(key in valid_builder_keys, 'Unexpected key {} for builder {}'.format(key, builder.get('name')))
 
 
 class TagsForBuilderTeest(unittest.TestCase):

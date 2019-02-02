@@ -1,3 +1,13 @@
+2019-02-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add unit test to verify builder keys
+        https://bugs.webkit.org/show_bug.cgi?id=194152
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.test_builder_keys): Added unit-test.
+
 2019-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Expand tests coverage (12 new tests -> 787)
