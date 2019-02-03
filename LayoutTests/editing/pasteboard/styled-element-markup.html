@@ -1,16 +1,16 @@
-<script>
-if (window.testRunner)
-     testRunner.dumpEditingCallbacks();
-</script>
 <p>This tests copy/paste of styled elements, like images.  The image in the region below should be centered after its copied and pasted.</p>
 <p><b>This demonstrates a bug: createMarkup puts the text-align property on the image, which doesn't center it, so its left aligned on paste.</b></p>
 <div contenteditable="true" id="copy"><center><img src="../resources/abe.png"></center></div>
 <div contenteditable="true" id="paste"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
 
-<script>;
-window.getSelection().setPosition(document.getElementById("copy"));
-document.execCommand("SelectAll");
-document.execCommand("Copy");
-window.getSelection().setPosition(document.getElementById("paste"));
-document.execCommand("Paste");
+addEventListener("load", () => {
+    getSelection().setPosition(document.getElementById("copy"));
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+    getSelection().setPosition(document.getElementById("paste"));
+    document.execCommand("Paste");
+});
 </script>

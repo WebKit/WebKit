@@ -1,3 +1,18 @@
+2019-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to move selection into editable roots with 0 height
+        https://bugs.webkit.org/show_bug.cgi?id=194143
+        <rdar://problem/47767284>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test that executes editing commands in a contenteditable element of height 0, and adjust an
+        existing layout test that copies and pastes an image element to wait until the image has loaded.
+
+        * editing/pasteboard/styled-element-markup.html:
+        * editing/selection/insert-text-in-empty-content-editable-expected.txt: Added.
+        * editing/selection/insert-text-in-empty-content-editable.html: Added.
+
 2019-02-03  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on Smart Paste

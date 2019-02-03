@@ -1,3 +1,21 @@
+2019-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to move selection into editable roots with 0 height
+        https://bugs.webkit.org/show_bug.cgi?id=194143
+        <rdar://problem/47767284>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, positions inside editable elements of height 0 are not considered to be candidates when
+        canonicalizing a position to its visible counterpart. This prevents us from moving the selection into these
+        editable roots at all. To fix this, we relax this constraint by allowing positions anchored by root editable
+        elements to be candidates.
+
+        Test: editing/selection/insert-text-in-empty-content-editable.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::isCandidate const):
+
 2019-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Tidyup of Pagination and FrameView m_mediaType initialization
