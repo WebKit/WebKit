@@ -30,8 +30,6 @@ namespace WebCore {
 struct Pagination {
     enum Mode : uint8_t { Unpaginated, LeftToRightPaginated, RightToLeftPaginated, TopToBottomPaginated, BottomToTopPaginated };
 
-    Pagination() = default;
-
     bool operator==(const Pagination& other) const
     {
         return mode == other.mode && behavesLikeColumns == other.behavesLikeColumns && pageLength == other.pageLength && gap == other.gap;
@@ -39,7 +37,7 @@ struct Pagination {
 
     bool operator!=(const Pagination& other) const
     {
-        return mode != other.mode || behavesLikeColumns != other.behavesLikeColumns || pageLength != other.pageLength || gap != other.gap;
+        return !(*this == other);
     }
 
     Mode mode { Unpaginated };
