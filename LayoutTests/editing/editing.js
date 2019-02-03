@@ -954,8 +954,21 @@ function runDumpAsTextEditingTest(enableCallbacks) {
     selection.setPosition(elem, 0);
     const result = editingTest();
 
-    for (var i = 0; i < elementsForDumpingMarkupList.length; i++)
-        document.body.appendChild(elementsForDumpingMarkupList[i]);
+    const postTask = () => {
+        for (var i = 0; i < elementsForDumpingMarkupList.length; i++)
+            document.body.appendChild(elementsForDumpingMarkupList[i]);
+    }
+
+    if (result instanceof Promise) {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        result.then(() => {
+            postTask();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    } else
+        postTask();
 }
 
 function debugForDumpAsText(name) {

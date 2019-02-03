@@ -11,7 +11,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertText:there should be a single trailing space between the '.' and the last character in this sentence  replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 96 of #text > DIV > DIV > BODY > HTML > #document to 96 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 97 of #text > DIV > DIV > BODY > HTML > #document to 97 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 97 of #text > DIV > DIV > BODY > HTML > #document to 97 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -27,4 +27,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (2,2) size 780x24 [border: (2px solid #AAAAFF)]
           RenderText {#text} at (2,2) size 586x19
             text run at (2,2) width 586: "there should be a single trailing space between the '.' and the last character in this sentence ."
-caret: position 96 of child 0 {#text} of child 1 {DIV} of child 5 {DIV} of body
+caret: position 97 of child 0 {#text} of child 0 {DIV} of child 5 {DIV} of body

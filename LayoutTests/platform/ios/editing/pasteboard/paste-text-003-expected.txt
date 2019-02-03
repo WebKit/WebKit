@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 4 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -79,33 +79,39 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 37 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 37 of #text > DIV > DIV > BODY > HTML > #document to 40 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 38 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 40 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 40 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x146 [border: (2px solid #FF0000)]
-        RenderBlock (anonymous) at (14,14) size 756x30
-          RenderText {#text} at (0,1) size 346x28
-            text run at (0,1) width 346: "Omitted, all the voyage of their life,"
-        RenderBlock {DIV} at (14,44) size 756x58 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,15) size 356x28
-            text run at (14,15) width 356: "Is bound in shallows and in miseries."
-        RenderBlock (anonymous) at (14,102) size 756x30
-          RenderText {#text} at (0,1) size 24x28
-            text run at (0,1) width 18: "U"
-            text run at (17,1) width 7: " "
-      RenderBlock {DIV} at (0,146) size 784x58 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,15) size 386x28
-          text run at (14,15) width 386: "U pon such a full sea are we now afloat,"
-caret: position 2 of child 0 {#text} of child 2 {DIV} of body
+This test copies and pastes "is a tide in the affairs of men,\nWhich taken at the flood leads on to fortune.\nOmitted" twice.
+
+There is a tide in the affairs of men,
+Which taken at the flood leads on to fortune.
+Omitted is a tide in the affairs of men,
+Which taken at the flood leads on to fortune.
+Omitted, all the voyage of their life,
+Is bound in shallows and in miseries.
+execCopyCommand: <div id="test" class="editing">There is a tide in the affairs of men, <div class="editing">Which taken at the flood leads on to fortune. <div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
+execPasteCommand: <div id="test" class="editing">There&nbsp;is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>
+execPasteCommand: <div id="test" class="editing">There&nbsp;is a tide in the affairs of men,<div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing"><div class="editing">Omitted is a tide in the affairs of men,</div><div class="editing">Which taken at the flood leads on to fortune.</div><div class="editing">Omitted, all the voyage of their life, <div class="editing">Is bound in shallows and in miseries. </div> </div> </div> </div>

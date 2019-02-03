@@ -147,7 +147,7 @@ void Pasteboard::write(const Color& color)
 
 bool Pasteboard::canSmartReplace()
 {
-    return false;
+    return true;
 }
 
 void Pasteboard::read(PasteboardPlainText& text)

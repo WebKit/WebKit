@@ -11,9 +11,9 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > span > div > body > html > #document to 7 of #text > span > div > body > html > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > span > div > body > html > #document to 14 of #text > span > div > body > html > #document toDOMRange:range from 10 of #text > span > div > body > html > #document to 10 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 15 of #text > span > div > body > html > #document to 15 of #text > span > div > body > html > #document toDOMRange:range from 11 of #text > span > div > body > html > #document to 11 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-foo barbar baz
+foo bar bar baz
 execCopyCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo bar baz</span>
-execPasteCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo barbar baz</span>
+execPasteCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo bar bar baz</span>

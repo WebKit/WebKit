@@ -1,3 +1,16 @@
+2019-02-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on Smart Paste
+        https://bugs.webkit.org/show_bug.cgi?id=193786
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/TextCheckerIOS.mm:
+        (WebKit::TextChecker::isSmartInsertDeleteEnabled):
+        Use the flag from UIKit to determine if smart copy paste should be
+        turned on.
+
 2019-02-02  Simon Fraser  <simon.fraser@apple.com>
 
         Tidy up data memebers of FrameView and related classes to shrink class sizes

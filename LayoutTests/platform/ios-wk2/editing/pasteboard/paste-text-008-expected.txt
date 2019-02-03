@@ -106,7 +106,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 45 of #text > DIV > BODY > HTML > #document to 45 of #text > DIV > BODY > HTML > #document toDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 46 of #text > DIV > BODY > HTML > #document to 46 of #text > DIV > BODY > HTML > #document toDOMRange:range from 20 of #text > DIV > BODY > HTML > #document to 20 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -122,8 +122,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (14,15) size 356x28
             text run at (14,15) width 356: "Is bound in shallows and in miseries."
         RenderBlock (anonymous) at (14,102) size 756x30
-          RenderText {#text} at (0,1) size 438x28
-            text run at (0,1) width 438: "Upon such a full seashallows and in miseries."
+          RenderText {#text} at (0,1) size 444x28
+            text run at (0,1) width 444: "Upon such a full sea shallows and in miseries."
       RenderBlock {DIV} at (0,146) size 784x58 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,15) size 380x28
           text run at (14,15) width 380: "Upon such a full sea are we now afloat,"

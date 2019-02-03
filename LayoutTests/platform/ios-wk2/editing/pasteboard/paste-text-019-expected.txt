@@ -14,7 +14,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertText:Bar replacingDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -48,11 +48,12 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,1) size 154x28
               text run at (0,1) width 154: "(case sensitive)."
       RenderBlock {DIV} at (0,321) size 784x34 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 152x28
+        RenderInline {SPAN} at (0,0) size 118x28
           RenderInline {SPAN} at (0,0) size 78x28
             RenderText {#text} at (2,3) size 78x28
               text run at (2,3) width 78: "Foo Bar"
-          RenderText {#text} at (80,3) size 74x28
-            text run at (80,3) width 74: " bazBar"
-        RenderText {#text} at (0,0) size 0x0
-caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body
+          RenderText {#text} at (80,3) size 40x28
+            text run at (80,3) width 40: " baz"
+        RenderText {#text} at (119,3) size 41x28
+          text run at (119,3) width 41: " Bar"
+caret: position 4 of child 2 {#text} of child 3 {DIV} of body

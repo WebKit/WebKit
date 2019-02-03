@@ -18,34 +18,16 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > DIV > BODY > HTML > #document to 5 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x60
-          RenderText {#text} at (0,1) size 66x28
-            text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 457x28
-            text run at (0,31) width 457: "Smart paste when pasting between two periods."
-        RenderBlock {DIV} at (14,90) size 756x120
-          RenderText {#text} at (0,1) size 190x28
-            text run at (0,1) width 190: "Expected Results: "
-          RenderBR {BR} at (189,23) size 1x0
-          RenderText {#text} at (0,31) size 738x58
-            text run at (0,31) width 738: "A space should be added before, but not after the pasted word. It should look"
-            text run at (0,61) width 90: "like this: "
-          RenderBR {BR} at (89,83) size 1x0
-          RenderText {#text} at (0,91) size 52x28
-            text run at (0,91) width 52: ". test."
-      RenderBlock {DIV} at (0,248) size 784x34
-        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,3) size 52x28
-            text run at (2,3) width 52: ". test."
-caret: position 6 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
-scrolled to 0,21
+Tests: 
+Smart paste when pasting between smart paste exempt characters.
+Expected Results: 
+No spaces should be added before or after the pasted word. It should look like this: 
+-test-
+-test-
+execCutCommand: <div id="test" class="editing"><br></div>
+execTypeCharacterCommand: <div id="test" class="editing">-</div>
+execTypeCharacterCommand: <div id="test" class="editing">--</div>
+execPasteCommand: <div id="test" class="editing">-test-</div>

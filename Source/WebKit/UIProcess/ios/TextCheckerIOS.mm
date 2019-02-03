@@ -113,8 +113,7 @@ bool TextChecker::isTestingMode()
 
 bool TextChecker::isSmartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    return [[UIKeyboardImpl sharedInstance] smartInsertDeleteIsEnabled];
 }
 
 void TextChecker::setSmartInsertDeleteEnabled(bool)

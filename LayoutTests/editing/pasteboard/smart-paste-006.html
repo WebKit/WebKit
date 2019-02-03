@@ -44,7 +44,8 @@ test
 <script>
 
 async function editingTest() {
-    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));    cutCommand();
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
+    cutCommand();
     typeCharacterCommand('-');
     typeCharacterCommand('-');
     moveSelectionBackwardByCharacterCommand();

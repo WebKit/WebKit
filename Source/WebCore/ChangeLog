@@ -1,3 +1,24 @@
+2019-02-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on Smart Paste
+        https://bugs.webkit.org/show_bug.cgi?id=193786
+
+        Reviewed by Ryosuke Niwa.
+
+        Turned on a modified tests:
+        LayoutTests/editing/pasteboard/smart-paste-001.html
+        LayoutTests/editing/pasteboard/smart-paste-002.html
+        LayoutTests/editing/pasteboard/smart-paste-003.html
+        LayoutTests/editing/pasteboard/smart-paste-004.html
+        LayoutTests/editing/pasteboard/smart-paste-005.html
+        LayoutTests/editing/pasteboard/smart-paste-006.html
+        LayoutTests/editing/pasteboard/smart-paste-007.html
+        LayoutTests/editing/pasteboard/smart-paste-008.html
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::canSmartReplace):
+        Turn on smart replace.
+
 2019-02-02  Simon Fraser  <simon.fraser@apple.com>
 
         Tidy up data memebers of FrameView and related classes to shrink class sizes
