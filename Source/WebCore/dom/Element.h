@@ -31,7 +31,6 @@
 #include "KeyframeAnimationOptions.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
-#include "ScrollingCoordinator.h"
 #include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
