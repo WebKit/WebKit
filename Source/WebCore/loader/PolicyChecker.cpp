@@ -71,6 +71,21 @@ static bool isAllowedByContentSecurityPolicy(const URL& url, const Element* owne
     return ownerElement->document().contentSecurityPolicy()->allowChildFrameFromSource(url, redirectResponseReceived);
 }
 
+PolicyCheckIdentifier PolicyCheckIdentifier::create()
+{
+    static uint64_t identifier = 0;
+    identifier++;
+    return PolicyCheckIdentifier { Process::identifier(), identifier };
+}
+
+bool PolicyCheckIdentifier::isValidFor(PolicyCheckIdentifier expectedIdentifier)
+{
+    RELEASE_ASSERT_WITH_MESSAGE(m_process == expectedIdentifier.m_process, "Received a policy check response for a wrong process");
+    RELEASE_ASSERT_WITH_MESSAGE(m_policyCheck, "Received 0 as the policy check identifier");
+    RELEASE_ASSERT_WITH_MESSAGE(m_policyCheck <= expectedIdentifier.m_policyCheck, "Received a policy check response from the future");
+    return m_policyCheck == expectedIdentifier.m_policyCheck;
+}
+
 PolicyChecker::PolicyChecker(Frame& frame)
     : m_frame(frame)
     , m_delegateIsDecidingNavigationPolicy(false)
@@ -170,9 +185,16 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     auto blobURLLifetimeExtension = policyDecisionMode == PolicyDecisionMode::Asynchronous ? extendBlobURLLifetimeIfNecessary(request) : CompletionHandlerCallingScope { };
 
+    auto requestIdentifier = PolicyCheckIdentifier::create();
     m_delegateIsDecidingNavigationPolicy = true;
     String suggestedFilename = action.downloadAttribute().isEmpty() ? nullAtom() : action.downloadAttribute();
-    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, [this, function = WTFMove(function), request = ResourceRequest(request), formState = WTFMove(formState), suggestedFilename = WTFMove(suggestedFilename), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
+    m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, requestIdentifier,
+        [this, function = WTFMove(function), request = ResourceRequest(request), formState = WTFMove(formState), suggestedFilename = WTFMove(suggestedFilename),
+         blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension), requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
+
+        if (!responseIdentifier.isValidFor(requestIdentifier))
+            return;
+
         m_delegateIsDecidingNavigationPolicy = false;
 
         switch (policyAction) {
@@ -206,7 +228,14 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request);
 
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, [frame = makeRef(m_frame), request, formState = WTFMove(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension)](PolicyAction policyAction) mutable {
+    auto requestIdentifier = PolicyCheckIdentifier::create();
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, requestIdentifier, [frame = makeRef(m_frame), request,
+        formState = WTFMove(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension),
+        requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
+
+        if (!responseIdentifier.isValidFor(requestIdentifier))
+            return;
+
         switch (policyAction) {
         case PolicyAction::Download:
             frame->loader().client().startDownload(request);

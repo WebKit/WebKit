@@ -83,9 +83,9 @@ public:
     uint64_t frameID() const { return m_frameID; }
 
     enum class ForNavigationAction { No, Yes };
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
+    uint64_t setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, ForNavigationAction);
     void invalidatePolicyListener();
-    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyCheckIdentifier, WebCore::PolicyAction, uint64_t navigationID, DownloadID, Optional<WebsitePoliciesData>&&);
 
     uint64_t setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(uint64_t);
@@ -178,6 +178,7 @@ private:
     WebCore::Frame* m_coreFrame { nullptr };
 
     uint64_t m_policyListenerID { 0 };
+    Optional<WebCore::PolicyCheckIdentifier> m_policyIdentifier;
     WebCore::FramePolicyFunction m_policyFunction;
     ForNavigationAction m_policyFunctionForNavigationAction { ForNavigationAction::No };
     HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;

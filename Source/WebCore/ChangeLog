@@ -1,3 +1,56 @@
+2019-02-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Validate navigation policy decisions to avoid crashes in continueLoadAfterNavigationPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=194189
+
+        Reviewed by Geoffrey Garen.
+
+        Introduced PolicyCheckIdentifier to pair each navigation policy check request with a decision,
+        and deployed it in PolicyChecker. The identifier is passed from WebContent process to UI process
+        in WebKit2, and passed it back with the policy decision.
+
+        Because PolicyCheckIdentifier embeds the process identifier from which a navigation policy is checked,
+        we would be able to detect when UI process had sent the decision to a wrong WebContent process.
+
+        This patch also adds release assertions to make sure history().provisionalItem() is set whenever
+        we're requesting a navigation policy check.
+
+        These code changes should either:
+        1. Fix crashes in FrameLoader::continueLoadAfterNavigationPolicy where isBackForwardLoadType would
+           return true yet history().provisionalItem() is null.
+        2. Detect a bug that UI process can send a navigation policy decision to a wrong WebContent process.
+        3. Rule out the possibility that (2) exists.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/FrameLoaderTypes.h:
+        (WebCore::PolicyCheckIdentifier): Added.
+        (WebCore::PolicyCheckIdentifier::operator== const): Added.
+        (WebCore::PolicyCheckIdentifier::PolicyCheckIdentifier): Added.
+        (WebCore::PolicyCheckIdentifier::encode const): Added.
+        (WebCore::PolicyCheckIdentifier::decode): Added.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyCheckIdentifier::generate):
+        (WebCore::PolicyCheckIdentifier::isValidFor): Returns true if the identifer matches. Also release asserts
+        that the process ID is same, and that m_check is always not zero (meaning it's a generated value).
+        The failure of these release assertions would indicate that there is a bug in UI process, which results in
+        a policy decision response being sent to a wrong Web process.
+        (WebCore::PolicyChecker::checkNavigationPolicy): Exit early if isValidFor fails.
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2019-02-03  Antti Koivisto  <antti@apple.com>
 
         Don't include ScrollCoordinator.h from Element.h
