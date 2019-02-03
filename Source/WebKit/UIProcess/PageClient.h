@@ -83,7 +83,7 @@ class TextIndicator;
 class WebMediaSessionManager;
 
 enum class RouteSharingPolicy : uint8_t;
-enum class ScrollbarStyle;
+enum class ScrollbarStyle : uint8_t;
 enum class TextIndicatorWindowLifetime : uint8_t;
 enum class TextIndicatorWindowDismissalAnimation : uint8_t;
 

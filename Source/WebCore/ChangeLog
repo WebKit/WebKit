@@ -1,5 +1,30 @@
 2019-02-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Tidy up data memebers of FrameView and related classes to shrink class sizes
+        https://bugs.webkit.org/show_bug.cgi?id=194197
+
+        Reviewed by Zalan Bujtas.
+
+        Make various enums 8-bit. Re-order data members of FrameView, FrameViewLayoutContext, Widget
+        and ScrollView to optimize padding.
+
+        Use more data member initializers.
+
+        This shrinks FrameView from 1168 (144 padding bytes) to 1096 (96 padding bytes).
+
+        * dom/Element.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        * page/FrameView.h:
+        * page/FrameViewLayoutContext.h:
+        * platform/ScrollTypes.h:
+        * platform/ScrollView.h: Data members should come after member functions.
+        * platform/Widget.h:
+        * rendering/Pagination.h:
+        (WebCore::Pagination::Pagination): Deleted.
+
+2019-02-02  Simon Fraser  <simon.fraser@apple.com>
+
         Rename "scrollingLayer" in RenderLayerBacking to "scrollContainerLayer" for clarity
         https://bugs.webkit.org/show_bug.cgi?id=194194
 

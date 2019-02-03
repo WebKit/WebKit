@@ -66,7 +66,6 @@ class RenderView;
 class RenderWidget;
 
 enum class FrameFlattening;
-enum class SelectionRevealMode;
 
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
@@ -813,118 +812,79 @@ private:
     };
     void overrideViewportSizeForCSSViewportUnits(OverrideViewportSize);
 
-    HashSet<Widget*> m_widgetsInRenderTree;
-
     static MonotonicTime sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
-    LayoutSize m_size;
-    LayoutSize m_margins;
-
-    std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     const Ref<Frame> m_frame;
+    FrameViewLayoutContext m_layoutContext;
 
+    HashSet<Widget*> m_widgetsInRenderTree;
+    std::unique_ptr<ListHashSet<RenderEmbeddedObject*>> m_embeddedObjectsToUpdate;
     std::unique_ptr<HashSet<const RenderElement*>> m_slowRepaintObjects;
 
-    bool m_canHaveScrollbars;
-    bool m_cannotBlitToWindow;
-    bool m_isOverlapped { false };
-    bool m_contentIsOpaque;
-
-    Timer m_updateEmbeddedObjectsTimer;
-    Timer m_updateWidgetPositionsTimer;
-
-    bool m_firstLayoutCallbackPending;
-
-    bool m_isTransparent;
-#if ENABLE(DARK_MODE_CSS)
-    bool m_usesDarkAppearance { false };
-#endif
-    Color m_baseBackgroundColor;
-    IntSize m_lastViewportSize;
-    float m_lastZoomFactor;
-
-    String m_mediaType;
-    String m_mediaTypeWhenNotPrinting;
-
-    bool m_overflowStatusDirty;
-    bool m_horizontalOverflow;
-    bool m_verticalOverflow;
-    enum class ViewportRendererType { None, Document, Body };
-    ViewportRendererType m_viewportRendererType { ViewportRendererType::None };
-
-    Pagination m_pagination;
-
-    bool m_wasScrolledByUser;
-    bool m_inProgrammaticScroll;
-    Timer m_delayedScrollEventTimer;
-    bool m_shouldScrollToFocusedElement { false };
-    SelectionRevealMode m_selectionRevealModeForFocusedElement;
-    Timer m_delayedScrollToFocusedElementTimer;
-
-    MonotonicTime m_lastPaintTime;
-
-    bool m_isTrackingRepaints; // Used for testing.
-    Vector<FloatRect> m_trackedRepaintRects;
-
-    bool m_shouldUpdateWhileOffscreen;
-
-    Optional<FloatRect> m_viewExposedRect;
-    
-    LayoutPoint m_layoutViewportOrigin;
-    Optional<LayoutRect> m_layoutViewportOverrideRect;
-    Optional<LayoutRect> m_visualViewportOverrideRect; // Used when the iOS keyboard is showing.
-
-    RefPtr<Node> m_nodeToDraw;
-    OptionSet<PaintBehavior> m_paintBehavior;
-    bool m_isPainting;
-
-    bool m_isVisuallyNonEmpty { false };
-    unsigned m_visuallyNonEmptyCharacterCount { 0 };
-    unsigned m_visuallyNonEmptyPixelCount { 0 };
-
-    unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
-    bool m_renderedSignificantAmountOfText { false };
-    bool m_hasReachedSignificantRenderedTextThreshold { false };
-
-    bool m_needsDeferredScrollbarsUpdate { false };
-
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
+    RefPtr<Node> m_nodeToDraw;
 
     // Renderer to hold our custom scroll corner.
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
 
-    bool m_speculativeTilingEnabled;
+    Timer m_updateEmbeddedObjectsTimer;
+    Timer m_updateWidgetPositionsTimer;
+    Timer m_delayedScrollEventTimer;
+    Timer m_delayedScrollToFocusedElementTimer;
     Timer m_speculativeTilingEnableTimer;
 
-#if PLATFORM(IOS_FAMILY)
-    bool m_useCustomFixedPositionLayoutRect;
-    IntRect m_customFixedPositionLayoutRect;
+    MonotonicTime m_lastPaintTime;
 
-    bool m_useCustomSizeForResizeEvent;
+    LayoutSize m_size;
+    LayoutSize m_margins;
+
+    Color m_baseBackgroundColor { Color::white };
+    IntSize m_lastViewportSize;
+
+    String m_mediaType;
+    String m_mediaTypeWhenNotPrinting;
+
+    Vector<FloatRect> m_trackedRepaintRects;
+    
+    IntRect* m_cachedWindowClipRect { nullptr };
+    Vector<WTF::Function<void ()>> m_postLayoutCallbackQueue;
+
+    LayoutPoint m_layoutViewportOrigin;
+    Optional<LayoutRect> m_layoutViewportOverrideRect;
+    Optional<LayoutRect> m_visualViewportOverrideRect; // Used when the iOS keyboard is showing.
+
+    Optional<FloatRect> m_viewExposedRect;
+
+    OptionSet<PaintBehavior> m_paintBehavior;
+
+    float m_lastZoomFactor { 1 };
+    unsigned m_visuallyNonEmptyCharacterCount { 0 };
+    unsigned m_visuallyNonEmptyPixelCount { 0 };
+    unsigned m_textRendererCountForVisuallyNonEmptyCharacters { 0 };
+    int m_headerHeight { 0 };
+    int m_footerHeight { 0 };
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_useCustomFixedPositionLayoutRect { false };
+    bool m_useCustomSizeForResizeEvent { false };
+
+    IntRect m_customFixedPositionLayoutRect;
     IntSize m_customSizeForResizeEvent;
 #endif
 
     Optional<OverrideViewportSize> m_overrideViewportSize;
 
-    // If true, automatically resize the frame view around its content.
-    bool m_shouldAutoSize;
-    bool m_inAutoSize;
-    // True if autosize has been run since m_shouldAutoSize was set.
-    bool m_didRunAutosize;
     // The lower bound on the size when autosizing.
     IntSize m_minAutoSize;
     // The upper bound on the size when autosizing.
     IntSize m_maxAutoSize;
     // The fixed height to resize the view to after autosizing is complete.
-    int m_autoSizeFixedMinimumHeight;
+    int m_autoSizeFixedMinimumHeight { 0 };
     // The intrinsic content size decided by autosizing.
     IntSize m_autoSizeContentSize;
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
-
-    int m_headerHeight;
-    int m_footerHeight;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
@@ -937,16 +897,51 @@ private:
     IntSize m_initialViewportSize;
 #endif
 
-    bool m_visualUpdatesAllowedByClient;
-    bool m_hasFlippedBlockRenderers;
+    Pagination m_pagination;
+
+    enum class ViewportRendererType : uint8_t { None, Document, Body };
+    ViewportRendererType m_viewportRendererType { ViewportRendererType::None };
+    ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
+    SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
+
+    bool m_shouldUpdateWhileOffscreen { true };
+    bool m_overflowStatusDirty { true };
+    bool m_horizontalOverflow { false };
+    bool m_verticalOverflow { false };
+    bool m_canHaveScrollbars { true };
+    bool m_cannotBlitToWindow { false };
+    bool m_isOverlapped { false };
+    bool m_contentIsOpaque { false };
+    bool m_firstLayoutCallbackPending { false };
+
+    bool m_isTransparent { false };
+#if ENABLE(DARK_MODE_CSS)
+    bool m_usesDarkAppearance { false };
+#endif
+
+    bool m_isTrackingRepaints { false }; // Used for testing.
+    bool m_wasScrolledByUser { false };
+    bool m_inProgrammaticScroll { false };
+    bool m_shouldScrollToFocusedElement { false };
+
+    bool m_isPainting { false };
+
+    bool m_isVisuallyNonEmpty { false };
+
+    bool m_renderedSignificantAmountOfText { false };
+    bool m_hasReachedSignificantRenderedTextThreshold { false };
+
+    bool m_needsDeferredScrollbarsUpdate { false };
+    bool m_speculativeTilingEnabled { false };
+    bool m_visualUpdatesAllowedByClient { true };
+    bool m_hasFlippedBlockRenderers { false };
     bool m_speculativeTilingDelayDisabledForTesting { false };
 
-    ScrollPinningBehavior m_scrollPinningBehavior;
-
-    IntRect* m_cachedWindowClipRect { nullptr };
-    Vector<WTF::Function<void ()>> m_postLayoutCallbackQueue;
-
-    FrameViewLayoutContext m_layoutContext;
+    // If true, automatically resize the frame view around its content.
+    bool m_shouldAutoSize { false };
+    bool m_inAutoSize { false };
+    // True if autosize has been run since m_shouldAutoSize was set.
+    bool m_didRunAutosize { false };
 };
 
 inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

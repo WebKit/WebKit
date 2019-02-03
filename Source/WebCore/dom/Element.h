@@ -70,12 +70,6 @@ enum SpellcheckAttributeState {
     SpellcheckAttributeDefault
 };
 
-enum class SelectionRevealMode {
-    Reveal,
-    RevealUpToMainFrame, // Scroll overflow and iframes, but not the main frame.
-    DoNotReveal
-};
-
 #if ENABLE(POINTER_EVENTS)
 enum class TouchAction : uint8_t;
 #endif
