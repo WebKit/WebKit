@@ -1,3 +1,18 @@
+2019-02-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION: clicking a selected call frame doesn't re-scroll
+        https://bugs.webkit.org/show_bug.cgi?id=194169
+        <rdar://problem/47743864>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._handleMouseDown):
+        Add a special case for a single-selection TreeOutline with
+        allowsRepeatSelection enabled. Since the element is already
+        selected, bypass the SelectionCongroller and dispatch an
+        event with event.data.selectedByUser set to true.
+
 2019-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: fix race conditions when editing
