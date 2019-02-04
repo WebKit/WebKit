@@ -1,3 +1,29 @@
+2019-02-03  John Wilander  <wilander@apple.com>
+
+        Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()
+        https://bugs.webkit.org/show_bug.cgi?id=194104
+        <rdar://problem/47649991>
+
+        Reviewed by Chris Dumez, Daniel Bates, and Darin Adler.
+
+        Test: http/tests/adClickAttribution/anchor-tag-attributes-validation.html
+
+        This patch adds parsing and validation of the two new Ad Click Attribution
+        attributes in anchor elements: adcampaignid and addestination. The data is
+        not yet forwarded into the loader.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAdClickAttribution const):
+        (WebCore::HTMLAnchorElement::handleClick):
+            Now calls HTMLAnchorElement::parseAdClickAttribution().
+        * html/HTMLAnchorElement.h:
+        * loader/AdClickAttribution.h:
+            Made WebCore::AdClickAttribution copyable since it's needed to have it be
+            WTF::Optional. Also made AdClickAttribution::MaxEntropy public. Changed
+            numeric types from unsigned short to uint32_t.
+        (WebCore::AdClickAttribution::Campaign::isValid const):
+        (WebCore::AdClickAttribution::Conversion::isValid const):
+
 2019-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Validate navigation policy decisions to avoid crashes in continueLoadAfterNavigationPolicy

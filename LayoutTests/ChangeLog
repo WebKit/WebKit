@@ -1,3 +1,18 @@
+2019-02-03  John Wilander  <wilander@apple.com>
+
+        Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()
+        https://bugs.webkit.org/show_bug.cgi?id=194104
+        <rdar://problem/47649991>
+
+        Reviewed by Chris Dumez, Daniel Bates, and Darin Adler.
+
+        This test case makes sure invalid data triggers console warnings.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt: Added.
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation.html: Added.
+        * platform/ios-wk2/http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt: Added.
+            Console line numbers are not emitted when running iOS tests so this -expected.txt file doesn't have them.
+
 2019-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to move selection into editable roots with 0 height

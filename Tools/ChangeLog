@@ -1,3 +1,15 @@
+2019-02-03  John Wilander  <wilander@apple.com>
+
+        Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()
+        https://bugs.webkit.org/show_bug.cgi?id=194104
+        <rdar://problem/47649991>
+
+        Reviewed by Chris Dumez, Daniel Bates, and Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/AdClickAttribution.cpp:
+        (TestWebKitAPI::TEST):
+            Changed numeric types from unsigned short to uint32_t.
+
 2019-02-02  David Kilzer  <ddkilzer@apple.com>
 
         Leak of NSArray (4.25 Kbytes) in com.apple.WebKit.WebContent running WebKit layout tests on iOS Simulator

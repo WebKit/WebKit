@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, internal:AdClickAttributionEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body onload="runAllTests()">
+<div id="description"></div>
+<div id="output"></div><br>
+<div id="console"></div>
+<script>
+    description("Test for validity of ad click attribution attributes on anchor tags.");
+    jsTestIsAsync = true;
+
+    function createAdClickAttributionAnchorElement(elementID, adCampaignID, adDestination) {
+        let anchorElement = document.createElement("a");
+        anchorElement.id = elementID;
+        anchorElement.adcampaignid = adCampaignID;
+        anchorElement.addestination = adDestination;
+        anchorElement.href = "#";
+        anchorElement.innerText = "Link" + currentTest;
+        return anchorElement;
+    }
+
+    function activateElement(elementID, callback) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+                callback();
+            },
+            function () {
+                testFailed("Promise rejected.");
+                finishJSTest();
+            }
+        );
+    }
+
+    let currentTest = 0;
+    function runOneTest(adCampaignID, adDestination, callback) {
+        const currentElementID = "test" + currentTest++;
+        const anchorElement = createAdClickAttributionAnchorElement(currentElementID, adCampaignID, adDestination);
+        output.appendChild(anchorElement);
+        const brElement = document.createElement("br");
+        output.appendChild(brElement);
+        activateElement(currentElementID, callback);
+    }
+
+    const validAdCampaignID = "03";
+    const validAdDestination = "http://webkit.org";
+    const testCases = [
+        [ validAdCampaignID, validAdDestination ],
+        [ "100", validAdDestination ],           // Too many characters.
+        [ "1", validAdDestination ],             // Too few characters.
+        [ "98", validAdDestination ],            // Too high value.
+        [ "-1", validAdDestination ],            // Negative value.
+        [ "ab", validAdDestination ],            // Non-digits.
+        [ "1", validAdDestination ],            // Non-ASCII.
+        [ " 1", validAdDestination ],            // Leading space.
+        [ "1 ", validAdDestination ],            // Trailing space.
+        [ validAdCampaignID, "webkit.org" ],     // Missing protocol.
+        [ validAdCampaignID, "://webkit.org" ],  // Partially missing protocol.
+        [ validAdCampaignID, "" ],           // Non-ASCII characters as destination.
+        [ "", validAdDestination ],              // Empty campaign ID.
+        [ validAdCampaignID, "" ]                // Empty destination.
+    ];
+
+    function runAllTests() {
+        if (currentTest < testCases.length)
+            runOneTest(testCases[currentTest][0], testCases[currentTest][1], runAllTests);
+        else
+            finishJSTest();
+    }
+</script>
+</body>
+</html>

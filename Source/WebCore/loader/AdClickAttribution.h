@@ -37,14 +37,13 @@ class URL;
 
 namespace WebCore {
 
-constexpr unsigned short maxEntropy = 64;
-
 class AdClickAttribution {
-    WTF_MAKE_NONCOPYABLE(AdClickAttribution);
 public:
-    using CampaignId = unsigned short;
-    using ConversionData = unsigned short;
-    using PriorityValue = unsigned short;
+    using CampaignId = uint32_t;
+    using ConversionData = uint32_t;
+    using PriorityValue = uint32_t;
+
+    static constexpr uint32_t MaxEntropy = 64;
 
     struct Campaign {
         explicit Campaign(CampaignId id)
@@ -54,7 +53,7 @@ public:
         
         bool isValid() const
         {
-            return id < maxEntropy;
+            return id < MaxEntropy;
         }
         
         CampaignId id;
@@ -104,7 +103,7 @@ public:
 
         bool isValid() const
         {
-            return data < maxEntropy && priority < maxEntropy;
+            return data < MaxEntropy && priority < MaxEntropy;
         }
         
         ConversionData data;

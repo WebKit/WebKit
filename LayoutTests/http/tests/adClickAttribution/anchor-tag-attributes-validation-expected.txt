@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: line 107: adcampaignid must have a non-negative value less than 64 for Ad Click Attribution.
+CONSOLE MESSAGE: line 107: adcampaignid must have a non-negative value less than 64 for Ad Click Attribution.
+CONSOLE MESSAGE: line 107: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.
+CONSOLE MESSAGE: line 107: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.
+CONSOLE MESSAGE: line 107: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.
+CONSOLE MESSAGE: line 107: adddestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: line 107: adddestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: line 107: adddestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: line 107: Both adcampaignid and addestination need to be set for Ad Click Attribution to work.
+CONSOLE MESSAGE: line 107: Both adcampaignid and addestination need to be set for Ad Click Attribution to work.
+Test for validity of ad click attribution attributes on anchor tags.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Link1
+Link2
+Link3
+Link4
+Link5
+Link6
+Link7
+Link8
+Link9
+Link10
+Link11
+Link12
+Link13
+Link14
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

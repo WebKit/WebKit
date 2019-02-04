@@ -33,8 +33,8 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-constexpr unsigned short min6BitValue { 0 };
-constexpr unsigned short max6BitValue { 63 };
+constexpr uint32_t min6BitValue { 0 };
+constexpr uint32_t max6BitValue { 63 };
 
 // Positive test cases.
 
@@ -52,8 +52,8 @@ TEST(AdClickAttribution, ValidMinValues)
 
 TEST(AdClickAttribution, ValidMidValues)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign((unsigned short)12), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
-    attribution.setConversion(AdClickAttribution::Conversion((unsigned short)44, AdClickAttribution::Priority((unsigned short)22)));
+    AdClickAttribution attribution(AdClickAttribution::Campaign((uint32_t)12), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    attribution.setConversion(AdClickAttribution::Conversion((uint32_t)44, AdClickAttribution::Priority((uint32_t)22)));
 
     auto attributionURL = attribution.url();
     auto referrerURL = attribution.referrer();
