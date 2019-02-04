@@ -1063,6 +1063,10 @@ void AccessibilityNodeObject::alterSliderValue(bool increase)
 {
     if (roleValue() != AccessibilityRole::Slider)
         return;
+    
+    auto element = this->element();
+    if (!element || element->isDisabledFormControl())
+        return;
 
     if (!getAttribute(stepAttr).isEmpty())
         changeValueByStep(increase);

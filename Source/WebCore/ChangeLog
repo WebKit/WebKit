@@ -1,3 +1,15 @@
+2019-02-04  Eric Liang  <ericliang@apple.com>
+
+        When performing Increment or Decrement on sliders, check to see if the slider is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=173497
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/set-value-not-work-for-disabled-sliders.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::alterSliderValue):
+
 2019-02-04  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: leak WebIDBConnectionToServer in layout tests
