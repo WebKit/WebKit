@@ -1,3 +1,11 @@
+2019-02-04  Antoine Quint  <graouts@apple.com>
+
+        <rdar://problem/47788802>
+
+        Unreviewed build fix.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2019-02-04  Youenn Fablet  <youenn@apple.com>
 
         Capture state should be managed consistently when doing process swapping
