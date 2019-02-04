@@ -2128,16 +2128,12 @@ void WebPage::showPageBanners()
 
 void WebPage::setHeaderBannerHeightForTesting(int height)
 {
-#if ENABLE(RUBBER_BANDING)
-    corePage()->addHeaderWithHeight(height);
-#endif
+    corePage()->setHeaderHeight(height);
 }
 
 void WebPage::setFooterBannerHeightForTesting(int height)
 {
-#if ENABLE(RUBBER_BANDING)
-    corePage()->addFooterWithHeight(height);
-#endif
+    corePage()->setFooterHeight(height);
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

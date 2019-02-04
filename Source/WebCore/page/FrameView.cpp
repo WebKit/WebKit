@@ -1047,24 +1047,20 @@ LayoutPoint FrameView::scrollPositionRespectingCustomFixedPosition() const
     return scrollPositionForFixedPosition();
 }
 
-void FrameView::setHeaderHeight(int headerHeight)
+int FrameView::headerHeight() const
 {
-    if (frame().page())
-        ASSERT(frame().isMainFrame());
-    m_headerHeight = headerHeight;
-
-    if (RenderView* renderView = this->renderView())
-        renderView->setNeedsLayout();
+    if (!frame().isMainFrame())
+        return 0;
+    Page* page = frame().page();
+    return page ? page->headerHeight() : 0;
 }
 
-void FrameView::setFooterHeight(int footerHeight)
+int FrameView::footerHeight() const
 {
-    if (frame().page())
-        ASSERT(frame().isMainFrame());
-    m_footerHeight = footerHeight;
-
-    if (RenderView* renderView = this->renderView())
-        renderView->setNeedsLayout();
+    if (!frame().isMainFrame())
+        return 0;
+    Page* page = frame().page();
+    return page ? page->footerHeight() : 0;
 }
 
 float FrameView::topContentInset(TopContentInsetType contentInsetTypeToReturn) const
@@ -2673,7 +2669,7 @@ void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
     }
 
     updateLayoutViewport();
-    setNeedsLayout();
+    setNeedsLayoutAfterViewConfigurationChange();
     ScrollView::availableContentSizeChanged(reason);
 }
 
@@ -2918,9 +2914,27 @@ bool FrameView::needsLayout() const
     return layoutContext().needsLayout();
 }
 
-void FrameView::setNeedsLayout()
+void FrameView::setNeedsLayoutAfterViewConfigurationChange()
 {
-    layoutContext().setNeedsLayout();
+    layoutContext().setNeedsLayoutAfterViewConfigurationChange();
+}
+
+void FrameView::setNeedsCompositingConfigurationUpdate()
+{
+    RenderView* renderView = this->renderView();
+    if (renderView->usesCompositing()) {
+        if (auto* rootLayer = renderView->layer())
+            renderView->layer()->setNeedsCompositingConfigurationUpdate();
+    }
+}
+
+void FrameView::setNeedsCompositingGeometryUpdate()
+{
+    RenderView* renderView = this->renderView();
+    if (renderView->usesCompositing()) {
+        if (auto* rootLayer = renderView->layer())
+            renderView->layer()->setNeedsCompositingGeometryUpdate();
+    }
 }
 
 void FrameView::scheduleSelectionUpdate()
@@ -2929,8 +2943,7 @@ void FrameView::scheduleSelectionUpdate()
         return;
     // FIXME: We should not need to go through the layout process since selection update does not change dimension/geometry.
     // However we can't tell at this point if the tree is stable yet, so let's just schedule a root only layout for now.
-    setNeedsLayout();
-    layoutContext().scheduleLayout();
+    setNeedsLayoutAfterViewConfigurationChange();
 }
 
 bool FrameView::isTransparent() const
@@ -2952,8 +2965,8 @@ void FrameView::setTransparent(bool isTransparent)
     if (!isViewForDocumentInFrame())
         return;
 
-    renderView()->compositor().rootBackgroundColorOrTransparencyChanged();
-    setNeedsLayout();
+    setNeedsLayoutAfterViewConfigurationChange();
+    setNeedsCompositingConfigurationUpdate();
 }
 
 bool FrameView::hasOpaqueBackground() const
@@ -2974,9 +2987,8 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
         return;
 
     recalculateScrollbarOverlayStyle();
-    setNeedsLayout();
-
-    renderView()->compositor().rootBackgroundColorOrTransparencyChanged();
+    setNeedsLayoutAfterViewConfigurationChange();
+    setNeedsCompositingConfigurationUpdate();
 }
 
 void FrameView::updateBackgroundRecursively(bool transparent)
@@ -3516,7 +3528,7 @@ void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
 
     m_autoSizeFixedMinimumHeight = fixedMinimumHeight;
 
-    setNeedsLayout();
+    setNeedsLayoutAfterViewConfigurationChange();
 }
 
 RenderElement* FrameView::viewportRenderer() const
@@ -4516,7 +4528,7 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const In
     m_maxAutoSize = maxSize;
     m_didRunAutosize = false;
 
-    setNeedsLayout();
+    setNeedsLayoutAfterViewConfigurationChange();
     layoutContext().scheduleLayout();
     if (m_shouldAutoSize) {
         overrideViewportSizeForCSSViewportUnits({ minSize.width(), m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });

@@ -117,7 +117,11 @@ public:
     void queuePostLayoutCallback(WTF::Function<void ()>&&);
 
     WEBCORE_EXPORT bool needsLayout() const;
-    WEBCORE_EXPORT void setNeedsLayout();
+    WEBCORE_EXPORT void setNeedsLayoutAfterViewConfigurationChange();
+
+    void setNeedsCompositingConfigurationUpdate();
+    void setNeedsCompositingGeometryUpdate();
+
     void setViewportConstrainedObjectsNeedLayout();
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
@@ -573,10 +577,8 @@ public:
 
     LayoutPoint scrollPositionRespectingCustomFixedPosition() const;
 
-    int headerHeight() const final { return m_headerHeight; }
-    WEBCORE_EXPORT void setHeaderHeight(int);
-    int footerHeight() const final { return m_footerHeight; }
-    WEBCORE_EXPORT void setFooterHeight(int);
+    WEBCORE_EXPORT int headerHeight() const final;
+    WEBCORE_EXPORT int footerHeight() const final;
 
     WEBCORE_EXPORT float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const final;
     void topContentInsetDidChange(float newTopContentInset);

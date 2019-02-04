@@ -50,9 +50,11 @@ public:
     ~FrameViewLayoutContext();
 
     void layout();
-
-    void setNeedsLayout();
     bool needsLayout() const;
+
+    // We rely on the side-effects of layout, like compositing updates, to update state in various subsystems
+    // whose dependencies are poorly defined. This call triggers such updates.
+    void setNeedsLayoutAfterViewConfigurationChange();
 
     void scheduleLayout();
     void scheduleSubtreeLayout(RenderElement& layoutRoot);

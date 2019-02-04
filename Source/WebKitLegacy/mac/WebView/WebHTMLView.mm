@@ -3869,7 +3869,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
         if (frame->document() && frame->document()->pageCacheState() != Document::NotInPageCache)
             return;
         if (FrameView* view = frame->view())
-            view->setNeedsLayout();
+            view->setNeedsLayoutAfterViewConfigurationChange();
     }
 }
 

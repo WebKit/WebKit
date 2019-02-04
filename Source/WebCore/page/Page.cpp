@@ -1005,11 +1005,8 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     m_pageScaleFactor = scale;
 
     if (!m_settings->delegatesPageScaling()) {
-        if (auto* renderView = document->renderView()) {
-            renderView->setNeedsLayout();
-            if (renderView->hasLayer() && renderView->layer()->isComposited())
-                renderView->layer()->setNeedsCompositingGeometryUpdate();
-        }
+        view->setNeedsLayoutAfterViewConfigurationChange();
+        view->setNeedsCompositingGeometryUpdate();
 
         document->resolveStyle(Document::ResolveStyleType::Rebuild);
 
@@ -1968,9 +1965,11 @@ VisibilityState Page::visibilityState() const
     return VisibilityState::Hidden;
 }
 
-#if ENABLE(RUBBER_BANDING)
-void Page::addHeaderWithHeight(int headerHeight)
+void Page::setHeaderHeight(int headerHeight)
 {
+    if (headerHeight == m_headerHeight)
+        return;
+
     m_headerHeight = headerHeight;
 
     FrameView* frameView = mainFrame().view();
@@ -1981,12 +1980,15 @@ void Page::addHeaderWithHeight(int headerHeight)
     if (!renderView)
         return;
 
-    frameView->setHeaderHeight(m_headerHeight);
-    renderView->compositor().updateLayerForHeader(m_headerHeight);
+    frameView->setNeedsLayoutAfterViewConfigurationChange();
+    frameView->setNeedsCompositingGeometryUpdate();
 }
 
-void Page::addFooterWithHeight(int footerHeight)
+void Page::setFooterHeight(int footerHeight)
 {
+    if (footerHeight == m_footerHeight)
+        return;
+
     m_footerHeight = footerHeight;
 
     FrameView* frameView = mainFrame().view();
@@ -1997,10 +1999,9 @@ void Page::addFooterWithHeight(int footerHeight)
     if (!renderView)
         return;
 
-    frameView->setFooterHeight(m_footerHeight);
-    renderView->compositor().updateLayerForFooter(m_footerHeight);
+    frameView->setNeedsLayoutAfterViewConfigurationChange();
+    frameView->setNeedsCompositingGeometryUpdate();
 }
-#endif
 
 void Page::incrementNestedRunLoopCount()
 {

@@ -674,12 +674,6 @@ static NSSet *dataTypes()
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     LOG(@"didFinishNavigation: %@", navigation);
-    
-    // Banner heights don't persist across page loads (oddly, since Page stores them), so reset on every page load.
-    if ([[SettingsController shared] isSpaceReservedForBanners]) {
-        [_webView _setHeaderBannerHeight:testHeaderBannerHeight];
-        [_webView _setFooterBannerHeight:testFooterBannerHeight];
-    }
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *__nullable credential))completionHandler

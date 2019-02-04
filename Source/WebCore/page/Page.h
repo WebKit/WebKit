@@ -519,10 +519,8 @@ public:
     WEBCORE_EXPORT void removeLayoutMilestones(OptionSet<LayoutMilestone>);
     OptionSet<LayoutMilestone> requestedLayoutMilestones() const { return m_requestedLayoutMilestones; }
 
-#if ENABLE(RUBBER_BANDING)
-    WEBCORE_EXPORT void addHeaderWithHeight(int);
-    WEBCORE_EXPORT void addFooterWithHeight(int);
-#endif
+    WEBCORE_EXPORT void setHeaderHeight(int);
+    WEBCORE_EXPORT void setFooterHeight(int);
 
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }

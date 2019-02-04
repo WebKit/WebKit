@@ -663,7 +663,7 @@ void PluginView::didInitializePlugin()
     if (wantsWheelEvents()) {
         if (Frame* frame = m_pluginElement->document().frame()) {
             if (FrameView* frameView = frame->view())
-                frameView->setNeedsLayout();
+                frameView->setNeedsLayoutAfterViewConfigurationChange();
         }
     }
 

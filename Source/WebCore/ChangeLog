@@ -1,3 +1,69 @@
+2019-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make setNeedsLayout on the root more explicitly about triggering its side-effects
+        https://bugs.webkit.org/show_bug.cgi?id=194198
+
+        Reviewed by Antti Koivisto.
+
+        Calling setNeedsLayout() on the FrameView or RenderView is an odd concept; the render tree
+        generally manages its own dirty state.
+
+        Most callers of setNeedsLayout() on the root are really trying to trigger the side-effects
+        of layout, like compositing updates, which are required when view configuration state, like
+        headers, footers and transparency, change. These dependencies are currently implicit and
+        poorly defined.
+
+        Renaming "setNeedsLayout" on FrameView is a step towards being more explicit about pure
+        rendering updates, vs updates of downstream data strutures like compositing. It's now called
+        setNeedsLayoutAfterViewConfigurationChange(). In addition, expose
+        setNeedsCompositingConfigurationUpdate() and setNeedsCompositingGeometryUpdate() so callers
+        can trigger the appropriate types of compositing updates on the root layer.
+
+        In addition, FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange() schedules a
+        layout. Withtout this, some callers would dirty the RenderView's layout but rely on some
+        other trigger to make the layout happen.
+
+        This cleanup was prompted by noticing that FrameView::setHeaderHeight() dirtied layout
+        but never scheduled it, making banner insertion in MiniBrowser unreliable.
+
+        This patch also removes the aliasing of headerHeight/footerHeight between Page and
+        FrameView. Banners are a property of Page, so FrameView fetches the banner heights
+        from Page.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::headerHeight const):
+        (WebCore::FrameView::footerHeight const):
+        (WebCore::FrameView::availableContentSizeChanged):
+        (WebCore::FrameView::setNeedsLayoutAfterViewConfigurationChange):
+        (WebCore::FrameView::setNeedsCompositingConfigurationUpdate):
+        (WebCore::FrameView::setNeedsCompositingGeometryUpdate):
+        (WebCore::FrameView::scheduleSelectionUpdate):
+        (WebCore::FrameView::setTransparent):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        (WebCore::FrameView::setAutoSizeFixedMinimumHeight):
+        (WebCore::FrameView::enableAutoSizeMode):
+        (WebCore::FrameView::setHeaderHeight): Deleted.
+        (WebCore::FrameView::setFooterHeight): Deleted.
+        (WebCore::FrameView::setNeedsLayout): Deleted.
+        * page/FrameView.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange):
+        (WebCore::FrameViewLayoutContext::setNeedsLayout): Deleted.
+        * page/FrameViewLayoutContext.h:
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        (WebCore::Page::setHeaderHeight):
+        (WebCore::Page::setFooterHeight):
+        (WebCore::Page::addHeaderWithHeight): Deleted.
+        (WebCore::Page::addFooterWithHeight): Deleted.
+        * page/Page.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setHeaderHeight):
+        (WebCore::Internals::setFooterHeight):
+
 2019-02-03  John Wilander  <wilander@apple.com>
 
         Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()

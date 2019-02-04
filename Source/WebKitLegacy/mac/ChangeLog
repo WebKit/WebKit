@@ -1,3 +1,17 @@
+2019-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make setNeedsLayout on the root more explicitly about triggering its side-effects
+        https://bugs.webkit.org/show_bug.cgi?id=194198
+
+        Reviewed by Antti Koivisto.
+
+        Call the newly named functions.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame setNeedsLayout]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setNeedsLayout:]):
+
 2019-02-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Validate navigation policy decisions to avoid crashes in continueLoadAfterNavigationPolicy

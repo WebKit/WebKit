@@ -313,7 +313,7 @@ bool FrameViewLayoutContext::needsLayout() const
         || (m_disableSetNeedsLayoutCount && m_setNeedsLayoutWasDeferred);
 }
 
-void FrameViewLayoutContext::setNeedsLayout()
+void FrameViewLayoutContext::setNeedsLayoutAfterViewConfigurationChange()
 {
     if (m_disableSetNeedsLayoutCount) {
         m_setNeedsLayoutWasDeferred = true;
@@ -323,6 +323,7 @@ void FrameViewLayoutContext::setNeedsLayout()
     if (auto* renderView = this->renderView()) {
         ASSERT(!renderView->inHitTesting());
         renderView->setNeedsLayout();
+        scheduleLayout();
     }
 }
 

@@ -735,7 +735,7 @@ void PDFPlugin::updateScrollbars()
         else
             frameView->removeScrollableArea(this);
 
-        frameView->setNeedsLayout();
+        frameView->setNeedsLayoutAfterViewConfigurationChange();
     }
     
     if (m_verticalScrollbarLayer) {

@@ -1,3 +1,15 @@
+2019-02-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Make setNeedsLayout on the root more explicitly about triggering its side-effects
+        https://bugs.webkit.org/show_bug.cgi?id=194198
+
+        Reviewed by Antti Koivisto.
+
+        No need to set the banner heights on navigation now, since Page stores them.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController webView:didFinishNavigation:]):
+
 2019-02-03  John Wilander  <wilander@apple.com>
 
         Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()

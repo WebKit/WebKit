@@ -1543,16 +1543,17 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
             layer.ensureBacking();
 
             if (layer.isRenderViewLayer() && useCoordinatedScrollingForLayer(layer)) {
+                auto& frameView = m_renderView.frameView();
                 if (auto* scrollingCoordinator = this->scrollingCoordinator())
-                    scrollingCoordinator->frameViewRootLayerDidChange(m_renderView.frameView());
+                    scrollingCoordinator->frameViewRootLayerDidChange(frameView);
 #if ENABLE(RUBBER_BANDING)
-                updateLayerForHeader(page().headerHeight());
-                updateLayerForFooter(page().footerHeight());
+                updateLayerForHeader(frameView.headerHeight());
+                updateLayerForFooter(frameView.footerHeight());
 #endif
                 updateRootContentLayerClipping();
 
                 if (auto* tiledBacking = layer.backing()->tiledBacking())
-                    tiledBacking->setTopContentInset(m_renderView.frameView().topContentInset());
+                    tiledBacking->setTopContentInset(frameView.topContentInset());
             }
 
             // This layer and all of its descendants have cached repaints rects that are relative to
