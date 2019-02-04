@@ -1,3 +1,12 @@
+2019-02-04  Abderrahim Kitouni  <akitouni@gnome.org>
+
+        [GTK] Remove last python2 dependency from CMake build process
+        https://bugs.webkit.org/show_bug.cgi?id=194218
+
+        Reviewed by Michael Catanzaro.
+
+        * InspectorGResources.cmake:
+
 2019-02-04  Antti Koivisto  <antti@apple.com>
 
         Rename GraphicsLayer and PlatformCALayer type enum values to match "scroll container layer" convention
