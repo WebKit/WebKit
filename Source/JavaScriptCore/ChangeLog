@@ -1,3 +1,17 @@
+2019-02-04  Mark Lam  <mark.lam@apple.com>
+
+        DFG's doesGC() is incorrect about the SameValue node's behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=194211
+        <rdar://problem/47608913>
+
+        Reviewed by Saam Barati.
+
+        Only the DoubleRepUse case is guaranteed to not GC.  The other case may GC because
+        it calls operationSameValue() which may allocate memory for resolving ropes.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] UnlinkedMetadataTable assumes that MetadataTable is destroyed before it is destructed, but order of destruction of JS heap cells are not guaranteed
