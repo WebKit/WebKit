@@ -1,3 +1,18 @@
+2019-02-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] WebKitTestRunners is failing to create the IndexedDB directory.
+        https://bugs.webkit.org/show_bug.cgi?id=194142
+
+        Reviewed by Ross Kirsling.
+
+        There three 'separator' variables in TestController.cpp. Renamed
+        it 'pathSeparator', and unified them.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::createTestURL):
+        (WTR::TestController::platformAdjustContext):
+
 2019-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make setNeedsLayout on the root more explicitly about triggering its side-effects

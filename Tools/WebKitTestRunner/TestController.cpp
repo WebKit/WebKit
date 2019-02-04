@@ -95,6 +95,12 @@
 
 namespace WTR {
 
+#if OS(WINDOWS)
+static constexpr auto pathSeparator = '\\';
+#else
+static constexpr auto pathSeparator = '/';
+#endif
+
 const unsigned TestController::viewWidth = 800;
 const unsigned TestController::viewHeight = 600;
 
@@ -457,15 +463,13 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
 
-        const char separator = '/';
-
-        WKContextConfigurationSetApplicationCacheDirectory(configuration.get(), toWK(temporaryFolder + separator + "ApplicationCache").get());
-        WKContextConfigurationSetDiskCacheDirectory(configuration.get(), toWK(temporaryFolder + separator + "Cache").get());
-        WKContextConfigurationSetIndexedDBDatabaseDirectory(configuration.get(), toWK(temporaryFolder + separator + "Databases" + separator + "IndexedDB").get());
-        WKContextConfigurationSetLocalStorageDirectory(configuration.get(), toWK(temporaryFolder + separator + "LocalStorage").get());
-        WKContextConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + separator + "Databases" + separator + "WebSQL").get());
-        WKContextConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + separator + "MediaKeys").get());
-        WKContextConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + separator + "ResourceLoadStatistics").get());
+        WKContextConfigurationSetApplicationCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
+        WKContextConfigurationSetDiskCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Cache").get());
+        WKContextConfigurationSetIndexedDBDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
+        WKContextConfigurationSetLocalStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "LocalStorage").get());
+        WKContextConfigurationSetWebSQLDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "WebSQL").get());
+        WKContextConfigurationSetMediaKeysStorageDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "MediaKeys").get());
+        WKContextConfigurationSetResourceLoadStatisticsDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ResourceLoadStatistics").get());
     }
     return configuration;
 }
@@ -1120,13 +1124,11 @@ static WKURLRef createTestURL(const char* pathOrURL)
         return 0;
 
 #if PLATFORM(WIN)
-    const char separator = '\\';
     bool isAbsolutePath = false;
-    if (strlen(pathOrURL) >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == separator)
+    if (strlen(pathOrURL) >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == pathSeparator)
         isAbsolutePath = true;
 #else
-    const char separator = '/';
-    bool isAbsolutePath = pathOrURL[0] == separator;
+    bool isAbsolutePath = pathOrURL[0] == pathSeparator;
 #endif
     const char* filePrefix = "file://";
     static const size_t prefixLength = strlen(filePrefix);
@@ -1137,12 +1139,12 @@ static WKURLRef createTestURL(const char* pathOrURL)
         strcpy(buffer.get(), filePrefix);
         strcpy(buffer.get() + prefixLength, pathOrURL);
     } else {
-        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the separator
+        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the pathSeparator
         strcpy(buffer.get(), filePrefix);
         if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
             return 0;
         size_t numCharacters = strlen(buffer.get());
-        buffer[numCharacters] = separator;
+        buffer[numCharacters] = pathSeparator;
         strcpy(buffer.get() + numCharacters + 1, pathOrURL);
     }
 
@@ -2709,9 +2711,8 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
 
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-        const char separator = '/';
 
-        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + separator + "ServiceWorkers").get());
+        WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
     }
 
     return context;
