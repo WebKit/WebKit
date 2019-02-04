@@ -68,6 +68,15 @@ public:
 
     static void fireTimersInNestedEventLoop();
 
+protected:
+    MonotonicTime nextFireTime() const { return m_heapItem ? m_heapItem->time : MonotonicTime { }; }
+    void setNextFireTime(MonotonicTime);
+
+    void assertThreadSafety()
+    {
+        ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    }
+
 private:
     virtual void fired() = 0;
 
@@ -75,8 +84,6 @@ private:
 
     void checkConsistency() const;
     void checkHeapIndex() const;
-
-    void setNextFireTime(MonotonicTime);
 
     bool inHeap() const { return m_heapItem && m_heapItem->isInHeap(); }
 
@@ -91,8 +98,6 @@ private:
     void heapPop();
     void heapPopMin();
     static void heapDeleteNullMin(ThreadTimerHeap&);
-
-    MonotonicTime nextFireTime() const { return m_heapItem ? m_heapItem->time : MonotonicTime { }; }
 
     MonotonicTime m_unalignedNextFireTime; // m_nextFireTime not considering alignment interval
     Seconds m_repeatInterval; // 0 if not repeating
@@ -141,16 +146,29 @@ inline bool TimerBase::isActive() const
     return static_cast<bool>(nextFireTime());
 }
 
-class DeferrableOneShotTimer : protected TimerBase {
+// ResettableOneShotTimer is a optimization for timers that need to be delayed frequently.
+//
+// Changing the deadline of a timer is not a cheap operation. When it is done frequently, it can
+// affect performance.
+//
+// With ResettableOneShotTimer, calling restart() does not change the underlying timer.
+// Instead, when the underlying timer fires, a new dealine is set for "delay" seconds.
+//
+// When a ResettableOneShotTimer of 5 seconds is restarted before the deadline, the total
+// time before the function is called is 10 seconds.
+//
+// If a timer is unfrequently reset, or if it is usually stopped before the deadline,
+// prefer WebCore::Timer to avoid idle wake-up.
+class ResettableOneShotTimer : protected TimerBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     template<typename TimerFiredClass>
-    DeferrableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)
-        : DeferrableOneShotTimer(std::bind(function, &object), delay)
+    ResettableOneShotTimer(TimerFiredClass& object, void (TimerFiredClass::*function)(), Seconds delay)
+        : ResettableOneShotTimer(std::bind(function, &object), delay)
     {
     }
 
-    DeferrableOneShotTimer(WTF::Function<void ()>&& function, Seconds delay)
+    ResettableOneShotTimer(WTF::Function<void()>&& function, Seconds delay)
         : m_function(WTFMove(function))
         , m_delay(delay)
         , m_shouldRestartWhenTimerFires(false)
@@ -194,6 +212,32 @@ private:
 
     Seconds m_delay;
     bool m_shouldRestartWhenTimerFires;
+};
+
+// DeferrableOneShotTimer is a optimization for timers that need to change the deadline frequently.
+//
+// With DeferrableOneShotTimer, if the new deadline is later than the original deadline, the timer
+// is not reset. Instead, the timer fires and schedule a new timer for the remaining time.
+//
+// DeferrableOneShotTimer supports absolute deadlines.
+// If a timer of 5 seconds is restarted after 2 seconds, the total time will be 7 seconds.
+//
+// Restarting a DeferrableOneShotTimer is more expensive than restarting a ResettableOneShotTimer.
+// If accumulating the delay is not important, prefer ResettableOneShotTimer.
+class WEBCORE_EXPORT DeferrableOneShotTimer : private TimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DeferrableOneShotTimer(WTF::Function<void()>&&);
+    ~DeferrableOneShotTimer();
+
+    void startOneShot(Seconds interval);
+    void stop();
+
+private:
+    void fired() override;
+
+    WTF::Function<void()> m_function;
+    MonotonicTime m_restartFireTime;
 };
 
 }

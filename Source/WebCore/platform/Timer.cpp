@@ -260,7 +260,7 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
-    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    assertThreadSafety();
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
     stop();
     ASSERT(!inHeap());
@@ -273,7 +273,7 @@ TimerBase::~TimerBase()
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
-    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    assertThreadSafety();
 
     m_repeatInterval = repeatInterval;
     setNextFireTime(MonotonicTime::now() + nextFireInterval);
@@ -281,7 +281,7 @@ void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 
 void TimerBase::stop()
 {
-    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    assertThreadSafety();
 
     m_repeatInterval = 0_s;
     setNextFireTime(MonotonicTime { });
@@ -465,7 +465,7 @@ void TimerBase::updateHeapIfNeeded(MonotonicTime oldTime)
 
 void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
-    ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
+    assertThreadSafety();
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
 
@@ -518,6 +518,54 @@ Seconds TimerBase::nextUnalignedFireInterval() const
 {
     ASSERT(isActive());
     return std::max(m_unalignedNextFireTime - MonotonicTime::now(), 0_s);
+}
+
+DeferrableOneShotTimer::DeferrableOneShotTimer(WTF::Function<void()>&& function)
+    : m_function(WTFMove(function))
+{
+}
+
+DeferrableOneShotTimer::~DeferrableOneShotTimer() = default;
+
+void DeferrableOneShotTimer::startOneShot(Seconds interval)
+{
+    assertThreadSafety();
+
+    MonotonicTime oldNextFireTime = TimerBase::nextFireTime();
+    if (!oldNextFireTime) {
+        m_restartFireTime = MonotonicTime();
+        TimerBase::startOneShot(interval);
+        return;
+    }
+
+    MonotonicTime newNextFireTime = MonotonicTime::now() + interval;
+    if (newNextFireTime < oldNextFireTime) {
+        m_restartFireTime = MonotonicTime();
+        TimerBase::setNextFireTime(newNextFireTime);
+        return;
+    }
+
+    m_restartFireTime = newNextFireTime;
+}
+
+void DeferrableOneShotTimer::stop()
+{
+    TimerBase::stop();
+}
+
+void DeferrableOneShotTimer::fired()
+{
+    if (m_restartFireTime) {
+        MonotonicTime now = MonotonicTime::now();
+        MonotonicTime restartFireTime = m_restartFireTime;
+        m_restartFireTime = MonotonicTime();
+        if (now < restartFireTime) {
+            TimerBase::setNextFireTime(restartFireTime);
+            return;
+        }
+    }
+
+    m_function();
 }
 
 } // namespace WebCore

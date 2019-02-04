@@ -1,3 +1,36 @@
+2019-02-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use deferrable timer to restart the Responsiveness Timer on each wheel event
+        https://bugs.webkit.org/show_bug.cgi?id=194135
+        <rdar://problem/47724099>
+
+        Reviewed by Simon Fraser.
+
+        The original DeferrableOneShotTimer was not really deferrable.
+        What it allows is to restart the count down from scratch after
+        firing.
+
+        For this optimization, I want to keep the correct timing but avoid
+        starting a real timer every time.
+
+        I renamed DeferrableOneShotTimer to ResettableOneShotTimer and
+        created a real DeferrableOneShotTimer that support deadlines.
+
+        * css/CSSImageGeneratorValue.cpp:
+        * html/HTMLPlugInImageElement.h:
+        * loader/cache/CachedResource.h:
+        * platform/Timer.cpp:
+        (WebCore::DeferrableOneShotTimer::startOneShot):
+        (WebCore::DeferrableOneShotTimer::fired):
+        * platform/Timer.h:
+        (WebCore::TimerBase::nextFireTime const):
+        (WebCore::ResettableOneShotTimer::ResettableOneShotTimer):
+        (WebCore::DeferrableOneShotTimer::DeferrableOneShotTimer):
+        (WebCore::DeferrableOneShotTimer::stop):
+        (WebCore::DeferrableOneShotTimer::restart): Deleted.
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/cg/SubimageCacheWithTimer.h:
+
 2019-02-04  Antoine Quint  <graouts@apple.com>
 
         Use constants for pointer types
