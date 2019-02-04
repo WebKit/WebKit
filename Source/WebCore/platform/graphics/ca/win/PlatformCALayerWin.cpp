@@ -778,7 +778,7 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     case PlatformCALayer::LayerTypeShapeLayer: layerTypeName = "shape-layer"; break;
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer: layerTypeName = "light-system-backdrop-layer"; break;
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer: layerTypeName = "dark-system-backdrop-layer"; break;
-    case PlatformCALayer::LayerTypeScrollingLayer: layerTypeName = "scrolling-layer"; break;
+    case PlatformCALayer::LayerTypeScrollContainerLayer: layerTypeName = "scroll-container-layer"; break;
     case PlatformCALayer::LayerTypeCustom: layerTypeName = "custom-layer"; break;
     }
 

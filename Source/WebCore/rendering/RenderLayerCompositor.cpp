@@ -3441,14 +3441,14 @@ void RenderLayerCompositor::ensureRootLayer()
             m_overflowControlsHostLayer->setName("overflow controls host");
 
             m_scrolledContentsLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-            m_scrolledContentsLayer->setName("scrolled contents layer");
+            m_scrolledContentsLayer->setName("scrolled contents");
             m_scrolledContentsLayer->setAnchorPoint({ });
 
 #if PLATFORM(IOS_FAMILY)
             if (m_renderView.settings().asyncFrameScrollingEnabled()) {
-                m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::Scrolling);
+                m_scrollContainerLayer = GraphicsLayer::create(graphicsLayerFactory(), *this, GraphicsLayer::Type::ScrollContainer);
 
-                m_scrollContainerLayer->setName("scroll containers layer");
+                m_scrollContainerLayer->setName("scroll container");
                 m_scrollContainerLayer->setMasksToBounds(true);
                 m_scrollContainerLayer->setAnchorPoint({ });
 

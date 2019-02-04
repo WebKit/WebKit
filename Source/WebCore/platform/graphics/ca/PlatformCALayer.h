@@ -75,7 +75,7 @@ public:
         LayerTypeShapeLayer,
         LayerTypeLightSystemBackdropLayer,
         LayerTypeDarkSystemBackdropLayer,
-        LayerTypeScrollingLayer,
+        LayerTypeScrollContainerLayer,
         LayerTypeEditableImageLayer,
         LayerTypeCustom,
     };

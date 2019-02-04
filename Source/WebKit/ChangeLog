@@ -1,3 +1,17 @@
+2019-02-04  Antti Koivisto  <antti@apple.com>
+
+        Rename GraphicsLayer and PlatformCALayer type enum values to match "scroll container layer" convention
+        https://bugs.webkit.org/show_bug.cgi?id=194215
+
+        Reviewed by Frédéric Wang.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
 2019-02-03  Antti Koivisto  <antti@apple.com>
 
         [iOS] Tiles not created in large scrollable iframes

@@ -1,3 +1,30 @@
+2019-02-04  Antti Koivisto  <antti@apple.com>
+
+        Rename GraphicsLayer and PlatformCALayer scrolling layer type enum values to be less ambiguous
+        https://bugs.webkit.org/show_bug.cgi?id=194215
+
+        Reviewed by Frédéric Wang.
+
+        GraphicsLayer::Type::Scrolling -> GraphicsLayer::Type::ScrollContainer
+        PlatformCALayer::LayerTypeScrollingLayer -> PlatformCALayer::LayerTypeScrollContainerLayer
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::supportsLayerType):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayer::supportsLayerType):
+        (WebCore::GraphicsLayerCA::initialize):
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        (WebCore::PlatformCALayerCocoa::commonInit):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
 2019-02-03  Antti Koivisto  <antti@apple.com>
 
         [iOS] Tiles not created in large scrollable iframes

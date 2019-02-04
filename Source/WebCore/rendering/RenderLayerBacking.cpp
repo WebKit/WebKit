@@ -1743,7 +1743,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
     if (!m_scrollContainerLayer) {
         // Outer layer which corresponds with the scroll view.
-        m_scrollContainerLayer = createGraphicsLayer("scrolling container", GraphicsLayer::Type::Scrolling);
+        m_scrollContainerLayer = createGraphicsLayer("scroll container", GraphicsLayer::Type::ScrollContainer);
         m_scrollContainerLayer->setDrawsContent(false);
         m_scrollContainerLayer->setMasksToBounds(true);
 

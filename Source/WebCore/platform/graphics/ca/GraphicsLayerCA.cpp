@@ -300,7 +300,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
     switch (type) {
     case Type::Normal:
     case Type::PageTiledBacking:
-    case Type::Scrolling:
+    case Type::ScrollContainer:
         return true;
     case Type::Shape:
 #if PLATFORM(COCOA)
@@ -417,8 +417,8 @@ void GraphicsLayerCA::initialize(Type layerType)
     case Type::PageTiledBacking:
         platformLayerType = PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer;
         break;
-    case Type::Scrolling:
-        platformLayerType = PlatformCALayer::LayerType::LayerTypeScrollingLayer;
+    case Type::ScrollContainer:
+        platformLayerType = PlatformCALayer::LayerType::LayerTypeScrollContainerLayer;
         break;
     case Type::Shape:
         platformLayerType = PlatformCALayer::LayerType::LayerTypeShapeLayer;

@@ -230,8 +230,8 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerTypeRootLayer:
         layerClass = [CALayer class];
         break;
-    case LayerTypeScrollingLayer:
-        // Scrolling layers only have special behavior with PlatformCALayerRemote.
+    case LayerTypeScrollContainerLayer:
+        // Scroll container layers only have special behavior with PlatformCALayerRemote.
         // fallthrough
     case LayerTypeEditableImageLayer:
     case LayerTypeWebLayer:
@@ -306,7 +306,7 @@ void PlatformCALayerCocoa::commonInit()
     [m_layer setValue:[NSValue valueWithPointer:this] forKey:platformCALayerPointer];
     
     // Clear all the implicit animations on the CALayer
-    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeContentsProvidedLayer || m_layerType == LayerTypeScrollingLayer || m_layerType == LayerTypeCustom)
+    if (m_layerType == LayerTypeAVPlayerLayer || m_layerType == LayerTypeContentsProvidedLayer || m_layerType == LayerTypeScrollContainerLayer || m_layerType == LayerTypeCustom)
         [m_layer web_disableAllActions];
     else
         [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];

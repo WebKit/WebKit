@@ -260,7 +260,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-    case PlatformCALayer::LayerTypeScrollingLayer:
+    case PlatformCALayer::LayerTypeScrollContainerLayer:
     case PlatformCALayer::LayerTypeEditableImageLayer:
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 

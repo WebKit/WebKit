@@ -228,8 +228,8 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
     case PlatformCALayer::LayerTypeShapeLayer:
         ts << "shape-layer";
         break;
-    case PlatformCALayer::LayerTypeScrollingLayer:
-        ts << "scrolling-layer";
+    case PlatformCALayer::LayerTypeScrollContainerLayer:
+        ts << "scroll-container-layer";
         break;
     case PlatformCALayer::LayerTypeCustom:
         ts << "custom-layer";

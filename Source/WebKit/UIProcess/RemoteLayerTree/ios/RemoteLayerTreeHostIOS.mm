@@ -108,7 +108,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeShapeLayer:
         return makeAdoptingView([[WKShapeView alloc] init]);
 
-    case PlatformCALayer::LayerTypeScrollingLayer:
+    case PlatformCALayer::LayerTypeScrollContainerLayer:
         if (!m_isDebugLayerTreeHost)
             return makeAdoptingView([[WKChildScrollView alloc] init]);
         // The debug indicator parents views under layers, which can cause crashes with UIScrollView.

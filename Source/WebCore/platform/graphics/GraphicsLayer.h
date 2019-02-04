@@ -237,7 +237,7 @@ public:
     enum class Type : uint8_t {
         Normal,
         PageTiledBacking,
-        Scrolling,
+        ScrollContainer,
         Shape
     };
 
