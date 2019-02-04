@@ -1,3 +1,20 @@
+2019-02-04  Antoine Quint  <graouts@apple.com>
+
+        Use constants for pointer types
+        https://bugs.webkit.org/show_bug.cgi?id=194232
+
+        Reviewed by Dean Jackson.
+
+        We cannot use an enum for the pointer type since a custom pointer type can be created by developers when creating a
+        pointer event using JavaScript, but we can at least used string constants for the ones created internally.
+
+        * dom/PointerEvent.cpp:
+        (WebCore::PointerEvent::mousePointerType):
+        (WebCore::PointerEvent::penPointerType):
+        (WebCore::PointerEvent::touchPointerType):
+        * dom/PointerEvent.h:
+        * dom/ios/PointerEventIOS.cpp:
+
 2019-02-04  Zalan Bujtas  <zalan@apple.com>
 
         [First paint] Adjust "finishedParsingMainDocument" flag by taking deferred and async scripts into account.

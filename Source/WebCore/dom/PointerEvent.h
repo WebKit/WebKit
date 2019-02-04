@@ -48,7 +48,7 @@ public:
         long tiltX { 0 };
         long tiltY { 0 };
         long twist { 0 };
-        String pointerType { "mouse"_s };
+        String pointerType { PointerEvent::mousePointerType() };
         bool isPrimary { false };
     };
 
@@ -85,6 +85,10 @@ public:
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
+    static const String& mousePointerType();
+    static const String& penPointerType();
+    static const String& touchPointerType();
+
     virtual ~PointerEvent();
 
     PointerID pointerId() const { return m_pointerId; }
@@ -117,7 +121,7 @@ private:
     long m_tiltX { 0 };
     long m_tiltY { 0 };
     long m_twist { 0 };
-    String m_pointerType { "mouse"_s };
+    String m_pointerType { PointerEvent::mousePointerType() };
     bool m_isPrimary { false };
 };
 
