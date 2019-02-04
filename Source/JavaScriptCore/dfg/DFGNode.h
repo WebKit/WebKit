@@ -2987,7 +2987,7 @@ private:
             return static_cast<T>(u.constPointer);
         }
         template <typename T>
-        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) == 4, T>::type
+        ALWAYS_INLINE auto as() const -> typename std::enable_if<(std::is_integral<T>::value || std::is_enum<T>::value) && sizeof(T) <= 4, T>::type
         {
             return static_cast<T>(u.int32);
         }

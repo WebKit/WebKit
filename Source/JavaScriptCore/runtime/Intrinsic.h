@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum Intrinsic {
+enum Intrinsic : uint8_t {
     // Call intrinsics.
     NoIntrinsic,
     AbsIntrinsic,

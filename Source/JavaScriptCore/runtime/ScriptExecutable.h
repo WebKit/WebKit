@@ -45,14 +45,13 @@ public:
     const SourceOrigin& sourceOrigin() const { return m_source.provider()->sourceOrigin(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
-    void setOverrideLineNumber(int overrideLineNumber) { m_overrideLineNumber = overrideLineNumber; }
-    bool hasOverrideLineNumber() const { return m_overrideLineNumber != -1; }
-    int overrideLineNumber() const { return m_overrideLineNumber; }
     int lastLine() const { return m_lastLine; }
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
     unsigned endColumn() const { return m_endColumn; }
-    unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
-    unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
+
+    Optional<int> overrideLineNumber(VM&) const;
+    unsigned typeProfilingStartOffset(VM&) const;
+    unsigned typeProfilingEndOffset(VM&) const;
 
     bool usesEval() const { return m_features & EvalFeature; }
     bool usesArguments() const { return m_features & ArgumentsFeature; }
@@ -124,8 +123,8 @@ protected:
 #endif
     }
 
+    bool m_didTryToEnterInLoop { false };
     CodeFeatures m_features;
-    bool m_didTryToEnterInLoop;
     bool m_hasCapturedVariables : 1;
     bool m_neverInline : 1;
     bool m_neverOptimize : 1;
@@ -135,11 +134,8 @@ protected:
     unsigned m_derivedContextType : 2; // DerivedContextType
     unsigned m_evalContextType : 2; // EvalContextType
 
-    int m_overrideLineNumber;
-    int m_lastLine;
-    unsigned m_endColumn;
-    unsigned m_typeProfilingStartOffset;
-    unsigned m_typeProfilingEndOffset;
+    int m_lastLine { -1 };
+    unsigned m_endColumn { UINT_MAX };
     SourceCode m_source;
 };
 

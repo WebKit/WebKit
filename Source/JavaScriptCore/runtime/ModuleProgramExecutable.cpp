@@ -46,10 +46,9 @@ ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCo
     : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
 {
     ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Module);
-    m_typeProfilingStartOffset = 0;
-    m_typeProfilingEndOffset = source.length() - 1;
-    if (exec->vm().typeProfiler() || exec->vm().controlFlowProfiler())
-        exec->vm().functionHasExecutedCache()->insertUnexecutedRange(sourceID(), m_typeProfilingStartOffset, m_typeProfilingEndOffset);
+    VM& vm = exec->vm();
+    if (vm.typeProfiler() || vm.controlFlowProfiler())
+        vm.functionHasExecutedCache()->insertUnexecutedRange(sourceID(), typeProfilingStartOffset(vm), typeProfilingEndOffset(vm));
 }
 
 ModuleProgramExecutable* ModuleProgramExecutable::create(ExecState* exec, const SourceCode& source)

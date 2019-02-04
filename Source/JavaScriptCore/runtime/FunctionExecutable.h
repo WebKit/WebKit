@@ -29,6 +29,7 @@
 #include "ScriptExecutable.h"
 #include "SourceCode.h"
 #include <wtf/Box.h>
+#include <wtf/Markable.h>
 
 namespace JSC {
 
@@ -122,10 +123,10 @@ public:
 
     RefPtr<TypeSet> returnStatementTypeSet() 
     {
-        if (!m_returnStatementTypeSet)
-            m_returnStatementTypeSet = TypeSet::create();
-
-        return m_returnStatementTypeSet;
+        RareData& rareData = ensureRareData();
+        if (!rareData.m_returnStatementTypeSet)
+            rareData.m_returnStatementTypeSet = TypeSet::create();
+        return rareData.m_returnStatementTypeSet;
     }
         
     FunctionMode functionMode() { return m_unlinkedExecutable->functionMode(); }
@@ -172,13 +173,50 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), info());
     }
 
-    unsigned parametersStartOffset() const { return m_parametersStartOffset; }
+    void setOverrideLineNumber(int overrideLineNumber)
+    {
+        if (overrideLineNumber == -1) {
+            if (UNLIKELY(m_rareData))
+                m_rareData->m_overrideLineNumber = WTF::nullopt;
+            return;
+        }
+        ensureRareData().m_overrideLineNumber = overrideLineNumber;
+    }
+
+    Optional<int> overrideLineNumber() const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_overrideLineNumber;
+        return WTF::nullopt;
+    }
+
+    unsigned typeProfilingStartOffset(VM&) const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_typeProfilingStartOffset;
+        return m_unlinkedExecutable->typeProfilingStartOffset();
+    }
+
+    unsigned typeProfilingEndOffset(VM&) const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_typeProfilingEndOffset;
+        return m_unlinkedExecutable->typeProfilingEndOffset();
+    }
+
+    unsigned parametersStartOffset() const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_parametersStartOffset;
+        return m_unlinkedExecutable->parametersStartOffset();
+    }
 
     void overrideParameterAndTypeProfilingStartEndOffsets(unsigned parametersStartOffset, unsigned typeProfilingStartOffset, unsigned typeProfilingEndOffset)
     {
-        m_parametersStartOffset = parametersStartOffset;
-        m_typeProfilingStartOffset = typeProfilingStartOffset;
-        m_typeProfilingEndOffset = typeProfilingEndOffset;
+        auto& rareData = ensureRareData();
+        rareData.m_parametersStartOffset = parametersStartOffset;
+        rareData.m_typeProfilingStartOffset = typeProfilingStartOffset;
+        rareData.m_typeProfilingEndOffset = typeProfilingEndOffset;
     }
 
     DECLARE_INFO;
@@ -237,12 +275,28 @@ private:
     void finishCreation(VM&);
 
     friend class ScriptExecutable;
-    
-    unsigned m_parametersStartOffset;
+
+    struct RareData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Markable<int, IntegralMarkableTraits<int, -1>> m_overrideLineNumber;
+        unsigned m_parametersStartOffset { 0 };
+        unsigned m_typeProfilingStartOffset { UINT_MAX };
+        unsigned m_typeProfilingEndOffset { UINT_MAX };
+        RefPtr<TypeSet> m_returnStatementTypeSet;
+    };
+
+    RareData& ensureRareData()
+    {
+        if (LIKELY(m_rareData))
+            return *m_rareData;
+        return ensureRareDataSlow();
+    }
+    RareData& ensureRareDataSlow();
+
+    std::unique_ptr<RareData> m_rareData;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
     WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
-    RefPtr<TypeSet> m_returnStatementTypeSet;
     union {
         WriteBarrier<InferredValue> m_singletonFunction;
         WatchpointState m_singletonFunctionState;

@@ -231,7 +231,7 @@ void CodeBlock::dumpSource(PrintStream& out)
         FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
         StringView source = functionExecutable->source().provider()->getRange(
             functionExecutable->parametersStartOffset(),
-            functionExecutable->typeProfilingEndOffset() + 1); // Type profiling end offset is the character before the '}'.
+            functionExecutable->typeProfilingEndOffset(*vm()) + 1); // Type profiling end offset is the character before the '}'.
         
         out.print("function ", inferredName(), source);
         return;
@@ -411,7 +411,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (vm.typeProfiler() || vm.controlFlowProfiler())
-        vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(), ownerExecutable->typeProfilingEndOffset());
+        vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(vm), ownerExecutable->typeProfilingEndOffset(vm));
 
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -758,7 +758,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     // the user's program, give the type profiler some range to identify these return statements.
                     // Currently, the text offset that is used as identification is "f" in the function keyword
                     // and is stored on TypeLocation's m_divotForFunctionOffsetIfReturnStatement member variable.
-                    divotStart = divotEnd = ownerExecutable->typeProfilingStartOffset();
+                    divotStart = divotEnd = ownerExecutable->typeProfilingStartOffset(vm);
                     shouldAnalyze = true;
                 }
                 break;
@@ -771,7 +771,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             bool isNewLocation = locationPair.second;
 
             if (bytecode.m_flag == ProfileTypeBytecodeFunctionReturnStatement)
-                location->m_divotForFunctionOffsetIfReturnStatement = ownerExecutable->typeProfilingStartOffset();
+                location->m_divotForFunctionOffsetIfReturnStatement = ownerExecutable->typeProfilingStartOffset(vm);
 
             if (shouldAnalyze && isNewLocation)
                 vm.typeProfiler()->insertNewLocation(location);

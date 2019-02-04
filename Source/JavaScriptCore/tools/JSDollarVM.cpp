@@ -1985,7 +1985,7 @@ static EncodedJSValue JSC_HOST_CALL functionReturnTypeFor(ExecState* exec)
     RELEASE_ASSERT(functionValue.isFunction(vm));
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(vm, functionValue.asCell()->getObject()))->jsExecutable();
 
-    unsigned offset = executable->typeProfilingStartOffset();
+    unsigned offset = executable->typeProfilingStartOffset(vm);
     String jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorFunctionReturn, offset, executable->sourceID(), vm);
     return JSValue::encode(JSONParse(exec, jsonString));
 }

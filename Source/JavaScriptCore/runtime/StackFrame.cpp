@@ -114,8 +114,8 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     m_codeBlock->expressionRangeForBytecodeOffset(m_bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
 
     ScriptExecutable* executable = m_codeBlock->ownerScriptExecutable();
-    if (executable->hasOverrideLineNumber())
-        line = executable->overrideLineNumber();
+    if (Optional<int> overrideLineNumber = executable->overrideLineNumber(*m_codeBlock->vm()))
+        line = overrideLineNumber.value();
 }
 
 String StackFrame::toString(VM& vm) const

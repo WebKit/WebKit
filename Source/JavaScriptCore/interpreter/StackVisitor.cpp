@@ -406,8 +406,8 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
     line = divotLine + codeBlock->ownerScriptExecutable()->firstLine();
     column = divotColumn + (divotLine ? 1 : codeBlock->firstLineColumnOffset());
 
-    if (codeBlock->ownerScriptExecutable()->hasOverrideLineNumber())
-        line = codeBlock->ownerScriptExecutable()->overrideLineNumber();
+    if (Optional<int> overrideLineNumber = codeBlock->ownerScriptExecutable()->overrideLineNumber(*codeBlock->vm()))
+        line = overrideLineNumber.value();
 }
 
 void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const

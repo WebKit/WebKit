@@ -48,7 +48,6 @@ const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase
 ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, EvalContextType evalContextType, Intrinsic intrinsic)
     : ExecutableBase(vm, structure, NUM_PARAMETERS_NOT_COMPILED, intrinsic)
     , m_features(isInStrictContext ? StrictModeFeature : 0)
-    , m_didTryToEnterInLoop(false)
     , m_hasCapturedVariables(false)
     , m_neverInline(false)
     , m_neverOptimize(false)
@@ -57,11 +56,6 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_canUseOSRExitFuzzing(true)
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_evalContextType(static_cast<unsigned>(evalContextType))
-    , m_overrideLineNumber(-1)
-    , m_lastLine(-1)
-    , m_endColumn(UINT_MAX)
-    , m_typeProfilingStartOffset(UINT_MAX)
-    , m_typeProfilingEndOffset(UINT_MAX)
     , m_source(source)
 {
 }
@@ -370,6 +364,31 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
 CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
 {
     return CodeBlockHash(source(), kind);
+}
+
+Optional<int> ScriptExecutable::overrideLineNumber(VM& vm) const
+{
+    if (inherits<FunctionExecutable>(vm))
+        return jsCast<const FunctionExecutable*>(this)->overrideLineNumber();
+    return WTF::nullopt;
+}
+
+unsigned ScriptExecutable::typeProfilingStartOffset(VM& vm) const
+{
+    if (inherits<FunctionExecutable>(vm))
+        return jsCast<const FunctionExecutable*>(this)->typeProfilingStartOffset(vm);
+    if (inherits<EvalExecutable>(vm))
+        return UINT_MAX;
+    return 0;
+}
+
+unsigned ScriptExecutable::typeProfilingEndOffset(VM& vm) const
+{
+    if (inherits<FunctionExecutable>(vm))
+        return jsCast<const FunctionExecutable*>(this)->typeProfilingEndOffset(vm);
+    if (inherits<EvalExecutable>(vm))
+        return UINT_MAX;
+    return m_source.length() - 1;
 }
 
 } // namespace JSC

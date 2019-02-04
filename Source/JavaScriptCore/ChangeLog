@@ -1,3 +1,56 @@
+2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink size of FunctionExecutable
+        https://bugs.webkit.org/show_bug.cgi?id=194191
+
+        Reviewed by Michael Saboff.
+
+        This patch reduces the size of FunctionExecutable. Since it is allocated in IsoSubspace, reducing the size directly
+        improves the allocation efficiency.
+
+        1. ScriptExecutable (base class of FunctionExecutable) has several members, but it is meaningful only in FunctionExecutable.
+           We remove this from ScriptExecutable, and move it to FunctionExecutable.
+
+        2. FunctionExecutable has several data which are rarely used. One for FunctionOverrides functionality, which is typically
+           used for JSC debugging purpose, and another is TypeSet and offsets for type profiler. We move them to RareData and reduce
+           the size of FunctionExecutable in the common case.
+
+        This patch changes the size of FunctionExecutable from 176 to 144.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpSource):
+        (JSC::CodeBlock::finishCreation):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::OpInfoWrapper::as const):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::computeLineAndColumn const):
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::ensureRareDataSlow):
+        * runtime/FunctionExecutable.h:
+        * runtime/Intrinsic.h:
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::ProgramExecutable):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::overrideLineNumber const):
+        (JSC::ScriptExecutable::typeProfilingStartOffset const):
+        (JSC::ScriptExecutable::typeProfilingEndOffset const):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::firstLine const):
+        (JSC::ScriptExecutable::setOverrideLineNumber): Deleted.
+        (JSC::ScriptExecutable::hasOverrideLineNumber const): Deleted.
+        (JSC::ScriptExecutable::overrideLineNumber const): Deleted.
+        (JSC::ScriptExecutable::typeProfilingStartOffset const): Deleted.
+        (JSC::ScriptExecutable::typeProfilingEndOffset const): Deleted.
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::computeLineAndColumn const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionReturnTypeFor):
+
 2019-02-04  Mark Lam  <mark.lam@apple.com>
 
         DFG's doesGC() is incorrect about the SameValue node's behavior.

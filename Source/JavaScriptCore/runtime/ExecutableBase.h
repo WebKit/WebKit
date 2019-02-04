@@ -229,11 +229,11 @@ public:
     void dump(PrintStream&) const;
         
 protected:
-    Intrinsic m_intrinsic;
     RefPtr<JITCode> m_jitCodeForCall;
     RefPtr<JITCode> m_jitCodeForConstruct;
     MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForCallWithArityCheck;
     MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForConstructWithArityCheck;
+    Intrinsic m_intrinsic;
 };
 
 } // namespace JSC

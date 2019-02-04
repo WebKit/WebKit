@@ -50,9 +50,6 @@ FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, Unlinke
     m_lastLine = lastLine;
     ASSERT(endColumn != UINT_MAX);
     m_endColumn = endColumn;
-    m_parametersStartOffset = unlinkedExecutable->parametersStartOffset();
-    m_typeProfilingStartOffset = unlinkedExecutable->typeProfilingStartOffset();
-    m_typeProfilingEndOffset = unlinkedExecutable->typeProfilingEndOffset();
     if (VM::canUseJIT())
         new (&m_singletonFunction) WriteBarrier<InferredValue>();
     else
@@ -109,6 +106,16 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
         return nullptr;
 
     return unlinkedExecutable->link(exec.vm(), source, overrideLineNumber);
+}
+
+FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
+{
+    ASSERT(!m_rareData);
+    m_rareData = std::make_unique<RareData>();
+    m_rareData->m_parametersStartOffset = m_unlinkedExecutable->parametersStartOffset();
+    m_rareData->m_typeProfilingStartOffset = m_unlinkedExecutable->typeProfilingStartOffset();
+    m_rareData->m_typeProfilingEndOffset = m_unlinkedExecutable->typeProfilingEndOffset();
+    return *m_rareData;
 }
 
 } // namespace JSC
