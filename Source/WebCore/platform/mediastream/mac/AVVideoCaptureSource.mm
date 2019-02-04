@@ -181,6 +181,8 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceTypedef* device, Strin
     static_assert(static_cast<int>(InterruptionReason::VideoInUse) == AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient, "InterruptionReason::VideoInUse is not AVCaptureSessionInterruptionReasonVideoDeviceInUseByAnotherClient as expected");
     static_assert(static_cast<int>(InterruptionReason::AudioInUse) == AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient, "InterruptionReason::AudioInUse is not AVCaptureSessionInterruptionReasonAudioDeviceInUseByAnotherClient as expected");
 #endif
+
+    [m_device.get() addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
 }
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
@@ -189,14 +191,29 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
     RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
 #endif
     [m_objcObserver disconnect];
+    [m_device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
 
     if (!m_session)
         return;
 
-    [m_session removeObserver:m_objcObserver.get() forKeyPath:@"running"];
-    [m_device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
     if ([m_session isRunning])
         [m_session stopRunning];
+
+    clearSession();
+}
+
+void AVVideoCaptureSource::initializeSession()
+{
+    ASSERT(!m_session);
+    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
+    [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
+}
+
+void AVVideoCaptureSource::clearSession()
+{
+    ASSERT(m_session);
+    [m_session removeObserver:m_objcObserver.get() forKeyPath:@"running"];
+    m_session = nullptr;
 }
 
 void AVVideoCaptureSource::startProducingData()
@@ -225,7 +242,7 @@ void AVVideoCaptureSource::stopProducingData()
 
     m_interruption = InterruptionReason::None;
 #if PLATFORM(IOS_FAMILY)
-    m_session = nullptr;
+    clearSession();
 #endif
 }
 
@@ -409,9 +426,7 @@ bool AVVideoCaptureSource::setupSession()
     if (m_session)
         return true;
 
-    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
-    [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
-    [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
+    initializeSession();
 
     [m_session beginConfiguration];
     bool success = setupCaptureSession();

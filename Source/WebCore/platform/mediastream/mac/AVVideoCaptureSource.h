@@ -73,6 +73,9 @@ private:
     AVVideoCaptureSource(AVCaptureDevice*, String&& id, String&& hashSalt);
     virtual ~AVVideoCaptureSource();
 
+    void initializeSession();
+    void clearSession();
+
     bool setupSession();
     bool setupCaptureSession();
     void shutdownCaptureSession();
