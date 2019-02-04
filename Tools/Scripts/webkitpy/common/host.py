@@ -63,7 +63,7 @@ class Host(SystemHost):
 
     @property
     @memoized
-    def bugzilla(self):
+    def buildbot(self):
         from webkitpy.common.net import buildbot
         return buildbot.BuildBot()
 
