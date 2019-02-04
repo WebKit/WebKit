@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tests layer tree for radius-clips that do and do not affect the padding box</title>
+    <style>
+        .scroller {
+            margin: 20px;
+            width: 300px;
+            height: 180px;
+            overflow-y: scroll;
+            border: 30px solid green;
+            padding: 10px;
+            line-height: 1.5em;
+            border-radius: 30px;
+            box-shadow: 0 0 10px black;
+        }
+
+        .stacking-context {
+            position: relative;
+            z-index: 0;
+        }
+
+        .contents {
+            width: 100%;
+            background-color: silver;
+            height: 1000px;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+          testRunner.dumpAsText();
+
+        if (window.internals) {
+            internals.settings.setAsyncOverflowScrollingEnabled(true);
+            internals.setUsesOverlayScrollbars(true);
+        }
+
+        window.addEventListener('load', () => {
+            if (window.testRunner)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }, false);
+    </script>
+
+</head>
+<body>
+    <div class="stacking-context scroller" style="border-radius: 30px">
+        <div class="composited contents">This is the scrolled contents</div>
+    </div>
+    <div class="stacking-context scroller" style="border-radius: 25%">
+        <div class="composited contents">This is the scrolled contents</div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

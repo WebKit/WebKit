@@ -76,7 +76,7 @@
               (contentsScale 2.00)
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=-5 height=-5)
+                  (offsetFromRenderer width=5 height=5)
                   (position 5.00 5.00)
                   (bounds 200.00 200.00)
                   (visible rect 0.00, 0.00 200.00 x 200.00)
@@ -108,7 +108,7 @@
               (contentsScale 2.00)
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=-5 height=-5)
+                  (offsetFromRenderer width=5 height=5)
                   (position 5.00 5.00)
                   (bounds 200.00 200.00)
                   (visible rect 0.00, 0.00 200.00 x 200.00)

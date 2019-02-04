@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .scroller {
+            margin: 10px;
+            width: 300px;
+            height: 200px;
+            overflow-y: scroll;
+            border: 30px solid green;
+            padding: 20px;
+            line-height: 1.5em;
+            border-top-right-radius: 150px 267px;
+            border-bottom-left-radius: 150px 267px;
+        }
+
+        .contents {
+            width: 100%;
+            background-color: silver;
+            height: 1000px;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+
+        .scrollbar-hider {
+            position: absolute;
+            width: 17px;
+            height: 240px;
+            left: 372px;
+            top: 40px;
+            background-color: gray;
+        }
+    </style>
+    <script>
+        if (window.internals) {
+            internals.settings.setAsyncOverflowScrollingEnabled(true);
+            internals.setUsesOverlayScrollbars(true);
+        }
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="composited contents">This is the scrolled contents</div>
+    </div>
+    <div class="scrollbar-hider"></div>
+</body>
+</html>

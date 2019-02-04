@@ -13,7 +13,7 @@
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (offsetFromRenderer width=-2 height=-2)
+              (offsetFromRenderer width=2 height=2)
               (position 2.00 2.00)
               (bounds origin 366.00 0.00)
               (bounds 400.00 205.00)

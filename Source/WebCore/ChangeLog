@@ -1,5 +1,33 @@
 2019-02-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Async overflow scroll with border-radius renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=194205
+        <rdar://problem/47771668>
+
+        Reviewed by Zalan Bujtas.
+
+        When an element has composited overflow:scroll and border-radius, we need to make a layer
+        to clip to the inside of the border radius if necessary.
+
+        Existing code simply turned off needsDescendantsClippingLayer for composited scrolling
+        layers, but now we check to see if the inner border is rounded. If we have both a m_childContainmentLayer
+        and scrolling layers, we need to adjust the location of the scrolling layers (which are parented
+        in m_childContainmentLayer).
+
+        Also fix offsetFromRenderer for these layers; it's positive for layers inset from the top left
+        of the border box.
+
+        Tests: compositing/clipping/border-radius-async-overflow-clipping-layer.html
+               compositing/clipping/border-radius-async-overflow-non-stacking.html
+               compositing/clipping/border-radius-async-overflow-stacking.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy): Layout is always up-to-date now, so remove the comment.
+
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
         PageOverlayController's layers should be created lazily
         https://bugs.webkit.org/show_bug.cgi?id=194199
 

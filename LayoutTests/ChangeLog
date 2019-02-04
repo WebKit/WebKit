@@ -1,5 +1,28 @@
 2019-02-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Async overflow scroll with border-radius renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=194205
+        <rdar://problem/47771668>
+
+        Reviewed by Zalan Bujtas.
+
+        New baselines, mostly correcting offsetFromRenderer.
+
+        * compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt: Added.
+        * compositing/clipping/border-radius-async-overflow-clipping-layer.html: Added.
+        * compositing/clipping/border-radius-async-overflow-non-stacking-expected.html: Added.
+        * compositing/clipping/border-radius-async-overflow-non-stacking.html: Added.
+        * compositing/clipping/border-radius-async-overflow-stacking-expected.html: Added.
+        * compositing/clipping/border-radius-async-overflow-stacking.html: Added.
+        * compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+        * platform/ios/compositing/overflow/scrolling-without-painting-expected.txt:
+        * platform/ios/compositing/overflow/textarea-scroll-touch-expected.txt: html.css specifies a border-radius on <textarea> for iOS, so we make additional
+        clipping layers.
+        * platform/ios/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * platform/ios/compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
         PageOverlayController's layers should be created lazily
         https://bugs.webkit.org/show_bug.cgi?id=194199
         rdar://problem/46571593

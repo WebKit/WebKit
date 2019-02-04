@@ -15,7 +15,7 @@
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (offsetFromRenderer width=-1 height=-1)
+              (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds origin 0.00 50.00)
               (bounds 200.00 200.00)
@@ -37,7 +37,7 @@
           (drawsContent 1)
           (children 1
             (GraphicsLayer
-              (offsetFromRenderer width=-1 height=-1)
+              (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
               (bounds origin 0.00 50.00)
               (bounds 200.00 200.00)

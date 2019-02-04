@@ -702,22 +702,26 @@ bool RenderLayerBacking::updateConfiguration()
     ASSERT(!renderer().view().needsLayout());
 
     bool layerConfigChanged = false;
+    auto& compositor = this->compositor();
 
-    setBackgroundLayerPaintsFixedRootBackground(compositor().needsFixedRootBackgroundLayer(m_owningLayer));
+    setBackgroundLayerPaintsFixedRootBackground(compositor.needsFixedRootBackgroundLayer(m_owningLayer));
 
     if (updateBackgroundLayer(m_backgroundLayerPaintsFixedRootBackground || m_requiresBackgroundLayer))
         layerConfigChanged = true;
 
-    if (updateForegroundLayer(compositor().needsContentsCompositingLayer(m_owningLayer)))
+    if (updateForegroundLayer(compositor.needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;
     
-    // This requires descendants to have been updated.
-    bool needsDescendantsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
+    bool needsDescendantsClippingLayer = false;
     bool usesCompositedScrolling = m_owningLayer.hasCompositedScrollableOverflow();
 
-    // Our scrolling layer will clip.
-    if (usesCompositedScrolling)
-        needsDescendantsClippingLayer = false;
+    if (usesCompositedScrolling) {
+        // If it's scrollable, it has to be a box.
+        auto& renderBox = downcast<RenderBox>(renderer());
+        FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(renderBox.borderBoxRect()).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+        needsDescendantsClippingLayer = contentsClippingRect.isRounded();
+    } else
+        needsDescendantsClippingLayer = compositor.clipsCompositingDescendants(m_owningLayer);
 
     if (updateScrollingLayers(usesCompositedScrolling))
         layerConfigChanged = true;
@@ -726,7 +730,7 @@ bool RenderLayerBacking::updateConfiguration()
         layerConfigChanged = true;
 
     // clippedByAncestor() does a tree walk.
-    if (updateAncestorClippingLayer(compositor().clippedByAncestor(m_owningLayer)))
+    if (updateAncestorClippingLayer(compositor.clippedByAncestor(m_owningLayer)))
         layerConfigChanged = true;
 
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
@@ -794,7 +798,7 @@ bool RenderLayerBacking::updateConfiguration()
         layerConfigChanged = true;
     }
 #endif
-    if (is<RenderWidget>(renderer()) && compositor().parentFrameContentLayers(downcast<RenderWidget>(renderer()))) {
+    if (is<RenderWidget>(renderer()) && compositor.parentFrameContentLayers(downcast<RenderWidget>(renderer()))) {
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         layerConfigChanged = true;
     }
@@ -1082,6 +1086,7 @@ void RenderLayerBacking::updateGeometry()
     // If we have a layer that clips children, position it.
     LayoutRect clippingBox;
     if (auto* clipLayer = clippingLayer()) {
+        // clipLayer is the m_childContainmentLayer.
         clippingBox = clipBox(downcast<RenderBox>(renderer()));
         // Clipping layer is parented in the primary graphics layer.
         LayoutSize clipBoxOffsetFromGraphicsLayer = toLayoutSize(clippingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
@@ -1185,24 +1190,25 @@ void RenderLayerBacking::updateGeometry()
         ASSERT(m_scrolledContentsLayer);
         auto& renderBox = downcast<RenderBox>(renderer());
         LayoutRect paddingBoxIncludingScrollbar = renderBox.paddingBoxRectIncludingScrollbar();
-        ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
+        LayoutRect parentLayerBounds = clippingLayer() ? clippingBox : compositedBounds();
 
         // FIXME: need to do some pixel snapping here.
-        m_scrollContainerLayer->setPosition(FloatPoint(paddingBoxIncludingScrollbar.location() - compositedBounds().location()));
-        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(renderBox.clientWidth(), renderBox.clientHeight())));
+        m_scrollContainerLayer->setPosition(FloatPoint(paddingBoxIncludingScrollbar.location() - parentLayerBounds.location()));
+        m_scrollContainerLayer->setSize(roundedIntSize(LayoutSize(renderBox.paddingBoxWidth(), renderBox.paddingBoxHeight())));
 
+        ScrollOffset scrollOffset = m_owningLayer.scrollOffset();
         updateScrollOffset(scrollOffset);
 #if PLATFORM(IOS_FAMILY)
         m_scrolledContentsLayer->setPosition({ }); // FIXME: necessary?
 #endif
 
         FloatSize oldScrollingLayerOffset = m_scrollContainerLayer->offsetFromRenderer();
-        m_scrollContainerLayer->setOffsetFromRenderer(-toFloatSize(paddingBoxIncludingScrollbar.location()));
+        m_scrollContainerLayer->setOffsetFromRenderer(toFloatSize(paddingBoxIncludingScrollbar.location()));
 
         if (m_childClippingMaskLayer) {
             m_childClippingMaskLayer->setPosition(m_scrollContainerLayer->position());
             m_childClippingMaskLayer->setSize(m_scrollContainerLayer->size());
-            m_childClippingMaskLayer->setOffsetFromRenderer(-toFloatSize(paddingBoxIncludingScrollbar.location()));
+            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(paddingBoxIncludingScrollbar.location()));
         }
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollContainerLayer->offsetFromRenderer();
@@ -1708,7 +1714,6 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
 {
     if (hasClippingLayer() && needsDescendantsClippingLayer) {
         if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
-            // FIXME: we shouldn't get geometry here as layout may not have been udpated.
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
             boxRect.move(contentOffsetInCompostingLayer());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
