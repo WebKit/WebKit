@@ -1,3 +1,18 @@
+2019-02-03  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Tiles not created in large scrollable iframes
+        https://bugs.webkit.org/show_bug.cgi?id=193665
+
+        Reviewed by Simon Fraser.
+
+        Test by Frédéric Wang.
+
+        * fast/scrolling/ios/scroll-iframe-expected.html:
+        * fast/scrolling/ios/scroll-iframe.html:
+        * platform/ios-wk2/compositing/iframes/scrolling-iframe-expected.txt:
+        * platform/ios-wk2/compositing/tiling/tiled-drawing-async-frame-scrolling-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+
 2019-02-03  John Wilander  <wilander@apple.com>
 
         Parse and handle Ad Click Attribution attributes in HTMLAnchorElement::handleClick()

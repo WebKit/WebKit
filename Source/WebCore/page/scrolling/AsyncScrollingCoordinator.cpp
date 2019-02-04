@@ -226,7 +226,8 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     ScrollingCoordinator::frameViewRootLayerDidChange(frameView);
 
     auto* node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID()));
-    node->setScrolledContentsLayer(scrollLayerForFrameView(frameView));
+    node->setScrollContainerLayer(scrollContainerLayerForFrameView(frameView));
+    node->setScrolledContentsLayer(scrolledContentsLayerForFrameView(frameView));
     node->setRootContentsLayer(rootContentsLayerForFrameView(frameView));
     node->setCounterScrollingLayer(counterScrollingLayerForFrameView(frameView));
     node->setInsetClipLayer(insetClipLayerForFrameView(frameView));
@@ -413,8 +414,7 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
             reconcileViewportConstrainedLayerPositions(scrollingNodeID, LayoutRect(layoutViewportRect.value()), scrollingLayerPositionAction);
     }
 
-    auto* scrollLayer = scrollLayerForFrameView(frameView);
-    if (!scrollLayer)
+    if (!scrolledContentsLayerForFrameView(frameView))
         return;
 
     auto* counterScrollingLayer = counterScrollingLayerForFrameView(frameView);
@@ -438,7 +438,8 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
         FrameView::yPositionForFooterLayer(scrollPosition, topContentInset, frameView.totalContentsSize().height(), frameView.footerHeight()));
 
     if (programmaticScroll || scrollingLayerPositionAction == ScrollingLayerPositionAction::Set) {
-        scrollLayer->setPosition(-frameView.scrollPosition());
+        reconcileScrollPosition(frameView, ScrollingLayerPositionAction::Set);
+
         if (counterScrollingLayer)
             counterScrollingLayer->setPosition(scrollPositionForFixed);
         if (insetClipLayer)
@@ -452,7 +453,8 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
         if (footerLayer)
             footerLayer->setPosition(positionForFooterLayer);
     } else {
-        scrollLayer->syncPosition(-frameView.scrollPosition());
+        reconcileScrollPosition(frameView, ScrollingLayerPositionAction::Sync);
+
         if (counterScrollingLayer)
             counterScrollingLayer->syncPosition(scrollPositionForFixed);
         if (insetClipLayer)
@@ -468,6 +470,28 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     }
 }
 
+void AsyncScrollingCoordinator::reconcileScrollPosition(FrameView& frameView, ScrollingLayerPositionAction scrollingLayerPositionAction)
+{
+#if PLATFORM(IOS_FAMILY)
+    // Doing all scrolling like this (UIScrollView style) would simplify code.
+    auto* scrollContainerLayer = scrollContainerLayerForFrameView(frameView);
+    if (!scrollContainerLayer)
+        return;
+    if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
+        scrollContainerLayer->setBoundsOrigin(frameView.scrollPosition());
+    else
+        scrollContainerLayer->syncBoundsOrigin(frameView.scrollPosition());
+#else
+    auto* scrolledContentsLayer = scrolledContentsLayerForFrameView(frameView);
+    if (!scrolledContentsLayer)
+        return;
+    if (scrollingLayerPositionAction == ScrollingLayerPositionAction::Set)
+        scrolledContentsLayer->setPosition(-frameView.scrollPosition());
+    else
+        scrolledContentsLayer->syncPosition(-frameView.scrollPosition());
+#endif
+}
+
 void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(ScrollableArea& scrollableArea, ScrollbarOrientation orientation)
 {
     ASSERT(isMainThread());
@@ -480,7 +504,6 @@ void AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange(Scrollable
             scrollingNode.setVerticalScrollbarLayer(scrollableArea.layerForVerticalScrollbar());
         else
             scrollingNode.setHorizontalScrollbarLayer(scrollableArea.layerForHorizontalScrollbar());
-
     }
 
     if (&scrollableArea == m_page->mainFrame().view()) {
@@ -659,15 +682,8 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(FrameView& frameV
     // at this point. So we'll update it before we switch back to main thread scrolling
     // in order to avoid layer positioning bugs.
     if (reasons)
-        updateScrollLayerPosition(frameView);
+        reconcileScrollPosition(frameView, ScrollingLayerPositionAction::Set);
     scrollingStateNode->setSynchronousScrollingReasons(reasons);
-}
-
-void AsyncScrollingCoordinator::updateScrollLayerPosition(FrameView& frameView)
-{
-    ASSERT(isMainThread());
-    if (auto* scrollLayer = scrollLayerForFrameView(frameView))
-        scrollLayer->setPosition(-frameView.scrollPosition());
 }
 
 bool AsyncScrollingCoordinator::isRubberBandInProgress() const

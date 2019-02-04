@@ -192,7 +192,8 @@ public:
 protected:
     explicit ScrollingCoordinator(Page*);
 
-    GraphicsLayer* scrollLayerForFrameView(FrameView&);
+    GraphicsLayer* scrollContainerLayerForFrameView(FrameView&);
+    GraphicsLayer* scrolledContentsLayerForFrameView(FrameView&);
     GraphicsLayer* counterScrollingLayerForFrameView(FrameView&);
     GraphicsLayer* insetClipLayerForFrameView(FrameView&);
     GraphicsLayer* rootContentsLayerForFrameView(FrameView&);

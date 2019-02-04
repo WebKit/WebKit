@@ -215,20 +215,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate()
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren(const ScrollingStateScrollingNode& scrollingStateNode)
 {
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)) {
-        RetainPtr<CALayer> layer;
-        layer = scrollingStateNode.scrollContainerLayer();
-        if ([[layer delegate] isKindOfClass:[UIScrollView self]])
-            m_scrollLayer = layer;
-    }
-
-    // FIMXE: ScrollContainerLayer should always be the UIScrollView layer.
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
-        RetainPtr<CALayer> layer;
-        layer = scrollingStateNode.scrolledContentsLayer();
-        if ([[layer delegate] isKindOfClass:[UIScrollView self]])
-            m_scrollLayer = layer;
-    }
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer))
+        m_scrollLayer = scrollingStateNode.scrollContainerLayer();
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const ScrollingStateScrollingNode& scrollingStateNode)

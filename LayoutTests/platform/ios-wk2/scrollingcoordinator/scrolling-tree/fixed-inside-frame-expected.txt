@@ -68,7 +68,6 @@
                   (bounds 480.00 400.00)
                   (children 1
                     (GraphicsLayer
-                      (position 0.00 -120.00)
                       (anchor 0.00 0.00)
                       (children 1
                         (GraphicsLayer
