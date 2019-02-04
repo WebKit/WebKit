@@ -1,3 +1,26 @@
+2019-02-04  Youenn Fablet  <youenn@apple.com>
+
+        Capture state should be managed consistently when doing process swapping
+        https://bugs.webkit.org/show_bug.cgi?id=194122
+        <rdar://problem/47609293>
+
+        Reviewed by Eric Carlson.
+
+        When doing PSON, WebPageProxy::resetState is called.
+        It resets the media state, but does not call the client delegates.
+        Instead of directly updating the media state, call the routine used to update it so that client delegates are called.
+
+        Covered by new API test and layout test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaCaptureState]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        * UIProcess/WebPageProxy.h:
+
 2019-02-04  Antoine Quint  <graouts@apple.com>
 
         Use a dedicated type instead of int32_t for pointer identifiers

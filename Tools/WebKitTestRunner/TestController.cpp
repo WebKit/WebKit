@@ -2900,6 +2900,12 @@ void TestController::allowCacheStorageQuotaIncrease()
 {
     // FIXME: To implement.
 }
+
+bool TestController::isDoingMediaCapture() const
+{
+    return false;
+}
+
 #endif
 
 struct ResourceStatisticsCallbackContext {

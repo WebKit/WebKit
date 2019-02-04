@@ -287,6 +287,8 @@ public:
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);
     void handleJavaScriptAlert(WKPageRunJavaScriptAlertResultListenerRef);
 
+    bool isDoingMediaCapture() const;
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;

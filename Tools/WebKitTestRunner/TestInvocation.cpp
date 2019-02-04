@@ -1034,6 +1034,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKRetainPtr<WKUInt64Ref> result(AdoptWK, WKUInt64Create(count));
         return result;
     }
+    if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture")) {
+        WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
+        return result;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsDebugMode")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());

@@ -1094,6 +1094,15 @@ void TestRunner::resetUserMediaPermission()
     InjectedBundle::singleton().resetUserMediaPermission();
 }
 
+bool TestRunner::isDoingMediaCapture() const
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("IsDoingMediaCapture"));
+    WKTypeRef returnData = nullptr;
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
+    ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
+}
+
 void TestRunner::setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);
