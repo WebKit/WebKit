@@ -175,7 +175,6 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     // Messages handlers (Modern IDB).
     void establishIDBConnectionToServer(PAL::SessionID, uint64_t& serverConnectionIdentifier);
-    void removeIDBConnectionToServer(uint64_t serverConnectionIdentifier);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

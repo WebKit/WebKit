@@ -1,3 +1,20 @@
+2019-02-04  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: leak WebIDBConnectionToServer in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=193688
+        <rdar://problem/47353263>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::establishIDBConnectionToServer):
+        (WebKit::NetworkConnectionToWebProcess::removeIDBConnectionToServer): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::~WebIDBConnectionToServer):
+
 2019-02-04  Antoine Quint  <graouts@apple.com>
 
         <rdar://problem/47788802>

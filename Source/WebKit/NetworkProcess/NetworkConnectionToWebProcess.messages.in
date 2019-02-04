@@ -79,7 +79,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
 #if ENABLE(INDEXED_DATABASE)
     EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier) LegacySync
-    RemoveIDBConnectionToServer(uint64_t serverConnectionIdentifier)
 #endif
 
 #if ENABLE(SERVICE_WORKER)

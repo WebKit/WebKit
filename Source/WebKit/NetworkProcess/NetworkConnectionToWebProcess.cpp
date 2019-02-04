@@ -263,7 +263,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     auto idbConnections = m_webIDBConnections;
     for (auto& connection : idbConnections.values())
         connection->disconnectedFromWebProcess();
-    
+
     m_webIDBConnections.clear();
 #endif
     
@@ -752,14 +752,6 @@ void NetworkConnectionToWebProcess::establishIDBConnectionToServer(PAL::SessionI
     ASSERT(!m_webIDBConnections.contains(serverConnectionIdentifier));
     
     m_webIDBConnections.set(serverConnectionIdentifier, WebIDBConnectionToClient::create(m_networkProcess, m_connection.get(), serverConnectionIdentifier, sessionID));
-}
-
-void NetworkConnectionToWebProcess::removeIDBConnectionToServer(uint64_t serverConnectionIdentifier)
-{
-    ASSERT(m_webIDBConnections.contains(serverConnectionIdentifier));
-    
-    auto connection = m_webIDBConnections.take(serverConnectionIdentifier);
-    connection->disconnectedFromWebProcess();
 }
 #endif
     

@@ -146,7 +146,7 @@ private:
     typedef void (IDBConnectionToServer::*ResultFunction)(const IDBResultData&);
     void callResultFunctionWithErrorLater(ResultFunction, const IDBResourceIdentifier& requestIdentifier);
     
-    Ref<IDBConnectionToServerDelegate> m_delegate;
+    WeakPtr<IDBConnectionToServerDelegate> m_delegate;
     bool m_serverConnectionIsValid { true };
 
     HashMap<uint64_t, WTF::Function<void (const Vector<String>&)>> m_getAllDatabaseNamesCallbacks;
