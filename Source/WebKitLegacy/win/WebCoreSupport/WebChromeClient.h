@@ -123,7 +123,7 @@ public:
 
     // Pass 0 as the GraphicsLayer to detatch the root layer.
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     // Sets a flag to specify that the next time content is drawn to the window,
     // the changes appear on the screen in synchrony with updates to GraphicsLayers.
     void setNeedsOneShotDrawingSynchronization() final { }

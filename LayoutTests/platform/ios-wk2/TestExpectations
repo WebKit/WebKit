@@ -91,10 +91,6 @@ js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 # JavaScript tests that time out:
 js/dom/dfg-inline-resolve.html
 
-# Page overlay tests that fail:
-pageoverlay/overlay-large-document-scrolled.html [ Failure ]
-pageoverlay/overlay-large-document.html [ Failure ]
-
 # Scrollbar test that fail:
 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]

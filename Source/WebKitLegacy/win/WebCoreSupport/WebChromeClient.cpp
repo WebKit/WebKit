@@ -727,7 +727,7 @@ void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* graphicsLay
     m_webView->setRootChildLayer(graphicsLayer);
 }
 
-void WebChromeClient::attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*)
+void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer*)
 {
     // FIXME: If we want view-relative page overlays in Legacy WebKit on Windows, this would be the place to hook them up.
 }

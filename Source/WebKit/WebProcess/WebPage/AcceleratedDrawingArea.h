@@ -70,7 +70,7 @@ protected:
 #endif
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& /* callbackIDs */) override;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
     void layerHostDidFlushLayers() override;
 

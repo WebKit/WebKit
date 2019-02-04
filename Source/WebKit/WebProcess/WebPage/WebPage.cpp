@@ -1220,7 +1220,7 @@ void WebPage::enterAcceleratedCompositingMode(GraphicsLayer* layer)
 
 void WebPage::exitAcceleratedCompositingMode()
 {
-    m_drawingArea->setRootCompositingLayer(0);
+    m_drawingArea->setRootCompositingLayer(nullptr);
 }
 
 void WebPage::close()

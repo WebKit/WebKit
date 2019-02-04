@@ -1,3 +1,46 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        PageOverlayController's layers should be created lazily
+        https://bugs.webkit.org/show_bug.cgi?id=194199
+        rdar://problem/46571593
+
+        Reviewed by Tim Horton.
+        
+        Expose PageOverlayController::hasDocumentOverlays() and hasViewOverlays()
+        and use them to only parent the overlay-hosting layers when necessary.
+
+        For document overlays, RenderLayerCompositor::appendDocumentOverlayLayers() can
+        simply do nothing if there are none. Updates are triggered via Page::installedPageOverlaysChanged(),
+        which calls FrameView::setNeedsCompositingConfigurationUpdate() to trigger the root layer
+        compositing updates that parents the layerWithDocumentOverlays().
+
+        View overlays are added to the layer tree via the DrawingArea. When we go between having
+        none and some view overlays, Page::installedPageOverlaysChanged() calls attachViewOverlayGraphicsLayer()
+        on the ChromeClient, and the DrawingArea responds by calling updateRootLayers() and scheduling a
+        compositing flush (this has to be done manually because view overlay layers are outside the
+        subtree managed by RenderLayerCompositor).
+        
+        Now that GraphicsLayers are ref-counted, we can let the DrawingArea simply retain its m_viewOverlayRootLayer;
+        there is no need for RenderLayerCompositor::attachRootLayer()/detachRootLayer() to do anything with view
+        overlay layers. This implies that a page can navigate (new FrameView) and view overlays will persist, without
+        having to be manually removed and re-added. We can also remove the Frame argument to attachViewOverlayGraphicsLayer().
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+
 2019-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, improve preprocessor guard

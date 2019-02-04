@@ -673,8 +673,10 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     // Avoid updating the layers with old values. Compositing layers will be updated after the layout is finished.
     // This happens when m_updateCompositingLayersTimer fires before layout is updated.
-    if (m_renderView.needsLayout())
+    if (m_renderView.needsLayout()) {
+        LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " - m_renderView.needsLayout, bailing ");
         return false;
+    }
 
     if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && page().pageOverlayController().overlayCount())))
         enableCompositingMode(true);
@@ -707,7 +709,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         return true;
     }
 
-    bool isFullUpdate = true;
     ++m_compositingUpdateCount;
 
     AnimationUpdateBlock animationUpdateBlock(&m_renderView.frameView().frame().animation());
@@ -757,15 +758,13 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         updateBackingAndHierarchy(*updateRoot, childList, scrollingTreeState);
 
         // Host the document layer in the RenderView's root layer.
-        if (isFullUpdate) {
-            appendDocumentOverlayLayers(childList);
-            // Even when childList is empty, don't drop out of compositing mode if there are
-            // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
-            if (childList.isEmpty() && !needsCompositingForContentOrOverlays())
-                destroyRootLayer();
-            else if (m_rootContentsLayer)
-                m_rootContentsLayer->setChildren(WTFMove(childList));
-        }
+        appendDocumentOverlayLayers(childList);
+        // Even when childList is empty, don't drop out of compositing mode if there are
+        // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
+        if (childList.isEmpty() && !needsCompositingForContentOrOverlays())
+            destroyRootLayer();
+        else if (m_rootContentsLayer)
+            m_rootContentsLayer->setChildren(WTFMove(childList));
     }
 
 #if !LOG_DISABLED
@@ -1269,6 +1268,9 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>& childList)
 {
     if (!isMainFrameCompositor() || !m_compositing)
+        return;
+
+    if (!page().pageOverlayController().hasDocumentOverlays())
         return;
 
     Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
@@ -3550,8 +3552,6 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
         case RootLayerAttachedViaChromeClient: {
             auto& frame = m_renderView.frameView().frame();
             page().chrome().client().attachRootGraphicsLayer(frame, rootGraphicsLayer());
-            if (frame.isMainFrame())
-                page().chrome().client().attachViewOverlayGraphicsLayer(frame, &page().pageOverlayController().layerWithViewOverlays());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -3598,10 +3598,6 @@ void RenderLayerCompositor::detachRootLayer()
     case RootLayerAttachedViaChromeClient: {
         auto& frame = m_renderView.frameView().frame();
         page().chrome().client().attachRootGraphicsLayer(frame, nullptr);
-        if (frame.isMainFrame()) {
-            page().chrome().client().attachViewOverlayGraphicsLayer(frame, nullptr);
-            page().pageOverlayController().willDetachRootLayer();
-        }
     }
     break;
     case RootLayerUnattached:

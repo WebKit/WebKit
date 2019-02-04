@@ -1,3 +1,19 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        PageOverlayController's layers should be created lazily
+        https://bugs.webkit.org/show_bug.cgi?id=194199
+        rdar://problem/46571593
+
+        Reviewed by Tim Horton.
+
+        * pageoverlay/overlay-remove-reinsert-view-expected.txt: We no longer unparent the overlays
+        on view removal, so new results.
+        * platform/ios-wk2/TestExpectations: Unskip some iOS tests.
+        * platform/ios-wk2/pageoverlay/overlay-installation-expected.txt: Added.
+        * platform/ios-wk2/pageoverlay/overlay-large-document-expected.txt: Added.
+        * platform/ios-wk2/pageoverlay/overlay-large-document-scrolled-expected.txt: Added.
+        * platform/ios/TestExpectations: Unskip some iOS tests.
+
 2019-02-04  Eric Liang  <ericliang@apple.com>
 
         Check if slider value changed after calling AX Increment or Decrement on disabled sliders.

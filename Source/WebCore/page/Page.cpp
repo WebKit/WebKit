@@ -2637,6 +2637,19 @@ void Page::appearanceDidChange()
     }
 }
 
+void Page::installedPageOverlaysChanged()
+{
+    if (isInWindow()) {
+        if (pageOverlayController().hasViewOverlays())
+            chrome().client().attachViewOverlayGraphicsLayer(&pageOverlayController().layerWithViewOverlays());
+        else
+            chrome().client().attachViewOverlayGraphicsLayer(nullptr);
+    }
+
+    if (auto* frameView = mainFrame().view())
+        frameView->setNeedsCompositingConfigurationUpdate();
+}
+
 void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
 {
     if (m_unobscuredSafeAreaInsets == insets)

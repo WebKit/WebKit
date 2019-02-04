@@ -470,11 +470,8 @@ void AcceleratedDrawingArea::activityStateDidChange(OptionSet<ActivityState::Fla
     }
 }
 
-void AcceleratedDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
+void AcceleratedDrawingArea::attachViewOverlayGraphicsLayer(GraphicsLayer* viewOverlayRootLayer)
 {
-    if (!frame->isMainFrame())
-        return;
-
     if (m_layerTreeHost)
         m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
     else if (m_previousLayerTreeHost)

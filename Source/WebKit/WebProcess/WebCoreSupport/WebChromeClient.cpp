@@ -892,10 +892,10 @@ void WebChromeClient::attachRootGraphicsLayer(Frame&, GraphicsLayer* layer)
         m_page.exitAcceleratedCompositingMode();
 }
 
-void WebChromeClient::attachViewOverlayGraphicsLayer(Frame& frame, GraphicsLayer* graphicsLayer)
+void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLayer)
 {
     if (auto drawingArea = m_page.drawingArea())
-        drawingArea->attachViewOverlayGraphicsLayer(&frame, graphicsLayer);
+        drawingArea->attachViewOverlayGraphicsLayer(graphicsLayer);
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()

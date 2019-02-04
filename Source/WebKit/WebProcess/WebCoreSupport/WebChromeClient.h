@@ -212,7 +212,7 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const final;
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void scheduleCompositingLayerFlush() final;
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) final;

@@ -128,7 +128,7 @@ public:
 
     virtual bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) { return false; }
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) { }
+    virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 
     virtual void setShouldScaleViewToFitDocument(bool) { }
 

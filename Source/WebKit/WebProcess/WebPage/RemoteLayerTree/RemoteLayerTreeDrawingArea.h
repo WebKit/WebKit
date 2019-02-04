@@ -66,7 +66,7 @@ private:
     void scheduleInitialDeferredPaint() override;
     void scheduleCompositingLayerFlush() override;
     void scheduleCompositingLayerFlushImmediately() override;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
     void addTransactionCallbackID(CallbackID) override;
 
@@ -172,8 +172,8 @@ private:
 
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedLayoutMilestones;
 
-    WebCore::GraphicsLayer* m_contentLayer { nullptr };
-    WebCore::GraphicsLayer* m_viewOverlayRootLayer { nullptr };
+    RefPtr<WebCore::GraphicsLayer> m_contentLayer;
+    RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 };
 
 } // namespace WebKit

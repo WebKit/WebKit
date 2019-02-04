@@ -168,7 +168,7 @@ private:
     bool shouldPaintEntireContents() const final;
 
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
-    void attachViewOverlayGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) final;
     void setNeedsOneShotDrawingSynchronization() final;
     void scheduleCompositingLayerFlush() final;
 

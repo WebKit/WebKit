@@ -413,11 +413,14 @@ public:
 
     WheelEventDeltaFilter* wheelEventDeltaFilter() { return m_recentWheelEventDeltaFilter.get(); }
     PageOverlayController& pageOverlayController() { return *m_pageOverlayController; }
+    
+    void installedPageOverlaysChanged();
 
 #if PLATFORM(MAC)
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
+
     ScrollLatchingState* latchingState();
     void pushNewLatchingState();
     void popLatchingState();

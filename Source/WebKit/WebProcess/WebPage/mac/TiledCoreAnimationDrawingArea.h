@@ -84,7 +84,7 @@ private:
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> changed, ActivityStateChangeID, const Vector<CallbackID>&) override;
     void didUpdateActivityStateTimerFired();
 
-    void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
     bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
 
@@ -163,7 +163,7 @@ private:
     Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
-    WebCore::GraphicsLayer* m_viewOverlayRootLayer;
+    RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 
     bool m_shouldScaleViewToFitDocument { false };
     bool m_isScalingViewToFitDocument { false };

@@ -270,18 +270,15 @@ void TiledCoreAnimationDrawingArea::updateRootLayers()
         [m_hostingLayer addSublayer:m_debugInfoLayer.get()];
 }
 
-void TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
+void TiledCoreAnimationDrawingArea::attachViewOverlayGraphicsLayer(GraphicsLayer* viewOverlayRootLayer)
 {
-    if (!frame->isMainFrame())
-        return;
-
     m_viewOverlayRootLayer = viewOverlayRootLayer;
     updateRootLayers();
+    scheduleCompositingLayerFlush();
 }
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
-
 }
 
 void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()

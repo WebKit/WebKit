@@ -1,3 +1,53 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        PageOverlayController's layers should be created lazily
+        https://bugs.webkit.org/show_bug.cgi?id=194199
+
+        Reviewed by Tim Horton.
+
+        Expose PageOverlayController::hasDocumentOverlays() and hasViewOverlays()
+        and use them to only parent the overlay-hosting layers when necessary.
+
+        For document overlays, RenderLayerCompositor::appendDocumentOverlayLayers() can
+        simply do nothing if there are none. Updates are triggered via Page::installedPageOverlaysChanged(),
+        which calls FrameView::setNeedsCompositingConfigurationUpdate() to trigger the root layer
+        compositing updates that parents the layerWithDocumentOverlays().
+
+        View overlays are added to the layer tree via the DrawingArea. When we go between having
+        none and some view overlays, Page::installedPageOverlaysChanged() calls attachViewOverlayGraphicsLayer()
+        on the ChromeClient, and the DrawingArea responds by calling updateRootLayers() and scheduling a
+        compositing flush (this has to be done manually because view overlay layers are outside the
+        subtree managed by RenderLayerCompositor).
+        
+        Now that GraphicsLayers are ref-counted, we can let the DrawingArea simply retain its m_viewOverlayRootLayer;
+        there is no need for RenderLayerCompositor::attachRootLayer()/detachRootLayer() to do anything with view
+        overlay layers. This implies that a page can navigate (new FrameView) and view overlays will persist, without
+        having to be manually removed and re-added. We can also remove the Frame argument to attachViewOverlayGraphicsLayer().
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setNeedsCompositingConfigurationUpdate): These functions need to schedule a compositing flush
+        because there may be nothing else that does.
+        (WebCore::FrameView::setNeedsCompositingGeometryUpdate):
+        * page/Page.cpp:
+        (WebCore::Page::installedPageOverlaysChanged):
+        * page/Page.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::hasDocumentOverlays const):
+        (WebCore::PageOverlayController::hasViewOverlays const):
+        (WebCore::PageOverlayController::attachViewOverlayLayers): PageOverlayController has the Page so it
+        might as well be the one to call through the ChromeClient.
+        (WebCore::PageOverlayController::detachViewOverlayLayers):
+        (WebCore::PageOverlayController::installPageOverlay):
+        (WebCore::PageOverlayController::uninstallPageOverlay):
+        * page/PageOverlayController.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): isFullUpdate is always true; remove it.
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+
 2019-02-04  Eric Liang  <ericliang@apple.com>
 
         When performing Increment or Decrement on sliders, check to see if the slider is disabled.

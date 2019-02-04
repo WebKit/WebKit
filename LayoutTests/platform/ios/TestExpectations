@@ -1384,11 +1384,6 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 # JavaScript tests that fail:
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 
-# Page overlay tests that fail:
-pageoverlay/overlay-large-document-scrolled.html [ Failure ]
-pageoverlay/overlay-large-document.html [ Failure ]
-webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
-
 # These tests require an OpenType MATH font on the Apple bots.
 webkit.org/b/160161 mathml/opentype/vertical.html [ Skip ]
 webkit.org/b/160161 mathml/opentype/large-operators.html [ Skip ]

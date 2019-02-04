@@ -39,15 +39,19 @@ class PlatformMouseEvent;
 
 class PageOverlayController final : public GraphicsLayerClient {
     WTF_MAKE_FAST_ALLOCATED;
+    friend class MockPageOverlayClient;
 public:
     PageOverlayController(Page&);
     virtual ~PageOverlayController();
 
+    bool hasDocumentOverlays() const;
+    bool hasViewOverlays() const;
+
+    void attachViewOverlayLayers();
+    void detachViewOverlayLayers();
+
     GraphicsLayer& layerWithDocumentOverlays();
     GraphicsLayer& layerWithViewOverlays();
-
-    WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayer() const;
-    WEBCORE_EXPORT GraphicsLayer* viewOverlayRootLayer() const;
 
     const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
 
@@ -58,8 +62,6 @@ public:
     void setPageOverlayOpacity(PageOverlay&, float);
     void clearPageOverlay(PageOverlay&);
     GraphicsLayer& layerForOverlay(PageOverlay&) const;
-
-    void willDetachRootLayer();
 
     void didChangeViewSize();
     void didChangeDocumentSize();
@@ -81,6 +83,11 @@ public:
 
 private:
     void createRootLayersIfNeeded();
+
+    WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayer() const;
+    WEBCORE_EXPORT GraphicsLayer* viewOverlayRootLayer() const;
+
+    void willDetachRootLayer();
 
     void updateSettingsForLayer(GraphicsLayer&);
     void updateForceSynchronousScrollLayerPositionUpdates();

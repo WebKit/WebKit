@@ -125,11 +125,8 @@ void RemoteLayerTreeDrawingArea::updateRootLayers()
     m_rootLayer->setChildren(WTFMove(children));
 }
 
-void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(Frame* frame, GraphicsLayer* viewOverlayRootLayer)
+void RemoteLayerTreeDrawingArea::attachViewOverlayGraphicsLayer(GraphicsLayer* viewOverlayRootLayer)
 {
-    if (!frame->isMainFrame())
-        return;
-
     m_viewOverlayRootLayer = viewOverlayRootLayer;
     updateRootLayers();
 }

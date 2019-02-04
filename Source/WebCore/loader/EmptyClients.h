@@ -151,7 +151,7 @@ class EmptyChromeClient : public ChromeClient {
     void scrollRectIntoView(const IntRect&) const final { }
 
     void attachRootGraphicsLayer(Frame&, GraphicsLayer*) final { }
-    void attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*) final { }
+    void attachViewOverlayGraphicsLayer(GraphicsLayer*) final { }
     void setNeedsOneShotDrawingSynchronization() final { }
     void scheduleCompositingLayerFlush() final { }
 

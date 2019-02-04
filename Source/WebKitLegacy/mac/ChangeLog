@@ -1,3 +1,15 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        PageOverlayController's layers should be created lazily
+        https://bugs.webkit.org/show_bug.cgi?id=194199
+        rdar://problem/46571593
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::attachViewOverlayGraphicsLayer):
+
 2019-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make setNeedsLayout on the root more explicitly about triggering its side-effects
