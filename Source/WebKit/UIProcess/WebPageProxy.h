@@ -81,6 +81,7 @@
 #include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/PointerID.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/TextChecking.h>
@@ -791,7 +792,7 @@ public:
 #endif
 
 #if ENABLE(POINTER_EVENTS)
-    void cancelPointer(int32_t, const WebCore::IntPoint&);
+    void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
 #endif
 
     void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);

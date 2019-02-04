@@ -28,6 +28,7 @@
 #if ENABLE(POINTER_EVENTS)
 
 #include "MouseEvent.h"
+#include "PointerID.h"
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
@@ -39,7 +40,7 @@ namespace WebCore {
 class PointerEvent final : public MouseEvent {
 public:
     struct Init : MouseEventInit {
-        int32_t pointerId { 0 };
+        PointerID pointerId { 0 };
         double width { 1 };
         double height { 1 };
         float pressure { 0 };
@@ -56,7 +57,7 @@ public:
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 
-    static Ref<PointerEvent> create(const AtomicString& type, int32_t pointerId, String pointerType)
+    static Ref<PointerEvent> create(const AtomicString& type, PointerID pointerId, String pointerType)
     {
         Init initializer;
         initializer.bubbles = true;
@@ -86,7 +87,7 @@ public:
 
     virtual ~PointerEvent();
 
-    int32_t pointerId() const { return m_pointerId; }
+    PointerID pointerId() const { return m_pointerId; }
     double width() const { return m_width; }
     double height() const { return m_height; }
     float pressure() const { return m_pressure; }
@@ -108,7 +109,7 @@ private:
     PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
-    int32_t m_pointerId { 0 };
+    PointerID m_pointerId { 0 };
     double m_width { 1 };
     double m_height { 1 };
     float m_pressure { 0 };

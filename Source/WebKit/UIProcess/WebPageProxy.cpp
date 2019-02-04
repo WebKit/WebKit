@@ -2650,7 +2650,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
 #endif // ENABLE(TOUCH_EVENTS)
 
 #if ENABLE(POINTER_EVENTS)
-void WebPageProxy::cancelPointer(int32_t pointerId, const WebCore::IntPoint& documentPoint)
+void WebPageProxy::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
     m_process->send(Messages::WebPage::CancelPointer(pointerId, documentPoint), m_pageID);
 }

@@ -65,6 +65,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/PointerID.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/UserActivity.h>
@@ -1251,7 +1252,7 @@ private:
 #endif
 
 #if ENABLE(POINTER_EVENTS)
-    void cancelPointer(int32_t, const WebCore::IntPoint&);
+    void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

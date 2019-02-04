@@ -26,6 +26,7 @@
 
 #if ENABLE(POINTER_EVENTS)
 
+#include "PointerID.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -40,17 +41,17 @@ class PointerCaptureController {
 public:
     explicit PointerCaptureController(Page&);
 
-    ExceptionOr<void> setPointerCapture(Element*, int32_t);
-    ExceptionOr<void> releasePointerCapture(Element*, int32_t);
-    bool hasPointerCapture(Element*, int32_t);
+    ExceptionOr<void> setPointerCapture(Element*, PointerID);
+    ExceptionOr<void> releasePointerCapture(Element*, PointerID);
+    bool hasPointerCapture(Element*, PointerID);
 
     void pointerLockWasApplied();
 
-    void touchEndedOrWasCancelledForIdentifier(int32_t);
-    bool hasCancelledPointerEventForIdentifier(int32_t);
+    void touchEndedOrWasCancelledForIdentifier(PointerID);
+    bool hasCancelledPointerEventForIdentifier(PointerID);
     void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
     void pointerEventWasDispatched(const PointerEvent&);
-    WEBCORE_EXPORT void cancelPointer(int32_t, const IntPoint&);
+    WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&);
 
 private:
     struct CapturingData {
@@ -63,7 +64,7 @@ private:
     void processPendingPointerCapture(const PointerEvent&);
 
     Page& m_page;
-    HashMap<int32_t, CapturingData> m_activePointerIdsToCapturingData;
+    HashMap<PointerID, CapturingData> m_activePointerIdsToCapturingData;
 };
 
 } // namespace WebCore

@@ -2816,7 +2816,7 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 #endif
 
 #if ENABLE(POINTER_EVENTS)
-void WebPage::cancelPointer(int32_t pointerId, const WebCore::IntPoint& documentPoint)
+void WebPage::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
     m_page->pointerCaptureController().cancelPointer(pointerId, documentPoint);
 }

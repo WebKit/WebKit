@@ -42,7 +42,7 @@ PointerCaptureController::PointerCaptureController(Page& page)
 {
 }
 
-ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, int32_t pointerId)
+ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, PointerID pointerId)
 {
     // https://w3c.github.io/pointerevents/#setting-pointer-capture
 
@@ -72,7 +72,7 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
     return { };
 }
 
-ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* capturingTarget, int32_t pointerId)
+ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* capturingTarget, PointerID pointerId)
 {
     // https://w3c.github.io/pointerevents/#releasing-pointer-capture
 
@@ -95,7 +95,7 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
     return { };
 }
 
-bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, int32_t pointerId)
+bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, PointerID pointerId)
 {
     // https://w3c.github.io/pointerevents/#dom-element-haspointercapture
 
@@ -123,12 +123,12 @@ void PointerCaptureController::pointerLockWasApplied()
     }
 }
 
-void PointerCaptureController::touchEndedOrWasCancelledForIdentifier(int32_t pointerId)
+void PointerCaptureController::touchEndedOrWasCancelledForIdentifier(PointerID pointerId)
 {
     m_activePointerIdsToCapturingData.remove(pointerId);
 }
 
-bool PointerCaptureController::hasCancelledPointerEventForIdentifier(int32_t pointerId)
+bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID pointerId)
 {
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
@@ -183,7 +183,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
     processPendingPointerCapture(event);
 }
 
-void PointerCaptureController::cancelPointer(int32_t pointerId, const IntPoint& documentPoint)
+void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint& documentPoint)
 {
     // https://w3c.github.io/pointerevents/#the-pointercancel-event
 
