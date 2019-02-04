@@ -50,6 +50,9 @@
 		0F5651F91FCE513500310FBC /* scroll-to-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */; };
 		115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */; };
 		1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */; };
+		118153442208B7AC00B2CCD2 /* deferred-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153432208B7AC00B2CCD2 /* deferred-script-load.html */; };
+		118153462208B7E500B2CCD2 /* deferred-script.js in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153452208B7E500B2CCD2 /* deferred-script.js */; };
+		118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm in Sources */ = {isa = PBXBuildFile; fileRef = 118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */; };
 		11B7FD28219F47110069B27F /* FirstMeaningfulPaintMilestone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */; };
 		11C2598D21FA6324004C9E23 /* async-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 11C2598C21FA618D004C9E23 /* async-script-load.html */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
@@ -1058,6 +1061,8 @@
 				F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */,
 				F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */,
 				F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */,
+				118153442208B7AC00B2CCD2 /* deferred-script-load.html in Copy Resources */,
+				118153462208B7E500B2CCD2 /* deferred-script.js in Copy Resources */,
 				C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */,
 				0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */,
 				63A61B8B1FAD251100F06885 /* display-mode.html in Copy Resources */,
@@ -1329,6 +1334,9 @@
 		0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
 		0FFC45A41B73EBE20085BD62 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lock.cpp; sourceTree = "<group>"; };
 		115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewportSizeForViewportUnits.mm; sourceTree = "<group>"; };
+		118153432208B7AC00B2CCD2 /* deferred-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "deferred-script-load.html"; sourceTree = "<group>"; };
+		118153452208B7E500B2CCD2 /* deferred-script.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "deferred-script.js"; sourceTree = "<group>"; };
+		118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm; sourceTree = "<group>"; };
 		11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone_Bundle.cpp; sourceTree = "<group>"; };
 		11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone.cpp; sourceTree = "<group>"; };
 		11C2598C21FA618D004C9E23 /* async-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "async-script-load.html"; sourceTree = "<group>"; };
@@ -2513,7 +2521,6 @@
 				A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */,
 				4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */,
 				57901FAC1CAF12C200ED64F9 /* LoadInvalidURLRequest.mm */,
-				5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */,
 				51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */,
 				CA38459520AE012E00990D3B /* LocalStorageDatabaseTracker.mm */,
 				46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */,
@@ -2574,6 +2581,7 @@
 				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				1C734B5220788C4800F430EA /* SystemColors.mm */,
 				2D70059521EDA0C6003463CB /* TabOutOfWebView.mm */,
+				5774AA6721FBBF7800AF2A1B /* TestLoadOptimizer.mm */,
 				F4CD74C720FDB49600DE3794 /* TestURLSchemeHandler.h */,
 				F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
@@ -3087,6 +3095,7 @@
 				C51AFB98169F49FF009CCF66 /* FindMatches.mm */,
 				11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */,
 				11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */,
+				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm */,
 				1ADBEFAD130C689C00D61D19 /* ForceRepaint.cpp */,
 				376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */,
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
@@ -3298,6 +3307,8 @@
 				9B270FED1DDC25FD002D53F3 /* closed-shadow-tree-test.html */,
 				5C9E56861DF9148E00C9EE33 /* contentBlockerCheck.html */,
 				290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */,
+				118153432208B7AC00B2CCD2 /* deferred-script-load.html */,
+				118153452208B7E500B2CCD2 /* deferred-script.js */,
 				A14AAB641E78DC3F00C1ADC2 /* encrypted.pdf */,
 				07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */,
 				C5E1AFFD16B22179006CC1F2 /* execCopy.html */,
@@ -4019,6 +4030,7 @@
 				11B7FD28219F47110069B27F /* FirstMeaningfulPaintMilestone.cpp in Sources */,
 				7C83E0401D0A63E300FEBCF3 /* FirstResponderScrollingPosition.mm in Sources */,
 				C9E6DD351EA97D0800DD78AA /* FirstResponderSuppression.mm in Sources */,
+				118153482208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm in Sources */,
 				7C83E0BC1D0A650700FEBCF3 /* FixedLayoutSize.mm in Sources */,
 				7A909A7E1D877480007E10F8 /* FloatPoint.cpp in Sources */,
 				7A909A7F1D877480007E10F8 /* FloatRect.cpp in Sources */,
@@ -4241,6 +4253,7 @@
 				F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */,
 				F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */,
 				F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */,
+				5774AA6821FBBF7800AF2A1B /* TestLoadOptimizer.mm in Sources */,
 				2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */,
 				A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */,
 				7CCE7EAE1A411A3400447C4C /* TestsController.cpp in Sources */,
@@ -4259,7 +4272,6 @@
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,
 				7C882E0A1C80C764006BF731 /* UserContentWorld.mm in Sources */,
-				5774AA6821FBBF7800AF2A1B /* TestLoadOptimizer.mm in Sources */,
 				7CCB99211D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm in Sources */,
 				7CCE7F171A411AE600447C4C /* UserMedia.cpp in Sources */,
 				0799C3491EBA2D7B003B7532 /* UserMediaDisabled.mm in Sources */,

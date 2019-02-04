@@ -4446,7 +4446,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
     if (frame().document()->styleScope().hasPendingSheetsBeforeBody())
         return false;
 
-    auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && !frame().document()->parsing();
+    auto finishedParsingMainDocument = frame().loader().stateMachine().committedFirstRealDocumentLoad() && (frame().document()->readyState() == Document::Interactive || frame().document()->readyState() == Document::Complete);
     // Ensure that we always fire visually non-empty milestone eventually.
     if (finishedParsingMainDocument && frame().loader().isComplete())
         return true;
@@ -4477,11 +4477,8 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return true;
 
     auto isMoreContentExpected = [&]() {
-        // Pending css/javascript/font loading/processing means we should wait a little longer.
-        auto hasPendingScriptExecution = frame().document()->scriptRunner().hasPendingScripts();
-        if (hasPendingScriptExecution)
-            return true;
-
+        ASSERT(finishedParsingMainDocument);
+        // Pending css/font loading means we should wait a little longer. Classic non-async, non-defer scripts are all processed by now.
         auto* documentLoader = frame().loader().documentLoader();
         if (!documentLoader)
             return false;
@@ -4494,7 +4491,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         for (auto& resource : resources) {
             if (resource.value->isLoaded())
                 continue;
-            if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::Script || resource.value->type() == CachedResource::Type::FontResource)
+            if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
                 return true;
         }
         return false;

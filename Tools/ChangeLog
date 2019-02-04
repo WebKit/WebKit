@@ -1,3 +1,20 @@
+2019-02-04  Zalan Bujtas  <zalan@apple.com>
+
+        [First paint] Adjust "finishedParsingMainDocument" flag by taking deferred and async scripts into account.
+        https://bugs.webkit.org/show_bug.cgi?id=194168
+
+        Reviewed by Simon Fraser.
+
+        Test if the firstVisuallyNoneEmpty milestone fires before the deferred script's post-message. 
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/FirstVisuallyNonEmptyMilestoneWithDeferredScript.mm: Added.
+        (-[FirstPaintMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[RenderingProgressNavigationDelegate _webView:renderingProgressDidChange:]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit/deferred-script-load.html: Added.
+        * TestWebKitAPI/Tests/WebKit/deferred-script.js: Added.
+
 2019-02-04  Dean Johnson  <dean_johnson@apple.com>
 
         REGRESSION (r237269): webkit-patch what-broke is broken 

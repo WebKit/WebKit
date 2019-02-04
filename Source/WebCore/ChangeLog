@@ -1,3 +1,15 @@
+2019-02-04  Zalan Bujtas  <zalan@apple.com>
+
+        [First paint] Adjust "finishedParsingMainDocument" flag by taking deferred and async scripts into account.
+        https://bugs.webkit.org/show_bug.cgi?id=194168
+
+        Reviewed by Simon Fraser.
+
+        First paint should not be blocked by async or deferred scripts.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty const):
+
 2019-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Async overflow scroll with border-radius renders incorrectly
