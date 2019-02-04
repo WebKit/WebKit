@@ -1,3 +1,12 @@
+2019-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, avoid -Wswitch warnings introduced in r240880
+        https://bugs.webkit.org/show_bug.cgi?id=193740
+        <rdar://problem/47527267>
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+
 2019-02-04  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Allow pinch zoom on touchpad

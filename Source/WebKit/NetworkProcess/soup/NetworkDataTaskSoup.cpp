@@ -391,6 +391,9 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
         case PolicyAction::Download:
             download();
             break;
+        case PolicyAction::StopAllLoads:
+            ASSERT_NOT_REACHED();
+            break;
         }
     });
 }
