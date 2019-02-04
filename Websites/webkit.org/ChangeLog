@@ -1,3 +1,91 @@
+2019-02-04  Jon Davis  <jond@apple.com>
+
+        Add demos for Intersection Observer API
+        https://bugs.webkit.org/show_bug.cgi?id=194219
+
+        Reviewed by Simon Fraser.
+
+        * demos/intersection-observer/lazy-image-load/index.html: Added.
+        * demos/intersection-observer/lazy-image-load/scripts.js: Added.
+        (ImageLoader):
+        (ImageLoader.prototype.findImages):
+        (ImageLoader.prototype.smallURLForImage):
+        (ImageLoader.prototype.largeURLForImage):
+        (ImageLoader.prototype.setupObserver):
+        (ImageLoader.prototype.intersectionsChanged):
+        * demos/intersection-observer/lazy-image-load/style.css: Added.
+        (body):
+        (section):
+        (header):
+        (.main):
+        (.main img):
+        (.stories):
+        (.world, .local):
+        (.world):
+        (.local):
+        (.ad):
+        (.contents):
+        (.sidebar):
+        (.links):
+        (.main-story):
+        (.main-story img):
+        (.top-story):
+        (.top-story img):
+        (.mid-story img):
+        (.link-group):
+        (.link-group img):
+        (.link-group ul):
+        (.link-group li):
+        (footer):
+        (footer ul):
+        (footer a):
+        (.footer-col):
+        * demos/intersection-observer/simple/script.js: Added.
+        (addToLog):
+        (clearLog):
+        (stringFromRect):
+        (intersectedCallback):
+        * demos/intersection-observer/simple/simple-observer-iframe.html: Added.
+        * demos/intersection-observer/simple/simple-observer-root-margin.html: Added.
+        * demos/intersection-observer/simple/simple-observer.html: Added.
+        * demos/intersection-observer/simple/styles.css: Added.
+        (body):
+        (.results):
+        (.results button):
+        (h2):
+        (#logging):
+        * demos/intersection-observer/triggered-animation/index.html: Added.
+        * demos/intersection-observer/triggered-animation/script.js: Added.
+        (AnimationManager):
+        (AnimationManager.prototype.setupObserver):
+        (AnimationManager.prototype.intersectionsChanged):
+        * demos/intersection-observer/triggered-animation/style.css: Added.
+        (body):
+        (p):
+        (.animation-container h1):
+        (.animation-container):
+        (.animation-container .box):
+        (.slide.box):
+        (.animation-container.visible > .slide.box):
+        (.slide.animation-container div:nth-of-type(1)):
+        (.slide.animation-container div:nth-of-type(2)):
+        (.slide.animation-container div:nth-of-type(3)):
+        (.spin):
+        (.animation-container.visible .spin):
+        (@keyframes spin):
+        (to):
+        (.animation-container.svg):
+        (.animation-container.svg path):
+        (.animation-container.svg.visible):
+        (@keyframes stroke-move):
+        (.animation-container.svg circle):
+        (.animation-container.svg.visible circle):
+        (.animation-container.svg circle:nth-of-type(2)):
+        (.animation-container.svg circle:nth-of-type(3)):
+        (.animation-container.svg circle:nth-of-type(4)):
+        (.animation-container.svg circle:nth-of-type(5)):
+        (@keyframes circle-scale):
+
 2019-01-25  Jon Davis  <jond@apple.com>
 
         Added feature status entry for "Removed in Preview"

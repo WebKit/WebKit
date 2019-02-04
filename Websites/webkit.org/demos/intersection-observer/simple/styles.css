@@ -1,0 +1,43 @@
+body {
+    background-color: rgba(240, 247, 238, 1);
+}
+
+.results {
+    position: fixed;
+    font-size: 16px;
+    top: 10px;
+    left: 450px;
+    width: calc(100% - 500px);
+    height: 600px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 3px solid gray;
+    margin: 5px;
+    color: gray;
+}
+
+.results button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+    -webkit-appearance: none;
+}
+
+h2 {
+    margin-top: 0.2em;
+    margin-bottom: 0.25em;
+}
+
+#logging {
+    width: 100%;
+    height: calc(100% - 3.5em);
+    font-size: 16px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+    margin: 5px;
+    color: gray;
+}
