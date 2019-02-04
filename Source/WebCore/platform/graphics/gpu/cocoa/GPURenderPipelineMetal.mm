@@ -85,8 +85,8 @@ static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const char*
         return nullptr;
     }
 
-    mtlDescriptor.get().depthCompareFunction = *mtlDepthCompare;
-    mtlDescriptor.get().depthWriteEnabled = descriptor.depthWriteEnabled;
+    [mtlDescriptor setDepthCompareFunction:*mtlDepthCompare];
+    [mtlDescriptor setDepthWriteEnabled:descriptor.depthWriteEnabled];
 
     // FIXME: Implement back/frontFaceStencil.
 
@@ -210,10 +210,9 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
         }
 
         auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
-        mtlAttributeDesc.get().format = *mtlFormat;
-        mtlAttributeDesc.get().offset = attributes[i].offset; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
-        mtlAttributeDesc.get().bufferIndex = WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot);
-        [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc.get() atIndexedSubscript:location];
+        [mtlAttributeDesc setFormat:*mtlFormat];
+        [mtlAttributeDesc setOffset:attributes[i].offset]; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
+        [mtlAttributeDesc setBufferIndex:WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot)];
     }
 
     const auto& inputs = descriptor.inputState.inputs;
@@ -235,12 +234,11 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
 
         auto convertedSlot = WHLSL::Metal::calculateVertexBufferIndex(slot);
         auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedSlot]);
-        mtlLayoutDesc.get().stepFunction = *mtlStepFunction;
-        mtlLayoutDesc.get().stride = inputs[j].stride;
-        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc.get() atIndexedSubscript:convertedSlot];
+        [mtlLayoutDesc setStepFunction:*mtlStepFunction];
+        [mtlLayoutDesc setStride:inputs[j].stride];
     }
 
-    mtlDescriptor.vertexDescriptor = mtlVertexDescriptor.get();
+    [mtlDescriptor setVertexDescriptor:mtlVertexDescriptor.get()];
 
     return true;
 }
