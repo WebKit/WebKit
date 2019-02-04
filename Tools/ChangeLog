@@ -1,3 +1,19 @@
+2019-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] API test WKAttachmentTests.InsertAndRemoveDuplicateAttachment is failing after r240902
+        https://bugs.webkit.org/show_bug.cgi?id=194207
+
+        Reviewed by Tim Horton.
+
+        Fix this API test by making it robust against smart paste on iOS. Currently, this test pastes an attachment
+        element and assumes that the pasted attachment is adjacent to the original one. However, after enabling smart
+        paste, we now insert an extra space in between. Instead of executing "DeleteBackward" twice to test removing the
+        attachment elements, we delete backwards once to remove the pasted attachment, and move the selection to the
+        start and delete forwards to remove the original attachment.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-02-04  Youenn Fablet  <youenn@apple.com>
 
         Capture state should be managed consistently when doing process swapping

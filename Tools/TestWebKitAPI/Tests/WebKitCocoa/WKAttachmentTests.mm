@@ -1114,7 +1114,8 @@ TEST(WKAttachmentTests, InsertAndRemoveDuplicateAttachment)
     }
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+        [webView evaluateJavaScript:@"getSelection().setPosition(document.body)" completionHandler:nil];
+        [webView _synchronouslyExecuteEditCommand:@"DeleteForward" argument:nil];
         observer.expectAttachmentUpdates(@[ originalAttachment.get() ], @[ ]);
     }
 
