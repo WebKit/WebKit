@@ -1,3 +1,16 @@
+2019-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: fix race conditions when editing
+        https://bugs.webkit.org/show_bug.cgi?id=192739
+        <rdar://problem/46752925>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/modify-css-property-expected.txt:
+        * inspector/css/modify-css-property-race-expected.txt: Added.
+        * inspector/css/modify-css-property-race.html: Added.
+        * inspector/css/modify-css-property.html:
+
 2019-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Async overflow scroll with border-radius renders incorrectly

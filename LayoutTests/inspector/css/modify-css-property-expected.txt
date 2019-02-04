@@ -4,17 +4,26 @@ Testing that CSSStyleDeclaration update immediately after modifying its properti
 == Running test suite: ModifyCSSProperty
 -- Running test case: Update value when CSSStyleDeclaration is not locked
 PASS: "font-size" property value should update immediately.
-PASS: Style declaration text should stay unchanged.
+PASS: Style declaration text should update immediately.
 
 -- Running test case: Update value when CSSStyleDeclaration is locked
 PASS: "font-size" property value should update immediately.
 PASS: Style declaration text should update immediately.
 
--- Running test case: Update inline style value when CSSStyleDeclaration locked and not locked
-PASS: Style declaration text should update immediately.
-PASS: Style declaration text should stay "width: 64px".
+-- Running test case: ModifyCSSProperty.PropertiesChangedEvent
+PASS: Style declaration is unlocked.
 PASS: "width" property value should update to "200px".
 PASS: Inline style declaration text should update when not locked.
+
+-- Running test case: Update inline style value when CSSStyleDeclaration locked and not locked
+PASS: Style declaration text should update immediately.
+PASS: Style declaration text should update immediately.
+PASS: Style declaration is unlocked.
+PASS: "width" property value should update to "128px".
+PASS: Inline style declaration text should update when not locked.
+
+-- Running test case: ModifyCSSProperty.ConsequentValueChanges
+PASS: Style declaration text should contain most recent value.
 
 -- Running test case: ModifyCSSProperty.CommentOutAndUncommentPropertyWithNewlines
 PASS: Commented out property should be disabled.
