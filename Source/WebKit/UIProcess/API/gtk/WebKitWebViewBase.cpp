@@ -364,6 +364,9 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
         | GDK_BUTTON2_MOTION_MASK
         | GDK_BUTTON3_MOTION_MASK
         | GDK_TOUCH_MASK;
+#if HAVE(GTK_GESTURES)
+    attributes.event_mask |= GDK_TOUCHPAD_GESTURE_MASK;
+#endif
 
     gint attributesMask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
 
@@ -1192,6 +1195,16 @@ static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext*
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
+static gboolean webkitWebViewBaseEvent(GtkWidget* widget, GdkEvent* event)
+{
+#if HAVE(GTK_GESTURES)
+    if (event->type == GDK_TOUCHPAD_PINCH)
+        webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(widget)).handleEvent(event);
+#endif
+
+    return GDK_EVENT_PROPAGATE;
+}
+
 static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
 {
     // If the socket has already been created and embedded a plug ID, return it.
@@ -1315,6 +1328,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->drag_drop = webkitWebViewBaseDragDrop;
     widgetClass->drag_data_received = webkitWebViewBaseDragDataReceived;
 #endif // ENABLE(DRAG_SUPPORT)
+    widgetClass->event = webkitWebViewBaseEvent;
     widgetClass->get_accessible = webkitWebViewBaseGetAccessible;
     widgetClass->hierarchy_changed = webkitWebViewBaseHierarchyChanged;
     widgetClass->destroy = webkitWebViewBaseDestroy;
