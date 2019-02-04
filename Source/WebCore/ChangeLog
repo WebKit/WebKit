@@ -1,3 +1,31 @@
+2019-02-04  Frederic Wang  <fwang@igalia.com>
+
+        [css-scroll-snap] scroll-snap-align not honored on child with non-visible overflow
+        https://bugs.webkit.org/show_bug.cgi?id=191816
+
+        Reviewed by Wenson Hsieh.
+
+        This patch fixes a bug that prevents children of a scroll container to create snap positions
+        when they have non-visible overflow. This happens because for such a child, the function
+        RenderBox::findEnclosingScrollableContainer() will return the child itself rather than the
+        scroll container. To address that issue, we introduce a new
+        RenderObject::enclosingScrollableContainerForSnapping() helper function that ensures that
+        a real RenderBox ancestor is returned.
+
+        Test: css3/scroll-snap/scroll-snap-children-with-overflow.html
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea): Use enclosingScrollableContainerForSnapping()
+        so that we don't skip children with non-visible overflow.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange): Ditto. The new function calls
+        enclosingBox().
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingScrollableContainerForSnapping const): Return
+        the scrollable container of the enclosing box. If it is actually the render object itself
+        then start the search from the parent box instead.
+        * rendering/RenderObject.h: Declare enclosingScrollableContainerForSnapping(). 
+
 2019-02-04  Antti Koivisto  <antti@apple.com>
 
         Rename GraphicsLayer and PlatformCALayer scrolling layer type enum values to be less ambiguous

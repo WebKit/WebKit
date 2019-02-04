@@ -1,3 +1,15 @@
+2019-02-04  Frederic Wang  <fwang@igalia.com>
+
+        [css-scroll-snap] scroll-snap-align not honored on child with non-visible overflow
+        https://bugs.webkit.org/show_bug.cgi?id=191816
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test to verify that children with non-visible overflow create snap offsets.
+
+        * css3/scroll-snap/scroll-snap-children-with-overflow-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-children-with-overflow.html: Added.
+
 2019-02-03  Antti Koivisto  <antti@apple.com>
 
         [iOS] Tiles not created in large scrollable iframes

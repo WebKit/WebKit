@@ -234,7 +234,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     LOG(Scrolling, "Computing scroll snap offsets in snap port: %s", snapPortOrAreaToString(scrollSnapPort).utf8().data());
 #endif
     for (auto* child : scrollContainer->view().boxesWithScrollSnapPositions()) {
-        if (child->findEnclosingScrollableContainer() != scrollContainer)
+        if (child->enclosingScrollableContainerForSnapping() != scrollContainer)
             continue;
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.

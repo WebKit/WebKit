@@ -438,6 +438,19 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
     return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
+const RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
+{
+    auto& renderBox = enclosingBox();
+    if (auto* scrollableContainer = renderBox.findEnclosingScrollableContainer()) {
+        // The scrollable container for snapping cannot be the node itself.
+        if (scrollableContainer != this)
+            return scrollableContainer;
+        if (renderBox.parentBox())
+            return renderBox.parentBox()->findEnclosingScrollableContainer();
+    }
+    return nullptr;
+}
+
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return nullptr;

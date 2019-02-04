@@ -219,7 +219,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         }
     }
     if (oldStyle && oldStyle->scrollSnapArea() != newStyle.scrollSnapArea()) {
-        const RenderBox* scrollSnapBox = enclosingBox().findEnclosingScrollableContainer();
+        auto* scrollSnapBox = enclosingScrollableContainerForSnapping();
         if (scrollSnapBox && scrollSnapBox->layer()) {
             const RenderStyle& style = scrollSnapBox->style();
             if (style.scrollSnapType().strictness != ScrollSnapStrictness::None) {
