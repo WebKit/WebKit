@@ -1,3 +1,40 @@
+2019-02-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] UnlinkedMetadataTable assumes that MetadataTable is destroyed before it is destructed, but order of destruction of JS heap cells are not guaranteed
+        https://bugs.webkit.org/show_bug.cgi?id=194031
+
+        Reviewed by Saam Barati.
+
+        UnlinkedMetadataTable assumes that MetadataTable linked against this UnlinkedMetadataTable is already destroyed when UnlinkedMetadataTable is destroyed.
+        This means that UnlinkedCodeBlock is destroyed after all the linked CodeBlocks are destroyed. But this assumption is not valid since GC's finalizer
+        sweeps objects without considering the dependencies among swept objects. UnlinkedMetadataTable can be destroyed even before linked MetadataTable is
+        destroyed if UnlinkedCodeBlock is destroyed before linked CodeBlock is destroyed.
+
+        To make the above assumption valid, we make UnlinkedMetadataTable RefCounted object, and make MetadataTable hold the strong ref to UnlinkedMetadataTable.
+        This ensures that UnlinkedMetadataTable is destroyed after all the linked MetadataTables are destroyed.
+
+        * bytecode/MetadataTable.cpp:
+        (JSC::MetadataTable::MetadataTable):
+        (JSC::MetadataTable::~MetadataTable):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        (JSC::UnlinkedCodeBlock::estimatedSize):
+        (JSC::UnlinkedCodeBlock::setInstructions):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::metadata):
+        (JSC::UnlinkedCodeBlock::metadataSizeInBytes):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::create):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::UnlinkedMetadataTable):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedMetadataTable::decode const):
+        (JSC::CachedCodeBlock::metadata const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+
 2019-02-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Decouple JIT related data from CodeBlock

@@ -32,18 +32,17 @@ namespace JSC {
 
 class MetadataTable;
 
-class UnlinkedMetadataTable {
+class UnlinkedMetadataTable : public RefCounted<UnlinkedMetadataTable> {
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
     friend class CachedMetadataTable;
 
 public:
     struct LinkingData {
-        UnlinkedMetadataTable* unlinkedMetadata;
+        Ref<UnlinkedMetadataTable> unlinkedMetadata;
         unsigned refCount;
     };
 
-    UnlinkedMetadataTable();
     ~UnlinkedMetadataTable();
 
     unsigned addEntry(OpcodeID);
@@ -54,7 +53,14 @@ public:
 
     RefPtr<MetadataTable> link();
 
+    static Ref<UnlinkedMetadataTable> create()
+    {
+        return adoptRef(*new UnlinkedMetadataTable);
+    }
+
 private:
+    UnlinkedMetadataTable();
+
     void unlink(MetadataTable&);
 
     size_t sizeInBytes(MetadataTable&);

@@ -360,11 +360,11 @@ public:
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 #endif
 
-    UnlinkedMetadataTable& metadata() { return m_metadata; }
+    UnlinkedMetadataTable& metadata() { return m_metadata.get(); }
 
     size_t metadataSizeInBytes()
     {
-        return m_metadata.sizeInBytes();
+        return m_metadata->sizeInBytes();
     }
 
 
@@ -410,7 +410,7 @@ private:
 
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
-    UnlinkedMetadataTable m_metadata;
+    Ref<UnlinkedMetadataTable> m_metadata;
 
 #if ENABLE(DFG_JIT)
     DFG::ExitProfile m_exitProfile;

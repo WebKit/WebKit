@@ -57,6 +57,7 @@ const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock", nullptr, null
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, DebuggerMode debuggerMode)
     : Base(*vm, structure)
     , m_globalObjectRegister(VirtualRegister())
+    , m_metadata(UnlinkedMetadataTable::create())
     , m_usesEval(info.usesEval())
     , m_isStrictMode(info.isStrictMode())
     , m_isConstructor(info.isConstructor())
@@ -92,7 +93,7 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
         visitor.append(*ptr);
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
-    size_t extraMemory = thisObject->m_metadata.sizeInBytes();
+    size_t extraMemory = thisObject->m_metadata->sizeInBytes();
     if (thisObject->m_instructions)
         extraMemory += thisObject->m_instructions->sizeInBytes();
     visitor.reportExtraMemoryVisited(extraMemory);
@@ -101,7 +102,7 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 size_t UnlinkedCodeBlock::estimatedSize(JSCell* cell, VM& vm)
 {
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
-    size_t extraSize = thisObject->m_metadata.sizeInBytes();
+    size_t extraSize = thisObject->m_metadata->sizeInBytes();
     if (thisObject->m_instructions)
         extraSize += thisObject->m_instructions->sizeInBytes();
     return Base::estimatedSize(cell, vm) + extraSize;
@@ -310,9 +311,9 @@ void UnlinkedCodeBlock::setInstructions(std::unique_ptr<InstructionStream> instr
     {
         auto locker = holdLock(cellLock());
         m_instructions = WTFMove(instructions);
-        m_metadata.finalize();
+        m_metadata->finalize();
     }
-    Heap::heap(this)->reportExtraMemoryAllocated(m_instructions->sizeInBytes() + m_metadata.sizeInBytes());
+    Heap::heap(this)->reportExtraMemoryAllocated(m_instructions->sizeInBytes() + m_metadata->sizeInBytes());
 }
 
 const InstructionStream& UnlinkedCodeBlock::instructions() const

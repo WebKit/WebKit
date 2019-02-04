@@ -35,8 +35,8 @@ namespace JSC {
 
 MetadataTable::MetadataTable(UnlinkedMetadataTable& unlinkedMetadata)
 {
-    linkingData() = UnlinkedMetadataTable::LinkingData {
-        &unlinkedMetadata,
+    new (&linkingData()) UnlinkedMetadataTable::LinkingData {
+        unlinkedMetadata,
         1,
     };
 }
@@ -55,7 +55,11 @@ MetadataTable::~MetadataTable()
 {
     for (unsigned i = 0; i < NUMBER_OF_BYTECODE_WITH_METADATA; i++)
         getOpcodeType<DeallocTable>(static_cast<OpcodeID>(i), this);
-    linkingData().unlinkedMetadata->unlink(*this);
+    Ref<UnlinkedMetadataTable> unlinkedMetadata = WTFMove(linkingData().unlinkedMetadata);
+    linkingData().~LinkingData();
+    // Since UnlinkedMetadata::unlink frees the underlying memory of MetadataTable.
+    // We need to destroy LinkingData before calling it.
+    unlinkedMetadata->unlink(*this);
 }
 
 size_t MetadataTable::sizeInBytes()

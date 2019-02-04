@@ -1170,13 +1170,15 @@ public:
             m_metadata[i] = metadataTable.buffer()[i];
     }
 
-    void decode(Decoder&, UnlinkedMetadataTable& metadataTable) const
+    Ref<UnlinkedMetadataTable> decode(Decoder&) const
     {
-        metadataTable.m_isFinalized = true;
-        metadataTable.m_isLinked = false;
-        metadataTable.m_hasMetadata = m_hasMetadata;
+        Ref<UnlinkedMetadataTable> metadataTable = UnlinkedMetadataTable::create();
+        metadataTable->m_isFinalized = true;
+        metadataTable->m_isLinked = false;
+        metadataTable->m_hasMetadata = m_hasMetadata;
         for (unsigned i = UnlinkedMetadataTable::s_offsetTableEntries; i--;)
-            metadataTable.buffer()[i] = m_metadata[i];
+            metadataTable->buffer()[i] = m_metadata[i];
+        return metadataTable;
     }
 
 private:
@@ -1475,6 +1477,8 @@ public:
     String sourceURLDirective(Decoder& decoder) const { return m_sourceURLDirective.decode(decoder); }
     String sourceMappingURLDirective(Decoder& decoder) const { return m_sourceMappingURLDirective.decode(decoder); }
 
+    Ref<UnlinkedMetadataTable> metadata(Decoder& decoder) const { return m_metadata.decode(decoder); }
+
     unsigned usesEval() const { return m_usesEval; }
     unsigned isStrictMode() const { return m_isStrictMode; }
     unsigned isConstructor() const { return m_isConstructor; }
@@ -1696,6 +1700,8 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_sourceURLDirective(cachedCodeBlock.sourceURLDirective(decoder))
     , m_sourceMappingURLDirective(cachedCodeBlock.sourceMappingURLDirective(decoder))
 
+    , m_metadata(cachedCodeBlock.metadata(decoder))
+
     , m_usesEval(cachedCodeBlock.usesEval())
     , m_isStrictMode(cachedCodeBlock.isStrictMode())
     , m_isConstructor(cachedCodeBlock.isConstructor())
@@ -1728,7 +1734,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, Unli
     for (unsigned i = LinkTimeConstantCount; i--;)
         codeBlock.m_linkTimeConstants[i] = m_linkTimeConstants[i];
 
-    m_metadata.decode(decoder, codeBlock.m_metadata);
     m_propertyAccessInstructions.decode(decoder, codeBlock.m_propertyAccessInstructions);
     m_constantRegisters.decode(decoder, codeBlock.m_constantRegisters, &codeBlock);
     m_constantsSourceCodeRepresentation.decode(decoder, codeBlock.m_constantsSourceCodeRepresentation);
@@ -1878,7 +1883,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     for (unsigned i = LinkTimeConstantCount; i--;)
         m_linkTimeConstants[i] = codeBlock.m_linkTimeConstants[i];
 
-    m_metadata.encode(encoder, codeBlock.m_metadata);
+    m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData);
 
     m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());

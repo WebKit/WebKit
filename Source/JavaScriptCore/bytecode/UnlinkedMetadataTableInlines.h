@@ -32,11 +32,11 @@
 namespace JSC {
 
 ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable()
+    : m_hasMetadata(false)
+    , m_isFinalized(false)
+    , m_isLinked(false)
+    , m_rawBuffer(fastZeroedMalloc(sizeof(LinkingData) + s_offsetTableSize))
 {
-    m_hasMetadata = false;
-    m_isFinalized = false;
-    m_isLinked = false;
-    m_rawBuffer = fastZeroedMalloc(sizeof(LinkingData) + s_offsetTableSize);
 }
 
 ALWAYS_INLINE UnlinkedMetadataTable::~UnlinkedMetadataTable()
