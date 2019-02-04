@@ -1,3 +1,17 @@
+2019-02-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] [WebKit] Assertion failures of missing networkStorageSession for storage/indexeddb tests
+        https://bugs.webkit.org/show_bug.cgi?id=194141
+
+        Reviewed by Ross Kirsling.
+
+        Implemented WebKit::NetworkProcess::switchToNewTestingSession and
+        WebKit::NetworkProcess::ensureSession for curl port.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession):
+        (WebKit::NetworkProcess::ensureSession):
+
 2019-02-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make setNeedsLayout on the root more explicitly about triggering its side-effects

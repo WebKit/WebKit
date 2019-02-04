@@ -477,6 +477,8 @@ void NetworkProcess::switchToNewTestingSession()
     m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), WTFMove(session), WTFMove(cookieStorage));
 #elif USE(SOUP)
     m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID(), std::make_unique<WebCore::SoupNetworkSession>());
+#elif USE(CURL)
+    m_defaultNetworkStorageSession = std::make_unique<WebCore::NetworkStorageSession>(PAL::SessionID::defaultSessionID());
 #endif
 }
 
@@ -509,6 +511,8 @@ void NetworkProcess::ensureSession(const PAL::SessionID& sessionID, const String
     addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
 #elif USE(SOUP)
     addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>(sessionID));
+#elif USE(CURL)
+    addResult.iterator->value = std::make_unique<NetworkStorageSession>(sessionID);
 #endif
 }
 
