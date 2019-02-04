@@ -1,3 +1,18 @@
+2019-02-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to make a selection in jsfiddle.net using arrow keys when requesting desktop site
+        Followup to https://bugs.webkit.org/show_bug.cgi?id=193758
+
+        Reviewed by Daniel Bates.
+
+        Put the iOS-specific behavior behind an EditingBehavior check, rather than a compile-time guard. No change in
+        behavior.
+
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldMoveSelectionToEndWhenFocusingTextInput const):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setDefaultSelectionAfterFocus):
+
 2019-02-04  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Make InlineFormattingContext::collectInlineContent non-recursive.

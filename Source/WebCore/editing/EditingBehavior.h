@@ -93,6 +93,9 @@ public:
     // Linux and Windows always extend selections from the extent endpoint.
     bool shouldAlwaysExtendSelectionFromExtentEndpoint() const { return m_type != EditingMacBehavior && m_type != EditingIOSBehavior; }
 
+    // On iOS, we don't want to select all the text when focusing a field. Instead, match platform behavior by going to the end of the line.
+    bool shouldMoveSelectionToEndWhenFocusingTextInput() const { return m_type == EditingIOSBehavior; }
+
 private:
     EditingBehaviorType m_type;
 };
