@@ -118,7 +118,6 @@ private:
     void placeInFlowPositionedChildren(unsigned firstRunIndex) const;
 
     void collectInlineContent(InlineRunProvider&) const;
-    void collectInlineContentForSubtree(const Box& root, InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
 
     InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

@@ -430,96 +430,130 @@ void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunInde
     }
 }
 
-void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, InlineRunProvider& inlineRunProvider) const
+static void addDetachingRules(InlineItem& inlineItem, Optional<LayoutUnit> nonBreakableStartWidth, Optional<LayoutUnit> nonBreakableEndWidth)
 {
-    // Collect inline content recursively and set breaking rules for the inline elements (for paddings, margins, positioned element etc).
-    auto& inlineFormattingState = formattingState();
-
-    auto createAndAppendInlineItem = [&] {
-        auto inlineItem = std::make_unique<InlineItem>(root);
-        inlineRunProvider.append(*inlineItem);
-        inlineFormattingState.inlineContent().add(WTFMove(inlineItem));
-    };
-
-    if (root.establishesFormattingContext() && &root != &(this->root())) {
-        createAndAppendInlineItem();
-        auto& inlineRun = *inlineFormattingState.inlineContent().last();
-        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
-        auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
-
-        inlineRun.addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
-        inlineRun.addNonBreakableStart(horizontalMargin.start);
-        inlineRun.addNonBreakableEnd(horizontalMargin.end);
-        // Skip formatting root subtree. They are not part of this inline formatting context.
-        return;
+    OptionSet<InlineItem::DetachingRule> detachingRules;
+    if (nonBreakableStartWidth) {
+        detachingRules.add(InlineItem::DetachingRule::BreakAtStart);
+        inlineItem.addNonBreakableStart(*nonBreakableStartWidth);
     }
-
-    if (!is<Container>(root)) {
-        createAndAppendInlineItem();
-        return;
+    if (nonBreakableEndWidth) {
+        detachingRules.add(InlineItem::DetachingRule::BreakAtEnd);
+        inlineItem.addNonBreakableEnd(*nonBreakableEndWidth);
     }
+    inlineItem.addDetachingRule(detachingRules);
+}
 
-    auto* lastInlineBoxBeforeContainer = inlineFormattingState.lastInlineItem();
-    auto* child = downcast<Container>(root).firstInFlowOrFloatingChild();
-    while (child) {
-        collectInlineContentForSubtree(*child, inlineRunProvider);
-        child = child->nextInFlowOrFloatingSibling();
-    }
-
-    // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
-    auto padding = Geometry::computedPadding(layoutState(), root);
-    auto border = Geometry::computedBorder(layoutState(), root);
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), root);
-    auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
-
-    // Setup breaking boundaries for this subtree.
-    auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
-    // Empty container?
-    if (lastInlineBoxBeforeContainer == lastDescendantInlineBox)
-        return;
-
-    auto rootBreaksAtStart = [&] {
-        if (&root == &(this->root()))
-            return false;
-        return (padding && padding->horizontal.left) || border.horizontal.left || horizontalMargin.start || root.isPositioned();
-    };
-
-    auto rootBreaksAtEnd = [&] {
-        if (&root == &(this->root()))
-            return false;
-        return (padding && padding->horizontal.right) || border.horizontal.right || horizontalMargin.end || root.isPositioned();
-    };
-
-    if (rootBreaksAtStart()) {
-        InlineItem* firstDescendantInlineBox = nullptr;
-        auto& inlineContent = inlineFormattingState.inlineContent();
-
-        if (lastInlineBoxBeforeContainer) {
-            auto iterator = inlineContent.find(lastInlineBoxBeforeContainer);
-            firstDescendantInlineBox = (*++iterator).get();
-        } else
-            firstDescendantInlineBox = inlineContent.first().get();
-
-        ASSERT(firstDescendantInlineBox);
-        firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
-        auto startOffset = border.horizontal.left + horizontalMargin.start;
-        if (padding)
-            startOffset += padding->horizontal.left;
-        firstDescendantInlineBox->addNonBreakableStart(startOffset);
-    }
-
-    if (rootBreaksAtEnd()) {
-        lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
-        auto endOffset = border.horizontal.right + horizontalMargin.end;
-        if (padding)
-            endOffset += padding->horizontal.right;
-        lastDescendantInlineBox->addNonBreakableEnd(endOffset);
-    }
+static InlineItem& createAndAppendInlineItem(InlineRunProvider& inlineRunProvider, InlineContent& inlineContent, const Box& layoutBox)
+{
+    ASSERT(layoutBox.isInlineLevelBox() || layoutBox.isFloatingPositioned());
+    auto inlineItem = std::make_unique<InlineItem>(layoutBox);
+    auto* inlineItemPtr = inlineItem.get();
+    inlineContent.add(WTFMove(inlineItem));
+    inlineRunProvider.append(*inlineItemPtr);
+    return *inlineItemPtr;
 }
 
 void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunProvider) const
 {
-    collectInlineContentForSubtree(root(), inlineRunProvider);
+    if (!is<Container>(root()))
+        return;
+    auto& root = downcast<Container>(this->root());
+    if (!root.hasInFlowOrFloatingChild())
+        return;
+    // The logic here is very similar to BFC layout.
+    // 1. Travers down the layout tree and collect "start" unbreakable widths (margin-left, border-left, padding-left)
+    // 2. Create InlineItem per leaf inline box (text nodes, inline-blocks, floats) and set "start" unbreakable width on them. 
+    // 3. Climb back and collect "end" unbreakable width and set it on the last InlineItem.
+    auto& layoutState = this->layoutState();
+    auto& inlineContent = formattingState().inlineContent();
+
+    enum class NonBreakableWidthType { Start, End };
+    auto nonBreakableWidth = [&](auto& container, auto type) {
+        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, container);
+        auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+        auto border = Geometry::computedBorder(layoutState, container);
+        auto padding = Geometry::computedPadding(layoutState, container);
+
+        if (type == NonBreakableWidthType::Start)
+            return border.horizontal.left + horizontalMargin.start + (padding ? padding->horizontal.left : LayoutUnit());
+        return border.horizontal.right + horizontalMargin.end + (padding ? padding->horizontal.right : LayoutUnit());
+    };
+
+    LayoutQueue layoutQueue;
+    layoutQueue.append(root.firstInFlowOrFloatingChild());
+
+    Optional<LayoutUnit> nonBreakableStartWidth;
+    Optional<LayoutUnit> nonBreakableEndWidth;
+    InlineItem* lastInlineItem = nullptr;
+    while (!layoutQueue.isEmpty()) {
+        while (true) {
+            auto& layoutBox = *layoutQueue.last();
+            if (!is<Container>(layoutBox))
+                break;
+            auto& container = downcast<Container>(layoutBox);
+
+            if (container.establishesFormattingContext()) {
+                // Formatting contexts are treated as leaf nodes.
+                auto& inlineItem = createAndAppendInlineItem(inlineRunProvider, inlineContent, container);
+                auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, container);
+                auto currentNonBreakableStartWidth = nonBreakableStartWidth.valueOr(0) + computedHorizontalMargin.start.valueOr(0) + nonBreakableEndWidth.valueOr(0);
+                addDetachingRules(inlineItem, currentNonBreakableStartWidth, computedHorizontalMargin.end);
+                nonBreakableStartWidth = { };
+                nonBreakableEndWidth = { };
+
+                // Formatting context roots take care of their subtrees. Continue with next sibling if exists.
+                layoutQueue.removeLast();
+                if (!container.nextInFlowOrFloatingSibling())
+                    break;
+                layoutQueue.append(container.nextInFlowOrFloatingSibling());
+                continue;
+            }
+
+            // Check if this non-formatting context container has any non-breakable start properties (margin-left, border-left, padding-left)
+            // <span style="padding-left: 5px"><span style="padding-left: 5px">foobar</span></span> -> 5px + 5px
+            auto currentNonBreakableStartWidth = nonBreakableWidth(layoutBox, NonBreakableWidthType::Start);
+            if (currentNonBreakableStartWidth || layoutBox.isPositioned())
+                nonBreakableStartWidth = nonBreakableStartWidth.valueOr(0) + currentNonBreakableStartWidth;
+
+            if (!container.hasInFlowOrFloatingChild())
+                break;
+            layoutQueue.append(container.firstInFlowOrFloatingChild());
+        }
+
+        while (!layoutQueue.isEmpty()) {
+            auto& layoutBox = *layoutQueue.takeLast();
+            if (is<Container>(layoutBox)) {
+                // This is the end of an inline container. Compute the non-breakable end width and add it to the last inline box.
+                // <span style="padding-right: 5px">foobar</span> -> 5px; last inline item -> "foobar"
+                auto currentNonBreakableEndWidth = nonBreakableWidth(layoutBox, NonBreakableWidthType::End);
+                if (currentNonBreakableEndWidth || layoutBox.isPositioned())
+                    nonBreakableEndWidth = nonBreakableEndWidth.valueOr(0) + currentNonBreakableEndWidth;
+                // Add it to the last inline box
+                if (lastInlineItem) {
+                    addDetachingRules(*lastInlineItem, { }, nonBreakableEndWidth);
+                    nonBreakableEndWidth = { };
+                }
+            } else {
+                // Leaf inline box
+                auto& inlineItem = createAndAppendInlineItem(inlineRunProvider, inlineContent, layoutBox);
+                // Add start and the (through empty containers) accumulated end width.
+                // <span style="padding-left: 1px">foobar</span> -> nonBreakableStartWidth: 1px;
+                // <span style="padding: 5px"></span>foobar -> nonBreakableStartWidth: 5px; nonBreakableEndWidth: 5px
+                if (nonBreakableStartWidth || nonBreakableEndWidth) {
+                    addDetachingRules(inlineItem, nonBreakableStartWidth.valueOr(0) + nonBreakableEndWidth.valueOr(0), { });
+                    nonBreakableStartWidth = { };
+                    nonBreakableEndWidth = { };
+                }
+                lastInlineItem = &inlineItem;
+            }
+
+            if (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling()) {
+                layoutQueue.append(nextSibling);
+                break;
+            }
+        }
+    }
 }
 
 FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints() const

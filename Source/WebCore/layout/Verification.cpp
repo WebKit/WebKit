@@ -133,7 +133,7 @@ static LayoutUnit resolveForRelativePositionIfNeeded(const InlineTextBox& inline
     while (is<InlineFlowBox>(parent)) {
         auto& renderer = parent->renderer();
         if (renderer.isInFlowPositioned())
-            xOffset = downcast<RenderInline>(renderer).offsetForInFlowPosition().width();
+            xOffset = renderer.offsetForInFlowPosition().width();
         parent = parent->parent();
     }
     return xOffset;
