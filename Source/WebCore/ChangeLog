@@ -1,3 +1,13 @@
+2019-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused variable warnings introduced in r240912
+        https://bugs.webkit.org/show_bug.cgi?id=194198
+        <rdar://problem/47776051>
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setNeedsCompositingConfigurationUpdate):
+        (WebCore::FrameView::setNeedsCompositingGeometryUpdate):
+
 2019-02-04  Frederic Wang  <fwang@igalia.com>
 
         [css-scroll-snap] scroll-snap-align not honored on child with non-visible overflow

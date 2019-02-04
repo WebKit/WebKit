@@ -2924,7 +2924,7 @@ void FrameView::setNeedsCompositingConfigurationUpdate()
     RenderView* renderView = this->renderView();
     if (renderView->usesCompositing()) {
         if (auto* rootLayer = renderView->layer())
-            renderView->layer()->setNeedsCompositingConfigurationUpdate();
+            rootLayer->setNeedsCompositingConfigurationUpdate();
     }
 }
 
@@ -2933,7 +2933,7 @@ void FrameView::setNeedsCompositingGeometryUpdate()
     RenderView* renderView = this->renderView();
     if (renderView->usesCompositing()) {
         if (auto* rootLayer = renderView->layer())
-            renderView->layer()->setNeedsCompositingGeometryUpdate();
+            rootLayer->setNeedsCompositingGeometryUpdate();
     }
 }
 
