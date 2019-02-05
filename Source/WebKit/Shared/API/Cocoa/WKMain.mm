@@ -26,9 +26,15 @@
 #include "config.h"
 #include "WKMain.h"
 
+#include "DaemonEntryPoint.h"
 #include "XPCServiceEntryPoint.h"
 
 int WKXPCServiceMain(int argc, const char** argv)
 {
     return WebKit::XPCServiceMain(argc, argv);
+}
+
+int WKDaemonMain(int argc, const char** argv)
+{
+    return WebKit::DaemonMain(argc, argv);
 }

@@ -263,7 +263,7 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
     }
 }
 
-void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(ResourceRequest& request, bool shouldBlockCookies)
+void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request, bool shouldBlockCookies)
 {
     if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
         request.setExistingHTTPReferrerToOriginString();

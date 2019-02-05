@@ -25,16 +25,8 @@
 
 #pragma once
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKFoundation.h>
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+int DaemonMain(int, const char**);
 
-WK_EXPORT int WKXPCServiceMain(int argc, const char** argv) WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-WK_EXPORT int WKDaemonMain(int argc, const char** argv) WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-#ifdef __cplusplus
 }
-#endif

@@ -37,6 +37,7 @@ OBJC_CLASS NSURLSessionDataTask;
 
 namespace WebKit {
 
+class Download;
 class NetworkSessionCocoa;
 
 class NetworkDataTaskCocoa final : public NetworkDataTask {

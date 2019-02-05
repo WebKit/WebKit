@@ -23,18 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "DaemonEntryPoint.h"
 
-#include <WebKit/WKBase.h>
-#include <WebKit/WKFoundation.h>
+namespace WebKit {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WK_EXPORT int WKXPCServiceMain(int argc, const char** argv) WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-WK_EXPORT int WKDaemonMain(int argc, const char** argv) WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-#ifdef __cplusplus
+int DaemonMain(int, const char**)
+{
+    return 0;
 }
-#endif
+
+}

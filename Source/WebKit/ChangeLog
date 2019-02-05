@@ -1,3 +1,27 @@
+2019-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Add Networking Daemon skeleton
+        https://bugs.webkit.org/show_bug.cgi?id=194278
+
+        Reviewed by Zalan Bujtas.
+
+        Daemon skeletons? This is spooky stuff.
+
+        * NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.h: Added.
+        * NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm: Added.
+        (WebKit::DaemonMain):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded):
+        * Shared/API/Cocoa/WKMain.h:
+        * Shared/API/Cocoa/WKMain.mm:
+        (WKDaemonMain):
+        * Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp:
+        (main):
+        * SourcesCocoa.txt:
+        * UnifiedSources-input.xcfilelist:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink size of VM by lazily allocating IsoSubspaces for non-common types

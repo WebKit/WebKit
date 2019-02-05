@@ -12,7 +12,8 @@ $(SRCROOT)/NetworkProcess/Downloads/Download.cpp
 $(SRCROOT)/NetworkProcess/Downloads/DownloadManager.cpp
 $(SRCROOT)/NetworkProcess/Downloads/PendingDownload.cpp
 $(SRCROOT)/NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
-$(SRCROOT)/NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm
+$(SRCROOT)/NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm
+$(SRCROOT)/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
 $(SRCROOT)/NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 $(SRCROOT)/NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
 $(SRCROOT)/NetworkProcess/NetworkActivityTracker.cpp

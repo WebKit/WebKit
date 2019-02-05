@@ -39,6 +39,7 @@ NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 
+NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm
 NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
 
 NetworkProcess/ios/NetworkProcessIOS.mm
