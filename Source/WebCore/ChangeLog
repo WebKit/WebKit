@@ -1,3 +1,7 @@
+2019-02-05  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r240738. rdar://problem/47810351
+
 2019-02-04  Antoine Quint  <graouts@apple.com>
 
         Use a dedicated type instead of int32_t for pointer identifiers
