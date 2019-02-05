@@ -1,3 +1,19 @@
+2019-02-04  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] Enable setAdditionalSupportedImageTypes for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=194190
+
+        Reviewed by Tim Horton.
+
+        Move the function webCoreStringVectorFromNSStringArray from WebKit to
+        WebCore so it can be used by both WebKit and WebKitLegacy.
+
+        * Platform/mac/StringUtilities.h:
+        * Platform/mac/StringUtilities.mm:
+        (WebKit::webCoreStringVectorFromNSStringArray): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2019-02-04  Benjamin Poulain  <benjamin@webkit.org>
 
         Use deferrable timer to restart the Responsiveness Timer on each wheel event

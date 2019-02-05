@@ -82,15 +82,4 @@ NSString *formattedPhoneNumberString(NSString *)
 
 #endif // ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
 
-Vector<String> webCoreStringVectorFromNSStringArray(NSArray<NSString *> *nsStringArray)
-{
-    Vector<String> stringVector;
-    stringVector.reserveInitialCapacity([nsStringArray count]);
-
-    for (NSString *nsString in nsStringArray)
-        stringVector.uncheckedAppend(nsString);
-
-    return stringVector;
-}
-
 }

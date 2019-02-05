@@ -1,3 +1,17 @@
+2019-02-04  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] Enable setAdditionalSupportedImageTypes for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=194190
+
+        Reviewed by Tim Horton.
+
+        Move the function webCoreStringVectorFromNSStringArray from WebKit to
+        WebCore so it can be used by both WebKit and WebKitLegacy.
+
+        * platform/mac/StringUtilities.h:
+        * platform/mac/StringUtilities.mm:
+        (WebCore::webCoreStringVectorFromNSStringArray):
+
 2019-02-04  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Code clean-up for RenderPipeline backend

@@ -757,6 +757,36 @@ public:
     [self _postPreferencesChangedNotification];
 }
 
+- (NSArray<NSString *> *)_stringArrayValueForKey:(NSString *)key
+{
+    id value = [self _valueForKey:key];
+    if (![value isKindOfClass:[NSArray class]])
+        return nil;
+
+    NSArray *array = (NSArray *)value;
+    for (id object in array) {
+        if (![object isKindOfClass:[NSString class]])
+            return nil;
+    }
+
+    return (NSArray<NSString *> *)array;
+}
+
+- (void)_setStringArrayValueForKey:(NSArray<NSString *> *)value forKey:(NSString *)key
+{
+    NSString *_key = KEY(key);
+#if PLATFORM(IOS_FAMILY)
+    dispatch_barrier_sync(_private->readWriteQueue, ^{
+#endif
+        [_private->values.get() setObject:value forKey:_key];
+#if PLATFORM(IOS_FAMILY)
+    });
+#endif
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
+    [self _postPreferencesChangedNotification];
+}
+
 - (int)_integerValueForKey:(NSString *)key
 {
     id o = [self _valueForKey:key];
@@ -1157,6 +1187,16 @@ public:
 - (BOOL)loadsImagesAutomatically
 {
     return [self _boolValueForKey: WebKitDisplayImagesKey];
+}
+
+- (void)setAdditionalSupportedImageTypes:(NSArray<NSString*> *)imageTypes
+{
+    [self _setStringArrayValueForKey:imageTypes forKey:WebKitAdditionalSupportedImageTypesKey];
+}
+
+- (NSArray<NSString *> *)additionalSupportedImageTypes
+{
+    return [self _stringArrayValueForKey:WebKitAdditionalSupportedImageTypesKey];
 }
 
 - (void)setAutosaves:(BOOL)flag

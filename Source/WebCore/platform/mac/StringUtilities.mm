@@ -59,4 +59,15 @@ bool stringMatchesWildcardString(const String& string, const String& wildcardStr
     return JSC::Yarr::RegularExpression(wildcardRegexPatternString(wildcardString), JSC::Yarr::TextCaseInsensitive).match(string) != -1;
 }
 
+Vector<String> webCoreStringVectorFromNSStringArray(NSArray<NSString *> *nsStringArray)
+{
+    Vector<String> stringVector;
+    stringVector.reserveInitialCapacity([nsStringArray count]);
+
+    for (NSString *nsString in nsStringArray)
+        stringVector.uncheckedAppend(nsString);
+
+    return stringVector;
+}
+
 }

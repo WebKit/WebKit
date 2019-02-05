@@ -37,8 +37,6 @@ namespace WebKit {
 NSString *nsStringFromWebCoreString(const String&);
 NSString *formattedPhoneNumberString(NSString *originalPhoneNumber);
 
-Vector<String> webCoreStringVectorFromNSStringArray(NSArray<NSString *> *);
-
 #endif // defined(__OBJC__)
 
 }

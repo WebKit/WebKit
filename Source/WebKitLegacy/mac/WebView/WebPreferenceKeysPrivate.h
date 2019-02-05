@@ -66,6 +66,7 @@
 #define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
+#define WebKitAdditionalSupportedImageTypesKey  @"WebKitAdditionalSupportedImageTypesKey"
 #define WebKitLoadSiteIconsKey @"WebKitLoadSiteIconsKey"
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 #if !TARGET_OS_IPHONE

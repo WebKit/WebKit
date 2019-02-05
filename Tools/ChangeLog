@@ -1,3 +1,21 @@
+2019-02-04  Said Abou-Hallawa  <said@apple.com>
+
+        [CG] Enable setAdditionalSupportedImageTypes for WK1
+        https://bugs.webkit.org/show_bug.cgi?id=194190
+
+        Reviewed by Tim Horton.
+
+        Add a test similar to the one under WebKit Cocoa but make it create a
+        WebView instead of a WKWebView.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/100x100-red.tga: Added.
+        * TestWebKitAPI/Tests/mac/AdditionalSupportedImageTypes.html: Added.
+        * TestWebKitAPI/Tests/mac/AdditionalSupportedImageTypes.mm: Added.
+        (-[AdditionalSupportedImageTypesTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::runTest):
+        (TestWebKitAPI::TEST):
+
 2019-02-04  Zalan Bujtas  <zalan@apple.com>
 
         [First paint] Adjust "finishedParsingMainDocument" flag by taking deferred and async scripts into account.
