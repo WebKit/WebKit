@@ -1,3 +1,19 @@
+2019-02-05  Jonathan Bedard  <jbedard@apple.com>
+
+        run-webkit-tests emits message "...running None" when running tests
+        https://bugs.webkit.org/show_bug.cgi?id=194133
+        <rdar://problem/47724738>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/xcode/device_type.py:
+        (DeviceType.__str__): Use both version mapping tables and use just the variant
+        name if no version name is available.
+        * Scripts/webkitpy/xcode/device_type_unittest.py:
+        (DeviceTypeTest):
+        (DeviceTypeTest.test_unmapped_version): Test case where the version does not have
+        an associated named.
+
 2019-02-05  Olivier Blin  <olivier.blin@softathome.com>
 
         [WPE] require python3-setuptools for meson build in jhbuild

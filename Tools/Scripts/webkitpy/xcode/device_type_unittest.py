@@ -155,3 +155,6 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertTrue(DeviceType.from_string('iphone 6s') in DeviceType.from_string('iPhone'))
         self.assertTrue(DeviceType.from_string('iPhone 6s') in DeviceType.from_string('iphone'))
         self.assertTrue(DeviceType.from_string('iphone 6s') in DeviceType.from_string('iphone'))
+
+    def test_unmapped_version(self):
+        self.assertEqual('iPhone running iOS', str(DeviceType.from_string('iPhone', Version(9))))

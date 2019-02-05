@@ -20,7 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.version_name_map import VersionNameMap
+from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
+from webkitpy.port.config import apple_additions
 
 
 # This class is designed to match device types. Because it is used for matching, 'None' is treated as a wild-card.
@@ -108,10 +109,16 @@ class DeviceType(object):
         self.check_consistency()
 
     def __str__(self):
+        version = None
+        if self.software_version and apple_additions():
+            version = VersionNameMap.map().to_name(self.software_version, platform=self.software_variant.lower(), table=INTERNAL_TABLE)
+        elif self.software_version:
+            version = VersionNameMap.map().to_name(self.software_version, platform=self.software_variant.lower())
+
         return '{hardware_family}{hardware_type} running {version}'.format(
             hardware_family=self.hardware_family if self.hardware_family else 'Device',
             hardware_type=' {}'.format(self.hardware_type) if self.hardware_type else '',
-            version=VersionNameMap.map().to_name(self.software_version, platform=self.software_variant.lower()) if self.software_version else self.software_variant,
+            version=version or self.software_variant,
         )
 
     # This technique of matching treats 'None' a wild-card.
