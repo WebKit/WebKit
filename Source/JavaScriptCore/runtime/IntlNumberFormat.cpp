@@ -510,16 +510,19 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     if (U_FAILURE(status))
         return throwTypeError(&exec, scope, "failed to format a number."_s);
 
-    Vector<IntlNumberFormatField> fields;
+    int32_t literalFieldType = -1;
+    auto literalField = IntlNumberFormatField(literalFieldType, resultLength);
+    Vector<IntlNumberFormatField> fields(resultLength, literalField);
     int32_t beginIndex = 0;
     int32_t endIndex = 0;
     auto fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
     while (fieldType >= 0) {
-        IntlNumberFormatField field;
-        field.type = UNumberFormatFields(fieldType);
-        field.beginIndex = beginIndex;
-        field.endIndex = endIndex;
-        fields.append(field);
+        auto size = endIndex - beginIndex;
+        for (auto i = beginIndex; i < endIndex; ++i) {
+            // Only override previous value if new value is more specific.
+            if (fields[i].size >= size)
+                fields[i] = IntlNumberFormatField(fieldType, size);
+        }
         fieldType = ufieldpositer_next(fieldItr.get(), &beginIndex, &endIndex);
     }
 
@@ -533,28 +536,20 @@ JSValue IntlNumberFormat::formatToParts(ExecState& exec, double value)
     auto typePropertyName = Identifier::fromString(&vm, "type");
     auto literalString = jsString(&exec, "literal"_s);
 
-    // FIXME: <http://webkit.org/b/185557> This is O(N^2) and could be done in O(N log N).
     int32_t currentIndex = 0;
     while (currentIndex < resultLength) {
-        IntlNumberFormatField field;
-        int32_t nextStartIndex = resultLength;
-        for (const auto &candidate : fields) {
-            if (candidate.beginIndex <= currentIndex && currentIndex < candidate.endIndex && (!field.size() || candidate.size() < field.size()))
-                field = candidate;
-            if (currentIndex < candidate.beginIndex && candidate.beginIndex < nextStartIndex)
-                nextStartIndex = candidate.beginIndex;
-        }
-        auto nextIndex = field.size() ? std::min(field.endIndex, nextStartIndex) : nextStartIndex;
-        auto type = field.size() ? jsString(&exec, partTypeString(field.type, value)) : literalString;
-        auto value = jsSubstring(&vm, resultString, currentIndex, nextIndex - currentIndex);
+        auto startIndex = currentIndex;
+        auto fieldType = fields[currentIndex].type;
+        while (currentIndex < resultLength && fields[currentIndex].type == fieldType)
+            ++currentIndex;
+        auto partType = fieldType == literalFieldType ? literalString : jsString(&exec, partTypeString(UNumberFormatFields(fieldType), value));
+        auto partValue = jsSubstring(&vm, resultString, startIndex, currentIndex - startIndex);
         JSObject* part = constructEmptyObject(&exec);
-        part->putDirect(vm, typePropertyName, type);
-        part->putDirect(vm, vm.propertyNames->value, value);
+        part->putDirect(vm, typePropertyName, partType);
+        part->putDirect(vm, vm.propertyNames->value, partValue);
         parts->putDirectIndex(&exec, index++, part);
         RETURN_IF_EXCEPTION(scope, { });
-        currentIndex = nextIndex;
     }
-
 
     return parts;
 }

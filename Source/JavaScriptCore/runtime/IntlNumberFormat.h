@@ -95,13 +95,12 @@ private:
     };
 
     struct IntlNumberFormatField {
-        UNumberFormatFields type;
-        int32_t beginIndex { 0 };
-        int32_t endIndex { 0 };
-        int32_t size() const
-        {
-            return endIndex - beginIndex;
-        };
+        int32_t type;
+        int32_t size;
+        IntlNumberFormatField(int32_t type, int32_t size)
+            : type(type)
+            , size(size)
+        { }
     };
 
     static ASCIILiteral partTypeString(UNumberFormatFields, double);
