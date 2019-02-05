@@ -322,6 +322,8 @@ typedef enum {
 + (void)_setIconLoadingEnabled:(BOOL)enabled;
 + (BOOL)_isIconLoadingEnabled;
 
+@property (nonatomic, assign, setter=_setUseDarkAppearance:) BOOL _useDarkAppearance;
+
 - (WebInspector *)inspector;
 
 #if ENABLE_REMOTE_INSPECTOR

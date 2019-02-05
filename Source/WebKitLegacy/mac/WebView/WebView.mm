@@ -2487,6 +2487,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return newWindowWebView;
 }
 
+- (BOOL)_useDarkAppearance
+{
+    if (!_private || !_private->page)
+        return NO;
+    return _private->page->useDarkAppearance();
+}
+
+- (void)_setUseDarkAppearance:(BOOL)useDarkAppearance
+{
+    if (!_private || !_private->page)
+        return;
+    _private->page->setUseDarkAppearance(useDarkAppearance);
+}
+
 + (void)_setIconLoadingEnabled:(BOOL)enabled
 {
     iconLoadingEnabled = enabled;
