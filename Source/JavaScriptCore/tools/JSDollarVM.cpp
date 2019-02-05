@@ -1932,8 +1932,10 @@ static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecSt
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (auto* shadowChicken = vm.shadowChicken())
+    if (auto* shadowChicken = vm.shadowChicken()) {
+        scope.release();
         return JSValue::encode(shadowChicken->functionsOnStack(exec));
+    }
 
     JSArray* result = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -1946,6 +1948,7 @@ static EncodedJSValue JSC_HOST_CALL functionShadowChickenFunctionsOnStack(ExecSt
         scope.releaseAssertNoException(); // This function is only called from tests.
         return StackVisitor::Continue;
     });
+    RETURN_IF_EXCEPTION(scope, { });
     return JSValue::encode(result);
 }
 

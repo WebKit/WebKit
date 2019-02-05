@@ -1,5 +1,13 @@
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, add missing exception checks after r240637
+        https://bugs.webkit.org/show_bug.cgi?id=193546
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionShadowChickenFunctionsOnStack):
+
+2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Shrink size of VM by lazily allocating IsoSubspaces for non-common types
         https://bugs.webkit.org/show_bug.cgi?id=193993
 
