@@ -1,3 +1,83 @@
+2019-02-05  Mark Lam  <mark.lam@apple.com>
+
+        Move DFG nodes that clobberize() says will write(Heap) to the doesGC() list that returns true.
+        https://bugs.webkit.org/show_bug.cgi?id=194298
+        <rdar://problem/47827555>
+
+        Reviewed by Saam Barati.
+
+        We do this for 3 reasons:
+        1. It's clearer when reading doesGC()'s code that these nodes will return true.
+        2. If things change in the future where clobberize() no longer reports these nodes
+           as write(Heap), each node should be vetted first to make sure that it can never
+           GC before being moved back to the doesGC() list that returns false.
+        3. This reduces the list of nodes that we need to audit to make sure doesGC() is
+           correct in its claims about the nodes' GCing possibility.
+
+        The list of nodes moved are:
+
+            ArrayPush
+            ArrayPop
+            Call
+            CallEval
+            CallForwardVarargs
+            CallVarargs
+            Construct
+            ConstructForwardVarargs
+            ConstructVarargs
+            DefineDataProperty
+            DefineAccessorProperty
+            DeleteById
+            DeleteByVal
+            DirectCall
+            DirectConstruct
+            DirectTailCallInlinedCaller
+            GetById
+            GetByIdDirect
+            GetByIdDirectFlush
+            GetByIdFlush
+            GetByIdWithThis
+            GetByValWithThis
+            GetDirectPname
+            GetDynamicVar
+            HasGenericProperty
+            HasOwnProperty
+            HasStructureProperty
+            InById
+            InByVal
+            InstanceOf
+            InstanceOfCustom
+            LoadVarargs
+            NumberToStringWithRadix
+            PutById
+            PutByIdDirect
+            PutByIdFlush
+            PutByIdWithThis
+            PutByOffset
+            PutByValWithThis
+            PutDynamicVar
+            PutGetterById
+            PutGetterByVal
+            PutGetterSetterById
+            PutSetterById
+            PutSetterByVal
+            PutStack
+            PutToArguments
+            RegExpExec
+            RegExpTest
+            ResolveScope
+            ResolveScopeForHoistingFuncDeclInEval
+            TailCall
+            TailCallForwardVarargsInlinedCaller
+            TailCallInlinedCaller
+            TailCallVarargsInlinedCaller
+            ToNumber
+            ToPrimitive
+            ValueNegate
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(UnlinkedCodeBlock)
