@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-enum TriState : int8_t {
+enum TriState : uint8_t {
     FalseTriState,
     TrueTriState,
     MixedTriState

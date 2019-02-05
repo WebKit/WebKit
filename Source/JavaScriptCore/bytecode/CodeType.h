@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum CodeType { GlobalCode, EvalCode, FunctionCode, ModuleCode };
+enum CodeType : uint8_t { GlobalCode, EvalCode, FunctionCode, ModuleCode };
 
 } // namespace JSC
 

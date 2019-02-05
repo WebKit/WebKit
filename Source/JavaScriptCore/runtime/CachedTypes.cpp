@@ -733,39 +733,6 @@ private:
     CachedHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable:: OffsetLocation> m_offsetTable;
 };
 
-class CachedCodeBlockRareData : public CachedObject<UnlinkedCodeBlock::RareData> {
-public:
-    void encode(Encoder& encoder, const UnlinkedCodeBlock::RareData& rareData)
-    {
-        m_exceptionHandlers.encode(encoder, rareData.m_exceptionHandlers);
-        m_switchJumpTables.encode(encoder, rareData.m_switchJumpTables);
-        m_stringSwitchJumpTables.encode(encoder, rareData.m_stringSwitchJumpTables);
-        m_expressionInfoFatPositions.encode(encoder, rareData.m_expressionInfoFatPositions);
-        m_typeProfilerInfoMap.encode(encoder, rareData.m_typeProfilerInfoMap);
-        m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
-    }
-
-    UnlinkedCodeBlock::RareData* decode(Decoder& decoder) const
-    {
-        UnlinkedCodeBlock::RareData* rareData = new UnlinkedCodeBlock::RareData { };
-        m_exceptionHandlers.decode(decoder, rareData->m_exceptionHandlers);
-        m_switchJumpTables.decode(decoder, rareData->m_switchJumpTables);
-        m_stringSwitchJumpTables.decode(decoder, rareData->m_stringSwitchJumpTables);
-        m_expressionInfoFatPositions.decode(decoder, rareData->m_expressionInfoFatPositions);
-        m_typeProfilerInfoMap.decode(decoder, rareData->m_typeProfilerInfoMap);
-        m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
-        return rareData;
-    }
-
-private:
-    CachedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
-    CachedVector<CachedSimpleJumpTable> m_switchJumpTables;
-    CachedVector<CachedStringJumpTable> m_stringSwitchJumpTables;
-    CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
-    CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-    CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
-};
-
 class CachedBitVector : public VariableLengthObject<BitVector> {
 public:
     void encode(Encoder& encoder, const BitVector& bitVector)
@@ -826,6 +793,45 @@ public:
 private:
     unsigned m_constant;
     CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash> m_set;
+};
+
+class CachedCodeBlockRareData : public CachedObject<UnlinkedCodeBlock::RareData> {
+public:
+    void encode(Encoder& encoder, const UnlinkedCodeBlock::RareData& rareData)
+    {
+        m_exceptionHandlers.encode(encoder, rareData.m_exceptionHandlers);
+        m_switchJumpTables.encode(encoder, rareData.m_switchJumpTables);
+        m_stringSwitchJumpTables.encode(encoder, rareData.m_stringSwitchJumpTables);
+        m_expressionInfoFatPositions.encode(encoder, rareData.m_expressionInfoFatPositions);
+        m_typeProfilerInfoMap.encode(encoder, rareData.m_typeProfilerInfoMap);
+        m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
+        m_bitVectors.encode(encoder, rareData.m_bitVectors);
+        m_constantIdentifierSets.encode(encoder, rareData.m_constantIdentifierSets);
+    }
+
+    UnlinkedCodeBlock::RareData* decode(Decoder& decoder) const
+    {
+        UnlinkedCodeBlock::RareData* rareData = new UnlinkedCodeBlock::RareData { };
+        m_exceptionHandlers.decode(decoder, rareData->m_exceptionHandlers);
+        m_switchJumpTables.decode(decoder, rareData->m_switchJumpTables);
+        m_stringSwitchJumpTables.decode(decoder, rareData->m_stringSwitchJumpTables);
+        m_expressionInfoFatPositions.decode(decoder, rareData->m_expressionInfoFatPositions);
+        m_typeProfilerInfoMap.decode(decoder, rareData->m_typeProfilerInfoMap);
+        m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
+        m_bitVectors.decode(decoder, rareData->m_bitVectors);
+        m_constantIdentifierSets.decode(decoder, rareData->m_constantIdentifierSets);
+        return rareData;
+    }
+
+private:
+    CachedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
+    CachedVector<CachedSimpleJumpTable> m_switchJumpTables;
+    CachedVector<CachedStringJumpTable> m_stringSwitchJumpTables;
+    CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
+    CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
+    CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+    CachedVector<CachedBitVector> m_bitVectors;
+    CachedVector<CachedConstantIdentifierSetEntry> m_constantIdentifierSets;
 };
 
 class CachedVariableEnvironment : public CachedObject<VariableEnvironment> {
@@ -1472,7 +1478,6 @@ public:
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
-    VirtualRegister globalObjectRegister() const { return m_globalObjectRegister; }
 
     String sourceURLDirective(Decoder& decoder) const { return m_sourceURLDirective.decode(decoder); }
     String sourceMappingURLDirective(Decoder& decoder) const { return m_sourceMappingURLDirective.decode(decoder); }
@@ -1502,14 +1507,14 @@ public:
 
     CodeFeatures features() const { return m_features; }
     SourceParseMode parseMode() const { return m_parseMode; }
-    CodeType codeType() const { return m_codeType; }
+    unsigned codeType() const { return m_codeType; }
 
     UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decodeAsPtr(decoder); }
 
 private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
-    VirtualRegister m_globalObjectRegister;
+    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
 
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;
@@ -1525,6 +1530,10 @@ private:
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
     unsigned m_hasTailCalls : 1;
+    unsigned m_codeType : 2;
+
+    CodeFeatures m_features;
+    SourceParseMode m_parseMode;
 
     unsigned m_lineCount;
     unsigned m_endColumn;
@@ -1533,11 +1542,6 @@ private:
     int m_numCalleeLocals;
     int m_numParameters;
 
-    CodeFeatures m_features;
-    SourceParseMode m_parseMode;
-    CodeType m_codeType;
-
-    std::array<unsigned, LinkTimeConstantCount> m_linkTimeConstants;
     CachedMetadataTable m_metadata;
 
     CachedOptional<CachedCodeBlockRareData> m_rareData;
@@ -1553,9 +1557,7 @@ private:
     CachedVector<ExpressionRangeInfo> m_expressionInfo;
     CachedHashMap<InstructionStream::Offset, int> m_outOfLineJumpTargets;
 
-    CachedVector<CachedConstantIdentifierSetEntry> m_constantIdentifierSets;
     CachedVector<CachedIdentifier> m_identifiers;
-    CachedVector<CachedBitVector> m_bitVectors;
     CachedVector<CachedWriteBarrier<CachedFunctionExecutable>> m_functionDecls;
     CachedVector<CachedWriteBarrier<CachedFunctionExecutable>> m_functionExprs;
 };
@@ -1691,16 +1693,8 @@ using CachedCodeBlockType = typename CachedCodeBlockTypeImpl<T>::type;
 template<typename CodeBlockType>
 ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* structure, const CachedCodeBlock<CodeBlockType>& cachedCodeBlock)
     : Base(decoder.vm(), structure)
-    , m_instructions(cachedCodeBlock.instructions(decoder))
-    , m_liveness(nullptr)
     , m_thisRegister(cachedCodeBlock.thisRegister())
     , m_scopeRegister(cachedCodeBlock.scopeRegister())
-    , m_globalObjectRegister(cachedCodeBlock.globalObjectRegister())
-
-    , m_sourceURLDirective(cachedCodeBlock.sourceURLDirective(decoder))
-    , m_sourceMappingURLDirective(cachedCodeBlock.sourceMappingURLDirective(decoder))
-
-    , m_metadata(cachedCodeBlock.metadata(decoder))
 
     , m_usesEval(cachedCodeBlock.usesEval())
     , m_isStrictMode(cachedCodeBlock.isStrictMode())
@@ -1716,14 +1710,23 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_derivedContextType(cachedCodeBlock.derivedContextType())
     , m_evalContextType(cachedCodeBlock.evalContextType())
     , m_hasTailCalls(cachedCodeBlock.hasTailCalls())
+    , m_codeType(cachedCodeBlock.codeType())
+
+    , m_features(cachedCodeBlock.features())
+    , m_parseMode(cachedCodeBlock.parseMode())
+
     , m_lineCount(cachedCodeBlock.lineCount())
     , m_endColumn(cachedCodeBlock.endColumn())
     , m_numVars(cachedCodeBlock.numVars())
     , m_numCalleeLocals(cachedCodeBlock.numCalleeLocals())
     , m_numParameters(cachedCodeBlock.numParameters())
-    , m_features(cachedCodeBlock.features())
-    , m_parseMode(cachedCodeBlock.parseMode())
-    , m_codeType(cachedCodeBlock.codeType())
+
+    , m_sourceURLDirective(cachedCodeBlock.sourceURLDirective(decoder))
+    , m_sourceMappingURLDirective(cachedCodeBlock.sourceMappingURLDirective(decoder))
+
+    , m_metadata(cachedCodeBlock.metadata(decoder))
+    , m_instructions(cachedCodeBlock.instructions(decoder))
+
     , m_rareData(cachedCodeBlock.rareData(decoder))
 {
 }
@@ -1740,9 +1743,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, Unli
     m_expressionInfo.decode(decoder, codeBlock.m_expressionInfo);
     m_outOfLineJumpTargets.decode(decoder, codeBlock.m_outOfLineJumpTargets);
     m_jumpTargets.decode(decoder, codeBlock.m_jumpTargets);
-    m_constantIdentifierSets.decode(decoder, codeBlock.m_constantIdentifierSets);
     m_identifiers.decode(decoder, codeBlock.m_identifiers);
-    m_bitVectors.decode(decoder, codeBlock.m_bitVectors);
     m_functionDecls.decode(decoder, codeBlock.m_functionDecls, &codeBlock);
     m_functionExprs.decode(decoder, codeBlock.m_functionExprs, &codeBlock);
 }
@@ -1856,7 +1857,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
 {
     m_thisRegister = codeBlock.m_thisRegister;
     m_scopeRegister = codeBlock.m_scopeRegister;
-    m_globalObjectRegister = codeBlock.m_globalObjectRegister;
     m_usesEval = codeBlock.m_usesEval;
     m_isStrictMode = codeBlock.m_isStrictMode;
     m_isConstructor = codeBlock.m_isConstructor;
@@ -1897,9 +1897,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_jumpTargets.encode(encoder, codeBlock.m_jumpTargets);
     m_outOfLineJumpTargets.encode(encoder, codeBlock.m_outOfLineJumpTargets);
 
-    m_constantIdentifierSets.encode(encoder, codeBlock.m_constantIdentifierSets);
     m_identifiers.encode(encoder, codeBlock.m_identifiers);
-    m_bitVectors.encode(encoder, codeBlock.m_bitVectors);
     m_functionDecls.encode(encoder, codeBlock.m_functionDecls);
     m_functionExprs.encode(encoder, codeBlock.m_functionExprs);
 }

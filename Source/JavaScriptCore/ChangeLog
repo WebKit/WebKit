@@ -1,3 +1,53 @@
+2019-02-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink sizeof(UnlinkedCodeBlock)
+        https://bugs.webkit.org/show_bug.cgi?id=194281
+
+        Reviewed by Michael Saboff.
+
+        This patch first attempts to reduce the size of UnlinkedCodeBlock in a relatively simpler way. Reordering members, remove unused member, and
+        move rarely used members to RareData. This changes sizeof(UnlinkedCodeBlock) from 312 to 256.
+
+        Still we have several chances to reduce sizeof(UnlinkedCodeBlock). Making more Vectors to RefCountedArrays can be done with some restructuring
+        of generatorification phase. It would be possible to remove m_sourceURLDirective and m_sourceMappingURLDirective from UnlinkedCodeBlock since
+        they should be in SourceProvider and that should be enough. These changes require some intrusive modifications and we make them as a future work.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bitVectors const): Deleted.
+        * bytecode/CodeType.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::bitVector):
+        (JSC::UnlinkedCodeBlock::addBitVector):
+        (JSC::UnlinkedCodeBlock::addSetConstant):
+        (JSC::UnlinkedCodeBlock::constantRegisters):
+        (JSC::UnlinkedCodeBlock::numberOfConstantIdentifierSets const):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        (JSC::UnlinkedCodeBlock::codeType const):
+        (JSC::UnlinkedCodeBlock::didOptimize const):
+        (JSC::UnlinkedCodeBlock::setDidOptimize):
+        (JSC::UnlinkedCodeBlock::usesGlobalObject const): Deleted.
+        (JSC::UnlinkedCodeBlock::setGlobalObjectRegister): Deleted.
+        (JSC::UnlinkedCodeBlock::globalObjectRegister const): Deleted.
+        (JSC::UnlinkedCodeBlock::bitVectors const): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+        (JSC::CachedCodeBlock::scopeRegister const):
+        (JSC::CachedCodeBlock::codeType const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::decode const):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedCodeBlock::globalObjectRegister const): Deleted.
+
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add missing exception checks after r240637

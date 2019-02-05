@@ -416,12 +416,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
     RETURN_IF_EXCEPTION(throwScope, false);
 
-    setConstantIdentifierSetRegisters(vm, unlinkedCodeBlock->constantIdentifierSets());
-    RETURN_IF_EXCEPTION(throwScope, false);
-
-    if (unlinkedCodeBlock->usesGlobalObject())
-        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(vm, this, m_globalObject.get());
-
     for (unsigned i = 0; i < LinkTimeConstantCount; i++) {
         LinkTimeConstant type = static_cast<LinkTimeConstant>(i);
         if (unsigned registerIndex = unlinkedCodeBlock->registerIndexForLinkTimeConstant(type))
@@ -458,6 +452,10 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     if (unlinkedCodeBlock->hasRareData()) {
         createRareDataIfNecessary();
+
+        setConstantIdentifierSetRegisters(vm, unlinkedCodeBlock->constantIdentifierSets());
+        RETURN_IF_EXCEPTION(throwScope, false);
+
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
             m_rareData->m_exceptionHandlers.resizeToFit(count);
             for (size_t i = 0; i < count; i++) {

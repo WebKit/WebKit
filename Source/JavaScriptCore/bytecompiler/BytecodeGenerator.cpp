@@ -1869,11 +1869,13 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
 {
-    for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
-        if (entry.first != set)
-            continue;
-        
-        return &m_constantPoolRegisters[entry.second];
+    if (m_codeBlock->numberOfConstantIdentifierSets()) {
+        for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
+            if (entry.first != set)
+                continue;
+            
+            return &m_constantPoolRegisters[entry.second];
+        }
     }
     
     unsigned index = addConstantIndex();
@@ -1884,19 +1886,6 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
         return move(dst, m_setRegister);
     
     return m_setRegister;
-}
-
-RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
-{
-    if (!m_globalObjectRegister) {
-        int index = addConstantIndex();
-        m_codeBlock->addConstant(JSValue());
-        m_globalObjectRegister = &m_constantPoolRegisters[index];
-        m_codeBlock->setGlobalObjectRegister(VirtualRegister(index));
-    }
-    if (dst)
-        move(dst, m_globalObjectRegister);
-    return m_globalObjectRegister;
 }
 
 template<typename LookUpVarKindFunctor>
