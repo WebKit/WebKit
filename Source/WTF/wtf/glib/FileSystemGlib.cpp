@@ -34,6 +34,7 @@
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -42,42 +43,62 @@ namespace WTF {
 
 namespace FileSystemImpl {
 
-/* On linux file names are just raw bytes, so also strings that cannot be encoded in any way
- * are valid file names. This mean that we cannot just store a file name as-is in a String
- * but we have to escape it.
- * On Windows the GLib file name encoding is always UTF-8 so we can optimize this case. */
-String stringFromFileSystemRepresentation(const char* fileSystemRepresentation)
+String stringFromFileSystemRepresentation(const char* representation)
 {
-    if (!fileSystemRepresentation)
-        return String();
+    if (!representation)
+        return { };
 
-#if OS(WINDOWS)
-    return String::fromUTF8(fileSystemRepresentation);
-#else
-    GUniquePtr<gchar> escapedString(g_uri_escape_string(fileSystemRepresentation, "/:", FALSE));
-    return escapedString.get();
-#endif
-}
+    // Short-cut to String creation when only ASCII characters are used.
+    size_t representationLength = strlen(representation);
+    if (charactersAreAllASCII(reinterpret_cast<const LChar*>(representation), representationLength))
+        return String(representation, representationLength);
 
-static GUniquePtr<char> unescapedFilename(const String& path)
-{
-    if (path.isEmpty())
-        return nullptr;
-#if OS(WINDOWS)
-    return GUniquePtr<char>(g_strdup(path.utf8().data()));
-#else
-    return GUniquePtr<char>(g_uri_unescape_string(path.utf8().data(), nullptr));
-#endif
+    // If the returned charset is UTF-8 (i.e. g_get_filename_charsets() returns true),
+    // go directly to String creation.
+    const gchar** filenameCharsets = nullptr;
+    if (g_get_filename_charsets(&filenameCharsets))
+        return String::fromUTF8(representation, representationLength);
+
+    ASSERT(filenameCharsets);
+    // FIXME: If possible, we'd want to convert directly to UTF-16 and construct
+    // WTF::String object with resulting data.
+    size_t utf8Length = 0;
+    GUniquePtr<gchar> utf8(g_convert(representation, representationLength,
+        "UTF-8", filenameCharsets[0], nullptr, &utf8Length, nullptr));
+    if (!utf8)
+        return { };
+
+    return String::fromUTF8(utf8.get(), utf8Length);
 }
 
 CString fileSystemRepresentation(const String& path)
 {
-#if OS(WINDOWS)
-    return path.utf8();
-#else
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    return filename.get();
-#endif
+    if (path.isEmpty())
+        return { };
+
+    CString utf8 = path.utf8();
+
+    // If the returned charset is UTF-8 (i.e. g_get_filename_charsets() returns true),
+    // simply return the CString object.
+    const gchar** filenameCharsets = nullptr;
+    if (g_get_filename_charsets(&filenameCharsets))
+        return utf8;
+
+    ASSERT(filenameCharsets);
+    // FIXME: If possible, we'd want to convert directly from WTF::String's UTF-16 data.
+    size_t representationLength = 0;
+    GUniquePtr<gchar> representation(g_convert(utf8.data(), utf8.length(),
+        filenameCharsets[0], "UTF-8", nullptr, &representationLength, nullptr));
+    if (!representation)
+        return { };
+
+    return CString(representation.get(), representationLength);
+}
+
+bool validRepresentation(const CString& representation)
+{
+    auto* data = representation.data();
+    return !!data && data[0] != '\0';
 }
 
 // Converts a string to something suitable to be displayed to the user.
@@ -86,52 +107,51 @@ String filenameForDisplay(const String& string)
 #if OS(WINDOWS)
     return string;
 #else
-    GUniquePtr<gchar> filename = unescapedFilename(string);
-    if (!filename)
+    auto filename = fileSystemRepresentation(string);
+    if (!validRepresentation(filename))
         return string;
 
-    GUniquePtr<gchar> display(g_filename_to_utf8(filename.get(), -1, nullptr, nullptr, nullptr));
+    GUniquePtr<gchar> display(g_filename_display_name(filename.data()));
     if (!display)
         return string;
-
     return String::fromUTF8(display.get());
 #endif
 }
 
 bool fileExists(const String& path)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    return filename ? g_file_test(filename.get(), G_FILE_TEST_EXISTS) : false;
+    auto filename = fileSystemRepresentation(path);
+    return validRepresentation(filename) ? g_file_test(filename.data(), G_FILE_TEST_EXISTS) : false;
 }
 
 bool deleteFile(const String& path)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    return filename ? g_remove(filename.get()) != -1 : false;
+    auto filename = fileSystemRepresentation(path);
+    return validRepresentation(filename) ? g_remove(filename.data()) != -1 : false;
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    return filename ? g_rmdir(filename.get()) != -1 : false;
+    auto filename = fileSystemRepresentation(path);
+    return validRepresentation(filename) ? g_rmdir(filename.data()) != -1 : false;
 }
 
 static bool getFileStat(const String& path, GStatBuf* statBuffer)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return false;
 
-    return g_stat(filename.get(), statBuffer) != -1;
+    return g_stat(filename.data(), statBuffer) != -1;
 }
 
 static bool getFileLStat(const String& path, GStatBuf* statBuffer)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return false;
 
-    return g_lstat(filename.get(), statBuffer) != -1;
+    return g_lstat(filename.data(), statBuffer) != -1;
 }
 
 bool getFileSize(const String& path, long long& resultSize)
@@ -225,8 +245,8 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 bool makeAllDirectories(const String& path)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    return filename ? g_mkdir_with_parents(filename.get(), S_IRWXU) != -1 : false;
+    auto filename = fileSystemRepresentation(path);
+    return validRepresentation(filename) ? g_mkdir_with_parents(filename.data(), S_IRWXU) != -1 : false;
 }
 
 String homeDirectoryPath()
@@ -237,33 +257,33 @@ String homeDirectoryPath()
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
 {
     CString targetPathFSRep = fileSystemRepresentation(targetPath);
-    if (!targetPathFSRep.data() || targetPathFSRep.data()[0] == '\0')
+    if (!validRepresentation(targetPathFSRep))
         return false;
 
     CString symbolicLinkPathFSRep = fileSystemRepresentation(symbolicLinkPath);
-    if (!symbolicLinkPathFSRep.data() || symbolicLinkPathFSRep.data()[0] == '\0')
+    if (!validRepresentation(symbolicLinkPathFSRep))
         return false;
 
     return !symlink(targetPathFSRep.data(), symbolicLinkPathFSRep.data());
 }
 
-String pathGetFileName(const String& pathName)
+String pathGetFileName(const String& path)
 {
-    GUniquePtr<gchar> tmpFilename = unescapedFilename(pathName);
-    if (!tmpFilename)
-        return pathName;
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
+        return path;
 
-    GUniquePtr<gchar> baseName(g_path_get_basename(tmpFilename.get()));
+    GUniquePtr<gchar> baseName(g_path_get_basename(filename.data()));
     return String::fromUTF8(baseName.get());
 }
 
 bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return false;
 
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_FILESYSTEM_FREE, 0, 0));
     if (!fileInfo)
         return false;
@@ -274,11 +294,11 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 
 String directoryName(const String& path)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return String();
 
-    GUniquePtr<char> dirname(g_path_get_dirname(filename.get()));
+    GUniquePtr<char> dirname(g_path_get_dirname(filename.data()));
     return String::fromUTF8(dirname.get());
 }
 
@@ -286,11 +306,11 @@ Vector<String> listDirectory(const String& path, const String& filter)
 {
     Vector<String> entries;
 
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return entries;
 
-    GUniquePtr<GDir> dir(g_dir_open(filename.get(), 0, nullptr));
+    GUniquePtr<GDir> dir(g_dir_open(filename.data(), 0, nullptr));
     if (!dir)
         return entries;
 
@@ -299,7 +319,7 @@ Vector<String> listDirectory(const String& path, const String& filter)
         if (!g_pattern_match_string(pspec.get(), name))
             continue;
 
-        GUniquePtr<gchar> entry(g_build_filename(filename.get(), name, nullptr));
+        GUniquePtr<gchar> entry(g_build_filename(filename.data(), name, nullptr));
         entries.append(stringFromFileSystemRepresentation(entry.get()));
     }
 
@@ -320,16 +340,16 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(path);
-    if (!filename)
+    auto filename = fileSystemRepresentation(path);
+    if (!validRepresentation(filename))
         return invalidPlatformFileHandle;
 
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
     GFileIOStream* ioStream = 0;
     if (mode == FileOpenMode::Read)
         ioStream = g_file_open_readwrite(file.get(), 0, 0);
     else if (mode == FileOpenMode::Write) {
-        if (g_file_test(filename.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
+        if (g_file_test(filename.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
             ioStream = g_file_open_readwrite(file.get(), 0, 0);
         else
             ioStream = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
@@ -395,16 +415,16 @@ int readFromFile(PlatformFileHandle handle, char* data, int length)
 
 bool moveFile(const String& oldPath, const String& newPath)
 {
-    GUniquePtr<gchar> oldFilename = unescapedFilename(oldPath);
-    if (!oldFilename)
+    auto oldFilename = fileSystemRepresentation(oldPath);
+    if (!validRepresentation(oldFilename))
         return false;
 
-    GUniquePtr<gchar> newFilename = unescapedFilename(newPath);
-    if (!newFilename)
+    auto newFilename = fileSystemRepresentation(newPath);
+    if (!validRepresentation(newFilename))
         return false;
 
-    GRefPtr<GFile> oldFile = adoptGRef(g_file_new_for_path(oldFilename.get()));
-    GRefPtr<GFile> newFile = adoptGRef(g_file_new_for_path(newFilename.get()));
+    GRefPtr<GFile> oldFile = adoptGRef(g_file_new_for_path(oldFilename.data()));
+    GRefPtr<GFile> newFile = adoptGRef(g_file_new_for_path(newFilename.data()));
 
     return g_file_move(oldFile.get(), newFile.get(), G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, nullptr);
 }
@@ -414,31 +434,27 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
 #if OS(WINDOWS)
     return !!::CopyFile(source.charactersWithNullTermination().data(), destination.charactersWithNullTermination().data(), TRUE);
 #else
-    GUniquePtr<gchar> sourceFilename = unescapedFilename(source);
-    if (!sourceFilename)
+    auto sourceFilename = fileSystemRepresentation(source);
+    if (!validRepresentation(sourceFilename))
         return false;
 
-    GUniquePtr<gchar> destinationFilename = unescapedFilename(destination);
-    if (!destinationFilename)
+    auto destinationFilename = fileSystemRepresentation(destination);
+    if (!validRepresentation(destinationFilename))
         return false;
 
-    if (!link(sourceFilename.get(), destinationFilename.get()))
+    if (!link(sourceFilename.data(), destinationFilename.data()))
         return true;
 
     // Hard link failed. Perform a copy instead.
-    GRefPtr<GFile> sourceFile = adoptGRef(g_file_new_for_path(sourceFilename.get()));
-    GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_path(destinationFilename.get()));
+    GRefPtr<GFile> sourceFile = adoptGRef(g_file_new_for_path(sourceFilename.data()));
+    GRefPtr<GFile> destinationFile = adoptGRef(g_file_new_for_path(destinationFilename.data()));
     return g_file_copy(sourceFile.get(), destinationFile.get(), G_FILE_COPY_NONE, nullptr, nullptr, nullptr, nullptr);
 #endif
 }
 
 Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
-    GUniquePtr<gchar> filename = unescapedFilename(fsFile.data());
-    if (!filename)
-        return WTF::nullopt;
-
-    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(fsFile.data()));
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE, nullptr, nullptr));
     if (!fileInfo)
         return WTF::nullopt;

@@ -1,3 +1,53 @@
+2019-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Stop URI-escaping file system representations
+        https://bugs.webkit.org/show_bug.cgi?id=194213
+
+        Reviewed by Carlos Garcia Campos.
+
+        Stop URI-escaping of file representation strings in
+        FileSystem::stringFromFileSystemRepresentation(), and URI-unescaping
+        of strings in FileSystem::fileSystemRepresentation().
+
+        This behavior deviates from POSIX and CF implementations and is
+        currently breaking IndexedDB-specific calculation of database sizes due
+        to directory components used in that process that are URL-based and are
+        as such URI-escaped. When unescaped, those single directory components
+        explode into multiple directory components, leading to incorrect total
+        database size calculation when iterating the database directory.
+
+        FileSystem::stringFromFileSystemRepresentation() now retrieves GLib's
+        filename charsets and in worst case converts the filesystem
+        representation to UTF-8 before String::fromUTF8() is used.
+        FileSystem::fileSystemRepresentation() reverses that process, taking
+        String's UTF-8 data and converting it to target charset if necessary.
+
+        Other FileSystem functions are adjusted to convert passed-in String
+        objects to filesystem representations.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::stringFromFileSystemRepresentation):
+        (WTF::FileSystemImpl::fileSystemRepresentation):
+        (WTF::FileSystemImpl::validRepresentation):
+        (WTF::FileSystemImpl::filenameForDisplay):
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        (WTF::FileSystemImpl::getFileStat):
+        (WTF::FileSystemImpl::getFileLStat):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::createSymbolicLink):
+        (WTF::FileSystemImpl::pathGetFileName):
+        (WTF::FileSystemImpl::getVolumeFreeSpace):
+        (WTF::FileSystemImpl::directoryName):
+        (WTF::FileSystemImpl::listDirectory):
+        (WTF::FileSystemImpl::openFile):
+        (WTF::FileSystemImpl::moveFile):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        (WTF::FileSystemImpl::getFileDeviceId): Align with POSIX implementation
+        and treat input CString as an existing filesystem representation.
+        (WTF::FileSystemImpl::unescapedFilename): Deleted.
+
 2019-02-04  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI
