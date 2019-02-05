@@ -812,8 +812,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             if (treeElement) {
                 if (treeElement.listItemElement)
                     treeElement.listItemElement.classList.remove("selected");
-                if (!this._suppressNextSelectionDidChangeEvent)
-                    treeElement.deselect();
+                treeElement.deselect();
             }
         }
 
@@ -823,8 +822,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             if (treeElement) {
                 if (treeElement.listItemElement)
                     treeElement.listItemElement.classList.add("selected");
-                if (!this._suppressNextSelectionDidChangeEvent)
-                    treeElement.select();
+                const omitFocus = true;
+                treeElement.select(omitFocus);
             }
         }
 
