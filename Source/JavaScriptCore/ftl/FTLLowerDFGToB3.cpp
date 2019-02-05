@@ -3111,8 +3111,9 @@ private:
         if (!validationEnabled())
             return;
 
+        LValue val = lowJSValue(m_node->child1());
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
-        patchpoint->appendSomeRegister(lowJSValue(m_node->child1()));
+        patchpoint->appendSomeRegister(val);
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);

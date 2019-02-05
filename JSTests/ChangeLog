@@ -1,3 +1,17 @@
+2019-02-04  Robin Morisset  <rmorisset@apple.com>
+
+        when lowering AssertNotEmpty, create the value before creating the patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=194231
+
+        Reviewed by Saam Barati.
+
+        This test is painfully fragile: it tries to test that AssertNotEmpty on a constant produces valid B3 IR.
+        The problem is that AssertNotEmpty is only created by DFGConstantFolding when it can simplify a CheckStructure, and constant folding is a bit capricious (https://bugs.webkit.org/show_bug.cgi?id=133947)
+        So even tiny changes to this test can change the path code taken.
+
+        * stress/assert-not-empty.js: Added.
+        (foo):
+
 2019-02-01  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid assertion in DFG's compileDoubleRep().

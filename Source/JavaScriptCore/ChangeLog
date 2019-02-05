@@ -1,3 +1,16 @@
+2019-02-04  Robin Morisset  <rmorisset@apple.com>
+
+        when lowering AssertNotEmpty, create the value before creating the patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=194231
+
+        Reviewed by Saam Barati.
+
+        This is a very simple change: we should never generate B3 IR where an instruction depends on a value that comes later in the instruction stream.
+        AssertNotEmpty was generating some such IR, it probably slipped through until now because it is a rather rare and tricky instruction to generate.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertNotEmpty):
+
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ExecutableToCodeBlockEdge should be smaller
