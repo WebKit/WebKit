@@ -159,8 +159,3 @@ int XPCServiceMain(int, const char**)
 }
 
 } // namespace WebKit
-
-int main(int argc, const char** argv)
-{
-    return WebKit::XPCServiceMain(argc, argv);
-}

@@ -116,6 +116,7 @@ $(SRCROOT)/Shared/API/APIPageGroupHandle.cpp
 $(SRCROOT)/Shared/API/APIPageHandle.cpp
 $(SRCROOT)/Shared/API/APIURLRequest.cpp
 $(SRCROOT)/Shared/API/APIURLResponse.cpp
+$(SRCROOT)/Shared/API/Cocoa/WKMain.mm
 $(SRCROOT)/Shared/API/Cocoa/RemoteObjectInvocation.mm
 $(SRCROOT)/Shared/API/Cocoa/RemoteObjectRegistry.mm
 $(SRCROOT)/Shared/API/Cocoa/WKBrowsingContextHandle.mm

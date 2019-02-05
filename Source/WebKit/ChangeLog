@@ -1,5 +1,26 @@
 2019-02-04  Alex Christensen  <achristensen@webkit.org>
 
+        Move XPCService main to a shared file calling a C function
+        https://bugs.webkit.org/show_bug.cgi?id=194256
+
+        Reviewed by Brady Eidson.
+
+        This not only reduces a few kilobytes of duplicated binary from the XPCService executables,
+        It will allow me to introduce a new kind of executable which will need to parse argv and call a different C function.
+        This is similar to r236075 but more general.
+
+        * Shared/API/Cocoa/WKMain.h: Added.
+        * Shared/API/Cocoa/WKMain.mm: Added.
+        (WKXPCServiceMain):
+        * Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp: Added.
+        (main):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (main): Deleted.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-02-04  Alex Christensen  <achristensen@webkit.org>
+
         Make MessageSender functions const
         https://bugs.webkit.org/show_bug.cgi?id=194247
 
