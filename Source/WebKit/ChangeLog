@@ -1,3 +1,12 @@
+2019-02-05  Brady Eidson  <beidson@apple.com>
+
+        Fix iOS simulator build after r240954
+
+        Unreviewed.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion): Implement the new constructor.
+
 2019-02-05  Alex Christensen  <achristensen@webkit.org>
 
         Stop using blobRegistry in NetworkProcess

@@ -286,6 +286,11 @@ ProcessAssertion::ProcessAssertion(pid_t, AssertionState assertionState, Functio
 {
 }
 
+ProcessAssertion::ProcessAssertion(pid_t, const String&, AssertionState assertionState, Function<void()>&&)
+    : m_assertionState(assertionState)
+{
+}
+
 ProcessAssertion::~ProcessAssertion()
 {
 }
