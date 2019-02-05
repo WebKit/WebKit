@@ -29,6 +29,8 @@ class BuilderMapping(models.Model):
     builder_id = models.IntegerField(primary_key=True)
     builder_name = models.TextField()
     display_name = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return "{}: {}".format(self.builder_id, self.name)
