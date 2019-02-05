@@ -1,3 +1,12 @@
+2019-02-04  Shawn Roberts  <sroberts@apple.com>
+
+        [iOS Simulator] pageoverlay/overlay tests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=153337
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2019-02-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: fix race conditions when editing

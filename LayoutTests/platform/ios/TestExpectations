@@ -3206,3 +3206,7 @@ webkit.org/b/192398 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/191704 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 
 webkit.org/b/193955 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Skip ]
+
+webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
+webkit.org/b/153337 pageoverlay/overlay-large-document-scrolled.html [ Pass Failure ]
+webkit.org/b/153337 pageoverlay/overlay-large-document.html [ Pass Failure ]
