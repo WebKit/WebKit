@@ -71,13 +71,6 @@ void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::uni
     ASSERT(!m_downloads.contains(downloadID));
     m_downloadsAfterDestinationDecided.remove(downloadID);
     m_downloads.add(downloadID, WTFMove(download));
-
-#if ENABLE(TAKE_DOWNLOAD_ASSERTION)
-    if (m_downloads.size() == 1) {
-        ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::Download);
-    }
-#endif
 }
 
 void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
@@ -180,12 +173,6 @@ void DownloadManager::downloadFinished(Download* download)
     ASSERT(m_downloads.contains(download->downloadID()));
     m_downloads.remove(download->downloadID());
     
-#if ENABLE(TAKE_DOWNLOAD_ASSERTION)
-    if (m_downloads.isEmpty()) {
-        ASSERT(m_downloadAssertion);
-        m_downloadAssertion = nullptr;
-    }
-#endif
 }
 
 void DownloadManager::didCreateDownload()

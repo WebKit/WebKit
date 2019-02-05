@@ -48,6 +48,7 @@ NetworkProcess/Cookies/WebCookieManager.cpp
 
 NetworkProcess/Downloads/Download.cpp
 NetworkProcess/Downloads/DownloadManager.cpp
+NetworkProcess/Downloads/DownloadMap.cpp
 NetworkProcess/Downloads/PendingDownload.cpp
 
 NetworkProcess/FileAPI/NetworkBlobRegistry.cpp

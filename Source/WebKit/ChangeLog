@@ -1,5 +1,38 @@
 2019-02-05  Brady Eidson  <beidson@apple.com>
 
+        Add a new DownloadMap type that manages taking an assertion automatically.
+        https://bugs.webkit.org/show_bug.cgi?id=194294
+
+        Reviewed by Alex Christensen.
+
+        If we don't need the download assertion, we use a vanilla HashMap like today.
+        If we need the download assertion, we use the new DownloadMap class instead.
+
+        The new DownloadMap is a wrapper around a HashMap that also creates/destroys the assertion as needed.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+        (WebKit::DownloadManager::downloadFinished):
+        * NetworkProcess/Downloads/DownloadManager.h:
+
+        * NetworkProcess/Downloads/DownloadMap.cpp: Added.
+        (WebKit::DownloadMap::get const):
+        (WebKit::DownloadMap::isEmpty const):
+        (WebKit::DownloadMap::size const):
+        (WebKit::DownloadMap::contains const):
+        (WebKit::DownloadMap::add):
+        (WebKit::DownloadMap::remove):
+        * NetworkProcess/Downloads/DownloadMap.h: Added.
+
+        * Sources.txt:
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-02-05  Brady Eidson  <beidson@apple.com>
+
         Fix iOS simulator build after r240954
 
         Unreviewed.

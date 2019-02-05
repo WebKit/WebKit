@@ -192,7 +192,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState
             });
         }
     };
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d", this, getpid(), pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d, name '%s'", this, getpid(), pid, name.utf8().data());
     
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:reasonForState(assertionState) name:(NSString *)name withHandler:handler]);
     m_assertion.get().invalidationHandler = ^() {
