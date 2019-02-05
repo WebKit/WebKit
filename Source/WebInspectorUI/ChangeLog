@@ -1,5 +1,17 @@
 2019-02-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'classes.includes')
+        https://bugs.webkit.org/show_bug.cgi?id=194280
+        <rdar://problem/47811159>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.js:
+        (WI.GeneralStyleDetailsSidebarPanel.prototype._populateClassToggles):
+        Add a fallback value in case the `class` attribute isn't specified for the selected node.
+
+2019-02-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Resources: missing resource data for document on reload
         https://bugs.webkit.org/show_bug.cgi?id=194243
         <rdar://problem/47559021>

@@ -359,7 +359,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         while (this._classListContainer.children.length > 1)
             this._classListContainer.children[1].remove();
 
-        let classes = this.domNode.getAttribute("class");
+        let classes = this.domNode.getAttribute("class") || [];
         let classToggledMap = this.domNode[WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol];
         if (!classToggledMap)
             classToggledMap = this.domNode[WI.GeneralStyleDetailsSidebarPanel.ToggledClassesSymbol] = new Map;
