@@ -1,5 +1,18 @@
 2019-02-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION: Resources: WI.TreeOutline assertions when refreshing the page
+        https://bugs.webkit.org/show_bug.cgi?id=194242
+        <rdar://problem/47802027>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WI.FolderizedTreeElement.prototype.removeChildren):
+        FolderTreeElements are removed by the base class call to removeChildren.
+        Calling `removeChildren` for detached TreeElements is unnecessary.
+
+2019-02-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: REGRESSION: clicking a selected call frame doesn't re-scroll
         https://bugs.webkit.org/show_bug.cgi?id=194169
         <rdar://problem/47743864>

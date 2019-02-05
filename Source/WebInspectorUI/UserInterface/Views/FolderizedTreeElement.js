@@ -69,16 +69,11 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
         this._folderizeSettingsMap.set(type, settings);
     }
 
-    // Overrides from TreeElement (Private).
-
     removeChildren()
     {
         super.removeChildren();
 
         this._clearNewChildQueue();
-
-        for (var folder of this._folderTypeMap.values())
-            folder.removeChildren();
 
         this._folderExpandedSettingMap.clear();
         this._folderTypeMap.clear();
