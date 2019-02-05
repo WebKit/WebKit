@@ -1,3 +1,20 @@
+2019-02-04  Keith Miller  <keith_miller@apple.com>
+
+        Change llint operand macros to inline functions
+        https://bugs.webkit.org/show_bug.cgi?id=194248
+
+        Reviewed by Mark Lam.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getNonConstantOperand):
+        (JSC::LLInt::getOperand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::genericCall):
+        (JSC::LLInt::varargsSetup):
+        (JSC::LLInt::commonCallEval):
+
 2019-02-04  Robin Morisset  <rmorisset@apple.com>
 
         when lowering AssertNotEmpty, create the value before creating the patchpoint
