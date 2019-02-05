@@ -58,9 +58,6 @@ public:
     static void visitOutputConstraints(JSCell*, SlotVisitor&);
     void finalizeUnconditionally(VM&);
     
-    void activate();
-    void deactivate();
-    
     static CodeBlock* unwrap(ExecutableToCodeBlockEdge* edge)
     {
         if (!edge)
@@ -78,11 +75,16 @@ private:
     friend class LLIntOffsetsExtractor;
 
     ExecutableToCodeBlockEdge(VM&, CodeBlock*);
+
+    void finishCreation(VM&);
+
+    void activate();
+    void deactivate();
+    bool isActive() const;
     
     void runConstraint(const ConcurrentJSLocker&, VM&, SlotVisitor&);
     
     WriteBarrier<CodeBlock> m_codeBlock;
-    bool m_isActive { false };
 };
 
 } // namespace JSC

@@ -1742,7 +1742,7 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 {
     ASSERT(prototype);
     if (prototype.isObject())
-        prototype.asCell()->didBecomePrototype();
+        asObject(prototype)->didBecomePrototype();
     
     if (structure(vm)->hasMonoProto()) {
         DeferredStructureTransitionWatchpointFire deferred(vm, structure(vm));

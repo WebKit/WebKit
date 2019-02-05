@@ -1,5 +1,49 @@
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] ExecutableToCodeBlockEdge should be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=194244
+
+        Reviewed by Michael Saboff.
+
+        ExecutableToCodeBlockEdge is allocated so many times. However its memory layout is not efficient.
+        sizeof(ExecutableToCodeBlockEdge) is 24bytes, but it discards 7bytes due to one bool m_isActive flag.
+        Because our size classes are rounded by 16bytes, ExecutableToCodeBlockEdge takes 32bytes. So, half of
+        it is wasted. We should fit it into 16bytes so that we can efficiently allocate it.
+
+        In this patch, we leverages TypeInfoMayBePrototype bit in JSTypeInfo. It is a bit special TypeInfo bit
+        since this is per-cell bit. We rename this to TypeInfoPerCellBit, and use it as a `m_isActive` mark in
+        ExecutableToCodeBlockEdge. In JSObject subclasses, we use it as MayBePrototype flag.
+
+        Since this flag is not changed in CAS style, we must not change this in concurrent threads. This is OK
+        for ExecutableToCodeBlockEdge's m_isActive flag since this is touched on the main thread (ScriptExecutable::installCode
+        does not touch it if it is called in non-main threads).
+
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::finishCreation):
+        (JSC::ExecutableToCodeBlockEdge::visitChildren):
+        (JSC::ExecutableToCodeBlockEdge::activate):
+        (JSC::ExecutableToCodeBlockEdge::deactivate):
+        (JSC::ExecutableToCodeBlockEdge::isActive const):
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::perCellBit const):
+        (JSC::JSCell::setPerCellBit):
+        (JSC::JSCell::mayBePrototype const): Deleted.
+        (JSC::JSCell::didBecomePrototype): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeDirect):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::mayBePrototype const):
+        (JSC::JSObject::didBecomePrototype):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::perCellBit):
+        (JSC::TypeInfo::mergeInlineTypeFlags):
+        (JSC::TypeInfo::mayBePrototype): Deleted.
+
+2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Shrink size of FunctionExecutable
         https://bugs.webkit.org/show_bug.cgi?id=194191
 

@@ -43,7 +43,7 @@ static const unsigned OverridesGetCallData = 1 << 2; // Need this flag if you im
 static const unsigned OverridesGetOwnPropertySlot = 1 << 3;
 static const unsigned OverridesToThis = 1 << 4; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
 static const unsigned HasStaticPropertyTable = 1 << 5;
-static const unsigned TypeInfoMayBePrototype = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
+static const unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
 
 // Out of line flags.
 
@@ -89,7 +89,7 @@ public:
     bool overridesGetOwnPropertySlot() const { return overridesGetOwnPropertySlot(inlineTypeFlags()); }
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     static bool hasStaticPropertyTable(InlineTypeFlags flags) { return flags & HasStaticPropertyTable; }
-    static bool mayBePrototype(InlineTypeFlags flags) { return flags & TypeInfoMayBePrototype; }
+    static bool perCellBit(InlineTypeFlags flags) { return flags & TypeInfoPerCellBit; }
     bool overridesToThis() const { return isSetOnFlags1(OverridesToThis); }
     bool structureIsImmortal() const { return isSetOnFlags2(StructureIsImmortal); }
     bool overridesGetPropertyNames() const { return isSetOnFlags2(OverridesGetPropertyNames); }
@@ -117,10 +117,10 @@ public:
         return OBJECT_OFFSETOF(TypeInfo, m_type);
     }
 
-    // Since the Structure doesn't track TypeInfoMayBePrototype, we need to make sure we copy it.
+    // Since the Structure doesn't track TypeInfoPerCellBit, we need to make sure we copy it.
     static InlineTypeFlags mergeInlineTypeFlags(InlineTypeFlags structureFlags, InlineTypeFlags oldCellFlags)
     {
-        return structureFlags | (oldCellFlags & static_cast<InlineTypeFlags>(TypeInfoMayBePrototype));
+        return structureFlags | (oldCellFlags & static_cast<InlineTypeFlags>(TypeInfoPerCellBit));
     }
 
     InlineTypeFlags inlineTypeFlags() const { return m_flags; }

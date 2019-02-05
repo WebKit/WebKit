@@ -139,9 +139,6 @@ public:
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
     
-    bool mayBePrototype() const;
-    void didBecomePrototype();
-
     const char* className(VM&) const;
 
     // Extracting the value.
@@ -239,6 +236,9 @@ public:
     }
     
     static const TypedArrayType TypedArrayStorageType = NotTypedArray;
+
+    void setPerCellBit(bool);
+    bool perCellBit() const;
 protected:
 
     void finishCreation(VM&);

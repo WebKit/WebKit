@@ -384,4 +384,14 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     return true;
 }
 
+inline bool JSObject::mayBePrototype() const
+{
+    return perCellBit();
+}
+
+inline void JSObject::didBecomePrototype()
+{
+    setPerCellBit(true);
+}
+
 } // namespace JSC

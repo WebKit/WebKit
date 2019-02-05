@@ -879,6 +879,9 @@ public:
     bool canPerformFastPutInline(VM&, PropertyName);
     bool canPerformFastPutInlineExcludingProto(VM&);
 
+    bool mayBePrototype() const;
+    void didBecomePrototype();
+
     DECLARE_EXPORT_INFO;
 
 protected:
