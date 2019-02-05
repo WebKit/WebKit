@@ -1,0 +1,7 @@
+Viewport: width=device-width
+
+scale	0.98047
+maxScale	5.00000
+minScale	0.98047
+visibleRect	{"left":"0.00000","top":"0.00000","width":"783.29883","height":"1024.00000"}
+

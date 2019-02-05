@@ -42,12 +42,6 @@
         function runTest()
         {
             var container = document.getElementById('container');
-            target.addEventListener('touchstart', function() {
-                debug("touchstart fired.");
-                shouldBe("event.touches.length", "1");
-                shouldBe("event.touches[0].clientX", "113");
-                shouldBe("event.touches[0].clientY", "178");
-            }, false);
 
             window.addEventListener("touchend", (event) => {
                 debug("touchend fired.");
@@ -58,6 +52,13 @@
             
             var tapPointX = targetRect.x + targetRect.width / 2;
             var tapPointY = targetRect.y + 50; // Tap near the top.
+
+            target.addEventListener('touchstart', function() {
+                debug("touchstart fired.");
+                shouldBe("event.touches.length", "1");
+                shouldBe("event.touches[0].clientX", "113");
+                shouldBe("event.touches[0].clientY", String(tapPointY));
+            }, false);
 
             if (window.testRunner)
                 testRunner.runUIScript(getUIScript(tapPointX, tapPointY), function(result) { });

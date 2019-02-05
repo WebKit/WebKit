@@ -1,3 +1,52 @@
+2019-02-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [iPad] Initial test gardening (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=193767
+        <rdar://problem/47515175>
+
+        Unreviewed test gardening.
+
+        A number of tests need to be re-baselined when run on iPad because of the larger screen.
+
+        * fast/canvas/canvas-too-large-to-draw.html: iOS userAgent regex should match iPhones and iPads.
+        * fast/events/touch/ios/target-taller-than-view.html: Move event listener since tabpPointY is the value we should compare against.
+        * fast/visual-viewport/ios/min-scale-greater-than-one.html: expectedTop depends on the screen size of the device.
+        * platform/ipad/fast/events: Added.
+        * platform/ipad/fast/events/ios: Added.
+        * platform/ipad/fast/events/ios/keyboard-should-not-trigger-resize-expected.txt: Added.
+        * platform/ipad/fast/events/ios/rotation: Added.
+        * platform/ipad/fast/events/ios/rotation/zz-no-rotation-expected.txt: Added.
+        * platform/ipad/fast/events/touch: Added.
+        * platform/ipad/fast/events/touch/ios: Added.
+        * platform/ipad/fast/events/touch/ios/target-taller-than-view-expected.txt: Added.
+        * platform/ipad/fast/scrolling: Added.
+        * platform/ipad/fast/scrolling/ios: Added.
+        * platform/ipad/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt: Added.
+        * platform/ipad/fast/scrolling/ios/touch-stacking-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios: Added.
+        * platform/ipad/fast/viewport/ios/device-width-viewport-after-changing-view-scale-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/initial-scale-after-changing-view-scale-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-expected.txt: Added.
+        * platform/ipad/fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit-expected.txt: Added.
+        * platform/ipad/platform: Added.
+        * platform/ipad/platform/ios: Added.
+        * platform/ipad/platform/ios/ios: Added.
+        * platform/ipad/platform/ios/ios/fast: Added.
+        * platform/ipad/platform/ios/ios/fast/text: Added.
+        * platform/ipad/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Added.
+        * platform/ipad/scrollingcoordinator: Added.
+        * platform/ipad/scrollingcoordinator/ios: Added.
+        * platform/ipad/scrollingcoordinator/ios/sync-layer-positions-after-scroll-expected.txt: Added.
+        * platform/ipad/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Added.
+
 2019-02-04  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

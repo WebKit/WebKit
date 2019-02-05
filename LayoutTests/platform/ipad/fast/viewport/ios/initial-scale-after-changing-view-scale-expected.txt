@@ -1,0 +1,16 @@
+Initial page scale factor                   : 1.00
+ - Page scale after setViewScale(1.25)      : 1.25
+ - Page scale after setViewScale(0.75)      : 0.75
+ - Page scale after setViewScale(1)         : 1.00
+
+Page scale after double tapping to zoom in  : 1.60
+ - Page scale after setViewScale(1.25)      : 1.60
+ - Page scale after setViewScale(0.75)      : 1.60
+ - Page scale after setViewScale(1)         : 1.60
+
+Page scale after double tapping to zoom out : 1.00
+ - Page scale after setViewScale(1.25)      : 1.25
+ - Page scale after setViewScale(0.75)      : 1.25
+ - Page scale after setViewScale(1)         : 1.25
+
+This test verifies that changing the view scale zooms the page to initial scale, but only if the page was already at initial scale. To manually test, (1) change the zoom scale without changing the page scale in any way, and check that the page zooms to initial scale; (2) now double tap on the box to zoom in, and check that changing zoom levels does not change the page scale; (3) finally, double tap on the box again to zoom back out to initial scale, and check that changing zoom levels automatically zooms the page to initial scale once again.

@@ -16,7 +16,7 @@
     if (window.testRunner)
       window.testRunner.dumpAsText();
 
-    var iOSPlatform = navigator.userAgent.search(/\biPhone OS\b/) != -1;
+    var iOSPlatform = navigator.userAgent.search(/\b(iPhone OS|iPad)\b/) != -1;
     var OSXYosemiteOrOlder = navigator.userAgent.search(/\bMac OS X 10_(8|9|10)(_[0-9]+)?\b/) != -1;
     var MAX_WIDTH = iOSPlatform ? Math.pow(2, 12) : (OSXYosemiteOrOlder ? Math.pow(2, 13) : Math.pow(2, 14));
     var MAX_HEIGHT = MAX_WIDTH;

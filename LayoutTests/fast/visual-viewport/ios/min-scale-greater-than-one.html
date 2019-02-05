@@ -42,7 +42,7 @@
             debug('Scrolling to bottom');
             testRunner.runUIScript(scrollToBottom(2000), function() {
 
-                expectedTop = 1578;
+                expectedTop = (navigator.userAgent.search(/\b(iPhone OS)\b/) != -1) ? 1578 : 1213;
                 shouldBe('window.scrollY', 'expectedTop');
                 checkBoundingClientRect(300);
                 
