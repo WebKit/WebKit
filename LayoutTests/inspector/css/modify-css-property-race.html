@@ -66,17 +66,17 @@ function test() {
             function styleDecorationUpdated(event) {
                 if (!updateCount) {
                     let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThan(valueNumber, 42);
+                    InspectorTest.expectGreaterThan(valueNumber, 42, "Height should be greater than 42px.");
                 } else if (updateCount === 1) {
                     let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThan(valueNumber, 42);
+                    InspectorTest.expectGreaterThan(valueNumber, 42, "Height should be greater than 42px.");
                     getProperty("height").rawValue = "10px";
                 } else if (updateCount === 2) {
-                    InspectorTest.expectEqual(getProperty("height").rawValue, "10px", `Value updated to "10px".`);
+                    InspectorTest.expectEqual(getProperty("height").rawValue, "10px", "Height should be 10px.");
                     InspectorTest.expectEqual(getInlineStyleDeclaration().text, "height: 10px;", "CSSStyleDeclaration text should update.");
                 } else {
                     let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThanOrEqual(valueNumber, 10);
+                    InspectorTest.expectGreaterThanOrEqual(valueNumber, 10, "Height should be greater or equal 10px.");
 
                     InspectorTest.evaluateInPage("stopExpanding()");
                     WI.CSSStyleDeclaration.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
