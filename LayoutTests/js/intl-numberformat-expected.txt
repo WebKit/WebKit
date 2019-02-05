@@ -203,10 +203,10 @@ PASS Intl.NumberFormat('en').format(-Infinity) is '-∞'
 PASS Intl.NumberFormat('en').format(0) is '0'
 PASS Intl.NumberFormat('en').format(-0) is '0'
 PASS Intl.NumberFormat('en').format(Number.MIN_VALUE) is '0'
-PASS Intl.NumberFormat('en').format(Number.MAX_VALUE) is '179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000'
+PASS Intl.NumberFormat('en', { maximumSignificantDigits: 15 }).format(Number.MAX_VALUE) is '179,769,313,486,232,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000'
 PASS Intl.NumberFormat('en').format(1234.567) is '1,234.567'
 PASS Intl.NumberFormat('es').format(1234.567) is '1.234,567'
-PASS Intl.NumberFormat('fr').format(1234.567) is '1\xA0234,567'
+PASS Intl.NumberFormat('de').format(1234.567) is '1.234,567'
 PASS Intl.NumberFormat('en-u-nu-latn').format(1234.567) is '1,234.567'
 PASS Intl.NumberFormat('en-u-nu-fullwide').format(1234.567) is '１,２３４.５６７'
 PASS Intl.NumberFormat('th-u-nu-thai').format(1234.567) is '๑,๒๓๔.๕๖๗'
@@ -217,14 +217,14 @@ PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2) i
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4) is '$4.00'
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(4.2) is '$4.20'
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(-4.2) is '-$4.20'
-PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(NaN) is 'NaN'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(NaN).includes('NaN') is true
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(Infinity) is '$∞'
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY'}).format(4.2) is '¥4'
-PASS Intl.NumberFormat('en', {style: 'currency', currency: 'xXx'}).format(4.2) is 'XXX4.20'
-PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).format(4) is 'USD4.00'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'xXx', currencyDisplay: 'code'}).format(4.2).includes('XXX') is true
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}).format(4).includes('USD') is true
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}).format(4) is '$4.00'
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4) is '4.00 US dollars'
-PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'code'}).format(-4.2) is '-JPY4'
+PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'code'}).format(-4.2).includes('JPY') is true
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'symbol'}).format(-4.2) is '-¥4'
 PASS Intl.NumberFormat('en', {style: 'currency', currency: 'JPY', currencyDisplay: 'name'}).format(-4.2) is '-4 Japanese yen'
 PASS Intl.NumberFormat('fr', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}).format(4) is '4,00 dollars des États-Unis'
@@ -250,10 +250,10 @@ PASS Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(0.1234567) is
 PASS Intl.NumberFormat('en', {maximumSignificantDigits: 4}).format(1234567) is '1,235,000'
 PASS Intl.NumberFormat('en', {useGrouping: true}).format(1234567.123) is '1,234,567.123'
 PASS Intl.NumberFormat('es', {useGrouping: true}).format(1234567.123) is '1.234.567,123'
-PASS Intl.NumberFormat('fr', {useGrouping: true}).format(1234567.123) is '1\xA0234\xA0567,123'
+PASS Intl.NumberFormat('de', {useGrouping: true}).format(1234567.123) is '1.234.567,123'
 PASS Intl.NumberFormat('en', {useGrouping: false}).format(1234567.123) is '1234567.123'
 PASS Intl.NumberFormat('es', {useGrouping: false}).format(1234567.123) is '1234567,123'
-PASS Intl.NumberFormat('fr', {useGrouping: false}).format(1234567.123) is '1234567,123'
+PASS Intl.NumberFormat('de', {useGrouping: false}).format(1234567.123) is '1234567,123'
 PASS Intl.NumberFormat.prototype.resolvedOptions.length is 0
 PASS defaultNFormat.resolvedOptions() is an instance of Object
 PASS defaultNFormat.resolvedOptions() === defaultNFormat.resolvedOptions() is false

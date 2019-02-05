@@ -1,3 +1,16 @@
+2019-02-05  Andy VanWagoner  <andy@vanwagoner.family>
+
+        REGRESSION(r238848): ICU upgrade broke jsc-layout-tests.yaml/js/script-tests/intl-numberformat.js.layout
+        https://bugs.webkit.org/show_bug.cgi?id=193620
+
+        Reviewed by Michael Catanzaro.
+
+        Update NumberFormat tests to be more tolerant of ICU version differences.
+
+        * js/intl-numberformat-expected.txt:
+        * js/script-tests/intl-numberformat.js:
+        * platform/gtk/TestExpectations:
+
 2019-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r240742.
