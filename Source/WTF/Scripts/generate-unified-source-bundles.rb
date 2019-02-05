@@ -361,8 +361,8 @@ $bundleManagers.each_value {
 }
 
 if $mode == :GenerateXCFilelists
-    IO::write($inputXCFilelistPath, $inputSources.sort.join("\n") + "\n")
-    IO::write($outputXCFilelistPath, $outputSources.sort.join("\n") + "\n")
+    IO::write($inputXCFilelistPath, $inputSources.sort.join("\n") + "\n") if $inputXCFilelistPath
+    IO::write($outputXCFilelistPath, $outputSources.sort.join("\n") + "\n") if $outputXCFilelistPath
 end
 
 # We use stdout to report our unified source list to CMake.

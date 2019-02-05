@@ -1,5 +1,32 @@
 2019-02-05  Keith Rollin  <krollin@apple.com>
 
+        Enable the automatic checking and regenerations of .xcfilelists during builds
+        https://bugs.webkit.org/show_bug.cgi?id=194124
+        <rdar://problem/47721277>
+
+        Reviewed by Tim Horton.
+
+        Bug 193790 add a facility for checking -- during build time -- that
+        any needed .xcfilelist files are up-to-date and for updating them if
+        they are not. This facility was initially opt-in by setting
+        WK_ENABLE_CHECK_XCFILELISTS until other pieces were in place and until
+        the process seemed robust. Its now time to enable this facility and
+        make it opt-out. If there is a need to disable this facility, set and
+        export WK_DISABLE_CHECK_XCFILELISTS=1 in your environment before
+        running `make` or `build-webkit`, or before running Xcode from the
+        command line.
+
+        Additionally, remove the step that generates a list of source files
+        going into the UnifiedSources build step. It's only necessarily to
+        specify Sources.txt and SourcesCocoa.txt as inputs.
+
+        No new tests since there should be no observable behavior difference.
+
+        * UnifiedSources-input.xcfilelist: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-02-05  Keith Rollin  <krollin@apple.com>
+
         Update .xcfilelist files
         https://bugs.webkit.org/show_bug.cgi?id=194121
         <rdar://problem/47720863>

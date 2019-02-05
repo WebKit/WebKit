@@ -10359,9 +10359,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"$(SRCROOT)/UnifiedSources-input.xcfilelist",
 			);
 			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
+				"$(SRCROOT)/Sources.txt",
+				"$(SRCROOT)/SourcesCocoa.txt",
 			);
 			name = "Generate Unified Sources";
 			outputFileListPaths = (

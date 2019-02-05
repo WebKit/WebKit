@@ -387,7 +387,6 @@ function set_common_project_settings()
     local GX_BASE_PATH="${GX_EFFECTIVE_PROJECT_DIR}/${GX_PS_XCFILELIST_RELATIVE_PATH}"
     GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/DerivedSources-input.xcfilelist"
     GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/DerivedSources-output.xcfilelist"
-    GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/UnifiedSources-input.xcfilelist"
     GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH="${GX_BASE_PATH}/UnifiedSources-output.xcfilelist"
 
     # Get the paths to the locations of the temporary .xcfilelist files (the
@@ -395,7 +394,6 @@ function set_common_project_settings()
 
     GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
     GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH}"
-    GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
     GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH="${GX_TEMP}/${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
 
     # Collect the default per-project commands to execute during the generate,
@@ -459,12 +457,10 @@ function dump_project_settings()
     log_debug
     log_debug_var GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH
     log_debug_var GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH
-    log_debug_var GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH
     log_debug_var GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH
     log_debug
     log_debug_var GX_INPUT_DERIVED_XCFILELIST_PROJECT_PATH
     log_debug_var GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_PATH
-    log_debug_var GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH
     log_debug_var GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH
     log_debug
     log_debug_var GX_PS_DERIVED_SOURCES_DIR
@@ -793,7 +789,7 @@ function generate_unifiedsources_xcfilelists()
 {
     log_callstack_and_parameters "$@"
 
-    create_empty_files "${GX_TEMP_INPUT_XCFILELIST}" "${GX_TEMP_OUTPUT_XCFILELIST}"
+    create_empty_files "${GX_TEMP_OUTPUT_XCFILELIST}"
 
     [[ -n "${GX_UNIFIEDSOURCES_GENERATOR}" ]] || die "GX_UNIFIEDSOURCES_GENERATOR is not defined."
     [[ -x "${GX_UNIFIEDSOURCES_GENERATOR}" ]] || die "${GX_UNIFIEDSOURCES_GENERATOR} does not exist or is not executable."
@@ -807,18 +803,14 @@ function generate_unifiedsources_xcfilelists()
     BUILD_SCRIPTS_DIR="${GX_BUILD_SCRIPTS_DIR}" \
     "${GX_UNIFIEDSOURCES_GENERATOR}" \
         --generate-xcfilelists \
-        --input-xcfilelist-path "${GX_TEMP_INPUT_XCFILELIST}" \
         --output-xcfilelist-path "${GX_TEMP_OUTPUT_XCFILELIST}"
     GX_RESULT=$?
 
     (( ${GX_RESULT} )) && die "Error generating unified sources: error = ${GX_RESULT}"
-    [[ -f "${GX_TEMP_INPUT_XCFILELIST}" ]] || die "${GX_TEMP_INPUT_XCFILELIST} was not generated."
     [[ -f "${GX_TEMP_OUTPUT_XCFILELIST}" ]] || die "${GX_TEMP_OUTPUT_XCFILELIST} was not generated."
 
-    unexpand "${GX_TEMP_INPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
     unexpand "${GX_TEMP_OUTPUT_XCFILELIST}" BUILT_PRODUCTS_DIR
 
-    merge_xcfilelists_helper "${GX_TEMP_INPUT_XCFILELIST}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
     merge_xcfilelists_helper "${GX_TEMP_OUTPUT_XCFILELIST}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
 }
 
@@ -884,7 +876,7 @@ function reset_project_specific_temp_files()
 
     create_empty_files \
         "${GX_INPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_DERIVED_XCFILELIST_PROJECT_TEMP_PATH}" \
-        "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
+        "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}"
 }
 
 
@@ -947,14 +939,10 @@ function merge_unifiedsources_xcfilelists()
 {
     log_callstack_and_parameters "$@"
 
-    log_debug "Merging ${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
     log_debug "Merging ${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH} into ${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
 
     if (( ! ${GX_DRY_RUN} ))
     then
-        merge_xcfilelists_helper "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
-        log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
-
         merge_xcfilelists_helper "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}" && GX_DEFERRED_EXIT_CODE=3
         log_debug "GX_DEFERRED_EXIT_CODE = $GX_DEFERRED_EXIT_CODE"
     fi
@@ -1016,7 +1004,6 @@ function check_unifiedsources_xcfilelists()
 {
     log_callstack_and_parameters "$@"
 
-    check_xcfilelists_helper "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_INPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
     check_xcfilelists_helper "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_TEMP_PATH}" "${GX_OUTPUT_UNIFIED_XCFILELIST_PROJECT_PATH}"
 }
 
