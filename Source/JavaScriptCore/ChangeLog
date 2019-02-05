@@ -1,3 +1,45 @@
+2019-02-05  Mark Lam  <mark.lam@apple.com>
+
+        Fix DFG's doesGC() for a few more nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=194307
+        <rdar://problem/47832956>
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix doesGC() for the following nodes:
+
+            NumberToStringWithValidRadixConstant:
+                Calls operationInt32ToStringWithValidRadix(), which calls int32ToString(),
+                which can allocate a string.
+                Calls operationInt52ToStringWithValidRadix(), which calls int52ToString(),
+                which can allocate a string.
+                Calls operationDoubleToStringWithValidRadix(), which calls numberToString(),
+                which can allocate a string.
+
+            RegExpExecNonGlobalOrSticky: calls createRegExpMatchesArray() which allocates
+                memory for all kinds of objects.
+            RegExpMatchFast: calls operationRegExpMatchFastString(), which calls
+                RegExpObject::execInline() and RegExpObject::matchGlobal().  Both of
+                these allocates memory for the match result.
+            RegExpMatchFastGlobal: calls operationRegExpMatchFastGlobalString(), which
+                calls RegExpObject's collectMatches(), which allocates an array amongst
+                other objects.
+
+            StringFromCharCode:
+                If the uint32 code to convert is greater than maxSingleCharacterString,
+                we'll call operationStringFromCharCode(), which calls jsSingleCharacterString(),
+                which allocates a new string if the code is greater than maxSingleCharacterString.
+
+        Also fix SpeculativeJIT::compileFromCharCode() and FTL's compileStringFromCharCode()
+        to use maxSingleCharacterString instead of a literal constant.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringFromCharCode):
+
 2019-02-05  Keith Rollin  <krollin@apple.com>
 
         Enable the automatic checking and regenerations of .xcfilelists during builds
