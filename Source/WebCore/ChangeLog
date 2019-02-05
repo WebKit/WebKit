@@ -1,3 +1,22 @@
+2019-02-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [curl] ASSERTION FAILED: !m_didNotifyResponse || m_multipartHandle
+        https://bugs.webkit.org/show_bug.cgi?id=190895
+
+        Reviewed by Ross Kirsling.
+
+        An assertion was failing in CurlRequest::invokeDidReceiveResponse
+        because DidReceiveResponse was already dispatched. This condition
+        was met if CurlRequestScheduler::completeTransfer is called while
+        waiting for the reply for the first DidReceiveResponse.
+
+        No new tests, covered by existing tests.
+
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::needToInvokeDidReceiveResponse const):
+        Return true if m_didNotifyResponse is false disregard to
+        m_didReturnFromNotify.
+
 2019-02-04  Said Abou-Hallawa  <said@apple.com>
 
         [CG] Enable setAdditionalSupportedImageTypes for WK1
