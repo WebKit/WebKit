@@ -1,3 +1,22 @@
+2019-02-05  Tim Horton  <timothy_horton@apple.com>
+
+        Reproducible crash under WKShareSheet presentWithParameters when cancelling a share
+        https://bugs.webkit.org/show_bug.cgi?id=194301
+        <rdar://problem/47719379>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithParameters:completionHandler:]):
+        NSSharingServicePicker's delegate callbacks can be called synchronously.
+        We release the WKShareSheet (which holds our reference to the NSSharingServicePicker)
+        under sharingServicePicker:didChooseSharingService:. On older versions of macOS,
+        there was nothing keeping the NSSharingServicePicker alive inside
+        showRelativeToRect:ofView:preferredEdge:, thus the whole chain of references would
+        fall and result in sending a message to a released NSSharingServicePicker.
+        To resolve this, keep an extra reference to the WKShareSheet until
+        presentation is complete.
+
 2019-02-05  Keith Rollin  <krollin@apple.com>
 
         Enable the automatic checking and regenerations of .xcfilelists during builds
