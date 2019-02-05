@@ -149,6 +149,23 @@
       "platform": "jsc-only"
     },
     {
+      "name": "ews150",
+      "platform": "*"
+    },
+    {
+      "name": "ews151",
+      "platform": "*",
+      "max_builds": 3
+    },
+    {
+      "name": "ews152",
+      "platform": "*"
+    },
+    {
+      "name": "ews153",
+      "platform": "*"
+    },
+    {
       "name": "ews200",
       "platform": "win"
     },
@@ -190,7 +207,7 @@
       "name": "Style-EWS",
       "factory": "StyleFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "GTK-Webkit2-EWS",
@@ -213,7 +230,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-11-sim-wk2-tests-ews"],
-      "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
+      "workernames": ["ews150", "ews152", "ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
       "name": "iOS-11-Simulator-WK2-Tests-EWS",
@@ -230,7 +247,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
-      "workernames": ["ews100", "ews101", "ews102", "ews103"]
+      "workernames": ["ews150", "ews100", "ews101", "ews102", "ews103"]
     },
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
@@ -311,31 +328,31 @@
       "name": "Bindings-Tests-EWS",
       "factory": "BindingsFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPy-Tests-EWS",
       "factory": "WebKitPyFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS",
       "factory": "WebKitPerlFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "API-Tests-iOS-Simulator-EWS",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews152", "ews153", "webkit-misc"]
     },
     {
       "name": "API-Tests-macOS-EWS",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["webkit-misc"]
+      "workernames": ["ews151", "ews152", "ews153", "webkit-misc"]
     }
   ],
   "schedulers": [

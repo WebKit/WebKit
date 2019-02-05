@@ -1,3 +1,12 @@
+2019-02-05  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add few bots to config.json
+        https://bugs.webkit.org/show_bug.cgi?id=194304
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-02-05  Keith Rollin  <krollin@apple.com>
 
         Enable the automatic checking and regenerations of .xcfilelists during builds
