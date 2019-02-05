@@ -1,3 +1,21 @@
+2019-02-05  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] collectInlineContent should use pre-computed margins, paddings and borders
+        https://bugs.webkit.org/show_bug.cgi?id=194269
+
+        Reviewed by Antti Koivisto.
+
+        In this patch we pre-compute the margins padding and borders for formatting context roots, replaced boxes and non-replaced containers.
+        These property values are input to collectInlineContent's inline item detaching logic.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::nextInPreOrder):
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPadding const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/layouttree/LayoutBox.h: ran out bits. 
+
 2019-02-05  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r240579): com.apple.WebKit.WebContent at WebCore: WebCore::Document::absoluteEventRegionForNode

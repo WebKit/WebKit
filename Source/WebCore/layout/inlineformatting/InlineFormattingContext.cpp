@@ -53,30 +53,42 @@ InlineFormattingContext::InlineFormattingContext(const Box& formattingContextRoo
 {
 }
 
+static inline const Box* nextInPreOrder(const Box& layoutBox, const Container& root)
+{
+    const Box* nextInPreOrder = nullptr;
+    if (!layoutBox.establishesFormattingContext() && is<Container>(layoutBox) && downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
+        return downcast<Container>(layoutBox).firstInFlowOrFloatingChild();
+
+    for (nextInPreOrder = &layoutBox; nextInPreOrder && nextInPreOrder != &root; nextInPreOrder = nextInPreOrder->parent()) {
+        if (auto* nextSibling = nextInPreOrder->nextInFlowOrFloatingSibling())
+            return nextSibling;
+    }
+    return nullptr;
+}
+
 void InlineFormattingContext::layout() const
 {
     if (!is<Container>(root()))
         return;
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
+    auto& root = downcast<Container>(this->root());
+    auto* layoutBox = root.firstInFlowOrFloatingChild();
+    // Compute width/height for non-text content and margin/border/padding for inline containers.
+    while (layoutBox) {
+        if (layoutBox->establishesFormattingContext())
+            layoutFormattingContextRoot(*layoutBox);
+        else if (is<Container>(*layoutBox))
+            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox));
+        else if (layoutBox->isReplaced())
+            computeWidthAndHeightForReplacedInlineBox(*layoutBox);
+        layoutBox = nextInPreOrder(*layoutBox, root);
+    }
 
     InlineRunProvider inlineRunProvider;
     collectInlineContent(inlineRunProvider);
-    // Compute width/height for non-text content.
-    for (auto& inlineRun : inlineRunProvider.runs()) {
-        if (inlineRun.isText())
-            continue;
-
-        auto& layoutBox = inlineRun.inlineItem().layoutBox();
-        if (layoutBox.establishesFormattingContext()) {
-            layoutFormattingContextRoot(layoutBox);
-            continue;
-        }
-        computeWidthAndHeightForReplacedInlineBox(layoutBox);
-    }
-
     layoutInlineContent(inlineRunProvider);
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root << ")");
 }
 
 static bool isTrimmableContent(const InlineLineBreaker::Run& run)
@@ -329,6 +341,19 @@ void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlin
     closeLine(line, IsLastLine::Yes);
 }
 
+void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContainer& inlineContainer) const
+{
+    // Non-replaced, non-formatting root containers (<span></span>) don't have width property -> non width computation. 
+    ASSERT(!inlineContainer.replaced());
+    ASSERT(!inlineContainer.establishesFormattingContext());
+
+    computeBorderAndPadding(inlineContainer);
+    auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), inlineContainer);
+    displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
+    displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
+}
+
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
@@ -470,14 +495,10 @@ void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunP
 
     enum class NonBreakableWidthType { Start, End };
     auto nonBreakableWidth = [&](auto& container, auto type) {
-        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, container);
-        auto horizontalMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
-        auto border = Geometry::computedBorder(layoutState, container);
-        auto padding = Geometry::computedPadding(layoutState, container);
-
+        auto& displayBox = layoutState.displayBoxForLayoutBox(container);
         if (type == NonBreakableWidthType::Start)
-            return border.horizontal.left + horizontalMargin.start + (padding ? padding->horizontal.left : LayoutUnit());
-        return border.horizontal.right + horizontalMargin.end + (padding ? padding->horizontal.right : LayoutUnit());
+            return displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().valueOr(0);
+        return displayBox.marginEnd() + displayBox.borderRight() + displayBox.paddingRight().valueOr(0);
     };
 
     LayoutQueue layoutQueue;
@@ -496,9 +517,9 @@ void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunP
             if (container.establishesFormattingContext()) {
                 // Formatting contexts are treated as leaf nodes.
                 auto& inlineItem = createAndAppendInlineItem(inlineRunProvider, inlineContent, container);
-                auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, container);
-                auto currentNonBreakableStartWidth = nonBreakableStartWidth.valueOr(0) + computedHorizontalMargin.start.valueOr(0) + nonBreakableEndWidth.valueOr(0);
-                addDetachingRules(inlineItem, currentNonBreakableStartWidth, computedHorizontalMargin.end);
+                auto& displayBox = layoutState.displayBoxForLayoutBox(container);
+                auto currentNonBreakableStartWidth = nonBreakableStartWidth.valueOr(0) + displayBox.marginStart() + nonBreakableEndWidth.valueOr(0);
+                addDetachingRules(inlineItem, currentNonBreakableStartWidth, displayBox.marginEnd());
                 nonBreakableStartWidth = { };
                 nonBreakableEndWidth = { };
 

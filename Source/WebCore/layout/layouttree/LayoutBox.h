@@ -155,7 +155,7 @@ private:
 
     std::unique_ptr<Replaced> m_replaced;
 
-    unsigned m_baseTypeFlags : 4;
+    unsigned m_baseTypeFlags : 5;
 };
 
 }
