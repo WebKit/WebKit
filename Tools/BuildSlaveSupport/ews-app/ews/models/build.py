@@ -80,7 +80,7 @@ class Build(models.Model):
         build.state_string = state_string
         build.started_at = started_at
         build.complete_at = complete_at
-        build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at'])
+        build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
         _log.info('Updated build {} in database for patch_id: {}'.format(build_id, patch_id))
         return SUCCESS
 

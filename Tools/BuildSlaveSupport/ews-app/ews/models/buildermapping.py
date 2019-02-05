@@ -67,7 +67,7 @@ class BuilderMapping(models.Model):
 
         mapping.builder_name = builder_name
         mapping.display_name = display_name
-        mapping.save(update_fields=['builder_name', 'display_name'])
+        mapping.save(update_fields=['builder_name', 'display_name', 'modified'])
         _log.info('Updated mapping for builder_id: {}, name: {}, display_name: {}'.format(builder_id, builder_name, display_name))
         return SUCCESS
 

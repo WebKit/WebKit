@@ -72,7 +72,7 @@ class Step(models.Model):
         step.state_string = state_string
         step.started_at = started_at
         step.complete_at = complete_at
-        step.save(update_fields=['result', 'state_string', 'started_at', 'complete_at'])
+        step.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
         _log.info('Updated step {} in database for build: {}'.format(step_id, build_id))
         return SUCCESS
 
