@@ -46,10 +46,10 @@ private:
     DirectArguments(VM&, Structure*, unsigned length, unsigned capacity);
     
 public:
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        RELEASE_ASSERT(!CellType::needsDestruction);
+        static_assert(!CellType::needsDestruction, "");
         return &vm.jsValueGigacageCellSpace;
     }
 

@@ -61,7 +61,7 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.unlinkedFunctionExecutableSpace.space;
@@ -120,7 +120,7 @@ public:
     {
         m_unlinkedCodeBlockForCall.clear();
         m_unlinkedCodeBlockForConstruct.clear();
-        vm.unlinkedFunctionExecutableSpace.clearableCodeSet.remove(this);
+        vm.unlinkedFunctionExecutableSpace.set.remove(this);
     }
 
     void recordParse(CodeFeatures features, bool hasCapturedVariables)

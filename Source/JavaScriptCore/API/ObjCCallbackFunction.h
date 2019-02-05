@@ -48,10 +48,10 @@ class ObjCCallbackFunction : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.objCCallbackFunctionSpace;
+        return vm.objCCallbackFunctionSpace<mode>();
     }
 
     static ObjCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, std::unique_ptr<ObjCCallbackFunctionImpl>);

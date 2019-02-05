@@ -1,3 +1,14 @@
+2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink size of VM by lazily allocating IsoSubspaces for non-common types
+        https://bugs.webkit.org/show_bug.cgi?id=193993
+
+        Reviewed by Keith Miller.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bridge/runtime_method.h:
+
 2019-02-04  Simon Fraser  <simon.fraser@apple.com>
 
         Move some macOS/iOS scrolling code into the scrolling/cocoa directory

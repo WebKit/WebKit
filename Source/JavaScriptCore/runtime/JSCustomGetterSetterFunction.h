@@ -40,10 +40,10 @@ public:
 
     static const unsigned StructureFlags = Base::StructureFlags;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.customGetterSetterFunctionSpace;
+        return vm.customGetterSetterFunctionSpace<mode>();
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -1,3 +1,139 @@
+2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink size of VM by lazily allocating IsoSubspaces for non-common types
+        https://bugs.webkit.org/show_bug.cgi?id=193993
+
+        Reviewed by Keith Miller.
+
+        JSC::VM has a lot of IsoSubspaces, and each takes 504B. This unnecessarily makes VM so large.
+        And some of them are rarely used. We should allocate it lazily.
+
+        In this patch, we make some `IsoSubspaces` `std::unique_ptr<IsoSubspace>`. And we add ensureXXXSpace
+        functions which allocate IsoSubspaces lazily. This function is used by subspaceFor<> in each class.
+        And we also add subspaceForConcurrently<> function, which is called from concurrent JIT tiers. This
+        returns nullptr if the subspace is not allocated yet. JSCell::subspaceFor now takes second template
+        parameter which tells the function whether subspaceFor is concurrently done. If the IsoSubspace is
+        lazily created, we may return nullptr for the concurrent access. We ensure the space's initialization
+        by using WTF::storeStoreFence when lazily allocating it.
+
+        In GC's constraint solving, we may touch these lazily allocated spaces. At that time, we check the
+        existence of the space before touching this. This is not racy because the main thread is stopped when
+        the constraint solving is working.
+
+        This changes sizeof(VM) from 64736 to 56472.
+
+        Another interesting thing is that we removed `PreventCollectionScope preventCollectionScope(heap);` in
+        `Subspace::initialize`. This is really dangerous API since it easily causes dead-lock between the
+        collector and the mutator if IsoSubspace is dynamically created. We do want to make IsoSubspaces
+        dynamically-created ones since the requirement of the pre-allocation poses a scalability problem
+        of IsoSubspace adoption because IsoSubspace is large. Registered Subspace is only touched in the
+        EndPhase, and the peripheries should be stopped when running EndPhase. Thus, as long as the main thread
+        can run this IsoSubspace code, the collector is never EndPhase. So this is safe.
+
+        * API/JSCallbackFunction.h:
+        * API/ObjCCallbackFunction.h:
+        (JSC::ObjCCallbackFunction::subspaceFor):
+        * API/glib/JSCCallbackFunction.h:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/CodeBlock.h:
+        * bytecode/EvalCodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileNewObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedCell):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Subspace.cpp:
+        (JSC::Subspace::initialize):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateVariableSizedCell):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * runtime/DirectArguments.h:
+        * runtime/DirectEvalExecutable.h:
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::subspaceFor):
+        * runtime/ExecutableBase.h:
+        * runtime/FunctionExecutable.h:
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/InferredValue.cpp:
+        (JSC::InferredValue::visitChildren):
+        * runtime/InferredValue.h:
+        * runtime/InferredValueInlines.h:
+        (JSC::InferredValue::finalizeUnconditionally):
+        * runtime/InternalFunction.h:
+        * runtime/JSAsyncFunction.h:
+        * runtime/JSAsyncGeneratorFunction.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCell.h:
+        (JSC::subspaceFor):
+        (JSC::subspaceForConcurrently):
+        * runtime/JSCellInlines.h:
+        (JSC::allocatorForNonVirtualConcurrently):
+        * runtime/JSCustomGetterSetterFunction.h:
+        * runtime/JSDestructibleObject.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGeneratorFunction.h:
+        * runtime/JSImmutableButterfly.h:
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::subspaceFor):
+        * runtime/JSNativeStdFunction.h:
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/JSString.h:
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/NativeExecutable.h:
+        * runtime/ProgramExecutable.h:
+        * runtime/PropertyMapHashTable.h:
+        * runtime/ProxyRevoke.h:
+        * runtime/ScopedArguments.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        * runtime/Structure.h:
+        * runtime/StructureRareData.h:
+        * runtime/SubspaceAccess.h: Copied from Source/JavaScriptCore/runtime/InferredValueInlines.h.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::SpaceAndSet::SpaceAndSet):
+        (JSC::VM::SpaceAndSet::setFor):
+        (JSC::VM::forEachScriptExecutableSpace):
+        (JSC::VM::SpaceAndFinalizerSet::SpaceAndFinalizerSet): Deleted.
+        (JSC::VM::SpaceAndFinalizerSet::finalizerSetFor): Deleted.
+        (JSC::VM::ScriptExecutableSpaceAndSet::ScriptExecutableSpaceAndSet): Deleted.
+        (JSC::VM::ScriptExecutableSpaceAndSet::clearableCodeSetFor): Deleted.
+        (JSC::VM::UnlinkedFunctionExecutableSpaceAndSet::UnlinkedFunctionExecutableSpaceAndSet): Deleted.
+        (JSC::VM::UnlinkedFunctionExecutableSpaceAndSet::clearableCodeSetFor): Deleted.
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapImpl::subspaceFor):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2019-02-04  Keith Miller  <keith_miller@apple.com>
 
         Change llint operand macros to inline functions

@@ -72,10 +72,10 @@ public:
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.errorInstanceSpace;
+        return vm.errorInstanceSpace<mode>();
     }
 
     void finalizeUnconditionally(VM&);

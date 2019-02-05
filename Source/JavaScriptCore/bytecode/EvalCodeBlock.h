@@ -38,7 +38,7 @@ public:
     typedef GlobalCodeBlock Base;
     DECLARE_INFO;
 
-    template<typename>
+    template<typename, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.codeBlockSpace.space;

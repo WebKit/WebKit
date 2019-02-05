@@ -45,10 +45,10 @@ class InferredValue final : public JSCell {
 public:
     typedef JSCell Base;
     
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.inferredValueSpace;
+        return vm.inferredValueSpace<mode>();
     }
 
     static InferredValue* create(VM&);

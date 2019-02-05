@@ -84,7 +84,7 @@ public:
     static void destroy(JSCell*);
     
     // Force subclasses to override this.
-    template<typename>
+    template<typename, SubspaceAccess>
     static void subspaceFor(VM&) { }
         
     CodeBlockHash hashFor(CodeSpecializationKind) const;

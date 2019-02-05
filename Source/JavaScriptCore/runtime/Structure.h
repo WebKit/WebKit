@@ -132,7 +132,7 @@ public:
 
     ~Structure();
     
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.structureSpace;

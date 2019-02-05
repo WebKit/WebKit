@@ -302,12 +302,12 @@ public:
         return std::is_same<WeakMapBucketType, JSC::WeakMapBucket<WeakMapBucketDataKey>>::value;
     }
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         if (isWeakMap())
-            return &vm.weakMapSpace;
-        return &vm.weakSetSpace;
+            return vm.weakMapSpace<mode>();
+        return vm.weakSetSpace<mode>();
     }
 
     static void visitOutputConstraints(JSCell*, SlotVisitor&);

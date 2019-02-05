@@ -37,7 +37,7 @@ public:
 
     static const bool needsDestruction = true;
     
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         return &vm.destructibleObjectSpace;

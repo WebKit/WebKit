@@ -43,7 +43,7 @@ class JSWebAssemblyMemory final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         // We hold onto a lot of memory, so it makes a lot of sense to be swept eagerly.

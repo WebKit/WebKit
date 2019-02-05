@@ -36,10 +36,10 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.proxyRevokeSpace;
+        return vm.proxyRevokeSpace<mode>();
     }
 
     static ProxyRevoke* create(VM&, Structure*, ProxyObject*);

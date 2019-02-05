@@ -44,7 +44,7 @@ public:
 
     static void destroy(JSCell*);
     
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.nativeExecutableSpace;

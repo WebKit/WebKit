@@ -46,7 +46,7 @@ public:
     typedef JSC::JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | JSC::OverridesGetCallData;
 
-    template<typename CellType>
+    template<typename CellType, JSC::SubspaceAccess>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         return subspaceForImpl(vm);

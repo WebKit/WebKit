@@ -937,6 +937,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StructureRareData.h
     runtime/StructureRareDataInlines.h
     runtime/StructureTransitionTable.h
+    runtime/SubspaceAccess.h
     runtime/Symbol.h
     runtime/SymbolPrototype.h
     runtime/SymbolTable.h

@@ -237,7 +237,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
-    vm.unlinkedFunctionExecutableSpace.clearableCodeSet.add(this);
+    vm.unlinkedFunctionExecutableSpace.set.add(this);
     return result;
 }
 

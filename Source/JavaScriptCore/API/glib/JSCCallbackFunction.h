@@ -40,7 +40,7 @@ class JSCCallbackFunction : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return subspaceForImpl(vm);

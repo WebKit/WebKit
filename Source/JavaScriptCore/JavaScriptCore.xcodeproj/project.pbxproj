@@ -1765,6 +1765,7 @@
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
+		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4703,10 +4704,11 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
-		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFromSyncIteratorPrototype.lut.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
+		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
+		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapImplInlines.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39D9D841D39000600667282 /* InterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterpreterInlines.h; sourceTree = "<group>"; };
@@ -7164,6 +7166,7 @@
 				C2FE18A316BAEC4000AF3061 /* StructureRareData.h */,
 				C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */,
 				BC9041470EB9250900FE26FA /* StructureTransitionTable.h */,
+				E39006202208BFC3001019CF /* SubspaceAccess.h */,
 				705B41A31A6E501E00716757 /* Symbol.cpp */,
 				705B41A41A6E501E00716757 /* Symbol.h */,
 				705B41A51A6E501E00716757 /* SymbolConstructor.cpp */,
@@ -9692,6 +9695,7 @@
 				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
 				0F44767020C5E2B4008B2C36 /* StubInfoSummary.h in Headers */,
 				0F7DF1371E2970E10095951B /* Subspace.h in Headers */,
+				E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */,
 				0F7DF1381E2970E40095951B /* SubspaceInlines.h in Headers */,
 				0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */,
 				530A66CD1FB1346D0026A545 /* SuperSamplerBytecodeScope.h in Headers */,

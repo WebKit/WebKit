@@ -567,18 +567,23 @@ void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
 
 void Heap::finalizeUnconditionalFinalizers()
 {
-    finalizeMarkedUnconditionalFinalizers<InferredValue>(vm()->inferredValuesWithFinalizers);
+    if (vm()->m_inferredValueSpace)
+        finalizeMarkedUnconditionalFinalizers<InferredValue>(vm()->m_inferredValueSpace->space);
     vm()->forEachCodeBlockSpace(
         [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.finalizerSet);
+            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
         });
     finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm()->executableToCodeBlockEdgesWithFinalizers);
-    finalizeMarkedUnconditionalFinalizers<JSWeakSet>(vm()->weakSetSpace);
-    finalizeMarkedUnconditionalFinalizers<JSWeakMap>(vm()->weakMapSpace);
-    finalizeMarkedUnconditionalFinalizers<ErrorInstance>(vm()->errorInstanceSpace);
+    if (vm()->m_weakSetSpace)
+        finalizeMarkedUnconditionalFinalizers<JSWeakSet>(*vm()->m_weakSetSpace);
+    if (vm()->m_weakMapSpace)
+        finalizeMarkedUnconditionalFinalizers<JSWeakMap>(*vm()->m_weakMapSpace);
+    if (vm()->m_errorInstanceSpace)
+        finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*vm()->m_errorInstanceSpace);
 
 #if ENABLE(WEBASSEMBLY)
-    finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCodeBlock>(vm()->webAssemblyCodeBlockSpace);
+    if (vm()->m_webAssemblyCodeBlockSpace)
+        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyCodeBlock>(*vm()->m_webAssemblyCodeBlockSpace);
 #endif
 }
 
@@ -880,11 +885,11 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
     vm.forEachScriptExecutableSpace(
         [&] (auto& spaceAndSet) {
             HeapIterationScope heapIterationScope(*this);
-            auto& clearableCodeSet = spaceAndSet.clearableCodeSet;
-            clearableCodeSet.forEachLiveCell(
+            auto& set = spaceAndSet.set;
+            set.forEachLiveCell(
                 [&] (HeapCell* cell, HeapCell::Kind) {
                     ScriptExecutable* executable = static_cast<ScriptExecutable*>(cell);
-                    executable->clearCode(clearableCodeSet);
+                    executable->clearCode(set);
                 });
         });
 
@@ -896,11 +901,13 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
         // points into a CodeBlock that could be dead. The IC will still succeed because
         // it uses a callee check, but then it will call into dead code.
         HeapIterationScope heapIterationScope(*this);
-        vm.webAssemblyCodeBlockSpace.forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
-            ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
-            JSWebAssemblyCodeBlock* codeBlock = static_cast<JSWebAssemblyCodeBlock*>(cell);
-            codeBlock->clearJSCallICs(vm);
-        });
+        if (vm.m_webAssemblyCodeBlockSpace) {
+            vm.m_webAssemblyCodeBlockSpace->forEachLiveCell([&] (HeapCell* cell, HeapCell::Kind kind) {
+                ASSERT_UNUSED(kind, kind == HeapCell::JSCell);
+                JSWebAssemblyCodeBlock* codeBlock = static_cast<JSWebAssemblyCodeBlock*>(cell);
+                codeBlock->clearJSCallICs(vm);
+            });
+        }
     }
 #endif
 }
@@ -916,7 +923,7 @@ void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
     RELEASE_ASSERT(!m_collectionScope);
 
     HeapIterationScope heapIterationScope(*this);
-    vm.unlinkedFunctionExecutableSpace.clearableCodeSet.forEachLiveCell(
+    vm.unlinkedFunctionExecutableSpace.set.forEachLiveCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
             UnlinkedFunctionExecutable* executable = static_cast<UnlinkedFunctionExecutable*>(cell);
             executable->clearCode(vm);
@@ -2730,7 +2737,8 @@ void Heap::addCoreConstraints()
             };
             
             add(vm.executableToCodeBlockEdgesWithConstraints);
-            add(vm.weakMapSpace);
+            if (vm.m_weakMapSpace)
+                add(*vm.m_weakMapSpace);
         },
         ConstraintVolatility::GreyedByMarking,
         ConstraintParallelism::Parallel);

@@ -43,10 +43,10 @@ private:
     using Base = GenericArguments<ScopedArguments>;
 
 public:
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        RELEASE_ASSERT(!CellType::needsDestruction);
+        static_assert(!CellType::needsDestruction, "");
         return &vm.jsValueGigacageCellSpace;
     }
 

@@ -62,7 +62,7 @@ class JSFunction : public JSCallee {
 
 public:
     
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.functionSpace;

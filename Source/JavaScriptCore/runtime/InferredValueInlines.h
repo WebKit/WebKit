@@ -40,7 +40,7 @@ void InferredValue::finalizeUnconditionally(VM& vm)
         invalidate(vm, StringFireDetail("InferredValue clean-up during GC"));
     }
     
-    vm.inferredValuesWithFinalizers.remove(this);
+    VM::SpaceAndSet::setFor(*subspace()).remove(this);
 }
 
 } // namespace JSC

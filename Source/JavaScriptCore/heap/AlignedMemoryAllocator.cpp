@@ -27,6 +27,7 @@
 #include "AlignedMemoryAllocator.h"
 
 #include "BlockDirectory.h"
+#include "Heap.h"
 #include "Subspace.h"
 
 namespace JSC { 
@@ -44,6 +45,7 @@ void AlignedMemoryAllocator::registerDirectory(BlockDirectory* directory)
     RELEASE_ASSERT(!directory->nextDirectoryInAlignedMemoryAllocator());
     
     if (m_directories.isEmpty()) {
+        ASSERT(!mayBeGCThread() || directory->heap()->worldIsStopped());
         for (Subspace* subspace = m_subspaces.first(); subspace; subspace = subspace->nextSubspaceInAlignedMemoryAllocator())
             subspace->didCreateFirstDirectory(directory);
     }

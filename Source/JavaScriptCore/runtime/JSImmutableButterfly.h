@@ -88,7 +88,7 @@ public:
 
     void copyToArguments(ExecState*, VirtualRegister firstElementDest, unsigned offset, unsigned length);
 
-    template<typename>
+    template<typename, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
         // We allocate out of the JSValue gigacage as other code expects all butterflies to live there.

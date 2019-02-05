@@ -38,7 +38,7 @@ public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | ImplementsDefaultHasInstance | OverridesGetCallData;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         static_assert(sizeof(CellType) == sizeof(InternalFunction), "InternalFunction subclasses that add fields need to override subspaceFor<>()");

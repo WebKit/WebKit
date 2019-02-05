@@ -59,10 +59,10 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.webAssemblyCodeBlockSpace;
+        return vm.webAssemblyCodeBlockSpace<mode>();
     }
 
     Wasm::CodeBlock& codeBlock() { return m_codeBlock.get(); }

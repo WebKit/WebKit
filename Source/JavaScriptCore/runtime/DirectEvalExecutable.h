@@ -31,10 +31,10 @@ namespace JSC {
 
 class DirectEvalExecutable final : public EvalExecutable {
 public:
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.directEvalExecutableSpace.space;
+        return vm.directEvalExecutableSpace<mode>();
     }
 
     static DirectEvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType, const VariableEnvironment*);

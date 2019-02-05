@@ -114,7 +114,7 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static const bool needsDestruction = true;
 
-    template<typename>
+    template<typename, SubspaceAccess>
     static void subspaceFor(VM&) { }
 
     DECLARE_INFO;

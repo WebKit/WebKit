@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AllocatorForMode.h"
 #include "AllocatorInlines.h"
 #include "CompleteSubspaceInlines.h"
 #include "CPU.h"
@@ -145,12 +146,20 @@ ALWAYS_INLINE VM& ExecState::vm() const
     return *callee->markedBlock().vm();
 }
 
-template<typename CellType>
+template<typename CellType, SubspaceAccess>
 CompleteSubspace* JSCell::subspaceFor(VM& vm)
 {
     if (CellType::needsDestruction)
         return &vm.destructibleCellSpace;
     return &vm.cellSpace;
+}
+
+template<typename Type>
+inline Allocator allocatorForNonVirtualConcurrently(VM& vm, size_t allocationSize, AllocatorForMode mode)
+{
+    if (auto* subspace = subspaceForConcurrently<Type>(vm))
+        return subspace->allocatorForNonVirtual(allocationSize, mode);
+    return { };
 }
 
 template<typename T>

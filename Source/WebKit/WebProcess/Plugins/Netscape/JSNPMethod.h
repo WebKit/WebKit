@@ -41,7 +41,7 @@ class JSNPMethod final : public JSC::InternalFunction {
 public:
     typedef JSC::InternalFunction Base;
 
-    template<typename CellType>
+    template<typename CellType, JSC::SubspaceAccess>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         return subspaceForImpl(vm);

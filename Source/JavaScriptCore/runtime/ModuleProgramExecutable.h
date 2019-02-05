@@ -36,10 +36,10 @@ public:
     typedef ScriptExecutable Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.moduleProgramExecutableSpace.space;
+        return vm.moduleProgramExecutableSpace<mode>();
     }
 
     static ModuleProgramExecutable* create(ExecState*, const SourceCode&);

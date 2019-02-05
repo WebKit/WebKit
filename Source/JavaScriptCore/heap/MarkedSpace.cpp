@@ -258,6 +258,7 @@ void MarkedSpace::sweepLargeAllocations()
 
 void MarkedSpace::prepareForAllocation()
 {
+    ASSERT(!mayBeGCThread() || m_heap->worldIsStopped());
     for (Subspace* subspace : m_subspaces)
         subspace->prepareForAllocation();
 

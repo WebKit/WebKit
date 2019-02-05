@@ -40,7 +40,7 @@ public:
     typedef ScriptExecutable Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.functionExecutableSpace.space;

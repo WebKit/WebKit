@@ -997,7 +997,7 @@ void CodeBlock::visitChildren(SlotVisitor& visitor)
     stronglyVisitStrongReferences(locker, visitor);
     stronglyVisitWeakReferences(locker, visitor);
     
-    VM::SpaceAndFinalizerSet::finalizerSetFor(*subspace()).add(this);
+    VM::SpaceAndSet::setFor(*subspace()).add(this);
 }
 
 bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker& locker)
@@ -1392,7 +1392,7 @@ void CodeBlock::finalizeUnconditionally(VM&)
     }
 #endif // ENABLE(DFG_JIT)
 
-    VM::SpaceAndFinalizerSet::finalizerSetFor(*subspace()).remove(this);
+    VM::SpaceAndSet::setFor(*subspace()).remove(this);
 }
 
 void CodeBlock::destroy(JSCell* cell)

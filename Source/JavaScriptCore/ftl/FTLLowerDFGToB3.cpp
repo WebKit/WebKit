@@ -6472,7 +6472,7 @@ private:
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
-        Allocator allocator = subspaceFor<JSRopeString>(vm())->allocatorForNonVirtual(sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForNonVirtualConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
         
         LValue result = allocateCell(
             m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
@@ -10723,7 +10723,7 @@ private:
             
             if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
                 size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-                Allocator cellAllocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+                Allocator cellAllocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
 
                 bool hasIndexingHeader = hasIndexedProperties(structure->indexingType());
                 unsigned indexingHeaderSize = 0;
@@ -13190,7 +13190,7 @@ private:
     LValue allocateObject(
         size_t size, StructureType structure, LValue butterfly, LBasicBlock slowPath)
     {
-        Allocator allocator = subspaceFor<ClassType>(vm())->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForNonVirtualConcurrently<ClassType>(vm(), size, AllocatorForMode::AllocatorIfExists);
         return allocateObject(
             m_out.constIntPtr(allocator.localAllocator()), structure, butterfly, slowPath);
     }
@@ -13254,7 +13254,9 @@ private:
     LValue allocateVariableSizedObject(
         LValue size, RegisteredStructure structure, LValue butterfly, LBasicBlock slowPath)
     {
-        LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
+        CompleteSubspace* subspace = subspaceForConcurrently<ClassType>(vm());
+        RELEASE_ASSERT_WITH_MESSAGE(subspace, "CompleteSubspace is always allocated");
+        LValue allocator = allocatorForSize(*subspace, size, slowPath);
         return allocateObject(allocator, structure, butterfly, slowPath);
     }
 
@@ -13262,14 +13264,16 @@ private:
     LValue allocateVariableSizedCell(
         LValue size, Structure* structure, LBasicBlock slowPath)
     {
-        LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
+        CompleteSubspace* subspace = subspaceForConcurrently<ClassType>(vm());
+        RELEASE_ASSERT_WITH_MESSAGE(subspace, "CompleteSubspace is always allocated");
+        LValue allocator = allocatorForSize(*subspace, size, slowPath);
         return allocateCell(allocator, structure, slowPath);
     }
     
     LValue allocateObject(RegisteredStructure structure)
     {
         size_t allocationSize = JSFinalObject::allocationSize(structure.get()->inlineCapacity());
-        Allocator allocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+        Allocator allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
         
         // FIXME: If the allocator is null, we could simply emit a normal C call to the allocator
         // instead of putting it on the slow path.

@@ -63,7 +63,7 @@ void InferredValue::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (!value.isCell())
         return;
     
-    visitor.vm().inferredValuesWithFinalizers.add(inferredValue);
+    VM::SpaceAndSet::setFor(*inferredValue->subspace()).add(inferredValue);
 }
 
 InferredValue::InferredValue(VM& vm)

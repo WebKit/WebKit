@@ -40,10 +40,10 @@ public:
 
     const static unsigned StructureFlags = Base::StructureFlags;
 
-    template<typename CellType>
+    template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return &vm.webAssemblyWrapperFunctionSpace;
+        return vm.webAssemblyWrapperFunctionSpace<mode>();
     }
 
     DECLARE_INFO;

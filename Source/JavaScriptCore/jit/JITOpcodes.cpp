@@ -96,7 +96,7 @@ void JIT::emit_op_new_object(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_codeBlock);
     Structure* structure = metadata.m_objectAllocationProfile.structure();
     size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-    Allocator allocator = subspaceFor<JSFinalObject>(*m_vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(*m_vm, allocationSize, AllocatorForMode::AllocatorIfExists);
 
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;

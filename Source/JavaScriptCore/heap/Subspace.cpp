@@ -50,7 +50,6 @@ void Subspace::initialize(HeapCellType* heapCellType, AlignedMemoryAllocator* al
     m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 
     Heap& heap = *m_space.heap();
-    PreventCollectionScope preventCollectionScope(heap);
     heap.objectSpace().m_subspaces.append(this);
     m_alignedMemoryAllocator->registerSubspace(this);
 }

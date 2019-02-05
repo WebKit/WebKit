@@ -68,7 +68,7 @@ void ScriptExecutable::destroy(JSCell* cell)
 void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
 {
     Base::clearCode();
-    ASSERT(&VM::ScriptExecutableSpaceAndSet::clearableCodeSetFor(*subspace()) == &clearableCodeSet);
+    ASSERT(&VM::SpaceAndSet::setFor(*subspace()) == &clearableCodeSet);
     clearableCodeSet.remove(this);
 }
 
@@ -149,7 +149,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         break;
     }
 
-    auto& clearableCodeSet = VM::ScriptExecutableSpaceAndSet::clearableCodeSetFor(*subspace());
+    auto& clearableCodeSet = VM::SpaceAndSet::setFor(*subspace());
     if (hasClearableCode())
         clearableCodeSet.add(this);
     else
