@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TiledCoreAnimationDrawingArea.h"
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 
 #import "ColorSpaceData.h"
 #import "DrawingAreaProxyMessages.h"
@@ -999,4 +999,4 @@ void TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired()
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(MAC)

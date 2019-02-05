@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingThread.h"
 
-#if ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include <mutex>
 
@@ -72,4 +72,4 @@ void ScrollingThread::threadRunLoopSourceCallback()
 
 } // namespace WebCore
 
-#endif // ENABLE(ASYNC_SCROLLING)
+#endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

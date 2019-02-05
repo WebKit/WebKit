@@ -1,3 +1,31 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move some macOS/iOS scrolling code into the scrolling/cocoa directory
+        https://bugs.webkit.org/show_bug.cgi?id=194245
+
+        Reviewed by Zalan Bujtas.
+
+        ScrollingTreeFixedNode and ScrollingTreeStickyNode are used on iOS and macOS, so move them to the cocoa
+        directory.
+
+        Standardize on the ordering of ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC).
+
+        Stop building ScrollingThread for iOS (it's never used), and stub out some functions so things build.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::initializeRunLoop):
+        (WebCore::ScrollingThread::wakeUpRunLoop):
+        (WebCore::ScrollingThread::threadRunLoopSourceCallback):
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.h: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeFixedNode.h.
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeFixedNode.mm.
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.h: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeStickyNode.h.
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingTreeStickyNode.mm.
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+
 2019-02-04  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

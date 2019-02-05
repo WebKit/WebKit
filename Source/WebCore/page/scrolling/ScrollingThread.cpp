@@ -104,6 +104,25 @@ void ScrollingThread::dispatchFunctionsFromScrollingThread()
         function();
 }
 
+#if PLATFORM(IOS_FAMILY)
+NO_RETURN_DUE_TO_ASSERT void ScrollingThread::initializeRunLoop()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ScrollingThread::wakeUpRunLoop()
+{
+}
+
+void ScrollingThread::threadRunLoopSourceCallback(void*)
+{
+}
+
+void ScrollingThread::threadRunLoopSourceCallback()
+{
+}
+#endif // PLATFORM(IOS_FAMILY)
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

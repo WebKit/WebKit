@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
 
 #include "CallbackID.h"
 #include "DrawingArea.h"
@@ -186,5 +186,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaTypeTiledCoreAnimation)
 
-#endif // !PLATFORM(IOS_FAMILY)
-
+#endif // PLATFORM(MAC)

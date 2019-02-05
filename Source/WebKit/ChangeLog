@@ -1,3 +1,15 @@
+2019-02-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move some macOS/iOS scrolling code into the scrolling/cocoa directory
+        https://bugs.webkit.org/show_bug.cgi?id=194245
+
+        Reviewed by Zalan Bujtas.
+
+        Use PLATFORM(MAC), not !PLATFORM(IOS_FAMILY).
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+
 2019-02-04  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

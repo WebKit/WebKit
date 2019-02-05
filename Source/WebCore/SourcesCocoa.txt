@@ -146,6 +146,8 @@ page/mac/WheelEventDeltaFilterMac.mm
 page/scrolling/ScrollingMomentumCalculator.cpp
 
 page/scrolling/cocoa/ScrollingStateNode.mm
+page/scrolling/cocoa/ScrollingTreeFixedNode.mm
+page/scrolling/cocoa/ScrollingTreeStickyNode.mm
 
 page/scrolling/ios/ScrollingCoordinatorIOS.mm
 page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm
@@ -155,12 +157,10 @@ page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
 page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingThreadMac.mm
-page/scrolling/mac/ScrollingTreeFixedNode.mm
 page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 page/scrolling/mac/ScrollingTreeMac.cpp
-page/scrolling/mac/ScrollingTreeStickyNode.mm
 
 platform/audio/AudioSession.cpp
 

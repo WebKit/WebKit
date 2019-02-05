@@ -27,7 +27,7 @@
 
 #include "ScrollingTreeScrollingNodeDelegate.h"
 
-#if PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include "ScrollController.h"
 
