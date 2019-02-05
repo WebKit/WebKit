@@ -16,6 +16,8 @@
 	<array>
 		<string>com.apple.WebKit.Networking</string>
 	</array>
+	<key>com.apple.multitasking.systemappassertions</key>
+	<true/>
 	<key>com.apple.private.memorystatus</key>
 	<true/>
 </dict>

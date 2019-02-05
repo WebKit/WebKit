@@ -1077,6 +1077,9 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         for (auto& page : m_pageMap.values())
             page->processWillBecomeForeground();
         break;
+    
+    case AssertionState::Download:
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);

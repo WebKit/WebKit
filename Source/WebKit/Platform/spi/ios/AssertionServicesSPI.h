@@ -69,6 +69,7 @@ typedef uint32_t BKSProcessAssertionFlags;
 
 enum {
     BKSProcessAssertionReasonExtension = 13,
+    BKSProcessAssertionReasonFinishTaskUnbounded = 10004,
 };
 typedef uint32_t BKSProcessAssertionReason;
 

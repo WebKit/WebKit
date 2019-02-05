@@ -28,6 +28,7 @@
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
 #include "PendingDownload.h"
+#include "ProcessAssertion.h"
 #include "SandboxExtension.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/Forward.h>
@@ -113,6 +114,10 @@ private:
     HashMap<DownloadID, std::pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>> m_downloadsWaitingForDestination;
     HashMap<DownloadID, RefPtr<NetworkDataTask>> m_downloadsAfterDestinationDecided;
     HashMap<DownloadID, std::unique_ptr<Download>> m_downloads;
+
+#if ENABLE(TAKE_DOWNLOAD_ASSERTION)
+    std::unique_ptr<ProcessAssertion> m_downloadAssertion;
+#endif
 };
 
 } // namespace WebKit

@@ -153,20 +153,38 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
     case AssertionState::Suspended:
         return suspendedTabFlags;
     case AssertionState::Background:
+    case AssertionState::Download:
         return backgroundTabFlags;
     case AssertionState::Foreground:
         return foregroundTabFlags;
     }
 }
 
+static BKSProcessAssertionReason reasonForState(AssertionState assertionState)
+{
+    switch (assertionState) {
+    case AssertionState::Download:
+        return BKSProcessAssertionReasonFinishTaskUnbounded;
+    case AssertionState::Suspended:
+    case AssertionState::Background:
+    case AssertionState::Foreground:
+        return BKSProcessAssertionReasonExtension;
+    }
+}
+
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Function<void()>&& invalidationCallback)
+    : ProcessAssertion(pid, "Web content visibility"_s, assertionState, WTFMove(invalidationCallback))
+{
+}
+
+ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState assertionState, Function<void()>&& invalidationCallback)
     : m_invalidationCallback(WTFMove(invalidationCallback))
     , m_assertionState(assertionState)
 {
     auto weakThis = makeWeakPtr(*this);
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
-            RELEASE_LOG_ERROR(ProcessSuspension, " %p - ProcessAssertion() Unable to acquire assertion for process with PID %d", this, pid);
+            RELEASE_LOG_ERROR(ProcessSuspension, " %p - ProcessAssertion() PID %d Unable to acquire assertion for process with PID %d", this, getpid(), pid);
             ASSERT_NOT_REACHED();
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakThis)
@@ -174,8 +192,9 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Fun
             });
         }
     };
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Acquiring assertion for process with PID %d", this, pid);
-    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visibility" withHandler:handler]);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d", this, getpid(), pid);
+    
+    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:reasonForState(assertionState) name:(NSString *)name withHandler:handler]);
     m_assertion.get().invalidationHandler = ^() {
         dispatch_async(dispatch_get_main_queue(), ^{
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Process assertion for process with PID %d was invalidated", this, pid);

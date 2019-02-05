@@ -28,6 +28,7 @@
 
 #include <wtf/Function.h>
 #include <wtf/ProcessID.h>
+#include <wtf/text/WTFString.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -44,6 +45,7 @@ namespace WebKit {
 enum class AssertionState {
     Suspended,
     Background,
+    Download,
     Foreground
 };
 
@@ -60,6 +62,7 @@ class ProcessAssertion
 {
 public:
     ProcessAssertion(ProcessID, AssertionState, Function<void()>&& invalidationCallback = { });
+    ProcessAssertion(ProcessID, const String& reason, AssertionState, Function<void()>&& invalidationCallback = { });
     virtual ~ProcessAssertion();
 
     virtual void setClient(ProcessAssertionClient& client) { m_client = &client; }

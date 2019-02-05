@@ -35,6 +35,11 @@ ProcessAssertion::ProcessAssertion(ProcessID, AssertionState assertionState, Fun
 {
 }
 
+ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState, Function<void()>&&)
+    : m_assertionState(assertionState)
+{
+}
+
 ProcessAssertion::~ProcessAssertion()
 {
 }

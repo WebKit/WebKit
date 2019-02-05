@@ -1,3 +1,35 @@
+2019-02-04  Brady Eidson  <beidson@apple.com>
+
+        Take additional process assertion while downloading.
+        <rdar://problem/47741356> and https://bugs.webkit.org/show_bug.cgi?id=194239
+
+        Reviewed by Chris Dumez.
+
+        When the first download starts, grab this new assertion.
+        When the last download ends, release it.
+
+        * Configurations/Network-iOS.entitlements:
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+        (WebKit::DownloadManager::downloadFinished):
+        * NetworkProcess/Downloads/DownloadManager.h:
+
+        * Platform/spi/ios/AssertionServicesSPI.h:
+
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::flagsForState):
+        (WebKit::reasonForState):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
 2019-02-04  Said Abou-Hallawa  <said@apple.com>
 
         [CG] Enable setAdditionalSupportedImageTypes for WK1
