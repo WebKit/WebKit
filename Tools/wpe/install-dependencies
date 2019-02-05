@@ -131,6 +131,7 @@ function installDependenciesWithApt {
         libxrandr-dev \
         libwayland-dev \
         luajit \
+        python3-setuptools \
         yasm"
 
     # These are dependencies necessary for using webkit-patch
@@ -223,6 +224,7 @@ function installDependenciesWithPacman {
         opus \
         orc \
         perl-xml-libxml \
+        python3-setuptools \
         util-linux \
         v4l-utils \
         xorg-xrandr \
@@ -316,6 +318,7 @@ function installDependenciesWithDnf {
         orc-devel \
         perl-XML-LibXML \
         pulseaudio-libs-devel \
+        python3-setuptools \
         wayland-devel \
         yasm"
 
