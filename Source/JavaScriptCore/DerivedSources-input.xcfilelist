@@ -121,6 +121,7 @@ $(PROJECT_DIR)/inspector/scripts/generate-inspector-protocol-bindings.py
 $(PROJECT_DIR)/parser/Keywords.table
 $(PROJECT_DIR)/runtime/ArrayConstructor.cpp
 $(PROJECT_DIR)/runtime/ArrayIteratorPrototype.cpp
+$(PROJECT_DIR)/runtime/AsyncFromSyncIteratorPrototype.cpp
 $(PROJECT_DIR)/runtime/AsyncGeneratorPrototype.cpp
 $(PROJECT_DIR)/runtime/BigIntConstructor.cpp
 $(PROJECT_DIR)/runtime/BigIntPrototype.cpp
@@ -136,6 +137,7 @@ $(PROJECT_DIR)/runtime/IntlDateTimeFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlDateTimeFormatPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlNumberFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlNumberFormatPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlObject.cpp
 $(PROJECT_DIR)/runtime/IntlPluralRulesConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlPluralRulesPrototype.cpp
 $(PROJECT_DIR)/runtime/JSDataViewPrototype.cpp

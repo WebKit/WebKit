@@ -4,6 +4,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AirOpcodeGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AirOpcodeUtils.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ArrayConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ArrayIteratorPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AsyncFromSyncIteratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AsyncGeneratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BigIntConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BigIntPrototype.lut.h
@@ -27,6 +28,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDateTimeFormatConstructo
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDateTimeFormatPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlNumberFormatConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlNumberFormatPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h

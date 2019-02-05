@@ -321,6 +321,9 @@ $(PROJECT_DIR)/Modules/webdatabase/SQLTransactionCallback.idl
 $(PROJECT_DIR)/Modules/webdatabase/SQLTransactionErrorCallback.idl
 $(PROJECT_DIR)/Modules/webdriver/NavigatorWebDriver.idl
 $(PROJECT_DIR)/Modules/webgpu/DOMWindowWebGPU.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUCompareFunction.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPURequestAdapterOptions.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapter.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapterDescriptor.idl
