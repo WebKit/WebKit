@@ -95,7 +95,7 @@ public:
 
     void flushAsynchronousTasks();
 
-    RenderLayoutState* layoutState() const;
+    RenderLayoutState* layoutState() const PURE_FUNCTION;
     // Returns true if layoutState should be used for its cached offset and clip.
     bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && layoutState(); }
 #ifndef NDEBUG

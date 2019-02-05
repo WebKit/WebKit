@@ -1,3 +1,39 @@
+2019-02-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Hit testing functions optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=194073
+        <rdar://problem/47692312>
+
+        Reviewed by Zalan Bujtas.
+
+        This patch implements some easy optimizations that speed up
+        hit testing without changing the algorithms.
+
+        * page/FrameViewLayoutContext.h:
+        The code for:
+            view().frameView().layoutContext().isPaintOffsetCacheEnabled()
+        followed by:
+            view().frameView().layoutContext().layoutState()
+        was loading all the intermediate values twice and calling layoutState()
+        twice.
+
+        By marking the function as pure, Clang can CSE the whole thing and
+        remove the duplicated code.
+
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::isInfinite const):
+        That one is pretty funny.
+
+        Since LayoutRect::isInfinite() was implemented before operator==() is
+        declared, the compiler was falling back to the implicit convertion to FloatRect()
+        before doing any comparison.
+
+        This explains a bunch of the convertions to float when using LayoutRect.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const):
+        Just reoder to make the register nice and clean for the optimization described above.
+
 2019-02-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink size of VM by lazily allocating IsoSubspaces for non-common types
