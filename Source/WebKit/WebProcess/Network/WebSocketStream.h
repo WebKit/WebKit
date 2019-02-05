@@ -70,8 +70,8 @@ public:
     
 private:
     // MessageSender
-    IPC::Connection* messageSenderConnection() final;
-    uint64_t messageSenderDestinationID() final;
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     WebSocketStream(const URL&, WebCore::SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition);
     ~WebSocketStream();

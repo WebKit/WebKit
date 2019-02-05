@@ -1,3 +1,92 @@
+2019-02-04  Alex Christensen  <achristensen@webkit.org>
+
+        Make MessageSender functions const
+        https://bugs.webkit.org/show_bug.cgi?id=194247
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::messageSenderConnection const):
+        (WebKit::Download::messageSenderDestinationID const):
+        (WebKit::Download::messageSenderConnection): Deleted.
+        (WebKit::Download::messageSenderDestinationID): Deleted.
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::messageSenderConnection const):
+        (WebKit::PendingDownload::messageSenderDestinationID const):
+        (WebKit::PendingDownload::messageSenderConnection): Deleted.
+        (WebKit::PendingDownload::messageSenderDestinationID): Deleted.
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection const):
+        (WebKit::WebIDBConnectionToClient::messageSenderConnection): Deleted.
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::messageSenderConnection const):
+        (WebKit::NetworkResourceLoader::messageSenderConnection): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::messageSenderConnection const):
+        (WebKit::NetworkSocketStream::messageSenderDestinationID const):
+        (WebKit::NetworkSocketStream::messageSenderConnection): Deleted.
+        (WebKit::NetworkSocketStream::messageSenderDestinationID): Deleted.
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::messageSenderConnection const):
+        (WebKit::WebSWServerToContextConnection::messageSenderDestinationID const):
+        (WebKit::WebSWServerToContextConnection::messageSenderConnection): Deleted.
+        (WebKit::WebSWServerToContextConnection::messageSenderDestinationID): Deleted.
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * Platform/IPC/MessageSender.h:
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::messageSenderConnection const):
+        (WebKit::AuxiliaryProcess::messageSenderDestinationID const):
+        (WebKit::AuxiliaryProcess::messageSenderConnection): Deleted.
+        (WebKit::AuxiliaryProcess::messageSenderDestinationID): Deleted.
+        * Shared/AuxiliaryProcess.h:
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::messageSenderConnection const):
+        (WebKit::WebConnectionToWebProcess::messageSenderDestinationID const):
+        (WebKit::WebConnectionToWebProcess::messageSenderConnection): Deleted.
+        (WebKit::WebConnectionToWebProcess::messageSenderDestinationID): Deleted.
+        * UIProcess/WebConnectionToWebProcess.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::messageSenderConnection const):
+        (WebKit::WebPageProxy::messageSenderDestinationID const):
+        (WebKit::WebPageProxy::messageSenderConnection): Deleted.
+        (WebKit::WebPageProxy::messageSenderDestinationID): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection const):
+        (WebKit::WebIDBConnectionToServer::messageSenderConnection): Deleted.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderConnection const):
+        (WebKit::WebResourceLoader::messageSenderDestinationID const):
+        (WebKit::WebResourceLoader::messageSenderConnection): Deleted.
+        (WebKit::WebResourceLoader::messageSenderDestinationID): Deleted.
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::messageSenderConnection const):
+        (WebKit::WebSocketStream::messageSenderDestinationID const):
+        (WebKit::WebSocketStream::messageSenderConnection): Deleted.
+        (WebKit::WebSocketStream::messageSenderDestinationID): Deleted.
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::messageSenderConnection const):
+        (WebKit::WebConnectionToUIProcess::messageSenderDestinationID const):
+        (WebKit::WebConnectionToUIProcess::messageSenderConnection): Deleted.
+        (WebKit::WebConnectionToUIProcess::messageSenderDestinationID): Deleted.
+        * WebProcess/WebConnectionToUIProcess.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::messageSenderConnection const):
+        (WebKit::WebPage::messageSenderDestinationID const):
+        (WebKit::WebPage::messageSenderConnection): Deleted.
+        (WebKit::WebPage::messageSenderDestinationID): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2019-02-04  Brady Eidson  <beidson@apple.com>
 
         Take additional process assertion while downloading.

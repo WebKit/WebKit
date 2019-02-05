@@ -65,12 +65,12 @@ WebResourceLoader::~WebResourceLoader()
 {
 }
 
-IPC::Connection* WebResourceLoader::messageSenderConnection()
+IPC::Connection* WebResourceLoader::messageSenderConnection() const
 {
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-uint64_t WebResourceLoader::messageSenderDestinationID()
+uint64_t WebResourceLoader::messageSenderDestinationID() const
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(m_coreLoader->identifier());

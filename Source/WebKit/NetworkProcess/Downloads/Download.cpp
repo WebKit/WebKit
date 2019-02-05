@@ -159,12 +159,12 @@ void Download::didCancel(const IPC::DataReference& resumeData)
     m_downloadManager.downloadFinished(this);
 }
 
-IPC::Connection* Download::messageSenderConnection()
+IPC::Connection* Download::messageSenderConnection() const
 {
     return m_downloadManager.downloadProxyConnection();
 }
 
-uint64_t Download::messageSenderDestinationID()
+uint64_t Download::messageSenderDestinationID() const
 {
     return m_downloadID.downloadID();
 }

@@ -69,7 +69,7 @@ void WebIDBConnectionToClient::disconnectedFromWebProcess()
     m_networkProcess->idbServer(m_sessionID).unregisterConnection(*m_connectionToClient);
 }
 
-IPC::Connection* WebIDBConnectionToClient::messageSenderConnection()
+IPC::Connection* WebIDBConnectionToClient::messageSenderConnection() const
 {
     return m_connection.ptr();
 }

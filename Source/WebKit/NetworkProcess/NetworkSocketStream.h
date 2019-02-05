@@ -61,8 +61,8 @@ public:
     void didFailSocketStream(WebCore::SocketStreamHandle&, const WebCore::SocketStreamError&) final;
 
 private:
-    IPC::Connection* messageSenderConnection() final;
-    uint64_t messageSenderDestinationID() final;
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     NetworkSocketStream(NetworkProcess&, URL&&, PAL::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
 

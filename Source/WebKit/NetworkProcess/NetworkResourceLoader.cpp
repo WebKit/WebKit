@@ -898,7 +898,7 @@ void NetworkResourceLoader::dispatchWillSendRequestForCacheEntry(ResourceRequest
     willSendRedirectedRequest(WTFMove(request), ResourceRequest { *entry->redirectRequest() }, ResourceResponse { entry->response() });
 }
 
-IPC::Connection* NetworkResourceLoader::messageSenderConnection()
+IPC::Connection* NetworkResourceLoader::messageSenderConnection() const
 {
     return &connectionToWebProcess().connection();
 }

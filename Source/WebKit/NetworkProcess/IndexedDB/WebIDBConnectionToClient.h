@@ -60,7 +60,7 @@ public:
 
     WebCore::IDBServer::IDBConnectionToClient& connectionToClient();
     uint64_t identifier() const final { return m_identifier; }
-    uint64_t messageSenderDestinationID() final { return m_identifier; }
+    uint64_t messageSenderDestinationID() const final { return m_identifier; }
 
     // IDBConnectionToClientDelegate
     void didDeleteDatabase(const WebCore::IDBResultData&) final;
@@ -130,7 +130,7 @@ public:
 private:
     WebIDBConnectionToClient(NetworkProcess&, IPC::Connection&, uint64_t serverConnectionIdentifier, PAL::SessionID);
 
-    IPC::Connection* messageSenderConnection() final;
+    IPC::Connection* messageSenderConnection() const final;
 
     template<class MessageType> void handleGetResult(const WebCore::IDBResultData&);
 

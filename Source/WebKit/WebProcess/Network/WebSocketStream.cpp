@@ -86,12 +86,12 @@ WebSocketStream::~WebSocketStream()
     globalWebSocketStreamMap().remove(identifier());
 }
 
-IPC::Connection* WebSocketStream::messageSenderConnection()
+IPC::Connection* WebSocketStream::messageSenderConnection() const
 {
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-uint64_t WebSocketStream::messageSenderDestinationID()
+uint64_t WebSocketStream::messageSenderDestinationID() const
 {
     return identifier();
 }

@@ -66,12 +66,12 @@ bool WebConnectionToUIProcess::hasValidConnection() const
     return m_process;
 }
 
-IPC::Connection* WebConnectionToUIProcess::messageSenderConnection()
+IPC::Connection* WebConnectionToUIProcess::messageSenderConnection() const
 {
     return m_process->parentProcessConnection();
 }
 
-uint64_t WebConnectionToUIProcess::messageSenderDestinationID()
+uint64_t WebConnectionToUIProcess::messageSenderDestinationID() const
 {
     return 0;
 }

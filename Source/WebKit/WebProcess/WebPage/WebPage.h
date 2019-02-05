@@ -1152,8 +1152,8 @@ private:
     void updateUserActivity();
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() override;
-    uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() const override;
+    uint64_t messageSenderDestinationID() const override;
 
     void platformInitialize();
     void platformDetach();

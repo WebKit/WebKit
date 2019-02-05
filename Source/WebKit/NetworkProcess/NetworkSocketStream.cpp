@@ -107,12 +107,12 @@ void NetworkSocketStream::didFailSocketStream(SocketStreamHandle& handle, const 
     send(Messages::WebSocketStream::DidFailSocketStream(error));
 }
 
-IPC::Connection* NetworkSocketStream::messageSenderConnection()
+IPC::Connection* NetworkSocketStream::messageSenderConnection() const
 {
     return &m_connection;
 }
 
-uint64_t NetworkSocketStream::messageSenderDestinationID()
+uint64_t NetworkSocketStream::messageSenderDestinationID() const
 {
     return m_identifier;
 }

@@ -790,12 +790,12 @@ WebPage::~WebPage()
 #endif
 }
 
-IPC::Connection* WebPage::messageSenderConnection()
+IPC::Connection* WebPage::messageSenderConnection() const
 {
     return WebProcess::singleton().parentProcessConnection();
 }
 
-uint64_t WebPage::messageSenderDestinationID()
+uint64_t WebPage::messageSenderDestinationID() const
 {
     return pageID();
 }

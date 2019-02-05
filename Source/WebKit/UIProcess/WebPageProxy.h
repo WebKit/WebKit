@@ -1479,8 +1479,8 @@ private:
 
     // IPC::MessageSender
     bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>) override;
-    IPC::Connection* messageSenderConnection() override;
-    uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() const override;
+    uint64_t messageSenderDestinationID() const override;
 
     // WebPopupMenuProxy::Client
     void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) override;

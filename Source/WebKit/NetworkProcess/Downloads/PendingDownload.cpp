@@ -98,7 +98,7 @@ void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
     send(Messages::DownloadProxy::DidFail(error, { }));
 }
     
-IPC::Connection* PendingDownload::messageSenderConnection()
+IPC::Connection* PendingDownload::messageSenderConnection() const
 {
     return m_parentProcessConnection.get();
 }
@@ -108,7 +108,7 @@ void PendingDownload::didReceiveResponse(WebCore::ResourceResponse&& response, R
     completionHandler(WebCore::PolicyAction::Download);
 }
 
-uint64_t PendingDownload::messageSenderDestinationID()
+uint64_t PendingDownload::messageSenderDestinationID() const
 {
     return m_networkLoad->pendingDownloadID().downloadID();
 }

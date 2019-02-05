@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConnectionToUIProcess_h
-#define WebConnectionToUIProcess_h
+#pragma once
 
 #include "WebConnection.h"
 
@@ -47,12 +46,10 @@ private:
     bool hasValidConnection() const override;
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() override;
-    uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() const override;
+    uint64_t messageSenderDestinationID() const override;
 
     WebProcess* m_process;
 };
 
 } // namespace WebKit
-
-#endif // WebConnectionToUIProcess_h

@@ -98,8 +98,8 @@ private:
     void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::ServiceWorkerClientData&&, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void unregisterServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier&);
 
-    IPC::Connection* messageSenderConnection() final { return m_contentConnection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return identifier().toUInt64(); }
+    IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
+    uint64_t messageSenderDestinationID() const final { return identifier().toUInt64(); }
     
     template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
 

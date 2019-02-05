@@ -45,12 +45,12 @@ WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& n
 
 WebSWServerToContextConnection::~WebSWServerToContextConnection() = default;
 
-IPC::Connection* WebSWServerToContextConnection::messageSenderConnection()
+IPC::Connection* WebSWServerToContextConnection::messageSenderConnection() const
 {
     return m_ipcConnection.ptr();
 }
 
-uint64_t WebSWServerToContextConnection::messageSenderDestinationID()
+uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 {
     return 0;
 }

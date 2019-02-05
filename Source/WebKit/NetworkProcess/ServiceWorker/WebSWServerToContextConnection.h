@@ -56,8 +56,8 @@ private:
     ~WebSWServerToContextConnection();
 
     // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() final;
-    uint64_t messageSenderDestinationID() final;
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     // Messages to the SW host WebProcess
     void installServiceWorkerContext(const WebCore::ServiceWorkerContextData&, PAL::SessionID, const String& userAgent) final;

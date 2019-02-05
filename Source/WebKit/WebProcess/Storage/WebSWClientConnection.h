@@ -93,8 +93,8 @@ private:
 
     void runOrDelayTaskForImport(WTF::Function<void()>&& task);
 
-    IPC::Connection* messageSenderConnection() final { return m_connection.ptr(); }
-    uint64_t messageSenderDestinationID() final { return m_identifier.toUInt64(); }
+    IPC::Connection* messageSenderConnection() const final { return m_connection.ptr(); }
+    uint64_t messageSenderDestinationID() const final { return m_identifier.toUInt64(); }
 
     void setSWOriginTableSharedMemory(const SharedMemory::Handle&);
     void setSWOriginTableIsImported();

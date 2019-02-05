@@ -71,8 +71,8 @@ private:
     void didFailLoading(const WebCore::ResourceError&) override;
 
     // MessageSender.
-    IPC::Connection* messageSenderConnection() override;
-    uint64_t messageSenderDestinationID() override;
+    IPC::Connection* messageSenderConnection() const override;
+    uint64_t messageSenderDestinationID() const override;
 
 private:
     std::unique_ptr<NetworkLoad> m_networkLoad;

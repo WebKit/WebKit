@@ -74,8 +74,8 @@ public:
     virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>);
 
 private:
-    virtual Connection* messageSenderConnection() = 0;
-    virtual uint64_t messageSenderDestinationID() = 0;
+    virtual Connection* messageSenderConnection() const = 0;
+    virtual uint64_t messageSenderDestinationID() const = 0;
 };
 
 } // namespace IPC

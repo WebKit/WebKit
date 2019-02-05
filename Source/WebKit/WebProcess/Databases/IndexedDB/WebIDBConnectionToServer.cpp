@@ -71,7 +71,7 @@ WebIDBConnectionToServer::~WebIDBConnectionToServer()
 {
 }
 
-IPC::Connection* WebIDBConnectionToServer::messageSenderConnection()
+IPC::Connection* WebIDBConnectionToServer::messageSenderConnection() const
 {
     return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }

@@ -5580,12 +5580,12 @@ bool WebPageProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<
     return m_process->sendMessage(WTFMove(encoder), sendOptions);
 }
 
-IPC::Connection* WebPageProxy::messageSenderConnection()
+IPC::Connection* WebPageProxy::messageSenderConnection() const
 {
     return m_process->connection();
 }
 
-uint64_t WebPageProxy::messageSenderDestinationID()
+uint64_t WebPageProxy::messageSenderDestinationID() const
 {
     return m_pageID;
 }

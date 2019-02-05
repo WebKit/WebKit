@@ -150,12 +150,12 @@ void AuxiliaryProcess::enableTermination()
     m_terminationTimer.startOneShot(m_terminationTimeout);
 }
 
-IPC::Connection* AuxiliaryProcess::messageSenderConnection()
+IPC::Connection* AuxiliaryProcess::messageSenderConnection() const
 {
     return m_connection.get();
 }
 
-uint64_t AuxiliaryProcess::messageSenderDestinationID()
+uint64_t AuxiliaryProcess::messageSenderDestinationID() const
 {
     return 0;
 }
