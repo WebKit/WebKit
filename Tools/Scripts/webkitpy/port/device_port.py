@@ -144,7 +144,15 @@ class DevicePort(DarwinPort):
             if device.device_type in self.DEVICE_TYPE:
                 types.add(device.device_type)
         if types:
-            return list(types)
+
+            def sorted_by_default_device_type(type):
+                try:
+                    return self.DEFAULT_DEVICE_TYPES.index(type)
+                except ValueError:
+                    return len(self.DEFAULT_DEVICE_TYPES)
+
+            return sorted(types, key=sorted_by_default_device_type)
+
         return self.DEFAULT_DEVICE_TYPES or [self.DEVICE_TYPE]
 
     def setup_test_run(self, device_type=None):
