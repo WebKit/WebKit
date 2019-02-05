@@ -69,7 +69,6 @@ fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
 
 # These tests don't have to be platform-specific, but they are only implemented on Mac now.
-fast/url/user-visible [ Skip ]
 fast/images/eps-as-image.html [ Skip ]
 
 # Only Mac supports Dashboard widgets.

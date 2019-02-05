@@ -1,3 +1,19 @@
+2019-02-04  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI
+        https://bugs.webkit.org/show_bug.cgi?id=174816
+
+        Reviewed by Michael Catanzaro.
+
+        Add tests for webkit_uri_for_display().
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitURIUtilities.cpp: Added.
+        (testURIForDisplayUnaffected):
+        (testURIForDisplayAffected):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/glib/CMakeLists.txt:
+
 2019-02-04  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Precedence of booted devices should match precedence in DEFAULT_DEVICE_TYPES

@@ -133,6 +133,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitURIRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitURIResponse.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitURISchemeRequest.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitURIUtilities.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserContent.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserContentManager.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitUserMediaPermissionRequest.h

@@ -1309,3 +1309,8 @@ webkit_application_info_get_type
 <SUBSECTION Standard>
 WEBKIT_TYPE_APPLICATION_INFO
 </SECTION>
+
+<SECTION>
+<FILE>WebKitURIUtilities</FILE>
+webkit_uri_for_display
+</SECTION>

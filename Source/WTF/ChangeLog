@@ -1,3 +1,44 @@
+2019-02-04  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI
+        https://bugs.webkit.org/show_bug.cgi?id=174816
+
+        Reviewed by Michael Catanzaro.
+
+        Translate userVisibleString and dependent code into platform-neutral C++
+        in wtf/URLHelpers.{h,cpp}.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/URLHelpers.cpp: Added.
+        (WTF::URLHelpers::loadIDNScriptWhiteList):
+        (WTF::URLHelpers::isArmenianLookalikeCharacter):
+        (WTF::URLHelpers::isArmenianScriptCharacter):
+        (WTF::URLHelpers::isASCIIDigitOrValidHostCharacter):
+        (WTF::URLHelpers::isLookalikeCharacter):
+        (WTF::URLHelpers::whiteListIDNScript):
+        (WTF::URLHelpers::initializeDefaultIDNScriptWhiteList):
+        (WTF::URLHelpers::allCharactersInIDNScriptWhiteList):
+        (WTF::URLHelpers::isSecondLevelDomainNameAllowedByTLDRules):
+        (WTF::URLHelpers::isRussianDomainNameCharacter):
+        (WTF::URLHelpers::allCharactersAllowedByTLDRules):
+        (WTF::URLHelpers::mapHostName):
+        (WTF::URLHelpers::collectRangesThatNeedMapping):
+        (WTF::URLHelpers::applyHostNameFunctionToMailToURLString):
+        (WTF::URLHelpers::applyHostNameFunctionToURLString):
+        (WTF::URLHelpers::mapHostNames):
+        (WTF::URLHelpers::createStringWithEscapedUnsafeCharacters):
+        (WTF::URLHelpers::toNormalizationFormC):
+        (WTF::URLHelpers::userVisibleURL):
+        * wtf/URLHelpers.h: Added.
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::URLHelpers::loadIDNScriptWhiteList):
+        (WTF::decodePercentEscapes):
+        (WTF::decodeHostName):
+        (WTF::encodeHostName):
+        (WTF::URLWithUserTypedString):
+        (WTF::userVisibleString):
+
 2019-02-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r240896.
