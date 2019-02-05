@@ -8690,7 +8690,7 @@ void Document::updateTouchActionElements(Element& element, const RenderStyle& st
 
     if (style.touchActions() != TouchAction::Auto) {
         if (!m_touchActionElements)
-            m_touchActionElements = std::make_unique<HashSet<Element*>>();
+            m_touchActionElements = std::make_unique<HashSet<RefPtr<Element>>>();
         changed |= m_touchActionElements->add(&element).isNewEntry;
     } else if (m_touchActionElements)
         changed |= m_touchActionElements->remove(&element);

@@ -1,3 +1,21 @@
+2019-02-05  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r240579): com.apple.WebKit.WebContent at WebCore: WebCore::Document::absoluteEventRegionForNode
+        https://bugs.webkit.org/show_bug.cgi?id=194284
+        <rdar://problem/47774298>
+
+        Reviewed by Antti Koivisto.
+
+        The m_touchActionElements list needs to be HashSet<RefPtr<Element>> instead of HashSet<Element*>. It was initially storing raw pointers based on m_touchEventTargets
+        which is an EventTargetSet (typedef’d to HashCountedSet<Node*>), but that's because these nodes have an event listener registered for them and as such are kept alive,
+        whereas elements with a touch-action property aren’t. Elements are removed from this list from Document::nodeWillBeRemoved() and from Document::updateTouchActionElements(),
+        the latter being called from Style::TreeResolver::resolveElement().
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTouchActionElements):
+        * dom/Document.h:
+        (WebCore::Document::touchActionElements const):
+
 2019-02-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Hit testing functions optimizations

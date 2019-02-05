@@ -1278,7 +1278,7 @@ public:
 #endif
 #if ENABLE(POINTER_EVENTS)
     void updateTouchActionElements(Element&, const RenderStyle&);
-    const HashSet<Element*>* touchActionElements() const { return m_touchActionElements.get(); }
+    const HashSet<RefPtr<Element>>* touchActionElements() const { return m_touchActionElements.get(); }
 #endif
 
     void didAddTouchEventHandler(Node&);
@@ -1881,7 +1881,7 @@ private:
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
 #if ENABLE(POINTER_EVENTS)
-    std::unique_ptr<HashSet<Element*>> m_touchActionElements;
+    std::unique_ptr<HashSet<RefPtr<Element>>> m_touchActionElements;
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
