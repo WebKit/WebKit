@@ -577,7 +577,7 @@ static vpx_codec_err_t set_screen_content_mode(vpx_codec_alg_priv_t *ctx,
 
 static vpx_codec_err_t vp8e_mr_alloc_mem(const vpx_codec_enc_cfg_t *cfg,
                                          void **mem_loc) {
-  vpx_codec_err_t res = 0;
+  vpx_codec_err_t res = VPX_CODEC_OK;
 
 #if CONFIG_MULTI_RES_ENCODING
   LOWER_RES_FRAME_INFO *shared_mem_loc;
@@ -586,12 +586,13 @@ static vpx_codec_err_t vp8e_mr_alloc_mem(const vpx_codec_enc_cfg_t *cfg,
 
   shared_mem_loc = calloc(1, sizeof(LOWER_RES_FRAME_INFO));
   if (!shared_mem_loc) {
-    res = VPX_CODEC_MEM_ERROR;
+    return VPX_CODEC_MEM_ERROR;
   }
 
   shared_mem_loc->mb_info =
       calloc(mb_rows * mb_cols, sizeof(LOWER_RES_MB_INFO));
   if (!(shared_mem_loc->mb_info)) {
+    free(shared_mem_loc);
     res = VPX_CODEC_MEM_ERROR;
   } else {
     *mem_loc = (void *)shared_mem_loc;
