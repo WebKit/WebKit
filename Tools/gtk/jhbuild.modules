@@ -229,7 +229,8 @@
             hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
   </meson>
 
-  <autotools id="libpsl">
+  <autotools id="libpsl"
+             autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
     <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
             version="0.20.2"
             repo="github-tarball"

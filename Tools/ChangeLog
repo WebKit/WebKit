@@ -1,3 +1,18 @@
+2019-02-05  Olivier Blin  <olivier.blin@softathome.com>
+
+        [GTK][WPE] force libpsl build to use ICU in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=194288
+
+        Reviewed by Philippe Normand.
+
+        In jhbuild, libpsl depends on ICU, but its configure script may decide to use libidn instead of ICU.
+        This can cause build failures if libidn is detected but libunistring is not available.
+
+        Make sure that ICU is used for runtime and builtin PSL data.
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2019-02-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Modified timestamp should be updated on updating data

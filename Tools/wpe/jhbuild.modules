@@ -90,7 +90,8 @@
             hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
   </meson>
 
-  <autotools id="libpsl">
+  <autotools id="libpsl"
+             autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
     <dependencies>
       <dep package="icu"/>
     </dependencies>
