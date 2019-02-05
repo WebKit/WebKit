@@ -1,5 +1,20 @@
 2019-02-05  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add method to save BuilderMapping to database
+        https://bugs.webkit.org/show_bug.cgi?id=194264
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/buildermapping.py:
+        (BuilderMapping.__str__):
+        (BuilderMapping):
+        (BuilderMapping.save_mapping):
+        (BuilderMapping.update_mapping):
+        (BuilderMapping.get_existing_mapping):
+        (BuilderMapping.is_valid_mapping):
+
+2019-02-05  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add timestamp fields for BuilderMappings
         https://bugs.webkit.org/show_bug.cgi?id=194266
 
