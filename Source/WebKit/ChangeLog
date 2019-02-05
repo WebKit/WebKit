@@ -1,3 +1,70 @@
+2019-02-05  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using blobRegistry in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=194027
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerFileBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURLOptionallyFileBacked):
+        (WebKit::NetworkBlobRegistry::registerBlobURLForSlice):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+        (WebKit::NetworkBlobRegistry::blobSize):
+        (WebKit::NetworkBlobRegistry::writeBlobsToTemporaryFiles):
+        (WebKit::NetworkBlobRegistry::writeBlobToFilePath):
+        (WebKit::NetworkBlobRegistry::connectionToWebProcessDidClose):
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        (WebKit::NetworkBlobRegistry::singleton): Deleted.
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        (WebKit::NetworkBlobRegistry::blobRegistry):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        (WebKit::NetworkConnectionToWebProcess::registerFileBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLForSlice):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::blobSize):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles):
+        (WebKit::NetworkConnectionToWebProcess::filesInBlob):
+        (WebKit::NetworkConnectionToWebProcess::blobRegistry):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::NetworkDataTaskBlob):
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::initialize):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::removeNetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkBlobRegistry):
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createBlobRegistry):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::m_shouldCaptureExtraNetworkLoadMetrics):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/PreconnectTask.cpp:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+
 2019-02-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r240742.

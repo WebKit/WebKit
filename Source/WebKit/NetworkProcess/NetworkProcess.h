@@ -28,6 +28,7 @@
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
 #include "DownloadManager.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
@@ -291,6 +292,8 @@ public:
     void removeCacheEngine(const PAL::SessionID&);
     void requestCacheStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
+    NetworkBlobRegistry& networkBlobRegistry() { return m_networkBlobRegistry; }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -422,7 +425,7 @@ private:
     void ensurePathExists(const String& path);
 
     // Connections to WebProcesses.
-    Vector<RefPtr<NetworkConnectionToWebProcess>> m_webProcessConnections;
+    Vector<Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 
     String m_diskCacheDirectory;
     bool m_hasSetCacheModel { false };
@@ -445,6 +448,7 @@ private:
     HashMap<PAL::SessionID, Ref<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
+    NetworkBlobRegistry m_networkBlobRegistry;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

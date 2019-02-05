@@ -65,7 +65,7 @@ static const char* httpInternalErrorText = "Internal Server Error";
 
 static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
 
-NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
+NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, BlobRegistryImpl& blobRegistry, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)
     , m_stream(std::make_unique<AsyncFileStream>(*this))
     , m_fileReferences(fileReferences)
@@ -74,7 +74,7 @@ NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, NetworkDataTas
     for (auto& fileReference : m_fileReferences)
         fileReference->prepareForFileAccess();
 
-    m_blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
+    m_blobData = blobRegistry.getBlobDataFromURL(request.url());
 
     m_session->registerNetworkDataTask(*this);
     LOG(NetworkSession, "%p - Created NetworkDataTaskBlob for %s", this, request.url().string().utf8().data());
