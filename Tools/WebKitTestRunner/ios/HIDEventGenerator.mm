@@ -834,7 +834,7 @@ static Optional<uint32_t> keyCodeForDOMFunctionKey(NSString *key)
     }
     for (int i = 13; i <= 24; ++i) {
         if ([key isEqualToString:[NSString stringWithFormat:@"F%d", i]])
-            return kHIDUsage_KeyboardF13 + i - 13;
+            return kHIDUsage_KeyboardF13 + i - 1;
     }
     return WTF::nullopt;
 }

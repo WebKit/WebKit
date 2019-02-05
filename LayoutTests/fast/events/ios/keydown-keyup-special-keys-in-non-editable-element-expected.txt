@@ -1,7 +1,5 @@
-This tests that DOM keydown and keyup events are dispatched to a non-editable <body> on iOS when pressing special keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: Tab, ↑, ↓, ←, →, Delete, End, Enter, Escape, Home, left Alt, left ⌘ Command, left Ctrl, left ⇧ Shift, Page Down, Page Up, Return, right Alt, right ⌘ Command, right Ctrl, right ⇧ Shift, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16.
+This tests that DOM keydown and keyup events are dispatched to a non-editable <body> on iOS when pressing special keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: ↑, ↓, ←, →, Delete, End, Enter, Escape, Home, Insert, left Alt, left ⌘ Command, left Ctrl, left ⇧ Shift, Page Down, Page Up, Return, right Alt, right ⌘ Command, right Ctrl, right ⇧ Shift, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24.
 
-type: keydown, key: Tab, code: Tab, keyIdentifier: U+0009, keyCode: 9, charCode: 0, keyCode: 9, which: 9
-type: keyup, key: Dead, code: Tab, keyIdentifier: Unidentified, keyCode: 9, charCode: 0, keyCode: 9, which: 9
 type: keydown, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
 type: keyup, key: ArrowUp, code: ArrowUp, keyIdentifier: Up, keyCode: 38, charCode: 0, keyCode: 38, which: 38
 type: keydown, key: ArrowDown, code: ArrowDown, keyIdentifier: Down, keyCode: 40, charCode: 0, keyCode: 40, which: 40
