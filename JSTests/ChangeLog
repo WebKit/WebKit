@@ -1,3 +1,13 @@
+2019-02-05  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Test running out of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=194285
+
+        Unreviewed. Do no execute test with LLInt disabled, test runs out of
+        executable memory otherwise.
+
+        * stress/class-subclassing-function.js:
+
 2019-02-04  Robin Morisset  <rmorisset@apple.com>
 
         when lowering AssertNotEmpty, create the value before creating the patchpoint
