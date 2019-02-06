@@ -162,7 +162,6 @@ bool doesGC(Graph& graph, Node* node)
     case CompareEq:
     case CompareStrictEq:
     case CompareEqPtr:
-    case SameValue:
     case Call:
     case DirectCall:
     case TailCallInlinedCaller:
@@ -411,6 +410,11 @@ bool doesGC(Graph& graph, Node* node)
         
     case MultiPutByOffset:
         return node->multiPutByOffsetData().reallocatesStorage();
+
+    case SameValue:
+        if (node->isBinaryUseKind(DoubleRepUse))
+            return false;
+        return true;
 
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
