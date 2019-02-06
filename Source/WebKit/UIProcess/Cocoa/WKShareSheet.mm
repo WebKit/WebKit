@@ -101,6 +101,9 @@
     _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:shareDataArray.get()]);
     _sharingServicePicker.get().delegate = self;
     
+    // WKShareSheet can be released under NSSharingServicePicker delegate callbacks.
+    RetainPtr<WKShareSheet> protector(self);
+    
     NSPoint location = [NSEvent mouseLocation];
     NSRect mouseLocationRect = NSMakeRect(location.x, location.y, 1.0, 1.0);
     NSRect mouseLocationInWindow = [webView.window convertRectFromScreen:mouseLocationRect];
