@@ -879,7 +879,6 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     ASSERT(m_sqliteDB->isOpen());
     ASSERT(m_databaseInfo);
 
-    m_sqliteDB->setMaximumSize(maximumSize());
     auto addResult = m_transactions.add(info.identifier(), nullptr);
     if (!addResult.isNewEntry) {
         LOG_ERROR("Attempt to establish transaction identifier that already exists");
