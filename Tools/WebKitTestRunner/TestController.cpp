@@ -2828,6 +2828,14 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
     return context.result;
 }
 
+#if !PLATFORM(COCOA)
+bool TestController::isDoingMediaCapture() const
+{
+    return false;
+}
+
+#endif
+
 struct ResourceStatisticsCallbackContext {
     explicit ResourceStatisticsCallbackContext(TestController& controller)
         : testController(controller)

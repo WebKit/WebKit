@@ -280,6 +280,8 @@ public:
 
     bool isDoingMediaCapture() const;
 
+    bool isDoingMediaCapture() const;
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;

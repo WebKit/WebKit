@@ -391,4 +391,13 @@ bool TestController::isDoingMediaCapture() const
 #endif
 }
 
+bool TestController::isDoingMediaCapture() const
+{
+#if WK_API_ENABLED
+    return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateNone;
+#else
+    return false;
+#endif
+}
+
 } // namespace WTR
