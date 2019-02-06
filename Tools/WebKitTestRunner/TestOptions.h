@@ -68,7 +68,7 @@ struct TestOptions {
     bool enableEditableImages { false };
     bool editable { false };
     bool enableUndoManagerAPI { false };
-    bool ignoreSynchronousMessagingTimeoutsForTesting { false };
+    bool ignoreSynchronousMessagingTimeouts { false };
 
     double contentInsetTop { 0 };
 
@@ -118,7 +118,7 @@ struct TestOptions {
             || editable != options.editable
             || enableUndoManagerAPI != options.enableUndoManagerAPI
             || contentInsetTop != options.contentInsetTop
-            || ignoreSynchronousMessagingTimeoutsForTesting != options.ignoreSynchronousMessagingTimeoutsForTesting)
+            || ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts)
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)

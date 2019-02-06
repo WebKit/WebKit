@@ -458,7 +458,7 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
-    WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeoutsForTesting);
+    WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts);
 
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
@@ -1286,8 +1286,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
         else if (key == "contentInset.top")
             testOptions.contentInsetTop = std::stod(value);
-        else if (key == "ignoreSynchronousMessagingTimeoutsForTesting")
-            testOptions.ignoreSynchronousMessagingTimeoutsForTesting = parseBooleanTestHeaderValue(value);
+        else if (key == "ignoreSynchronousMessagingTimeouts")
+            testOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

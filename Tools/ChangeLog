@@ -1,3 +1,19 @@
+2019-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename TestOptions.ignoreSynchronousMessagingTimeoutsForTesting
+        https://bugs.webkit.org/show_bug.cgi?id=194324
+
+        Reviewed by Andy Estes.
+
+        Rename ignoreSynchronousMessagingTimeoutsForTesting to just ignoreSynchronousMessagingTimeouts. The -ForTesting
+        part of the name is already implicit, since this is in testing code in TestOptions.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2019-02-05  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Allow * as platform for builders and workers
