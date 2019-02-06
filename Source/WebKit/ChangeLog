@@ -1,3 +1,60 @@
+2019-02-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Roll out parts of r238819 since it is a PLT performance regression.
+        https://bugs.webkit.org/show_bug.cgi?id=194346
+
+        Unreviewed performance fix.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didStartProvisionalLoadForFrame):
+        (didReceiveServerRedirectForProvisionalLoadForFrame):
+        (didFinishLoadForFrame):
+        (globalObjectIsAvailableForFrame):
+        (didRemoveFrameFromHierarchy):
+        (didCommitLoadForFrame):
+        (didFinishDocumentLoadForFrame):
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        (didSameDocumentNavigationForFrame):
+        (didLayoutForFrame):
+        (didReachLayoutMilestone):
+        (didFirstVisuallyNonEmptyLayoutForFrame):
+        (didHandleOnloadEventsForFrame):
+        (userAgentForURL):
+        (setUpPageLoaderClient):
+        (willSendRequestForFrame):
+        (didInitiateLoadForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (setUpResourceLoadClient):
+        (-[WKWebProcessPlugInBrowserContextController setLoadDelegate:]):
+        (ResourceLoadClient::ResourceLoadClient): Deleted.
+        (ResourceLoadClient::loadDelegate const): Deleted.
+        (ResourceLoadClient::pluginContextController const): Deleted.
+        (PageLoaderClient::PageLoaderClient): Deleted.
+        (PageLoaderClient::loadDelegate const): Deleted.
+        (PageLoaderClient::pluginContextController const): Deleted.
+        (PageLoaderClient::didStartProvisionalLoadForFrame): Deleted.
+        (PageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (PageLoaderClient::didFinishLoadForFrame): Deleted.
+        (PageLoaderClient::globalObjectIsAvailableForFrame): Deleted.
+        (PageLoaderClient::didRemoveFrameFromHierarchy): Deleted.
+        (PageLoaderClient::didCommitLoadForFrame): Deleted.
+        (PageLoaderClient::didFinishDocumentLoadForFrame): Deleted.
+        (PageLoaderClient::didFailProvisionalLoadWithErrorForFrame): Deleted.
+        (PageLoaderClient::didFailLoadWithErrorForFrame): Deleted.
+        (PageLoaderClient::didSameDocumentNavigationForFrame): Deleted.
+        (PageLoaderClient::didLayoutForFrame): Deleted.
+        (PageLoaderClient::didReachLayoutMilestone): Deleted.
+        (PageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame): Deleted.
+        (PageLoaderClient::layoutMilestones const): Deleted.
+        (PageLoaderClient::didHandleOnloadEventsForFrame): Deleted.
+        (PageLoaderClient::userAgentForURL const): Deleted.
+        (ResourceLoadClient::willSendRequestForFrame): Deleted.
+        (ResourceLoadClient::didInitiateLoadForResource): Deleted.
+        (ResourceLoadClient::didFinishLoadForResource): Deleted.
+        (ResourceLoadClient::didFailLoadForResource): Deleted.
+
 2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r240785): [SOUP] Broke cookie persistent storage
