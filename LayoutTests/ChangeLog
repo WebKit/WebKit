@@ -1,3 +1,14 @@
+2019-02-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [iPad] Initial test gardening (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=193767
+        <rdar://problem/47515175>
+
+        Unreviewed test gardening.
+
+        * fast/forms/ios/validation-bubble-dismiss-on-tap.html: Change tap location so test is compatible with iPads.
+        * platform/ipad/TestExpectations: Associate iPad specific failures with bugs.
+
 2019-02-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline some tests for iOS after r240713.

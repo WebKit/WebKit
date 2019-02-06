@@ -1,1 +1,51 @@
+# iPads don't zoom when form elements are focused
+fast/forms/ios/accessory-bar-navigation.html [ Skip ]
+fast/forms/ios/choose-select-option.html [ Skip ]
+fast/forms/ios/delete-in-input-in-iframe.html [ Skip ]
+fast/forms/ios/focus-input-in-fixed.html [ Skip ]
+fast/forms/ios/focus-input-in-iframe.html [ Skip ]
+fast/forms/ios/focus-input-via-button-no-scaling.html [ Skip ]
+fast/forms/ios/focus-input-via-button.html [ Skip ]
+fast/forms/ios/focus-long-textarea.html [ Skip ]
+fast/forms/ios/typing-in-input-in-iframe.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap-wide-input.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap.html [ Skip ]
+fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
+
+# These tests are designed for iPhone and crash on iPad
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
+
+webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
+webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
+
+webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
+
+webkit.org/b/194228 fast/media/invalid-media-query-list.html [ ImageOnlyFailure ]
+
+webkit.org/b/194234 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
+
+webkit.org/b/193971 editing/selection/ios/selection-handles-in-readonly-input.html [ Skip ]
+
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
+
+webkit.org/b/194223 media/controls-strict.html [ Failure ]
+webkit.org/b/194223 media/controls-without-preload.html [ Skip ]
+webkit.org/b/194223 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/194223 media/video-zoom-controls.html [ Failure ]
+
+webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
+webkit.org/b/194226 quicklook/word.html [ Failure ]
+
+webkit.org/b/194259 fast/events/ios/rotation/basic-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+
+webkit.org/b/194313 fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html [ Skip ]
+
+webkit.org/b/194314 fast/forms/ios/scroll-to-reveal-focused-select.html
