@@ -1,5 +1,32 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240856. rdar://problem/47774509
+
+    API Test broken: TestWebKitAPI.WebKit2.GetUserMediaReprompt
+    https://bugs.webkit.org/show_bug.cgi?id=194155
+    
+    Reviewed by Eric Carlson.
+    
+    * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+    Revert use of async functions as it seems it cannot be evaluated from TestWebKitAPI.
+    Keep calling enumerateDevices to continue cover https://bugs.webkit.org/show_bug.cgi?id=194106.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240856 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-01  Youenn Fablet  <youenn@apple.com>
+
+            API Test broken: TestWebKitAPI.WebKit2.GetUserMediaReprompt
+            https://bugs.webkit.org/show_bug.cgi?id=194155
+
+            Reviewed by Eric Carlson.
+
+            * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+            Revert use of async functions as it seems it cannot be evaluated from TestWebKitAPI.
+            Keep calling enumerateDevices to continue cover https://bugs.webkit.org/show_bug.cgi?id=194106.
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240818. rdar://problem/47774549
 
     Page zoom level is lost after a process swap or a crash
