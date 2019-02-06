@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class BlobRegistry;
 class DOMFormData;
 class Document;
 class File;
@@ -226,7 +227,7 @@ public:
 
     // Resolve all blob references so we only have file and data.
     // If the FormData has no blob references to resolve, this is returned.
-    Ref<FormData> resolveBlobReferences();
+    WEBCORE_EXPORT Ref<FormData> resolveBlobReferences(BlobRegistry&);
 
     bool isEmpty() const { return m_elements.isEmpty(); }
     const Vector<FormDataElement>& elements() const { return m_elements; }

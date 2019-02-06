@@ -40,6 +40,7 @@ class AsyncFileStream;
 class BlobDataFileReference;
 class BlobData;
 class BlobDataItem;
+class BlobRegistryImpl;
 }
 
 namespace WebKit {
@@ -48,15 +49,15 @@ class NetworkProcess;
 
 class NetworkDataTaskBlob final : public NetworkDataTask, public WebCore::FileStreamClient {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
+    static Ref<NetworkDataTask> create(NetworkSession& session, WebCore::BlobRegistryImpl& blobRegistry, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     {
-        return adoptRef(*new NetworkDataTaskBlob(session, client, request, shouldContentSniff, fileReferences));
+        return adoptRef(*new NetworkDataTaskBlob(session, blobRegistry, client, request, shouldContentSniff, fileReferences));
     }
 
     ~NetworkDataTaskBlob();
 
 private:
-    NetworkDataTaskBlob(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::ContentSniffingPolicy, const Vector<RefPtr<WebCore::BlobDataFileReference>>&);
+    NetworkDataTaskBlob(NetworkSession&, WebCore::BlobRegistryImpl&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::ContentSniffingPolicy, const Vector<RefPtr<WebCore::BlobDataFileReference>>&);
 
     void suspend() override;
     void cancel() override;

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/BlobRegistryImpl.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -44,7 +45,7 @@ class NetworkBlobRegistry {
 WTF_MAKE_NONCOPYABLE(NetworkBlobRegistry);
 public:
     NetworkBlobRegistry();
-    static NetworkBlobRegistry& singleton();
+    ~NetworkBlobRegistry();
 
     void registerFileBlobURL(NetworkConnectionToWebProcess&, const URL&, const String& path, RefPtr<SandboxExtension>&&, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess&, const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
@@ -60,12 +61,13 @@ public:
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess&, const URL&);
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const URL&);
+    
+    WebCore::BlobRegistryImpl& blobRegistry() { return m_blobRegistry; }
 
 private:
-    ~NetworkBlobRegistry();
-
     typedef HashMap<NetworkConnectionToWebProcess*, HashSet<URL>> BlobForConnectionMap;
     BlobForConnectionMap m_blobsForConnection;
+    WebCore::BlobRegistryImpl m_blobRegistry;
 };
 
 }

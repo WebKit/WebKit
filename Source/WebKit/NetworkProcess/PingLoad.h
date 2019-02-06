@@ -40,7 +40,7 @@ class NetworkProcess;
 
 class PingLoad final : public CanMakeWeakPtr<PingLoad>, private NetworkDataTaskClient {
 public:
-    PingLoad(NetworkProcess&, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
+    PingLoad(NetworkConnectionToWebProcess&, NetworkProcess&, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
     
 private:
     ~PingLoad();
@@ -66,6 +66,7 @@ private:
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     UniqueRef<NetworkLoadChecker> m_networkLoadChecker;
+    Vector<RefPtr<WebCore::BlobDataFileReference>> m_blobFiles;
 };
 
 }

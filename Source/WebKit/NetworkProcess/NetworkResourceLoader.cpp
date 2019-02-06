@@ -29,7 +29,6 @@
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
-#include "NetworkBlobRegistry.h"
 #include "NetworkCache.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
@@ -92,6 +91,7 @@ static void sendReplyToSynchronousRequest(NetworkResourceLoader::SynchronousLoad
 NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& synchronousReply)
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
+    , m_fileReferences(connection.resolveBlobReferences(m_parameters))
     , m_defersLoading { parameters.defersLoading }
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
@@ -102,13 +102,6 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
     //        Once bug 116233 is resolved, this ASSERT can just be "m_webPageID && m_webFrameID"
     ASSERT((m_parameters.webPageID && m_parameters.webFrameID) || m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials);
-
-    if (originalRequest().httpBody()) {
-        for (const auto& element : originalRequest().httpBody()->elements()) {
-            if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(element.data))
-                m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, blobData->url));
-        }
-    }
 
     if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
@@ -128,6 +121,7 @@ NetworkResourceLoader::~NetworkResourceLoader()
     ASSERT(RunLoop::isMain());
     ASSERT(!m_networkLoad);
     ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply);
+    ASSERT(m_fileReferences.isEmpty());
     if (m_responseCompletionHandler)
         m_responseCompletionHandler(PolicyAction::Ignore);
 }
@@ -282,7 +276,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
     if (request.url().protocolIsBlob())
-        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(m_connection, originalRequest().url());
+        parameters.blobFileReferences = m_connection->filesInBlob(originalRequest().url());
 
     auto* networkSession = m_connection->networkProcess().networkSession(parameters.sessionID);
     if (!networkSession && parameters.sessionID.isEphemeral()) {
@@ -298,7 +292,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     }
 
     parameters.request = WTFMove(request);
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, &m_connection->blobRegistry(), WTFMove(parameters), *networkSession);
 
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", description = %{public}s)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_networkLoad->description().utf8().data());
 
@@ -353,7 +347,7 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 {
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
-        m_connection->networkProcess().downloadManager().startDownload(m_connection.ptr(), m_parameters.sessionID, downloadID, request);
+        m_connection->networkProcess().downloadManager().startDownload(m_parameters.sessionID, downloadID, request);
         abort();
         return;
     }

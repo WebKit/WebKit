@@ -1,3 +1,29 @@
+2019-02-05  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using blobRegistry in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=194027
+
+        Reviewed by Youenn Fablet.
+
+        Also stop using NetworkBlobRegistry::singleton.
+        Instead, have the NetworkProcess own a NetworkBlobRegistry which owns a BlobRegistryImpl.
+        We now have to resolve all blob file references while we still have a
+        NetworkConnectionToWebProcess/NetworkProcess/NetworkBlobRegistry/BlobRegistryImpl instead of
+        using the singleton after we have passed everything to the loading code, but it works the same
+        as it did before.  We must consume the sandbox extension from the BlobRegistryImpl before using
+        the resolved files, so I pass around a Vector<RefPtr<WebCore::BlobDataFileReference>> so we know
+        which extensions to revoke.
+
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/FormData.cpp:
+        (WebCore::appendBlobResolved):
+        (WebCore::FormData::resolveBlobReferences):
+        * platform/network/FormData.h:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::createHTTPBodyCFReadStream):
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::CurlFormDataStream):
+
 2019-02-05  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240984.

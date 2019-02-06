@@ -50,19 +50,23 @@ struct NetworkLoad::Throttle {
     ResponseCompletionHandler responseCompletionHandler;
 };
 
-NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
+NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegistry, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)
     , m_networkProcess(networkSession.networkProcess())
     , m_parameters(WTFMove(parameters))
     , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
 {
-    initialize(networkSession);
+    initialize(networkSession, blobRegistry);
 }
 
-void NetworkLoad::initialize(NetworkSession& networkSession)
+void NetworkLoad::initialize(NetworkSession& networkSession, WebCore::BlobRegistryImpl* blobRegistry)
 {
-    m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
+    if (blobRegistry && m_parameters.request.url().protocolIsBlob())
+        m_task = NetworkDataTaskBlob::create(networkSession, *blobRegistry, *this, m_parameters.request, m_parameters.contentSniffingPolicy, m_parameters.blobFileReferences);
+    else
+        m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
+
     if (!m_parameters.defersLoading)
         m_task->resume();
 }
