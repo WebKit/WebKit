@@ -93,7 +93,9 @@ void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
         return;
 
     auto requestID = generateRequestID();
-    auto handler = [this, requestID](bool originHasPersistentAccess) mutable {
+    auto handler = [this, weakThis = makeWeakPtr(*this), requestID](bool originHasPersistentAccess) mutable {
+        if (!weakThis)
+            return;
 
         auto pendingRequest = m_pendingDeviceRequests.take(requestID);
         if (!pendingRequest || !m_page.isValid())
@@ -391,7 +393,9 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
     };
 
     auto requestID = generateRequestID();
-    auto havePermissionInfoHandler = [this, requestID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), localUserRequest = userRequest](bool originHasPersistentAccess) mutable {
+    auto havePermissionInfoHandler = [this, weakThis = makeWeakPtr(*this), requestID, validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler), localUserRequest = userRequest](bool originHasPersistentAccess) mutable {
+        if (!weakThis)
+            return;
 
         auto pendingRequest = m_pendingDeviceRequests.take(requestID);
         if (!pendingRequest)
@@ -467,12 +471,14 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
     static const int defaultMaximumMicrophoneCount = 1;
 
     auto requestID = generateRequestID();
-    auto completionHandler = [this, requestID, userMediaID, requestOrigin = userMediaDocumentOrigin.copyRef(), topOrigin = topLevelDocumentOrigin.copyRef()](bool originHasPersistentAccess) {
+    auto completionHandler = [this, weakThis = makeWeakPtr(*this), requestID, userMediaID, requestOrigin = userMediaDocumentOrigin.copyRef(), topOrigin = topLevelDocumentOrigin.copyRef()](bool originHasPersistentAccess) mutable {
+        if (!weakThis)
+            return;
 
         if (!m_page.isValid())
             return;
 
-        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin.get(), topOrigin.get(), [this, weakThis = makeWeakPtr(*this), requestID, userMediaID, &originHasPersistentAccess] (String&& deviceIDHashSalt) {
+        m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(requestOrigin.get(), topOrigin.get(), [this, weakThis = WTFMove(weakThis), requestID, userMediaID, &originHasPersistentAccess] (String&& deviceIDHashSalt) {
             if (!weakThis)
                 return;
             auto pendingRequest = m_pendingDeviceRequests.take(requestID);

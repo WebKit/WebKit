@@ -1,3 +1,18 @@
+2019-02-05  Youenn Fablet  <youenn@apple.com>
+
+        UserMediaPermissionRequestManagerProxy lambdas should check for 'this' being valid
+        https://bugs.webkit.org/show_bug.cgi?id=194246
+
+        Reviewed by Eric Carlson.
+
+        With PSON enabled, the manager proxy can be destroyed.
+        It is thus important for its callbacks to check for 'this' to be valid.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureDevicesChanged):
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame):
+
 2019-02-05  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the build following r241000
