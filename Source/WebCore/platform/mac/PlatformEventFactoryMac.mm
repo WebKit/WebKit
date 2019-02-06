@@ -666,7 +666,7 @@ OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
     if (event.modifierFlags & NSEventModifierFlagShift)
         modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event.modifierFlags & NSEventModifierFlagControl)
-        modifiers.add(PlatformEvent::Modifier::CtrlKey);
+        modifiers.add(PlatformEvent::Modifier::ControlKey);
     if (event.modifierFlags & NSEventModifierFlagOption)
         modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event.modifierFlags & NSEventModifierFlagCommand)

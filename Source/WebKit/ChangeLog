@@ -1,3 +1,21 @@
+2019-02-06  Daniel Bates  <dabates@apple.com>
+
+        Standardize on ControlKey instead of CtrlKey
+        https://bugs.webkit.org/show_bug.cgi?id=194317
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::handleKeyPress):
+
 2019-02-06  Per Arne Vollan  <pvollan@apple.com>
 
         Roll out parts of r238819 since it is a PLT performance regression.

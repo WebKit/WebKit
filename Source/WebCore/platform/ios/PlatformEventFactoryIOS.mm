@@ -47,7 +47,7 @@ static OptionSet<PlatformEvent::Modifier> modifiersForEvent(WebEvent *event)
     if (event.modifierFlags & WebEventFlagMaskShiftKey)
         modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event.modifierFlags & WebEventFlagMaskControlKey)
-        modifiers.add(PlatformEvent::Modifier::CtrlKey);
+        modifiers.add(PlatformEvent::Modifier::ControlKey);
     if (event.modifierFlags & WebEventFlagMaskOptionKey)
         modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event.modifierFlags & WebEventFlagMaskCommandKey)

@@ -326,7 +326,7 @@ OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifier
     if (currentModifiers & ::WebEventFlagMaskShiftKey)
         modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (currentModifiers & ::WebEventFlagMaskControlKey)
-        modifiers.add(PlatformEvent::Modifier::CtrlKey);
+        modifiers.add(PlatformEvent::Modifier::ControlKey);
     if (currentModifiers & ::WebEventFlagMaskOptionKey)
         modifiers.add(PlatformEvent::Modifier::AltKey);
     if (currentModifiers & ::WebEventFlagMaskCommandKey)

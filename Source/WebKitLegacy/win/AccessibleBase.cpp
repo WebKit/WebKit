@@ -601,7 +601,7 @@ HRESULT AccessibleBase::get_accKeyboardShortcut(VARIANT vChild, __deref_opt_out 
         // Follow the same order as Mozilla MSAA implementation:
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
-        if (modifiers.contains(PlatformEvent::Modifier::CtrlKey))
+        if (modifiers.contains(PlatformEvent::Modifier::ControlKey))
             accessKeyModifiersBuilder.appendLiteral("Ctrl+");
         if (modifiers.contains(PlatformEvent::Modifier::AltKey))
             accessKeyModifiersBuilder.appendLiteral("Alt+");

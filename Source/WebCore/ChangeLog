@@ -1,3 +1,42 @@
+2019-02-06  Daniel Bates  <dabates@apple.com>
+
+        Standardize on ControlKey instead of CtrlKey
+        https://bugs.webkit.org/show_bug.cgi?id=194317
+
+        Reviewed by Tim Horton.
+
+        * dom/UIEventWithKeyState.cpp:
+        (WebCore::UIEventWithKeyState::modifiersFromInitializer):
+        (WebCore::UIEventWithKeyState::setModifierKeys):
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::ctrlKey const):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::accessKeyModifiers):
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::controlKey const):
+        (WebCore::PlatformEvent::PlatformEvent):
+        (WebCore::PlatformEvent::ctrlKey const): Deleted.
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::modifiersForGdkKeyEvent):
+        * platform/gtk/PlatformMouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::PlatformKeyboardEvent::currentStateOfModifierKeys):
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::modifiersForEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::currentStateOfModifierKeys):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::modifiersForEvent):
+        * testing/Internals.cpp:
+        (WebCore::Internals::accessKeyModifiers const):
+
 2019-02-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix WatchOS build

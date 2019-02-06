@@ -27,7 +27,7 @@ auto UIEventWithKeyState::modifiersFromInitializer(const EventModifierInit& init
 {
     OptionSet<Modifier> result;
     if (initializer.ctrlKey)
-        result.add(Modifier::CtrlKey);
+        result.add(Modifier::ControlKey);
     if (initializer.altKey)
         result.add(Modifier::AltKey);
     if (initializer.shiftKey)
@@ -63,7 +63,7 @@ void UIEventWithKeyState::setModifierKeys(bool ctrlKey, bool altKey, bool shiftK
 {
     OptionSet<Modifier> result;
     if (ctrlKey)
-        result.add(Modifier::CtrlKey);
+        result.add(Modifier::ControlKey);
     if (altKey)
         result.add(Modifier::AltKey);
     if (shiftKey)

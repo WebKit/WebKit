@@ -49,7 +49,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     if (event->state & GDK_SHIFT_MASK)
         m_modifiers.add(Modifier::ShiftKey);
     if (event->state & GDK_CONTROL_MASK)
-        m_modifiers.add(Modifier::CtrlKey);
+        m_modifiers.add(Modifier::ControlKey);
     if (event->state & GDK_MOD1_MASK)
         m_modifiers.add(Modifier::AltKey);
     if (event->state & GDK_META_MASK)

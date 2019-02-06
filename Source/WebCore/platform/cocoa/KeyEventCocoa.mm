@@ -48,7 +48,7 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
 {
     auto currentModifiers = currentStateOfModifierKeys();
     shiftKey = currentModifiers.contains(PlatformEvent::Modifier::ShiftKey);
-    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::CtrlKey);
+    ctrlKey = currentModifiers.contains(PlatformEvent::Modifier::ControlKey);
     altKey = currentModifiers.contains(PlatformEvent::Modifier::AltKey);
     metaKey = currentModifiers.contains(PlatformEvent::Modifier::MetaKey);
 }

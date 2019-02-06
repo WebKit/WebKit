@@ -49,7 +49,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     if (event->state & GDK_SHIFT_MASK)
         m_modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (event->state & GDK_CONTROL_MASK)
-        m_modifiers.add(PlatformEvent::Modifier::CtrlKey);
+        m_modifiers.add(PlatformEvent::Modifier::ControlKey);
     if (event->state & GDK_MOD1_MASK)
         m_modifiers.add(PlatformEvent::Modifier::AltKey);
     if (event->state & GDK_META_MASK)
@@ -98,7 +98,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
     if (motion->state & GDK_SHIFT_MASK)
         m_modifiers.add(PlatformEvent::Modifier::ShiftKey);
     if (motion->state & GDK_CONTROL_MASK)
-        m_modifiers.add(PlatformEvent::Modifier::CtrlKey);
+        m_modifiers.add(PlatformEvent::Modifier::ControlKey);
     if (motion->state & GDK_MOD1_MASK)
         m_modifiers.add(PlatformEvent::Modifier::AltKey);
     if (motion->state & GDK_META_MASK)

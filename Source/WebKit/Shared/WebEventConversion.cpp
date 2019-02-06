@@ -71,7 +71,7 @@ public:
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifiers.add(Modifier::CtrlKey);
+            m_modifiers.add(Modifier::ControlKey);
         if (webEvent.altKey())
             m_modifiers.add(Modifier::AltKey);
         if (webEvent.metaKey())
@@ -138,7 +138,7 @@ public:
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifiers.add(Modifier::CtrlKey);
+            m_modifiers.add(Modifier::ControlKey);
         if (webEvent.altKey())
             m_modifiers.add(Modifier::AltKey);
         if (webEvent.metaKey())
@@ -200,7 +200,7 @@ public:
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifiers.add(Modifier::CtrlKey);
+            m_modifiers.add(Modifier::ControlKey);
         if (webEvent.altKey())
             m_modifiers.add(Modifier::AltKey);
         if (webEvent.metaKey())
@@ -341,7 +341,7 @@ public:
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifiers.add(Modifier::CtrlKey);
+            m_modifiers.add(Modifier::ControlKey);
         if (webEvent.altKey())
             m_modifiers.add(Modifier::AltKey);
         if (webEvent.metaKey())
@@ -400,7 +400,7 @@ public:
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifiers.add(Modifier::CtrlKey);
+            m_modifiers.add(Modifier::ControlKey);
         if (webEvent.altKey())
             m_modifiers.add(Modifier::AltKey);
         if (webEvent.metaKey())

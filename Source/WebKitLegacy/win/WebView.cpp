@@ -2418,9 +2418,9 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     // We need to handle back/forward using either Ctrl+Left/Right Arrow keys.
     // FIXME: This logic should probably be in EventHandler::defaultArrowEventHandler().
     // FIXME: Should check that other modifiers aren't pressed.
-    if (virtualKeyCode == VK_RIGHT && keyEvent.ctrlKey())
+    if (virtualKeyCode == VK_RIGHT && keyEvent.controlKey())
         return m_page->backForward().goForward();
-    if (virtualKeyCode == VK_LEFT && keyEvent.ctrlKey())
+    if (virtualKeyCode == VK_LEFT && keyEvent.controlKey())
         return m_page->backForward().goBack();
 
     // Need to scroll the page if the arrow keys, pgup/dn, or home/end are hit.

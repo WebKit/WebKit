@@ -33,7 +33,7 @@ class UIEventWithKeyState : public UIEvent {
 public:
     using Modifier = PlatformEvent::Modifier;
 
-    bool ctrlKey() const { return m_modifiers.contains(Modifier::CtrlKey); }
+    bool ctrlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
     bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
     bool altKey() const { return m_modifiers.contains(Modifier::AltKey); }
     bool metaKey() const { return m_modifiers.contains(Modifier::MetaKey); }

@@ -101,7 +101,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
         return;
 
     // Don't insert anything if a modifier is pressed
-    if (platformEvent->ctrlKey() || platformEvent->altKey())
+    if (platformEvent->controlKey() || platformEvent->altKey())
         return;
 
     if (frame->editor().insertText(platformEvent->text(), event))
