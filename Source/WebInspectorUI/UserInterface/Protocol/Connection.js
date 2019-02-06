@@ -308,7 +308,8 @@ InspectorBackend.WorkerConnection = class InspectorBackendWorkerConnection exten
 
     sendMessageToBackend(message)
     {
-        WorkerAgent.sendMessageToWorker(this._workerId, message);
+        // Ignore errors if a worker went away quickly.
+        WorkerAgent.sendMessageToWorker(this._workerId, message).catch(function(){});
     }
 };
 

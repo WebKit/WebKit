@@ -55,7 +55,8 @@ WI.WorkerManager = class WorkerManager extends WI.Object
         this._connections.set(workerId, connection);
 
         // Unpause the worker now that we have sent all initialization messages.
-        WorkerAgent.initialized(workerId);
+        // Ignore errors if a worker went away quickly.
+        WorkerAgent.initialized(workerId).catch(function(){});
     }
 
     workerTerminated(workerId)

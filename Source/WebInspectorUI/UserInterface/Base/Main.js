@@ -228,6 +228,11 @@ WI.terminatePageTarget = function(target)
     console.assert(WI.pageTarget === target);
     console.assert(WI.sharedApp.debuggableType === WI.DebuggableType.Web);
 
+    // Remove any Worker targets associated with this page.
+    let workerTargets = WI.targets.filter((x) => x.type === WI.Target.Type.Worker);
+    for (let workerTarget of workerTargets)
+        WI.workerManager.workerTerminated(workerTarget.identifier);
+
     WI.pageTarget = null;
 
     WI.redirectGlobalAgentsToConnection(WI.backendConnection);

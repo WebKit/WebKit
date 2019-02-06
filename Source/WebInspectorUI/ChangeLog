@@ -1,3 +1,25 @@
+2019-02-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: "Worker not found" uncaught protocol errors
+        https://bugs.webkit.org/show_bug.cgi?id=194319
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WI.terminatePageTarget):
+        Remove Worker targets associated with the Page on navigation.
+        Eventually we will have to associate Workers with their parent
+        frame, but for now a transition can only happen at the Page
+        level, so we can eliminate all workers on the page.
+
+        * UserInterface/Controllers/WorkerManager.js:
+        (WI.WorkerManager.prototype.workerCreated):
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection.sendMessageToBackend):
+        Allow any WorkerAgent domain message to fail silently. This can
+        happen if a Worker is created and destroyed before the frontend
+        hears about it and sends messages to the backend for that Worker.
+
 2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
