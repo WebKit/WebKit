@@ -1,18 +1,27 @@
-<script>
-if (window.testRunner)
-     testRunner.dumpEditingCallbacks();
-</script>
-<p>There was a bug in paste's smart replace whitespace handling.  In some cases, it used information gathered at the start of the selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content.</p>
-<p>A smart paste is performed into a selection starting in one block and ending in another.  Spaces should surround the pasted word.</p>
-<div id="test" contenteditable="true"><div>foo</div><div>x bar</div></div>
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
 
 <script src="../editing.js"></script>
 <script src="../../resources/ui-helper.js"></script>
 <script>
-var e = document.getElementById("test");
 
-async function runTest() {
-    getSelection().setBaseAndExtent(e, 0, e, 0);
+async function editingTest() {
     await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
     copyCommand();
     moveSelectionBackwardByCharacterCommand();
@@ -20,6 +29,20 @@ async function runTest() {
     extendSelectionForwardByLineCommand();
     pasteCommand();
 }
+</script>
 
-UIHelper.wait(runTest());
+<div class="explanation">
+<div class="scenario">
+<p>There was a bug in paste's smart replace whitespace handling.  In some cases, it used information gathered at the start of the selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content.</p>
+<div class="expected-results">
+Expected Results:
+<br>
+A smart paste is performed into a selection starting in one block and ending in another.  Spaces should surround the pasted word and look like:
+<br>
+f foo bar
+</div>
+<div id="test" contenteditable="true"><div>foo</div><div>x bar</div></div>
+
+<script>
+runDumpAsTextEditingTest(true);
 </script>
