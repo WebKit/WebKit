@@ -1,3 +1,15 @@
+2019-02-06  David Kilzer  <ddkilzer@apple.com>
+
+        WTR::InjectedBundlePage::willSendRequestForFrame() leaks a WKDataRef
+        <https://webkit.org/b/194286>
+        <rdar://problem/47815558>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame): Use
+        WKRetainPtr<> to avoid leaking the WKDataRef.
+
 2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix a typo

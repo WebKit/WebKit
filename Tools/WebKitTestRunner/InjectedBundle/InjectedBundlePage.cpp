@@ -1211,7 +1211,8 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         String body = injectedBundle.testRunner()->willSendRequestHTTPBody();
         if (!body.isEmpty()) {
             CString cBody = body.utf8();
-            return WKURLRequestCopySettingHTTPBody(request, WKDataCreate(reinterpret_cast<const unsigned char*>(cBody.data()), cBody.length()));
+            WKRetainPtr<WKDataRef> body = adoptWK(WKDataCreate(reinterpret_cast<const unsigned char*>(cBody.data()), cBody.length()));
+            return WKURLRequestCopySettingHTTPBody(request, body.get());
         }
     }
 
