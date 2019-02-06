@@ -80,7 +80,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
 static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier> modifiers)
 {
     NSEventModifierFlags modifierFlags = 0;
-    if (modifiers.contains(WebKit::WebEvent::CapsLockKey))
+    if (modifiers.contains(WebKit::WebEvent::Modifier::CapsLockKey))
         modifierFlags |= NSEventModifierFlagCapsLock;
     if (modifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
         modifierFlags |= NSEventModifierFlagShift;

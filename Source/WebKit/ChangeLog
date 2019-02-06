@@ -1,5 +1,27 @@
 2019-02-05  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the build following r241000
+        (https://bugs.webkit.org/show_bug.cgi?id=194241)
+
+        Substitute WebEvent::Modifier::CapsLockKey for WebEvent::CapsLockKey.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::modifiersForEvent):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (toNSEventModifierFlags):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::protocolModifierToWebEventModifier):
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::modifiersToEventState):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::toNSEventModifierFlags):
+
+2019-02-05  Daniel Bates  <dabates@apple.com>
+
         Make WebEvent::Modifiers an OptionSet
         https://bugs.webkit.org/show_bug.cgi?id=194241
 
