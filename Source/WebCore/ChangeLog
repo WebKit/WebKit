@@ -1,5 +1,36 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240833. rdar://problem/47774523
+
+    [Cocoa][EME] AirPlaying a FairPlay-protected HLS stream fails to decrypt
+    https://bugs.webkit.org/show_bug.cgi?id=194114
+    
+    Reviewed by Eric Carlson.
+    
+    The AVAssetResourceLoaderDelegate must explicitly... delegate responsibility for FairPlay key
+    requests to the AVContentKeySession.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240833 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-31  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa][EME] AirPlaying a FairPlay-protected HLS stream fails to decrypt
+            https://bugs.webkit.org/show_bug.cgi?id=194114
+
+            Reviewed by Eric Carlson.
+
+            The AVAssetResourceLoaderDelegate must explicitly... delegate responsibility for FairPlay key
+            requests to the AVContentKeySession.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240822. rdar://problem/47774539
 
     [Mac] Requesting PiP from two different WebViews gets PiP window "stuck"
