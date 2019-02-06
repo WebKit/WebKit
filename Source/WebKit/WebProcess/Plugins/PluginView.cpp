@@ -888,17 +888,17 @@ std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent& event) const
         break;
     }
 
-    unsigned modifiers = 0;
+    OptionSet<WebEvent::Modifier> modifiers;
     if (event.shiftKey())
-        modifiers |= WebEvent::ShiftKey;
+        modifiers.add(WebEvent::Modifier::ShiftKey);
     if (event.ctrlKey())
-        modifiers |= WebEvent::ControlKey;
+        modifiers.add(WebEvent::Modifier::ControlKey);
     if (event.altKey())
-        modifiers |= WebEvent::AltKey;
+        modifiers.add(WebEvent::Modifier::AltKey);
     if (event.metaKey())
-        modifiers |= WebEvent::MetaKey;
+        modifiers.add(WebEvent::Modifier::MetaKey);
 
-    return std::make_unique<WebMouseEvent>(type, button, event.buttons(), m_plugin->convertToRootView(IntPoint(event.offsetX(), event.offsetY())), event.screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), WallTime { }, 0);
+    return std::make_unique<WebMouseEvent>(type, button, event.buttons(), m_plugin->convertToRootView(IntPoint(event.offsetX(), event.offsetY())), event.screenLocation(), 0, 0, 0, clickCount, modifiers, WallTime { }, 0);
 }
 
 void PluginView::handleEvent(Event& event)

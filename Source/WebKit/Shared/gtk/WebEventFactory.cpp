@@ -45,27 +45,27 @@ static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
     return keyval >= GDK_KP_Space && keyval <= GDK_KP_9;
 }
 
-static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)
+static inline OptionSet<WebEvent::Modifier> modifiersForEvent(const GdkEvent* event)
 {
-    unsigned modifiers = 0;
+    OptionSet<WebEvent::Modifier> modifiers;
     GdkModifierType state;
 
     // Check for a valid state in GdkEvent.
     if (!gdk_event_get_state(event, &state))
-        return static_cast<WebEvent::Modifiers>(0);
+        return modifiers;
 
     if (state & GDK_CONTROL_MASK)
-        modifiers |= WebEvent::ControlKey;
+        modifiers.add(WebEvent::Modifier::ControlKey);
     if (state & GDK_SHIFT_MASK)
-        modifiers |= WebEvent::ShiftKey;
+        modifiers.add(WebEvent::Modifier::ShiftKey);
     if (state & GDK_MOD1_MASK)
-        modifiers |= WebEvent::AltKey;
+        modifiers.add(WebEvent::Modifier::AltKey);
     if (state & GDK_META_MASK)
-        modifiers |= WebEvent::MetaKey;
+        modifiers.add(WebEvent::Modifier::MetaKey);
     if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
-        modifiers |= WebEvent::CapsLockKey;
+        modifiers.add(WebEvent::CapsLockKey);
 
-    return static_cast<WebEvent::Modifiers>(modifiers);
+    return modifiers;
 }
 
 static inline WebMouseEvent::Button buttonForEvent(const GdkEvent* event)

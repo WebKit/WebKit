@@ -29,7 +29,7 @@
 #include "WebKitNavigationAction.h"
 #include <WebCore/FrameLoaderTypes.h>
 
-unsigned toPlatformModifiers(WebKit::WebEvent::Modifiers);
+unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier>);
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);
 unsigned toWebKitMouseButton(WebKit::WebMouseEvent::Button);
 unsigned toWebKitError(unsigned webCoreError);

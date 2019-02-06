@@ -31,32 +31,32 @@
 #endif
 
 #if PLATFORM(GTK)
-unsigned toPlatformModifiers(WebKit::WebEvent::Modifiers wkModifiers)
+unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier> wkModifiers)
 {
     unsigned modifiers = 0;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::ShiftKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
         modifiers |= GDK_SHIFT_MASK;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::ControlKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
         modifiers |= GDK_CONTROL_MASK;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::AltKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::AltKey))
         modifiers |= GDK_MOD1_MASK;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::MetaKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
         modifiers |= GDK_META_MASK;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::CapsLockKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::CapsLockKey))
         modifiers |= GDK_LOCK_MASK;
     return modifiers;
 }
 #elif PLATFORM(WPE)
-unsigned toPlatformModifiers(WebKit::WebEvent::Modifiers wkModifiers)
+unsigned toPlatformModifiers(OptionSet<WebKit::WebEvent::Modifier> wkModifiers)
 {
     unsigned modifiers = 0;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::ShiftKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
         modifiers |= wpe_input_keyboard_modifier_shift;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::ControlKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
         modifiers |= wpe_input_keyboard_modifier_control;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::AltKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::AltKey))
         modifiers |= wpe_input_keyboard_modifier_alt;
-    if (wkModifiers & WebKit::WebEvent::Modifiers::MetaKey)
+    if (wkModifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
         modifiers |= wpe_input_keyboard_modifier_meta;
     return modifiers;
 }

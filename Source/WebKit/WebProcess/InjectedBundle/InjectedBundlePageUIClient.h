@@ -51,7 +51,7 @@ public:
     void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*) override;
     void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*) override;
     void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*) override;
-    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<API::Object>& userData) override;
+    void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, OptionSet<WebEvent::Modifier>, RefPtr<API::Object>& userData) override;
     void pageDidScroll(WebPage*) override;
 
     String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath) override;

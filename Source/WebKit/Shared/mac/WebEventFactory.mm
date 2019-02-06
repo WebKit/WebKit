@@ -309,22 +309,20 @@ static inline bool isKeyUpEvent(NSEvent *event)
     return false;
 }
 
-static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
+static inline OptionSet<WebEvent::Modifier> modifiersForEvent(NSEvent *event)
 {
-    unsigned modifiers = 0;
-
+    OptionSet<WebEvent::Modifier> modifiers;
     if ([event modifierFlags] & NSEventModifierFlagCapsLock)
-        modifiers |= WebEvent::CapsLockKey;
+        modifiers.add(WebEvent::CapsLockKey);
     if ([event modifierFlags] & NSEventModifierFlagShift)
-        modifiers |= WebEvent::ShiftKey;
+        modifiers.add(WebEvent::Modifier::ShiftKey);
     if ([event modifierFlags] & NSEventModifierFlagControl)
-        modifiers |= WebEvent::ControlKey;
+        modifiers.add(WebEvent::Modifier::ControlKey);
     if ([event modifierFlags] & NSEventModifierFlagOption)
-        modifiers |= WebEvent::AltKey;
+        modifiers.add(WebEvent::Modifier::AltKey);
     if ([event modifierFlags] & NSEventModifierFlagCommand)
-        modifiers |= WebEvent::MetaKey;
-
-    return (WebEvent::Modifiers)modifiers;
+        modifiers.add(WebEvent::Modifier::MetaKey);
+    return modifiers;
 }
 
 static int typeForEvent(NSEvent *event)
@@ -362,7 +360,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     float deltaY = [event deltaY];
     float deltaZ = [event deltaZ];
     int clickCount = clickCountForEvent(event);
-    WebEvent::Modifiers modifiers = modifiersForEvent(event);
+    auto modifiers = modifiersForEvent(event);
     auto timestamp = WebCore::eventTimeStampSince1970(event);
     int eventNumber = [event eventNumber];
     int menuTypeForEvent = typeForEvent(event);
@@ -420,9 +418,9 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         unacceleratedScrollingDelta = WebCore::FloatSize(deltaX, deltaY);
     }
 
-    WebEvent::Modifiers modifiers           = modifiersForEvent(event);
-    auto timestamp                          = WebCore::eventTimeStampSince1970(event);
-    
+    auto modifiers = modifiersForEvent(event);
+    auto timestamp = WebCore::eventTimeStampSince1970(event);
+
     return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
 }
 
@@ -440,7 +438,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     bool autoRepeat                 = [event type] != NSEventTypeFlagsChanged && [event isARepeat];
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
-    WebEvent::Modifiers modifiers   = modifiersForEvent(event);
+    auto modifiers = modifiersForEvent(event);
     auto timestamp                  = WebCore::eventTimeStampSince1970(event);
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.

@@ -687,23 +687,23 @@ void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(WebC
     }).get()];
 }
 
-static NSEventModifierFlags toNSEventModifierFlags(WebEvent::Modifiers modifiers)
+static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebEvent::Modifier> modifiers)
 {
     NSEventModifierFlags flags = 0;
-    if (modifiers & WebEvent::ShiftKey)
+    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
         flags |= NSEventModifierFlagShift;
-    if (modifiers & WebEvent::ControlKey)
+    if (modifiers.contains(WebEvent::Modifier::ControlKey))
         flags |= NSEventModifierFlagControl;
-    if (modifiers & WebEvent::AltKey)
+    if (modifiers.contains(WebEvent::Modifier::AltKey))
         flags |= NSEventModifierFlagOption;
-    if (modifiers & WebEvent::MetaKey)
+    if (modifiers.contains(WebEvent::Modifier::MetaKey))
         flags |= NSEventModifierFlagCommand;
-    if (modifiers & WebEvent::CapsLockKey)
+    if (modifiers.contains(WebEvent::CapsLockKey))
         flags |= NSEventModifierFlagCapsLock;
     return flags;
 }
 
-void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object* userInfo)
+void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEvent::Modifier> modifiers, API::Object* userInfo)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo)
         return;

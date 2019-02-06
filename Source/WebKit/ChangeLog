@@ -1,3 +1,119 @@
+2019-02-05  Daniel Bates  <dabates@apple.com>
+
+        Make WebEvent::Modifiers an OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=194241
+
+        Reviewed by Simon Fraser.
+
+        Use an OptionSet to represent the bitmask of keyboard modifier flags. This improves type safety
+        and makes debugging more enjoyable because our LLDB pretty-printers have built-in support for
+        OptionSet.
+
+        While I am at it, make WebEvent::Modifier an enum class. It is currently an enum. This makes
+        this enum more closely match WebCore::PlatformEvent::Modifier.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::WebEvent):
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::shiftKey const):
+        (WebKit::WebEvent::controlKey const):
+        (WebKit::WebEvent::altKey const):
+        (WebKit::WebEvent::metaKey const):
+        (WebKit::WebEvent::capsLockKey const):
+        (WebKit::WebEvent::modifiers const):
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent):
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (modifiersForEvent):
+        (WebIOSEventFactory::createWebKeyboardEvent):
+        (WebIOSEventFactory::createWebMouseEvent):
+        * Shared/libwpe/WebEventFactory.cpp:
+        (WebKit::modifiersForEventModifiers):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::modifiersForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::modifiersForEvent):
+        (WebKit::modifiersForCurrentKeyState):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::mouseDidMoveOverElement):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (toNSEventModifierFlags):
+        * UIProcess/API/glib/WebKitPrivate.cpp:
+        (toPlatformModifiers):
+        * UIProcess/API/glib/WebKitPrivate.h:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewMouseTargetChanged):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::protocolModifierToWebEventModifier):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::modifiersToEventState):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp:
+        (WebKit::modifiersToEventState):
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::toNSEventModifierFlags):
+        (WebKit::UIDelegate::UIClient::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::mouseDidMoveOverElement):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::modifiersForNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        (WebKit::InjectedBundleNavigationAction::modifiers const):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::mouseDidMoveOverElement):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showContextMenuAtPoint):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent const):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+
 2019-02-05  Tim Horton  <timothy_horton@apple.com>
 
         Reproducible crash under WKShareSheet presentWithParameters when cancelling a share

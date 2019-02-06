@@ -1531,7 +1531,7 @@ void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInt
             callbackInMap(AUTOMATION_COMMAND_ERROR_WITH_NAME(Timeout));
         callbackInMap = WTFMove(mouseEventsFlushedCallback);
 
-        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInView, (WebEvent::Modifiers)m_currentModifiers);
+        platformSimulateMouseInteraction(page, interaction, mouseButton, locationInView, OptionSet<WebEvent::Modifier>::fromRaw(m_currentModifiers));
 
         // If the event does not hit test anything in the window, then it may not have been delivered.
         if (callbackInMap && !page->isProcessingMouseEvents()) {
@@ -1590,17 +1590,17 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
 #endif // ENABLE(WEBDRIVER_ACTIONS_API)
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
+static WebEvent::Modifier protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
 {
     switch (modifier) {
     case Inspector::Protocol::Automation::KeyModifier::Alt:
-        return WebEvent::AltKey;
+        return WebEvent::Modifier::AltKey;
     case Inspector::Protocol::Automation::KeyModifier::Meta:
-        return WebEvent::MetaKey;
+        return WebEvent::Modifier::MetaKey;
     case Inspector::Protocol::Automation::KeyModifier::Control:
-        return WebEvent::ControlKey;
+        return WebEvent::Modifier::ControlKey;
     case Inspector::Protocol::Automation::KeyModifier::Shift:
-        return WebEvent::ShiftKey;
+        return WebEvent::Modifier::ShiftKey;
     case Inspector::Protocol::Automation::KeyModifier::CapsLock:
         return WebEvent::CapsLockKey;
     }
@@ -1644,7 +1644,7 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
     if (!requestedPositionObject.getDouble("y"_s, y))
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'y' was not found.");
 
-    WebEvent::Modifiers keyModifiers = (WebEvent::Modifiers)0;
+    OptionSet<WebEvent::Modifier> keyModifiers;
     for (auto it = keyModifierStrings.begin(); it != keyModifierStrings.end(); ++it) {
         String modifierString;
         if (!it->get()->asString(modifierString))
@@ -1653,8 +1653,7 @@ void WebAutomationSession::performMouseInteraction(const String& handle, const J
         auto parsedModifier = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::KeyModifier>(modifierString);
         if (!parsedModifier)
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A modifier in the 'modifiers' array is invalid.");
-        WebEvent::Modifiers enumValue = protocolModifierToWebEventModifier(parsedModifier.value());
-        keyModifiers = (WebEvent::Modifiers)(enumValue | keyModifiers);
+        keyModifiers.add(protocolModifierToWebEventModifier(parsedModifier.value()));
     }
 
     page->getWindowFrameWithCallback([this, protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRef(*page), x, y, mouseInteractionString, mouseButtonString, keyModifiers](WebCore::FloatRect windowFrame) mutable {
