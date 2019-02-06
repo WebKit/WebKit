@@ -1,5 +1,79 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240880. rdar://problem/47774545
+
+    REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+    https://bugs.webkit.org/show_bug.cgi?id=193740
+    <rdar://problem/47527267>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::willSendRequest):
+    (WebCore::DocumentLoader::continueAfterContentPolicy):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::loadURL):
+    (WebCore::FrameLoader::loadWithDocumentLoader):
+    (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+    * loader/FrameLoader.h:
+    * loader/FrameLoaderTypes.h:
+    * loader/PolicyChecker.cpp:
+    (WebCore::PolicyChecker::checkNavigationPolicy):
+    (WebCore::PolicyChecker::checkNewWindowPolicy):
+    * loader/PolicyChecker.h:
+    
+    Source/WebKit:
+    
+    The issue was happening when the page is triggering a cross-site navigation while in the middle of parsing. This would cause us to
+    start a new provisional load in a new process before the previous process sends the DidFinishLoadForFrame() IPC to the UIProcess.
+    Getting such IPC after a provisional load has started would mess up our state machine and trip assertions.
+    
+    This patch restores non-PSON behavior which is that the previous load in the old process now gets stopped so that no DidFinishLoadForFrame()
+    / DidFailLoadForFrame() gets sent. To achieve this behavior, I introduced a new "StopAllLoads" PolicyAction that we now send the old
+    process when the load is continuing in a new process, instead of sending it "Ignore".
+    
+    * NetworkProcess/NetworkDataTaskBlob.cpp:
+    (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (toNSURLSessionResponseDisposition):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240880 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-01  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
+            https://bugs.webkit.org/show_bug.cgi?id=193740
+            <rdar://problem/47527267>
+
+            Reviewed by Alex Christensen.
+
+            The issue was happening when the page is triggering a cross-site navigation while in the middle of parsing. This would cause us to
+            start a new provisional load in a new process before the previous process sends the DidFinishLoadForFrame() IPC to the UIProcess.
+            Getting such IPC after a provisional load has started would mess up our state machine and trip assertions.
+
+            This patch restores non-PSON behavior which is that the previous load in the old process now gets stopped so that no DidFinishLoadForFrame()
+            / DidFailLoadForFrame() gets sent. To achieve this behavior, I introduced a new "StopAllLoads" PolicyAction that we now send the old
+            process when the load is continuing in a new process, instead of sending it "Ignore".
+
+            * NetworkProcess/NetworkDataTaskBlob.cpp:
+            (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (toNSURLSessionResponseDisposition):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240818. rdar://problem/47774549
 
     Page zoom level is lost after a process swap or a crash

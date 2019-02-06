@@ -44,6 +44,7 @@ enum class PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
+    StopAllLoads
 };
 
 enum class ReloadOption : uint8_t {
@@ -152,7 +153,8 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
         WebCore::PolicyAction,
         WebCore::PolicyAction::Use,
         WebCore::PolicyAction::Download,
-        WebCore::PolicyAction::Ignore
+        WebCore::PolicyAction::Ignore,
+        WebCore::PolicyAction::StopAllLoads
     >;
 };
 
