@@ -1,5 +1,39 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240917. rdar://problem/47810465
+
+    DFG's doesGC() is incorrect about the SameValue node's behavior.
+    https://bugs.webkit.org/show_bug.cgi?id=194211
+    <rdar://problem/47608913>
+    
+    Reviewed by Saam Barati.
+    
+    Only the DoubleRepUse case is guaranteed to not GC.  The other case may GC because
+    it calls operationSameValue() which may allocate memory for resolving ropes.
+    
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240917 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-04  Mark Lam  <mark.lam@apple.com>
+
+            DFG's doesGC() is incorrect about the SameValue node's behavior.
+            https://bugs.webkit.org/show_bug.cgi?id=194211
+            <rdar://problem/47608913>
+
+            Reviewed by Saam Barati.
+
+            Only the DoubleRepUse case is guaranteed to not GC.  The other case may GC because
+            it calls operationSameValue() which may allocate memory for resolving ropes.
+
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240681. rdar://problem/47774514
 
     ValueRecovery::recover() should purify NaN values it recovers.
