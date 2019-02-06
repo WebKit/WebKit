@@ -1,5 +1,54 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240819. rdar://problem/47774546
+
+    REGRESSION(r?): Web Inspector: Clicking on text doesn't move text caret when editing innerHTML/tagName/attribute
+    https://bugs.webkit.org/show_bug.cgi?id=192652
+    <rdar://problem/46684612>
+    
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/DOMTreeElement.js:
+    (WI.DOMTreeElement.prototype.canSelectOnMouseDown):
+    Call to Event.preventDefault() should be made here instead of at the
+    TreeOutline level.
+    
+    * UserInterface/Views/TreeElement.js:
+    (WI.TreeElement.prototype.selectOnMouseDown): Deleted.
+    Remove dead code.
+    
+    * UserInterface/Views/TreeOutline.js:
+    (WI.TreeOutline._handleMouseDown):
+    Do not prevent default event handling when the item cannot be selected.
+    This matches TreeOutline behavior prior to introducing SelectionController.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240819 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-31  Matt Baker  <mattbaker@apple.com>
+
+            REGRESSION(r?): Web Inspector: Clicking on text doesn't move text caret when editing innerHTML/tagName/attribute
+            https://bugs.webkit.org/show_bug.cgi?id=192652
+            <rdar://problem/46684612>
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/DOMTreeElement.js:
+            (WI.DOMTreeElement.prototype.canSelectOnMouseDown):
+            Call to Event.preventDefault() should be made here instead of at the
+            TreeOutline level.
+
+            * UserInterface/Views/TreeElement.js:
+            (WI.TreeElement.prototype.selectOnMouseDown): Deleted.
+            Remove dead code.
+
+            * UserInterface/Views/TreeOutline.js:
+            (WI.TreeOutline._handleMouseDown):
+            Do not prevent default event handling when the item cannot be selected.
+            This matches TreeOutline behavior prior to introducing SelectionController.
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240639. rdar://problem/47774511
 
     Web Inspector: Elements tab should toggle visibility for all selected nodes

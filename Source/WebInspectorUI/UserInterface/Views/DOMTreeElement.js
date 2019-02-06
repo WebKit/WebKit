@@ -646,8 +646,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return false;
 
         // Prevent selecting the nearest word on double click.
-        if (event.detail >= 2)
+        if (event.detail >= 2) {
+            event.preventDefault();
             return false;
+        }
 
         return true;
     }

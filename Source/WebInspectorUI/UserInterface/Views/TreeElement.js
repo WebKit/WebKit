@@ -490,14 +490,6 @@ WI.TreeElement = class TreeElement extends WI.Object
         return true;
     }
 
-    selectOnMouseDown(event)
-    {
-        if (!this.treeOutline.selectable)
-            return;
-
-        this.select(false, true);
-    }
-
     select(omitFocus, selectedByUser, suppressNotification)
     {
         if (!this.treeOutline || !this.selectable)
