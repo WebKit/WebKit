@@ -114,6 +114,30 @@ IntRect DragCaretController::caretRectInRootViewCoordinates() const
     return { };
 }
 
+IntRect DragCaretController::editableElementRectInRootViewCoordinates() const
+{
+    if (!hasCaret())
+        return { };
+
+    RefPtr<ContainerNode> editableContainer;
+    if (auto* formControl = enclosingTextFormControl(m_position.deepEquivalent()))
+        editableContainer = formControl;
+    else
+        editableContainer = highestEditableRoot(m_position.deepEquivalent());
+
+    if (!editableContainer)
+        return { };
+
+    auto* renderer = editableContainer->renderer();
+    if (!renderer)
+        return { };
+
+    if (auto* view = editableContainer->document().view())
+        return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
+
+    return { };
+}
+
 static inline bool shouldAlwaysUseDirectionalSelection(Frame* frame)
 {
     return !frame || frame->editor().behavior().shouldConsiderSelectionAsDirectional();

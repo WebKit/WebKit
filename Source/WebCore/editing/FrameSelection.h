@@ -104,6 +104,7 @@ public:
     void setCaretPosition(const VisiblePosition&);
     void clear() { setCaretPosition(VisiblePosition()); }
     WEBCORE_EXPORT IntRect caretRectInRootViewCoordinates() const;
+    WEBCORE_EXPORT IntRect editableElementRectInRootViewCoordinates() const;
 
     void nodeWillBeRemoved(Node&);
 
