@@ -62,7 +62,7 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view)
     : WebGestureEvent(
         webEventTypeForNSEvent(event),
-        OptionSet<WebEvent::Modifiers> { },
+        OptionSet<WebEvent::Modifier> { },
         WebCore::eventTimeStampSince1970(event),
         WebCore::IntPoint(pointForEvent(event, view)),
         event.type == NSEventTypeMagnify ? event.magnification : 0,

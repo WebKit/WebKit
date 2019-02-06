@@ -1,5 +1,12 @@
 2019-02-05  Daniel Bates  <dabates@apple.com>
 
+        Fix a typo in r241006. Substitute Modifier for Modifiers.
+
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+
+2019-02-05  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the build following r241000
         (https://bugs.webkit.org/show_bug.cgi?id=194241)
 
