@@ -1,3 +1,12 @@
+2019-02-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline some tests for iOS after r240713.
+
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state-expected.txt:
+        * fast/events/touch/ios/tap-with-active-touch-end-listener-expected.txt:
+
 2019-02-06  Antti Koivisto  <antti@apple.com>
 
         RELEASE_ASSERT(!m_document.isResolvingTreeStyle()) in com.apple.WebKit.WebContent at WebCore: WebCore::StyleResolver::~StyleResolver
