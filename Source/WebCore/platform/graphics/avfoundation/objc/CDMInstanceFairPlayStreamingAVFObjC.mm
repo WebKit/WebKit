@@ -38,6 +38,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
+#import <wtf/FileSystem.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringHash.h>
 
@@ -170,7 +171,7 @@ CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::initializeWithCon
     if (configuration.persistentState != CDMRequirement::Required && (configuration.sessionTypes.contains(CDMSessionType::PersistentUsageRecord) || configuration.sessionTypes.contains(CDMSessionType::PersistentLicense)))
         return Failed;
 
-    if (configuration.persistentState == CDMRequirement::Required && !m_storageDirectory)
+    if (configuration.persistentState == CDMRequirement::Required && !m_storageURL)
         return Failed;
 
     if (configuration.sessionTypes.contains(CDMSessionType::PersistentLicense) && !supportsPersistentKeys())
@@ -202,10 +203,30 @@ CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setServerCertific
 
 CDMInstance::SuccessValue CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& storageDirectory)
 {
-    if (storageDirectory.isEmpty())
-        m_storageDirectory = nil;
-    else
-        m_storageDirectory = adoptNS([[NSURL alloc] initFileURLWithPath:storageDirectory isDirectory:YES]);
+    if (storageDirectory.isEmpty()) {
+        m_storageURL = nil;
+        return Succeeded;
+    }
+
+    auto storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+
+    if (!FileSystem::fileExists(storageDirectory)) {
+        if (!FileSystem::makeAllDirectories(storageDirectory))
+            return Failed;
+    } else if (!FileSystem::fileIsDirectory(storageDirectory, FileSystem::ShouldFollowSymbolicLinks::Yes)) {
+        auto tempDirectory = FileSystem::createTemporaryDirectory(@"MediaKeys");
+        if (!tempDirectory)
+            return Failed;
+
+        auto tempStoragePath = FileSystem::pathByAppendingComponent(tempDirectory, FileSystem::pathGetFileName(storagePath));
+        if (!FileSystem::moveFile(storageDirectory, tempStoragePath))
+            return Failed;
+
+        if (!FileSystem::moveFile(tempDirectory, storageDirectory))
+            return Failed;
+    }
+
+    m_storageURL = adoptNS([[NSURL alloc] initFileURLWithPath:storagePath isDirectory:NO]);
     return Succeeded;
 }
 
@@ -341,15 +362,15 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             [expiredSessions addObject:session.get()];
 
         auto* certificate = m_instance->serverCertificate();
-        auto* storageDirectory = m_instance->storageDirectory();
+        auto* storageURL = m_instance->storageURL();
 
-        if (!certificate || !storageDirectory) {
+        if (!certificate || !storageURL) {
             callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed);
             return;
         }
 
         RetainPtr<NSData> appIdentifier = certificate->createNSData();
-        [getAVContentKeySessionClass() removePendingExpiredSessionReports:expiredSessions.get() withAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageDirectory];
+        [getAVContentKeySessionClass() removePendingExpiredSessionReports:expiredSessions.get() withAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL];
         callback(false, { }, WTF::nullopt, WTF::nullopt, Succeeded);
         return;
     }
@@ -389,8 +410,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
 {
     UNUSED_PARAM(origin);
     if (licenseType == LicenseType::PersistentUsageRecord) {
-        auto* storageDirectory = m_instance->storageDirectory();
-        if (!m_instance->persistentStateAllowed() || storageDirectory) {
+        auto* storageURL = m_instance->storageURL();
+        if (!m_instance->persistentStateAllowed() || storageURL) {
             callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, Failed, SessionLoadFailure::MismatchedSessionType);
             return;
         }
@@ -402,7 +423,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
 
         RetainPtr<NSData> appIdentifier = certificate->createNSData();
         KeyStatusVector changedKeys;
-        for (NSData* expiredSessionData in [getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageDirectory]) {
+        for (NSData* expiredSessionData in [getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
             if (![playbackSessionIdValue isKindOfClass:[NSString class]])
@@ -450,10 +471,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
     [m_session expire];
 
     if (licenseType == LicenseType::PersistentUsageRecord) {
-        auto* storageDirectory = m_instance->storageDirectory();
+        auto* storageURL = m_instance->storageURL();
         auto* certificate = m_instance->serverCertificate();
 
-        if (!m_instance->persistentStateAllowed() || !storageDirectory || !certificate) {
+        if (!m_instance->persistentStateAllowed() || !storageURL || !certificate) {
             callback({ }, WTF::nullopt, Failed);
             return;
         }
@@ -461,7 +482,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
         RetainPtr<NSData> appIdentifier = certificate->createNSData();
         RetainPtr<NSMutableArray> expiredSessionsArray = adoptNS([[NSMutableArray alloc] init]);
         KeyStatusVector changedKeys;
-        for (NSData* expiredSessionData in [getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageDirectory]) {
+        for (NSData* expiredSessionData in [getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
             if (![playbackSessionIdValue isKindOfClass:[NSString class]])
@@ -692,11 +713,11 @@ AVContentKeySession* CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSession()
     if (m_session)
         return m_session.get();
 
-    auto* storageDirectory = m_instance->storageDirectory();
-    if (!m_instance->persistentStateAllowed() || !storageDirectory)
+    auto storageURL = m_instance->storageURL();
+    if (!m_instance->persistentStateAllowed() || !storageURL)
         m_session = [getAVContentKeySessionClass() contentKeySessionWithKeySystem:getAVContentKeySystemFairPlayStreaming()];
     else
-        m_session = [getAVContentKeySessionClass() contentKeySessionWithKeySystem:getAVContentKeySystemFairPlayStreaming() storageDirectoryAtURL:storageDirectory];
+        m_session = [getAVContentKeySessionClass() contentKeySessionWithKeySystem:getAVContentKeySystemFairPlayStreaming() storageDirectoryAtURL:storageURL];
 
     if (!m_session)
         return nullptr;
