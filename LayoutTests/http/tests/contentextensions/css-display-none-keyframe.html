@@ -1,0 +1,27 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+@keyframes bgimage {
+    from {
+        background-image: url("non-existent.png");
+    }
+    to {
+        background-image: url("non-existent-2.png");
+    }
+}
+div {
+    animation-duration: 0.1s;
+    animation-name: bgimage;
+}
+</style>
+<div onanimationend="testRunner.notifyDone()">
+Test content extension inserting a display:none rule triggered by a resource in a keyframe.
+</div>
+<div class="hidden">
+FAIL
+</div>

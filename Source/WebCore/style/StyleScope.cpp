@@ -602,8 +602,10 @@ void Scope::scheduleUpdate(UpdateType update)
         // :host and ::slotted rules might go away.
         if (m_shadowRoot && m_resolver)
             invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, *m_resolver);
+        // FIXME: Animation code may trigger resource load in middle of style recalc and that can add a rule to a content extension stylesheet.
+        //        Fix and remove isResolvingTreeStyle() test below, see https://bugs.webkit.org/show_bug.cgi?id=194335
         // FIXME: The m_isUpdatingStyleResolver test is here because extension stylesheets can get us here from StyleResolver::appendAuthorStyleSheets.
-        if (!m_isUpdatingStyleResolver)
+        if (!m_isUpdatingStyleResolver && !m_document.isResolvingTreeStyle())
             clearResolver();
     }
 
