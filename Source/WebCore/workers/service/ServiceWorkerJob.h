@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "JSDOMPromiseDeferred.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerJobData.h"
@@ -46,13 +47,10 @@ class ScriptExecutionContext;
 enum class ServiceWorkerJobType;
 struct ServiceWorkerRegistrationData;
 
-class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob>, public WorkerScriptLoaderClient {
+class ServiceWorkerJob : public WorkerScriptLoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient& client, RefPtr<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
-    {
-        return adoptRef(*new ServiceWorkerJob(client, WTFMove(promise), WTFMove(jobData)));
-    }
-
+    ServiceWorkerJob(ServiceWorkerJobClient&, RefPtr<DeferredPromise>&&, ServiceWorkerJobData&&);
     WEBCORE_EXPORT ~ServiceWorkerJob();
 
     void failedWithException(const Exception&);
@@ -64,7 +62,8 @@ public:
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
 
     const ServiceWorkerJobData& data() const { return m_jobData; }
-    DeferredPromise* promise() { return m_promise.get(); }
+    bool hasPromise() const { return !!m_promise; }
+    RefPtr<DeferredPromise> takePromise() { return WTFMove(m_promise); }
 
     void fetchScriptWithContext(ScriptExecutionContext&, FetchOptions::Cache);
 
@@ -73,13 +72,11 @@ public:
     void cancelPendingLoad();
 
 private:
-    ServiceWorkerJob(ServiceWorkerJobClient&, RefPtr<DeferredPromise>&&, ServiceWorkerJobData&&);
-
     // WorkerScriptLoaderClient
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
     void notifyFinished() final;
 
-    Ref<ServiceWorkerJobClient> m_client;
+    ServiceWorkerJobClient& m_client;
     ServiceWorkerJobData m_jobData;
     RefPtr<DeferredPromise> m_promise;
 

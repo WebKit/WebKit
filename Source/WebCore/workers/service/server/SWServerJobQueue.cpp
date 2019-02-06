@@ -64,7 +64,8 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     auto& job = firstJob();
 
     auto* registration = m_server.getRegistration(m_registrationKey);
-    ASSERT(registration);
+    if (!registration)
+        return;
 
     auto* newestWorker = registration->getNewestWorker();
 
