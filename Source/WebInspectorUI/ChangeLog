@@ -1,5 +1,40 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240997. rdar://problem/47838594
+
+    Web Inspector: REGRESSION (r240947): Resources tab: can't select main frame after refreshing page
+    https://bugs.webkit.org/show_bug.cgi?id=194254
+    <rdar://problem/47805023>
+    
+    Reviewed by Devin Rousso.
+    
+    * UserInterface/Views/TreeOutline.js:
+    (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+    TreeOutline should always call the TreeElement `select` and `deselect`
+    methods while processing selection changes. Having notifications
+    suppressed by `this._suppressNextSelectionDidChangeEvent` should only
+    affect the dispatching of TreeOutline events.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240997 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-05  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: REGRESSION (r240947): Resources tab: can't select main frame after refreshing page
+            https://bugs.webkit.org/show_bug.cgi?id=194254
+            <rdar://problem/47805023>
+
+            Reviewed by Devin Rousso.
+
+            * UserInterface/Views/TreeOutline.js:
+            (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+            TreeOutline should always call the TreeElement `select` and `deselect`
+            methods while processing selection changes. Having notifications
+            suppressed by `this._suppressNextSelectionDidChangeEvent` should only
+            affect the dispatching of TreeOutline events.
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240947. rdar://problem/47830605
 
     Web Inspector: REGRESSION: clicking a selected call frame doesn't re-scroll
