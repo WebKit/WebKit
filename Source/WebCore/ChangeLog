@@ -1,3 +1,15 @@
+2019-02-05  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [FreeType] Build fix for Debian stable
+
+        Unreviewed build fix.
+
+        Debian stable currently has a version of fontconfig that doesn't
+        yet have FC_COLOR. #ifdef its use to fix the build.
+
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+
 2019-02-05  Alex Christensen  <achristensen@webkit.org>
 
         Stop using blobRegistry in NetworkProcess

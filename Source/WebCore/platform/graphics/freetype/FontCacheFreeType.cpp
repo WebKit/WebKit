@@ -132,8 +132,10 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     FcPatternAddCharSet(pattern.get(), FC_CHARSET, fontConfigCharSet.get());
 
     FcPatternAddBool(pattern.get(), FC_SCALABLE, FcTrue);
+#ifdef FC_COLOR
     if (preferColoredFont == PreferColoredFont::Yes)
         FcPatternAddBool(pattern.get(), FC_COLOR, FcTrue);
+#endif
 
     if (!configurePatternForFontDescription(pattern.get(), description))
         return nullptr;
