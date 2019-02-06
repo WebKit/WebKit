@@ -6630,7 +6630,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         editCommand->invalidate();
 
     m_activePopupMenu = nullptr;
-    m_mediaState = MediaProducer::IsNotPlaying;
+    updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
 
 #if ENABLE(POINTER_LOCK)
     requestPointerUnlock();
@@ -7690,7 +7690,11 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
     ASSERT(focusManager);
     focusManager->updatePlaybackAttributesFromMediaState(this, sourceElementID, newState);
 #endif
+    updatePlayingMediaDidChange(newState);
+}
 
+void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
+{
     if (newState == m_mediaState)
         return;
 

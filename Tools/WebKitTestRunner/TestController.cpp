@@ -3185,6 +3185,12 @@ bool TestController::keyExistsInKeychain(const String&, const String&)
 {
     return false;
 }
+
+bool TestController::isDoingMediaCapture() const
+{
+    return false;
+}
+
 #endif
 
 void TestController::sendDisplayConfigurationChangedMessageForTesting()

@@ -5555,6 +5555,23 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return _page->mediaCaptureEnabled();
 }
 
+- (_WKMediaCaptureState)_mediaCaptureState
+{
+    auto state = _page->mediaStateFlags();
+
+    _WKMediaCaptureState mediaCaptureState = _WKMediaCaptureStateNone;
+    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateActiveMicrophone;
+    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateActiveCamera;
+    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateMutedMicrophone;
+    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+        mediaCaptureState |= _WKMediaCaptureStateMutedCamera;
+
+    return mediaCaptureState;
+}
+
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
     WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;

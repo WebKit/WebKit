@@ -1,5 +1,33 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/47810458
+
+    fix-194122
+
+    2019-02-04  Youenn Fablet  <youenn@apple.com>
+
+            Capture state should be managed consistently when doing process swapping
+            https://bugs.webkit.org/show_bug.cgi?id=194122
+            <rdar://problem/47609293>
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+            (-[GetUserMediaUIDelegate _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+            (-[GetUserMediaUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+            (-[GetUserMediaUIDelegate _webView:mediaCaptureStateDidChange:]):
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::isDoingMediaCapture const):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::isDoingMediaCapture const):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::isDoingMediaCapture const):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239752. rdar://problem/47776478
 
     [WebAuthN] Support U2F HID Authenticators on macOS

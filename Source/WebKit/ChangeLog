@@ -1,5 +1,32 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/47810458
+
+    fix-194122
+
+    2019-02-04  Youenn Fablet  <youenn@apple.com>
+
+            Capture state should be managed consistently when doing process swapping
+            https://bugs.webkit.org/show_bug.cgi?id=194122
+            <rdar://problem/47609293>
+
+            When doing PSON, WebPageProxy::resetState is called.
+            It resets the media state, but does not call the client delegates.
+            Instead of directly updating the media state, call the routine used to update it so that client delegates are called.
+
+            Covered by new API test and layout test.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _mediaCaptureState]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetState):
+            (WebKit::WebPageProxy::isPlayingMediaDidChange):
+            (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+            * UIProcess/WebPageProxy.h:
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239752. rdar://problem/47776478
 
     [WebAuthN] Support U2F HID Authenticators on macOS

@@ -382,4 +382,13 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
     return false;
 }
 
+bool TestController::isDoingMediaCapture() const
+{
+#if WK_API_ENABLED
+    return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateNone;
+#else
+    return false;
+#endif
+}
+
 } // namespace WTR
