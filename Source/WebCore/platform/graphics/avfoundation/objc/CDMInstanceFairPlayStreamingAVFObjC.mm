@@ -38,7 +38,7 @@
 #import <objc/runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Algorithms.h>
-#import <wtf/FileSystem.h>
+#import <WebCore/FileSystem.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringHash.h>
 
