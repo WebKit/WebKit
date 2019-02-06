@@ -1089,26 +1089,25 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!treeOutline)
             return null;
 
-        let firstChild = treeElement.children[0];
-        if (treeElement.root && !firstChild)
-            return null;
+        function numberOfElementsInSubtree(treeElement) {
+            let elements = treeElement.root ? Array.from(treeElement.children) : [treeElement];
+            let count = 0;
+            while (elements.length) {
+                let child = elements.pop();
+                if (child.hidden)
+                    continue;
 
-        let current = firstChild || treeElement;
-        let startIndex = treeOutline._indexOfTreeElement(current);
-        let endIndex = startIndex;
+                count++;
+                elements = elements.concat(child.children);
+            }
+            return count;
+        }
 
-        const skipUnrevealed = false;
-        const stayWithin = treeElement;
-        const dontPopulate = true;
-
-        while (current = current.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate))
-            endIndex++;
-
-        let count = endIndex - startIndex + 1;
-
+        let firstChild = treeElement.root ? treeElement.children[0] : treeElement;
+        let startIndex = treeOutline._indexOfTreeElement(firstChild);
+        let count = numberOfElementsInSubtree(treeElement);
         let indexes = new WI.IndexSet;
         indexes.addRange(startIndex, count);
-
         return indexes;
     }
 };
