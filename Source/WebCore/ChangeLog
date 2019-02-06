@@ -1,3 +1,13 @@
+2019-02-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WatchOS build
+        https://bugs.webkit.org/show_bug.cgi?id=194353
+
+        Rubber stamped by Tim Horton and Wenson Hsieh.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::iconForAttachment):
+
 2019-02-06  Olivier Blin  <olivier.blin@softathome.com>
 
         [SVG] fix SVGURIReference build by including SVGElement

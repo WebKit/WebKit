@@ -1640,7 +1640,9 @@ static BOOL getAttachmentProgress(const RenderAttachment& attachment, float& pro
 
 static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, FloatSize& size)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     String fileName;
     if (File* file = attachment.attachmentElement().file())
@@ -1658,14 +1660,18 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
         else
             UTI = UTIFromMIMEType(attachmentType);
 
+#if !PLATFORM(WATCHOS)
         [documentInteractionController setUTI:static_cast<NSString *>(UTI)];
+#endif
     }
 
+    RetainPtr<UIImage> result;
+#if !PLATFORM(WATCHOS)
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
         return nil;
 
-    RetainPtr<UIImage> result = icons.lastObject;
+    result = icons.lastObject;
 
     BOOL useHeightForClosestMatch = [result size].height > [result size].width;
     CGFloat bestMatchRatio = -1;
@@ -1682,7 +1688,7 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
             }
         }
     }
-
+#endif
     CGFloat iconAspect = [result size].width / [result size].height;
     size = largestRectWithAspectRatioInsideRect(iconAspect, FloatRect(0, 0, attachmentIconSize, attachmentIconSize)).size();
 
