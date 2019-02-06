@@ -54,8 +54,8 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this._editing = false;
         this._visible = false;
 
-        this._hideElementKeyboardShortcut = new WI.KeyboardShortcut(null, "H", this._hideElement.bind(this), this.element);
-        this._hideElementKeyboardShortcut.implicitlyPreventsDefault = false;
+        this._hideElementsKeyboardShortcut = new WI.KeyboardShortcut(null, "H", this._hideElements.bind(this), this.element);
+        this._hideElementsKeyboardShortcut.implicitlyPreventsDefault = false;
 
         WI.settings.showShadowDOM.addEventListener(WI.Setting.Event.Changed, this._showShadowDOMSettingChanged, this);
     }
@@ -193,6 +193,12 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         let selectedTreeElements = this.selectedTreeElements;
         for (let treeElement of selectedTreeElements)
             treeElement.updateSelectionArea();
+    }
+
+    toggleSelectedElementsVisibility(forceHidden)
+    {
+        for (let treeElement of this.selectedTreeElements)
+            treeElement.toggleElementVisibility(forceHidden);
     }
 
     _selectedNodeChanged()
@@ -534,14 +540,15 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             this.selectDOMNode(nodeToSelect);
     }
 
-    _hideElement(event, keyboardShortcut)
+    _hideElements(event, keyboardShortcut)
     {
         if (!this.selectedTreeElement || WI.isEditingAnyField())
             return;
 
         event.preventDefault();
 
-        this.selectedTreeElement.toggleElementVisibility();
+        let forceHidden = !this.selectedTreeElements.every((treeElement) => treeElement.isNodeHidden);
+        this.toggleSelectedElementsVisibility(forceHidden);
     }
 };
 
