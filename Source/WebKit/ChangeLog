@@ -1,3 +1,15 @@
+2019-02-05  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the build following r241000
+        (https://bugs.webkit.org/show_bug.cgi?id=194241)
+
+        Substitute OptionSet<WebEvent::Modifier> for Modifiers.
+
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+        * Shared/mac/WebGestureEvent.h:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+
 2019-02-05  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r240984.
