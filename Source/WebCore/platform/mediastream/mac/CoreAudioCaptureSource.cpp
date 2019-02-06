@@ -830,6 +830,15 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
     , m_captureDeviceID(captureDeviceID)
 {
+}
+
+void CoreAudioCaptureSource::initializeToStartProducingData()
+{
+    if (m_isReadyToStart)
+        return;
+
+    m_isReadyToStart = true;
+
     auto& unit = CoreAudioSharedUnit::singleton();
     unit.setCaptureDevice(String { persistentID() }, m_captureDeviceID);
 
@@ -878,6 +887,7 @@ void CoreAudioCaptureSource::startProducingData()
         return;
     }
 
+    initializeToStartProducingData();
     unit.startProducingData();
 }
 

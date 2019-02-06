@@ -1,5 +1,23 @@
 2019-02-06  Youenn Fablet  <youenn@apple.com>
 
+        CoreAudioCaptureSource should not configure its audio unit until it starts producing data
+        https://bugs.webkit.org/show_bug.cgi?id=194310
+
+        Reviewed by Eric Carlson.
+
+        Delay the configuration of the audio unit until the source is instructed to start producing data.
+        This allows the UIProcess to not start changing the audio unit when
+        checking for constraints during getUserMedia call before the prompt.
+        Covered by manual testing.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::initializeToStartProducingData):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
+2019-02-06  Youenn Fablet  <youenn@apple.com>
+
         Disable audio ducking at Audio Unit setup time
         https://bugs.webkit.org/show_bug.cgi?id=194303
 
