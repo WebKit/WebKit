@@ -1,5 +1,32 @@
 2019-02-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239834. rdar://problem/47776472
+
+    [macOS] Add name of IORegistry key in sandbox.
+    https://bugs.webkit.org/show_bug.cgi?id=193324
+    
+    Reviewed by Brent Fulgham.
+    
+    IOGVAVTCapabilities key has been changed to IOGVAHEVCDecodeCapabilities.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239834 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Add name of IORegistry key in sandbox.
+            https://bugs.webkit.org/show_bug.cgi?id=193324
+
+            Reviewed by Brent Fulgham.
+
+            IOGVAVTCapabilities key has been changed to IOGVAHEVCDecodeCapabilities.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-02-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240995. rdar://problem/47843415
 
     Reproducible crash under WKShareSheet presentWithParameters when cancelling a share

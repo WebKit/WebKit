@@ -248,7 +248,7 @@
     (iokit-property "IOFramebufferOpenGLIndex")
     (iokit-property "IOGeneralInterest")
     (iokit-property "IOGLBundleName")
-    (iokit-property-regex #"^IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler|VTCapabilities)")
+    (iokit-property-regex #"^IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler|VTCapabilities|HEVCDecodeCapabilities)")
     (iokit-property-regex #"^IOGVA(.*)(De|En)code$")
     (iokit-property "IOHibernateState")
     (iokit-property "IOI2CTransactionTypes")
