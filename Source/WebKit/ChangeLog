@@ -1,5 +1,39 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240974. rdar://problem/47830620
+
+    Protect globalWebSocketStreamMap with a Lock
+    https://bugs.webkit.org/show_bug.cgi?id=194224
+    <rdar://problem/47581081>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * WebProcess/Network/WebSocketStream.cpp:
+    (WebKit::WebSocketStream::streamWithIdentifier):
+    (WebKit::WebSocketStream::networkProcessCrashed):
+    (WebKit::WebSocketStream::WebSocketStream):
+    (WebKit::WebSocketStream::~WebSocketStream):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240974 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-05  Alex Christensen  <achristensen@webkit.org>
+
+            Protect globalWebSocketStreamMap with a Lock
+            https://bugs.webkit.org/show_bug.cgi?id=194224
+            <rdar://problem/47581081>
+
+            Reviewed by Ryosuke Niwa.
+
+            * WebProcess/Network/WebSocketStream.cpp:
+            (WebKit::WebSocketStream::streamWithIdentifier):
+            (WebKit::WebSocketStream::networkProcessCrashed):
+            (WebKit::WebSocketStream::WebSocketStream):
+            (WebKit::WebSocketStream::~WebSocketStream):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240925. rdar://problem/47774545
 
     Unreviewed, avoid -Wswitch warnings introduced in r240880
