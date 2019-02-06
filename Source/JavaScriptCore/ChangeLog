@@ -1,5 +1,46 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240616. rdar://problem/47774497
+
+    ToString node actually does GC.
+    https://bugs.webkit.org/show_bug.cgi?id=193920
+    <rdar://problem/46695900>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/dfg-to-string-on-int-does-gc.js: Added.
+    * stress/dfg-to-string-on-string-object-does-not-gc.js: Added.
+    * stress/dfg-to-string-on-string-or-string-object-does-not-gc.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Other than for StringObjectUse and StringOrStringObjectUse, ToString and
+    CallStringConstructor can allocate new JSStrings, and hence, can GC.
+    
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240616 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-28  Mark Lam  <mark.lam@apple.com>
+
+            ToString node actually does GC.
+            https://bugs.webkit.org/show_bug.cgi?id=193920
+            <rdar://problem/46695900>
+
+            Reviewed by Yusuke Suzuki.
+
+            Other than for StringObjectUse and StringOrStringObjectUse, ToString and
+            CallStringConstructor can allocate new JSStrings, and hence, can GC.
+
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240448. rdar://problem/47774335
 
     Update ARM64EHash
