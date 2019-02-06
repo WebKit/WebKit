@@ -73,6 +73,7 @@ static void valueToGValue(int32_t value, GValue* gValue)
     g_value_set_int(gValue, value);
 }
 
+#if CPU(ADDRESS64)
 static bool valueFromGValue(const GValue* gValue, unsigned& value)
 {
     value = g_value_get_uint(gValue);
@@ -83,6 +84,7 @@ static void valueToGValue(unsigned value, GValue* gValue)
 {
     g_value_set_uint(gValue, value);
 }
+#endif
 
 static bool valueFromGValue(const GValue* gValue, size_t& value)
 {
@@ -540,10 +542,12 @@ static JSCOptionType jscOptionsType(int)
     return JSC_OPTION_INT;
 }
 
+#if CPU(ADDRESS64)
 static JSCOptionType jscOptionsType(unsigned)
 {
     return JSC_OPTION_UINT;
 }
+#endif
 
 static JSCOptionType jscOptionsType(size_t)
 {
