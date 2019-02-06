@@ -103,28 +103,8 @@ bool doesGC(Graph& graph, Node* node)
     case ValueAdd:
     case ValueSub:
     case ValueMul:
-    case ValueNegate:
     case ValueDiv:
     case TryGetById:
-    case GetById:
-    case GetByIdFlush:
-    case GetByIdWithThis:
-    case GetByIdDirect:
-    case GetByIdDirectFlush:
-    case PutById:
-    case PutByIdFlush:
-    case PutByIdWithThis:
-    case PutByValWithThis:
-    case PutByIdDirect:
-    case PutGetterById:
-    case PutSetterById:
-    case PutGetterSetterById:
-    case PutGetterByVal:
-    case PutSetterByVal:
-    case DefineDataProperty:
-    case DefineAccessorProperty:
-    case DeleteById:
-    case DeleteByVal:
     case CheckStructure:
     case CheckStructureOrEmpty:
     case CheckStructureImmediate:
@@ -148,9 +128,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckNotEmpty:
     case AssertNotEmpty:
     case CheckStringIdent:
-    case RegExpExec:
     case RegExpExecNonGlobalOrSticky:
-    case RegExpTest:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
     case CompareLess:
@@ -162,26 +140,10 @@ bool doesGC(Graph& graph, Node* node)
     case CompareEq:
     case CompareStrictEq:
     case CompareEqPtr:
-    case Call:
-    case DirectCall:
-    case TailCallInlinedCaller:
-    case DirectTailCallInlinedCaller:
-    case Construct:
-    case DirectConstruct:
-    case CallVarargs:
-    case CallEval:
-    case TailCallVarargsInlinedCaller:
-    case ConstructVarargs:
-    case LoadVarargs:
-    case CallForwardVarargs:
-    case ConstructForwardVarargs:
     case TailCallForwardVarargs:
-    case TailCallForwardVarargsInlinedCaller:
     case ProfileType:
     case ProfileControlFlow:
     case OverridesHasInstance:
-    case InstanceOf:
-    case InstanceOfCustom:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -194,19 +156,12 @@ bool doesGC(Graph& graph, Node* node)
     case IsTypedArrayView:
     case TypeOf:
     case LogicalNot:
-    case ToPrimitive:
-    case ToNumber:
-    case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
-    case InByVal:
-    case InById:
-    case HasOwnProperty:
     case Jump:
     case Branch:
     case Switch:
     case EntrySwitch:
     case Return:
-    case TailCall:
     case DirectTailCall:
     case TailCallVarargs:
     case Throw:
@@ -251,11 +206,8 @@ bool doesGC(Graph& graph, Node* node)
     case GetGetter:
     case GetSetter:
     case GetByVal:
-    case GetByValWithThis:
     case GetArrayLength:
     case GetVectorLength:
-    case ArrayPush:
-    case ArrayPop:
     case StringCharAt:
     case StringCharCodeAt:
     case GetTypedArrayByteOffset:
@@ -266,12 +218,8 @@ bool doesGC(Graph& graph, Node* node)
     case PutStructure:
     case GetByOffset:
     case GetGetterSetterByOffset:
-    case PutByOffset:
     case GetEnumerableLength:
-    case HasGenericProperty:
-    case HasStructureProperty:
     case HasIndexedProperty:
-    case GetDirectPname:
     case FiatInt52:
     case BooleanToNumber:
     case CheckBadCell:
@@ -293,18 +241,12 @@ bool doesGC(Graph& graph, Node* node)
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
     case PutHint:
-    case PutStack:
     case KillStack:
     case GetStack:
     case GetFromArguments:
-    case PutToArguments:
     case GetArgument:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:
-    case GetDynamicVar:
-    case PutDynamicVar:
-    case ResolveScopeForHoistingFuncDeclInEval:
-    case ResolveScope:
     case NukeStructureAndSetButterfly:
     case AtomicsAdd:
     case AtomicsAnd:
@@ -326,13 +268,70 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewSet:
         return false;
 
+    case ArrayPush:
+    case ArrayPop:
     case PushWithScope:
     case CreateActivation:
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
+    case Call:
+    case CallEval:
+    case CallForwardVarargs:
     case CallObjectConstructor:
+    case CallVarargs:
+    case Construct:
+    case ConstructForwardVarargs:
+    case ConstructVarargs:
+    case DefineDataProperty:
+    case DefineAccessorProperty:
+    case DeleteById:
+    case DeleteByVal:
+    case DirectCall:
+    case DirectConstruct:
+    case DirectTailCallInlinedCaller:
+    case GetById:
+    case GetByIdDirect:
+    case GetByIdDirectFlush:
+    case GetByIdFlush:
+    case GetByIdWithThis:
+    case GetByValWithThis:
+    case GetDirectPname:
+    case GetDynamicVar:
+    case HasGenericProperty:
+    case HasOwnProperty:
+    case HasStructureProperty:
+    case InById:
+    case InByVal:
+    case InstanceOf:
+    case InstanceOfCustom:
+    case LoadVarargs:
+    case NumberToStringWithRadix:
+    case PutById:
+    case PutByIdDirect:
+    case PutByIdFlush:
+    case PutByIdWithThis:
+    case PutByOffset:
+    case PutByValWithThis:
+    case PutDynamicVar:
+    case PutGetterById:
+    case PutGetterByVal:
+    case PutGetterSetterById:
+    case PutSetterById:
+    case PutSetterByVal:
+    case PutStack:
+    case PutToArguments:
+    case RegExpExec:
+    case RegExpTest:
+    case ResolveScope:
+    case ResolveScopeForHoistingFuncDeclInEval:
+    case TailCall:
+    case TailCallForwardVarargsInlinedCaller:
+    case TailCallInlinedCaller:
+    case TailCallVarargsInlinedCaller:
+    case ToNumber:
     case ToObject:
+    case ToPrimitive:
     case ToThis:
     case CreateThis:
     case ObjectCreate:
@@ -378,6 +377,7 @@ bool doesGC(Graph& graph, Node* node)
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:
     case MapSet:
+    case ValueNegate:
         return true;
 
     case CallStringConstructor:
