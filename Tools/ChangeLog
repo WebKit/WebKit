@@ -1,3 +1,9 @@
+2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix a typo
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+
 2019-02-06  Olivier Blin  <olivier.blin@softathome.com>
 
         [GTK][WPE] force libpsl build to use ICU in jhbuild

@@ -535,7 +535,7 @@ static void testCookieManagerCookiesChanged(CookieManagerTest* test, gconstpoint
     g_assert_true(test->m_cookiesChanged);
 }
 
-class CookiePersistentStorageTest: public CookieManagerTest {
+class CookiePersistentStorageTest : public CookieManagerTest {
 public:
     MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(CookiePersistentStorageTest, setup, teardown);
 
