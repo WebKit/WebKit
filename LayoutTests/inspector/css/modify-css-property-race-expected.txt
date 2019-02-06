@@ -3,9 +3,9 @@ Testing that changes to "style" attribute made from page's JavaScript are ignore
 
 == Running test suite: ModifyCSSProperty
 -- Running test case: ModifyCSSPropertyRace.ChangeInlineStyle
-PASS: expectGreaterThan(43, 42)
-PASS: expectGreaterThan(43, 42)
-PASS: Value updated to "10px".
+PASS: Height should be greater than 42px.
+PASS: Height should be greater than 42px.
+PASS: Height should be 10px.
 PASS: CSSStyleDeclaration text should update.
-PASS: expectGreaterThanOrEqual(10, 10)
+PASS: Height should be greater or equal 10px.
 
