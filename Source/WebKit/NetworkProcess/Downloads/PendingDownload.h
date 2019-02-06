@@ -34,7 +34,6 @@ class Connection;
 }
 
 namespace WebCore {
-class BlobRegistryImpl;
 class ResourceResponse;
 }
 
@@ -49,7 +48,7 @@ class NetworkSession;
 class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, WebCore::BlobRegistryImpl*, const String& suggestedName);
+    PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
     PendingDownload(IPC::Connection*, std::unique_ptr<NetworkLoad>&&, ResponseCompletionHandler&&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);

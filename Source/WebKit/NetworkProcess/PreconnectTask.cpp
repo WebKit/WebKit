@@ -53,7 +53,7 @@ PreconnectTask::PreconnectTask(NetworkProcess& networkProcess, NetworkLoadParame
     }
 
     ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
 
     m_timeoutTimer.startOneShot(60000_s);
 }

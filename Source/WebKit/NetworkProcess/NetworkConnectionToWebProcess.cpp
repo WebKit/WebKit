@@ -26,9 +26,9 @@
 #include "config.h"
 #include "NetworkConnectionToWebProcess.h"
 
-#include "BlobDataFileReferenceWithSandboxExtension.h"
 #include "CacheStorageEngineConnectionMessages.h"
 #include "DataReference.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkCache.h"
 #include "NetworkMDNSRegisterMessages.h"
 #include "NetworkProcess.h"
@@ -249,7 +249,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     // root activity trackers.
     stopAllNetworkActivityTracking();
 
-    m_networkProcess->networkBlobRegistry().connectionToWebProcessDidClose(*this);
+    NetworkBlobRegistry::singleton().connectionToWebProcessDidClose(*this);
     m_networkProcess->removeNetworkConnectionToWebProcess(*this);
 
 #if USE(LIBWEBRTC)
@@ -311,20 +311,6 @@ void NetworkConnectionToWebProcess::endSuspension()
 #endif
 }
 
-Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::resolveBlobReferences(const NetworkResourceLoadParameters& parameters)
-{
-    Vector<RefPtr<WebCore::BlobDataFileReference>> files;
-    if (auto* body = parameters.request.httpBody()) {
-        for (auto& element : body->elements()) {
-            if (auto* blobData = WTF::get_if<FormDataElement::EncodedBlobData>(element.data))
-                files.appendVector(m_networkProcess->networkBlobRegistry().filesInBlob(*this, blobData->url));
-        }
-        const_cast<WebCore::ResourceRequest&>(parameters.request).setHTTPBody(body->resolveBlobReferences(m_networkProcess->networkBlobRegistry().blobRegistry()));
-    }
-
-    return files;
-}
-
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters)
 {
     auto identifier = loadParameters.identifier;
@@ -356,7 +342,7 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
     };
 
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(*this, networkProcess(), WTFMove(loadParameters), WTFMove(completionHandler));
+    new PingLoad(networkProcess(), WTFMove(loadParameters), WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)
@@ -405,8 +391,6 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 
 void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkResourceLoadParameters&& parameters)
 {
-    ASSERT(!parameters.request.httpBody());
-    
 #if ENABLE(SERVER_PRECONNECT)
     new PreconnectTask(networkProcess(), WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
         didFinishPreconnection(identifier, error);
@@ -509,63 +493,55 @@ void NetworkConnectionToWebProcess::deleteCookie(PAL::SessionID sessionID, const
 
 void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
-    m_networkProcess->networkBlobRegistry().registerFileBlobURL(*this, url, path, SandboxExtension::create(WTFMove(extensionHandle)), contentType);
+    RefPtr<SandboxExtension> extension = SandboxExtension::create(WTFMove(extensionHandle));
+
+    NetworkBlobRegistry::singleton().registerFileBlobURL(*this, url, path, WTFMove(extension), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
-    m_networkProcess->networkBlobRegistry().registerBlobURL(*this, url, WTFMove(blobParts), contentType);
+    NetworkBlobRegistry::singleton().registerBlobURL(*this, url, WTFMove(blobParts), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL, bool shouldBypassConnectionCheck)
 {
-    m_networkProcess->networkBlobRegistry().registerBlobURL(*this, url, srcURL, shouldBypassConnectionCheck);
+    NetworkBlobRegistry::singleton().registerBlobURL(*this, url, srcURL, shouldBypassConnectionCheck);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
-    m_networkProcess->networkBlobRegistry().registerBlobURLOptionallyFileBacked(*this, url, srcURL, fileBackedPath, contentType);
+    NetworkBlobRegistry::singleton().registerBlobURLOptionallyFileBacked(*this, url, srcURL, fileBackedPath, contentType);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end)
 {
-    m_networkProcess->networkBlobRegistry().registerBlobURLForSlice(*this, url, srcURL, start, end);
+    NetworkBlobRegistry::singleton().registerBlobURLForSlice(*this, url, srcURL, start, end);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
 {
-    m_networkProcess->networkBlobRegistry().unregisterBlobURL(*this, url);
+    NetworkBlobRegistry::singleton().unregisterBlobURL(*this, url);
 }
 
 void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSize)
 {
-    resultSize = m_networkProcess->networkBlobRegistry().blobSize(*this, url);
+    resultSize = NetworkBlobRegistry::singleton().blobSize(*this, url);
 }
 
 void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)
-        fileReferences.appendVector(m_networkProcess->networkBlobRegistry().filesInBlob(*this, { { }, url }));
+        fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(*this, { { }, url }));
 
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    m_networkProcess->networkBlobRegistry().writeBlobsToTemporaryFiles(blobURLs, [fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& fileNames) mutable {
+    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& fileNames) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
         completionHandler(WTFMove(fileNames));
     });
-}
-
-Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::filesInBlob(const URL& url)
-{
-    return m_networkProcess->networkBlobRegistry().filesInBlob(*this, url);
-}
-
-WebCore::BlobRegistryImpl& NetworkConnectionToWebProcess::blobRegistry()
-{
-    return m_networkProcess->networkBlobRegistry().blobRegistry();
 }
 
 void NetworkConnectionToWebProcess::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)

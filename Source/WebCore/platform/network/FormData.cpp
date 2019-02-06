@@ -311,14 +311,14 @@ String FormData::flattenToString() const
     return Latin1Encoding().decode(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
 
-static void appendBlobResolved(BlobRegistry& blobRegistry, FormData& formData, const URL& url)
+static void appendBlobResolved(FormData* formData, const URL& url)
 {
-    if (!blobRegistry.isBlobRegistryImpl()) {
+    if (!blobRegistry().isBlobRegistryImpl()) {
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
 
-    auto* blobData = static_cast<BlobRegistryImpl&>(blobRegistry).getBlobDataFromURL(url);
+    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(url);
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;
@@ -327,15 +327,15 @@ static void appendBlobResolved(BlobRegistry& blobRegistry, FormData& formData, c
     for (const auto& blobItem : blobData->items()) {
         if (blobItem.type() == BlobDataItem::Type::Data) {
             ASSERT(blobItem.data().data());
-            formData.appendData(blobItem.data().data()->data() + static_cast<int>(blobItem.offset()), static_cast<int>(blobItem.length()));
+            formData->appendData(blobItem.data().data()->data() + static_cast<int>(blobItem.offset()), static_cast<int>(blobItem.length()));
         } else if (blobItem.type() == BlobDataItem::Type::File)
-            formData.appendFileRange(blobItem.file()->path(), blobItem.offset(), blobItem.length(), blobItem.file()->expectedModificationTime());
+            formData->appendFileRange(blobItem.file()->path(), blobItem.offset(), blobItem.length(), blobItem.file()->expectedModificationTime());
         else
             ASSERT_NOT_REACHED();
     }
 }
 
-Ref<FormData> FormData::resolveBlobReferences(BlobRegistry& blobRegistry)
+Ref<FormData> FormData::resolveBlobReferences()
 {
     // First check if any blobs needs to be resolved, or we can take the fast path.
     bool hasBlob = false;
@@ -361,7 +361,7 @@ Ref<FormData> FormData::resolveBlobReferences(BlobRegistry& blobRegistry)
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 newFormData->appendFileRange(fileData.filename, fileData.fileStart, fileData.fileLength, fileData.expectedFileModificationTime, fileData.shouldGenerateFile);
             }, [&] (const FormDataElement::EncodedBlobData& blobData) {
-                appendBlobResolved(blobRegistry, newFormData.get(), blobData.url);
+                appendBlobResolved(newFormData.ptr(), blobData.url);
             }
         );
     }

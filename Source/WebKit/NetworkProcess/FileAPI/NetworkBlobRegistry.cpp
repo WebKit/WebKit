@@ -37,12 +37,20 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkBlobRegistry::NetworkBlobRegistry() = default;
-NetworkBlobRegistry::~NetworkBlobRegistry() = default;
+NetworkBlobRegistry& NetworkBlobRegistry::singleton()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<NetworkBlobRegistry> registry;
+    return registry;
+}
+
+NetworkBlobRegistry::NetworkBlobRegistry()
+{
+}
 
 void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess& connection, const URL& url, const String& path, RefPtr<SandboxExtension>&& sandboxExtension, const String& contentType)
 {
-    m_blobRegistry.registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, WTFMove(sandboxExtension)), contentType);
+    blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, WTFMove(sandboxExtension)), contentType);
 
     ASSERT(!m_blobsForConnection.get(&connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(&connection);
@@ -53,7 +61,7 @@ void NetworkBlobRegistry::registerFileBlobURL(NetworkConnectionToWebProcess& con
 
 void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess& connection, const URL& url, Vector<WebCore::BlobPart>&& blobParts, const String& contentType)
 {
-    m_blobRegistry.registerBlobURL(url, WTFMove(blobParts), contentType);
+    blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
 
     ASSERT(!m_blobsForConnection.get(&connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(&connection);
@@ -72,7 +80,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess& connect
         mapIterator = m_blobsForConnection.add(&connection, HashSet<URL>()).iterator;
     }
 
-    m_blobRegistry.registerBlobURL(url, srcURL);
+    blobRegistry().registerBlobURL(url, srcURL);
 
     ASSERT(shouldBypassConnectionCheck || mapIterator->value.contains(srcURL));
     mapIterator->value.add(url);
@@ -80,7 +88,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess& connect
 
 void NetworkBlobRegistry::registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess& connection, const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
-    m_blobRegistry.registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath, nullptr), contentType);
+    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath, nullptr), contentType);
 
     ASSERT(!m_blobsForConnection.get(&connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(&connection);
@@ -96,7 +104,7 @@ void NetworkBlobRegistry::registerBlobURLForSlice(NetworkConnectionToWebProcess&
     if (mapIterator == m_blobsForConnection.end())
         return;
 
-    m_blobRegistry.registerBlobURLForSlice(url, srcURL, start, end);
+    blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
 
     ASSERT(mapIterator->value.contains(srcURL));
     mapIterator->value.add(url);
@@ -109,7 +117,7 @@ void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess& conne
     if (mapIterator == m_blobsForConnection.end())
         return;
 
-    m_blobRegistry.unregisterBlobURL(url);
+    blobRegistry().unregisterBlobURL(url);
 
     mapIterator->value.remove(url);
 }
@@ -119,17 +127,17 @@ uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess& connection
     if (!m_blobsForConnection.contains(&connection) || !m_blobsForConnection.find(&connection)->value.contains(url))
         return 0;
 
-    return m_blobRegistry.blobSize(url);
+    return blobRegistry().blobSize(url);
 }
 
 void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    m_blobRegistry.writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
+    blobRegistry().writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
 }
 
 void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& path, CompletionHandler<void(bool success)>&& completionHandler)
 {
-    if (!m_blobRegistry.isBlobRegistryImpl()) {
+    if (!blobRegistry().isBlobRegistryImpl()) {
         completionHandler(false);
         ASSERT_NOT_REACHED();
         return;
@@ -139,7 +147,7 @@ void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& 
     for (auto& file : blobFiles)
         file->prepareForFileAccess();
 
-    m_blobRegistry.writeBlobToFilePath(blobURL, path, [blobFiles = WTFMove(blobFiles), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    static_cast<BlobRegistryImpl&>(blobRegistry()).writeBlobToFilePath(blobURL, path, [blobFiles = WTFMove(blobFiles), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
         for (auto& file : blobFiles)
             file->revokeFileAccess();
         completionHandler(success);
@@ -153,7 +161,7 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
 
     HashSet<URL>& blobsForConnection = m_blobsForConnection.find(&connection)->value;
     for (HashSet<URL>::iterator iter = blobsForConnection.begin(), end = blobsForConnection.end(); iter != end; ++iter)
-        m_blobRegistry.unregisterBlobURL(*iter);
+        blobRegistry().unregisterBlobURL(*iter);
 
     m_blobsForConnection.remove(&connection);
 }
@@ -168,8 +176,8 @@ Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkCo
 
 Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(const URL& url)
 {
-    ASSERT(m_blobRegistry.isBlobRegistryImpl());
-    BlobData* blobData = m_blobRegistry.getBlobDataFromURL(url);
+    ASSERT(blobRegistry().isBlobRegistryImpl());
+    BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(url);
     if (!blobData)
         return { };
 

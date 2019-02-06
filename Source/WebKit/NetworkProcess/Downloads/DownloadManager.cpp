@@ -27,7 +27,7 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
-#include "NetworkConnectionToWebProcess.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
 #include "PendingDownload.h"
@@ -54,10 +54,10 @@ void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, P
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     if (request.url().protocolIsBlob() && connection)
-        parameters.blobFileReferences = connection->filesInBlob(request.url());
+        parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, request.url());
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
-    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, connection ? &connection->blobRegistry() : nullptr, suggestedName));
+    m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName));
 }
 
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)

@@ -33,10 +33,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class BlobRegistryImpl;
-}
-
 namespace WebKit {
 
 class NetworkProcess;
@@ -44,7 +40,7 @@ class NetworkProcess;
 class NetworkLoad final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NetworkLoad(NetworkLoadClient&, WebCore::BlobRegistryImpl*, NetworkLoadParameters&&, NetworkSession&);
+    NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
     ~NetworkLoad();
 
     void setDefersLoading(bool);
@@ -69,7 +65,7 @@ public:
     String description() const;
 
 private:
-    void initialize(NetworkSession&, WebCore::BlobRegistryImpl*);
+    void initialize(NetworkSession&);
 
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;

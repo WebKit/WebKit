@@ -29,7 +29,6 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Logging.h"
-#include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoadChecker.h"
 #include "NetworkProcess.h"
 #include "WebErrors.h"
@@ -40,18 +39,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkProcess& networkProcess, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
+PingLoad::PingLoad(NetworkProcess& networkProcess, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
     : m_parameters(WTFMove(parameters))
     , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_networkLoadChecker(makeUniqueRef<NetworkLoadChecker>(networkProcess, FetchOptions { m_parameters.options}, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, WTFMove(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer()))
-    , m_blobFiles(connection.resolveBlobReferences(m_parameters))
 {
-    for (auto& file : m_blobFiles) {
-        if (file)
-            file->prepareForFileAccess();
-    }
-
     m_networkLoadChecker->enableContentExtensionsCheck();
     if (m_parameters.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(WTFMove(m_parameters.cspResponseHeaders.value()));
@@ -85,10 +78,6 @@ PingLoad::~PingLoad()
         ASSERT(m_task->client() == this);
         m_task->clearClient();
         m_task->cancel();
-    }
-    for (auto& file : m_blobFiles) {
-        if (file)
-            file->revokeFileAccess();
     }
 }
 

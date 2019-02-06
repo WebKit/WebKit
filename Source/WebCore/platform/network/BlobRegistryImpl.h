@@ -56,6 +56,7 @@ public:
     Ref<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
     void writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
 
+private:
     void appendStorageItems(BlobData*, const BlobDataItemList&, long long offset, long long length);
 
     void registerFileBlobURL(const URL&, Ref<BlobDataFileReference>&&, const String& contentType) override;
@@ -77,7 +78,6 @@ public:
 
     bool populateBlobsForFileWriting(const Vector<String>& blobURLs, Vector<BlobForFileWriting>&);
 
-private:
     HashMap<String, RefPtr<BlobData>> m_blobs;
 };
 

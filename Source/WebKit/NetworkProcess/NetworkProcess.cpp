@@ -37,6 +37,7 @@
 #include "LegacyCustomProtocolManager.h"
 #endif
 #include "Logging.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkContentRuleListManagerMessages.h"
 #include "NetworkProcessCreationParameters.h"
@@ -149,10 +150,9 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     });
 #endif
 
-    NetworkStateNotifier::singleton().addListener([weakThis = makeWeakPtr(*this)](bool isOnLine) {
-        if (!weakThis)
-            return;
-        for (auto& webProcessConnection : weakThis->m_webProcessConnections)
+    NetworkStateNotifier::singleton().addListener([this](bool isOnLine) {
+        auto webProcessConnections = m_webProcessConnections;
+        for (auto& webProcessConnection : webProcessConnections)
             webProcessConnection->setOnLineState(isOnLine);
     });
 
@@ -186,10 +186,10 @@ NetworkProximityManager& NetworkProcess::proximityManager()
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {
-    auto count = m_webProcessConnections.removeAllMatching([&] (const auto& c) {
-        return c.ptr() == &connection;
-    });
-    ASSERT_UNUSED(count, count == 1);
+    size_t vectorIndex = m_webProcessConnections.find(&connection);
+    ASSERT(vectorIndex != notFound);
+
+    m_webProcessConnections.remove(vectorIndex);
 }
 
 bool NetworkProcess::shouldTerminate()

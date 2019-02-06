@@ -30,7 +30,6 @@
 #include "FormDataStreamCFNet.h"
 
 #include "BlobData.h"
-#include "BlobRegistry.h"
 #include "FormData.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -373,7 +372,7 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
 RetainPtr<CFReadStreamRef> createHTTPBodyCFReadStream(FormData& formData)
 {
-    auto resolvedFormData = formData.resolveBlobReferences(blobRegistry());
+    auto resolvedFormData = formData.resolveBlobReferences();
 
     // Precompute the content length so CFNetwork doesn't use chunked mode.
     unsigned long long length = 0;
