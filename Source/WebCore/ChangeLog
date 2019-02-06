@@ -1,3 +1,15 @@
+2019-02-06  Dean Jackson  <dino@apple.com>
+
+        Fix potential build error in GPUDevice
+        https://bugs.webkit.org/show_bug.cgi?id=194359
+
+        Reviewed by Joseph Pecoraro.
+
+        Add an UNUSED_PARAM for non-macOS platforms.
+
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::create):
+
 2019-02-06  Daniel Bates  <dabates@apple.com>
 
         Standardize on ControlKey instead of CtrlKey

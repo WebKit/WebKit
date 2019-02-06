@@ -53,9 +53,10 @@ RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options
             }
         }
     }
-    
-    if (!devicePtr)
+#else
+    UNUSED_PARAM(options);
 #endif // PLATFORM(MAC)
+    if (!devicePtr)
         devicePtr = adoptNS(MTLCreateSystemDefaultDevice());
 
     END_BLOCK_OBJC_EXCEPTIONS;
