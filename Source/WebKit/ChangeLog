@@ -1,5 +1,27 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240925. rdar://problem/47774545
+
+    Unreviewed, avoid -Wswitch warnings introduced in r240880
+    https://bugs.webkit.org/show_bug.cgi?id=193740
+    <rdar://problem/47527267>
+    
+    * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+    (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240925 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+            Unreviewed, avoid -Wswitch warnings introduced in r240880
+            https://bugs.webkit.org/show_bug.cgi?id=193740
+            <rdar://problem/47527267>
+
+            * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+            (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240880. rdar://problem/47774545
 
     REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
