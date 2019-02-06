@@ -455,8 +455,7 @@ public:
         func(codeBlockSpace);
     }
 
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(directEvalExecutableSpace)
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(indirectEvalExecutableSpace)
+    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace)
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(moduleProgramExecutableSpace)
     SpaceAndSet functionExecutableSpace;
     SpaceAndSet programExecutableSpace;
@@ -464,11 +463,9 @@ public:
     template<typename Func>
     void forEachScriptExecutableSpace(const Func& func)
     {
-        if (m_directEvalExecutableSpace)
-            func(*m_directEvalExecutableSpace);
+        if (m_evalExecutableSpace)
+            func(*m_evalExecutableSpace);
         func(functionExecutableSpace);
-        if (m_indirectEvalExecutableSpace)
-            func(*m_indirectEvalExecutableSpace);
         if (m_moduleProgramExecutableSpace)
             func(*m_moduleProgramExecutableSpace);
         func(programExecutableSpace);

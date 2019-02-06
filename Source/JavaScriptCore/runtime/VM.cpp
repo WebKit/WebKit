@@ -1261,8 +1261,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHea
     }
 
 DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(inferredValueSpace, destructibleCellHeapCellType.get(), InferredValue)
-DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(directEvalExecutableSpace, destructibleCellHeapCellType.get(), DirectEvalExecutable)
-DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(indirectEvalExecutableSpace, destructibleCellHeapCellType.get(), IndirectEvalExecutable)
+DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(evalExecutableSpace, destructibleCellHeapCellType.get(), EvalExecutable)
 DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
 
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW

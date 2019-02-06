@@ -1,5 +1,23 @@
 2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Unify indirectEvalExecutableSpace and directEvalExecutableSpace
+        https://bugs.webkit.org/show_bug.cgi?id=194339
+
+        Reviewed by Michael Saboff.
+
+        DirectEvalExecutable and IndirectEvalExecutable have completely same memory layout.
+        They have even the same structure. This patch unifies the subspaces for them.
+
+        * runtime/DirectEvalExecutable.h:
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::subspaceFor):
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+        (JSC::VM::forEachScriptExecutableSpace):
+
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] NativeExecutable should be smaller
         https://bugs.webkit.org/show_bug.cgi?id=194331
 

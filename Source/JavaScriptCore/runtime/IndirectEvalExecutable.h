@@ -31,15 +31,11 @@ namespace JSC {
 
 class IndirectEvalExecutable final : public EvalExecutable {
 public:
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.indirectEvalExecutableSpace<mode>();
-    }
-
     static IndirectEvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 private:
     IndirectEvalExecutable(ExecState*, const SourceCode&, bool inStrictContext, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 };
+
+static_assert(sizeof(IndirectEvalExecutable) == sizeof(EvalExecutable), "");
 
 } // namespace JSC
