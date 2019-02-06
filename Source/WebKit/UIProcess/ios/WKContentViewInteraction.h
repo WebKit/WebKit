@@ -298,6 +298,8 @@ struct WKAutoCorrectionData {
     BOOL _showDebugTapHighlightsForFastClicking;
     BOOL _isZoomingToRevealFocusedElement;
 
+    BOOL _keyboardDidRequestDismissal;
+
     BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;
     BOOL _needsDeferredEndScrollingSelectionUpdate;

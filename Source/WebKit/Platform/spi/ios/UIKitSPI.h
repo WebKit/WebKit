@@ -1138,6 +1138,8 @@ extern NSString * const UIWindowDidRotateNotification;
 extern NSString * const UIWindowNewScreenUserInfoKey;
 extern NSString * const UIWindowWillRotateNotification;
 
+extern NSString * const UIKeyboardPrivateDidRequestDismissalNotification;
+
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
 extern UIApplication *UIApp;
