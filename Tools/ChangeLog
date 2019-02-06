@@ -1,3 +1,13 @@
+2019-02-06  Olivier Blin  <olivier.blin@softathome.com>
+
+        [GTK][WPE] force libpsl build to use ICU in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=194288
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules:
+        Require ICU for libpsl build in jhbuild, like done in WPE.
+
 2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r240785): [SOUP] Broke cookie persistent storage
