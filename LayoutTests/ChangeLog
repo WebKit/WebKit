@@ -1,3 +1,15 @@
+2019-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r240909): Release assert in FrameLoader::loadURL when navigating with a non-existent target name
+        https://bugs.webkit.org/show_bug.cgi?id=194329
+
+        Reviewed by Geoffrey Garen.
+
+        Added a regression test.
+
+        * fast/loader/navigate-with-new-target-after-back-forward-navigation-expected.txt: Added.
+        * fast/loader/navigate-with-new-target-after-back-forward-navigation.html: Added.
+
 2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
