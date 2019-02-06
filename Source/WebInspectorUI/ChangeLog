@@ -1,5 +1,24 @@
 2019-02-05  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Elements tab: selection is broken after deleting the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=194300
+        <rdar://problem/47829275>
+
+        Reviewed by Devin Rousso.
+
+        Deleting a TreeElement can cause an IndexSet including indexes
+        outside the deleted range to be passed to SelectionController,
+        corrupting the internal selection state.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._indexesForSubtree.numberOfElementsInSubtree): Added.
+        (WI.TreeOutline.prototype._indexesForSubtree):
+        Finding the last (rightmost leaf) TreeElement in the subtree used
+        TreeElement.prototype.traverseNextElement to do a depth first traversal.
+        This method did not stay within the subtree rooted at `treeElement`.
+
+2019-02-05  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: REGRESSION (r240947): Resources tab: can't select main frame after refreshing page
         https://bugs.webkit.org/show_bug.cgi?id=194254
         <rdar://problem/47805023>
