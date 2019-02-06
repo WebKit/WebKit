@@ -1,5 +1,47 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240681. rdar://problem/47774514
+
+    ValueRecovery::recover() should purify NaN values it recovers.
+    https://bugs.webkit.org/show_bug.cgi?id=193978
+    <rdar://problem/47625488>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/value-recovery-of-double-displaced-in-jsstack-should-be-purified.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    According to DFG::OSRExit::executeOSRExit() and DFG::OSRExit::compileExit(),
+    recovered DoubleDisplacedInJSStack values need to be purified.
+    ValueRecovery::recover() should do the same.
+    
+    * bytecode/ValueRecovery.cpp:
+    (JSC::ValueRecovery::recover const):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240681 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-29  Mark Lam  <mark.lam@apple.com>
+
+            ValueRecovery::recover() should purify NaN values it recovers.
+            https://bugs.webkit.org/show_bug.cgi?id=193978
+            <rdar://problem/47625488>
+
+            Reviewed by Saam Barati.
+
+            According to DFG::OSRExit::executeOSRExit() and DFG::OSRExit::compileExit(),
+            recovered DoubleDisplacedInJSStack values need to be purified.
+            ValueRecovery::recover() should do the same.
+
+            * bytecode/ValueRecovery.cpp:
+            (JSC::ValueRecovery::recover const):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240616. rdar://problem/47774497
 
     ToString node actually does GC.
