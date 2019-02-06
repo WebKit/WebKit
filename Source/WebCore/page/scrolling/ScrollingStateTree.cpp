@@ -100,6 +100,11 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             if (!parentID)
                 return newNodeID;
 
+            if (!parent) {
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
+
             size_t currentIndex = parent->indexOfChild(*node);
             if (currentIndex == childIndex)
                 return newNodeID;
