@@ -47,6 +47,7 @@ public:
     using KeyStatusVector = Vector<std::pair<Ref<SharedBuffer>, KeyStatus>>;
     virtual void updateKeyStatuses(KeyStatusVector&&) = 0;
     virtual void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) = 0;
+    virtual void sessionIdChanged(const String&) = 0;
 };
 
 class CDMInstanceSession : public RefCounted<CDMInstanceSession> {
