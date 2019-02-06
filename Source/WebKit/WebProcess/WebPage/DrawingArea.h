@@ -149,8 +149,6 @@ public:
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
 
-    virtual void attach() { };
-
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
 

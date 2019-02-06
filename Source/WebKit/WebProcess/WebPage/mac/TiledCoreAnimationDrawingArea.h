@@ -49,7 +49,7 @@ namespace WebKit {
 
 class LayerHostingContext;
 
-class TiledCoreAnimationDrawingArea : public DrawingArea {
+class TiledCoreAnimationDrawingArea : public DrawingArea, public CanMakeWeakPtr<TiledCoreAnimationDrawingArea> {
 public:
     TiledCoreAnimationDrawingArea(WebPage&, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
@@ -102,7 +102,7 @@ private:
     void addTransactionCallbackID(CallbackID) override;
     void setShouldScaleViewToFitDocument(bool) override;
 
-    void attach() override;
+    void sendEnterAcceleratedCompositingModeIfNeeded();
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
@@ -177,6 +177,7 @@ private:
 
     bool m_isThrottlingLayerFlushes { false };
     bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
+    bool m_needsSendEnterAcceleratedCompositingMode { true };
 
     WebCore::Timer m_layerFlushThrottlingTimer;
 };
