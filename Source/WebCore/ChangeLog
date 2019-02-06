@@ -1,5 +1,58 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240930. rdar://problem/47810469
+
+    Make sure to remove the device observer in AVVideoCaptureSource
+    https://bugs.webkit.org/show_bug.cgi?id=194181
+    <rdar://problem/47739247>
+    
+    Reviewed by Eric Carlson.
+    
+    Make sure to remove the device observer when the observer is destroyed.
+    To simplify things, add the observer in AVVideoCaptureSource constructor and remove it in the destructor.
+    
+    Make also sure the session observer is also removed whenever the session is released by AVVideoCaptureSource.
+    
+    Covered by manual test.
+    
+           * platform/mediastream/mac/AVVideoCaptureSource.h:
+    * platform/mediastream/mac/AVVideoCaptureSource.mm:
+    (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+    (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+    (WebCore::AVVideoCaptureSource::initializeSession):
+    (WebCore::AVVideoCaptureSource::clearSession):
+    (WebCore::AVVideoCaptureSource::stopProducingData):
+    (WebCore::AVVideoCaptureSource::setupSession):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240930 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-04  Youenn Fablet  <youenn@apple.com>
+
+            Make sure to remove the device observer in AVVideoCaptureSource
+            https://bugs.webkit.org/show_bug.cgi?id=194181
+            <rdar://problem/47739247>
+
+            Reviewed by Eric Carlson.
+
+            Make sure to remove the device observer when the observer is destroyed.
+            To simplify things, add the observer in AVVideoCaptureSource constructor and remove it in the destructor.
+
+            Make also sure the session observer is also removed whenever the session is released by AVVideoCaptureSource.
+
+            Covered by manual test.
+
+           * platform/mediastream/mac/AVVideoCaptureSource.h:
+            * platform/mediastream/mac/AVVideoCaptureSource.mm:
+            (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+            (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+            (WebCore::AVVideoCaptureSource::initializeSession):
+            (WebCore::AVVideoCaptureSource::clearSession):
+            (WebCore::AVVideoCaptureSource::stopProducingData):
+            (WebCore::AVVideoCaptureSource::setupSession):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240880. rdar://problem/47774545
 
     REGRESSION: Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html
