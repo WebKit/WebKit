@@ -28,6 +28,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"
 #include "RuntimeApplicationChecks.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 
@@ -60,7 +61,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
 
     // Getting location.href cross origin needs to throw. However, getOwnPropertyDescriptor() needs to return
     // a descriptor that has a setter but no getter.
-    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == vm.propertyNames->href) {
+    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
         slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | PropertyAttribute::DontEnum), customGetterSetter);
@@ -105,7 +106,7 @@ static bool putCommon(JSLocation& thisObject, ExecState& state, PropertyName pro
     // Always allow assigning to the whole location.
     // However, alllowing assigning of pieces might inadvertently disclose parts of the original location.
     // So fall through to the access check for those.
-    if (propertyName == vm.propertyNames->href)
+    if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName())
         return false;
 
     // Block access and throw if there is a security error.

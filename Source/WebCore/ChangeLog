@@ -1,3 +1,19 @@
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PrivateName to PublicName hash table is wasteful
+        https://bugs.webkit.org/show_bug.cgi?id=194277
+
+        Reviewed by Michael Saboff.
+
+        Use WebCoreBuiltinNames instead of adding WebCore names to JSC CommonIdentifiers.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::addCrossOriginPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::putCommon):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2019-02-06  Keith Rollin  <krollin@apple.com>
 
         Really enable the automatic checking and regenerations of .xcfilelists during builds

@@ -1,3 +1,74 @@
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PrivateName to PublicName hash table is wasteful
+        https://bugs.webkit.org/show_bug.cgi?id=194277
+
+        Reviewed by Michael Saboff.
+
+        PrivateNames account for a lot of memory in the initial JSC footprint. BuiltinNames have Identifier fields corresponding to these PrivateNames
+        which makes the sizeof(BuiltinNames) about 6KB. It also maintains hash tables for "PublicName to PrivateName" and "PrivateName to PublicName",
+        each of which takes 16KB memory. While "PublicName to PrivateName" functionality is used in builtin JS (parsing "@xxx" and get a private
+        name for "xxx"), "PrivateName to PublicName" is rarely used. Holding 16KB hash table for rarely used feature is costly.
+
+        In this patch, we add some rules to remove "PrivateName to PublicName" hash table.
+
+        1. PrivateName's content should be the same to PublicName.
+        2. If PrivateName is not actually a private name (we introduced hacky mapping like "@iteratorSymbol" => Symbol.iterator),
+           the public name should be easily crafted from the given PrivateName.
+
+        We modify the content of private names to ensure (1). And for (2), we can meet this requirement by ensuring that the "@xxxSymbol"
+        is converted to "Symbol.xxx". (1) and (2) allow us to convert a private name to a public name without a large hash table.
+
+        We also remove unused identifiers in CommonIdentifiers. And we also move some of them to WebCore's WebCoreBuiltinNames if it is only used in
+        WebCore.
+
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::lookUpPrivateName const):
+        (JSC::BuiltinNames::getPublicName const):
+        (JSC::BuiltinNames::checkPublicToPrivateMapConsistency):
+        (JSC::BuiltinNames::appendExternalName):
+        (JSC::BuiltinNames::lookUpPublicName const): Deleted.
+        * builtins/BuiltinUtils.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpIdentifiers):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<LChar>::parseIdentifier):
+        (JSC::Lexer<UChar>::parseIdentifier):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::createGeneratorParameters):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::makeIdentifier):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUniquedStringImpl::encode):
+        (JSC::CachedUniquedStringImpl::decode const):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        (JSC::CommonIdentifiers::lookUpPrivateName const):
+        (JSC::CommonIdentifiers::getPublicName const):
+        (JSC::CommonIdentifiers::lookUpPublicName const): Deleted.
+        * runtime/CommonIdentifiers.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createUndefinedVariableError):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::dump const):
+        * runtime/Identifier.h:
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::fromUid):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGetPrivateProperty):
+
 2019-02-06  Keith Rollin  <krollin@apple.com>
 
         Really enable the automatic checking and regenerations of .xcfilelists during builds

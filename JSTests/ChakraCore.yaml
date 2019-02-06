@@ -1582,7 +1582,7 @@
   # Appears to be bad test.  JSC early parse exception vs. Chakra runtime exception.
   cmd: runChakra :skip, "NoException", "blockscope-functionbinding.baseline", []
 - path: ChakraCore/test/es6/letconst_global.js
-  cmd: runChakra :baseline, "NoException", "letconst_global.baseline-jsc", []
+  cmd: runChakra :skip, "NoException", "letconst_global.baseline-jsc", []
 - path: ChakraCore/test/es6/letconst_global_shadowing.js
   cmd: runChakra :baseline, "NoException", "letconst_global_shadowing.baseline-jsc", []
 - path: ChakraCore/test/es6/letconst_global_shadow_builtins.js

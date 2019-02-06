@@ -47,6 +47,7 @@ namespace JSC {
         ALWAYS_INLINE const Identifier& makeIdentifier(VM*, const T* characters, size_t length);
         ALWAYS_INLINE const Identifier& makeEmptyIdentifier(VM*);
         ALWAYS_INLINE const Identifier& makeIdentifierLCharFromUChar(VM*, const UChar* characters, size_t length);
+        ALWAYS_INLINE const Identifier& makeIdentifier(VM*, SymbolImpl*);
 
         const Identifier& makeNumericIdentifier(VM*, double number);
 
@@ -89,6 +90,13 @@ namespace JSC {
             return *ident;
         m_identifiers.append(Identifier::fromString(vm, characters, length));
         m_recentIdentifiers[characters[0]] = &m_identifiers.last();
+        return m_identifiers.last();
+    }
+
+    ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM*, SymbolImpl* symbol)
+    {
+        ASSERT(symbol);
+        m_identifiers.append(Identifier::fromUid(*symbol));
         return m_identifiers.last();
     }
 

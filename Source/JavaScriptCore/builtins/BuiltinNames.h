@@ -32,11 +32,14 @@
 
 namespace JSC {
 
-#define INITIALIZE_BUILTIN_NAMES_IN_JSC(name) , m_##name(JSC::Identifier::fromString(vm, #name)), m_##name##PrivateName(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##PrivateName)))
-#define INITIALIZE_BUILTIN_SYMBOLS(name) , m_##name##Symbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##Symbol))), m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name "Symbol"))
-#define DECLARE_BUILTIN_SYMBOLS(name) const JSC::Identifier m_##name##Symbol; const JSC::Identifier m_##name##SymbolPrivateIdentifier;
+#define DECLARE_BUILTIN_NAMES_IN_JSC(name) const JSC::Identifier m_##name;
+#define DECLARE_BUILTIN_SYMBOLS_IN_JSC(name) const JSC::Identifier m_##name##Symbol; const JSC::Identifier m_##name##SymbolPrivateIdentifier;
 #define DECLARE_BUILTIN_SYMBOL_ACCESSOR(name) \
     const JSC::Identifier& name##Symbol() const { return m_##name##Symbol; }
+#define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC(name) \
+    const JSC::Identifier& name##PublicName() const { return m_##name; } \
+    JSC::Identifier name##PrivateName() const { return JSC::Identifier::fromUid(*bitwise_cast<SymbolImpl*>(&JSC::Symbols::name##PrivateName)); }
+
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
@@ -192,27 +195,18 @@ namespace JSC {
     macro(webAssemblyInstantiateStreamingInternal) \
 
 namespace Symbols {
-#define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern SymbolImpl::StaticSymbolImpl name##Symbol;
+#define DECLARE_BUILTIN_STATIC_SYMBOLS(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##Symbol;
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_STATIC_SYMBOLS)
 #undef DECLARE_BUILTIN_STATIC_SYMBOLS
 
-#define DECLARE_BUILTIN_PRIVATE_NAMES(name) extern SymbolImpl::StaticSymbolImpl name##PrivateName;
+#define DECLARE_BUILTIN_PRIVATE_NAMES(name) extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl name##PrivateName;
 JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_PRIVATE_NAMES)
 JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_PRIVATE_NAMES)
 #undef DECLARE_BUILTIN_PRIVATE_NAMES
 
-extern SymbolImpl::StaticSymbolImpl dollarVMPrivateName;
-extern SymbolImpl::StaticSymbolImpl polyProtoPrivateName;
+extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl dollarVMPrivateName;
+extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl polyProtoPrivateName;
 }
-
-#define INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##PrivateName.impl(), &m_##name);
-#define INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY(name) m_publicToPrivateMap.add(m_##name.impl(), &m_##name##PrivateName);
-
-// We commandeer the publicToPrivateMap to allow us to convert private symbol names into the appropriate symbol.
-// e.g. @iteratorSymbol points to Symbol.iterator in this map rather than to a an actual private name.
-// FIXME: This is a weird hack and we shouldn't need to do this.
-#define INITIALIZE_SYMBOL_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##Symbol.impl(), &m_##name##SymbolPrivateIdentifier);
-#define INITIALIZE_SYMBOL_PUBLIC_TO_PRIVATE_ENTRY(name) m_publicToPrivateMap.add(m_##name##SymbolPrivateIdentifier.impl(), &m_##name##Symbol);
 
 class BuiltinNames {
     WTF_MAKE_NONCOPYABLE(BuiltinNames); WTF_MAKE_FAST_ALLOCATED;
@@ -220,56 +214,76 @@ class BuiltinNames {
 public:
     BuiltinNames(VM*, CommonIdentifiers*);
 
-    const Identifier* lookUpPrivateName(const Identifier&) const;
-    const Identifier& lookUpPublicName(const Identifier&) const;
+    SymbolImpl* lookUpPrivateName(const Identifier&) const;
+    Identifier getPublicName(VM&, SymbolImpl*) const;
     
     void appendExternalName(const Identifier& publicName, const Identifier& privateName);
 
-    JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR_IN_JSC)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOL_ACCESSOR)
     const JSC::Identifier& dollarVMPublicName() const { return m_dollarVMName; }
     const JSC::Identifier& dollarVMPrivateName() const { return m_dollarVMPrivateName; }
     const JSC::Identifier& polyProtoName() const { return m_polyProtoPrivateName; }
 
 private:
+    void checkPublicToPrivateMapConsistency(UniquedStringImpl* publicName, UniquedStringImpl* privateName);
+
     Identifier m_emptyIdentifier;
-    JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_NAMES)
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_NAMES)
-    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOLS)
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_NAMES_IN_JSC)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_NAMES_IN_JSC)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOLS_IN_JSC)
     const JSC::Identifier m_dollarVMName;
     const JSC::Identifier m_dollarVMPrivateName;
     const JSC::Identifier m_polyProtoPrivateName;
-    typedef HashMap<RefPtr<UniquedStringImpl>, const Identifier*, IdentifierRepHash> BuiltinNamesMap;
+    typedef HashMap<RefPtr<UniquedStringImpl>, SymbolImpl*, IdentifierRepHash> BuiltinNamesMap;
     BuiltinNamesMap m_publicToPrivateMap;
-    BuiltinNamesMap m_privateToPublicMap;
 };
 
-inline const Identifier* BuiltinNames::lookUpPrivateName(const Identifier& ident) const
+inline SymbolImpl* BuiltinNames::lookUpPrivateName(const Identifier& ident) const
 {
     auto iter = m_publicToPrivateMap.find(ident.impl());
     if (iter != m_publicToPrivateMap.end())
         return iter->value;
-    return 0;
+    return nullptr;
 }
 
-inline const Identifier& BuiltinNames::lookUpPublicName(const Identifier& ident) const
+inline Identifier BuiltinNames::getPublicName(VM& vm, SymbolImpl* symbol) const
 {
-    auto iter = m_privateToPublicMap.find(ident.impl());
-    if (iter != m_privateToPublicMap.end())
-        return *iter->value;
-    return m_emptyIdentifier;
+    if (symbol->isPrivate())
+        return Identifier::fromString(&vm, symbol);
+    // We have special handling for well-known symbols.
+    ASSERT(symbol->startsWith("Symbol."));
+    return Identifier::fromString(&vm, makeString(String(symbol->substring(strlen("Symbol."))), "Symbol"));
+}
+
+inline void BuiltinNames::checkPublicToPrivateMapConsistency(UniquedStringImpl* publicName, UniquedStringImpl* privateName)
+{
+#ifndef NDEBUG
+    for (const auto& key : m_publicToPrivateMap.keys())
+        ASSERT(String(publicName) != *key);
+
+    ASSERT(privateName->isSymbol());
+    SymbolImpl* symbol = static_cast<SymbolImpl*>(privateName);
+    if (symbol->isPrivate()) {
+        // This guarantees that we can get public symbols from private symbols by using content of private symbols.
+        ASSERT(String(symbol) == *publicName);
+    } else {
+        // We have a hack in m_publicToPrivateMap: adding non-private Symbol with readable name to use it
+        // in builtin code. The example is @iteratorSymbol => Symbol.iterator mapping. To allow the reverse
+        // transformation, we ensure that non-private symbol mapping has xxxSymbol => Symbol.xxx.
+        ASSERT(makeString(String(symbol), "Symbol") == makeString("Symbol.", String(publicName)));
+    }
+#else
+    UNUSED_PARAM(publicName);
+    UNUSED_PARAM(privateName);
+#endif
 }
 
 inline void BuiltinNames::appendExternalName(const Identifier& publicName, const Identifier& privateName)
 {
-#ifndef NDEBUG
-    for (const auto& key : m_publicToPrivateMap.keys())
-        ASSERT(publicName.string() != *key);
-#endif
-
-    m_privateToPublicMap.add(privateName.impl(), &publicName);
-    m_publicToPrivateMap.add(publicName.impl(), &privateName);
+    checkPublicToPrivateMapConsistency(publicName.impl(), privateName.impl());
+    m_publicToPrivateMap.add(publicName.impl(), static_cast<SymbolImpl*>(privateName.impl()));
 }
 
 } // namespace JSC

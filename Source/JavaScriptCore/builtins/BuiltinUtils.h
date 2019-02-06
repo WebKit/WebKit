@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-#define INITIALIZE_BUILTIN_NAMES(name) , m_##name(JSC::Identifier::fromString(vm, #name)), m_##name##PrivateName(JSC::Identifier::fromUid(JSC::PrivateName(JSC::PrivateName::PrivateSymbol, "PrivateSymbol." #name ""_s)))
+#define INITIALIZE_BUILTIN_NAMES(name) , m_##name(JSC::Identifier::fromString(vm, #name)), m_##name##PrivateName(JSC::Identifier::fromUid(JSC::PrivateName(JSC::PrivateName::PrivateSymbol, #name ""_s)))
 #define DECLARE_BUILTIN_NAMES(name) const JSC::Identifier m_##name; const JSC::Identifier m_##name##PrivateName;
 #define DECLARE_BUILTIN_IDENTIFIER_ACCESSOR(name) \
     const JSC::Identifier& name##PublicName() const { return m_##name; } \

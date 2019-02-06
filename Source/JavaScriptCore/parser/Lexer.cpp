@@ -975,9 +975,9 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<LChar>::p
                 return ERRORTOK;
             }
             if (isPrivateName)
-                ident = m_vm->propertyNames->lookUpPrivateName(*ident);
+                ident = &m_arena->makeIdentifier(m_vm, m_vm->propertyNames->lookUpPrivateName(*ident));
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
-                tokenData->ident = &m_vm->propertyNames->builtinNames().undefinedPrivateName();
+                tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
         }
@@ -1053,9 +1053,9 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
                 return ERRORTOK;
             }
             if (isPrivateName)
-                ident = m_vm->propertyNames->lookUpPrivateName(*ident);
+                ident = &m_arena->makeIdentifier(m_vm, m_vm->propertyNames->lookUpPrivateName(*ident));
             else if (*ident == m_vm->propertyNames->undefinedKeyword)
-                tokenData->ident = &m_vm->propertyNames->builtinNames().undefinedPrivateName();
+                tokenData->ident = &m_vm->propertyNames->undefinedPrivateName;
             if (!ident)
                 return INVALID_PRIVATE_NAME_ERRORTOK;
         }

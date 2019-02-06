@@ -967,10 +967,10 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByIdDirectPrivate(BytecodeG
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
     ASSERT(node->m_expr->isString());
-    const Identifier* ident = generator.vm()->propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
-    ASSERT(ident);
+    SymbolImpl* symbol = generator.vm()->propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
+    ASSERT(symbol);
     ASSERT(!node->m_next);
-    return generator.emitDirectGetById(generator.finalDestination(dst), base.get(), *ident);
+    return generator.emitDirectGetById(generator.finalDestination(dst), base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_argument(BytecodeGenerator& generator, RegisterID* dst)
@@ -1018,14 +1018,14 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate(BytecodeG
     RefPtr<RegisterID> base = generator.emitNode(node);
     node = node->m_next;
     ASSERT(node->m_expr->isString());
-    const Identifier* ident = generator.vm()->propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
-    ASSERT(ident);
+    SymbolImpl* symbol = generator.vm()->propertyNames->lookUpPrivateName(static_cast<StringNode*>(node->m_expr)->value());
+    ASSERT(symbol);
     node = node->m_next;
     RefPtr<RegisterID> value = generator.emitNode(node);
 
     ASSERT(!node->m_next);
 
-    return generator.move(dst, generator.emitDirectPutById(base.get(), *ident, value.get(), PropertyNode::KnownDirect));
+    return generator.move(dst, generator.emitDirectPutById(base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol), value.get(), PropertyNode::KnownDirect));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValDirect(BytecodeGenerator& generator, RegisterID* dst)

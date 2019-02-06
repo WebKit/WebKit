@@ -2284,15 +2284,15 @@ template <class TreeBuilder> typename TreeBuilder::FormalParameterList Parser<Le
     };
 
     // @generator
-    addParameter(m_vm->propertyNames->builtinNames().generatorPrivateName());
+    addParameter(m_vm->propertyNames->generatorPrivateName);
     // @generatorState
-    addParameter(m_vm->propertyNames->builtinNames().generatorStatePrivateName());
+    addParameter(m_vm->propertyNames->generatorStatePrivateName);
     // @generatorValue
-    addParameter(m_vm->propertyNames->builtinNames().generatorValuePrivateName());
+    addParameter(m_vm->propertyNames->generatorValuePrivateName);
     // @generatorResumeMode
-    addParameter(m_vm->propertyNames->builtinNames().generatorResumeModePrivateName());
+    addParameter(m_vm->propertyNames->generatorResumeModePrivateName);
     // @generatorFrame
-    addParameter(m_vm->propertyNames->builtinNames().generatorFramePrivateName());
+    addParameter(m_vm->propertyNames->generatorFramePrivateName);
 
     return parameters;
 }
@@ -2666,7 +2666,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
         //
         // In this case, we use "*default*" as this function declaration's name.
         requirements = FunctionNameRequirements::None;
-        functionInfo.name = &m_vm->propertyNames->builtinNames().starDefaultPrivateName();
+        functionInfo.name = &m_vm->propertyNames->starDefaultPrivateName;
     }
 
     failIfFalse((parseFunctionInfo(context, requirements, parseMode, true, ConstructorKind::None, SuperBinding::NotNeeded, functionKeywordStart, functionInfo, FunctionDefinitionType::Declaration, functionConstructorParametersEndPosition)), "Cannot parse this function");
@@ -2724,7 +2724,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseAsyncFunction
         //
         // In this case, we use "*default*" as this function declaration's name.
         requirements = FunctionNameRequirements::None;
-        functionInfo.name = &m_vm->propertyNames->builtinNames().starDefaultPrivateName();
+        functionInfo.name = &m_vm->propertyNames->starDefaultPrivateName;
     }
 
     failIfFalse((parseFunctionInfo(context, requirements, parseMode, true, ConstructorKind::None, SuperBinding::NotNeeded, functionKeywordStart, functionInfo, FunctionDefinitionType::Declaration, functionConstructorParametersEndPosition)), "Cannot parse this async function");
@@ -2770,7 +2770,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
         //
         // In this case, we use "*default*" as this class declaration's name.
         requirements = FunctionNameRequirements::None;
-        info.className = &m_vm->propertyNames->builtinNames().starDefaultPrivateName();
+        info.className = &m_vm->propertyNames->starDefaultPrivateName;
     }
 
     TreeClassExpression classExpr = parseClass(context, requirements, info);
@@ -3407,7 +3407,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         }
 
         if (!localName)
-            localName = &m_vm->propertyNames->builtinNames().starDefaultPrivateName();
+            localName = &m_vm->propertyNames->starDefaultPrivateName;
 
         if (isFunctionOrClassDeclaration) {
             if (startsWithFunction) {
@@ -3439,11 +3439,11 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
             TreeExpression expression = parseAssignmentExpression(context);
             failIfFalse(expression, "Cannot parse expression");
 
-            DeclarationResultMask declarationResult = declareVariable(&m_vm->propertyNames->builtinNames().starDefaultPrivateName(), DeclarationType::ConstDeclaration);
+            DeclarationResultMask declarationResult = declareVariable(&m_vm->propertyNames->starDefaultPrivateName, DeclarationType::ConstDeclaration);
             if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
                 internalFailWithMessage(false, "Only one 'default' export is allowed");
 
-            TreeExpression assignment = context.createAssignResolve(location, m_vm->propertyNames->builtinNames().starDefaultPrivateName(), expression, start, start, tokenEndPosition(), AssignmentContext::ConstDeclarationStatement);
+            TreeExpression assignment = context.createAssignResolve(location, m_vm->propertyNames->starDefaultPrivateName, expression, start, start, tokenEndPosition(), AssignmentContext::ConstDeclarationStatement);
             result = context.createExprStatement(location, assignment, start, tokenEndPosition());
             failIfFalse(autoSemiColon(), "Expected a ';' following a targeted export declaration");
         }
@@ -4733,7 +4733,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
 
                 JSTokenLocation location(tokenLocation());
-                base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm->propertyNames->builtinNames().metaPrivateName(), false, expressionStart, location));
+                base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm->propertyNames->metaPrivateName, false, expressionStart, location));
                 next();
             } else {
                 failIfTrue(match(IDENT), "\"import.\" can only followed with meta");

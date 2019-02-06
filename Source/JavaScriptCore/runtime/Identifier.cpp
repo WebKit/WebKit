@@ -96,9 +96,14 @@ Identifier Identifier::from(VM* vm, double value)
 
 void Identifier::dump(PrintStream& out) const
 {
-    if (impl())
+    if (impl()) {
+        if (impl()->isSymbol()) {
+            auto* symbol = static_cast<SymbolImpl*>(impl());
+            if (symbol->isPrivate())
+                out.print("PrivateSymbol.");
+        }
         out.print(impl());
-    else
+    } else
         out.print("<null identifier>");
 }
 

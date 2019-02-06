@@ -14,7 +14,7 @@ PASS Calling close() after calling error() should throw a TypeError
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
-FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
+FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: PrivateSymbol.Uint8Array
 PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
 PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
 PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 
@@ -39,7 +39,7 @@ PASS Calling close() after calling error() should throw a TypeError
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 PASS Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is undefined) 
-FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: @Uint8Array
+FAIL Pending reading promise should be rejected if controller is errored (case where autoAllocateChunkSize is specified) Can't find private variable: PrivateSymbol.Uint8Array
 PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
 PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
 PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 

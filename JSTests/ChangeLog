@@ -1,3 +1,14 @@
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PrivateName to PublicName hash table is wasteful
+        https://bugs.webkit.org/show_bug.cgi?id=194277
+
+        Reviewed by Michael Saboff.
+
+        This test depends on the order of JSSegmentedVariableObjects' variables, which is not guaranteed in JSC. Skipped.
+
+        * ChakraCore.yaml:
+
 2019-02-05  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Test running out of executable memory

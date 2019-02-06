@@ -126,6 +126,7 @@ public:
     static Identifier fromUid(VM*, UniquedStringImpl* uid);
     static Identifier fromUid(ExecState*, UniquedStringImpl* uid);
     static Identifier fromUid(const PrivateName&);
+    static Identifier fromUid(SymbolImpl&);
 
     static Identifier createLCharFromUChar(VM* vm, const UChar* s, int length) { return Identifier(vm, add8(vm, s, length)); }
 

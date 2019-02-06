@@ -280,6 +280,7 @@ namespace WebCore {
     macro(getTracks) \
     macro(getUserMedia) \
     macro(header) \
+    macro(href) \
     macro(indexedDB) \
     macro(initializeWith) \
     macro(isDisturbed) \

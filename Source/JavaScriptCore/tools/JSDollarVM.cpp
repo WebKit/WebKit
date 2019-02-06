@@ -1854,11 +1854,11 @@ static EncodedJSValue JSC_HOST_CALL functionGetPrivateProperty(ExecState* exec)
 
     String str = asString(exec->argument(1))->value(exec);
 
-    const Identifier* ident = vm.propertyNames->lookUpPrivateName(Identifier::fromString(exec, str));
-    if (!ident)
+    SymbolImpl* symbol = vm.propertyNames->lookUpPrivateName(Identifier::fromString(exec, str));
+    if (!symbol)
         return throwVMError(exec, scope, "Unknown private name.");
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(exec->argument(0).get(exec, *ident)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(exec->argument(0).get(exec, symbol)));
 }
 
 static EncodedJSValue JSC_HOST_CALL functionCreateRoot(ExecState* exec)

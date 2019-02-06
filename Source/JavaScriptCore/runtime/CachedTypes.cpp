@@ -534,12 +534,14 @@ public:
     {
         m_isAtomic = string.isAtomic();
         m_isSymbol = string.isSymbol();
-        StringImpl* impl = const_cast<StringImpl*>(&string);
+        RefPtr<StringImpl> impl = const_cast<StringImpl*>(&string);
+
         if (m_isSymbol) {
-            SymbolImpl* symbol = static_cast<SymbolImpl*>(impl);
+            SymbolImpl* symbol = static_cast<SymbolImpl*>(impl.get());
             if (!symbol->isNullSymbol()) {
-                Identifier uid = Identifier::fromUid(&encoder.vm(), symbol);
-                impl = encoder.vm().propertyNames->lookUpPublicName(uid).string().impl();
+                // We have special handling for well-known symbols.
+                if (!symbol->isPrivate())
+                    impl = encoder.vm().propertyNames->getPublicName(encoder.vm(), symbol).impl();
             }
         }
 
@@ -572,7 +574,7 @@ public:
                 return &SymbolImpl::createNullSymbol().leakRef();
 
             Identifier ident = Identifier::fromString(&decoder.vm(), buffer, m_length);
-            String str = decoder.vm().propertyNames->lookUpPrivateName(ident)->string();
+            String str = decoder.vm().propertyNames->lookUpPrivateName(ident);
             StringImpl* impl = str.releaseImpl().get();
             ASSERT(impl->isSymbol());
             return static_cast<UniquedStringImpl*>(impl);

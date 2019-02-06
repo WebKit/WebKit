@@ -88,6 +88,11 @@ inline Identifier Identifier::fromUid(const PrivateName& name)
     return name.uid();
 }
 
+inline Identifier Identifier::fromUid(SymbolImpl& symbol)
+{
+    return symbol;
+}
+
 template<unsigned charactersCount>
 inline Identifier Identifier::fromString(VM* vm, const char (&characters)[charactersCount])
 {

@@ -104,7 +104,7 @@ void BytecodeDumper<Block>::dumpIdentifiers()
         m_out.printf("\nIdentifiers:\n");
         size_t i = 0;
         do {
-            m_out.printf("  id%u = %s\n", static_cast<unsigned>(i), identifier(i).string().utf8().data());
+            m_out.print("  id", static_cast<unsigned>(i), " = ", identifier(i), "\n");
             ++i;
         } while (i != count);
     }
