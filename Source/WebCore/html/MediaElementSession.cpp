@@ -377,6 +377,11 @@ bool MediaElementSession::dataBufferingPermitted() const
     if (shouldOverrideBackgroundLoadingRestriction())
         return true;
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    if (m_shouldPlayToPlaybackTarget)
+        return true;
+#endif
+
     if (m_elementIsHiddenUntilVisibleInViewport || m_elementIsHiddenBecauseItWasRemovedFromDOM || m_element.elementIsHidden())
         return false;
 
@@ -675,6 +680,7 @@ void MediaElementSession::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
     m_shouldPlayToPlaybackTarget = shouldPlay;
+    updateClientDataBuffering();
     client().setShouldPlayToPlaybackTarget(shouldPlay);
 }
 

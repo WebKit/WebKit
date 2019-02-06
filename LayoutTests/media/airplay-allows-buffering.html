@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=false ] -->
+<html>
+<head>
+    <title>airplay-allows-buffering</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+
+    waitFor(window, 'load').then(async event => { 
+        findMediaElement();
+
+        run('internals.setMockMediaPlaybackTargetPickerEnabled(true)');
+
+        run(`video.src = findMediaFile('video', 'content/test')`);
+        await waitFor(video, 'loadedmetadata');
+
+        run(`video.parentNode.removeChild(video)`);
+        await testExpectedEventually('internals.elementShouldBufferData(video)', false);
+
+        run(`video.webkitShowPlaybackTargetPicker()`);
+        await sleepFor(100);
+
+        run(`internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable')`);
+        await waitFor(video, 'webkitcurrentplaybacktargetiswirelesschanged');
+        testExpected('video.webkitCurrentPlaybackTargetIsWireless', true);
+
+        await testExpectedEventually('internals.elementShouldBufferData(video)', true);
+
+        endTest();
+    });
+
+    </script>
+</head>
+<body>
+    <video controls preload='metadata'></video>
+</body>
+</html>
