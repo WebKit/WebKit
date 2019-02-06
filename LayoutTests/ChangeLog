@@ -1,3 +1,10 @@
+2019-02-06  David Kilzer  <ddkilzer@apple.com>
+
+        Revert part of r241015 that skipped all WebGL tests
+
+        * TestExpectations: Revert unintended change to skip all WebGL
+        tests.
+
 2019-02-06  Jonathan Bedard  <jbedard@apple.com>
 
         [iPad] Initial test gardening (Part 2)
