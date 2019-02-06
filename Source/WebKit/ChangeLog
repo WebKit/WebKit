@@ -1,5 +1,42 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240717. rdar://problem/47774504
+
+    Crash in WebKit::RemoteLayerTreePropertyApplier::updateChildren
+    https://bugs.webkit.org/show_bug.cgi?id=193897
+    <rdar://problem/47427750>
+    
+    Reviewed by Simon Fraser.
+    
+    There has been some null pointer crashes where we fail to find a remote layer tree node that matches
+    the transaction properties.
+    
+    * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+    (WebKit::RemoteLayerTreePropertyApplier::updateChildren):
+    
+    Null check the nodes.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240717 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-30  Antti Koivisto  <antti@apple.com>
+
+            Crash in WebKit::RemoteLayerTreePropertyApplier::updateChildren
+            https://bugs.webkit.org/show_bug.cgi?id=193897
+            <rdar://problem/47427750>
+
+            Reviewed by Simon Fraser.
+
+            There has been some null pointer crashes where we fail to find a remote layer tree node that matches
+            the transaction properties.
+
+            * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+            (WebKit::RemoteLayerTreePropertyApplier::updateChildren):
+
+            Null check the nodes.
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240702. rdar://problem/47774503
 
     iOS: Nullptr crash in WebPage::getPositionInformation dereferencing an input element for data list

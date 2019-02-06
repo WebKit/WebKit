@@ -277,7 +277,11 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
     auto hasViewChildren = [&] {
         if (node.uiView() && [[node.uiView() subviews] count])
             return true;
-        return !properties.children.isEmpty() && relatedLayers.get(properties.children.first())->uiView();
+        if (properties.children.isEmpty())
+            return false;
+        auto* childNode = relatedLayers.get(properties.children.first());
+        ASSERT(childNode);
+        return childNode && childNode->uiView();
     };
 
     auto contentView = [&] {
@@ -295,6 +299,9 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
         RetainPtr<NSMutableArray> subviews = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
         for (auto& child : properties.children) {
             auto* childNode = relatedLayers.get(child);
+            ASSERT(childNode);
+            if (!childNode)
+                continue;
             ASSERT(childNode->uiView());
             [subviews addObject:childNode->uiView()];
         }
@@ -307,6 +314,9 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
     RetainPtr<NSMutableArray> sublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
     for (auto& child : properties.children) {
         auto* childNode = relatedLayers.get(child);
+        ASSERT(childNode);
+        if (!childNode)
+            continue;
 #if PLATFORM(IOS_FAMILY)
         ASSERT(!childNode->uiView());
 #endif
@@ -339,7 +349,11 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
         return;
     }
 
-    CALayer *maskLayer = relatedLayers.get(properties.maskLayerID)->layer();
+    auto* maskNode = relatedLayers.get(properties.maskLayerID);
+    ASSERT(maskNode);
+    if (!maskNode)
+        return;
+    CALayer *maskLayer = maskNode->layer();
     ASSERT(!maskLayer.superlayer);
     if (maskLayer.superlayer)
         return;
