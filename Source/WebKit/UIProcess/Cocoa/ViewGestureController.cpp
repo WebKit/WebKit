@@ -188,7 +188,7 @@ void ViewGestureController::didRestoreScrollPosition()
 
 void ViewGestureController::didReachMainFrameLoadTerminalState()
 {
-    if (m_snapshotRemovalTracker.isPaused()) {
+    if (m_snapshotRemovalTracker.isPaused() && m_snapshotRemovalTracker.hasRemovalCallback()) {
         removeSwipeSnapshot();
         return;
     }
