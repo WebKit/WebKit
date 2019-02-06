@@ -287,7 +287,16 @@ enum class PIPState {
 {
     ASSERT_UNUSED(pip, pip == _pipViewController);
 
-    if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel() && _videoViewContainer && _returningWindow && !NSEqualRects(_returningRect, NSZeroRect)) {
+    if (!_videoFullscreenInterfaceMac)
+        return;
+
+    if (_pipState != PIPState::ExitingPIP) {
+        // We got told to close without going through -pipActionStop, nor by exlicitly being asked to in -exitPiP:.
+        // Call -pipActionStop: here in order to set the fullscreen state to an expected value.
+        [self pipActionStop:pip];
+    }
+
+    if (_videoFullscreenInterfaceMac->videoFullscreenModel() && _videoViewContainer && _returningWindow && !NSEqualRects(_returningRect, NSZeroRect)) {
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             context.allowsImplicitAnimation = NO;
             [_videoViewContainer setFrame:_returningRect];
@@ -298,19 +307,17 @@ enum class PIPState {
         } completionHandler:nil];
     }
 
-    if (_videoFullscreenInterfaceMac) {
-        if (!self.isExitingToStandardFullscreen) {
-            if (VideoFullscreenModel* videoFullscreenModel = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
-                videoFullscreenModel->didExitPictureInPicture();
-                videoFullscreenModel->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
-            }
+    if (!self.isExitingToStandardFullscreen) {
+        if (VideoFullscreenModel* videoFullscreenModel = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
+            videoFullscreenModel->didExitPictureInPicture();
+            videoFullscreenModel->setVideoLayerGravity(MediaPlayerEnums::VideoGravityResizeAspect);
         }
-
-        _videoFullscreenInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
-
-        if (VideoFullscreenChangeObserver* fullscreenChangeObserver = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
-            fullscreenChangeObserver->didExitFullscreen();
     }
+
+    if (VideoFullscreenChangeObserver* fullscreenChangeObserver = _videoFullscreenInterfaceMac->videoFullscreenChangeObserver())
+        fullscreenChangeObserver->didExitFullscreen();
+
+    _videoFullscreenInterfaceMac->clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 }
 
 - (void)pipActionPlay:(PIPViewController *)pip
