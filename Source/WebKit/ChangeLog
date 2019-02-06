@@ -1,5 +1,34 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239895. rdar://problem/47776475
+
+    Allow WebContent process access to some drawing-related IOKit properties
+    https://bugs.webkit.org/show_bug.cgi?id=193086
+    <rdar://problem/46568088>
+    
+    Reviewed by Eric Carlson.
+    
+    Add one missing IOKit property, and revise the regexp used for another.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239895 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+            Allow WebContent process access to some drawing-related IOKit properties
+            https://bugs.webkit.org/show_bug.cgi?id=193086
+            <rdar://problem/46568088>
+
+            Reviewed by Eric Carlson.
+
+            Add one missing IOKit property, and revise the regexp used for another.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239881. rdar://problem/47776480
 
     [iOS] Precision drop state thrashes when dragging near the top edge of an editable element
