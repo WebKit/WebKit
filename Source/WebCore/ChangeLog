@@ -1,3 +1,17 @@
+2019-02-06  Olivier Blin  <olivier.blin@softathome.com>
+
+        [SVG] fix SVGURIReference build by including SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=194292
+
+        Reviewed by Michael Catanzaro.
+
+        * svg/SVGURIReference.h:
+        SVGURIReference is making use of SVGElement in its constructor, but
+        it was not declared.
+
+        The issue was not seen in unified builds because it was grouped with
+        other files including SVGElement.
+
 2019-02-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move line layout code to a dedicated file

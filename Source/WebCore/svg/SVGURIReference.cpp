@@ -25,6 +25,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "SVGAttributeOwnerProxy.h"
+#include "SVGElement.h"
 #include <wtf/URL.h>
 #include "XLinkNames.h"
 

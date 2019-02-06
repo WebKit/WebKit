@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+class SVGElement;
+
 template<typename OwnerType, typename... BaseTypes>
 class SVGAttributeRegistry;
 
