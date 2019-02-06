@@ -1,5 +1,155 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r239752. rdar://problem/47776478
+
+    [WebAuthN] Support U2F HID Authenticators on macOS
+    https://bugs.webkit.org/show_bug.cgi?id=191535
+    <rdar://problem/47102027>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    This patch changes U2fCommandConstructor to produce register commands with
+    enforcing test of user presence. Otherwise, authenticators would silently
+    generate credentials. It also renames readFromU2fSignResponse to
+    readU2fSignResponse.
+    
+    Tests: http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html
+           http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html
+           http/wpt/webauthn/public-key-credential-create-success-u2f.https.html
+           http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html
+           http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html
+           http/wpt/webauthn/public-key-credential-get-success-u2f.https.html
+    
+    * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+    (fido::WebCore::constructU2fRegisterCommand):
+    * Modules/webauthn/fido/U2fResponseConverter.cpp:
+    (fido::readU2fSignResponse):
+    (fido::readFromU2fSignResponse): Deleted.
+    * Modules/webauthn/fido/U2fResponseConverter.h:
+    
+    Source/WebKit:
+    
+    This patch implements the support for U2F authenticators, and enables it for hid devices.
+    It follows the CTAP spec to map WebAuthN requests to U2F commands and return the responses:
+    https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-interoperability
+    Most of the parts are done before this patch, this patch focues on: 7.2.2 and 7.3.2.
+    
+    Besides implementing the U2fHidAuthenticator, this patch also adds support in the mocking
+    environment for U2F authenticators. It is done by extending the stages in MockHidConnection
+    from 4 to indefinite as multi-round communications are expected to map WebAuthN requests
+    to U2F requests.
+    
+    * Sources.txt:
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetWebAuthenticationMockConfiguration):
+    * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+    (WebKit::HidService::continueAddDeviceAfterGetInfo):
+    * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+    (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+    * UIProcess/WebAuthentication/fido/CtapHidDriver.h:
+    (WebKit::CtapHidDriver::setProtocol):
+    * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp: Added.
+    (WebKit::U2fHidAuthenticator::U2fHidAuthenticator):
+    (WebKit::U2fHidAuthenticator::makeCredential):
+    (WebKit::U2fHidAuthenticator::checkExcludeList):
+    (WebKit::U2fHidAuthenticator::issueRegisterCommand):
+    (WebKit::U2fHidAuthenticator::getAssertion):
+    (WebKit::U2fHidAuthenticator::issueSignCommand):
+    (WebKit::U2fHidAuthenticator::issueNewCommand):
+    (WebKit::U2fHidAuthenticator::issueCommand):
+    (WebKit::U2fHidAuthenticator::responseReceived):
+    (WebKit::U2fHidAuthenticator::continueRegisterCommandAfterResponseReceived):
+    (WebKit::U2fHidAuthenticator::continueCheckOnlyCommandAfterResponseReceived):
+    (WebKit::U2fHidAuthenticator::continueBogusCommandAfterResponseReceived):
+    (WebKit::U2fHidAuthenticator::continueSignCommandAfterResponseReceived):
+    * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.h: Added.
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+    (WebKit::MockHidConnection::parseRequest):
+    (WebKit::MockHidConnection::feedReports):
+    * UIProcess/WebAuthentication/Mock/MockHidConnection.h:
+    * UIProcess/WebAuthentication/Mock/MockWebAuthenticationConfiguration.h:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    Tools:
+    
+    This patch:
+    1) adds support for U2F mocking mechanism;
+    2) updates tests to reflect U2fCommandConstructor changes.
+    
+    * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+    
+    LayoutTests:
+    
+    Besiding adding tests for U2F authenticators, it also changes payloadBase64 from
+    a string to a vector of strings. New tests are skipped for iOS.
+    
+    * http/wpt/webauthn/ctap-hid-failure.https.html:
+    * http/wpt/webauthn/ctap-hid-success.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html: Copied from LayoutTests/http/wpt/webauthn/public-key-credential-create-success-hid.https.html.
+    * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html: Added.
+    * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+    * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt: Added.
+    * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html: Added.
+    * http/wpt/webauthn/resources/util.js:
+    * platform/ios-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@239752 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthN] Support U2F HID Authenticators on macOS
+            https://bugs.webkit.org/show_bug.cgi?id=191535
+            <rdar://problem/47102027>
+
+            Reviewed by Brent Fulgham.
+
+            Besiding adding tests for U2F authenticators, it also changes payloadBase64 from
+            a string to a vector of strings. New tests are skipped for iOS.
+
+            * http/wpt/webauthn/ctap-hid-failure.https.html:
+            * http/wpt/webauthn/ctap-hid-success.https.html:
+            * http/wpt/webauthn/public-key-credential-create-failure-hid-silent.https.html:
+            * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+            * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-create-failure-u2f-silent.https.html: Added.
+            * http/wpt/webauthn/public-key-credential-create-failure-u2f.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-create-failure-u2f.https.html: Added.
+            * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+            * http/wpt/webauthn/public-key-credential-create-success-u2f.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html: Copied from LayoutTests/http/wpt/webauthn/public-key-credential-create-success-hid.https.html.
+            * http/wpt/webauthn/public-key-credential-get-failure-hid-silent.https.html:
+            * http/wpt/webauthn/public-key-credential-get-failure-hid.https.html:
+            * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-get-failure-u2f-silent.https.html: Added.
+            * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html: Added.
+            * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+            * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html: Added.
+            * http/wpt/webauthn/resources/util.js:
+            * platform/ios-wk2/TestExpectations:
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240773. rdar://problem/47774755
 
     ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification

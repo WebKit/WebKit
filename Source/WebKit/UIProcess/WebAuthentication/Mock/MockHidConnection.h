@@ -35,11 +35,13 @@
 namespace WebKit {
 
 // The following basically simulates an external HID token that:
-//    1. Only supports CTAP2 protocol,
+//    1. Supports only one protocol, either CTAP2 or U2F.
 //    2. Doesn't support resident keys,
 //    3. Doesn't support user verification.
-// There are four stages for each WebAuthN request:
+// There are four stages for each CTAP request:
 // FSM: Info::Init => Info::Msg => Request::Init => Request::Msg
+// There are indefinite stages for each U2F request:
+// FSM: Info::Init => Info::Msg => [Request::Init => Request::Msg]+
 // According to different combinations of error and stages, error will manifest differently.
 class MockHidConnection final : public CanMakeWeakPtr<MockHidConnection>, public HidConnection {
 public:

@@ -69,6 +69,34 @@ const testAssertionMessageBase64 =
     "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
     "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
     "QoJ1L7Fe64G9uBc=";
+const testU2fApduNoErrorOnlyResponseBase64 = "kAA=";
+const testU2fApduInsNotSupportedOnlyResponseBase64 = "bQA=";
+const testU2fApduWrongDataOnlyResponseBase64 = "aoA=";
+const testU2fApduConditionsNotSatisfiedOnlyResponseBase64 = "aYU=";
+const testU2fRegisterResponse =
+    "BQTodiWJbuTkbcAydm6Ah5YvNt+d/otWfzdjAVsZkKYOFCfeYS1mQYvaGVBYHrxc" +
+    "jB2tcQyxTCL4yXBF9GEvsgyRQD69ib937FCXVe6cJjXvqqx7K5xc7xc2w3F9pIU0" +
+    "yMa2VNf/lF9QtcxOeAVb3TlrZPeNosX5YgDM1BXNCP5CADgwggJKMIIBMqADAgEC" +
+    "AgQEbIgiMA0GCSqGSIb3DQEBCwUAMC4xLDAqBgNVBAMTI1l1YmljbyBVMkYgUm9v" +
+    "dCBDQSBTZXJpYWwgNDU3MjAwNjMxMCAXDTE0MDgwMTAwMDAwMFoYDzIwNTAwOTA0" +
+    "MDAwMDAwWjAsMSowKAYDVQQDDCFZdWJpY28gVTJGIEVFIFNlcmlhbCAyNDkxODIz" +
+    "MjQ3NzAwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQ8yrksy5cofujmOUN+IfzW" +
+    "tvFlstWj89sTHTHBa3QrtHbY0emQgOtUbJu99VbmIQ/UJ4WJnnjMWJ6+MQ9s25/0" +
+    "ozswOTAiBgkrBgEEAYLECgIEFTEuMy42LjEuNC4xLjQxNDgyLjEuMjATBgsrBgEE" +
+    "AYLlHAIBAQQEAwIEMDANBgkqhkiG9w0BAQsFAAOCAQEAn5sFIki8TPQsxZkfyqus" +
+    "m2Ubvlvc3I7wrSwcH/s20YcV1C54skkiT5LH5uegXEnw5+TIgb8ulPReSiGDPXRW" +
+    "hR0PbBRaKVQMh08wksk0tD0iK4liwPQQzvHbdYkq8Ra0Spb101reo4IvxxRvYAQ4" +
+    "W8tptlyZ5+tpGXhnA8DYzUHo91zKRKqKtyWtjnmf86hpam8bJlbmMbHkAYPAj9pT" +
+    "+kqPhaBWk5RK4XmhM50ALRXKvYEAkOxyLvXe+ZZaNx1BXWJLaKJwfK2XvN0Xha+X" +
+    "4ljzPfVqAxqgNW2OjV68rcdOBxY2xrEQrOXMm5Df6srmQP8bsPH+XbTv96lfBgcz" +
+    "9TBFAiAyR3nGjzOAKIoRl7YJX3puubGxwSf2auEqmf6FMuwjuQIhAOOVFqxNYe5k" +
+    "BE1QtBWmpNTYS6bYlctat6GqfQgd40H6kAA=";
+const testU2fCredentialIdBase64 =
+    "Pr2Jv3fsUJdV7pwmNe-qrHsrnFzvFzbDcX2khTTIxrZU1_-UX1C1zE54BVvdOWtk" +
+    "942ixfliAMzUFc0I_kIAOA";
+const testU2fSignResponse =
+    "AQAAADswRAIge94KUqwfTIsn4AOjcM1mpMcRjdItVEeDX0W5nGhCP/cCIDxRe0eH" +
+    "f4V4LeEAhqeD0effTjY553H19q+jWq1Tc4WOkAA=";
 
 const RESOURCES_DIR = "/WebKit/webauthn/resources/";
 

@@ -520,7 +520,7 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData5)
 // Tests that U2F authenticator data is properly serialized.
 TEST(CTAPResponseTest, TestParseSignResponseData)
 {
-    auto response = readFromU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse());
     ASSERT_TRUE(response);
     EXPECT_EQ(response->rawId->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
     EXPECT_EQ(memcmp(response->rawId->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
@@ -533,27 +533,27 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)
 {
-    auto response = readFromU2fSignResponse(TestData::kRelyingPartyId, Vector<uint8_t>(), getTestSignResponse());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, Vector<uint8_t>(), getTestSignResponse());
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullResponse)
 {
-    auto response = readFromU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), Vector<uint8_t>());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), Vector<uint8_t>());
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithCorruptedCounter)
 {
     // A sign response of less than 5 bytes.
-    auto response = readFromU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(3));
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(3));
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithCorruptedSignature)
 {
     // A sign response no more than 5 bytes.
-    auto response = readFromU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(5));
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(5));
     EXPECT_FALSE(response);
 }
 

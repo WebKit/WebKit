@@ -21,7 +21,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: testCreationMessageBase64, keepAlive: true } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], keepAlive: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -30,7 +30,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: testCreationMessageBase64, fastDataArrival: true } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "success", payloadBase64: [testCreationMessageBase64], fastDataArrival: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -39,7 +39,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "empty-report", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -48,7 +48,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-channel-id", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);
@@ -57,7 +57,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce", payloadBase64: testCreationMessageBase64, continueAfterErrorData: true } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "info", subStage: "init", error: "wrong-nonce", payloadBase64: [testCreationMessageBase64], continueAfterErrorData: true } });
         return navigator.credentials.create(defaultOptions).then(credential => {
             assert_not_equals(credential, undefined);
             assert_not_equals(credential, null);

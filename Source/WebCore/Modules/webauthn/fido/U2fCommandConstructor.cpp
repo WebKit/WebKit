@@ -54,6 +54,8 @@ static Vector<uint8_t> constructU2fRegisterCommand(const Vector<uint8_t>& applic
 
     apdu::ApduCommand command;
     command.setIns(static_cast<uint8_t>(U2fApduInstruction::kRegister));
+    // This is needed for test of user presence even though the spec doesn't specify it.
+    command.setP1(kP1EnforceUserPresenceAndSign);
     command.setData(WTFMove(data));
     command.setResponseLength(apdu::ApduCommand::kApduMaxResponseLength);
     return command.getEncodedCommand();

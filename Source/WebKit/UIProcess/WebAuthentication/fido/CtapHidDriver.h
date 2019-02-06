@@ -57,6 +57,7 @@ public:
 
     explicit CtapHidDriver(UniqueRef<HidConnection>&&);
 
+    void setProtocol(fido::ProtocolVersion protocol) { m_protocol = protocol; }
     void transact(Vector<uint8_t>&& data, ResponseCallback&&);
 
 private:
@@ -103,6 +104,7 @@ private:
     Vector<uint8_t> m_requestData;
     ResponseCallback m_responseCallback;
     Vector<uint8_t> m_nonce;
+    fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
 };
 
 } // namespace WebKit

@@ -173,7 +173,7 @@ Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, co
     return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr };
 }
 
-Optional<PublicKeyCredentialData> readFromU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
+Optional<PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
 {
     if (keyHandle.isEmpty() || u2fData.size() <= signatureIndex)
         return WTF::nullopt;

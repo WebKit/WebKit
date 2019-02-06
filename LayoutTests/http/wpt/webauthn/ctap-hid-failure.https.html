@@ -64,7 +64,7 @@
 
     promise_test(function(t) {
         if (window.testRunner)
-            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "wrong-channel-id", payloadBase64:testDummyMessagePayloadBase64 } });
+            testRunner.setWebAuthenticationMockConfiguration({ hid: { stage: "request", subStage: "msg", error: "wrong-channel-id", payloadBase64:[testDummyMessagePayloadBase64] } });
         return promiseRejects(t, "UnknownError", navigator.credentials.create(defaultOptions), "Unknown internal error. Error code: -1");
     }, "CTAP HID with request::msg stage wrong channel id error in a mock hid authenticator.");
 </script>

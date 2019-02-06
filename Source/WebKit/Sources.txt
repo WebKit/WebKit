@@ -385,6 +385,10 @@ UIProcess/Plugins/PluginProcessProxy.cpp
 UIProcess/UserContent/WebScriptMessageHandler.cpp
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 
+UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp
+UIProcess/WebAuthentication/fido/CtapHidDriver.cpp
+UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp
+
 UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp
 UIProcess/WebAuthentication/Mock/MockHidConnection.cpp
 UIProcess/WebAuthentication/Mock/MockHidService.cpp
