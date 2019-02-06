@@ -1,5 +1,53 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240660. rdar://problem/47774552
+
+    REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab
+    https://bugs.webkit.org/show_bug.cgi?id=193932
+    <rdar://problem/47598947>
+    
+    Reviewed by Brady Eidson.
+    
+    Source/WebKit:
+    
+    When doing a client side redirect from origin A to origin B, we would swap process and
+    create a SuspendedPageProxy and save it on the source BackForwardListItem. The issue is
+    that the BackForwardList is locked for such redirect so we end up updating the current
+    BackForwardListItem with origin B's URL while origin A's suspended page remained on
+    the item. When going to another URL in the same origin A, we would not create a suspended
+    page since no process-swap would occur. When pressing the back button, we would go back
+    to the previous BackForwardListItem and use its SuspendedPageProxy, which is for the
+    wrong URL (The pre-client redirect one).
+    
+    To address the issue, we no longer create a SuspendedPageProxy for cross-site client side
+    redirects. There will be no way no go back to this suspended page anyway since the
+    back/forward list item will be updated with the redirection URL.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240660 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab
+            https://bugs.webkit.org/show_bug.cgi?id=193932
+            <rdar://problem/47598947>
+
+            Reviewed by Brady Eidson.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r239881. rdar://problem/47776480
 
     [iOS] Precision drop state thrashes when dragging near the top edge of an editable element
