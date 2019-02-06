@@ -56,9 +56,9 @@ public:
 
     CookieManagerTest()
         : WebViewTest()
-        , m_cookieManager(webkit_web_context_get_cookie_manager(webkit_web_view_get_context(m_webView)))
+        , m_cookieManager(webkit_web_context_get_cookie_manager(m_webContext.get()))
     {
-        g_assert_true(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(webkit_web_view_get_context(m_webView))) == m_cookieManager);
+        g_assert_true(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(m_webContext.get())) == m_cookieManager);
         g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
     }
 
@@ -535,9 +535,27 @@ static void testCookieManagerCookiesChanged(CookieManagerTest* test, gconstpoint
     g_assert_true(test->m_cookiesChanged);
 }
 
-static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpointer)
+class CookiePersistentStorageTest: public CookieManagerTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(CookiePersistentStorageTest, setup, teardown);
+
+    static void setup()
+    {
+        WebViewTest::shouldInitializeWebViewInConstructor = false;
+    }
+
+    static void teardown()
+    {
+        WebViewTest::shouldInitializeWebViewInConstructor = true;
+    }
+};
+
+static void testCookieManagerPersistentStorage(CookiePersistentStorageTest* test, gconstpointer)
 {
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
+
+    g_unlink(test->m_cookiesTextFile.get());
+    g_unlink(test->m_cookiesSQLiteFile.get());
 
     // Text storage using a new file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
@@ -545,13 +563,16 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
+    // Initialization of web view is deferred to ensure it's not required for
+    // setting persistent storage to work.
+    test->initializeWebView();
     test->loadURI(kServer->getURIForPath("/index.html").data());
     test->waitUntilLoadFinished();
     g_assert_true(test->m_cookiesChanged);
     domains = test->getDomains();
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
-
+    g_assert_true(g_file_test(test->m_cookiesTextFile.get(), G_FILE_TEST_EXISTS));
 
     // SQLite storage using a new file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE);
@@ -565,6 +586,7 @@ static void testCookieManagerPersistentStorage(CookieManagerTest* test, gconstpo
     domains = test->getDomains();
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 2);
+    g_assert_true(g_file_test(test->m_cookiesSQLiteFile.get(), G_FILE_TEST_EXISTS));
 
     // Text storage using an existing file.
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
@@ -698,7 +720,7 @@ void beforeAll()
     CookieManagerTest::add("WebKitCookieManager", "delete-cookie", testCookieManagerDeleteCookie);
     CookieManagerTest::add("WebKitCookieManager", "delete-cookies", testCookieManagerDeleteCookies);
     CookieManagerTest::add("WebKitCookieManager", "cookies-changed", testCookieManagerCookiesChanged);
-    CookieManagerTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);
+    CookiePersistentStorageTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);
     CookieManagerTest::add("WebKitCookieManager", "persistent-storage-delete-all", testCookieManagerPersistentStorageDeleteAll);
     CookieManagerTest::add("WebKitCookieManager", "ephemeral", testCookieManagerEphemeral);
 }

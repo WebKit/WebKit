@@ -1,3 +1,16 @@
+2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r240785): [SOUP] Broke cookie persistent storage
+        https://bugs.webkit.org/show_bug.cgi?id=194209
+
+        Reviewed by Carlos Garcia Campos.
+
+        I missed a spot when moving the persistent storage parameters from NetworkProcess to
+        NetworkSession. They have to be initialized separately for the default session.
+
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2019-02-05  Alex Christensen  <achristensen@webkit.org>
 
         Stop using blobRegistry in NetworkProcess

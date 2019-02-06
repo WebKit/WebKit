@@ -1,3 +1,16 @@
+2019-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r240785): [SOUP] Broke cookie persistent storage
+        https://bugs.webkit.org/show_bug.cgi?id=194209
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enhance TestCookieManager to ensure this doesn't happen again.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerPersistentStorage):
+        (beforeAll):
+
 2019-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename TestOptions.ignoreSynchronousMessagingTimeoutsForTesting

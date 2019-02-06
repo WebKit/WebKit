@@ -38,6 +38,9 @@ namespace WebKit {
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
+    NetworkSessionCreationParameters& defaultSessionParameters = parameters.defaultDataStoreParameters.networkSessionParameters;
+    supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(defaultSessionParameters.sessionID, defaultSessionParameters.cookiePersistentStoragePath, defaultSessionParameters.cookiePersistentStorageType);
+
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.languages = userPreferredLanguages();
