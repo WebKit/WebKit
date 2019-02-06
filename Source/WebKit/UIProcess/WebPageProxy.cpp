@@ -2716,7 +2716,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
         bool shouldProcessSwap = processForNavigation.ptr() != &process();
-        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? WTF::nullopt : WTFMove(data), WTFMove(sender));
+        receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? WTF::nullopt : WTFMove(data), WTFMove(sender), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
 
         if (!shouldProcessSwap)
             return;
@@ -2729,7 +2729,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     });
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, Optional<WebsitePoliciesData>&& websitePolicies, Ref<PolicyDecisionSender>&& sender)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, Optional<WebsitePoliciesData>&& websitePolicies, Ref<PolicyDecisionSender>&& sender, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
 {
     if (!isValid()) {
         sender->send(PolicyAction::Ignore, 0, DownloadID(), WTF::nullopt);
@@ -2738,7 +2738,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (action == PolicyAction::Ignore)
+    if (action == PolicyAction::Ignore && willContinueLoadInNewProcess == WillContinueLoadInNewProcess::No)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
     DownloadID downloadID = { };

@@ -1,5 +1,47 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240675. rdar://problem/47776350
+
+    Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]
+    https://bugs.webkit.org/show_bug.cgi?id=193967
+    <rdar://problem/47635348>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    Update WebPageProxy::receivedPolicyDecision() to no longer clear the pending URL when we send PolicyAction::Ignore to
+    the old process when the load is continuing in a new process due to PSON.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+    (WebKit::WebPageProxy::receivedPolicyDecision):
+    * UIProcess/WebPageProxy.h:
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    (-[PSONLoadingObserver observeValueForKeyPath:ofObject:change:context:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240675 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-29  Chris Dumez  <cdumez@apple.com>
+
+            Regression (r240046): [PSON] Spurious changes to [WKWebView url] and [WKWebView loading] after [WKWebView loadRequest]
+            https://bugs.webkit.org/show_bug.cgi?id=193967
+            <rdar://problem/47635348>
+
+            Reviewed by Alex Christensen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+            (-[PSONLoadingObserver observeValueForKeyPath:ofObject:change:context:]):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240660. rdar://problem/47774552
 
     REGRESSION (PSON): Twitter link gets stuck at t.co after navigating back in tab
