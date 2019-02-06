@@ -2942,6 +2942,9 @@
 		A0EE0DF6144F825500F80B0D /* WebGLDebugRendererInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */; };
 		A0EE0DF7144F825500F80B0D /* WebGLDebugShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0EE0DF3144F825500F80B0D /* WebGLDebugShaders.cpp */; };
 		A0EE0DF8144F825500F80B0D /* WebGLDebugShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EE0DF4144F825500F80B0D /* WebGLDebugShaders.h */; };
+		A104EC5A220A3DE000CBF67A /* MockPaymentContactFields.h in Headers */ = {isa = PBXBuildFile; fileRef = A104EC55220A39B400CBF67A /* MockPaymentContactFields.h */; };
+		A104EC5D220A3E4B00CBF67A /* JSMockPaymentContactFields.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A104EC5B220A3E4300CBF67A /* JSMockPaymentContactFields.cpp */; };
+		A104EC5E220A3E4E00CBF67A /* JSMockPaymentContactFields.h in Headers */ = {isa = PBXBuildFile; fileRef = A104EC5C220A3E4400CBF67A /* JSMockPaymentContactFields.h */; };
 		A104F24414C71F7A009E2C23 /* CachedSVGDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10BB5851484E3A700B2E87A /* RenderSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5831484E3A700B2E87A /* RenderSVGRect.h */; };
 		A10BB58B1484E3B300B2E87A /* RenderSVGShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5891484E3B300B2E87A /* RenderSVGShape.h */; };
@@ -11139,6 +11142,11 @@
 		A0EE0DF2144F825500F80B0D /* WebGLDebugRendererInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLDebugRendererInfo.h; sourceTree = "<group>"; };
 		A0EE0DF3144F825500F80B0D /* WebGLDebugShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLDebugShaders.cpp; sourceTree = "<group>"; };
 		A0EE0DF4144F825500F80B0D /* WebGLDebugShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLDebugShaders.h; sourceTree = "<group>"; };
+		A104EC53220A017400CBF67A /* PaymentCoordinatorClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PaymentCoordinatorClient.cpp; sourceTree = "<group>"; };
+		A104EC55220A39B400CBF67A /* MockPaymentContactFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockPaymentContactFields.h; sourceTree = "<group>"; };
+		A104EC57220A39B400CBF67A /* MockPaymentContactFields.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockPaymentContactFields.idl; sourceTree = "<group>"; };
+		A104EC5B220A3E4300CBF67A /* JSMockPaymentContactFields.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockPaymentContactFields.cpp; sourceTree = "<group>"; };
+		A104EC5C220A3E4400CBF67A /* JSMockPaymentContactFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMockPaymentContactFields.h; sourceTree = "<group>"; };
 		A104F24114C71F7A009E2C23 /* CachedSVGDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGDocument.cpp; sourceTree = "<group>"; };
 		A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocument.h; sourceTree = "<group>"; };
 		A10BB5821484E3A700B2E87A /* RenderSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGRect.cpp; sourceTree = "<group>"; };
@@ -16754,6 +16762,7 @@
 				1A8A64381D19FC5300D0E00F /* PaymentContact.h */,
 				1A58E86B1D19E42D00C0EA73 /* PaymentCoordinator.cpp */,
 				1A58E86C1D19E42D00C0EA73 /* PaymentCoordinator.h */,
+				A104EC53220A017400CBF67A /* PaymentCoordinatorClient.cpp */,
 				1A58E8621D19D3BF00C0EA73 /* PaymentCoordinatorClient.h */,
 				7CF930E61E01F9AD00BAFFBE /* PaymentHeaders.h */,
 				1AE96A871D1A0CEB00B86768 /* PaymentMerchantSession.h */,
@@ -17860,6 +17869,8 @@
 				A146D31C1F99C9C200D29196 /* MockPaymentAddress.h */,
 				A146D31E1F99C9C200D29196 /* MockPaymentAddress.idl */,
 				A146D3241F99D69800D29196 /* MockPaymentContact.h */,
+				A104EC55220A39B400CBF67A /* MockPaymentContactFields.h */,
+				A104EC57220A39B400CBF67A /* MockPaymentContactFields.idl */,
 				A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */,
 				A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */,
 				A146D3161F99B53D00D29196 /* MockPaymentCoordinator.idl */,
@@ -17901,6 +17912,8 @@
 				2D6F3E931C1F85550061DBD4 /* JSMockPageOverlay.h */,
 				A146D3201F99CA3E00D29196 /* JSMockPaymentAddress.cpp */,
 				A146D31F1F99CA3D00D29196 /* JSMockPaymentAddress.h */,
+				A104EC5B220A3E4300CBF67A /* JSMockPaymentContactFields.cpp */,
+				A104EC5C220A3E4400CBF67A /* JSMockPaymentContactFields.h */,
 				A146D3191F99BCBB00D29196 /* JSMockPaymentCoordinator.cpp */,
 				A146D3181F99BCBA00D29196 /* JSMockPaymentCoordinator.h */,
 				A1BB85B42159B3890067E07D /* JSMockPaymentError.cpp */,
@@ -28263,6 +28276,7 @@
 				A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */,
 				538EC9341F99B9F7004D22A8 /* JSMockPageOverlay.h in Headers */,
 				A146D3231F99D0EF00D29196 /* JSMockPaymentAddress.h in Headers */,
+				A104EC5E220A3E4E00CBF67A /* JSMockPaymentContactFields.h in Headers */,
 				A146D31B1F99BCFB00D29196 /* JSMockPaymentCoordinator.h in Headers */,
 				A1BB85B92159B3AE0067E07D /* JSMockPaymentError.h in Headers */,
 				427DA71E13735DFA007C57FB /* JSServiceWorkerInternals.h in Headers */,
@@ -28278,6 +28292,7 @@
 				A14BB0A01F9813B800605A35 /* MockPayment.h in Headers */,
 				A146D3211F99CB1A00D29196 /* MockPaymentAddress.h in Headers */,
 				A146D3251F99D69800D29196 /* MockPaymentContact.h in Headers */,
+				A104EC5A220A3DE000CBF67A /* MockPaymentContactFields.h in Headers */,
 				A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */,
 				A1CBEF641F9F11290028DE7C /* MockPaymentMethod.h in Headers */,
 				A140618C1E2ECA0A0032B34E /* MockPreviewLoaderClient.h in Headers */,
@@ -32837,6 +32852,7 @@
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
 				2D4150DE1C1F868C000A3BA2 /* JSMockPageOverlay.cpp in Sources */,
 				A146D3221F99D0EC00D29196 /* JSMockPaymentAddress.cpp in Sources */,
+				A104EC5D220A3E4B00CBF67A /* JSMockPaymentContactFields.cpp in Sources */,
 				A146D31A1F99BCF800D29196 /* JSMockPaymentCoordinator.cpp in Sources */,
 				A1BB85B82159B3A40067E07D /* JSMockPaymentError.cpp in Sources */,
 				427DA71D13735DFA007C57FB /* JSServiceWorkerInternals.cpp in Sources */,

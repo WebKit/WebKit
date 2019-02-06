@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -312,7 +312,6 @@ class EmptyInspectorClient final : public InspectorClient {
 #if ENABLE(APPLE_PAY)
 
 class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
-    bool supportsVersion(unsigned) final { return false; }
     Optional<String> validatedPaymentNetwork(const String&) final { return WTF::nullopt; }
     bool canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)] { completionHandler(false); }); }

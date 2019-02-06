@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,16 +129,6 @@ static ExceptionOr<Vector<ApplePaySessionPaymentRequest::LineItem>> convertAndVa
     return { WTFMove(result) };
 }
 
-static ApplePaySessionPaymentRequest::ContactFields convert(const PaymentOptions& options)
-{
-    ApplePaySessionPaymentRequest::ContactFields result;
-    result.email = options.requestPayerEmail;
-    result.name = options.requestPayerName;
-    result.phone = options.requestPayerPhone;
-    result.postalAddress = options.requestShipping;
-    return result;
-}
-
 static ApplePaySessionPaymentRequest::ShippingType convert(PaymentShippingType type)
 {
     switch (type) {
@@ -182,6 +172,19 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::JSValue&& data)
     return { };
 }
 
+static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPaymentRequest& request)
+{
+    auto requiredShippingContactFields = request.requiredShippingContactFields();
+    requiredShippingContactFields.email |= options.requestPayerEmail;
+    requiredShippingContactFields.name |= options.requestPayerName;
+    requiredShippingContactFields.phone |= options.requestPayerPhone;
+    requiredShippingContactFields.postalAddress |= options.requestShipping;
+    request.setRequiredShippingContactFields(requiredShippingContactFields);
+
+    if (options.requestShipping)
+        request.setShippingType(convert(options.shippingType));
+}
+
 ExceptionOr<void> ApplePayPaymentHandler::show()
 {
     auto validatedRequest = convertAndValidate(m_applePayRequest->version, *m_applePayRequest, paymentCoordinator());
@@ -203,9 +206,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show()
         return convertedLineItems.releaseException();
     request.setLineItems(convertedLineItems.releaseReturnValue());
 
-    request.setRequiredShippingContactFields(convert(m_paymentRequest->paymentOptions()));
-    if (m_paymentRequest->paymentOptions().requestShipping)
-        request.setShippingType(convert(m_paymentRequest->paymentOptions().shippingType));
+    mergePaymentOptions(m_paymentRequest->paymentOptions(), request);
 
     auto shippingMethods = computeShippingMethods();
     if (shippingMethods.hasException())

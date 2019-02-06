@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayRequestBase {
-    required sequence<ApplePayMerchantCapability> merchantCapabilities;
-    required sequence<DOMString> supportedNetworks; // FIXME: Should this be an sequence of enums?
-    required DOMString countryCode;
+#include "config.h"
+#include "PaymentCoordinatorClient.h"
 
-    sequence<ApplePayContactField> requiredBillingContactFields;
-    ApplePayPaymentContact billingContact;
+#if ENABLE(APPLE_PAY)
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+namespace WebCore {
 
-    DOMString applicationData;
-    [Conditional=APPLE_PAY_SESSION_V3] sequence<DOMString> supportedCountries;
-};
+bool PaymentCoordinatorClient::supportsVersion(unsigned version)
+{
+    ASSERT(version > 0);
+
+#if !ENABLE(APPLE_PAY_SESSION_V3)
+    static const unsigned currentVersion = 2;
+#elif !ENABLE(APPLE_PAY_SESSION_V4)
+    static const unsigned currentVersion = 3;
+#else
+    static const unsigned currentVersion = 6;
+#endif
+
+    return version <= currentVersion;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

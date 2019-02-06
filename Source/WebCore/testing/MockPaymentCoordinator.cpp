@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,21 +53,6 @@ MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     m_availablePaymentNetworks.add("visa");
 }
 
-bool MockPaymentCoordinator::supportsVersion(unsigned version)
-{
-    ASSERT(version > 0);
-
-#if !ENABLE(APPLE_PAY_SESSION_V3)
-    static const unsigned currentVersion = 2;
-#elif !ENABLE(APPLE_PAY_SESSION_V4)
-    static const unsigned currentVersion = 3;
-#else
-    static const unsigned currentVersion = 5;
-#endif
-
-    return version <= currentVersion;
-}
-
 Optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
@@ -119,6 +104,8 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     if (request.shippingContact().pkContact())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
     m_shippingMethods = convert(request.shippingMethods());
+    m_requiredBillingContactFields = request.requiredBillingContactFields();
+    m_requiredShippingContactFields = request.requiredShippingContactFields();
 
     ASSERT(showCount == hideCount);
     ++showCount;

@@ -3,6 +3,18 @@ Test ApplePayRequest.shippingContact.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+Test setting required contact fields in a version 3 request.
+PASS internals.mockPaymentCoordinator.requiredBillingContactFields.name is false
+PASS internals.mockPaymentCoordinator.requiredBillingContactFields.phoneticName is false
+PASS internals.mockPaymentCoordinator.requiredBillingContactFields.email is false
+PASS internals.mockPaymentCoordinator.requiredBillingContactFields.phone is false
+PASS internals.mockPaymentCoordinator.requiredBillingContactFields.postalAddress is false
+PASS internals.mockPaymentCoordinator.requiredShippingContactFields.name is true
+PASS internals.mockPaymentCoordinator.requiredShippingContactFields.phoneticName is true
+PASS internals.mockPaymentCoordinator.requiredShippingContactFields.email is true
+PASS internals.mockPaymentCoordinator.requiredShippingContactFields.phone is true
+PASS internals.mockPaymentCoordinator.requiredShippingContactFields.postalAddress is true
+
 Test setting a default shipping contact in a version 3 request.
 PASS paymentResponse.details.shippingContact.phoneticGivenName is expectedGivenName
 PASS paymentResponse.details.shippingContact.phoneticFamilyName is expectedFamilyName

@@ -124,6 +124,43 @@ PASS new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() 
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.billingContact = 7;
 PASS new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with InvalidStateError: The object is in an invalid state..
 
+Testing ApplePayRequest.requiredShippingContactFields
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = '';
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Value is not a sequence.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = null;
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Value is not a sequence.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = 7;
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Value is not a sequence.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = { };
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [''];
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [null];
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [undefined];
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = [{}];
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.requiredShippingContactFields = ['invalid'];
+PASS request = new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with TypeError: Type error.
+
+Testing ApplePayRequest.shippingContact
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = '';
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with InvalidStateError: The object is in an invalid state..
+
+SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.shippingContact = 7;
+PASS new PaymentRequest([paymentMethod], validPaymentDetails()); request.show() rejected promise  with InvalidStateError: The object is in an invalid state..
+
 Testing ApplePayRequest.applicationData
 
 SETUP: paymentMethod = validPaymentMethod(); paymentMethod.data.applicationData = { toString: function() { throw '"Error in toString"'; } };

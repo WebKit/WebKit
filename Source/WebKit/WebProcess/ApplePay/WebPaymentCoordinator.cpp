@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,21 +49,6 @@ WebPaymentCoordinator::WebPaymentCoordinator(WebPage& webPage)
 WebPaymentCoordinator::~WebPaymentCoordinator()
 {
     WebProcess::singleton().removeMessageReceiver(*this);
-}
-
-bool WebPaymentCoordinator::supportsVersion(unsigned version)
-{
-    ASSERT(version > 0);
-
-#if !ENABLE(APPLE_PAY_SESSION_V3)
-    static const unsigned currentVersion = 2;
-#elif !ENABLE(APPLE_PAY_SESSION_V4)
-    static const unsigned currentVersion = 3;
-#else
-    static const unsigned currentVersion = 5;
-#endif
-
-    return version <= currentVersion;
 }
 
 const WebPaymentCoordinator::AvailablePaymentNetworksSet& WebPaymentCoordinator::availablePaymentNetworks()
