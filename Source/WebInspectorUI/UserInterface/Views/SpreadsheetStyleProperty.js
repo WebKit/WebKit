@@ -75,8 +75,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     get element() { return this._element; }
     get property() { return this._property; }
-    get nameTextField() { return this._nameTextField; }
-    get valueTextField() { return this._valueTextField; }
     get enabled() { return this._property.enabled; }
 
     set index(index)

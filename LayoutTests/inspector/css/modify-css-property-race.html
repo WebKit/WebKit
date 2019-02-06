@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let requestAnimationFrameID;
+
+function expand() {
+    let element = document.getElementById("x");
+    let initialHeight = parseInt(element.style.height);
+    let i = 0;
+
+    let loop = () => {
+        ++i;
+        let height = initialHeight + i;
+        element.style.height = height + "px";
+        TestPage.dispatchEventToFrontend("TestPage-styleChanged", height + "px");
+
+        requestAnimationFrameID = requestAnimationFrame(loop);
+    };
+
+    loop();
+}
+
+function stopExpanding() {
+    cancelAnimationFrame(requestAnimationFrameID);
+}
+
+function test() {
+    InspectorTest.redirectRequestAnimationFrame();
+
+    let nodeStyles = null;
+    let suite = InspectorTest.createAsyncSuite("ModifyCSSProperty");
+
+    InspectorTest.addEventListener("TestPage-styleChanged", (event) => {
+        // Normally, this would get called if the styles sidebar is visible.
+        // This doesn't work in tests.
+        nodeStyles.refresh();
+    });
+
+    suite.addTestCase({
+        name: "ModifyCSSPropertyRace.ChangeInlineStyle",
+        test(resolve, reject) {
+            let getInlineStyleDeclaration = () => {
+                for (let styleDeclaration of nodeStyles.orderedStyles) {
+                    if (styleDeclaration.type === styleDeclaration.constructor.Type.Inline)
+                        return styleDeclaration;
+                }
+                InspectorTest.fail("No declaration found.");
+                resolve();
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getInlineStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                InspectorTest.fail("No property found.");
+                resolve();
+            };
+
+            InspectorTest.evaluateInPage("expand()");
+            let updateCount = 0;
+
+            function styleDecorationUpdated(event) {
+                if (!updateCount) {
+                    let valueNumber = parseInt(getProperty("height").rawValue);
+                    InspectorTest.expectGreaterThan(valueNumber, 42);
+                } else if (updateCount === 1) {
+                    let valueNumber = parseInt(getProperty("height").rawValue);
+                    InspectorTest.expectGreaterThan(valueNumber, 42);
+                    getProperty("height").rawValue = "10px";
+                } else if (updateCount === 2) {
+                    InspectorTest.expectEqual(getProperty("height").rawValue, "10px", `Value updated to "10px".`);
+                    InspectorTest.expectEqual(getInlineStyleDeclaration().text, "height: 10px;", "CSSStyleDeclaration text should update.");
+                } else {
+                    let valueNumber = parseInt(getProperty("height").rawValue);
+                    InspectorTest.expectGreaterThanOrEqual(valueNumber, 10);
+
+                    InspectorTest.evaluateInPage("stopExpanding()");
+                    WI.CSSStyleDeclaration.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
+                    resolve();
+                }
+                ++updateCount;
+            }
+
+            WI.CSSStyleDeclaration.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish()
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that changes to "style" attribute made from page's JavaScript are ignored when there's a pending change made via Web Inspector.</p>
+    <div id="x" style="height: 42px"></div>
+</body>
+</html>

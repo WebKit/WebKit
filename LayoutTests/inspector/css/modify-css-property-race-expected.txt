@@ -1,0 +1,11 @@
+Testing that changes to "style" attribute made from page's JavaScript are ignored when there's a pending change made via Web Inspector.
+
+
+== Running test suite: ModifyCSSProperty
+-- Running test case: ModifyCSSPropertyRace.ChangeInlineStyle
+PASS: expectGreaterThan(43, 42)
+PASS: expectGreaterThan(43, 42)
+PASS: Value updated to "10px".
+PASS: CSSStyleDeclaration text should update.
+PASS: expectGreaterThanOrEqual(10, 10)
+
