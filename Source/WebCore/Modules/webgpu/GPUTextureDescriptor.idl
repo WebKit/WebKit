@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,17 +22,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
+typedef unsigned long u32;
+typedef u32 GPUTextureUsageFlags;
 
-#if ENABLE(WEBGPU)
-
-#include "GPUTextureFormatEnum.h"
-
-namespace WebCore {
-
-using WebGPUTextureFormatEnum = GPUTextureFormatEnum;
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary GPUTextureDescriptor {
+    GPUExtent3D size;
+    u32 arrayLayerCount;
+    u32 mipLevelCount;
+    u32 sampleCount;
+    GPUTextureDimension dimension;
+    GPUTextureFormat format;
+    GPUTextureUsageFlags usage;
+};

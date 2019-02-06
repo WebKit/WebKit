@@ -2765,13 +2765,18 @@ JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
+JSGPUExtent3D.cpp
+JSGPURequestAdapterOptions.cpp
+JSGPUTextureDescriptor.cpp
+JSGPUTextureDimension.cpp
+JSGPUTextureFormat.cpp
+JSGPUTextureUsage.cpp
 JSGainNode.cpp
 JSGeolocation.cpp
 JSGeoposition.cpp
 JSGlobalCrypto.cpp
 JSGlobalEventHandlers.cpp
 JSGlobalPerformance.cpp
-JSGPURequestAdapterOptions.cpp
 JSHTMLAllCollection.cpp
 JSHTMLAnchorElement.cpp
 JSHTMLAppletElement.cpp
@@ -3329,7 +3334,6 @@ JSWebGPUShaderModuleDescriptor.cpp
 JSWebGPUShaderStageBit.cpp
 JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
-JSWebGPUTextureFormatEnum.cpp
 JSWebGPUTextureView.cpp
 JSWebGPUVertexAttributeDescriptor.cpp
 JSWebGPUVertexFormat.cpp

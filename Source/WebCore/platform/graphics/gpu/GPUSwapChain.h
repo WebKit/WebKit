@@ -39,7 +39,7 @@ namespace WebCore {
 
 class GPUDevice;
 
-enum class GPUTextureFormatEnum;
+enum class GPUTextureFormat;
 
 using PlatformDrawableSmartPtr = RetainPtr<CAMetalDrawable>;
 using PlatformLayer = CALayer;
@@ -50,7 +50,7 @@ public:
     static RefPtr<GPUSwapChain> create();
 
     void setDevice(const GPUDevice&);
-    void setFormat(GPUTextureFormatEnum);
+    void setFormat(GPUTextureFormat);
     void reshape(int width, int height);
     RefPtr<GPUTexture> getNextTexture();
     void present();

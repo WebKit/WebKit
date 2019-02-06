@@ -74,7 +74,7 @@ async function setUpContexts(canvas) {
     }
 
     // FIXME: Implement WebGPUTextureUsageEnum.
-    context.configure({ device: defaultDevice, format:"B8G8R8A8Unorm", width: canvas.width, height: canvas.height });
+    context.configure({ device: defaultDevice, format:"b8g8r8a8-unorm", width: canvas.width, height: canvas.height });
 }
 
 let shaderModule, vertexStageDescriptor, fragmentStageDescriptor, pipelineDescriptor, renderPipeline;

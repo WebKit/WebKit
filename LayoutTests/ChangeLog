@@ -1,3 +1,17 @@
+2019-02-06  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Implement supporting dictionaries for GPUTexture
+        https://bugs.webkit.org/show_bug.cgi?id=194354
+
+        Reviewed by Dean Jackson.
+
+        Update test files to use hyphen-case for GPUTextureFormat.
+
+        * webgpu/js/basic-webgpu-functions.js:
+        (async.setUpContexts):
+        * webgpu/js/webgpu-functions.js:
+        (createBasicContext):
+
 2019-02-06  David Kilzer  <ddkilzer@apple.com>
 
         Revert part of r241015 that skipped all WebGL tests

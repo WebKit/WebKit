@@ -30,7 +30,7 @@
 
 #import "GPUDevice.h"
 #import "GPUTexture.h"
-#import "GPUTextureFormatEnum.h"
+#import "GPUTextureFormat.h"
 #import "Logging.h"
 #import "WebGPULayer.h"
 
@@ -80,16 +80,16 @@ void GPUSwapChain::setDevice(const GPUDevice& device)
     [m_platformSwapLayer setDevice:device.platformDevice()];
 }
 
-static Optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(GPUTextureFormatEnum format)
+static Optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(GPUTextureFormat format)
 {
     switch (format) {
-    case GPUTextureFormatEnum::R8G8B8A8Unorm:
+    case GPUTextureFormat::R8g8b8a8Unorm:
         return MTLPixelFormatRGBA8Unorm;
-    case GPUTextureFormatEnum::R8G8B8A8Uint:
+    case GPUTextureFormat::R8g8b8a8Uint:
         return MTLPixelFormatRGBA8Uint;
-    case GPUTextureFormatEnum::B8G8R8A8Unorm:
+    case GPUTextureFormat::B8g8r8a8Unorm:
         return MTLPixelFormatBGRA8Unorm;
-    case GPUTextureFormatEnum::D32FloatS8Uint:
+    case GPUTextureFormat::D32FloatS8Uint:
         return MTLPixelFormatDepth32Float_Stencil8;
     default:
         LOG(WebGPU, "GPUSwapChain::setFormat(): Invalid texture format specified!");
@@ -97,7 +97,7 @@ static Optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(
     }
 }
 
-void GPUSwapChain::setFormat(GPUTextureFormatEnum format)
+void GPUSwapChain::setFormat(GPUTextureFormat format)
 {
     auto result = platformTextureFormatForGPUTextureFormat(format);
     if (!result)

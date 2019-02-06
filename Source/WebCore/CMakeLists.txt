@@ -464,7 +464,12 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/DOMWindowWebGPU.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
+    Modules/webgpu/GPUExtent3D.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
+    Modules/webgpu/GPUTextureDescriptor.idl
+    Modules/webgpu/GPUTextureDimension.idl
+    Modules/webgpu/GPUTextureFormat.idl
+    Modules/webgpu/GPUTextureUsage.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUBindGroup.idl
@@ -500,7 +505,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUShaderStageBit.idl
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
-    Modules/webgpu/WebGPUTextureFormatEnum.idl
     Modules/webgpu/WebGPUTextureView.idl
     Modules/webgpu/WebGPUVertexAttributeDescriptor.idl
     Modules/webgpu/WebGPUVertexFormat.idl

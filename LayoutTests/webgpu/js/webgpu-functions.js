@@ -7,7 +7,7 @@ async function getBasicDevice() {
 function createBasicContext(canvas, device) {
     const context = canvas.getContext("webgpu");
     // FIXME: Implement and specify a WebGPUTextureUsageEnum.
-    context.configure({ device: device, format:"B8G8R8A8Unorm", width: canvas.width, height: canvas.height });
+    context.configure({ device: device, format:"b8g8r8a8-unorm", width: canvas.width, height: canvas.height });
     return context;
 }
 

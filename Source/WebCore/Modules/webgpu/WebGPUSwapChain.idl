@@ -42,7 +42,7 @@ typedef unsigned long u32;
 ] dictionary WebGPUSwapChainDescriptor {
     WebGPUDevice? device;
     // WebGPUTextureUsageFlags usage;
-    WebGPUTextureFormatEnum format;
+    GPUTextureFormat format;
     u32 width;
     u32 height;
 };

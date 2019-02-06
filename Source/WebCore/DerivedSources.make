@@ -374,7 +374,12 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
+    $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUTextureDimension.idl \
+    $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
+    $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroup.idl \
@@ -410,7 +415,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
     $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
-    $(WebCore)/Modules/webgpu/WebGPUTextureFormatEnum.idl \
     $(WebCore)/Modules/webgpu/WebGPUTextureView.idl \
 	$(WebCore)/Modules/webgpu/WebGPUVertexAttributeDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUVertexFormat.idl \

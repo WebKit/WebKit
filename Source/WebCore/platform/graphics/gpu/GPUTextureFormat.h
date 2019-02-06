@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-enum class GPUTextureFormatEnum {
-    R8G8B8A8Unorm,
-    R8G8B8A8Uint,
-    B8G8R8A8Unorm,
+enum class GPUTextureFormat {
+    R8g8b8a8Unorm,
+    R8g8b8a8Uint,
+    B8g8r8a8Unorm,
     D32FloatS8Uint
 };
 

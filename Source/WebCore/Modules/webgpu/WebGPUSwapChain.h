@@ -29,9 +29,9 @@
 
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUSwapChain.h"
+#include "GPUTextureFormat.h"
 #include "WebGPUDevice.h"
 #include "WebGPUTexture.h"
-#include "WebGPUTextureFormatEnum.h"
 
 #include <wtf/RefPtr.h>
 
@@ -42,7 +42,7 @@ public:
     struct Descriptor {
         const WebGPUDevice* device = nullptr;
         // FIXME: More texture properties.
-        WebGPUTextureFormatEnum format;
+        GPUTextureFormat format;
         unsigned long width;
         unsigned long height;
     };
