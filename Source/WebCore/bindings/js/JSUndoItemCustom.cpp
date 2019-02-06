@@ -34,12 +34,12 @@ void JSUndoItem::visitAdditionalChildren(JSC::SlotVisitor& visitor)
     wrapped().redoHandler().visitJSFunction(visitor);
 }
 
-bool JSUndoItemOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor, const char** reason)
+bool JSUndoItemOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor, const char** reason)
 {
     if (UNLIKELY(reason))
         *reason = "Document is an opaque root.";
 
-    auto* documentForUndoItem = jsCast<JSUndoItem*>(handle.slot()->asCell())->wrapped().document();
+    auto* documentForUndoItem = JSC::jsCast<JSUndoItem*>(handle.slot()->asCell())->wrapped().document();
     return documentForUndoItem && visitor.containsOpaqueRoot(documentForUndoItem);
 }
 

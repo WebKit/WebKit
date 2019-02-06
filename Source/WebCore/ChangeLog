@@ -1,3 +1,13 @@
+2019-02-06  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Build failure after r240315
+        https://bugs.webkit.org/show_bug.cgi?id=194341
+
+        Reviewed by Wenson Hsieh.
+
+        * bindings/js/JSUndoItemCustom.cpp:
+        (WebCore::JSUndoItemOwner::isReachableFromOpaqueRoots):
+
 2019-02-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r240909): Release assert in FrameLoader::loadURL when navigating with a non-existent target name
