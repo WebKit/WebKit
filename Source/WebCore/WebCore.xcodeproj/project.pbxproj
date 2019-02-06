@@ -9196,9 +9196,9 @@
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
 		6F0830DF20B46951008A945B /* BlockFormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockFormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6F219D742178D37100BB033C /* InlineRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineRun.h; sourceTree = "<group>"; };
-		6F219D762178D37100BB033C /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		6F222B741AB52D640094651A /* WebGLVertexArrayObjectBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGLVertexArrayObjectBase.h; sourceTree = "<group>"; };
 		6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLVertexArrayObjectBase.cpp; sourceTree = "<group>"; };
+		6F25B200220A85AB0000011B /* InlineFormattingContextLineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextLineLayout.cpp; sourceTree = "<group>"; };
 		6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6F3E1F5F2136141700A65A08 /* FloatBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatBox.cpp; sourceTree = "<group>"; };
 		6F3E1F612136141700A65A08 /* FloatBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FloatBox.h; sourceTree = "<group>"; };
@@ -16456,6 +16456,7 @@
 				6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */,
 				6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */,
 				6F35EFAF2187CBD50044E0F4 /* InlineFormattingContextGeometry.cpp */,
+				6F25B200220A85AB0000011B /* InlineFormattingContextLineLayout.cpp */,
 				115CFA7D208B8E10001E6991 /* InlineFormattingState.cpp */,
 				115CFA7C208B8E10001E6991 /* InlineFormattingState.h */,
 				1123AFDD209ABBBA00736ACC /* InlineInvalidation.cpp */,
@@ -16466,7 +16467,6 @@
 				6F219D742178D37100BB033C /* InlineRun.h */,
 				6F5217C62177F5A6006583BB /* InlineRunProvider.cpp */,
 				6F5217C42177F5A6006583BB /* InlineRunProvider.h */,
-				6F219D762178D37100BB033C /* Line.cpp */,
 			);
 			path = inlineformatting;
 			sourceTree = "<group>";

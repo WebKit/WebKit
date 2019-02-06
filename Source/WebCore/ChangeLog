@@ -1,3 +1,65 @@
+2019-02-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move line layout code to a dedicated file
+        https://bugs.webkit.org/show_bug.cgi?id=194328
+
+        Reviewed by Antti Koivisto.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::isTrimmableContent): Deleted.
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::createFinalRuns const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::postProcessInlineRuns const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::closeLine const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::computeFloatPosition const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::placeInFlowPositionedChildren const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::hasContent const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::isClosed const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::isFirstLine const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::runs):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::contentLogicalLeft const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::availableWidth const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::lastRunType const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::logicalTop const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::logicalBottom const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::logicalHeight const):
+        (WebCore::Layout::InlineFormattingContext::Line::hasContent const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::isClosed const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::isFirstLine const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::runs): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalLeft const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::availableWidth const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::lastRunType const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::logicalTop const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::logicalBottom const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::logicalHeight const): Deleted.
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::adjustedLineLogicalLeft): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Geometry::justifyRuns): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Geometry::computeExpansionOpportunities): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Geometry::alignRuns): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Geometry::runWidth): Deleted.
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::init):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::adjustLogicalLeft):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::adjustLogicalRight):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::contentLogicalRight const):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::LineLayout::Line::close):
+        (WebCore::Layout::InlineFormattingContext::Line::init): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::adjustLogicalLeft): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::adjustLogicalRight): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight const): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent): Deleted.
+        (WebCore::Layout::InlineFormattingContext::Line::close): Deleted.
+
 2019-02-06  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioCaptureSource should not configure its audio unit until it starts producing data

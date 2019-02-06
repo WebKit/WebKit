@@ -29,15 +29,17 @@
 
 #include "DisplayBox.h"
 #include "FormattingContext.h"
+#include "InlineFormattingState.h"
 #include "InlineRun.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 namespace Layout {
 
+class FloatingState;
 class InlineContainer;
-class InlineFormattingState;
 class InlineRunProvider;
+class Line;
 
 // This class implements the layout logic for inline formatting contexts.
 // https://www.w3.org/TR/CSS22/visuren.html#inline-formatting
@@ -45,79 +47,49 @@ class InlineFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const Box& formattingContextRoot, InlineFormattingState&);
-
     void layout() const override;
 
 private:
-    class Line {
+    class LineLayout {
     public:
-        void init(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimalHeight);
-        void close();
-
-        void appendContent(const InlineRunProvider::Run&, const LayoutSize&);
-
-        void adjustLogicalLeft(LayoutUnit delta);
-        void adjustLogicalRight(LayoutUnit delta);
-
-        bool hasContent() const { return !m_inlineRuns.isEmpty(); }
-        bool isClosed() const { return m_closed; }
-        bool isFirstLine() const { return m_isFirstLine; }
-        Vector<InlineRun>& runs() { return m_inlineRuns; }
-
-        LayoutUnit contentLogicalRight() const;
-        LayoutUnit contentLogicalLeft() const { return m_logicalRect.left(); }
-        LayoutUnit availableWidth() const { return m_availableWidth; }
-        Optional<InlineRunProvider::Run::Type> lastRunType() const { return m_lastRunType; }
-
-        LayoutUnit logicalTop() const { return m_logicalRect.top(); }
-        LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
-        LayoutUnit logicalHeight() const { return logicalBottom() - logicalTop(); }
+        LineLayout(const InlineFormattingContext&);
+        void layout(const InlineRunProvider&) const;
 
     private:
-        struct TrailingTrimmableContent {
-            LayoutUnit width;
-            unsigned length;
-        };
-        Optional<TrailingTrimmableContent> m_trailingTrimmableContent;
-        Optional<InlineRunProvider::Run::Type> m_lastRunType;
-        bool m_lastRunCanExpand { false };
+        enum class IsLastLine { No, Yes };
+        void initializeNewLine(Line&) const;
+        void closeLine(Line&, IsLastLine) const;
+        void appendContentToLine(Line&, const InlineRunProvider::Run&, const LayoutSize&) const;
+        void postProcessInlineRuns(Line&, IsLastLine) const;
+        void createFinalRuns(Line&) const;
+        void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
+        void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
+        void placeInFlowPositionedChildren(unsigned firstRunIndex) const;
+        void alignRuns(TextAlignMode, Line&, IsLastLine) const;
+        void computeExpansionOpportunities(Line&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType) const;
+        LayoutUnit runWidth(const InlineContent&, const InlineItem&, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft) const;
 
-        Display::Box::Rect m_logicalRect;
-        LayoutUnit m_availableWidth;
+    private:
+        static void justifyRuns(Line&);
 
-        Vector<InlineRun> m_inlineRuns;
-        bool m_isFirstLine { true };
-        bool m_closed { true };
+    private:
+        const InlineFormattingContext& m_formattingContext;
+        InlineFormattingState& m_formattingState;
+        FloatingState& m_floatingState;
+        const Container& m_formattingRoot;
     };
-    enum class IsLastLine { No, Yes };
 
     class Geometry : public FormattingContext::Geometry {
     public:
         static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
         static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&);
-        static void alignRuns(TextAlignMode, Line&, IsLastLine);
-        static void computeExpansionOpportunities(Line&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType);
-        static LayoutUnit runWidth(const InlineContent&, const InlineItem&, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft); 
-
-    private:
-        static void justifyRuns(Line&);
     };
-
-    void layoutInlineContent(const InlineRunProvider&) const;
-    void initializeNewLine(Line&) const;
-    void closeLine(Line&, IsLastLine) const;
-    void appendContentToLine(Line&, const InlineRunProvider::Run&, const LayoutSize&) const;
-    void postProcessInlineRuns(Line&, IsLastLine) const;
-    void createFinalRuns(Line&) const;
-    void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
 
     void layoutFormattingContextRoot(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&) const;
     void computeMarginBorderAndPadding(const InlineContainer&) const;
     void computeHeightAndMargin(const Box&) const;
     void computeWidthAndMargin(const Box&) const;
-    void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
-    void placeInFlowPositionedChildren(unsigned firstRunIndex) const;
 
     void collectInlineContent(InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
