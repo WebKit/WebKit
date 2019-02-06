@@ -29,6 +29,7 @@
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
 #include "DrawingAreaMessages.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <wtf/ProcessPrivilege.h>
 
