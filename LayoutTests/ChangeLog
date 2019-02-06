@@ -1,5 +1,48 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240773. rdar://problem/47774755
+
+    ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification
+    https://bugs.webkit.org/show_bug.cgi?id=189094
+    <rdar://problem/43853526>
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Protect against access to objects and cache's that can be removed while an object is still in memory.
+    
+    Unskipped flaky tests on mac-wk2.
+    
+    * accessibility/mac/AXObjectCacheMac.mm:
+    (WebCore::AXObjectCache::postTextStateChangePlatformNotification):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (textMarkerForVisiblePosition):
+    (textMarkerRangeFromVisiblePositions):
+    
+    LayoutTests:
+    
+    Unskip flaky test with crash resolved.
+    
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240773 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-31  Chris Fleizach  <cfleizach@apple.com>
+
+            ASSERTION FAILED: cache under WebCore::AXObjectCache::postTextStateChangePlatformNotification
+            https://bugs.webkit.org/show_bug.cgi?id=189094
+            <rdar://problem/43853526>
+
+            Reviewed by Zalan Bujtas.
+
+            Unskip flaky test with crash resolved.
+
+            * platform/mac-wk2/TestExpectations:
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240750. rdar://problem/47774507
 
     Regression(PSON) History navigations to twitter.com lead to a 403 HTTP error
