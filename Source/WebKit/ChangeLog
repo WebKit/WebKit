@@ -1,5 +1,40 @@
 2019-02-05  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r240803. rdar://problem/47774506
+
+    Regression(PSON) Crash under WebProcessProxy::canTerminateChildProcess()
+    https://bugs.webkit.org/show_bug.cgi?id=194094
+    <rdar://problem/47580753>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    If a SuspendedPageProxy gets destroyed while a WebPageProxy is waiting for its to finish to suspend,
+    call the "failure to suspend" completion handler asynchronously instead of synchronouly to make sure
+    the completion handler cannot try and use the suspended page proxy while it is being destroyed.
+    
+    * UIProcess/SuspendedPageProxy.cpp:
+    (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240803 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-31  Chris Dumez  <cdumez@apple.com>
+
+            Regression(PSON) Crash under WebProcessProxy::canTerminateChildProcess()
+            https://bugs.webkit.org/show_bug.cgi?id=194094
+            <rdar://problem/47580753>
+
+            Reviewed by Ryosuke Niwa.
+
+            If a SuspendedPageProxy gets destroyed while a WebPageProxy is waiting for its to finish to suspend,
+            call the "failure to suspend" completion handler asynchronously instead of synchronouly to make sure
+            the completion handler cannot try and use the suspended page proxy while it is being destroyed.
+
+            * UIProcess/SuspendedPageProxy.cpp:
+            (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r240772. rdar://problem/47774490
 
     iOS: Crash in InteractiveUpdateHandler set by ViewGestureController::beginSwipeGesture
