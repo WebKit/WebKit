@@ -1015,6 +1015,14 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!treeElement.canSelectOnMouseDown(event))
             return;
 
+        if (this.allowsRepeatSelection && treeElement.selected && this._selectionController.selectedItems.size === 1) {
+            // Special case for dispatching a selection event for an already selected
+            // item in single-selection mode.
+            this._itemWasSelectedByUser = true;
+            this._dispatchSelectionDidChangeEvent();
+            return;
+        }
+
         let index = this._indexOfTreeElement(treeElement);
         if (isNaN(index))
             return;
