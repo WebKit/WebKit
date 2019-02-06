@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableBaseInlines.h"
 #include "FunctionExecutable.h"
 #include "JSCast.h"
 #include "JSFunction.h"

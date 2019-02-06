@@ -1,3 +1,91 @@
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] NativeExecutable should be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=194331
+
+        Reviewed by Michael Saboff.
+
+        NativeExecutable takes 88 bytes now. Since our GC rounds the size with 16, it actually takes 96 bytes in IsoSubspaces.
+        Since a lot of NativeExecutable are allocated, we already has two MarkedBlocks even just after JSGlobalObject initialization.
+        This patch makes sizeof(NativeExecutable) 64 bytes, which is 32 bytes smaller than 96 bytes. Now our JSGlobalObject initialization
+        only takes one MarkedBlock for NativeExecutable.
+
+        To make NativeExecutable smaller,
+
+        1. m_numParametersForCall and m_numParametersForConstruct in ExecutableBase are only meaningful in ScriptExecutable subclasses. Since
+           they are not touched from JIT, we can remove them from ExecutableBase and move them to ScriptExecutable.
+
+        2. DOMJIT::Signature* is rarely used. Rather than having it in NativeExecutable, we should put it in NativeJITCode. Since NativeExecutable
+           always has JITCode, we can safely query the value from NativeExecutable. This patch creates NativeDOMJITCode, which is a subclass of
+           NativeJITCode, and instantiated only when DOMJIT::Signature* is given.
+
+        3. Move Intrinsic to a member of ScriptExecutable or JITCode. Since JITCode has some paddings to put things, we can leverage this to put
+           Intrinsic for NativeExecutable.
+
+        We also move "clearCode" code from ExecutableBase to ScriptExecutable since it is only valid for ScriptExecutable subclasses.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallVariant.h:
+        * interpreter/Interpreter.cpp:
+        * jit/JITCode.cpp:
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::NativeJITCode::NativeJITCode):
+        (JSC::NativeDOMJITCode::NativeDOMJITCode):
+        * jit/JITCode.h:
+        (JSC::JITCode::signature const):
+        (JSC::JITCode::intrinsic):
+        * jit/JITOperations.cpp:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/Repatch.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::dump const):
+        (JSC::ExecutableBase::hashFor const):
+        (JSC::ExecutableBase::hasClearableCode const): Deleted.
+        (JSC::ExecutableBase::clearCode): Deleted.
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::isModuleProgramExecutable):
+        (JSC::ExecutableBase::isHostFunction const):
+        (JSC::ExecutableBase::generatedJITCodeForCall const):
+        (JSC::ExecutableBase::generatedJITCodeForConstruct const):
+        (JSC::ExecutableBase::generatedJITCodeFor const):
+        (JSC::ExecutableBase::generatedJITCodeForCall): Deleted.
+        (JSC::ExecutableBase::generatedJITCodeForConstruct): Deleted.
+        (JSC::ExecutableBase::generatedJITCodeFor): Deleted.
+        (JSC::ExecutableBase::offsetOfNumParametersFor): Deleted.
+        (JSC::ExecutableBase::hasJITCodeForCall const): Deleted.
+        (JSC::ExecutableBase::hasJITCodeForConstruct const): Deleted.
+        (JSC::ExecutableBase::intrinsic const): Deleted.
+        * runtime/ExecutableBaseInlines.h: Added.
+        (JSC::ExecutableBase::intrinsic const):
+        (JSC::ExecutableBase::hasJITCodeForCall const):
+        (JSC::ExecutableBase::hasJITCodeForConstruct const):
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::createStructure):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::NativeExecutable::signatureFor const):
+        (JSC::NativeExecutable::intrinsic const):
+        * runtime/NativeExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::hasClearableCode const):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::intrinsic const):
+        (JSC::ScriptExecutable::hasJITCodeForCall const):
+        (JSC::ScriptExecutable::hasJITCodeForConstruct const):
+        * runtime/VM.cpp:
+        (JSC::VM::getHostFunction):
+
 2019-02-06  Pablo Saavedra  <psaavedra@igalia.com>
 
         Build failure after r240431

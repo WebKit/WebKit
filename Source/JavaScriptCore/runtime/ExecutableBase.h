@@ -60,14 +60,8 @@ class ExecutableBase : public JSCell {
     friend MacroAssemblerCodeRef<JITThunkPtrTag> boundThisNoArgsFunctionCallGenerator(VM*);
 
 protected:
-    static const int NUM_PARAMETERS_IS_HOST = 0;
-    static const int NUM_PARAMETERS_NOT_COMPILED = -1;
-
-    ExecutableBase(VM& vm, Structure* structure, int numParameters, Intrinsic intrinsic)
+    ExecutableBase(VM& vm, Structure* structure)
         : JSCell(vm, structure)
-        , m_numParametersForCall(numParameters)
-        , m_numParametersForConstruct(numParameters)
-        , m_intrinsic(intrinsic)
     {
     }
 
@@ -105,39 +99,29 @@ public:
     {
         return type() == ModuleProgramExecutableType;
     }
-
-
     bool isHostFunction() const
     {
-        ASSERT((m_numParametersForCall == NUM_PARAMETERS_IS_HOST) == (m_numParametersForConstruct == NUM_PARAMETERS_IS_HOST));
-        return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
+        return type() == NativeExecutableType;
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info()); }
 
-    bool hasClearableCode() const;
-    void clearCode();
-
     DECLARE_EXPORT_INFO;
 
-protected:
-    int m_numParametersForCall;
-    int m_numParametersForConstruct;
-
 public:
-    Ref<JITCode> generatedJITCodeForCall()
+    Ref<JITCode> generatedJITCodeForCall() const
     {
         ASSERT(m_jitCodeForCall);
         return *m_jitCodeForCall;
     }
 
-    Ref<JITCode> generatedJITCodeForConstruct()
+    Ref<JITCode> generatedJITCodeForConstruct() const
     {
         ASSERT(m_jitCodeForConstruct);
         return *m_jitCodeForConstruct;
     }
         
-    Ref<JITCode> generatedJITCodeFor(CodeSpecializationKind kind)
+    Ref<JITCode> generatedJITCodeFor(CodeSpecializationKind kind) const
     {
         if (kind == CodeForCall)
             return generatedJITCodeForCall();
@@ -190,24 +174,9 @@ public:
         return 0;
     }
     
-    static ptrdiff_t offsetOfNumParametersFor(CodeSpecializationKind kind)
-    {
-        if (kind == CodeForCall)
-            return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForCall);
-        ASSERT(kind == CodeForConstruct);
-        return OBJECT_OFFSETOF(ExecutableBase, m_numParametersForConstruct);
-    }
+    bool hasJITCodeForCall() const;
+    bool hasJITCodeForConstruct() const;
 
-    bool hasJITCodeForCall() const
-    {
-        return m_numParametersForCall >= 0;
-    }
-        
-    bool hasJITCodeForConstruct() const
-    {
-        return m_numParametersForConstruct >= 0;
-    }
-        
     bool hasJITCodeFor(CodeSpecializationKind kind) const
     {
         if (kind == CodeForCall)
@@ -217,7 +186,7 @@ public:
     }
 
     // Intrinsics are only for calls, currently.
-    Intrinsic intrinsic() const { return m_intrinsic; }
+    Intrinsic intrinsic() const;
         
     Intrinsic intrinsicFor(CodeSpecializationKind kind) const
     {
@@ -233,7 +202,6 @@ protected:
     RefPtr<JITCode> m_jitCodeForConstruct;
     MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForCallWithArityCheck;
     MacroAssemblerCodePtr<JSEntryPtrTag> m_jitCodeForConstructWithArityCheck;
-    Intrinsic m_intrinsic;
 };
 
 } // namespace JSC

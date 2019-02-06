@@ -97,6 +97,22 @@ public:
 
     void clearCode(IsoCellSet&);
 
+    Intrinsic intrinsic() const
+    {
+        return m_intrinsic;
+    }
+
+    static constexpr int NUM_PARAMETERS_NOT_COMPILED = -1;
+
+    bool hasJITCodeForCall() const
+    {
+        return m_numParametersForCall >= 0;
+    }
+    bool hasJITCodeForConstruct() const
+    {
+        return m_numParametersForConstruct >= 0;
+    }
+
     // This function has an interesting GC story. Callers of this function are asking us to create a CodeBlock
     // that is not jettisoned before this function returns. Callers are essentially asking for a strong reference
     // to the CodeBlock. Because the Executable may be allocating the CodeBlock, we require callers to pass in
@@ -109,6 +125,8 @@ public:
 private:
     friend class ExecutableBase;
     JSObject* prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
+
+    bool hasClearableCode(VM&) const;
 
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, EvalContextType, Intrinsic);
@@ -123,6 +141,15 @@ protected:
 #endif
     }
 
+    SourceCode m_source;
+
+    int m_numParametersForCall { NUM_PARAMETERS_NOT_COMPILED };
+    int m_numParametersForConstruct { NUM_PARAMETERS_NOT_COMPILED };
+
+    int m_lastLine { -1 };
+    unsigned m_endColumn { UINT_MAX };
+
+    Intrinsic m_intrinsic { NoIntrinsic };
     bool m_didTryToEnterInLoop { false };
     CodeFeatures m_features;
     bool m_hasCapturedVariables : 1;
@@ -133,10 +160,6 @@ protected:
     bool m_canUseOSRExitFuzzing : 1;
     unsigned m_derivedContextType : 2; // DerivedContextType
     unsigned m_evalContextType : 2; // EvalContextType
-
-    int m_lastLine { -1 };
-    unsigned m_endColumn { UINT_MAX };
-    SourceCode m_source;
 };
 
 } // namespace JSC

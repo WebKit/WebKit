@@ -699,10 +699,12 @@ NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrins
     }
 #endif // ENABLE(JIT)
     UNUSED_PARAM(intrinsic);
+    UNUSED_PARAM(signature);
+
     return NativeExecutable::create(*this,
-        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITCode::HostCallThunk)), function,
-        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITCode::HostCallThunk)), constructor,
-        NoIntrinsic, signature, name);
+        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITCode::HostCallThunk, NoIntrinsic)), function,
+        adoptRef(*new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITCode::HostCallThunk, NoIntrinsic)), constructor,
+        name);
 }
 
 MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)

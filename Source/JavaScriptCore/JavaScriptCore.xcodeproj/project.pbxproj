@@ -1759,6 +1759,7 @@
 		E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = E35070891DC49BB60089BCD6 /* DOMJITSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMGetterSnippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4692,6 +4693,7 @@
 		E35070891DC49BB60089BCD6 /* DOMJITSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSignature.h; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
 		E3555B891DAE03A200F36921 /* DOMJITCallDOMGetterSnippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMGetterSnippet.h; sourceTree = "<group>"; };
+		E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableBaseInlines.h; sourceTree = "<group>"; };
 		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
 		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
 		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
@@ -6734,6 +6736,7 @@
 				FE6491361D78F01300A694D4 /* ExceptionScope.h */,
 				147341E91DC2CF2500AA29BA /* ExecutableBase.cpp */,
 				147341CB1DC02D7200AA29BA /* ExecutableBase.h */,
+				E35A0B9C220AD87A00AC4474 /* ExecutableBaseInlines.h */,
 				A7A8AF2917ADB5F3005AB174 /* Float32Array.h */,
 				A7A8AF2A17ADB5F3005AB174 /* Float64Array.h */,
 				BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */,
@@ -8950,6 +8953,7 @@
 				0FF054FA1AC35B4400E5BE57 /* ExecutableAllocationFuzz.h in Headers */,
 				A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */,
 				147341CC1DC02D7200AA29BA /* ExecutableBase.h in Headers */,
+				E35A0B9D220AD87A00AC4474 /* ExecutableBaseInlines.h in Headers */,
 				14142E531B796EDD00F4BF4B /* ExecutableInfo.h in Headers */,
 				0F60FE901FFC37020003320A /* ExecutableToCodeBlockEdge.h in Headers */,
 				0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */,

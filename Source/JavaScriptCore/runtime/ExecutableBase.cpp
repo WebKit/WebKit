@@ -49,100 +49,17 @@ void ExecutableBase::destroy(JSCell* cell)
     static_cast<ExecutableBase*>(cell)->ExecutableBase::~ExecutableBase();
 }
 
-bool ExecutableBase::hasClearableCode() const
-{
-    VM& vm = *this->vm();
-
-#if ENABLE(JIT)
-    if (m_jitCodeForCall
-        || m_jitCodeForConstruct
-        || m_jitCodeForCallWithArityCheck
-        || m_jitCodeForConstructWithArityCheck)
-        return true;
-#endif
-
-    if (structure(vm)->classInfo() == FunctionExecutable::info()) {
-        auto* executable = static_cast<const FunctionExecutable*>(this);
-        if (executable->m_codeBlockForCall || executable->m_codeBlockForConstruct)
-            return true;
-
-    } else if (structure(vm)->classInfo() == EvalExecutable::info()) {
-        auto* executable = static_cast<const EvalExecutable*>(this);
-        if (executable->m_evalCodeBlock || executable->m_unlinkedEvalCodeBlock)
-            return true;
-
-    } else if (structure(vm)->classInfo() == ProgramExecutable::info()) {
-        auto* executable = static_cast<const ProgramExecutable*>(this);
-        if (executable->m_programCodeBlock || executable->m_unlinkedProgramCodeBlock)
-            return true;
-
-    } else if (structure(vm)->classInfo() == ModuleProgramExecutable::info()) {
-        auto* executable = static_cast<const ModuleProgramExecutable*>(this);
-        if (executable->m_moduleProgramCodeBlock
-            || executable->m_unlinkedModuleProgramCodeBlock
-            || executable->m_moduleEnvironmentSymbolTable)
-            return true;
-    }
-    return false;
-}
-
-void ExecutableBase::clearCode()
-{
-#if ENABLE(JIT)
-    m_jitCodeForCall = nullptr;
-    m_jitCodeForConstruct = nullptr;
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
-    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
-#endif
-    m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
-    m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
-    VM& vm = *this->vm();
-
-
-    if (structure(vm)->classInfo() == FunctionExecutable::info()) {
-        FunctionExecutable* executable = static_cast<FunctionExecutable*>(this);
-        executable->m_codeBlockForCall.clear();
-        executable->m_codeBlockForConstruct.clear();
-        return;
-    }
-
-    if (structure(vm)->classInfo() == EvalExecutable::info()) {
-        EvalExecutable* executable = static_cast<EvalExecutable*>(this);
-        executable->m_evalCodeBlock.clear();
-        executable->m_unlinkedEvalCodeBlock.clear();
-        return;
-    }
-    
-    if (structure(vm)->classInfo() == ProgramExecutable::info()) {
-        ProgramExecutable* executable = static_cast<ProgramExecutable*>(this);
-        executable->m_programCodeBlock.clear();
-        executable->m_unlinkedProgramCodeBlock.clear();
-        return;
-    }
-
-    if (structure(vm)->classInfo() == ModuleProgramExecutable::info()) {
-        ModuleProgramExecutable* executable = static_cast<ModuleProgramExecutable*>(this);
-        executable->m_moduleProgramCodeBlock.clear();
-        executable->m_unlinkedModuleProgramCodeBlock.clear();
-        executable->m_moduleEnvironmentSymbolTable.clear();
-        return;
-    }
-    
-    ASSERT(structure(vm)->classInfo() == NativeExecutable::info());
-}
-
 void ExecutableBase::dump(PrintStream& out) const
 {
-    VM& vm = *this->vm();
     ExecutableBase* realThis = const_cast<ExecutableBase*>(this);
 
-    if (classInfo(vm) == NativeExecutable::info()) {
+    switch (type()) {
+    case NativeExecutableType: {
         NativeExecutable* native = jsCast<NativeExecutable*>(realThis);
         out.print("NativeExecutable:", RawPointer(bitwise_cast<void*>(native->function())), "/", RawPointer(bitwise_cast<void*>(native->constructor())));
         return;
     }
-    
-    if (classInfo(vm) == EvalExecutable::info()) {
+    case EvalExecutableType: {
         EvalExecutable* eval = jsCast<EvalExecutable*>(realThis);
         if (CodeBlock* codeBlock = eval->codeBlock())
             out.print(*codeBlock);
@@ -150,8 +67,7 @@ void ExecutableBase::dump(PrintStream& out) const
             out.print("EvalExecutable w/o CodeBlock");
         return;
     }
-    
-    if (classInfo(vm) == ProgramExecutable::info()) {
+    case ProgramExecutableType: {
         ProgramExecutable* eval = jsCast<ProgramExecutable*>(realThis);
         if (CodeBlock* codeBlock = eval->codeBlock())
             out.print(*codeBlock);
@@ -159,8 +75,7 @@ void ExecutableBase::dump(PrintStream& out) const
             out.print("ProgramExecutable w/o CodeBlock");
         return;
     }
-
-    if (classInfo(vm) == ModuleProgramExecutable::info()) {
+    case ModuleProgramExecutableType: {
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(realThis);
         if (CodeBlock* codeBlock = executable->codeBlock())
             out.print(*codeBlock);
@@ -168,22 +83,27 @@ void ExecutableBase::dump(PrintStream& out) const
             out.print("ModuleProgramExecutable w/o CodeBlock");
         return;
     }
-    
-    FunctionExecutable* function = jsCast<FunctionExecutable*>(realThis);
-    if (!function->eitherCodeBlock())
-        out.print("FunctionExecutable w/o CodeBlock");
-    else {
-        CommaPrinter comma("/");
-        if (function->codeBlockForCall())
-            out.print(comma, *function->codeBlockForCall());
-        if (function->codeBlockForConstruct())
-            out.print(comma, *function->codeBlockForConstruct());
+    case FunctionExecutableType: {
+        FunctionExecutable* function = jsCast<FunctionExecutable*>(realThis);
+        if (!function->eitherCodeBlock())
+            out.print("FunctionExecutable w/o CodeBlock");
+        else {
+            CommaPrinter comma("/");
+            if (function->codeBlockForCall())
+                out.print(comma, *function->codeBlockForCall());
+            if (function->codeBlockForConstruct())
+                out.print(comma, *function->codeBlockForConstruct());
+        }
+        return;
+    }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
 CodeBlockHash ExecutableBase::hashFor(CodeSpecializationKind kind) const
 {
-    if (this->classInfo(*this->vm()) == NativeExecutable::info())
+    if (type() == NativeExecutableType)
         return jsCast<const NativeExecutable*>(this)->hashFor(kind);
     
     return jsCast<const ScriptExecutable*>(this)->hashFor(kind);

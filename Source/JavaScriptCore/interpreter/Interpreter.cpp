@@ -37,6 +37,7 @@
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "DirectArguments.h"
+#include "ExecutableBaseInlines.h"
 #include "Heap.h"
 #include "Debugger.h"
 #include "DebuggerCallFrame.h"

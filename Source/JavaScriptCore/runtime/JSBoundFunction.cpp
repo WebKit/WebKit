@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSBoundFunction.h"
 
+#include "ExecutableBaseInlines.h"
 #include "GetterSetter.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"

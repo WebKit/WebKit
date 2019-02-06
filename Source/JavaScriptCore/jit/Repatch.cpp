@@ -35,6 +35,7 @@
 #include "DFGSpeculativeJIT.h"
 #include "DOMJITGetterSetter.h"
 #include "DirectArguments.h"
+#include "ExecutableBaseInlines.h"
 #include "FTLThunks.h"
 #include "FullCodeOrigin.h"
 #include "FunctionCodeBlock.h"

@@ -40,10 +40,10 @@ namespace JSC {
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, TaggedNativeFunction function, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature, const String& name)
+NativeExecutable* NativeExecutable::create(VM& vm, Ref<JITCode>&& callThunk, TaggedNativeFunction function, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, const String& name)
 {
     NativeExecutable* executable;
-    executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor, intrinsic, signature);
+    executable = new (NotNull, allocateCell<NativeExecutable>(vm.heap)) NativeExecutable(vm, function, constructor);
     executable->finishCreation(vm, WTFMove(callThunk), WTFMove(constructThunk), name);
     return executable;
 }
@@ -55,7 +55,7 @@ void NativeExecutable::destroy(JSCell* cell)
 
 Structure* NativeExecutable::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {
-    return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info());
+    return Structure::create(vm, globalObject, proto, TypeInfo(NativeExecutableType, StructureFlags), info());
 }
 
 void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name)
@@ -73,12 +73,22 @@ void NativeExecutable::finishCreation(VM& vm, Ref<JITCode>&& callThunk, Ref<JITC
     assertIsTaggedWith(m_jitCodeForConstructWithArityCheck.executableAddress(), JSEntryPtrTag);
 }
 
-NativeExecutable::NativeExecutable(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor, Intrinsic intrinsic, const DOMJIT::Signature* signature)
-    : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST, intrinsic)
+NativeExecutable::NativeExecutable(VM& vm, TaggedNativeFunction function, TaggedNativeFunction constructor)
+    : ExecutableBase(vm, vm.nativeExecutableStructure.get())
     , m_function(function)
     , m_constructor(constructor)
-    , m_signature(signature)
 {
+}
+
+const DOMJIT::Signature* NativeExecutable::signatureFor(CodeSpecializationKind kind) const
+{
+    ASSERT(hasJITCodeFor(kind));
+    return generatedJITCodeFor(kind)->signature();
+}
+
+Intrinsic NativeExecutable::intrinsic() const
+{
+    return generatedJITCodeFor(CodeForCall)->intrinsic();
 }
 
 CodeBlockHash NativeExecutable::hashFor(CodeSpecializationKind kind) const

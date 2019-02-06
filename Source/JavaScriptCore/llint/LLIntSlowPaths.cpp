@@ -34,6 +34,7 @@
 #include "EvalCodeBlock.h"
 #include "Exception.h"
 #include "ExceptionFuzz.h"
+#include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionWhitelist.h"

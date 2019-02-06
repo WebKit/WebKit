@@ -42,6 +42,7 @@
 #include "ErrorHandlingScope.h"
 #include "EvalCodeBlock.h"
 #include "ExceptionFuzz.h"
+#include "ExecutableBaseInlines.h"
 #include "FTLOSREntry.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
