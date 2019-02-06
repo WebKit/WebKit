@@ -53,6 +53,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(lockHistory);
     encoder.encodeEnum(lockBackForwardList);
     encoder << clientRedirectSourceForHistory;
+    encoder << adClickAttribution;
 }
 
 Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
@@ -139,10 +140,15 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!clientRedirectSourceForHistory)
         return WTF::nullopt;
 
+    Optional<Optional<WebCore::AdClickAttribution>> adClickAttribution;
+    decoder >> adClickAttribution;
+    if (!adClickAttribution)
+        return WTF::nullopt;
+
     return {{ WTFMove(navigationType), modifiers, WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
         WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, WTFMove(*requesterOrigin),
-        WTFMove(*targetBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory) }};
+        WTFMove(*targetBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), WTFMove(*adClickAttribution) }};
 }
 
 } // namespace WebKit

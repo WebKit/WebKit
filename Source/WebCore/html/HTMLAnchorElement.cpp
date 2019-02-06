@@ -488,13 +488,11 @@ void HTMLAnchorElement::handleClick(Event& event)
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
     auto adClickAttribution = parseAdClickAttribution();
-    // FIXME: The adClickAttribution should be forwarded to the loader and handled down the pipe. See
-    // rdar://problem/47650118
     // A matching conversion event needs to happen before the complete ad click attributionURL can be
     // created. Thus, it should be empty for now.
-    ASSERT_UNUSED(adClickAttribution, !adClickAttribution || adClickAttribution->url().isNull());
+    ASSERT(!adClickAttribution || adClickAttribution->url().isNull());
     
-    frame->loader().urlSelected(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo);
+    frame->loader().urlSelected(completedURL, effectiveTarget, &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, systemPreviewInfo, WTFMove(adClickAttribution));
 
     sendPings(completedURL);
 }

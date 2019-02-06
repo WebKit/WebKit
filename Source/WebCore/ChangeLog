@@ -1,3 +1,37 @@
+2019-02-06  John Wilander  <wilander@apple.com>
+
+        Forward Ad Click Attribution data from HTMLAnchorElement::handleClick() to WebKit::NavigationActionData
+        https://bugs.webkit.org/show_bug.cgi?id=194325
+        <rdar://problem/47840283>
+
+        Reviewed by Chris Dumez.
+
+        No new tests. This is just data forwarding. Once the data is stored, I will create
+        test infrastructure to query it.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::encode const):
+        (WebCore::AdClickAttribution::decode):
+        (WebCore::AdClickAttribution::Conversion::encode const):
+        (WebCore::AdClickAttribution::Conversion::decode):
+            Infrastructure for IPC.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+            These functions forward the optional WebCore::AdClickAttribution object
+            FrameLoader::loadURL() creates the NavigationAction object and sets the
+            WebCore::AdClickAttribution object on there.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURL):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::adClickAttribution):
+        (WebCore::NavigationAction::setAdClickAttribution):
+
 2019-02-06  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Implement supporting dictionaries for GPUTexture
