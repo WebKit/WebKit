@@ -1,3 +1,31 @@
+2019-02-06  Youenn Fablet  <youenn@apple.com>
+
+        Disable audio ducking at Audio Unit setup time
+        https://bugs.webkit.org/show_bug.cgi?id=194303
+
+        Reviewed by Eric Carlson.
+
+        When creating a CoreAudioCaptureSource, the audio unit might be
+        reconfigured if a past audio capture was done.
+        This might trigger audio ducking which is undone in startInternal.
+        In some cases, startInternal will never call start.
+        In that case, the audio unit will continue ducking the other processing.
+        To ensure ducking is disabled, unduck in setupAudioUnit as well as startInternal.
+
+        In addition to that, once a shared unit is created, it stays alive until the UIProcess exits.
+        This might affect all applications.
+        Instead, whenever the shared unit is stopped, clean it so as to restore the state as if no capture ever happened.
+        This has noticeable effects in the quality of audio being played on bluetooth devices.
+
+        Covered by manual tests.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::unduck):
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        (WebCore::CoreAudioSharedUnit::captureFailed):
+        (WebCore::CoreAudioSharedUnit::stopProducingData):
+
 2019-02-06  Antti Koivisto  <antti@apple.com>
 
         RELEASE_ASSERT(!m_document.isResolvingTreeStyle()) in com.apple.WebKit.WebContent at WebCore: WebCore::StyleResolver::~StyleResolver
