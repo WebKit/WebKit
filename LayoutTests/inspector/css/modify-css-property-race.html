@@ -7,12 +7,11 @@ let requestAnimationFrameID;
 
 function expand() {
     let element = document.getElementById("x");
-    let initialHeight = parseInt(element.style.height);
     let i = 0;
 
     let loop = () => {
         ++i;
-        let height = initialHeight + i;
+        let height = parseInt(element.style.height) + 1;
         element.style.height = height + "px";
         TestPage.dispatchEventToFrontend("TestPage-styleChanged", height + "px");
 
@@ -63,29 +62,28 @@ function test() {
             InspectorTest.evaluateInPage("expand()");
             let updateCount = 0;
 
-            function styleDecorationUpdated(event) {
-                if (!updateCount) {
-                    let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThan(valueNumber, 42, "Height should be greater than 42px.");
-                } else if (updateCount === 1) {
-                    let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThan(valueNumber, 42, "Height should be greater than 42px.");
-                    getProperty("height").rawValue = "10px";
-                } else if (updateCount === 2) {
-                    InspectorTest.expectEqual(getProperty("height").rawValue, "10px", "Height should be 10px.");
-                    InspectorTest.expectEqual(getInlineStyleDeclaration().text, "height: 10px;", "CSSStyleDeclaration text should update.");
-                } else {
-                    let valueNumber = parseInt(getProperty("height").rawValue);
-                    InspectorTest.expectGreaterThanOrEqual(valueNumber, 10, "Height should be greater or equal 10px.");
+            function styleDecorationUpdated() {
+                ++updateCount;
+                let heightNumber = parseInt(getProperty("height").rawValue);
+
+                if (updateCount === 1)
+                    InspectorTest.expectGreaterThan(heightNumber, 10, "Height should have increased from 10px.");
+                else if (updateCount === 2) {
+                    InspectorTest.expectGreaterThan(heightNumber, 11, "Height should have increased from 11px.");
+                    getProperty("height").rawValue = "100px";
+                } else if (updateCount === 3)
+                    InspectorTest.expectGreaterThanOrEqual(heightNumber, 100, "Height should be 100px or more.");
+                else {
+                    InspectorTest.expectGreaterThanOrEqual(heightNumber, 101, "Height should be 101px or more.");
 
                     InspectorTest.evaluateInPage("stopExpanding()");
                     WI.CSSStyleDeclaration.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
                     resolve();
                 }
-                ++updateCount;
             }
 
-            WI.CSSStyleDeclaration.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
+            let style = getInlineStyleDeclaration();
+            style.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
         }
     });
 
@@ -112,6 +110,6 @@ function test() {
 </head>
 <body onload="runTest()">
     <p>Testing that changes to "style" attribute made from page's JavaScript are ignored when there's a pending change made via Web Inspector.</p>
-    <div id="x" style="height: 42px"></div>
+    <div id="x" style="height: 10px"></div>
 </body>
 </html>

@@ -1,3 +1,15 @@
+2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
+        https://bugs.webkit.org/show_bug.cgi?id=194318
+
+        Reviewed by Devin Rousso.
+
+        Previously, WI.CSSStyleDeclaration.Event.PropertiesChanged fired when
+        old text and new text were empty strings.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+
 2019-02-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Lots of time spent updating related resources in ResourceDetailsSidebar when loading a page with lots of resources

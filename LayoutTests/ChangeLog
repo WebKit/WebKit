@@ -1,3 +1,15 @@
+2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
+        https://bugs.webkit.org/show_bug.cgi?id=194318
+
+        Reviewed by Devin Rousso.
+
+        Fix the flaky test on Debug.
+
+        * inspector/css/modify-css-property-race-expected.txt:
+        * inspector/css/modify-css-property-race.html:
+
 2019-02-05  Megan Gardner  <megan_gardner@apple.com>
 
         [iOS] Layout tests editing/pasteboard/smart-paste-007.html and editing/pasteboard/smart-paste-008.html are failing
