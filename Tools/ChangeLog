@@ -1,3 +1,20 @@
+2019-02-05  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/47774509
+
+    fix-194106
+
+    2019-01-31  Youenn Fablet  <youenn@apple.com>
+
+            Add an API test to cover UIClient checkUserMediaPermissionForOrigin being nullptr
+            https://bugs.webkit.org/show_bug.cgi?id=194106
+            <rdar://problem/47676333>
+
+            * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+            (TestWebKitAPI::didFinishNavigation):
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2019-01-30  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r240633. rdar://problem/47682687

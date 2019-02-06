@@ -419,7 +419,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
     m_pendingDeviceRequests.add(requestID, request.copyRef());
     if (!m_page.uiClient().checkUserMediaPermissionForOrigin(m_page, *m_page.process().webFrame(frameID), userMediaOrigin.get(), topLevelOrigin.get(), request.get())) {
         m_pendingDeviceRequests.take(requestID);
-        handler(false);
+        request->setUserMediaAccessInfo(false);
     }
 }
 
