@@ -1,3 +1,11 @@
+2019-02-07  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal build after r241127
+        https://bugs.webkit.org/show_bug.cgi?id=191394
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+        Add some (un)availability macros.
+
 2019-02-07  Youenn Fablet  <youenn@apple.com>
 
         Make to clear sources from UserMediaCaptureManagerProxy and UserMediaCaptureManager when no longer needed

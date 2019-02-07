@@ -45,7 +45,7 @@
 @property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
 @property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
-@property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading WK_API_DEPRECATED("No longer supported");
+@property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading WK_API_DEPRECATED("No longer supported", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @property (nonatomic, readonly) BOOL _usesNonPersistentWebsiteDataStore;
 
