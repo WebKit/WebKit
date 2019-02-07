@@ -29,7 +29,7 @@ WEB_CONTENT_RESOURCES_PATH="${BUILT_PRODUCTS_DIR}/WebKit.framework/PrivateHeader
 mkdir -p "${WEB_CONTENT_RESOURCES_PATH}"
 
 if [[ ${WK_PLATFORM_NAME} == "macosx" ]]; then
-    ENTITLEMENTS_FILE="${TEMP_FILE_DIR}/${FULL_PRODUCT_NAME}.xcent"
+    ENTITLEMENTS_FILE="${WK_PROCESSED_XCENT_FILE}"
 else
     ENTITLEMENTS_FILE="${SRCROOT}/Configurations/WebContent-iOS.entitlements"
 fi

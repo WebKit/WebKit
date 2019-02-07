@@ -1,3 +1,57 @@
+2019-02-07  Keith Rollin  <krollin@apple.com>
+
+        Fix XCBuild issue related to codesigning WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=193799
+        <rdar://problem/47533890>
+
+        Reviewed by Brent Fulgham.
+
+        Building with XCBuild enabled results in the error message "cannot
+        read entitlement data" when trying to codesign the macOS XPC
+        processes. The reason for this error message is that there is a build
+        step that deletes any previous "stale" generated .xcent file before
+        building up a new one. With XCBuild enabled, the build steps got
+        re-ordered, such that the step that deletes this file could get
+        executed after the steps that build up the file. The built-up set of
+        entitlements is now gone, and the build process fails when `codesign`
+        tries to access it.
+
+        The apparent quick-fix to this problem -- of tweaking dependencies so
+        that the build steps execute in the desired order -- wouldn't work
+        with XCBuild. Establishing these dependencies would require both
+        having multiple build phases produce the same .xcent file as output,
+        as well as a build phase that has this file as an input and an output.
+        XCBuild either forbids or frowns upon these configurations.
+
+        Ultimately, the solution that worked was to take over complete control
+        of the codesigning process. This means (a) not specifying a base
+        .entitlements file that XCode uses to start with (and which was
+        subsequently altered via custom build scripts), (b) not letting XCode
+        automatically and silently inject a 'get-task-all' entitlement used to
+        facilitate debugging (we now add that entitlement by hand), and (c)
+        building up all of our entitlements by hand via a single custom
+        script. Because of the addition of this custom script, many other
+        scripts and entitlements files could now be removed.
+
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/Databases-iOS.entitlements: Removed.
+        * Configurations/Network-OSX-restricted.entitlements: Removed.
+        * Configurations/Network-OSX-sandbox.entitlements: Removed.
+        * Configurations/Network-OSX.entitlements: Removed.
+        * Configurations/NetworkService.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/PluginService.entitlements: Removed.
+        * Configurations/WebContent-OSX-sandbox.entitlements: Removed.
+        * Configurations/WebContent-OSX.entitlements: Removed.
+        * Configurations/WebContent-or-Plugin-OSX-restricted.entitlements: Removed.
+        * Configurations/WebContentService.xcconfig:
+        * Scripts/copy-webcontent-resources-to-private-headers.sh:
+        * Scripts/process-entitlements.sh: Added.
+        * Scripts/process-network-sandbox-entitlements.sh: Removed.
+        * Scripts/process-webcontent-or-plugin-entitlements.sh: Removed.
+        * Scripts/process-webcontent-sandbox-entitlements.sh: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal build after r241127
