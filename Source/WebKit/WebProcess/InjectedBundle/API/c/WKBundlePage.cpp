@@ -303,9 +303,8 @@ void WKBundlePageStopLoading(WKBundlePageRef pageRef)
     WebKit::toImpl(pageRef)->stopLoading();
 }
 
-void WKBundlePageSetDefersLoading(WKBundlePageRef pageRef, bool defersLoading)
+void WKBundlePageSetDefersLoading(WKBundlePageRef, bool)
 {
-    WebKit::toImpl(pageRef)->setDefersLoading(defersLoading);
 }
 
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)

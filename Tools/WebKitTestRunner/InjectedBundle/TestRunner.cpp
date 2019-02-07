@@ -741,9 +741,8 @@ void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnP
     InjectedBundle::singleton().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
-void TestRunner::setDefersLoading(bool shouldDeferLoading)
+void TestRunner::setDefersLoading(bool)
 {
-    WKBundlePageSetDefersLoading(InjectedBundle::singleton().page()->page(), shouldDeferLoading);
 }
 
 bool TestRunner::didReceiveServerRedirectForProvisionalNavigation() const

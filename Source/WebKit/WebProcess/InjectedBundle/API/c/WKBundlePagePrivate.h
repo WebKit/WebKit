@@ -27,6 +27,7 @@
 #define WKBundlePagePrivate_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKGeometry.h>
 #include <WebKit/WKUserContentInjectedFrames.h>
@@ -37,7 +38,7 @@ extern "C" {
 #endif
 
 WK_EXPORT void WKBundlePageStopLoading(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading);
+WK_EXPORT void WKBundlePageSetDefersLoading(WKBundlePageRef page, bool defersLoading) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef page, WKStringRef commandName);
 WK_EXPORT void WKBundlePageClearMainFrameName(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageClose(WKBundlePageRef page);

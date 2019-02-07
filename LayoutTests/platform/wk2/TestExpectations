@@ -535,6 +535,9 @@ platform/mac/fast/AppleScript/001.html
 platform/mac/fast/AppleScript/array.html
 platform/mac/fast/AppleScript/date.html
 
+# setDefersLoading is not supported in WK2.
+loader/load-defer.html [ WontFix ]
+
 # WebKitTestRunner doesn't have objCController
 platform/mac/fast/dom/objc-wrapper-identity.html
 platform/mac/fast/dom/wrapper-classes-objc.html

@@ -693,12 +693,11 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 
 - (BOOL)_defersLoading
 {
-    return _page->defersLoading();
+    return NO;
 }
 
 - (void)_setDefersLoading:(BOOL)defersLoading
 {
-    _page->setDefersLoading(defersLoading);
 }
 
 - (BOOL)_usesNonPersistentWebsiteDataStore

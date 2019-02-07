@@ -1,3 +1,13 @@
+2019-02-07  Alex Christensen  <achristensen@webkit.org>
+
+        Deprecate WKBundlePageSetDefersLoading
+        https://bugs.webkit.org/show_bug.cgi?id=191394
+
+        Reviewed by Dean Jackson.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setDefersLoading):
+
 2019-02-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Out-of-flow] Use the containing block's padding width when computing min/max width.
