@@ -499,7 +499,7 @@ private:
         case Add:
             handleCommutativity();
             
-            if (m_value->child(0)->opcode() == Add && isInt(m_value->type())) {
+            if (m_value->child(0)->opcode() == Add && m_value->isInteger()) {
                 // Turn this: Add(Add(value, constant1), constant2)
                 // Into this: Add(value, constant1 + constant2)
                 Value* newSum = m_value->child(1)->addConstant(m_proc, m_value->child(0)->child(1));
@@ -532,7 +532,7 @@ private:
             
             // Turn this: Add(otherValue, Add(value, constant))
             // Into this: Add(Add(value, otherValue), constant)
-            if (isInt(m_value->type())
+            if (m_value->isInteger()
                 && !m_value->child(0)->hasInt()
                 && m_value->child(1)->opcode() == Add
                 && m_value->child(1)->child(1)->hasInt()) {
@@ -579,14 +579,29 @@ private:
                 break;
             }
 
-            // Turn this: Integer Add(Sub(0, value), -1)
-            // Into this: BitXor(value, -1)
-            if (m_value->isInteger()
-                && m_value->child(0)->opcode() == Sub
-                && m_value->child(1)->isInt(-1)
-                && m_value->child(0)->child(0)->isInt(0)) {
-                replaceWithNewValue(m_proc.add<Value>(BitXor, m_value->origin(), m_value->child(0)->child(1), m_value->child(1)));
-                break;
+            if (m_value->isInteger()) {
+                // Turn this: Integer Add(value, Neg(otherValue))
+                // Into this: Sub(value, otherValue)
+                if (m_value->child(1)->opcode() == Neg) {
+                    replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0), m_value->child(1)->child(0));
+                    break;
+                }
+
+                // Turn this: Integer Add(Neg(value), otherValue)
+                // Into this: Sub(otherValue, value)
+                if (m_value->child(0)->opcode() == Neg) {
+                    replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(1), m_value->child(0)->child(0));
+                    break;
+                }
+
+                // Turn this: Integer Add(Sub(0, value), -1)
+                // Into this: BitXor(value, -1)
+                if (m_value->child(0)->opcode() == Sub
+                    && m_value->child(1)->isInt(-1)
+                    && m_value->child(0)->child(0)->isInt(0)) {
+                    replaceWithNew<Value>(BitXor, m_value->origin(), m_value->child(0)->child(1), m_value->child(1));
+                    break;
+                }
             }
 
             break;
@@ -599,7 +614,7 @@ private:
                 break;
             }
 
-            if (isInt(m_value->type())) {
+            if (m_value->isInteger()) {
                 // Turn this: Sub(value, constant)
                 // Into this: Add(value, -constant)
                 if (Value* negatedConstant = m_value->child(1)->negConstant(m_proc)) {
@@ -613,6 +628,20 @@ private:
                 // Into this: Neg(value)
                 if (m_value->child(0)->isInt(0)) {
                     replaceWithNew<Value>(Neg, m_value->origin(), m_value->child(1));
+                    break;
+                }
+
+                // Turn this: Sub(value, value)
+                // Into this: 0
+                if (m_value->child(0) == m_value->child(1)) {
+                    replaceWithNewValue(m_proc.addIntConstant(m_value, 0));
+                    break;
+                }
+
+                // Turn this: Sub(value, Neg(otherValue))
+                // Into this: Add(value, otherValue)
+                if (m_value->child(1)->opcode() == Neg) {
+                    replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(1)->child(0));
                     break;
                 }
             }
@@ -634,6 +663,13 @@ private:
                 break;
             }
             
+            // Turn this: Integer Neg(Sub(value, otherValue))
+            // Into this: Sub(otherValue, value)
+            if (m_value->isInteger() && m_value->child(0)->opcode() == Sub) {
+                replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0)->child(1), m_value->child(0)->child(0));
+                break;
+            }
+
             break;
 
         case Mul:
@@ -1199,6 +1235,13 @@ private:
             // Into this: Abs(value)
             if (m_value->child(0)->opcode() == Abs) {
                 replaceWithIdentity(m_value->child(0));
+                break;
+            }
+                
+            // Turn this: Abs(Neg(value))
+            // Into this: Abs(value)
+            if (m_value->child(0)->opcode() == Neg) {
+                replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
 

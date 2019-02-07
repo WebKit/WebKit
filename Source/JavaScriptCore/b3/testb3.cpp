@@ -609,6 +609,36 @@ void testAddImmMem32(int32_t a, int32_t b)
     CHECK(inputOutput == a + b);
 }
 
+void testAddNeg1(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<Value>(proc, Neg, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+    
+    CHECK(compileAndRun<int>(proc, a, b) == (- a) + b);
+}
+
+void testAddNeg2(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Value>(proc, Neg, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a + (- b));
+}
+
 void testAddArgZeroImmZDef()
 {
     Procedure proc;
@@ -1895,6 +1925,36 @@ void testSubArgImm(int64_t a, int64_t b)
             root->appendNew<Const64Value>(proc, Origin(), b)));
 
     CHECK(compileAndRun<int64_t>(proc, a) == a - b);
+}
+
+void testSubNeg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Value>(proc, Neg, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+    
+    CHECK(compileAndRun<int>(proc, a, b) == a - (- b));
+}
+
+void testNegSub(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Neg, Origin(),
+            root->appendNew<Value>(proc, Sub, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == -(a - b));
 }
 
 void testNegValueSubOne(int a)
@@ -3917,7 +3977,19 @@ void testAbsAbsArg(double a)
     Value* secondAbs = root->appendNew<Value>(proc, Abs, Origin(), firstAbs);
     root->appendNewControlValue(proc, Return, Origin(), secondAbs);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(fabs(a))));
+}
+
+void testAbsNegArg(double a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* neg = root->appendNew<Value>(proc, Abs, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
+    root->appendNewControlValue(proc, Return, Origin(), abs);
+    
+    CHECK(isIdentical(compileAndRun<double>(proc, a), fabs(- a)));
 }
 
 void testAbsBitwiseCastArg(double a)
@@ -3997,7 +4069,21 @@ void testAbsAbsArg(float a)
     Value* secondAbs = root->appendNew<Value>(proc, Abs, Origin(), firstAbs);
     root->appendNewControlValue(proc, Return, Origin(), secondAbs);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(a))));
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(fabs(a)))));
+}
+
+void testAbsNegArg(float a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument32 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* argument = root->appendNew<Value>(proc, BitwiseCast, Origin(), argument32);
+    Value* neg = root->appendNew<Value>(proc, Neg, Origin(), argument);
+    Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
+    root->appendNewControlValue(proc, Return, Origin(), abs);
+    
+    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(fabs(- a))));
 }
 
 void testAbsBitwiseCastArg(float a)
@@ -16382,6 +16468,8 @@ void run(const char* filter)
     RUN_BINARY(testAddArgMem32, int32Operands(), int32Operands());
     RUN_BINARY(testAddMemArg32, int32Operands(), int32Operands());
     RUN_BINARY(testAddImmMem32, int32Operands(), int32Operands());
+    RUN_BINARY(testAddNeg1, int32Operands(), int32Operands());
+    RUN_BINARY(testAddNeg2, int32Operands(), int32Operands());
     RUN(testAddArgZeroImmZDef());
     RUN(testAddLoadTwice());
 
@@ -16549,6 +16637,8 @@ void run(const char* filter)
     RUN_BINARY(testSubMemArg, int64Operands(), int64Operands());
     RUN_BINARY(testSubImmMem, int32Operands(), int32Operands());
     RUN_BINARY(testSubMemImm, int32Operands(), int32Operands());
+    RUN_BINARY(testSubNeg, int32Operands(), int32Operands());
+    RUN_BINARY(testNegSub, int32Operands(), int32Operands());
     RUN_UNARY(testNegValueSubOne, int32Operands());
 
     RUN(testSubArgs32(1, 1));
@@ -16905,12 +16995,14 @@ void run(const char* filter)
     RUN_UNARY(testAbsImm, floatingPointOperands<double>());
     RUN_UNARY(testAbsMem, floatingPointOperands<double>());
     RUN_UNARY(testAbsAbsArg, floatingPointOperands<double>());
+    RUN_UNARY(testAbsNegArg, floatingPointOperands<double>());
     RUN_UNARY(testAbsBitwiseCastArg, floatingPointOperands<double>());
     RUN_UNARY(testBitwiseCastAbsBitwiseCastArg, floatingPointOperands<double>());
     RUN_UNARY(testAbsArg, floatingPointOperands<float>());
     RUN_UNARY(testAbsImm, floatingPointOperands<float>());
     RUN_UNARY(testAbsMem, floatingPointOperands<float>());
     RUN_UNARY(testAbsAbsArg, floatingPointOperands<float>());
+    RUN_UNARY(testAbsNegArg, floatingPointOperands<float>());
     RUN_UNARY(testAbsBitwiseCastArg, floatingPointOperands<float>());
     RUN_UNARY(testBitwiseCastAbsBitwiseCastArg, floatingPointOperands<float>());
     RUN_UNARY(testAbsArgWithUselessDoubleConversion, floatingPointOperands<float>());

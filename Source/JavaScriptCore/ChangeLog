@@ -1,3 +1,38 @@
+2019-02-07  Robin Morisset  <rmorisset@apple.com>
+
+        B3ReduceStrength: missing peephole optimizations for Neg and Sub
+        https://bugs.webkit.org/show_bug.cgi?id=194250
+
+        Reviewed by Saam Barati.
+
+        Adds the following optimizations for integers:
+        - Sub(x, x) => 0
+            Already covered by the test testSubArg
+        - Sub(x1, Neg(x2)) => Add (x1, x2)
+            Added test: testSubNeg
+        - Neg(Sub(x1, x2)) => Sub(x2, x1)
+            Added test: testNegSub
+        - Add(Neg(x1), x2) => Sub(x2, x1)
+            Added test: testAddNeg1
+        - Add(x1, Neg(x2)) => Sub(x1, x2)
+            Added test: testAddNeg2
+        Adds the following optimization for floating point values:
+        - Abs(Neg(x)) => Abs(x)
+            Added test: testAbsNegArg
+            Adds the following optimization:
+
+        Also did some trivial refactoring, using m_value->isInteger() everywhere instead of isInt(m_value->type()), and using replaceWithNew<Value> instead of replaceWithNewValue(m_proc.add<Value(..))
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testAddNeg1):
+        (JSC::B3::testAddNeg2):
+        (JSC::B3::testSubNeg):
+        (JSC::B3::testNegSub):
+        (JSC::B3::testAbsAbsArg):
+        (JSC::B3::testAbsNegArg):
+        (JSC::B3::run):
+
 2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use BufferInternal single character StringImpl for SmallStrings
