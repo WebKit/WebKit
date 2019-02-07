@@ -193,7 +193,6 @@ void ImageLoader::updateFromElement()
             newImage = new CachedImage(WTFMove(request), m_element.document().page()->sessionID());
             newImage->setStatus(CachedResource::Pending);
             newImage->setLoading(true);
-            newImage->setOwningCachedResourceLoader(&document.cachedResourceLoader());
             document.cachedResourceLoader().m_documentResources.set(newImage->url(), newImage.get());
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else
