@@ -76,19 +76,6 @@ NamedLineCollection::NamedLineCollection(const RenderStyle& gridContainerStyle, 
     m_autoRepeatTrackListLength = isRowAxis ? gridContainerStyle.gridAutoRepeatColumns().size() : gridContainerStyle.gridAutoRepeatRows().size();
 }
 
-bool NamedLineCollection::isValidNamedLineOrArea(const String& namedLine, const RenderStyle& gridContainerStyle, GridPositionSide side)
-{
-    bool isRowAxis = directionFromSide(side) == ForColumns;
-    auto& gridLineNames = isRowAxis ? gridContainerStyle.namedGridColumnLines() : gridContainerStyle.namedGridRowLines();
-    auto& autoRepeatGridLineNames = isRowAxis ? gridContainerStyle.autoRepeatNamedGridColumnLines() : gridContainerStyle.autoRepeatNamedGridRowLines();
-
-    if (gridLineNames.contains(namedLine) || autoRepeatGridLineNames.contains(namedLine))
-        return true;
-
-    String implicitName = implicitNamedGridLineForSide(namedLine, side);
-    return gridLineNames.contains(implicitName) || autoRepeatGridLineNames.contains(implicitName);
-}
-
 bool NamedLineCollection::hasNamedLines() const
 {
     return m_namedLinesIndexes || m_autoRepeatNamedLinesIndexes;
@@ -148,7 +135,7 @@ unsigned NamedLineCollection::firstPosition() const
     return std::min(m_namedLinesIndexes->at(firstLine), m_autoRepeatNamedLinesIndexes->at(firstLine) + m_insertionPoint);
 }
 
-static void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
+static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
 {
     bool isForColumns = direction == ForColumns;
     initialPosition = isForColumns ? gridItem.style().gridItemColumnStart() : gridItem.style().gridItemRowStart();
@@ -158,15 +145,6 @@ static void adjustGridPositionsFromStyle(const RenderStyle& gridContainerStyle, 
     // overwrite the specified values.
     if (initialPosition.isSpan() && finalPosition.isSpan())
         finalPosition.setAutoPosition();
-
-    if (gridItem.isOutOfFlowPositioned()) {
-        // Early detect the case of non existing named grid lines for positioned items.
-        if (initialPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(initialPosition.namedGridLine(), gridContainerStyle, GridPositionsResolver::initialPositionSide(direction)))
-            initialPosition.setAutoPosition();
-
-        if (finalPosition.isNamedGridArea() && !NamedLineCollection::isValidNamedLineOrArea(finalPosition.namedGridLine(), gridContainerStyle, GridPositionsResolver::finalPositionSide(direction)))
-            finalPosition.setAutoPosition();
-    }
 
     // If the grid item has an automatic position and a grid span for a named line in a given dimension, instead treat the grid span as one.
     if (initialPosition.isAuto() && finalPosition.isSpan() && !finalPosition.namedGridLine().isNull())
@@ -302,10 +280,10 @@ GridPositionSide GridPositionsResolver::finalPositionSide(GridTrackSizingDirecti
     return direction == ForColumns ? ColumnEndSide : RowEndSide;
 }
 
-unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction)
+unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
     GridPosition initialPosition, finalPosition;
-    adjustGridPositionsFromStyle(gridContainerStyle, gridItem, direction, initialPosition, finalPosition);
+    adjustGridPositionsFromStyle(gridItem, direction, initialPosition, finalPosition);
 
     // This method will only be used when both positions need to be resolved against the opposite one.
     ASSERT(initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition());
@@ -357,7 +335,6 @@ static int resolveGridPositionFromStyle(const RenderStyle& gridContainerStyle, c
         if (explicitLines.hasNamedLines())
             return explicitLines.firstPosition();
 
-        ASSERT(!NamedLineCollection::isValidNamedLineOrArea(namedGridLine, gridContainerStyle, side));
         // If none of the above works specs mandate to assume that all the lines in the implicit grid have this name.
         return lastLine + 1;
     }
@@ -374,7 +351,7 @@ static int resolveGridPositionFromStyle(const RenderStyle& gridContainerStyle, c
 GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderStyle& gridContainerStyle, const RenderBox& gridItem, GridTrackSizingDirection direction, unsigned autoRepeatTracksCount)
 {
     GridPosition initialPosition, finalPosition;
-    adjustGridPositionsFromStyle(gridContainerStyle, gridItem, direction, initialPosition, finalPosition);
+    adjustGridPositionsFromStyle(gridItem, direction, initialPosition, finalPosition);
 
     GridPositionSide initialSide = initialPositionSide(direction);
     GridPositionSide finalSide = finalPositionSide(direction);

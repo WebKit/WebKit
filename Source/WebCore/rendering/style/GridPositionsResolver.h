@@ -48,8 +48,6 @@ class NamedLineCollection {
 public:
     NamedLineCollection(const RenderStyle&, const String& namedLine, GridTrackSizingDirection, unsigned lastLine, unsigned autoRepeatTracksCount);
 
-    static bool isValidNamedLineOrArea(const String& namedLine, const RenderStyle&, GridPositionSide);
-
     bool hasNamedLines() const;
     unsigned firstPosition() const;
 
@@ -72,7 +70,7 @@ class GridPositionsResolver {
 public:
     static GridPositionSide initialPositionSide(GridTrackSizingDirection);
     static GridPositionSide finalPositionSide(GridTrackSizingDirection);
-    static unsigned spanSizeForAutoPlacedItem(const RenderStyle&, const RenderBox&, GridTrackSizingDirection);
+    static unsigned spanSizeForAutoPlacedItem(const RenderBox&, GridTrackSizingDirection);
     static GridSpan resolveGridPositionsFromStyle(const RenderStyle&, const RenderBox&, GridTrackSizingDirection, unsigned autoRepeatTracksCount);
     static unsigned explicitGridColumnCount(const RenderStyle&, unsigned autoRepeatColumnsCount);
     static unsigned explicitGridRowCount(const RenderStyle&, unsigned autoRepeatRowsCount);
