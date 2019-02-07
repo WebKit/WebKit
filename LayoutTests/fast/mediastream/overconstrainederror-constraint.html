@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>OverConstrainedError.constraint testing</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+
+        <script>
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+if (window.internals)
+    window.internals.setMockMediaCaptureDevicesEnabled(true);
+
+promise_test(async () => {
+    return navigator.mediaDevices.getUserMedia({audio: {deviceId: {exact:"none"}}}).then(
+        () => assert_not_reached("gum should fail"),
+        (e) => {
+            assert_true(e instanceof OverconstrainedError);
+            assert_equals(e.constraint, "", "constraint should be the empty string");
+        }
+    );
+}, "Before grant");
+
+promise_test(async(test) => {
+    await navigator.mediaDevices.getUserMedia({audio: true});
+    return navigator.mediaDevices.getUserMedia({audio: {deviceId: {exact:"none"}}}).then(
+        () => assert_not_reached("gum should fail"),
+        (e) => {
+            assert_true(e instanceof OverconstrainedError);
+            assert_equals(e.constraint, "deviceId", "constraint should be deviceId");
+        }
+    );
+}, "After grant");
+        </script>
+    </body>
+</html>
