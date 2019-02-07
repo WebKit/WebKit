@@ -30,6 +30,7 @@
 #include "FetchRequest.h"
 
 #include "HTTPParsers.h"
+#include "JSAbortSignal.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
@@ -159,8 +160,14 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     if (optionsResult.hasException())
         return optionsResult.releaseException();
 
-    if (init.signal && init.signal.value())
-        m_signal->follow(*init.signal.value());
+    if (init.signal) {
+        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
+            m_signal->follow(*signal);
+        else if (!init.signal.isUndefinedOrNull())  {
+            ASCIILiteral consoleMessage { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
+            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+        }
+    }
 
     if (init.headers) {
         auto fillResult = m_headers->fill(*init.headers);
@@ -191,11 +198,16 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     if (optionsResult.hasException())
         return optionsResult.releaseException();
 
-    if (init.signal) {
-        if (init.signal.value())
-            m_signal->follow(*init.signal.value());
+    if (init.signal && !init.signal.isUndefined()) {
+        if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
+            m_signal->follow(*signal);
+        else if (!init.signal.isNull()) {
+            ASCIILiteral consoleMessage { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
+            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+        }
+
     } else
-        m_signal->follow(input.m_signal);
+        m_signal->follow(input.m_signal.get());
 
     if (init.headers) {
         auto fillResult = m_headers->fill(*init.headers);

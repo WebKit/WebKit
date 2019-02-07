@@ -1,3 +1,14 @@
+2019-02-07  Youenn Fablet  <youenn@apple.com>
+
+        Unable to sign in leetcode.
+        https://bugs.webkit.org/show_bug.cgi?id=194366
+        rdar://problem/47259025.
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/fetch/request-abort-expected.txt: Added.
+        * http/wpt/fetch/request-abort.html: Added.
+
 2019-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKBundlePageSetDefersLoading
