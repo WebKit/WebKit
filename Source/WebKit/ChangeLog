@@ -1,3 +1,18 @@
+2019-02-07  Alex Christensen  <achristensen@webkit.org>
+
+        Shrink and hyphenate safe browsing warning text on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=194361
+        <rdar://problem/47466549>
+
+        Reviewed by Geoffrey Garen.
+
+        Some internationalizations use long words that didn't fit on small watches.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (fontOfSize):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+
 2019-02-07  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Implement GStreamer based holepunch
