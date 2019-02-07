@@ -40,7 +40,7 @@ using namespace HTMLNames;
 
 inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , ActiveDOMObject(&document)
+    , ActiveDOMObject(document)
 {
     ASSERT(hasTagName(marqueeTag));
 }

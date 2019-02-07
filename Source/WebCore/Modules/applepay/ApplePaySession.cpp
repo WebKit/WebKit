@@ -407,7 +407,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
 }
 
 ApplePaySession::ApplePaySession(Document& document, unsigned version, ApplePaySessionPaymentRequest&& paymentRequest)
-    : ActiveDOMObject { &document }
+    : ActiveDOMObject { document }
     , m_paymentRequest { WTFMove(paymentRequest) }
     , m_version { version }
 {

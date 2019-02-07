@@ -73,7 +73,7 @@ std::unique_ptr<MediaRecorderPrivate> MediaRecorder::getPrivateImpl(const MediaS
 }
 
 MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, std::unique_ptr<MediaRecorderPrivate>&& privateImpl, Options&& option)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_options(WTFMove(option))
     , m_stream(WTFMove(stream))
     , m_private(WTFMove(privateImpl))

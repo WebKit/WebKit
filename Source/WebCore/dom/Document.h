@@ -2140,6 +2140,11 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
     return &document().contextDocument();
 }
 
+inline ActiveDOMObject::ActiveDOMObject(Document& document)
+    : ActiveDOMObject(static_cast<ScriptExecutionContext*>(&document.contextDocument()))
+{
+}
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
