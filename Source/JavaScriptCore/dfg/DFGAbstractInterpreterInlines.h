@@ -341,7 +341,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 value.setNonCellType(SpecBoolean);
                 break;
             case FlushedCell:
-                value.setType(m_graph, SpecCell);
+                value.setType(m_graph, SpecCellCheck);
                 break;
             case FlushedJSValue:
                 value.makeBytecodeTop();

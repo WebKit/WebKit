@@ -1,3 +1,18 @@
+2019-02-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] InitializeEntrypointArguments should produce SpecCellCheck if FlushFormat is FlushedCell
+        https://bugs.webkit.org/show_bug.cgi?id=194369
+        <rdar://problem/47813087>
+
+        Reviewed by Saam Barati.
+
+        InitializeEntrypointArguments says SpecCell if the FlushFormat is FlushedCell. But this actually has
+        JSEmpty if it is TDZ. This incorrectly proved type information removes necessary CheckNotEmpty in
+        constant folding phase.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-02-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: don't send the entire function string with each event listener
