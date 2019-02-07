@@ -52,28 +52,18 @@ private:
 
 SmallStringsStorage::SmallStringsStorage()
 {
-    LChar* characterBuffer = 0;
-    auto baseString = StringImpl::createUninitialized(singleCharacterStringCount, characterBuffer);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
-        characterBuffer[i] = i;
-        m_reps[i] = AtomicStringImpl::add(StringImpl::createSubstringSharingImpl(baseString.get(), i, 1).ptr());
+        const LChar string[] = { static_cast<LChar>(i) };
+        m_reps[i] = AtomicStringImpl::add(StringImpl::create(string, 1).ptr());
     }
 }
 
 SmallStrings::SmallStrings()
-    : m_emptyString(0)
-#define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) , m_##name(0)
-    JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
-#undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
-    , m_objectStringStart(nullptr)
-    , m_nullObjectString(nullptr)
-    , m_undefinedObjectString(nullptr)
-    , m_needsToBeVisited(true)
 {
     COMPILE_ASSERT(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
 
     for (unsigned i = 0; i < singleCharacterStringCount; ++i)
-        m_singleCharacterStrings[i] = 0;
+        m_singleCharacterStrings[i] = nullptr;
 }
 
 void SmallStrings::initializeCommonStrings(VM& vm)

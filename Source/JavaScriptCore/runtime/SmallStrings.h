@@ -131,16 +131,16 @@ private:
 
     void initialize(VM*, JSString*&, const char* value);
 
-    JSString* m_emptyString;
-#define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name;
+    JSString* m_emptyString { nullptr };
+#define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name { nullptr };
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION
-    JSString* m_objectStringStart;
-    JSString* m_nullObjectString;
-    JSString* m_undefinedObjectString;
-    JSString* m_singleCharacterStrings[singleCharacterStringCount];
+    JSString* m_objectStringStart { nullptr };
+    JSString* m_nullObjectString { nullptr };
+    JSString* m_undefinedObjectString { nullptr };
+    JSString* m_singleCharacterStrings[singleCharacterStringCount] { nullptr };
     std::unique_ptr<SmallStringsStorage> m_storage;
-    bool m_needsToBeVisited;
+    bool m_needsToBeVisited { true };
 };
 
 } // namespace JSC
