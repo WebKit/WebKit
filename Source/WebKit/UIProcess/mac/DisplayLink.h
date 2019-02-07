@@ -41,6 +41,7 @@ namespace WebKit {
 class WebProcessProxy;
     
 class DisplayLink {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DisplayLink(WebCore::PlatformDisplayID, WebProcessProxy&);
     ~DisplayLink();
