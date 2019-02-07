@@ -250,6 +250,7 @@ struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 struct LoadParameters;
 struct PrintInfo;
+struct WebAutocorrectionContext;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebSelectionData;
@@ -647,7 +648,7 @@ public:
     void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(CallbackID);
-    void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
+    void autocorrectionContextSync(CompletionHandler<void(WebAutocorrectionContext&&)>&&);
     void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
@@ -1189,6 +1190,7 @@ private:
 
     void sendPositionInformation(InteractionInformationAtPosition&&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
+    WebAutocorrectionContext autocorrectionContext();
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)

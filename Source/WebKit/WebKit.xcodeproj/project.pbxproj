@@ -4510,6 +4510,7 @@
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDragDestinationAction.h; sourceTree = "<group>"; };
+		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
 		F44291911FA59107002CC93E /* _WKAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachment.h; sourceTree = "<group>"; };
 		F44291931FA59311002CC93E /* _WKAttachment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAttachment.mm; sourceTree = "<group>"; };
@@ -5785,6 +5786,7 @@
 				2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */,
 				A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */,
 				A118A9ED1907AD6F00F7C92B /* QuickLookDocumentData.h */,
+				F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */,
 				F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */,
 				F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */,
 				2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */,

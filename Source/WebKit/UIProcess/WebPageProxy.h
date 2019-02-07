@@ -102,6 +102,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "WebAutocorrectionContext.h"
+#endif
+
 OBJC_CLASS NSView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
@@ -640,8 +644,8 @@ public:
     void requestAutocorrectionData(const String& textForAutocorrection, WTF::Function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>&&);
     void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText);
-    void requestAutocorrectionContext(WTF::Function<void (const String&, const String&, const String&, const String&, uint64_t, uint64_t, CallbackBase::Error)>&&);
-    void getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length);
+    void requestAutocorrectionContext(Function<void(const WebAutocorrectionContext&, CallbackBase::Error)>&&);
+    WebAutocorrectionContext autocorrectionContextSync();
     void requestDictationContext(WTF::Function<void (const String&, const String&, const String&, CallbackBase::Error)>&&);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
@@ -1761,7 +1765,7 @@ private:
     void gestureCallback(const WebCore::IntPoint&, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID);
     void touchesCallback(const WebCore::IntPoint&, uint32_t touches, uint32_t flags, CallbackID);
     void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID);
-    void autocorrectionContextCallback(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackID);
+    void autocorrectionContextCallback(const WebAutocorrectionContext&, CallbackID);
     void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);

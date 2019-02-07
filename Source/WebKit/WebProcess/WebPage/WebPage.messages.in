@@ -79,7 +79,7 @@ messages -> WebPage LegacyReceiver {
     ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) LegacySync
     RequestAutocorrectionContext(WebKit::CallbackID callbackID)
-    GetAutocorrectionContext() -> (String beforeContext, String markedText, String selectedText, String afterContext, uint64_t location, uint64_t length) LegacySync
+    AutocorrectionContextSync() -> (struct WebKit::WebAutocorrectionContext context) Delayed
     GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Delayed
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)

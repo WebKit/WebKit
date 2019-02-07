@@ -1,3 +1,54 @@
+2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Modernize autocorrection context code
+        https://bugs.webkit.org/show_bug.cgi?id=194373
+
+        Reviewed by Tim Horton.
+
+        * Shared/ios/WebAutocorrectionContext.h: Added.
+        (WebKit::WebAutocorrectionContext::encode const):
+        (WebKit::WebAutocorrectionContext::decode):
+
+        Introduce a WebAutocorrectionContext struct that encapsulates the individual pieces of autocorrection context.
+        Change to use this instead of a long list of arguments when propagating autocorrection context information over
+        IPC.
+
+        * UIProcess/AutoCorrectionCallback.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (+[WKAutocorrectionContext autocorrectionContextWithContext:]):
+        (+[WKAutocorrectionContext autocorrectionContextWithData:markedText:selectedText:afterText:selectedRangeInMarkedText:]): Deleted.
+
+        Change this constructor to take an entire WebAutocorrectionContext.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::autocorrectionContextCallback):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::autocorrectionContextSync):
+        (WebKit::WebPageProxy::getAutocorrectionContext): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Use Delayed instead of LegacySync.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::autocorrectionContext):
+
+        Renamed from computeAutocorrectionContext. This is now a private method on WebPage that uses the focused or main
+        frame to compute and return a WebAutocorrectionContext.
+
+        (WebKit::WebPage::requestAutocorrectionContext):
+        (WebKit::WebPage::autocorrectionContextSync):
+
+        Renamed getAutocorrectionContext to autocorrectionContextSync.
+
+        (WebKit::computeAutocorrectionContext): Deleted.
+        (WebKit::WebPage::getAutocorrectionContext): Deleted.
+
 2019-02-07  Youenn Fablet  <youenn@apple.com>
 
         Simplify applyConstraints callbacks

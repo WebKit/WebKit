@@ -188,7 +188,7 @@ messages -> WebPageProxy {
     GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackID callbackID)
     TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint32_t flags, WebKit::CallbackID callbackID)
     AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, WebKit::CallbackID callbackID)
-    AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, WebKit::CallbackID callbackID)
+    AutocorrectionContextCallback(struct WebKit::WebAutocorrectionContext context, WebKit::CallbackID callbackID)
     SelectionContextCallback(String selectedText, String beforeText, String afterText, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) LegacySync
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)

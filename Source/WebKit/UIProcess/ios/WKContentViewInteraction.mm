@@ -64,6 +64,7 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
+#import "WebAutocorrectionContext.h"
 #import "WebDataListSuggestionsDropdownIOS.h"
 #import "WebEvent.h"
 #import "WebIOSEventFactory.h"
@@ -271,7 +272,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 @interface WKAutocorrectionContext : UIWKAutocorrectionContext
-+ (WKAutocorrectionContext *)autocorrectionContextWithData:(NSString *)beforeText markedText:(NSString *)markedText selectedText:(NSString *)selectedText afterText:(NSString *)afterText selectedRangeInMarkedText:(NSRange)range;
++ (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)context;
 @end
 
 @interface UITextInteractionAssistant (UITextInteractionAssistant_Internal)
@@ -3393,25 +3394,20 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
+    if (!completionHandler)
+        return;
+
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
     if (useSyncRequest) {
-        String beforeText;
-        String markedText;
-        String selectedText;
-        String afterText;
-        uint64_t location;
-        uint64_t length;
-        _page->getAutocorrectionContext(beforeText, markedText, selectedText, afterText, location, length);
-        completionHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
-    } else {
-        _autocorrectionData.autocorrectionContextHandler = [completionHandler copy];
-        RetainPtr<WKContentView> view = self;
-        _page->requestAutocorrectionContext([view](const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, WebKit::CallbackBase::Error) {
-            view->_autocorrectionData.autocorrectionContextHandler([WKAutocorrectionContext autocorrectionContextWithData:beforeText markedText:markedText selectedText:selectedText afterText:afterText selectedRangeInMarkedText:NSMakeRange(location, length)]);
-        });
+        completionHandler([WKAutocorrectionContext autocorrectionContextWithContext:_page->autocorrectionContextSync()]);
+        return;
     }
+
+    _page->requestAutocorrectionContext([protectedSelf = retainPtr(self), completion = makeBlockPtr(completionHandler)] (auto& context, auto) {
+        completion([WKAutocorrectionContext autocorrectionContextWithContext:context]);
+    });
 }
 
 // UIWebFormAccessoryDelegate
@@ -7093,19 +7089,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WKAutocorrectionContext
 
-+ (WKAutocorrectionContext *)autocorrectionContextWithData:(NSString *)beforeText markedText:(NSString *)markedText selectedText:(NSString *)selectedText afterText:(NSString *)afterText selectedRangeInMarkedText:(NSRange)range
++ (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)webContext
 {
     WKAutocorrectionContext *context = [[WKAutocorrectionContext alloc] init];
 
-    if ([beforeText length])
-        context.contextBeforeSelection = beforeText;
-    if ([selectedText length])
-        context.selectedText = selectedText;
-    if ([markedText length])
-        context.markedText = markedText;
-    if ([afterText length])
-        context.contextAfterSelection = afterText;
-    context.rangeInMarkedText = range;
+    if (!webContext.contextBefore.isEmpty())
+        context.contextBeforeSelection = webContext.contextBefore;
+    if (!webContext.selectedText.isEmpty())
+        context.selectedText = webContext.selectedText;
+    if (!webContext.markedText.isEmpty())
+        context.markedText = webContext.markedText;
+    if (!webContext.contextAfter.isEmpty())
+        context.contextAfterSelection = webContext.contextAfter;
+    context.rangeInMarkedText = NSMakeRange(webContext.location, webContext.length);
     return [context autorelease];
 }
 

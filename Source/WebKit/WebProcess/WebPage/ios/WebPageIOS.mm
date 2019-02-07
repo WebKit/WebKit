@@ -45,6 +45,7 @@
 #import "UserData.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
+#import "WebAutocorrectionContext.h"
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
@@ -1975,13 +1976,19 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
     correctionApplied = true;
 }
 
-static void computeAutocorrectionContext(Frame& frame, String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)
+WebAutocorrectionContext WebPage::autocorrectionContext()
 {
+    String contextBefore;
+    String markedText;
+    String selectedText;
+    String contextAfter;
+    uint64_t location = NSNotFound;
+    uint64_t length = 0;
+
+    auto& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> range;
     VisiblePosition startPosition = frame.selection().selection().start();
     VisiblePosition endPosition = frame.selection().selection().end();
-    location = NSNotFound;
-    length = 0;
     const unsigned minContextWordCount = 3;
     const unsigned minContextLenght = 12;
     const unsigned maxContextLength = 30;
@@ -2035,25 +2042,17 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
                 contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, nextPosition).ptr());
         }
     }
+    return { WTFMove(contextBefore), WTFMove(markedText), WTFMove(selectedText), WTFMove(contextAfter), location, length };
 }
 
 void WebPage::requestAutocorrectionContext(CallbackID callbackID)
 {
-    String contextBefore;
-    String contextAfter;
-    String selectedText;
-    String markedText;
-    uint64_t location;
-    uint64_t length;
-
-    computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
-
-    send(Messages::WebPageProxy::AutocorrectionContextCallback(contextBefore, markedText, selectedText, contextAfter, location, length, callbackID));
+    send(Messages::WebPageProxy::AutocorrectionContextCallback(autocorrectionContext(), callbackID));
 }
 
-void WebPage::getAutocorrectionContext(String& contextBefore, String& markedText, String& selectedText, String& contextAfter, uint64_t& location, uint64_t& length)
+void WebPage::autocorrectionContextSync(CompletionHandler<void(WebAutocorrectionContext&&)>&& completionHandler)
 {
-    computeAutocorrectionContext(m_page->focusController().focusedOrMainFrame(), contextBefore, markedText, selectedText, contextAfter, location, length);
+    completionHandler(autocorrectionContext());
 }
 
 static HTMLAnchorElement* containingLinkElement(Element* element)

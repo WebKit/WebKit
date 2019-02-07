@@ -176,7 +176,6 @@ struct WKAutoCorrectionData {
     CGRect textFirstRect;
     CGRect textLastRect;
     UIWKAutocorrectionCompletionHandler autocorrectionHandler;
-    UIWKAutocorrectionContextHandler autocorrectionContextHandler;
 };
 
 }
