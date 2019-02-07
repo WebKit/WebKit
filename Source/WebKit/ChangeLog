@@ -1,3 +1,22 @@
+2019-02-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unreviewed, rolling out r240759 and r240944.
+
+        Some timer uses are done off the main thread, WebCore::Timer
+        cannot be used
+
+        Reverted changesets:
+
+        "<rdar://problem/47570443> Responsiveness timers are too
+        expensive for frequent events"
+        https://bugs.webkit.org/show_bug.cgi?id=194003
+        https://trac.webkit.org/changeset/240759
+
+        "Use deferrable timer to restart the Responsiveness Timer on
+        each wheel event"
+        https://bugs.webkit.org/show_bug.cgi?id=194135
+        https://trac.webkit.org/changeset/240944
+
 2019-02-06  chris fleizach  <cfleizach@apple.com>
 
         AX:  com.apple.WebKit.WebContent at WebKit: -[WKAccessibilityWebPageObjectBase axObjectCache]

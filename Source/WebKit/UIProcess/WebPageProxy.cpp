@@ -2357,7 +2357,7 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
-    m_process->isResponsiveWithLazyStop();
+    m_process->isResponsive(nullptr);
 }
 
 bool WebPageProxy::shouldProcessWheelEventNow(const WebWheelEvent& event) const

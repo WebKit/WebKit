@@ -284,7 +284,7 @@ private:
     // This snapshot is used to avoid side effects should the plugin run JS during painting.
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
-    WebCore::ResettableOneShotTimer m_pluginSnapshotTimer;
+    WebCore::DeferrableOneShotTimer m_pluginSnapshotTimer;
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC) || PLATFORM(COCOA)
     unsigned m_countSnapshotRetries { 0 };
 #endif

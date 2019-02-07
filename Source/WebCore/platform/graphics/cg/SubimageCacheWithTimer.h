@@ -94,7 +94,7 @@ private:
 
     HashCountedSet<CGImageRef> m_images;
     SubimageCacheHashSet m_cache;
-    ResettableOneShotTimer m_timer;
+    DeferrableOneShotTimer m_timer;
 
     static SubimageCacheWithTimer& subimageCache();
     static bool subimageCacheExists();

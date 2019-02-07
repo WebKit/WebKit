@@ -130,7 +130,7 @@ private:
     bool m_needsWidgetUpdate { false };
     bool m_needsDocumentActivationCallbacks { false };
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
-    ResettableOneShotTimer m_simulatedMouseClickTimer;
+    DeferrableOneShotTimer m_simulatedMouseClickTimer;
     Timer m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
     bool m_createdDuringUserGesture { false };

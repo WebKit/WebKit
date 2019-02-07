@@ -87,8 +87,8 @@ private:
 
     uint64_t m_assertionCount { 0 };
     State m_state { State::Suspended };
-    WebCore::ResettableOneShotTimer m_releaseTimer;
-    WebCore::ResettableOneShotTimer m_suspendAfterBackgroundingTimer;
+    WebCore::DeferrableOneShotTimer m_releaseTimer;
+    WebCore::DeferrableOneShotTimer m_suspendAfterBackgroundingTimer;
 };
 
 class BluetoothProximityAssertion final : public NetworkProximityAssertion {

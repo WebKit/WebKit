@@ -1120,15 +1120,6 @@ void WebProcessProxy::isResponsive(WTF::Function<void(bool isWebProcessResponsiv
     send(Messages::WebProcess::MainThreadPing(), 0);
 }
 
-void WebProcessProxy::isResponsiveWithLazyStop()
-{
-    if (m_isResponsive == NoOrMaybe::No)
-        return;
-
-    responsivenessTimer().startWithLazyStop();
-    send(Messages::WebProcess::MainThreadPing(), 0);
-}
-
 bool WebProcessProxy::isJITEnabled() const
 {
     return processPool().configuration().isJITEnabled();
