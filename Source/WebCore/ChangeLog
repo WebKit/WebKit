@@ -1,5 +1,98 @@
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241130. rdar://problem/47893594
+
+    HTMLMediaElement registers wrong ScriptExecutionContext with its ActiveDOMObject parent class
+    https://bugs.webkit.org/show_bug.cgi?id=194360
+    
+    HTMLMediaElement registers the Document used to create it with ActiveDOMObject, when it should
+    really use that Document's contextDocument(). Rather than just fix this in HTMLMediaElement,
+    make sure that the correct document is used everywhere by adding a new ActiveDOMObject constructor
+    taking a Document&, and making an explicitly deleted Document* constructor to catch any new cases.
+    
+    Reviewed by Geoffrey Garen.
+    
+    * Modules/applepay/ApplePaySession.cpp:
+    (WebCore::ApplePaySession::ApplePaySession):
+    * Modules/mediarecorder/MediaRecorder.cpp:
+    (WebCore::MediaRecorder::MediaRecorder):
+    * Modules/mediastream/MediaDevices.cpp:
+    (WebCore::MediaDevices::MediaDevices):
+    * Modules/mediastream/UserMediaRequest.cpp:
+    (WebCore::UserMediaRequest::UserMediaRequest):
+    * Modules/notifications/Notification.cpp:
+    (WebCore::Notification::Notification):
+    * Modules/paymentrequest/PaymentRequest.cpp:
+    (WebCore::PaymentRequest::PaymentRequest):
+    * Modules/webaudio/AudioContext.cpp:
+    (WebCore::AudioContext::AudioContext):
+    * animation/WebAnimation.cpp:
+    (WebCore::WebAnimation::WebAnimation):
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::FontFaceSet):
+    * dom/ActiveDOMObject.cpp:
+    (WebCore::ActiveDOMObject::ActiveDOMObject):
+    * dom/ActiveDOMObject.h:
+    * dom/Document.h:
+    (WebCore::ActiveDOMObject::ActiveDOMObject):
+    * html/HTMLMarqueeElement.cpp:
+    (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::HTMLMediaElement):
+    * html/HTMLSourceElement.cpp:
+    (WebCore::HTMLSourceElement::HTMLSourceElement):
+    * page/IntersectionObserver.cpp:
+    (WebCore::IntersectionObserver::IntersectionObserver):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241130 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-07  Jer Noble  <jer.noble@apple.com>
+
+            HTMLMediaElement registers wrong ScriptExecutionContext with its ActiveDOMObject parent class
+            https://bugs.webkit.org/show_bug.cgi?id=194360
+
+            HTMLMediaElement registers the Document used to create it with ActiveDOMObject, when it should
+            really use that Document's contextDocument(). Rather than just fix this in HTMLMediaElement,
+            make sure that the correct document is used everywhere by adding a new ActiveDOMObject constructor
+            taking a Document&, and making an explicitly deleted Document* constructor to catch any new cases.
+
+            Reviewed by Geoffrey Garen.
+
+            * Modules/applepay/ApplePaySession.cpp:
+            (WebCore::ApplePaySession::ApplePaySession):
+            * Modules/mediarecorder/MediaRecorder.cpp:
+            (WebCore::MediaRecorder::MediaRecorder):
+            * Modules/mediastream/MediaDevices.cpp:
+            (WebCore::MediaDevices::MediaDevices):
+            * Modules/mediastream/UserMediaRequest.cpp:
+            (WebCore::UserMediaRequest::UserMediaRequest):
+            * Modules/notifications/Notification.cpp:
+            (WebCore::Notification::Notification):
+            * Modules/paymentrequest/PaymentRequest.cpp:
+            (WebCore::PaymentRequest::PaymentRequest):
+            * Modules/webaudio/AudioContext.cpp:
+            (WebCore::AudioContext::AudioContext):
+            * animation/WebAnimation.cpp:
+            (WebCore::WebAnimation::WebAnimation):
+            * css/FontFaceSet.cpp:
+            (WebCore::FontFaceSet::FontFaceSet):
+            * dom/ActiveDOMObject.cpp:
+            (WebCore::ActiveDOMObject::ActiveDOMObject):
+            * dom/ActiveDOMObject.h:
+            * dom/Document.h:
+            (WebCore::ActiveDOMObject::ActiveDOMObject):
+            * html/HTMLMarqueeElement.cpp:
+            (WebCore::HTMLMarqueeElement::HTMLMarqueeElement):
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement):
+            * html/HTMLSourceElement.cpp:
+            (WebCore::HTMLSourceElement::HTMLSourceElement):
+            * page/IntersectionObserver.cpp:
+            (WebCore::IntersectionObserver::IntersectionObserver):
+
+2019-02-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241121. rdar://problem/47893559
 
     Infinite recursion via CachedResource::~CachedResource

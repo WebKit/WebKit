@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class Document;
+
 enum class ReasonForSuspension {
     JavaScriptDebuggerPaused,
     WillDeferLoading,
@@ -114,6 +116,8 @@ public:
 
 protected:
     explicit ActiveDOMObject(ScriptExecutionContext*);
+    explicit ActiveDOMObject(Document*) = delete;
+    explicit ActiveDOMObject(Document&); // Implemented in Document.h
     virtual ~ActiveDOMObject();
 
 private:

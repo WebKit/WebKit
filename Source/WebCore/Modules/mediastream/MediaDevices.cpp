@@ -48,7 +48,7 @@
 namespace WebCore {
 
 inline MediaDevices::MediaDevices(Document& document)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
 {

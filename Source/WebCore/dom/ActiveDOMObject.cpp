@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ActiveDOMObject.h"
 
+#include "Document.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
     , m_suspendIfNeededWasCalled(false)
 #endif
 {
+    ASSERT(!is<Document>(m_scriptExecutionContext) || &downcast<Document>(m_scriptExecutionContext)->contextDocument() == downcast<Document>(m_scriptExecutionContext));
     if (!m_scriptExecutionContext)
         return;
 

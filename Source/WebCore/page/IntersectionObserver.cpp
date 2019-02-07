@@ -106,7 +106,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 }
 
 IntersectionObserver::IntersectionObserver(Document& document, Ref<IntersectionObserverCallback>&& callback, Element* root, LengthBox&& parsedRootMargin, Vector<double>&& thresholds)
-    : ActiveDOMObject(downcast<Document>(callback->scriptExecutionContext()))
+    : ActiveDOMObject(callback->scriptExecutionContext())
     , m_root(root)
     , m_rootMargin(WTFMove(parsedRootMargin))
     , m_thresholds(WTFMove(thresholds))

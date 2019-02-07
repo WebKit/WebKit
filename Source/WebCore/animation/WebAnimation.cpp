@@ -58,7 +58,7 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
 }
 
 WebAnimation::WebAnimation(Document& document)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_readyPromise(makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve))
     , m_finishedPromise(makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve))
 {
