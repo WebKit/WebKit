@@ -46,6 +46,7 @@
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
+#import "WebEventFactory.h"
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKContextMenuElementInfo.h"
@@ -687,22 +688,6 @@ void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(WebC
     }).get()];
 }
 
-static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebEvent::Modifier> modifiers)
-{
-    NSEventModifierFlags flags = 0;
-    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
-        flags |= NSEventModifierFlagShift;
-    if (modifiers.contains(WebEvent::Modifier::ControlKey))
-        flags |= NSEventModifierFlagControl;
-    if (modifiers.contains(WebEvent::Modifier::AltKey))
-        flags |= NSEventModifierFlagOption;
-    if (modifiers.contains(WebEvent::Modifier::MetaKey))
-        flags |= NSEventModifierFlagCommand;
-    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
-        flags |= NSEventModifierFlagCapsLock;
-    return flags;
-}
-
 void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData& data, OptionSet<WebEvent::Modifier> modifiers, API::Object* userInfo)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo)
@@ -713,7 +698,7 @@ void UIDelegate::UIClient::mouseDidMoveOverElement(WebPageProxy&, const WebHitTe
         return;
 
     auto apiHitTestResult = API::HitTestResult::create(data);
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:toNSEventModifierFlags(modifiers) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView mouseDidMoveOverElement:wrapper(apiHitTestResult.get()) withFlags:WebEventFactory::toNSEventModifierFlags(modifiers) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }
 
 static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)

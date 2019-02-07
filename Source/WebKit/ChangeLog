@@ -1,3 +1,26 @@
+2019-02-06  Daniel Bates  <dabates@apple.com>
+
+        Move toNSEventModifierFlags() and toNSButtonNumber() to WebEventFactory.mm
+        https://bugs.webkit.org/show_bug.cgi?id=194321
+
+        Reviewed by Jer Noble.
+
+        Move some code to WebEventFactory so that it can be shared by both WKNavigationAction.mm
+        and UIDelegate.mm among other benefits.
+
+        * Shared/mac/WebEventFactory.h:
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::toNSEventModifierFlags):
+        (WebKit::WebEventFactory::toNSButtonNumber):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction modifierFlags]):
+        (-[WKNavigationAction buttonNumber]):
+        (toNSEventModifierFlags): Deleted.
+        (toNSButtonNumber): Deleted.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::mouseDidMoveOverElement):
+        (WebKit::toNSEventModifierFlags): Deleted.
+
 2019-02-06  Andy Estes  <aestes@apple.com>
 
         [Payment Request] It should be possible to require a phonetic name for shipping contacts

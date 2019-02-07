@@ -462,6 +462,38 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     return WebKeyboardEvent(type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
 
+NSEventModifierFlags WebEventFactory::toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier> modifiers)
+{
+    NSEventModifierFlags modifierFlags = 0;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::CapsLockKey))
+        modifierFlags |= NSEventModifierFlagCapsLock;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
+        modifierFlags |= NSEventModifierFlagShift;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
+        modifierFlags |= NSEventModifierFlagControl;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::AltKey))
+        modifierFlags |= NSEventModifierFlagOption;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
+        modifierFlags |= NSEventModifierFlagCommand;
+    return modifierFlags;
+}
+
+NSInteger WebEventFactory::toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
+{
+    switch (mouseButton) {
+    case WebKit::WebMouseEvent::NoButton:
+        return 0;
+    case WebKit::WebMouseEvent::LeftButton:
+        return 1 << 0;
+    case WebKit::WebMouseEvent::RightButton:
+        return 1 << 1;
+    case WebKit::WebMouseEvent::MiddleButton:
+        return 1 << 2;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 } // namespace WebKit
 
 #endif // USE(APPKIT)

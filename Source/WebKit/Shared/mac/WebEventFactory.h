@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventFactory_h
-#define WebEventFactory_h
+#pragma once
 
 #import "WebEvent.h"
 
 #if USE(APPKIT)
+#if defined(__OBJC__)
+#include <AppKit/AppKit.h>
+#endif
+
 namespace WebCore {
 class PlatformMouseEvent;
 }
@@ -46,9 +49,12 @@ public:
     static WebWheelEvent createWebWheelEvent(NSEvent *, NSView *windowView);
     static WebKeyboardEvent createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
     static bool shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);
+
+#if defined(__OBJC__)
+    static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
+    static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button);
+#endif
 #endif // USE(APPKIT)
 };
 
 } // namespace WebKit
-
-#endif // WebEventFactory_h
