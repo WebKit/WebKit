@@ -1,5 +1,127 @@
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241105. rdar://problem/47893571
+
+    [Payment Request] It should be possible to require a phonetic name for shipping contacts
+    https://bugs.webkit.org/show_bug.cgi?id=194311
+    <rdar://46733045>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebCore:
+    
+    It should be possible to require that a shipping contact has a phonetic name in Payment Request.
+    To accomplish this, move requiredShippingContactFields from ApplePayPaymentRequest to
+    ApplePayRequestBase so that it can be used as part of an Apple Pay payment method data.
+    
+    Since required shipping contact fields can now be specified both in
+    requiredShippingContactFields and PaymentOptions, we merge the required fields from these
+    two sources such that, e.g., email is required if it is specified in either place.
+    
+    So that clients can detect this new feature, the API version number is bumped from 5 to 6.
+    
+    Added test cases to ApplePayRequestShippingContact.https.html and ApplePayRequestShippingContactV3.https.html.
+    
+    * DerivedSources.make:
+    * Modules/applepay/ApplePayPaymentRequest.h:
+    * Modules/applepay/ApplePayPaymentRequest.idl:
+    * Modules/applepay/ApplePayRequestBase.cpp:
+    (WebCore::convertAndValidate):
+    * Modules/applepay/ApplePayRequestBase.h:
+    * Modules/applepay/ApplePayRequestBase.idl:
+    * Modules/applepay/ApplePaySession.cpp:
+    (WebCore::convertAndValidate):
+    * Modules/applepay/PaymentCoordinatorClient.cpp: Added.
+    (WebCore::PaymentCoordinatorClient::supportsVersion):
+    * Modules/applepay/PaymentCoordinatorClient.h:
+    * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+    (WebCore::mergePaymentOptions):
+    (WebCore::ApplePayPaymentHandler::show):
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * loader/EmptyClients.cpp:
+    * testing/MockPaymentContactFields.h: Added.
+    (WebCore::MockPaymentContactFields::MockPaymentContactFields):
+    * testing/MockPaymentContactFields.idl: Added.
+    * testing/MockPaymentCoordinator.cpp:
+    (WebCore::MockPaymentCoordinator::showPaymentUI):
+    (WebCore::MockPaymentCoordinator::supportsVersion): Deleted.
+    * testing/MockPaymentCoordinator.h:
+    * testing/MockPaymentCoordinator.idl:
+    
+    Source/WebKit:
+    
+    * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+    (WebKit::WebPaymentCoordinator::supportsVersion): Deleted.
+    * WebProcess/ApplePay/WebPaymentCoordinator.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebPaymentCoordinatorClient.h:
+    * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+    (WebPaymentCoordinatorClient::supportsVersion): Deleted.
+    
+    LayoutTests:
+    
+    * http/tests/ssl/applepay/ApplePayRequestShippingContact.https-expected.txt:
+    * http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html:
+    * http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https-expected.txt:
+    * http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html:
+    * http/tests/ssl/applepay/PaymentRequest.https-expected.txt:
+    * http/tests/ssl/applepay/PaymentRequest.https.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241105 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-06  Andy Estes  <aestes@apple.com>
+
+            [Payment Request] It should be possible to require a phonetic name for shipping contacts
+            https://bugs.webkit.org/show_bug.cgi?id=194311
+            <rdar://46733045>
+
+            Reviewed by Alex Christensen.
+
+            It should be possible to require that a shipping contact has a phonetic name in Payment Request.
+            To accomplish this, move requiredShippingContactFields from ApplePayPaymentRequest to
+            ApplePayRequestBase so that it can be used as part of an Apple Pay payment method data.
+
+            Since required shipping contact fields can now be specified both in
+            requiredShippingContactFields and PaymentOptions, we merge the required fields from these
+            two sources such that, e.g., email is required if it is specified in either place.
+
+            So that clients can detect this new feature, the API version number is bumped from 5 to 6.
+
+            Added test cases to ApplePayRequestShippingContact.https.html and ApplePayRequestShippingContactV3.https.html.
+
+            * DerivedSources.make:
+            * Modules/applepay/ApplePayPaymentRequest.h:
+            * Modules/applepay/ApplePayPaymentRequest.idl:
+            * Modules/applepay/ApplePayRequestBase.cpp:
+            (WebCore::convertAndValidate):
+            * Modules/applepay/ApplePayRequestBase.h:
+            * Modules/applepay/ApplePayRequestBase.idl:
+            * Modules/applepay/ApplePaySession.cpp:
+            (WebCore::convertAndValidate):
+            * Modules/applepay/PaymentCoordinatorClient.cpp: Added.
+            (WebCore::PaymentCoordinatorClient::supportsVersion):
+            * Modules/applepay/PaymentCoordinatorClient.h:
+            * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+            (WebCore::mergePaymentOptions):
+            (WebCore::ApplePayPaymentHandler::show):
+            * SourcesCocoa.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            * loader/EmptyClients.cpp:
+            * testing/MockPaymentContactFields.h: Added.
+            (WebCore::MockPaymentContactFields::MockPaymentContactFields):
+            * testing/MockPaymentContactFields.idl: Added.
+            * testing/MockPaymentCoordinator.cpp:
+            (WebCore::MockPaymentCoordinator::showPaymentUI):
+            (WebCore::MockPaymentCoordinator::supportsVersion): Deleted.
+            * testing/MockPaymentCoordinator.h:
+            * testing/MockPaymentCoordinator.idl:
+
+2019-02-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241022. rdar://problem/47893580
 
     CoreAudioCaptureSource should not configure its audio unit until it starts producing data
