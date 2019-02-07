@@ -226,7 +226,8 @@
     decisionHandler(WKNavigationActionPolicyCancel);
     
     // And instead load it in the inspected page.
-    _inspectedPage->loadRequest(navigationAction.request);
+    if (_inspectedPage)
+        _inspectedPage->loadRequest(navigationAction.request);
 }
 
 // MARK: WKInspectorWKWebViewDelegate methods
