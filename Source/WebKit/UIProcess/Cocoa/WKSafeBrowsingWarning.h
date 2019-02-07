@@ -57,6 +57,9 @@ using RectType = CGRect;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     WeakObjCPtr<WKSafeBrowsingTextView> _details;
     WeakObjCPtr<ViewType> _box;
+#if PLATFORM(WATCHOS)
+    WeakObjCPtr<UIResponder> _previousFirstResponder;
+#endif
 }
 
 - (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;

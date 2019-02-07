@@ -33,6 +33,11 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 
+#if PLATFORM(WATCHOS)
+#import "UIKitSPI.h"
+#import <PepperUICore/UIScrollView+PUICAdditionsPrivate.h>
+#endif
+
 constexpr CGFloat exclamationPointSize = 30;
 constexpr CGFloat boxCornerRadius = 6;
 #if HAVE(SAFE_BROWSING)
@@ -274,11 +279,21 @@ static void setBackground(ViewType *view, ColorType *color)
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);
         return nil;
     }
-    _completionHandler = WTFMove(completionHandler);
+    _completionHandler = [weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), completionHandler = WTFMove(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& result) mutable {
+#if PLATFORM(WATCHOS)
+        if (auto strongSelf = weakSelf.get())
+            [strongSelf.get()->_previousFirstResponder becomeFirstResponder];
+#endif
+        completionHandler(WTFMove(result));
+    };
     _warning = makeRef(warning);
     setBackground(self, colorForItem(WarningItem::Background, self));
 #if PLATFORM(MAC)
     [self addContent];
+#endif
+
+#if PLATFORM(WATCHOS)
+    self.crownInputScrollDirection = PUICCrownInputScrollDirectionVertical;
 #endif
     return self;
 }
@@ -367,6 +382,11 @@ static void setBackground(ViewType *view, ColorType *color)
 #if !PLATFORM(MAC)
     [self updateContentSize];
 #endif
+#endif
+    
+#if PLATFORM(WATCHOS)
+    self->_previousFirstResponder = [self firstResponder];
+    [self becomeFirstResponder];
 #endif
 }
 
