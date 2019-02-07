@@ -108,11 +108,11 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 
     WidthAndMargin widthAndMargin;
     if (layoutBox.isFloatingPositioned())
-        widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox);
+        widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox, { });
     else if (layoutBox.isInlineBlockBox())
         widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutState, layoutBox);
     else if (layoutBox.replaced())
-        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutState, layoutBox);
+        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutState, layoutBox, { });
     else
         ASSERT_NOT_REACHED();
 
@@ -128,11 +128,11 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     HeightAndMargin heightAndMargin;
     if (layoutBox.isFloatingPositioned())
-        heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox);
+        heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox, { });
     else if (layoutBox.isInlineBlockBox())
         heightAndMargin = Geometry::inlineBlockHeightAndMargin(layoutState, layoutBox);
     else if (layoutBox.replaced())
-        heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutState, layoutBox);
+        heightAndMargin = Geometry::inlineReplacedHeightAndMargin(layoutState, layoutBox, { });
     else
         ASSERT_NOT_REACHED();
 

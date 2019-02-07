@@ -68,21 +68,21 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](Optional<LayoutUnit> usedWidth) {
-        return Geometry::outOfFlowHorizontalGeometry(layoutState, layoutBox, usedWidth);
+    auto compute = [&](UsedHorizontalValues usedValues) {
+        return Geometry::outOfFlowHorizontalGeometry(layoutState, layoutBox, usedValues);
     };
 
     auto horizontalGeometry = compute({ });
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
     if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
-        auto maxHorizontalGeometry = compute(maxWidth);
+        auto maxHorizontalGeometry = compute({ *maxWidth, { } });
         if (horizontalGeometry.widthAndMargin.width > maxHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
     if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
-        auto minHorizontalGeometry = compute(minWidth);
+        auto minHorizontalGeometry = compute({ *minWidth, { } });
         if (horizontalGeometry.widthAndMargin.width < minHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = minHorizontalGeometry;
     }
@@ -98,19 +98,19 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) c
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](Optional<LayoutUnit> usedHeight) {
-        return Geometry::outOfFlowVerticalGeometry(layoutState, layoutBox, usedHeight);
+    auto compute = [&](UsedVerticalValues usedValues) {
+        return Geometry::outOfFlowVerticalGeometry(layoutState, layoutBox, usedValues);
     };
 
     auto verticalGeometry = compute({ });
     if (auto maxHeight = Geometry::computedMaxHeight(layoutState, layoutBox)) {
-        auto maxVerticalGeometry = compute(maxHeight);
+        auto maxVerticalGeometry = compute({ *maxHeight });
         if (verticalGeometry.heightAndMargin.height > maxVerticalGeometry.heightAndMargin.height)
             verticalGeometry = maxVerticalGeometry;
     }
 
     if (auto minHeight = Geometry::computedMinHeight(layoutState, layoutBox)) {
-        auto minVerticalGeometry = compute(minHeight);
+        auto minVerticalGeometry = compute({ *minHeight });
         if (verticalGeometry.heightAndMargin.height < minVerticalGeometry.heightAndMargin.height)
             verticalGeometry = minVerticalGeometry;
     }

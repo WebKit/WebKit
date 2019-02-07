@@ -46,7 +46,7 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.replaced())
-        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot);
+        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot, { });
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
@@ -71,11 +71,11 @@ HeightAndMargin InlineFormattingContext::Geometry::inlineBlockHeightAndMargin(co
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.replaced())
-        return inlineReplacedHeightAndMargin(layoutState, layoutBox);
+        return inlineReplacedHeightAndMargin(layoutState, layoutBox, { });
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
-    return complicatedCases(layoutState, layoutBox);
+    return complicatedCases(layoutState, layoutBox, { });
 }
 
 }

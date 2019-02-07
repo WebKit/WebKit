@@ -299,13 +299,13 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](Optional<LayoutUnit> usedWidth) -> WidthAndMargin {
+    auto compute = [&](UsedHorizontalValues usedValues) -> WidthAndMargin {
 
         if (layoutBox.isInFlow())
-            return Geometry::inFlowWidthAndMargin(layoutState, layoutBox, usedWidth);
+            return Geometry::inFlowWidthAndMargin(layoutState, layoutBox, usedValues);
 
         if (layoutBox.isFloatingPositioned())
-            return Geometry::floatingWidthAndMargin(layoutState, layoutBox, usedWidth);
+            return Geometry::floatingWidthAndMargin(layoutState, layoutBox, usedValues);
 
         ASSERT_NOT_REACHED();
         return { };
@@ -315,13 +315,13 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
     if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
-        auto maxWidthAndMargin = compute(maxWidth);
+        auto maxWidthAndMargin = compute({ *maxWidth, { } });
         if (widthAndMargin.width > maxWidthAndMargin.width)
             widthAndMargin = maxWidthAndMargin;
     }
 
     auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth).valueOr(0);
-    auto minWidthAndMargin = compute(minWidth);
+    auto minWidthAndMargin = compute({ minWidth, { } });
     if (widthAndMargin.width < minWidthAndMargin.width)
         widthAndMargin = minWidthAndMargin;
 
@@ -335,13 +335,13 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
 
-    auto compute = [&](Optional<LayoutUnit> usedHeight) -> HeightAndMargin {
+    auto compute = [&](UsedVerticalValues usedValues) -> HeightAndMargin {
 
         if (layoutBox.isInFlow())
-            return Geometry::inFlowHeightAndMargin(layoutState, layoutBox, usedHeight);
+            return Geometry::inFlowHeightAndMargin(layoutState, layoutBox, usedValues);
 
         if (layoutBox.isFloatingPositioned())
-            return Geometry::floatingHeightAndMargin(layoutState, layoutBox, usedHeight);
+            return Geometry::floatingHeightAndMargin(layoutState, layoutBox, usedValues);
 
         ASSERT_NOT_REACHED();
         return { };
@@ -350,7 +350,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     auto heightAndMargin = compute({ });
     if (auto maxHeight = Geometry::computedMaxHeight(layoutState, layoutBox)) {
         if (heightAndMargin.height > *maxHeight) {
-            auto maxHeightAndMargin = compute(maxHeight);
+            auto maxHeightAndMargin = compute({ *maxHeight });
             // Used height should remain the same.
             ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.height == *maxHeight);
             heightAndMargin = { *maxHeight, maxHeightAndMargin.nonCollapsedMargin };
@@ -359,7 +359,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     if (auto minHeight = Geometry::computedMinHeight(layoutState, layoutBox)) {
         if (heightAndMargin.height < *minHeight) {
-            auto minHeightAndMargin = compute(minHeight);
+            auto minHeightAndMargin = compute({ *minHeight });
             // Used height should remain the same.
             ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.height == *minHeight);
             heightAndMargin = { *minHeight, minHeightAndMargin.nonCollapsedMargin };

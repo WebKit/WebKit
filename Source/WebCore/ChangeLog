@@ -1,3 +1,72 @@
+2019-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Use dedicated data structures for optional used values (input to geometry functions)
+        https://bugs.webkit.org/show_bug.cgi?id=194376
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for being able to pass in the containing block's width as an optional used value.
+        During layout we always have a valid width for the containing block, however it's not the case while computing the preferred width.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin): Deleted.
+        (): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin): Deleted.
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        * layout/LayoutUnits.h:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContext.h:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin): Deleted.
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowWidthAndMargin):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockHeightAndMargin):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
 2019-02-07  Antti Koivisto  <antti@apple.com>
 
         Infinite recursion via CachedResource::~CachedResource

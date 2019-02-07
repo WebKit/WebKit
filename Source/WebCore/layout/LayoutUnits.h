@@ -124,6 +124,15 @@ struct VerticalGeometry {
     HeightAndMargin heightAndMargin;
 };
 
+struct UsedHorizontalValues {
+    Optional<LayoutUnit> width;
+    Optional<UsedHorizontalMargin> margin;
+};
+
+struct UsedVerticalValues {
+    Optional<LayoutUnit> height;
+};
+
 }
 }
 #endif
