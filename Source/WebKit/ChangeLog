@@ -1,3 +1,13 @@
+2019-02-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Permit additional IOKit Properties needed by older Mac Hardware
+        https://bugs.webkit.org/show_bug.cgi?id=194410
+        <rdar://problem/47820620>
+
+        Reviewed by Per Arne Vollan.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-02-07  Brady Eidson  <beidson@apple.com>
 
         Rename the TAKE_DOWNLOAD_ASSERTION macro.

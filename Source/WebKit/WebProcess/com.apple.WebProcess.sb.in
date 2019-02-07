@@ -311,6 +311,7 @@
     (iokit-property "SurfaceList")
     (iokit-property "TimeStampFiltering")
     (iokit-property "Transport")
+    (iokit-property "USBADC") ;; Needed for Audio support on older hardware
     (iokit-property "UserClientEnabled")
     (iokit-property "VRAM,totalMB")
     (iokit-property "WANTS_FRAMES_IGNORED")
@@ -332,11 +333,13 @@
     (iokit-property-regex #"^(device|revision|subsystem-vendor|touch-size)-id")
     (iokit-property "device_type")
     (iokit-property "dpm")
+    (iokit-property "errordb") ;; Needed for OpenGL on older hardware
     (iokit-property "graphic-options")
     (iokit-property "hda-gfx")
     (iokit-property-regex #"^id(Product|Vendor)")
     (iokit-property "iofb_version")
     (iokit-property "image-encrypted")
+    (iokit-property "locationID") ;; Needed for Audio support on older hardware
     (iokit-property "model")
     (iokit-property "mt-device-id")
     (iokit-property "name")
