@@ -1,3 +1,17 @@
+2019-02-07  Timothy Hatcher  <timothy@apple.com>
+
+        Overflow element scrollbar is light for dark mode content.
+        https://bugs.webkit.org/show_bug.cgi?id=194407
+        rdar://problem/45991585
+
+        Reviewed by Beth Dakin.
+
+        Updated tests to look at overflow elements and if dark apearance
+        is used by the scrollbar directly.
+
+        * css-dark-mode/supported-color-schemes-scrollbar-expected.txt:
+        * css-dark-mode/supported-color-schemes-scrollbar.html:
+
 2019-02-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Fix modify-css-property-race.html flakiness

@@ -2552,14 +2552,36 @@ ExceptionOr<String> Internals::repaintRectsAsText() const
     return document->frame()->trackedRepaintRectsAsText();
 }
 
-ExceptionOr<String> Internals::scrollbarOverlayStyle() const
+ExceptionOr<String> Internals::scrollbarOverlayStyle(Node* node) const
 {
-    Document* document = contextDocument();
-    if (!document || !document->view())
+    if (!node)
+        node = contextDocument();
+
+    if (!node)
         return Exception { InvalidAccessError };
 
-    auto& frameView = *document->view();
-    switch (frameView.scrollbarOverlayStyle()) {
+    node->document().updateLayoutIgnorePendingStylesheets();
+
+    ScrollableArea* scrollableArea = nullptr;
+    if (is<Document>(*node)) {
+        auto* frameView = downcast<Document>(node)->view();
+        if (!frameView)
+            return Exception { InvalidAccessError };
+
+        scrollableArea = frameView;
+    } else if (is<Element>(*node)) {
+        auto& element = *downcast<Element>(node);
+        if (!element.renderBox())
+            return Exception { InvalidAccessError };
+
+        scrollableArea = element.renderBox()->layer();
+    } else
+        return Exception { InvalidNodeTypeError };
+
+    if (!scrollableArea)
+        return Exception { InvalidNodeTypeError };
+
+    switch (scrollableArea->scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
         return "default"_str;
     case ScrollbarOverlayStyleDark:
@@ -2570,6 +2592,38 @@ ExceptionOr<String> Internals::scrollbarOverlayStyle() const
 
     ASSERT_NOT_REACHED();
     return "unknown"_str;
+}
+
+ExceptionOr<bool> Internals::scrollbarUsingDarkAppearance(Node* node) const
+{
+    if (!node)
+        node = contextDocument();
+
+    if (!node)
+        return Exception { InvalidAccessError };
+
+    node->document().updateLayoutIgnorePendingStylesheets();
+
+    ScrollableArea* scrollableArea = nullptr;
+    if (is<Document>(*node)) {
+        auto* frameView = downcast<Document>(node)->view();
+        if (!frameView)
+            return Exception { InvalidAccessError };
+
+        scrollableArea = frameView;
+    } else if (is<Element>(*node)) {
+        auto& element = *downcast<Element>(node);
+        if (!element.renderBox())
+            return Exception { InvalidAccessError };
+
+        scrollableArea = element.renderBox()->layer();
+    } else
+        return Exception { InvalidNodeTypeError };
+
+    if (!scrollableArea)
+        return Exception { InvalidNodeTypeError };
+
+    return scrollableArea->useDarkAppearance();
 }
 
 ExceptionOr<String> Internals::scrollingStateTreeAsText() const

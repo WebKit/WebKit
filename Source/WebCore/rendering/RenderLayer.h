@@ -445,6 +445,7 @@ public:
     ScrollableArea* enclosingScrollableArea() const override;
     bool isScrollableOrRubberbandable() override;
     bool hasScrollableOrRubberbandableAncestor() override;
+    bool useDarkAppearance() const final;
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() override;
 #endif

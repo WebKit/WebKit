@@ -3242,6 +3242,11 @@ bool RenderLayer::hasScrollableOrRubberbandableAncestor()
     return false;
 }
 
+bool RenderLayer::useDarkAppearance() const
+{
+    return renderer().useDarkAppearance();
+}
+
 #if ENABLE(CSS_SCROLL_SNAP)
 void RenderLayer::updateSnapOffsets()
 {
