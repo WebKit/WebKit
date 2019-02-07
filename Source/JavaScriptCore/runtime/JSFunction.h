@@ -88,7 +88,7 @@ public:
 
     JS_EXPORT_PRIVATE String name(VM&);
     JS_EXPORT_PRIVATE String displayName(VM&);
-    const String calculatedDisplayName(VM&);
+    JS_EXPORT_PRIVATE const String calculatedDisplayName(VM&);
 
     ExecutableBase* executable() const { return m_executable.get(); }
 

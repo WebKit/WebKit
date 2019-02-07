@@ -80,13 +80,19 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
     _functionTextOrLink()
     {
-        var match = this._eventListener.handlerBody.match(/function ([^\(]+?)\(/);
-        if (match) {
-            var anonymous = false;
-            var functionName = match[1];
-        } else {
-            var anonymous = true;
-            var functionName = WI.UIString("(anonymous function)");
+        let anonymous = false;
+        let functionName = this._eventListener.handlerName;
+
+        // COMPATIBILITY (iOS 12.2): DOM.EventListener.handlerBody was replaced by DOM.EventListener.handlerName.
+        if (!functionName && this._eventListener.handlerBody) {
+            let match = this._eventListener.handlerBody.match(/function ([^\(]+?)\(/);
+            if (match)
+                functionName = match[1];
+        }
+
+        if (!functionName) {
+            anonymous = true;
+            functionName = WI.UIString("(anonymous function)");
         }
 
         if (!this._eventListener.location)

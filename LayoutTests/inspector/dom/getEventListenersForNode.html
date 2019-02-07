@@ -27,13 +27,14 @@ function test() {
                     InspectorTest.log(`Capture: ${eventListener.useCapture}`);
                     InspectorTest.log(`Attribute: ${eventListener.isAttribute}`);
 
+                    if (eventListener.handlerName)
+                        InspectorTest.log(`Handler Name: ${eventListener.handlerName}`);
                     if (eventListener.passive)
                         InspectorTest.log(`Passive: ${eventListener.passive}`);
                     if (eventListener.once)
                         InspectorTest.log(`Once: ${eventListener.once}`);
 
                     InspectorTest.expectThat(eventListener.location, "The Event Listener has a source location.");
-                    InspectorTest.expectThat(eventListener.handlerBody, "The Event Listener has a function.");
 
                     InspectorTest.log("");
                 }
@@ -62,15 +63,24 @@ function test() {
 <body onload="runTest()">
     <p>Testing DOMAgent.getEventListenersForNode.</p>
 
-    <div id="x"></div>
+    <div id="x" onclick="(function xClick(event) { })()"></div>
     <script>
+        class ObjectEventHandler {
+            handleEvent(event) { }
+        }
+
         let element = document.getElementById("x");
-        element.addEventListener("alpha", (event) => {});
-        element.addEventListener("beta", (event) => {}, {once: true});
+        element.addEventListener("A", function xA(event) { });
+        element.addEventListener("B", function xB(event) { }, {once: true});
+        element.addEventListener("C", (event) => { });
+        element.addEventListener("D", { handleEvent(event) { } });
+        element.addEventListener("E", new ObjectEventHandler);
 
-        document.body.addEventListener("alpha", (event) => {}, true);
+        document.body.addEventListener("A", function bodyA(event) { }, true);
+        document.body.addEventListener("B", (event) => {}, true);
 
-        document.addEventListener("alpha", (event) => {}, {passive: true});
+        document.addEventListener("A", function documentA(event) { }, {passive: true});
+        document.addEventListener("B", (event) => {}, {passive: true});
     </script>
 </body>
 </html>

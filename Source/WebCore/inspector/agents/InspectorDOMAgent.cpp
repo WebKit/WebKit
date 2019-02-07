@@ -1663,28 +1663,48 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
 {
     Ref<EventListener> eventListener = registeredEventListener.callback();
 
-    JSC::ExecState* state = nullptr;
-    JSC::JSObject* handler = nullptr;
-    String body;
+    JSC::ExecState* exec = nullptr;
+    JSC::JSObject* handlerObject = nullptr;
+    JSC::JSFunction* handlerFunction = nullptr;
+    String handlerName;
     int lineNumber = 0;
     int columnNumber = 0;
     String scriptID;
-    String sourceName;
     if (is<JSEventListener>(eventListener.get())) {
         auto& scriptListener = downcast<JSEventListener>(eventListener.get());
+
         JSC::JSLockHolder lock(scriptListener.isolatedWorld().vm());
-        state = execStateFromNode(scriptListener.isolatedWorld(), &node->document());
-        handler = scriptListener.jsFunction(node->document());
-        if (handler && state) {
-            body = handler->toString(state)->value(state);
-            if (auto function = JSC::jsDynamicCast<JSC::JSFunction*>(state->vm(), handler)) {
-                if (!function->isHostOrBuiltinFunction()) {
-                    if (auto executable = function->jsExecutable()) {
-                        lineNumber = executable->firstLine() - 1;
-                        columnNumber = executable->startColumn() - 1;
-                        scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
-                        sourceName = executable->sourceURL();
-                    }
+
+        exec = execStateFromNode(scriptListener.isolatedWorld(), &node->document());
+        handlerObject = scriptListener.jsFunction(node->document());
+        if (handlerObject && exec) {
+            handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(exec->vm(), handlerObject);
+
+            if (!handlerFunction) {
+                auto scope = DECLARE_CATCH_SCOPE(exec->vm());
+
+                // If the handler is not actually a function, see if it implements the EventListener interface and use that.
+                auto handleEventValue = handlerObject->get(exec, JSC::Identifier::fromString(exec, "handleEvent"));
+
+                if (UNLIKELY(scope.exception()))
+                    scope.clearException();
+
+                if (handleEventValue)
+                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(exec->vm(), handleEventValue);
+            }
+
+            if (handlerFunction && !handlerFunction->isHostOrBuiltinFunction()) {
+                // If the listener implements the EventListener interface, use the class name instead of
+                // "handleEvent", unless it is a plain object.
+                if (handlerFunction != handlerObject)
+                    handlerName = JSC::JSObject::calculatedClassName(handlerObject);
+                if (handlerName.isEmpty() || handlerName == "Object"_s)
+                    handlerName = handlerFunction->calculatedDisplayName(exec->vm());
+
+                if (auto executable = handlerFunction->jsExecutable()) {
+                    lineNumber = executable->firstLine() - 1;
+                    columnNumber = executable->startColumn() - 1;
+                    scriptID = executable->sourceID() == JSC::SourceProvider::nullID ? emptyString() : String::number(executable->sourceID());
                 }
             }
         }
@@ -1696,12 +1716,11 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         .setUseCapture(registeredEventListener.useCapture())
         .setIsAttribute(eventListener->isAttribute())
         .setNodeId(pushNodePathToFrontend(node))
-        .setHandlerBody(body)
         .release();
-    if (objectGroupId && handler && state) {
-        InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    if (objectGroupId && handlerObject && exec) {
+        InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(exec);
         if (!injectedScript.hasNoValue())
-            value->setHandler(injectedScript.wrapObject(handler, *objectGroupId));
+            value->setHandlerObject(injectedScript.wrapObject(handlerObject, *objectGroupId));
     }
     if (!scriptID.isNull()) {
         auto location = Inspector::Protocol::Debugger::Location::create()
@@ -1710,9 +1729,9 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
             .release();
         location->setColumnNumber(columnNumber);
         value->setLocation(WTFMove(location));
-        if (!sourceName.isEmpty())
-            value->setSourceName(sourceName);
     }
+    if (!handlerName.isEmpty())
+        value->setHandlerName(handlerName);
     if (registeredEventListener.isPassive())
         value->setPassive(true);
     if (registeredEventListener.isOnce())

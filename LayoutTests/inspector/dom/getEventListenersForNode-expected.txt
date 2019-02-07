@@ -3,34 +3,74 @@ Testing DOMAgent.getEventListenersForNode.
 
 == Running test suite: DOM.getEventListenersForNode
 -- Running test case: DOM.getEventListenersForNode.Basic
-Event: alpha
+Event: A
+Node: body
+Capture: true
+Attribute: false
+Handler Name: bodyA
+PASS: The Event Listener has a source location.
+
+Event: B
 Node: body
 Capture: true
 Attribute: false
 PASS: The Event Listener has a source location.
-PASS: The Event Listener has a function.
 
-Event: beta
+Event: E
 Node: div#x
 Capture: false
 Attribute: false
+Handler Name: ObjectEventHandler
+PASS: The Event Listener has a source location.
+
+Event: D
+Node: div#x
+Capture: false
+Attribute: false
+Handler Name: handleEvent
+PASS: The Event Listener has a source location.
+
+Event: C
+Node: div#x
+Capture: false
+Attribute: false
+PASS: The Event Listener has a source location.
+
+Event: B
+Node: div#x
+Capture: false
+Attribute: false
+Handler Name: xB
 Once: true
 PASS: The Event Listener has a source location.
-PASS: The Event Listener has a function.
 
-Event: alpha
+Event: A
 Node: div#x
 Capture: false
 Attribute: false
+Handler Name: xA
 PASS: The Event Listener has a source location.
-PASS: The Event Listener has a function.
 
-Event: alpha
+Event: click
+Node: div#x
+Capture: false
+Attribute: true
+Handler Name: onclick
+PASS: The Event Listener has a source location.
+
+Event: B
 Node: #document
 Capture: false
 Attribute: false
 Passive: true
 PASS: The Event Listener has a source location.
-PASS: The Event Listener has a function.
+
+Event: A
+Node: #document
+Capture: false
+Attribute: false
+Handler Name: documentA
+Passive: true
+PASS: The Event Listener has a source location.
 
 
