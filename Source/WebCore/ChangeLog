@@ -1,5 +1,61 @@
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241137. rdar://problem/47893603
+
+    Unable to sign in leetcode.
+    https://bugs.webkit.org/show_bug.cgi?id=194366
+    rdar://problem/47259025.
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    In case a signal is passed as part of a FetchRequestInit,
+    the IDL binding code is throwing an exception in case signal is not an AbortSignal object.
+    This breaks an AbortSignal shim used in some web sites.
+    Relaxed the IDL binding rule by marking signal as any and doing the conversion in FetchRequest.
+    
+    Test: http/wpt/fetch/request-abort.html
+    Also covered by manually signing in to leetcode.
+    
+    * Modules/fetch/FetchRequest.cpp:
+    (WebCore::FetchRequest::initializeWith):
+    * Modules/fetch/FetchRequestInit.h:
+    (WebCore::FetchRequestInit::hasMembers const):
+    * Modules/fetch/FetchRequestInit.idl:
+    
+    LayoutTests:
+    
+    * http/wpt/fetch/request-abort-expected.txt: Added.
+    * http/wpt/fetch/request-abort.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241137 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-07  Youenn Fablet  <youenn@apple.com>
+
+            Unable to sign in leetcode.
+            https://bugs.webkit.org/show_bug.cgi?id=194366
+            rdar://problem/47259025.
+
+            Reviewed by Chris Dumez.
+
+            In case a signal is passed as part of a FetchRequestInit,
+            the IDL binding code is throwing an exception in case signal is not an AbortSignal object.
+            This breaks an AbortSignal shim used in some web sites.
+            Relaxed the IDL binding rule by marking signal as any and doing the conversion in FetchRequest.
+
+            Test: http/wpt/fetch/request-abort.html
+            Also covered by manually signing in to leetcode.
+
+            * Modules/fetch/FetchRequest.cpp:
+            (WebCore::FetchRequest::initializeWith):
+            * Modules/fetch/FetchRequestInit.h:
+            (WebCore::FetchRequestInit::hasMembers const):
+            * Modules/fetch/FetchRequestInit.idl:
+
+2019-02-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241130. rdar://problem/47893594
 
     HTMLMediaElement registers wrong ScriptExecutionContext with its ActiveDOMObject parent class

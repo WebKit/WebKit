@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 14: FetchRequestInit.signal should be undefined, null or an AbortSignal object.
+CONSOLE MESSAGE: line 28: FetchRequestInit.signal should be undefined, null or an AbortSignal object.
+
+FAIL Request from URL with signal assert_throws: function "() => { new Request("/", {signal: "my signal"}) }" did not throw
+FAIL Request from request with signal assert_throws: function "() => { new Request(request, {signal: "my signal"}) }" did not throw
+
