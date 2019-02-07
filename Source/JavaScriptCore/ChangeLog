@@ -1,3 +1,44 @@
+2019-02-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix more doesGC() for CheckTraps, GetMapBucket, and Switch nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=194399
+        <rdar://problem/47889777>
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix doesGC() for the following nodes:
+
+            CheckTraps:
+                We normally will not emit this node because Options::usePollingTraps() is
+                false by default.  However, as it is implemented now, CheckTraps can GC
+                because it can allocate a TerminatedExecutionException.  If we make the
+                TerminatedExecutionException a singleton allocated at initialization time,
+                doesGC() can return false for CheckTraps.
+                https://bugs.webkit.org/show_bug.cgi?id=194323
+
+            GetMapBucket:
+                Can call operationJSMapFindBucket() or operationJSSetFindBucket(),
+                which calls HashMapImpl::findBucket(), which calls jsMapHash(), which
+                can resolve a rope.
+
+            Switch:
+                If switchData kind is SwitchChar, can call operationResolveRope() .
+                If switchData kind is SwitchString and the child use kind is not StringIdentUse,
+                    can call operationSwitchString() which resolves ropes.
+
+            DirectTailCall:
+            ForceOSRExit:
+            Return:
+            TailCallForwardVarargs:
+            TailCallVarargs:
+            Throw:
+                These are terminal nodes.  It shouldn't really matter what doesGC() returns
+                for them, but following our conservative practice, unless we have a good
+                reason for doesGC() to return false, we should just return true.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-02-07  Robin Morisset  <rmorisset@apple.com>
 
         B3ReduceStrength: missing peephole optimizations for Neg and Sub

@@ -41,8 +41,19 @@ bool doesGC(Graph& graph, Node* node)
         return true;
     
     // Now consider nodes that don't clobber the world but that still may GC. This includes all
-    // nodes. By convention we put world-clobbering nodes in the block of "false" cases but we can
-    // put them anywhere.
+    // nodes. By default, we should assume every node can GC and return true. This includes the
+    // world-clobbering nodes. We should only return false if we have proven that the node cannot
+    // GC. Typical examples of how a node can GC is if the code emitted for the node does any of the
+    // following:
+    //     1. Allocates any objects.
+    //     2. Resolves a rope string, which allocates a string.
+    //     3. Produces a string (which allocates the string) except when we can prove that
+    //        the string will always be one of the pre-allcoated SmallStrings.
+    //     4. Triggers a structure transition (which can allocate a new structure)
+    //        unless it is a known transition between previously allocated structures
+    //        such as between Array types.
+    //     5. Calls to a JS function, which can execute arbitrary code including allocating objects.
+
     switch (node->op()) {
     case JSConstant:
     case DoubleConstant:
@@ -130,7 +141,6 @@ bool doesGC(Graph& graph, Node* node)
     case CompareEq:
     case CompareStrictEq:
     case CompareEqPtr:
-    case TailCallForwardVarargs:
     case ProfileType:
     case ProfileControlFlow:
     case OverridesHasInstance:
@@ -149,20 +159,12 @@ bool doesGC(Graph& graph, Node* node)
     case LogicalNot:
     case Jump:
     case Branch:
-    case Switch:
     case EntrySwitch:
-    case Return:
-    case DirectTailCall:
-    case TailCallVarargs:
-    case Throw:
     case CountExecution:
     case SuperSamplerBegin:
     case SuperSamplerEnd:
-    case ForceOSRExit:
     case CPUIntrinsic:
-    case CheckTraps:
     case NormalizeMapKey:
-    case GetMapBucket:
     case GetMapBucketHead:
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
@@ -257,6 +259,7 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewSet:
         return false;
 
+#if !ASSERT_DISABLED
     case ArrayPush:
     case ArrayPop:
     case PushWithScope:
@@ -278,7 +281,9 @@ bool doesGC(Graph& graph, Node* node)
     case DeleteByVal:
     case DirectCall:
     case DirectConstruct:
+    case DirectTailCall:
     case DirectTailCallInlinedCaller:
+    case ForceOSRExit:
     case GetById:
     case GetByIdDirect:
     case GetByIdDirectFlush:
@@ -287,6 +292,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetByValWithThis:
     case GetDirectPname:
     case GetDynamicVar:
+    case GetMapBucket:
     case HasGenericProperty:
     case HasOwnProperty:
     case HasStructureProperty:
@@ -318,10 +324,14 @@ bool doesGC(Graph& graph, Node* node)
     case RegExpTest:
     case ResolveScope:
     case ResolveScopeForHoistingFuncDeclInEval:
+    case Return:
     case TailCall:
+    case TailCallForwardVarargs:
     case TailCallForwardVarargsInlinedCaller:
     case TailCallInlinedCaller:
+    case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
+    case Throw:
     case ToNumber:
     case ToObject:
     case ToPrimitive:
@@ -378,6 +388,11 @@ bool doesGC(Graph& graph, Node* node)
     case ValueMul:
     case ValueDiv:
     case ValueNegate:
+#else
+    // See comment at the top for why be default for all nodes should be to
+    // return true.
+    default:
+#endif
         return true;
 
     case CallStringConstructor:
@@ -389,6 +404,11 @@ bool doesGC(Graph& graph, Node* node)
         default:
             break;
         }
+        return true;
+
+    case CheckTraps:
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=194323
+        ASSERT(Options::usePollingTraps());
         return true;
 
     case GetIndexedPropertyStorage:
@@ -422,6 +442,22 @@ bool doesGC(Graph& graph, Node* node)
         if (node->child1()->isInt32Constant() && (node->child1()->asUInt32() <= maxSingleCharacterString))
             return false;
         return true;
+
+    case Switch:
+        switch (node->switchData()->kind) {
+        case SwitchCell:
+            ASSERT(graph.m_plan.isFTL());
+            FALLTHROUGH;
+        case SwitchImm:
+            return false;
+        case SwitchChar:
+            return true;
+        case SwitchString:
+            if (node->child1().useKind() == StringIdentUse)
+                return false;
+            ASSERT(node->child1().useKind() == StringUse || node->child1().useKind() == UntypedUse);
+            return true;
+        }
 
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
