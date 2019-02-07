@@ -92,7 +92,7 @@ struct WindowFeatures;
 WEBCORE_EXPORT bool isBackForwardLoadType(FrameLoadType);
 WEBCORE_EXPORT bool isReload(FrameLoadType);
 
-using ContentPolicyDecisionFunction = WTF::Function<void(PolicyAction)>;
+using ContentPolicyDecisionFunction = WTF::Function<void(PolicyAction, PolicyCheckIdentifier)>;
 
 class FrameLoader {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
@@ -224,7 +224,7 @@ public:
 
     void setDefersLoading(bool);
 
-    void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction&&);
+    void checkContentPolicy(const ResourceResponse&, PolicyCheckIdentifier, ContentPolicyDecisionFunction&&);
 
     void didExplicitOpen();
 
