@@ -1,3 +1,13 @@
+2019-02-07  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r241117.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/gtk/compositing/iframes/resizer-expected.txt:
+        * platform/gtk/compositing/rtl/rtl-iframe-absolute-expected.txt:
+        * platform/gtk/compositing/rtl/rtl-iframe-relative-expected.txt:
+
 2019-02-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: don't send the entire function string with each event listener
