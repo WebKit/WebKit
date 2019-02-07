@@ -30,6 +30,7 @@
 
 #include "MediaSourcePrivate.h"
 #include <wtf/Deque.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -51,7 +52,12 @@ class SourceBufferPrivateAVFObjC;
 class TimeRanges;
 class WebCoreDecompressionSession;
 
-class MediaSourcePrivateAVFObjC final : public MediaSourcePrivate {
+class MediaSourcePrivateAVFObjC final
+    : public MediaSourcePrivate
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
     virtual ~MediaSourcePrivateAVFObjC();
@@ -95,6 +101,15 @@ public:
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 #endif
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MediaSourcePrivateAVFObjC"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+
+    const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(++m_nextSourceBufferID); }
+#endif
+
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);
 
@@ -119,6 +134,11 @@ private:
     bool m_isEnded;
 #if ENABLE(ENCRYPTED_MEDIA)
     RefPtr<CDMInstance> m_cdmInstance;
+#endif
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+    uint64_t m_nextSourceBufferID { 0 };
 #endif
 };
 

@@ -46,6 +46,9 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource& paren
     : m_player(parent)
     , m_client(client)
 {
+#if !RELEASE_LOG_DISABLED
+    m_client->setLogIdentifier(m_player.mediaPlayerLogIdentifier());
+#endif
 }
 
 MockMediaSourcePrivate::~MockMediaSourcePrivate()
@@ -178,6 +181,18 @@ Optional<VideoPlaybackQualityMetrics> MockMediaSourcePrivate::videoPlaybackQuali
         0,
     };
 }
+
+#if !RELEASE_LOG_DISABLED
+const Logger& MockMediaSourcePrivate::mediaSourceLogger() const
+{
+    return m_player.mediaPlayerLogger();
+}
+
+const void* MockMediaSourcePrivate::mediaSourceLogIdentifier()
+{
+    return m_player.mediaPlayerLogIdentifier();
+}
+#endif
 
 }
 

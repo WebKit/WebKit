@@ -1,3 +1,185 @@
+2019-02-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] Convert debug-only logging to runtime logging
+        https://bugs.webkit.org/show_bug.cgi?id=194348
+        <rdar://problem/47566449>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this just changes existing logging.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::convertEnumerationToString):
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::~MediaSource):
+        (WebCore::MediaSource::setPrivateAndOpen):
+        (WebCore::MediaSource::addedToRegistry):
+        (WebCore::MediaSource::removedFromRegistry):
+        (WebCore::MediaSource::durationChanged):
+        (WebCore::MediaSource::seekToTime):
+        (WebCore::MediaSource::completeSeek):
+        (WebCore::MediaSource::setLiveSeekableRange):
+        (WebCore::MediaSource::clearLiveSeekableRange):
+        (WebCore::MediaSource::setDuration):
+        (WebCore::MediaSource::setDurationInternal):
+        (WebCore::MediaSource::setReadyState):
+        (WebCore::MediaSource::endOfStream):
+        (WebCore::MediaSource::streamEndedWithError):
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::removeSourceBuffer):
+        (WebCore::MediaSource::isTypeSupported):
+        (WebCore::MediaSource::detachFromElement):
+        (WebCore::MediaSource::attachToElement):
+        (WebCore::MediaSource::openIfInEndedState):
+        (WebCore::MediaSource::suspend):
+        (WebCore::MediaSource::resume):
+        (WebCore::MediaSource::stop):
+        (WebCore::MediaSource::onReadyStateChange):
+        (WebCore::MediaSource::scheduleEvent):
+        (WebCore::MediaSource::logChannel const):
+        (WebCore::MediaSourceInternal::toString): Deleted.
+        * Modules/mediasource/MediaSource.h:
+        (WTF::LogArgument<WebCore::MediaSource::EndOfStreamError>::toString):
+        (WTF::LogArgument<WebCore::MediaSource::ReadyState>::toString):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::~SourceBuffer):
+        (WebCore::SourceBuffer::remove):
+        (WebCore::SourceBuffer::seekToTime):
+        (WebCore::SourceBuffer::appendBufferInternal):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError):
+        (WebCore::removeSamplesFromTrackBuffer):
+        (WebCore::SourceBuffer::removeCodedFrames):
+        (WebCore::SourceBuffer::evictCodedFrames):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::sourceBufferPrivateReenqueSamples):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples):
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::trySignalAllSamplesInTrackEnqueued):
+        (WebCore::SourceBuffer::monitorBufferingRate):
+        (WebCore::SourceBuffer::logChannel const):
+        * Modules/mediasource/SourceBuffer.h:
+        * dom/Document.cpp:
+        (WebCore::messageSourceForWTFLogChannel):
+        (WebCore::Document::didLogMessage):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::convertEnumerationToString):
+        (WebCore::HTMLMediaElement::scheduleCheckPlaybackTargetCompatability):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::scheduleConfigureTextTracks):
+        (WebCore::HTMLMediaElement::scheduleMediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::scheduleUpdatePlayState):
+        (WebCore::HTMLMediaElement::scheduleUpdateMediaState):
+        * platform/ContentType.cpp:
+        (WebCore::ContentType::toJSONString const):
+        * platform/ContentType.h:
+        (WTF::LogArgument<WebCore::ContentType>::toString):
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::toJSONString const):
+        (WTF::LogArgument<WebCore::MediaSample>::toString):
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::toJSONObject const):
+        (WebCore::FloatSize::toJSONString const):
+        * platform/graphics/FloatSize.h:
+        (WTF::LogArgument<WebCore::FloatSize>::toString):
+        * platform/graphics/MediaSourcePrivate.h:
+        (WebCore::MediaSourcePrivate::mediaSourceLogIdentifier):
+        (WTF::LogArgument<WebCore::MediaSourcePrivate::AddStatus>::toString):
+        (WTF::LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus>::toString):
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::sourceBufferLogger const):
+        (WebCore::SourceBufferPrivate::sourceBufferLogIdentifier):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setMuted):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldBufferData):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::mediaPlayerLogIdentifier):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::mediaPlayerLogger):
+        (WTF::LogArgument<WebCore::MediaPlayerPrivateMediaSourceAVFObjC::SeekState>::toString):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::convertEnumerationToString):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVolume):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setMuted):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVisible):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSamples):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setNaturalSize):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setReadyState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::logChannel const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::toJSONString const):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC):
+        (WebCore::MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC):
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        (WebCore::MediaSourcePrivateAVFObjC::logChannel const):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::bufferWasConsumedCallback):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError):
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame):
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState):
+        (WebCore::SourceBufferPrivateAVFObjC::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateAVFObjC::setReadyState):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMSession):
+        (WebCore::SourceBufferPrivateAVFObjC::setCDMInstance):
+        (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError):
+        (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+        (WebCore::SourceBufferPrivateAVFObjC::flush):
+        (WebCore::SourceBufferPrivateAVFObjC::flushVideo):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::bufferWasConsumed):
+        (WebCore::SourceBufferPrivateAVFObjC::setActive):
+        (WebCore::SourceBufferPrivateAVFObjC::willSeek):
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::canSwitchToType):
+        (WebCore::SourceBufferPrivateAVFObjC::setDecompressionSession):
+        (WebCore::SourceBufferPrivateAVFObjC::logChannel const):
+
 2019-02-07  Youenn Fablet  <youenn@apple.com>
 
         Simplify applyConstraints callbacks

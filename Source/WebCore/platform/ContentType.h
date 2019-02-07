@@ -46,10 +46,26 @@ public:
     Vector<String> profiles() const;
     const String& raw() const { return m_type; }
     bool isEmpty() const { return m_type.isEmpty(); }
+
+    String toJSONString() const;
+
 private:
     String m_type;
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<typename Type> struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::ContentType> {
+    static String toString(const WebCore::ContentType& type)
+    {
+        return type.toJSONString();
+    }
+};
+
+} // namespace WTF
 
 #endif // ContentType_h

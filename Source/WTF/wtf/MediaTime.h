@@ -29,6 +29,7 @@
 #pragma once
 
 #include <wtf/FastMalloc.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 #include <cmath>
@@ -111,6 +112,7 @@ public:
     void dump(PrintStream& out) const;
     String toString() const;
     String toJSONString() const;
+    Ref<JSON::Object> toJSONObject() const;
 
     // Make the following casts errors:
     operator double() const = delete;

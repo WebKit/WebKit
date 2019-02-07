@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayerPrivate.h"
+#include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {
@@ -55,6 +56,11 @@ public:
     void setNetworkState(MediaPlayer::NetworkState);
     void waitForSeekCompleted();
     void seekCompleted();
+
+#if !RELEASE_LOG_DISABLED
+    const void* mediaPlayerLogIdentifier() { return m_player->mediaPlayerLogIdentifier(); }
+    const Logger& mediaPlayerLogger() { return m_player->mediaPlayerLogger(); }
+#endif
 
 private:
     // MediaPlayerPrivate Overrides

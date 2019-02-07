@@ -31,6 +31,7 @@
 #import "CDMInstance.h"
 #import "CDMSessionMediaSourceAVFObjC.h"
 #import "ContentType.h"
+#import "Logging.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "SourceBufferPrivateAVFObjC.h"
@@ -55,17 +56,29 @@ MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSour
     : m_player(parent)
     , m_client(client)
     , m_isEnded(false)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(m_player->mediaPlayerLogger())
+    , m_logIdentifier(m_player->mediaPlayerLogIdentifier())
+#endif
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+#if !RELEASE_LOG_DISABLED
+    m_client->setLogIdentifier(m_logIdentifier);
+#endif
 }
 
 MediaSourcePrivateAVFObjC::~MediaSourcePrivateAVFObjC()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     for (auto it = m_sourceBuffers.begin(), end = m_sourceBuffers.end(); it != end; ++it)
         (*it)->clearMediaSource();
 }
 
 MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)
 {
+    DEBUG_LOG(LOGIDENTIFIER, contentType);
+
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = contentType;
@@ -304,6 +317,13 @@ void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPri
         m_sourceBufferWithSelectedVideo->setDecompressionSession(m_player->decompressionSession());
     }
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaSourcePrivateAVFObjC::logChannel() const
+{
+    return LogMediaSource;
+}
+#endif
 
 }
 

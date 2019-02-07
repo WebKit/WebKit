@@ -100,6 +100,7 @@ public:
     bool hasAlpha() const { return flags() & HasAlpha; }
 
     virtual void dump(PrintStream&) const = 0;
+    virtual String toJSONString() const { return { }; }
 };
 
 } // namespace WebCore
@@ -114,6 +115,15 @@ template<> struct EnumTraits<WebCore::MediaSample::VideoRotation> {
         WebCore::MediaSample::VideoRotation::Right,
         WebCore::MediaSample::VideoRotation::Left
     >;
+};
+
+template<typename Type> struct LogArgument;
+template <>
+struct LogArgument<WebCore::MediaSample> {
+    static String toString(const WebCore::MediaSample& sample)
+    {
+        return sample.toJSONString();
+    }
 };
 
 } // namespace WTF

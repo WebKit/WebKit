@@ -32,6 +32,7 @@
 #include "SourceBufferPrivateClient.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -57,7 +58,12 @@ class VideoTextureCopierCV;
 class WebCoreDecompressionSession;
 
 
-class MediaPlayerPrivateMediaSourceAVFObjC : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateMediaSourceAVFObjC
+    : public MediaPlayerPrivateInterface
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
@@ -140,6 +146,22 @@ public:
     bool shouldCheckHardwareSupport() const;
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"; }
+    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    WTFLogChannel& logChannel() const final;
+
+    const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
+    const Logger& mediaPlayerLogger() { return logger(); }
+#endif
+
+    enum SeekState {
+        Seeking,
+        WaitingForAvailableFame,
+        SeekCompleted,
+    };
 
 private:
     // MediaPlayerPrivateInterface
@@ -292,16 +314,12 @@ private:
     double m_rate;
     bool m_playing;
     bool m_seeking;
-    enum SeekState {
-        Seeking,
-        WaitingForAvailableFame,
-        SeekCompleted,
-    };
     SeekState m_seekCompleted { SeekCompleted };
     mutable bool m_loadingProgressed;
     bool m_hasBeenAskedToPaintGL { false };
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
+    bool m_visible { false };
     std::unique_ptr<TextureCacheCV> m_textureCache;
     std::unique_ptr<VideoTextureCopierCV> m_videoTextureCopier;
     RetainPtr<CVOpenGLTextureRef> m_lastTexture;
@@ -310,9 +328,31 @@ private:
     bool m_shouldPlayToTarget { false };
 #endif
     std::unique_ptr<VideoFullscreenLayerManagerObjC> m_videoFullscreenLayerManager;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
+String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);
+
 }
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::MediaPlayerPrivateMediaSourceAVFObjC::SeekState> {
+    static String toString(const WebCore::MediaPlayerPrivateMediaSourceAVFObjC::SeekState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+} // namespace WTF
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 

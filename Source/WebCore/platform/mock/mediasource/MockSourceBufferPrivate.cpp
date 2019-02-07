@@ -289,6 +289,18 @@ MediaTime MockSourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& tim
     return time;
 }
 
+#if !RELEASE_LOG_DISABLED
+const Logger& MockSourceBufferPrivate::sourceBufferLogger() const
+{
+    return m_mediaSource->mediaSourceLogger();
+}
+
+const void* MockSourceBufferPrivate::sourceBufferLogIdentifier()
+{
+    return m_mediaSource->mediaSourceLogIdentifier();
+}
+#endif
+
 }
 
 #endif

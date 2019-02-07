@@ -51,23 +51,33 @@
 
 namespace WebCore {
 
-#if !LOG_DISABLED
-namespace MediaSourceInternal {
-static const char* toString(MediaSource::ReadyState readyState)
+String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue)
 {
-    switch (readyState) {
-    case MediaSource::ReadyState::Closed:
-        return "closed";
-    case MediaSource::ReadyState::Ended:
-        return "ended";
-    case MediaSource::ReadyState::Open:
-        return "open";
-    default:
-        return "(unknown)";
-    }
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("Ok"),
+        MAKE_STATIC_STRING_IMPL("NotSupported"),
+        MAKE_STATIC_STRING_IMPL("ReachedIdLimit"),
+    };
+    static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::Ok) == 0, "MediaSourcePrivate::AddStatus::Ok is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::NotSupported) == 1, "MediaSourcePrivate::AddStatus::NotSupported is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::AddStatus::ReachedIdLimit) == 2, "MediaSourcePrivate::AddStatus::ReachedIdLimit is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
 }
+
+String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("EosNoError"),
+        MAKE_STATIC_STRING_IMPL("EosNetworkError"),
+        MAKE_STATIC_STRING_IMPL("EosDecodeError"),
+    };
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNoError) == 0, "MediaSourcePrivate::EndOfStreamStatus::EosNoError is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNetworkError) == 1, "MediaSourcePrivate::EndOfStreamStatus::EosNetworkError is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosDecodeError) == 2, "MediaSourcePrivate::EndOfStreamStatus::EosDecodeError is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
 }
-#endif
 
 URLRegistry* MediaSource::s_registry;
 
@@ -89,20 +99,23 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
     , m_asyncEventQueue(*this)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(downcast<Document>(context).logger())
+#endif
 {
-    LOG(MediaSource, "MediaSource::MediaSource %p", this);
     m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
     m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
 }
 
 MediaSource::~MediaSource()
 {
-    LOG(MediaSource, "MediaSource::~MediaSource %p", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
     ASSERT(isClosed());
 }
 
 void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate)
 {
+    DEBUG_LOG(LOGIDENTIFIER);
     ASSERT(!m_private);
     ASSERT(m_mediaElement);
     m_private = WTFMove(mediaSourcePrivate);
@@ -133,11 +146,13 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 
 void MediaSource::addedToRegistry()
 {
+    DEBUG_LOG(LOGIDENTIFIER);
     setPendingActivity(*this);
 }
 
 void MediaSource::removedFromRegistry()
 {
+    DEBUG_LOG(LOGIDENTIFIER);
     unsetPendingActivity(*this);
 }
 
@@ -148,6 +163,7 @@ MediaTime MediaSource::duration() const
 
 void MediaSource::durationChanged(const MediaTime& duration)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, duration);
     m_duration = duration;
 }
 
@@ -210,6 +226,8 @@ void MediaSource::seekToTime(const MediaTime& time)
     if (isClosed())
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, time);
+
     // 2.4.3 Seeking
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#mediasource-seeking
 
@@ -227,7 +245,6 @@ void MediaSource::seekToTime(const MediaTime& time)
         // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
         // than HAVE_METADATA.
-        LOG(MediaSource, "MediaSource::seekToTime(%p) - waitForSeekCompleted()", this);
         m_private->waitForSeekCompleted();
         return;
     }
@@ -250,6 +267,8 @@ void MediaSource::completeSeek()
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#mediasource-seeking
 
     ASSERT(m_pendingSeekTime.isValid());
+
+    ALWAYS_LOG(LOGIDENTIFIER, m_pendingSeekTime);
 
     // 2. The media element resets all decoders and initializes each one with data from the appropriate
     // initialization segment.
@@ -310,6 +329,8 @@ ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
     // W3C Editor's Draft 16 September 2016
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-mediasource-setliveseekablerange
 
+    ALWAYS_LOG(LOGIDENTIFIER, "start = ", start, ", end = ", end);
+
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
         return Exception { InvalidStateError };
@@ -329,6 +350,8 @@ ExceptionOr<void> MediaSource::clearLiveSeekableRange()
 {
     // W3C Editor's Draft 16 September 2016
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-mediasource-clearliveseekablerange
+
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     // If the readyState attribute is not "open" then throw an InvalidStateError exception and abort these steps.
     if (!isOpen())
@@ -475,6 +498,8 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
     // 2.1 Attributes - Duration
     // https://www.w3.org/TR/2016/REC-media-source-20161117/#attributes
 
+    ALWAYS_LOG(LOGIDENTIFIER, duration);
+
     // On setting, run the following steps:
     // 1. If the value being set is negative or NaN then throw a TypeError exception and abort these steps.
     if (duration < 0.0 || std::isnan(duration))
@@ -527,9 +552,9 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 
     // 5. Update duration to new duration.
     m_duration = newDuration;
+    ALWAYS_LOG(LOGIDENTIFIER, duration);
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%s)", this, duration.toString().utf8().data());
     m_private->durationChanged();
 
     return { };
@@ -538,8 +563,6 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 void MediaSource::setReadyState(ReadyState state)
 {
     auto oldState = readyState();
-    LOG(MediaSource, "MediaSource::setReadyState(%p) : %s -> %s", this, MediaSourceInternal::toString(oldState), MediaSourceInternal::toString(state));
-
     if (oldState == state)
         return;
 
@@ -550,6 +573,8 @@ void MediaSource::setReadyState(ReadyState state)
 
 ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-endOfStream-void-EndOfStreamError-error
     // 1. If the readyState attribute is not in the "open" state then throw an
     // InvalidStateError exception and abort these steps.
@@ -569,7 +594,13 @@ ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
 
 void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
 {
-    LOG(MediaSource, "MediaSource::streamEndedWithError(%p)", this);
+#if !RELEASE_LOG_DISABLED
+    if (error)
+        ALWAYS_LOG(LOGIDENTIFIER, error.value());
+    else
+        ALWAYS_LOG(LOGIDENTIFIER);
+#endif
+
     if (isClosed())
         return;
 
@@ -632,7 +663,7 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
 
 ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 {
-    LOG(MediaSource, "MediaSource::addSourceBuffer(%s) %p", type.ascii().data(), this);
+    DEBUG_LOG(LOGIDENTIFIER, type);
 
     // 2.2 http://www.w3.org/TR/media-source/#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
     // When this method is invoked, the user agent must run the following steps:
@@ -662,6 +693,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     }
 
     auto buffer = SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), this);
+    DEBUG_LOG(LOGIDENTIFIER, "created SourceBuffer");
 
     // 6. Set the generate timestamps flag on the new object to the value in the "Generate Timestamps Flag"
     // column of the byte stream format registry [MSE-REGISTRY] entry that is associated with type.
@@ -686,7 +718,8 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
 ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
 {
-    LOG(MediaSource, "MediaSource::removeSourceBuffer() %p", this);
+    DEBUG_LOG(LOGIDENTIFIER);
+
     Ref<SourceBuffer> protect(buffer);
 
     // 2. If sourceBuffer specifies an object that is not in sourceBuffers then
@@ -835,8 +868,6 @@ ExceptionOr<void> MediaSource::removeSourceBuffer(SourceBuffer& buffer)
 
 bool MediaSource::isTypeSupported(const String& type)
 {
-    LOG(MediaSource, "MediaSource::isTypeSupported(%s)", type.ascii().data());
-
     // Section 2.2 isTypeSupported() method steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type
     // 1. If type is an empty string, then return false.
@@ -882,6 +913,8 @@ bool MediaSource::isEnded() const
 
 void MediaSource::detachFromElement(HTMLMediaElement& element)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     ASSERT_UNUSED(element, m_mediaElement == &element);
 
     // 2.4.2 Detaching from a media element
@@ -929,6 +962,8 @@ void MediaSource::openIfInEndedState()
     if (m_readyState != ReadyState::Ended)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     setReadyState(ReadyState::Open);
     m_private->unmarkEndOfStream();
 }
@@ -941,6 +976,8 @@ bool MediaSource::hasPendingActivity() const
 
 void MediaSource::suspend(ReasonForSuspension reason)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, static_cast<int>(reason));
+
     switch (reason) {
     case ReasonForSuspension::PageCache:
     case ReasonForSuspension::PageWillBeSuspended:
@@ -955,11 +992,15 @@ void MediaSource::suspend(ReasonForSuspension reason)
 
 void MediaSource::resume()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     m_asyncEventQueue.resume();
 }
 
 void MediaSource::stop()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     m_asyncEventQueue.close();
     if (m_mediaElement)
         m_mediaElement->detachMediaSource();
@@ -979,6 +1020,8 @@ const char* MediaSource::activeDOMObjectName() const
 
 void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "old state = ", oldState, ", new state = ", newState);
+
     for (auto& buffer : *m_sourceBuffers)
         buffer->readyStateChanged();
 
@@ -1029,6 +1072,8 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 
 void MediaSource::scheduleEvent(const AtomicString& eventName)
 {
+    DEBUG_LOG(LOGIDENTIFIER, "scheduling '", eventName, "'");
+
     auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
     event->setTarget(this);
 
@@ -1061,6 +1106,19 @@ void MediaSource::regenerateActiveSourceBuffers()
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(true);
 }
+
+#if !RELEASE_LOG_DISABLED
+void MediaSource::setLogIdentifier(const void* identifier)
+{
+    m_logIdentifier = identifier;
+    ALWAYS_LOG(LOGIDENTIFIER);
+}
+
+WTFLogChannel& MediaSource::logChannel() const
+{
+    return LogMediaSource;
+}
+#endif
 
 }
 

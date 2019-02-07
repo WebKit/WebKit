@@ -311,4 +311,18 @@ RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
 #endif
 }
 
+String MediaSampleAVFObjC::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    object->setObject("pts"_s, presentationTime().toJSONObject());
+    object->setObject("opts"_s, outputPresentationTime().toJSONObject());
+    object->setObject("dts"_s, decodeTime().toJSONObject());
+    object->setObject("duration"_s, duration().toJSONObject());
+    object->setInteger("flags"_s, static_cast<unsigned>(flags()));
+    object->setObject("presentationSize"_s, presentationSize().toJSONObject());
+
+    return object->toJSONString();
+}
+
 }

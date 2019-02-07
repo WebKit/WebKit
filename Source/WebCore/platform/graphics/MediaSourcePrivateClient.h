@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "PlatformTimeRanges.h"
+#include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -45,6 +46,10 @@ public:
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
     virtual void seekToTime(const MediaTime&) = 0;
     virtual void monitorSourceBuffers() = 0;
+
+#if !RELEASE_LOG_DISABLED
+    virtual void setLogIdentifier(const void*) = 0;
+#endif
 };
 
 }

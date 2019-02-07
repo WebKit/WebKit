@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ContentType.h"
 #include "HTMLParserIdioms.h"
+#include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -111,6 +112,23 @@ Vector<String> ContentType::codecs() const
 Vector<String> ContentType::profiles() const
 {
     return splitParameters(parameter(profilesParameter()));
+}
+
+String ContentType::toJSONString() const
+{
+    auto object = JSON::Object::create();
+
+    object->setString("containerType"_s, containerType());
+
+    auto codecs = codecsParameter();
+    if (!codecs.isEmpty())
+        object->setString("codecs"_s, codecs);
+
+    auto profiles = profilesParameter();
+    if (!profiles.isEmpty())
+        object->setString("profiles"_s, profiles);
+
+    return object->toJSONString();
 }
 
 } // namespace WebCore

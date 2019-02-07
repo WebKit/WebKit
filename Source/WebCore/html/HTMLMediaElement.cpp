@@ -228,11 +228,11 @@ String convertEnumerationToString(HTMLMediaElement::ReadyState enumerationValue)
         MAKE_STATIC_STRING_IMPL("HAVE_FUTURE_DATA"),
         MAKE_STATIC_STRING_IMPL("HAVE_ENOUGH_DATA"),
     };
-    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_NOTHING) == 0, "HTMLMediaElement::HAVE_NOTHING is not 0 as expected");
-    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_METADATA) == 1, "HTMLMediaElement::HAVE_METADATA is not 1 as expected");
-    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_CURRENT_DATA) == 2, "HTMLMediaElement::HAVE_CURRENT_DATA is not 2 as expected");
-    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_FUTURE_DATA) == 3, "HTMLMediaElement::HAVE_FUTURE_DATA is not 3 as expected");
-    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_ENOUGH_DATA) == 4, "HTMLMediaElement::HAVE_ENOUGH_DATA is not 4 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_NOTHING) == 0, "HTMLMediaElementEnums::HAVE_NOTHING is not 0 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_METADATA) == 1, "HTMLMediaElementEnums::HAVE_METADATA is not 1 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_CURRENT_DATA) == 2, "HTMLMediaElementEnums::HAVE_CURRENT_DATA is not 2 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_FUTURE_DATA) == 3, "HTMLMediaElementEnums::HAVE_FUTURE_DATA is not 3 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElementEnums::HAVE_ENOUGH_DATA) == 4, "HTMLMediaElementEnums::HAVE_ENOUGH_DATA is not 4 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
@@ -1097,7 +1097,7 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     m_checkPlaybackTargetCompatablityTask.scheduleTask([this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         checkPlaybackTargetCompatablity();
     });
 }
@@ -1350,7 +1350,13 @@ void HTMLMediaElement::selectMediaResource()
     // put into the background.
     m_mediaSession->removeBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
 
-    m_resourceSelectionTaskQueue.enqueueTask([this]  {
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    UNUSED_PARAM(logSiteIdentifier);
+
+    m_resourceSelectionTaskQueue.enqueueTask([this, logSiteIdentifier]  {
+
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+
         // 5. If the media element’s blocked-on-parser flag is false, then populate the list of pending text tracks.
 #if ENABLE(VIDEO_TRACK)
         if (hasMediaControls())
@@ -1380,7 +1386,7 @@ void HTMLMediaElement::selectMediaResource()
             mode = Attribute;
             ASSERT(m_player);
             if (!m_player) {
-                ERROR_LOG(LOGIDENTIFIER, " - has srcAttr but m_player is not created");
+                ERROR_LOG(logSiteIdentifier, " has srcAttr but m_player is not created");
                 return;
             }
         } else if (auto firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
@@ -1397,7 +1403,7 @@ void HTMLMediaElement::selectMediaResource()
             setShouldDelayLoadEvent(false);
             m_networkState = NETWORK_EMPTY;
 
-            ALWAYS_LOG(LOGIDENTIFIER, "nothing to load");
+            ALWAYS_LOG(logSiteIdentifier, "nothing to load");
             return;
         }
 
@@ -1427,7 +1433,7 @@ void HTMLMediaElement::selectMediaResource()
 
             ContentType contentType;
             loadResource(URL(), contentType, String());
-            ALWAYS_LOG(LOGIDENTIFIER, "using 'srcObject' property");
+            ALWAYS_LOG(logSiteIdentifier, "using 'srcObject' property");
 
             //    If that algorithm returns without aborting this one, then the load failed.
             // 4. Failed with media provider: Reaching this step indicates that the media resource
@@ -1450,7 +1456,7 @@ void HTMLMediaElement::selectMediaResource()
             URL absoluteURL = getNonEmptyURLAttribute(srcAttr);
             if (absoluteURL.isEmpty()) {
                 mediaLoadingFailed(MediaPlayer::FormatError);
-                ALWAYS_LOG(LOGIDENTIFIER, "empty 'src'");
+                ALWAYS_LOG(logSiteIdentifier, "empty 'src'");
                 return;
             }
 
@@ -1471,7 +1477,7 @@ void HTMLMediaElement::selectMediaResource()
             // will have to pick a media engine based on the file extension.
             ContentType contentType;
             loadResource(absoluteURL, contentType, String());
-            ALWAYS_LOG(LOGIDENTIFIER, "using 'src' attribute url");
+            ALWAYS_LOG(logSiteIdentifier, "using 'src' attribute url");
 
             // 6. Failed with attribute: Reaching this step indicates that the media resource failed to load
             //    or that the given URL could not be resolved. Queue a task to run the dedicated media source failure steps.
@@ -1593,6 +1599,8 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (m_mediaSource) {
         loadAttempted = true;
+        
+        ALWAYS_LOG(LOGIDENTIFIER, "loading MSE blob");
         if (!m_mediaSource->attachToElement(*this) || !m_player->load(url, contentType, m_mediaSource.get())) {
             // Forget our reference to the MediaSource, so we leave it alone
             // while processing remainder of load failure.
@@ -1609,6 +1617,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
         if (m_mediaStreamSrcObject) {
             loadAttempted = true;
+            ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
             if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
                 mediaLoadingFailed(MediaPlayer::FormatError);
         }
@@ -1617,6 +1626,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (!loadAttempted && m_blob) {
         loadAttempted = true;
+        ALWAYS_LOG(LOGIDENTIFIER, "loading generic blob");
         if (!m_player->load(m_blob->url(), contentType, keySystem))
             mediaLoadingFailed(MediaPlayer::FormatError);
     }
@@ -1773,7 +1783,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
                 return;
 
             auto currentMediaTime = weakThis->currentMediaTime();
-            INFO_LOG(LOGIDENTIFIER, " - lambda, currentMediaTime:", currentMediaTime);
+            INFO_LOG(LOGIDENTIFIER, " lambda, currentMediaTime:", currentMediaTime);
             weakThis->updateActiveTextTrackCues(currentMediaTime);
         }, nextInterestingTime);
     }
@@ -4526,7 +4536,7 @@ void HTMLMediaElement::scheduleConfigureTextTracks()
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     m_configureTextTracksTask.scheduleTask([this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // configureTextTracks calls methods that can trigger arbitrary DOM mutations.
         configureTextTracks();
     });
@@ -5080,7 +5090,7 @@ void HTMLMediaElement::scheduleMediaEngineWasUpdated()
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     m_mediaEngineUpdatedTask.scheduleTask([this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // mediaEngineWasUpdated calls methods that can trigger arbitrary DOM mutations.
         mediaEngineWasUpdated();
     });
@@ -5378,7 +5388,7 @@ void HTMLMediaElement::scheduleUpdatePlayState()
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     m_updatePlayStateTask.scheduleTask([this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // updatePlayState calls methods that can trigger arbitrary DOM mutations.
         updatePlayState();
     });
@@ -7704,7 +7714,7 @@ void HTMLMediaElement::scheduleUpdateMediaState()
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     m_updateMediaStateTask.scheduleTask([this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
-        ALWAYS_LOG(logSiteIdentifier, "- lambda(), task fired");
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // updateMediaState calls methods that can trigger arbitrary DOM mutations.
         updateMediaState();
     });

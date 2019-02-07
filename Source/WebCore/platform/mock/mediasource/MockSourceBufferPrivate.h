@@ -74,6 +74,11 @@ private:
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& sourceBufferLogger() const final;
+    const void* sourceBufferLogIdentifier() final;
+#endif
+
     MockMediaSourcePrivate* m_mediaSource;
     SourceBufferPrivateClient* m_client;
     Vector<String> m_enqueuedSamples;

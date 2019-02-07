@@ -381,9 +381,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
         INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", track.id(), " set to ", timelineOffset);
     }
 
-    DEBUG_LOG(LOGIDENTIFIER, "original sample = ", toString(sample));
+    DEBUG_LOG(LOGIDENTIFIER, "original sample = ", sample);
     sample.offsetTimestampsBy(timelineOffset);
-    DEBUG_LOG(LOGIDENTIFIER, "updated sample = ", toString(sample));
+    DEBUG_LOG(LOGIDENTIFIER, "updated sample = ", sample);
 
     if (WILL_LOG(WTFLogLevelDebug)) {
         MediaTime now = streamTime();

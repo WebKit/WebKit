@@ -68,6 +68,8 @@ public:
 
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
+    String toJSONString() const override;
+
 protected:
     MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
         : m_sample(WTFMove(sample))
@@ -101,4 +103,5 @@ protected:
     bool m_mirrored { false };
 };
 
-}
+} // namespace WebCore
+

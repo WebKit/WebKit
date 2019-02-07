@@ -1395,7 +1395,7 @@ void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
     if (m_muted == muted)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "- ", muted);
+    INFO_LOG(LOGIDENTIFIER, muted);
 
     m_muted = muted;
 
@@ -1412,7 +1412,7 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
     if (!metaDataAvailable())
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "- ", closedCaptionsVisible);
+    INFO_LOG(LOGIDENTIFIER, closedCaptionsVisible);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
@@ -2813,7 +2813,7 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
     wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
 #endif
 
-    INFO_LOG(LOGIDENTIFIER, "- ", wirelessTarget);
+    INFO_LOG(LOGIDENTIFIER, wirelessTarget);
 
     return wirelessTarget;
 }
@@ -2941,14 +2941,14 @@ bool MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled() const
         return !m_allowsWirelessVideoPlayback;
 
     m_allowsWirelessVideoPlayback = [m_avPlayer.get() allowsExternalPlayback];
-    INFO_LOG(LOGIDENTIFIER, "- ", !m_allowsWirelessVideoPlayback);
+    INFO_LOG(LOGIDENTIFIER, !m_allowsWirelessVideoPlayback);
 
     return !m_allowsWirelessVideoPlayback;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool disabled)
 {
-    INFO_LOG(LOGIDENTIFIER, "- ", disabled);
+    INFO_LOG(LOGIDENTIFIER, disabled);
     m_allowsWirelessVideoPlayback = !disabled;
     if (!m_avPlayer)
         return;
@@ -2982,7 +2982,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
     if (!m_playbackTarget)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "- ", shouldPlay);
+    INFO_LOG(LOGIDENTIFIER, shouldPlay);
 
     if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation) {
         AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
@@ -3109,7 +3109,7 @@ void MediaPlayerPrivateAVFoundationObjC::trackEnabledDidChange(bool)
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldBufferData(bool shouldBuffer)
 {
-    INFO_LOG(LOGIDENTIFIER, "- ", shouldBuffer);
+    INFO_LOG(LOGIDENTIFIER, shouldBuffer);
 
     if (m_shouldBufferData == shouldBuffer)
         return;

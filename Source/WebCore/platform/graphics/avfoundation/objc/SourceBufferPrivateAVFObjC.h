@@ -32,6 +32,7 @@
 #include <wtf/Box.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/RefPtr.h>
@@ -77,7 +78,13 @@ public:
     ALLOW_NEW_API_WITHOUT_GUARDS_END
 };
 
-class SourceBufferPrivateAVFObjC final : public SourceBufferPrivate, public CanMakeWeakPtr<SourceBufferPrivateAVFObjC> {
+class SourceBufferPrivateAVFObjC final
+    : public SourceBufferPrivate
+    , public CanMakeWeakPtr<SourceBufferPrivateAVFObjC>
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     static Ref<SourceBufferPrivateAVFObjC> create(MediaSourcePrivateAVFObjC*);
     virtual ~SourceBufferPrivateAVFObjC();
@@ -126,6 +133,15 @@ public:
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void bufferWasConsumed();
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "SourceBufferPrivateAVFObjC"; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+    const Logger& sourceBufferLogger() const final { return m_logger.get(); }
+    const void* sourceBufferLogIdentifier() final { return logIdentifier(); }
+#endif
 
 private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
@@ -196,6 +212,11 @@ private:
     int m_enabledVideoTrackID { -1 };
     int m_protectedTrackID { -1 };
     uint64_t m_mapID;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 }

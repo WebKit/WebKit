@@ -598,33 +598,34 @@ String MediaTime::toString() const
     return builder.toString();
 }
 
-static Ref<JSON::Object> toJSONStringInternal(const MediaTime& time)
+Ref<JSON::Object> MediaTime::toJSONObject() const
 {
     auto object = JSON::Object::create();
 
-    if (time.hasDoubleValue())
-        object->setDouble("value"_s, time.toDouble());
-    else {
-        if (time.isInvalid() || time.isIndefinite())
-            object->setString("value"_s, "NaN"_s);
-        else if (time.isPositiveInfinite())
-            object->setString("value"_s, "POSITIVE_INFINITY"_s);
-        else if (time.isNegativeInfinite())
-            object->setString("value"_s, "NEGATIVE_INFINITY"_s);
-        else
-            object->setDouble("value"_s, time.toDouble());
-
-        object->setInteger("numerator"_s, static_cast<int>(time.timeValue()));
-        object->setInteger("denominator"_s, time.timeScale());
-        object->setInteger("flags"_s, time.timeFlags());
+    if (hasDoubleValue()) {
+        object->setDouble("value"_s, toDouble());
+        return object;
     }
+
+    if (isInvalid() || isIndefinite())
+        object->setString("value"_s, "NaN"_s);
+    else if (isPositiveInfinite())
+        object->setString("value"_s, "POSITIVE_INFINITY"_s);
+    else if (isNegativeInfinite())
+        object->setString("value"_s, "NEGATIVE_INFINITY"_s);
+    else
+        object->setDouble("value"_s, toDouble());
+
+    object->setDouble("numerator"_s, static_cast<double>(m_timeValue));
+    object->setInteger("denominator"_s, m_timeScale);
+    object->setInteger("flags"_s, m_timeFlags);
 
     return object;
 }
 
 String MediaTime::toJSONString() const
 {
-    return toJSONStringInternal(*this)->toJSONString();
+    return toJSONObject()->toJSONString();
 }
 
 MediaTime abs(const MediaTime& rhs)
@@ -645,8 +646,8 @@ String MediaTimeRange::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-    object->setObject("start"_s, toJSONStringInternal(start));
-    object->setObject("end"_s, toJSONStringInternal(end));
+    object->setObject("start"_s, start.toJSONObject());
+    object->setObject("end"_s, end.toJSONObject());
 
     return object->toJSONString();
 }

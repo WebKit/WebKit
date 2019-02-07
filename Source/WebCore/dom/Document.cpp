@@ -8569,7 +8569,6 @@ static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
     if (equalIgnoringASCIICase(webrtcChannel, channel.name))
         return MessageSource::WebRTC;
 
-    ASSERT_NOT_REACHED();
     return MessageSource::Other;
 }
 
@@ -8603,11 +8602,14 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
 
     ASSERT(sessionID().isAlwaysOnLoggingAllowed());
 
-    m_logMessageTaskQueue.enqueueTask([this, channel, level, logMessages = WTFMove(logMessages)]() mutable {
+    auto messageSource = messageSourceForWTFLogChannel(channel);
+    if (messageSource == MessageSource::Other)
+        return;
+
+    m_logMessageTaskQueue.enqueueTask([this, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
         if (!page())
             return;
 
-        auto messageSource = messageSourceForWTFLogChannel(channel);
         auto messageLevel = messageLevelFromWTFLogLevel(level);
         auto message = std::make_unique<Inspector::ConsoleMessage>(messageSource, MessageType::Log, messageLevel, WTFMove(logMessages), mainWorldExecState(frame()));
 

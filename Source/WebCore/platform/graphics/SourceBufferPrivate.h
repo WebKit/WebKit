@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
+#include <wtf/Logger.h>
 
 namespace WebCore {
 
@@ -64,6 +65,11 @@ public:
     virtual Vector<String> enqueuedSamplesForTrackID(const AtomicString&) { return { }; }
 
     virtual bool canSwitchToType(const ContentType&) { return false; }
+
+#if !RELEASE_LOG_DISABLED
+    virtual const Logger& sourceBufferLogger() const = 0;
+    virtual const void* sourceBufferLogIdentifier() = 0;
+#endif
 };
 
 }

@@ -60,6 +60,11 @@ public:
     void incrementCorruptedFrames() { ++m_corruptedVideoFrames; }
     void incrementTotalFrameDelayBy(const MediaTime& delay) { m_totalFrameDelay += delay; }
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& mediaSourceLogger() const;
+    const void* mediaSourceLogIdentifier();
+#endif
+
 private:
     MockMediaSourcePrivate(MockMediaPlayerMediaSource&, MediaSourcePrivateClient&);
 
