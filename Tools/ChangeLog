@@ -1,3 +1,22 @@
+2019-02-07  Keith Rollin  <krollin@apple.com>
+
+        Remove extra copy of 100x100-red.tga
+        https://bugs.webkit.org/show_bug.cgi?id=194371
+        <rdar://problem/47873465>
+
+        Reviewed by Said Abou-Hallawa.
+
+        In order to help it pass its tests, Bug 194190 added a second copy of
+        the file 100x100-red.tga. However, it turns out that this additional
+        file wasn't actually needed, and that that sole previous copy was
+        sufficient. At the same time, this second copy -- which was copied to
+        the same location in the build output as the first copy -- now caused
+        XCBuild to complain because there were two production rules for the
+        same output file. Address this by removing the newly-added extra copy.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/100x100-red.tga: Removed.
+
 2019-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKBundlePageSetDefersLoading

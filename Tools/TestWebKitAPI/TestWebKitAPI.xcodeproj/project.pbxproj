@@ -344,7 +344,6 @@
 		6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B306105218A372900F5A802 /* ClosingWebView.mm */; };
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
 		6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */; };
-		725C3EEF220570BE007C36FC /* 100x100-red.tga in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EEE22057005007C36FC /* 100x100-red.tga */; };
 		725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */; };
 		751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */; };
 		754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */; };
@@ -999,7 +998,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				725C3EEF220570BE007C36FC /* 100x100-red.tga in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -1727,7 +1725,6 @@
 		6B0A07F621FA9C2B00D57391 /* AdClickAttribution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AdClickAttribution.cpp; sourceTree = "<group>"; };
 		6B306105218A372900F5A802 /* ClosingWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClosingWebView.mm; sourceTree = "<group>"; };
 		6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPParsers.cpp; sourceTree = "<group>"; };
-		725C3EEE22057005007C36FC /* 100x100-red.tga */ = {isa = PBXFileReference; lastKnownFileType = file; path = "100x100-red.tga"; sourceTree = "<group>"; };
 		725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = AdditionalSupportedImageTypes.html; sourceTree = "<group>"; };
 		751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseTrackerTest.mm; sourceTree = "<group>"; };
 		754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutoFillAvailable.mm; sourceTree = "<group>"; };
@@ -3504,7 +3501,6 @@
 		C07E6CB013FD737C0038B22B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				725C3EEE22057005007C36FC /* 100x100-red.tga */,
 				379028B814FABE49007E6B43 /* acceptsFirstMouse.html */,
 				725C3EF2220584BA007C36FC /* AdditionalSupportedImageTypes.html */,
 				B55F11B01517A2C400915916 /* attributedStringCustomFont.html */,
