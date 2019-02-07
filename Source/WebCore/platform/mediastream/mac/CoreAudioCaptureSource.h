@@ -93,6 +93,8 @@ private:
 
     bool interrupted() const final;
 
+    void initializeToStartProducingData();
+
     uint32_t m_captureDeviceID { 0 };
 
     Optional<RealtimeMediaSourceCapabilities> m_capabilities;
@@ -107,6 +109,7 @@ private:
     bool m_reconfigurationRequired { false };
     bool m_suspendPending { false };
     bool m_resumePending { false };
+    bool m_isReadyToStart { false };
 };
 
 class CoreAudioCaptureSourceFactory : public AudioCaptureFactory {
