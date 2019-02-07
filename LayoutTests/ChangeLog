@@ -1,3 +1,14 @@
+2019-02-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Fix modify-css-property-race.html flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=194408
+
+        Reviewed by Devin Rousso.
+
+        Event listener wasn't removed property, sometimes causing it to fire one more time.
+
+        * inspector/css/modify-css-property-race.html:
+
 2019-02-07  Youenn Fablet  <youenn@apple.com>
 
         Unable to sign in leetcode.

@@ -61,6 +61,7 @@ function test() {
 
             InspectorTest.evaluateInPage("expand()");
             let updateCount = 0;
+            let style = getInlineStyleDeclaration();
 
             function styleDecorationUpdated() {
                 ++updateCount;
@@ -77,12 +78,11 @@ function test() {
                     InspectorTest.expectGreaterThanOrEqual(heightNumber, 101, "Height should be 101px or more.");
 
                     InspectorTest.evaluateInPage("stopExpanding()");
-                    WI.CSSStyleDeclaration.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
+                    style.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
                     resolve();
                 }
             }
 
-            let style = getInlineStyleDeclaration();
             style.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, styleDecorationUpdated);
         }
     });
