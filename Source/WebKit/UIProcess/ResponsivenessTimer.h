@@ -26,7 +26,7 @@
 #ifndef ResponsivenessTimer_h
 #define ResponsivenessTimer_h
 
-#include <WebCore/Timer.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -48,17 +48,6 @@ public:
     ~ResponsivenessTimer();
     
     void start();
-
-    // A responsiveness timer with lazy stop does not stop the underlying system timer when stopped.
-    // Instead, it ignores the timeout if stop() was already called.
-    //
-    // This exists to reduce the rate at which we reset the timer.
-    //
-    // With a non lazy timer, we may set a timer and reset it soon after because the process is responsive.
-    // For events, this means reseting a timer 120 times/s for a 60 Hz event source.
-    // By not reseting the timer when responsive, we cut that in half to 60 timeout changes.
-    void startWithLazyStop();
-
     void stop();
 
     void invalidate();
@@ -71,10 +60,9 @@ private:
     void timerFired();
 
     ResponsivenessTimer::Client& m_client;
-    WebCore::DeferrableOneShotTimer m_timer;
-    bool m_isResponsive { true };
-    bool m_waitingForTimer { false };
-    bool m_useLazyStop { false };
+    bool m_isResponsive;
+
+    RunLoop::Timer<ResponsivenessTimer> m_timer;
 };
 
 } // namespace WebKit
