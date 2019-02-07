@@ -130,8 +130,6 @@ public:
     void clearDocumentLoader() { m_documentLoader = nullptr; }
     PAL::SessionID sessionID() const;
 
-    void removeCachedResource(CachedResource&);
-
     void loadDone(LoadCompletionType, bool shouldPerformPostLoadActions = true);
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();

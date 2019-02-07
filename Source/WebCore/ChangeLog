@@ -1,3 +1,49 @@
+2019-02-07  Antti Koivisto  <antti@apple.com>
+
+        Infinite recursion via CachedResource::~CachedResource
+        https://bugs.webkit.org/show_bug.cgi?id=194378
+        <rdar://problem/42023295>
+
+        Reviewed by Daniel Bates.
+
+        I don't know the exact steps to trigger this but the mechanism seems clear.
+
+        1) An existing resource is removed from or replaced in CachedResourceLoader::m_documentResources map.
+        2) This decrements the handle count of resource and causes it be deleted.
+        3) CachedResource::~CachedResource calls m_owningCachedResourceLoader->removeCachedResource(*this). This only happens with
+           resources that are "owned" by CachedResourceLoader which is a rare special case (used by image document and if memory cache is disabled).
+        4) CachedResourceLoader::removeCachedResource looks up the resource from the map which causes a temporary CachedResourceHandle to be created.
+           This increments the handle count of the resource from 0 back to 1.
+        5) When the temporary dies, CachedResource::~CachedResource is called again and we cycle back to 3).
+
+        The fix here is simply to remove CachedResourceLoader::removeCachedResource call from ~CachedResource.
+        It is a leftover from when the map contained raw pointers instead of owning CachedResourceHandles.
+
+        Since m_documentResources map has a handle to the resource, the only way we are in the destructor is that the resource
+        has been removed from the map already (or is in process of being removed like in this crash). Any call that does anything
+        other than bail out is going to crash.
+
+        CachedResource::n_owningCachedResourceLoader member and CachedResourceLoader::removeCachedResource function only exist to
+        support this erranous call so they are removed as well.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+
+        This is the substantive change. The rest just removes now-dead code.
+
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setOwningCachedResourceLoader): Deleted.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+        (WebCore::CachedResourceLoader::removeCachedResource): Deleted.
+        * loader/cache/CachedResourceLoader.h:
+
 2019-02-07  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Implement GStreamer based holepunch
