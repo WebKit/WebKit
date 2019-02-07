@@ -5,6 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS test('http://спецодежда.онлайн/') is 'http://спецодежда.онлайн/'
 PASS test('http://спецодежда.онлайн/') is 'http://спецодежда.онлайн/'
+PASS test('http://ж1-2.бг/') is 'http://ж1-2.бг/'
+PASS test('http://жabc.бг/') is 'http://xn--abc-udd.xn--90ae/'
+PASS test('http://abc.бг/') is 'http://abc.xn--90ae/'
+PASS test('http://ы.бг/') is 'http://xn--01a.xn--90ae/'
+PASS test('http://э.бг/') is 'http://xn--21a.xn--90ae/'
 PASS successfullyParsed is true
 
 TEST COMPLETE
