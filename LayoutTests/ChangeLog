@@ -1,5 +1,23 @@
 2019-02-06  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241031. rdar://problem/47866495
+
+    Revert part of r241015 that skipped all WebGL tests
+    
+    * TestExpectations: Revert unintended change to skip all WebGL
+    tests.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241031 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-06  David Kilzer  <ddkilzer@apple.com>
+
+            Revert part of r241015 that skipped all WebGL tests
+
+            * TestExpectations: Revert unintended change to skip all WebGL
+            tests.
+
+2019-02-06  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241015. rdar://problem/47866495
 
     REGRESSION (r240909): Release assert in FrameLoader::loadURL when navigating with a non-existent target name
