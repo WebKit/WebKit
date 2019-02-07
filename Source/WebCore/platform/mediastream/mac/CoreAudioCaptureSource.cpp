@@ -749,9 +749,8 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
 #endif
 
     if (constraints) {
-        auto result = source->applyConstraints(*constraints);
-        if (result)
-            return WTFMove(result.value().first);
+        if (auto result = source->applyConstraints(*constraints))
+            return WTFMove(result->badConstraint);
     }
     return CaptureSourceOrError(WTFMove(source));
 }

@@ -164,7 +164,7 @@ CaptureSourceOrError AVVideoCaptureSource::create(String&& id, String&& hashSalt
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result)
-            return WTFMove(result.value().first);
+            return WTFMove(result.value().badConstraint);
     }
 
     return CaptureSourceOrError(WTFMove(source));

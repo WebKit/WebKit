@@ -165,15 +165,16 @@ public:
 
     void applyConstraintsSucceeded(const WebCore::RealtimeMediaSourceSettings& settings)
     {
-        auto callbacks = m_pendingApplyConstraintsCallbacks.takeFirst();
         setSettings(WebCore::RealtimeMediaSourceSettings(settings));
-        callbacks.successHandler();
+
+        auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
+        callback({ });
     }
 
-    void applyConstraintsFailed(const String& failedConstraint, const String& errorMessage)
+    void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
     {
-        auto callbacks = m_pendingApplyConstraintsCallbacks.takeFirst();
-        callbacks.failureHandler(failedConstraint, errorMessage);
+        auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
+        callback(ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
     }
 
 private:
@@ -187,9 +188,10 @@ private:
     void commitConfiguration() final { }
     void hasEnded() final { m_manager.sourceEnded(m_id); }
 
-    void applyConstraints(const WebCore::MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler) final {
+    void applyConstraints(const WebCore::MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler) final
+    {
         m_manager.applyConstraints(m_id, constraints);
-        m_pendingApplyConstraintsCallbacks.append({ WTFMove(successHandler), WTFMove(failureHandler)});
+        m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
     }
 
     uint64_t m_id;
@@ -203,11 +205,7 @@ private:
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
     CaptureDevice::DeviceType m_deviceType { CaptureDevice::DeviceType::Unknown };
 
-    struct ApplyConstraintsCallback {
-        SuccessHandler successHandler;
-        FailureHandler failureHandler;
-    };
-    Deque<ApplyConstraintsCallback> m_pendingApplyConstraintsCallbacks;
+    Deque<ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
 };
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
@@ -358,11 +356,11 @@ void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCo
     source.applyConstraintsSucceeded(settings);
 }
 
-void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, const String& failedConstraint, const String& message)
+void UserMediaCaptureManager::applyConstraintsFailed(uint64_t id, String&& failedConstraint, String&& message)
 {
     ASSERT(m_sources.contains(id));
     auto& source = *m_sources.get(id);
-    source.applyConstraintsFailed(failedConstraint, message);
+    source.applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(message));
 }
 
 }

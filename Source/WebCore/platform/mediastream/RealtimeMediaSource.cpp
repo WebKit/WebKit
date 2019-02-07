@@ -41,6 +41,7 @@
 #include "NotImplemented.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceCenter.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
@@ -842,26 +843,22 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
     commitConfiguration();
 }
 
-Optional<std::pair<String, String>> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)
+Optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints)
 {
     ASSERT(constraints.isValid);
 
     FlattenedConstraint candidates;
     String failedConstraint;
     if (!selectSettings(constraints, candidates, failedConstraint, SelectType::ForApplyConstraints))
-        return { { failedConstraint, "Constraint not supported"_s } };
+        return ApplyConstraintsError { failedConstraint, "Constraint not supported"_s };
 
     applyConstraints(candidates);
-    return WTF::nullopt;
+    return { };
 }
 
-void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler)
+void RealtimeMediaSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
 {
-    auto result = applyConstraints(constraints);
-    if (!result && successHandler)
-        successHandler();
-    else if (result && failureHandler)
-        failureHandler(result.value().first, result.value().second);
+    completionHandler(applyConstraints(constraints));
 }
 
 void RealtimeMediaSource::setSize(const IntSize& size)

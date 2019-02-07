@@ -141,15 +141,15 @@ CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID,
     return CaptureSourceOrError(WTFMove(source));
 }
 
-Optional<std::pair<String, String>> MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints)
+Optional<RealtimeMediaSource::ApplyConstraintsError> MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints)
 {
     m_wrappedSource->applyConstraints(constraints);
     return GStreamerAudioCaptureSource::applyConstraints(constraints);
 }
 
-void MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler)
+void MockGStreamerAudioCaptureSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
 {
-    m_wrappedSource->applyConstraints(constraints, WTFMove(successHandler), WTFMove(failureHandler));
+    m_wrappedSource->applyConstraints(constraints, WTFMove(completionHandler));
 }
 
 MockGStreamerAudioCaptureSource::MockGStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt)

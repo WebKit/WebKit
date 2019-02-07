@@ -330,19 +330,17 @@ void MediaStreamTrack::applyConstraints(const Optional<MediaTrackConstraints>& c
 {
     m_promise = WTFMove(promise);
 
-    auto weakThis = makeWeakPtr(*this);
-    auto failureHandler = [weakThis] (const String& failedConstraint, const String& message) {
-        if (!weakThis || !weakThis->m_promise)
+    auto completionHandler = [this, weakThis = makeWeakPtr(*this), constraints](auto&& error) mutable {
+        if (!weakThis || !m_promise)
             return;
-        weakThis->m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(failedConstraint, message).get());
-    };
-    auto successHandler = [weakThis, constraints] () {
-        if (!weakThis || !weakThis->m_promise)
+        if (error) {
+            m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
             return;
-        weakThis->m_promise->resolve();
-        weakThis->m_constraints = constraints.valueOr(MediaTrackConstraints { });
+        }
+        m_promise->resolve();
+        m_constraints = constraints.valueOr(MediaTrackConstraints { });
     };
-    m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(successHandler), WTFMove(failureHandler));
+    m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(completionHandler));
 }
 
 void MediaStreamTrack::addObserver(Observer& observer)

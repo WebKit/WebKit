@@ -107,15 +107,15 @@ MockGStreamerVideoCaptureSource::~MockGStreamerVideoCaptureSource()
     m_wrappedSource->removeObserver(*this);
 }
 
-Optional<std::pair<String, String>> MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints)
+Optional<RealtimeMediaSource::ApplyConstraintsError> MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints)
 {
     m_wrappedSource->applyConstraints(constraints);
     return GStreamerVideoCaptureSource::applyConstraints(constraints);
 }
 
-void MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler)
+void MockGStreamerVideoCaptureSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& completionHandler)
 {
-    m_wrappedSource->applyConstraints(constraints, WTFMove(successHandler), WTFMove(failureHandler));
+    m_wrappedSource->applyConstraints(constraints, WTFMove(completionHandler));
 }
 
 const RealtimeMediaSourceSettings& MockGStreamerVideoCaptureSource::settings()

@@ -211,7 +211,7 @@ void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::
     if (!result)
         m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsSucceeded(id, source.settings()), 0);
     else
-        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result.value().first, result.value().second), 0);
+        m_process.send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->badConstraint, result->message), 0);
 }
 
 void UserMediaCaptureManagerProxy::clear()

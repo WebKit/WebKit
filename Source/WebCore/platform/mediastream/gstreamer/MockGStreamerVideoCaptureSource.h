@@ -36,8 +36,8 @@ class MockGStreamerVideoCaptureSource final : public GStreamerVideoCaptureSource
 public:
     MockGStreamerVideoCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
     ~MockGStreamerVideoCaptureSource();
-    Optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
-    void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&) final;
+    Optional<ApplyConstraintsError> applyConstraints(const MediaConstraints&);
+    void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&) final;
 
 private:
     void stopProducingData() final;

@@ -150,10 +150,13 @@ public:
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
 
-    using SuccessHandler = WTF::Function<void()>;
-    using FailureHandler = WTF::Function<void(const String& badConstraint, const String& errorString)>;
-    virtual void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&);
-    Optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
+    struct ApplyConstraintsError {
+        String badConstraint;
+        String message;
+    };
+    using ApplyConstraintsHandler = CompletionHandler<void(Optional<ApplyConstraintsError>&&)>;
+    virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
+    Optional<ApplyConstraintsError> applyConstraints(const MediaConstraints&);
 
     bool supportsConstraints(const MediaConstraints&, String&);
     bool supportsConstraint(const MediaConstraint&);
