@@ -29,7 +29,7 @@
 #pragma once
 
 #include "IntRect.h"
-#include "ProcessIdentifier.h"
+#include "Process.h"
 
 namespace WebCore {
 
