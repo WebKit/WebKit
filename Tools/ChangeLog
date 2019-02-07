@@ -1,5 +1,23 @@
 2019-02-06  Keith Rollin  <krollin@apple.com>
 
+        Remove Info.plist from MobileMiniBrowser.framework's Copy Bundle Resources phase
+        https://bugs.webkit.org/show_bug.cgi?id=193975
+        <rdar://problem/47643306>
+
+        Reviewed by Tim Horton.
+
+        The MobileMiniBrowser.framework's Copy Bundle Resources phase copies
+        the Info.plist file into the bundle. This step is not necessary as the
+        implicit "bundle up all the build products into a framework" build
+        phase does this already. Having the Copy Bundle Resources phase do
+        this causes a conflict under XCBuild, which objects to two build
+        phases producing the same file (Info.plist). Address this by removing
+        Info.plist from the Copy Bundle Resources phase.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+
+2019-02-06  Keith Rollin  <krollin@apple.com>
+
         Really enable the automatic checking and regenerations of .xcfilelists during builds
         https://bugs.webkit.org/show_bug.cgi?id=194357
         <rdar://problem/47861231>
