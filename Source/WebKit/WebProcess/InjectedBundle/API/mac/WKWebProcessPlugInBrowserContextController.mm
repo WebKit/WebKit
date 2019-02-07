@@ -192,6 +192,18 @@ static void didReachLayoutMilestone(WKBundlePageRef page, WKLayoutMilestones mil
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController renderingProgressDidChange:renderingProgressEvents(WebKit::toLayoutMilestones(milestones))];
 }
 
+static WKLayoutMilestones layoutMilestones(const void *clientInfo)
+{
+    auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
+    auto loadDelegate = pluginContextController->_loadDelegate.get();
+    
+    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextControllerRenderingProgressEvents:)]) {
+        _WKRenderingProgressEvents milestones = [loadDelegate webProcessPlugInBrowserContextControllerRenderingProgressEvents:pluginContextController];
+        return static_cast<WKLayoutMilestones>(milestones);
+    }
+    return { };
+}
+
 static void didFirstVisuallyNonEmptyLayoutForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)
 {
     auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
@@ -229,10 +241,10 @@ static WKStringRef userAgentForURL(WKBundleFrameRef frame, WKURLRef url, const v
 
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebKit::WebPage& page)
 {
-    WKBundlePageLoaderClientV9 client;
+    WKBundlePageLoaderClientV10 client;
     memset(&client, 0, sizeof(client));
 
-    client.base.version = 8;
+    client.base.version = 10;
     client.base.clientInfo = (__bridge void*)contextController;
     client.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     client.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
@@ -250,6 +262,7 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
 
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didReachLayoutMilestone;
+    client.layoutMilestones = layoutMilestones;
 
     WKBundlePageSetPageLoaderClient(toAPI(&page), &client.base);
 }

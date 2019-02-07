@@ -1,3 +1,22 @@
+2019-02-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] API test times out after r241026
+        https://bugs.webkit.org/show_bug.cgi?id=194372
+
+        Reviewed by Alex Christensen.
+
+        The API test TestWebKitAPI.RenderingProgress.FirstMeaningfulPaint times out after r241026.
+        A new function pointer, layoutMilestones, is added to WKBundlePageLoaderClient, in order
+        for clients to decide which milestones they would like to listen for.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (layoutMilestones):
+        (setUpPageLoaderClient):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::layoutMilestones const):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+
 2019-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKBundlePageSetDefersLoading
