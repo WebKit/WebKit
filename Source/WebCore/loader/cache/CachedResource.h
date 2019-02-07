@@ -311,7 +311,7 @@ protected:
     ResourceRequest m_resourceRequest;
     ResourceResponse m_response;
 
-    DeferrableOneShotTimer m_decodedDataDeletionTimer;
+    ResettableOneShotTimer m_decodedDataDeletionTimer;
 
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
     HashCountedSet<CachedResourceClient*> m_clients;

@@ -207,7 +207,7 @@ private:
     IntRect m_boundsAtLastRevalidate;
 
     Timer m_tileRevalidationTimer;
-    DeferrableOneShotTimer m_tileSizeChangeTimer;
+    ResettableOneShotTimer m_tileSizeChangeTimer;
 
     TileCoverage m_tileCoverage { CoverageForVisibleArea };
     

@@ -32,7 +32,7 @@ static const Seconds responsivenessTimeout { 3_s };
 
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client)
     : m_client(client)
-    , m_timer(*this, &ResponsivenessTimer::timerFired)
+    , m_timer(std::bind(&ResponsivenessTimer::timerFired, this))
 {
 }
 

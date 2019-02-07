@@ -71,7 +71,7 @@ private:
     void timerFired();
 
     ResponsivenessTimer::Client& m_client;
-    WebCore::Timer m_timer;
+    WebCore::DeferrableOneShotTimer m_timer;
     bool m_isResponsive { true };
     bool m_waitingForTimer { false };
     bool m_useLazyStop { false };
