@@ -284,6 +284,8 @@ public:
 #endif
 
     virtual bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime) { return false; }
+
+    virtual bool shouldIgnoreIntrinsicSize() { return false; }
 };
 
 }

@@ -82,7 +82,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         RGBA32 rgba = makeRGBA32FromFloats(backgroundColor.red(),
             backgroundColor.green(), backgroundColor.blue(),
             backgroundColor.alpha() * opacity);
-        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba));
+        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba), true);
     } else
         m_textureMapper->clearColor(m_viewBackgroundColor);
 

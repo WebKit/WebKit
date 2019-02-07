@@ -158,6 +158,10 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
 IntRect RenderVideo::videoBox() const
 {
+    auto mediaPlayer = videoElement().player();
+    if (mediaPlayer && mediaPlayer->shouldIgnoreIntrinsicSize())
+        return snappedIntRect(contentBoxRect());
+
     LayoutSize intrinsicSize = this->intrinsicSize();
 
     if (videoElement().shouldDisplayPosterImage())

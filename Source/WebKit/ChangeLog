@@ -1,3 +1,15 @@
+2019-02-07  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Implement GStreamer based holepunch
+        https://bugs.webkit.org/show_bug.cgi?id=193715
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a new parameter to the calls of TextureMapper::drawSolidColor().
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+
 2019-02-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Unreviewed, rolling out r240759 and r240944.

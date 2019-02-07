@@ -1552,6 +1552,11 @@ bool MediaPlayer::performTaskAtMediaTime(WTF::Function<void()>&& task, MediaTime
     return m_private->performTaskAtMediaTime(WTFMove(task), time);
 }
 
+bool MediaPlayer::shouldIgnoreIntrinsicSize()
+{
+    return m_private->shouldIgnoreIntrinsicSize();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

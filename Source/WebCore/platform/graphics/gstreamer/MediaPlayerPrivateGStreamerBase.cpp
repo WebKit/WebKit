@@ -133,6 +133,10 @@ GST_DEBUG_CATEGORY(webkit_media_player_debug);
 namespace WebCore {
 using namespace std;
 
+#if USE(GSTREAMER_HOLEPUNCH)
+static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
+#endif
+
 static int greatestCommonDivisor(int a, int b)
 {
     while (b) {
@@ -487,6 +491,13 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
 // Returns the size of the video
 FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
 {
+#if USE(GSTREAMER_HOLEPUNCH)
+    // When using the holepuch we may not be able to get the video frames size, so we can't use
+    // it. But we need to report some non empty naturalSize for the player's GraphicsLayer
+    // to be properly created.
+    return s_holePunchDefaultFrameSize;
+#endif
+
     if (!hasVideo())
         return FloatSize();
 
@@ -672,6 +683,9 @@ PlatformLayer* MediaPlayerPrivateGStreamerBase::platformLayer() const
 #if USE(NICOSIA)
 void MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded()
 {
+#if USE(GSTREAMER_HOLEPUNCH)
+    pushNextHolePunchBuffer();
+#endif
 }
 #else
 RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamerBase::proxy() const
@@ -681,6 +695,9 @@ RefPtr<TextureMapperPlatformLayerProxy> MediaPlayerPrivateGStreamerBase::proxy()
 
 void MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded()
 {
+#if USE(GSTREAMER_HOLEPUNCH)
+    pushNextHolePunchBuffer();
+#endif
 }
 #endif
 
@@ -1078,9 +1095,61 @@ void MediaPlayerPrivateGStreamerBase::ensureGLVideoSinkContext()
 }
 #endif // USE(GSTREAMER_GL)
 
+#if USE(GSTREAMER_HOLEPUNCH)
+static void setRectangleToVideoSink(GstElement* videoSink, const IntRect& rect)
+{
+    // Here goes the platform-dependant code to set to the videoSink the size
+    // and position of the video rendering window. Mark them unused as default.
+    UNUSED_PARAM(videoSink);
+    UNUSED_PARAM(rect);
+}
+
+class GStreamerHolePunchClient : public TextureMapperPlatformLayerBuffer::HolePunchClient {
+public:
+    GStreamerHolePunchClient(GRefPtr<GstElement>&& videoSink) : m_videoSink(WTFMove(videoSink)) { };
+    void setVideoRectangle(const IntRect& rect) final { setRectangleToVideoSink(m_videoSink.get(), rect); }
+private:
+    GRefPtr<GstElement> m_videoSink;
+};
+
+GstElement* MediaPlayerPrivateGStreamerBase::createHolePunchVideoSink()
+{
+    // Here goes the platform-dependant code to create the videoSink. As a default
+    // we use a fakeVideoSink so nothing is drawn to the page.
+    GstElement* videoSink =  gst_element_factory_make("fakevideosink", nullptr);
+
+    return videoSink;
+}
+
+void MediaPlayerPrivateGStreamerBase::pushNextHolePunchBuffer()
+{
+    auto proxyOperation =
+        [this](TextureMapperPlatformLayerProxy& proxy)
+        {
+            LockHolder holder(proxy.lock());
+            std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = std::make_unique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
+            std::unique_ptr<GStreamerHolePunchClient> holePunchClient = std::make_unique<GStreamerHolePunchClient>(m_videoSink.get());
+            layerBuffer->setHolePunchClient(WTFMove(holePunchClient));
+            proxy.pushNextBuffer(WTFMove(layerBuffer));
+        };
+
+#if USE(NICOSIA)
+    proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
+#else
+    proxyOperation(*m_platformLayerProxy);
+#endif
+}
+#endif
+
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
 {
     acceleratedRenderingStateChanged();
+
+#if USE(GSTREAMER_HOLEPUNCH)
+    m_videoSink = createHolePunchVideoSink();
+    pushNextHolePunchBuffer();
+    return m_videoSink.get();
+#endif
 
 #if USE(GSTREAMER_GL)
     if (m_renderingCanBeAccelerated)

@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>WPE holepunch test</title>
+    <style>
+      video {
+          width: 400px;
+          height: 400px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      <strong>WPE holepunch test</strong>
+    </p>
+    <p>
+      This test checks whether the holepunch feature is working on WPE.
+    </p>
+    <p>
+      There is a video player of 400x400 placed below this text. If the video playback is visible,
+      then the holepunch option is disabled or it's not working properly.
+    </p>
+    <p>
+      If everything is working fine, there should be a transparent rectangle of 400x400 just
+      below this.
+    </p>
+    <video id="video"></video>
+    <script type="text/javascript">
+      var v = document.getElementById("video");
+      v.src = "../../LayoutTests/media/content/long-test.mp4";
+      v.play();
+    </script>
+  </body>
+</html>

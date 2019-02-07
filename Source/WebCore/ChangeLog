@@ -1,3 +1,49 @@
+2019-02-07  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Implement GStreamer based holepunch
+        https://bugs.webkit.org/show_bug.cgi?id=193715
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement GStreamer based holepunch functionality. Instead of getting the video frames from the
+        video sink and drawing then, the player just draws a transparent rectangle on the position where
+        the video should be. MediaPlayerPrivateGStreamerBase will instantiate a platform dependant video
+        sink which will be in charge of displaying the video frames in some way (usually on a plane below
+        the browser), and will push empty frames to the compositor indicating that the rectangle to draw
+        should overwrite the existent content. TextureMapperPlatformLayerBuffer::HolePunchClient is used
+        to tell the video sink where to position the video so it's set below the browser transparent hole.
+
+        Added ManualTest wpe/video-player-holepunch.html to test the feature.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::shouldIgnoreIntrinsicSize):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::shouldIgnoreIntrinsicSize):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize const):
+        (WebCore::MediaPlayerPrivateGStreamerBase::swapBuffersIfNeeded):
+        (WebCore::setRectangleToVideoSink):
+        (WebCore::GStreamerHolePunchClient::GStreamerHolePunchClient):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createHolePunchVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushNextHolePunchBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawSolidColor):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelf):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        (WebCore::TextureMapperPlatformLayerBuffer::setHolePunchClient):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoBox const):
+
 2019-02-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Unreviewed, rolling out r240759 and r240944.

@@ -576,6 +576,8 @@ public:
 
     bool performTaskAtMediaTime(WTF::Function<void()>&&, MediaTime);
 
+    bool shouldIgnoreIntrinsicSize();
+
 private:
     MediaPlayer(MediaPlayerClient&);
 

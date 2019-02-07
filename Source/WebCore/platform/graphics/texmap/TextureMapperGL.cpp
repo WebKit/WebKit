@@ -504,13 +504,13 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity);
 }
 
-void TextureMapperGL::drawSolidColor(const FloatRect& rect, const TransformationMatrix& matrix, const Color& color)
+void TextureMapperGL::drawSolidColor(const FloatRect& rect, const TransformationMatrix& matrix, const Color& color, bool isBlendingAllowed)
 {
     Flags flags = 0;
     TextureMapperShaderProgram::Options options = TextureMapperShaderProgram::SolidColor;
     if (!matrix.mapQuad(rect).isRectilinear()) {
         options |= TextureMapperShaderProgram::Antialiasing;
-        flags |= ShouldBlend | ShouldAntialias;
+        flags |= ShouldAntialias | (isBlendingAllowed ? ShouldBlend : 0);
     }
 
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
@@ -519,7 +519,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     float r, g, b, a;
     Color(premultipliedARGBFromColor(color)).getRGBA(r, g, b, a);
     glUniform4f(program->colorLocation(), r, g, b, a);
-    if (a < 1)
+    if (a < 1 && isBlendingAllowed)
         flags |= ShouldBlend;
 
     draw(rect, matrix, program.get(), GL_TRIANGLE_FAN, flags);

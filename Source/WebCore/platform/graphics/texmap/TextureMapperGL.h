@@ -53,7 +53,8 @@ public:
         ShouldRotateTexture180 = 0x20,
         ShouldRotateTexture270 = 0x40,
         ShouldConvertTextureBGRAToRGBA = 0x80,
-        ShouldConvertTextureARGBToRGBA = 0x100
+        ShouldConvertTextureARGBToRGBA = 0x100,
+        ShouldNotBlend = 0x200
     };
 
     typedef int Flags;
@@ -63,7 +64,7 @@ public:
     void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) override;
     void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, unsigned exposedEdges) override;
     virtual void drawTexture(GLuint texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges = AllEdges);
-    void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) override;
+    void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&, bool) override;
     void clearColor(const Color&) override;
 
     void bindSurface(BitmapTexture* surface) override;

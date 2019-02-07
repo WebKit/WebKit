@@ -1,3 +1,16 @@
+2019-02-07  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Implement GStreamer based holepunch
+        https://bugs.webkit.org/show_bug.cgi?id=193715
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add GSTREAMER_HOLEPUNCH option to the WPE port with a manual test to
+        check the feature.
+
+        * ManualTests/wpe/video-player-holepunch.html: Added.
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable font variations

@@ -411,6 +411,8 @@ void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platfor
     if (m_nicosia.contentLayer != contentLayer) {
         m_nicosia.contentLayer = contentLayer;
         m_nicosia.delta.contentLayerChanged = true;
+        if (m_nicosia.contentLayer)
+            m_shouldUpdatePlatformLayer = true;
     }
     notifyFlushRequired();
 #else
