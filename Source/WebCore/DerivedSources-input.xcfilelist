@@ -323,7 +323,12 @@ $(PROJECT_DIR)/Modules/webdriver/NavigatorWebDriver.idl
 $(PROJECT_DIR)/Modules/webgpu/DOMWindowWebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUExtent3D.idl
 $(PROJECT_DIR)/Modules/webgpu/GPURequestAdapterOptions.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUTextureDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUTextureDimension.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUTextureFormat.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUTextureUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapter.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUAdapterDescriptor.idl
@@ -1065,6 +1070,7 @@ $(PROJECT_DIR)/testing/MockCDMFactory.idl
 $(PROJECT_DIR)/testing/MockContentFilterSettings.idl
 $(PROJECT_DIR)/testing/MockPageOverlay.idl
 $(PROJECT_DIR)/testing/MockPaymentAddress.idl
+$(PROJECT_DIR)/testing/MockPaymentContactFields.idl
 $(PROJECT_DIR)/testing/MockPaymentCoordinator.idl
 $(PROJECT_DIR)/testing/MockPaymentError.idl
 $(PROJECT_DIR)/testing/ServiceWorkerInternals.idl

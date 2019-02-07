@@ -1,3 +1,12 @@
+2019-02-06  Keith Rollin  <krollin@apple.com>
+
+        Update .xcfilelist files
+
+        Unreviewed build fix.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2019-02-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: don't send the entire function string with each event listener

@@ -582,8 +582,18 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureDimension.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureDimension.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGainNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGainNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepad.cpp
@@ -954,6 +964,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPageOverlay.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentAddress.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentAddress.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentContactFields.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentContactFields.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentCoordinator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentCoordinator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMockPaymentError.cpp
