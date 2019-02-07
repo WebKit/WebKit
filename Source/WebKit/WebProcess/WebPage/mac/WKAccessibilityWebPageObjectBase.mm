@@ -50,12 +50,16 @@ using namespace WebKit;
 
 - (WebCore::AXObjectCache*)axObjectCache
 {
-    WebCore::Page* page = m_page->corePage();
+    if (!m_page)
+        return nullptr;
+
+    auto page = m_page->corePage();
     if (!page)
-        return nil;
-    WebCore::Frame& core = page->mainFrame();
+        return nullptr;
+
+    auto& core = page->mainFrame();
     if (!core.document())
-        return nil;
+        return nullptr;
 
     return core.document()->axObjectCache();
 }

@@ -1,3 +1,16 @@
+2019-02-06  chris fleizach  <cfleizach@apple.com>
+
+        AX:  com.apple.WebKit.WebContent at WebKit: -[WKAccessibilityWebPageObjectBase axObjectCache]
+        https://bugs.webkit.org/show_bug.cgi?id=194306
+        <rdar://problem/47764549>
+
+        Reviewed by Zalan Bujtas.
+
+        Check the page reference is still valid.
+        Modernize code in this area.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+
 2019-02-06  Daniel Bates  <dabates@apple.com>
 
         Move toNSEventModifierFlags() and toNSButtonNumber() to WebEventFactory.mm
