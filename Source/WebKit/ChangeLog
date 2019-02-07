@@ -1,5 +1,41 @@
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241124. rdar://problem/47893586
+
+    Shrink and hyphenate safe browsing warning text on watchOS
+    https://bugs.webkit.org/show_bug.cgi?id=194361
+    <rdar://problem/47466549>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Some internationalizations use long words that didn't fit on small watches.
+    
+    * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+    (fontOfSize):
+    (-[WKSafeBrowsingWarning addContent]):
+    (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241124 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-07  Alex Christensen  <achristensen@webkit.org>
+
+            Shrink and hyphenate safe browsing warning text on watchOS
+            https://bugs.webkit.org/show_bug.cgi?id=194361
+            <rdar://problem/47466549>
+
+            Reviewed by Geoffrey Garen.
+
+            Some internationalizations use long words that didn't fit on small watches.
+
+            * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+            (fontOfSize):
+            (-[WKSafeBrowsingWarning addContent]):
+            (-[WKSafeBrowsingTextView initWithAttributedString:forWarning:]):
+
+2019-02-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241105. rdar://problem/47893571
 
     [Payment Request] It should be possible to require a phonetic name for shipping contacts
