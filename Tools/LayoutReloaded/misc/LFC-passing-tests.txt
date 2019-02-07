@@ -96,6 +96,7 @@ fast/block/block-only/relative-position-when-containing-block-is-not-in-the-form
 fast/block/block-only/relative-right.html
 fast/block/block-only/relative-siblings.html
 fast/block/block-only/relative-simple.html
+fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding.html
 fast/block/basic/012.html
 fast/block/inside-inlines/crash-on-first-line-change.html
 fast/block/float/007.html

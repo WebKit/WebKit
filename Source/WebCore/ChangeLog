@@ -1,5 +1,19 @@
 2019-02-07  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Out-of-flow] Use the containing block's padding width when computing min/max width.
+        https://bugs.webkit.org/show_bug.cgi?id=194391
+
+        Reviewed by Antti Koivisto.
+
+        The spec is not clear about this but that's what matches the current behaviour.
+
+        Test: fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding.html
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+
+2019-02-07  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Use dedicated data structures for optional used values (input to geometry functions)
         https://bugs.webkit.org/show_bug.cgi?id=194376
 

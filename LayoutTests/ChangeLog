@@ -1,3 +1,13 @@
+2019-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Out-of-flow] Use the containing block's padding width when computing min/max width.
+        https://bugs.webkit.org/show_bug.cgi?id=194391
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding-expected.html: Added.
+        * fast/block/block-only/absolute-positioned-min-max-percentage-with-parent-padding.html: Added.
+
 2019-02-07  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r241117.

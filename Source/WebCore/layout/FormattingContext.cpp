@@ -73,7 +73,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     };
 
     auto horizontalGeometry = compute({ });
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
 
     if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
         auto maxHorizontalGeometry = compute({ *maxWidth, { } });
