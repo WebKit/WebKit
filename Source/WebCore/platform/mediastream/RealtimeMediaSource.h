@@ -100,7 +100,7 @@ public:
     bool isProducingData() const { return m_isProducingData; }
     void start();
     void stop();
-    void requestStop(Observer* callingObserver = nullptr);
+    void requestToEnd(Observer& callingObserver);
 
     bool muted() const { return m_muted; }
     void setMuted(bool);
@@ -211,6 +211,8 @@ private:
     virtual void stopProducingData() { }
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
 
+    virtual void hasEnded() { }
+
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
     bool m_muted { false };
@@ -238,6 +240,7 @@ private:
     bool m_interrupted { false };
     bool m_captureDidFailed { false };
     bool m_isRemote { false };
+    bool m_isEnded { false };
 };
 
 struct CaptureSourceOrError {

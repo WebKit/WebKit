@@ -185,6 +185,7 @@ private:
     // RealtimeMediaSource
     void beginConfiguration() final { }
     void commitConfiguration() final { }
+    void hasEnded() final { m_manager.sourceEnded(m_id); }
 
     void applyConstraints(const WebCore::MediaConstraints& constraints, SuccessHandler&& successHandler, FailureHandler&& failureHandler) final {
         m_manager.applyConstraints(m_id, constraints);
@@ -343,6 +344,11 @@ void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
 void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints(id, constraints), 0);
+}
+
+void UserMediaCaptureManager::sourceEnded(uint64_t id)
+{
+    m_process.send(Messages::UserMediaCaptureManagerProxy::End(id), 0);
 }
 
 void UserMediaCaptureManager::applyConstraintsSucceeded(uint64_t id, const WebCore::RealtimeMediaSourceSettings& settings)

@@ -1,3 +1,27 @@
+2019-02-07  Youenn Fablet  <youenn@apple.com>
+
+        Make to clear sources from UserMediaCaptureManagerProxy and UserMediaCaptureManager when no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=194312
+
+        Reviewed by Eric Carlson.
+
+        Sources in UserMediaCaptureManager and Proxy are never removed once added to their HashMap.
+        Use the 'ended' mechanism to do the clean-up on WebProcess side.
+        As part of this clean-up, send IPC to UIProcess to do clean-up on proxy side.
+        On WebProcess crash case, clean-up the proxy as well.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::end):
+        (WebKit::UserMediaCaptureManagerProxy::clear):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::sourceEnded):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2019-02-07  Alex Christensen  <achristensen@webkit.org>
 
         Print backgrounds preference should be honored instead of WKWebViewConfiguration value

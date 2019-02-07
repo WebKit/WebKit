@@ -85,6 +85,7 @@ private:
     // Messages::UserMediaCaptureManager
     void captureFailed(uint64_t id);
     void sourceStopped(uint64_t id);
+    void sourceEnded(uint64_t id);
     void sourceMutedChanged(uint64_t id, bool muted);
     void sourceSettingsChanged(uint64_t id, const WebCore::RealtimeMediaSourceSettings&);
     void storageChanged(uint64_t id, const SharedMemory::Handle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);

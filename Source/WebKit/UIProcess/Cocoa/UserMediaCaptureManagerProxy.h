@@ -40,10 +40,11 @@ class WebProcessProxy;
 
 class UserMediaCaptureManagerProxy : private IPC::MessageReceiver {
 public:
-    UserMediaCaptureManagerProxy(WebProcessProxy&);
+    explicit UserMediaCaptureManagerProxy(WebProcessProxy&);
     ~UserMediaCaptureManagerProxy();
 
     WebProcessProxy& process() const { return m_process; }
+    void clear();
 
 private:
     // IPC::MessageReceiver
@@ -53,6 +54,7 @@ private:
     void createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings&);
     void startProducingData(uint64_t);
     void stopProducingData(uint64_t);
+    void end(uint64_t);
     void capabilities(uint64_t, WebCore::RealtimeMediaSourceCapabilities&);
     void setMuted(uint64_t, bool);
     void applyConstraints(uint64_t, const WebCore::MediaConstraints&);

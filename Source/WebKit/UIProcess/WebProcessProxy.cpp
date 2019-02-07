@@ -571,6 +571,10 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
     // to be deleted before we can finish our work.
     Ref<WebProcessProxy> protect(*this);
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    m_userMediaCaptureManagerProxy->clear();
+#endif
+
     if (auto* webConnection = this->webConnection())
         webConnection->didClose();
 

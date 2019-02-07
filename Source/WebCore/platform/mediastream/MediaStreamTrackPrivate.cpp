@@ -137,7 +137,7 @@ void MediaStreamTrackPrivate::endTrack()
     m_isEnded = true;
     updateReadyState();
 
-    m_source->requestStop(this);
+    m_source->requestToEnd(*this);
 
     forEachObserver([this](auto& observer) {
         observer.trackEnded(*this);

@@ -172,7 +172,7 @@ void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const Pla
 
 void RealtimeMediaSource::start()
 {
-    if (m_isProducingData)
+    if (m_isProducingData || m_isEnded)
         return;
 
     m_isProducingData = true;
@@ -195,7 +195,7 @@ void RealtimeMediaSource::stop()
     stopProducingData();
 }
 
-void RealtimeMediaSource::requestStop(Observer* callingObserver)
+void RealtimeMediaSource::requestToEnd(Observer& callingObserver)
 {
     if (!m_isProducingData)
         return;
@@ -208,10 +208,14 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     if (hasObserverPreventingStopping)
         return;
 
+    auto protectedThis = makeRef(*this);
+
     stop();
+    m_isEnded = true;
+    hasEnded();
 
     forEachObserver([callingObserver](auto& observer) {
-        if (&observer != callingObserver)
+        if (&observer != &callingObserver)
             observer.sourceStopped();
     });
 }
