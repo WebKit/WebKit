@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DownloadMap.h"
 
-#if ENABLE(TAKE_DOWNLOAD_ASSERTION)
+#if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 
 #include "Download.h"
 
@@ -77,4 +77,4 @@ bool DownloadMap::remove(DownloadID downloadID)
 
 } // namespace WebKit
 
-#endif // ENABLE(TAKE_DOWNLOAD_ASSERTION)
+#endif // ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)

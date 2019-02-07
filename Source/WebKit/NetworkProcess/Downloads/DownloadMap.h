@@ -33,7 +33,7 @@ namespace WebKit {
 
 class Download;
 
-#if !ENABLE(TAKE_DOWNLOAD_ASSERTION)
+#if !ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 typedef HashMap<DownloadID, std::unique_ptr<Download>> DownloadMap;
 #else
 
@@ -54,6 +54,6 @@ private:
     std::unique_ptr<ProcessAssertion> m_downloadAssertion;
 };
 
-#endif // !ENABLE(TAKE_DOWNLOAD_ASSERTION)
+#endif // !ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
 
 } // namespace WebKit
