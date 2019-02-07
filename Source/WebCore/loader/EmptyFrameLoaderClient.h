@@ -81,7 +81,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void dispatchDidReplaceStateWithinPage() final { }
     void dispatchDidPopStateWithinPage() final { }
     void dispatchWillClose() final { }
-    void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&& completionHandler) final { completionHandler(); }
+    void dispatchDidStartProvisionalLoad() final { }
     void dispatchDidReceiveTitle(const StringWithDirection&) final { }
     void dispatchDidCommitLoad(Optional<HasInsecureContent>) final { }
     void dispatchDidFailProvisionalLoad(const ResourceError&) final { }

@@ -97,7 +97,7 @@ public:
         : m_controller(controller)
         , m_delegate(delegate) { }
     
-    void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, CompletionHandler<void(RefPtr<API::Object>&&)>&&) override;
+    void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) override;
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) override;
     void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) override;
     void didCommitLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) override;
@@ -135,25 +135,10 @@ private:
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
-void PageLoaderClient::didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame& frame, CompletionHandler<void(RefPtr<API::Object>&&)>&& completionHandler)
+void PageLoaderClient::didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame& frame, RefPtr<API::Object>&)
 {
-    if ([loadDelegate() respondsToSelector:@selector(webProcessPlugInBrowserContextController:didStartProvisionalLoadForFrame:)]) {
+    if ([loadDelegate() respondsToSelector:@selector(webProcessPlugInBrowserContextController:didStartProvisionalLoadForFrame:)])
         [loadDelegate() webProcessPlugInBrowserContextController:pluginContextController() didStartProvisionalLoadForFrame:wrapper(frame)];
-        completionHandler(nullptr);
-        return;
-    }
-    SEL selector = @selector(webProcessPlugInBrowserContextController:willStartProvisionalLoadForFrame:completionHandler:);
-    if ([loadDelegate() respondsToSelector:selector]) {
-        auto checker = WebKit::CompletionHandlerCallChecker::create(loadDelegate(), selector);
-        [loadDelegate() webProcessPlugInBrowserContextController:pluginContextController() willStartProvisionalLoadForFrame:wrapper(frame) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] () mutable {
-            if (checker->completionHandlerHasBeenCalled())
-                return;
-            checker->didCallCompletionHandler();
-            completionHandler(nullptr);
-        }).get()];
-        return;
-    }
-    completionHandler(nullptr);
 }
 
 void PageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame& frame, RefPtr<API::Object>&)
