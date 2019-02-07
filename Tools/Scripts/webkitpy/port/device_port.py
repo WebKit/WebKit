@@ -143,7 +143,7 @@ class DevicePort(DarwinPort):
                 continue
             if device.device_type in self.DEVICE_TYPE:
                 types.add(device.device_type)
-        if types:
+        if types and not self.get_option('dedicated_simulators', False):
 
             def sorted_by_default_device_type(type):
                 try:

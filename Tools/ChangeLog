@@ -1,3 +1,15 @@
+2019-02-07  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Respect --dedicated-simulators flag
+        https://bugs.webkit.org/show_bug.cgi?id=194416
+        <rdar://problem/47894722>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort.supported_device_types): If --dedicated-simulators is passed, all
+        available devices can be safely ignored.
+
 2019-02-07  Keith Rollin  <krollin@apple.com>
 
         Remove extra copy of 100x100-red.tga
