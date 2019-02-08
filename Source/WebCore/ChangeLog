@@ -1,5 +1,36 @@
 2019-02-08  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] The used containing block width value is optional
+        https://bugs.webkit.org/show_bug.cgi?id=194428
+
+        Reviewed by Antti Koivisto.
+
+        The preferred width codepath cannot provide a valid used containing block width value.
+
+        "The percentage is calculated with respect to the width of the generated box's containing block.
+        If the containing block's width depends on this element's width, then the resulting layout is undefined in CSS 2.2."
+
+        Let's use 0 as used value for now.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedPadding):
+        (WebCore::Layout::FormattingContext::Geometry::computedHorizontalMargin):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::UsedHorizontalValues::UsedHorizontalValues):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::inlineBlockWidthAndMargin):
+        * page/FrameViewLayoutContext.cpp:
+
+2019-02-08  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Horizontal geometry compute functions should take the containing block's width as a used value
         https://bugs.webkit.org/show_bug.cgi?id=194424
 

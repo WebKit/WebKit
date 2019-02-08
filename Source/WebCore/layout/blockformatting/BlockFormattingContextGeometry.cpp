@@ -136,7 +136,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
 
         auto& style = layoutBox.style();
         auto* containingBlock = layoutBox.containingBlock();
-        auto containingBlockWidth = usedValues.containingBlockWidth;
+        auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedValues.width ? Length { usedValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
