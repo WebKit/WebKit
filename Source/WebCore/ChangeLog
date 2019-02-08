@@ -1,3 +1,46 @@
+2019-02-07  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUDevice::createTexture implementation prototype
+        https://bugs.webkit.org/show_bug.cgi?id=194409
+        <rdar://problem/47894312>
+
+        Reviewed by Myles C. Maxfield.
+
+        Test: textures-textureviews.html updated to test new functionality.
+
+        Implement GPUDevice::createTexture():
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createTexture const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::create): Modified to return non-nullable to match direction of API.
+        (WebCore::WebGPUTexture::WebGPUTexture):
+        * Modules/webgpu/WebGPUTexture.h:
+
+        Metal backend MTLTextureDescriptor and MTLTexture creation:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateTexture const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUTexture.h:
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::mtlTextureTypeForGPUTextureDescriptor):
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags):
+        (WebCore::storageModeForPixelFormatAndSampleCount):
+        (WebCore::tryCreateMtlTextureDescriptor):
+        (WebCore::GPUTexture::tryCreate):
+        (WebCore::GPUTexture::createDefaultTextureView): Add ObjC try/catch guards.
+
+        Add GPUUtils.h/cpp for shared utility functions:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUUtils.h: Added. Moved platformTextureFormatForGPUTextureFormat here.
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::setFormat):
+        (WebCore::platformTextureFormatForGPUTextureFormat): Moved to GPUUtils.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm: Added.
+        (WebCore::platformTextureFormatForGPUTextureFormat): Moved here to be referenced by multiple files.
+
 2019-02-07  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION(r239887): Crash under IDBConnectionToClient::didDeleteDatabase(WebCore::IDBResultData const&)

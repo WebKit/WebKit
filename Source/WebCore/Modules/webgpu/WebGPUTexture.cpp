@@ -32,12 +32,12 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUTexture> WebGPUTexture::create(RefPtr<GPUTexture>&& texture)
+Ref<WebGPUTexture> WebGPUTexture::create(RefPtr<GPUTexture>&& texture)
 {
-    return texture ? adoptRef(new WebGPUTexture(texture.releaseNonNull())) : nullptr;
+    return adoptRef(*new WebGPUTexture(WTFMove(texture)));
 }
 
-WebGPUTexture::WebGPUTexture(Ref<GPUTexture>&& texture)
+WebGPUTexture::WebGPUTexture(RefPtr<GPUTexture>&& texture)
     : m_texture(WTFMove(texture))
 {
 }

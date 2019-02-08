@@ -14066,6 +14066,8 @@
 		D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURequestAdapterOptions.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
+		D06EF552220BA26A0018724E /* GPUUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUUtils.h; sourceTree = "<group>"; };
+		D06EF553220BA26A0018724E /* GPUUtilsMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUUtilsMetal.mm; sourceTree = "<group>"; };
 		D07DEAB70A36554A00CA30F8 /* InsertListCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InsertListCommand.cpp; sourceTree = "<group>"; };
 		D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InsertListCommand.h; sourceTree = "<group>"; };
 		D083D98421C48050008E8EFF /* GPUBindGroupLayoutDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayoutDescriptor.h; sourceTree = "<group>"; };
@@ -18503,6 +18505,7 @@
 				D026F486220A505900AC5F49 /* GPUTextureDimension.h */,
 				312FF8C321A4C2F300EB199D /* GPUTextureFormat.h */,
 				D026F485220A477200AC5F49 /* GPUTextureUsage.h */,
+				D06EF552220BA26A0018724E /* GPUUtils.h */,
 				D0D8649B21BA1C2D003C983C /* GPUVertexAttributeDescriptor.h */,
 				D0D8649C21BA1CE8003C983C /* GPUVertexInputDescriptor.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
@@ -26188,6 +26191,7 @@
 				D087CE4021ACA94200BDE174 /* GPUShaderModuleMetal.mm */,
 				D087CE3E21ACA94200BDE174 /* GPUSwapChainMetal.mm */,
 				D087CE3F21ACA94200BDE174 /* GPUTextureMetal.mm */,
+				D06EF553220BA26A0018724E /* GPUUtilsMetal.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

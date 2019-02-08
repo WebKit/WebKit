@@ -32,6 +32,7 @@
     readonly attribute WebGPUAdapter adapter;
 
     WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
+    WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
 
     WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
     WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);

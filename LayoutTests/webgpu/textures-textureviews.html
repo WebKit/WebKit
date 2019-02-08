@@ -1,34 +1,66 @@
-<!DOCTYPE html>
-<html>
-<script src="../resources/js-test-pre.js"></script>
-<script src="js/basic-webgpu-functions.js"></script>
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset=utf-8>
+<title>Basic GPUTexture Tests.</title>
+<body>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+const canvas = document.querySelector("canvas");    
+let device, context;
 
-function setUpNextTextureView() {
-    let texture = context.getNextTexture();
-    if (texture)
-        testPassed("Acquired next WebGPUTexture from WebGPURenderingContext.");
-    else {
-        testFailed("Could not get next WebGPUTexture from WebGPURenderingContext!");
-        return;
-    }
+let texSize = {
+    width: canvas.width,
+    height: canvas.height,
+    depth: 1
+};
 
-    let textureView = texture.createDefaultTextureView();
-    if (textureView) 
-        testPassed("Created default WebGPUTextureView from a WebGPUTexture");
-    else {
-        testFailed("Could not create default WebGPUTextureView!");
-        return;
-    }
-}
+let texDescriptor = {
+    size: texSize,
+    arrayLayerCount: 1,
+    mipLevelCount: 1,
+    sampleCount: 1,
+    dimension: "2d",
+    format: "d32-float-s8-uint",
+    usage: GPUTextureUsage.OUTPUT_ATTACHMENT
+};
 
-// FIXME: Add tests for device.createTexture, WebGPUTextureDescriptor, and WebGPUTextureViewDescriptor.
+promise_test(async () => {
+    device = await getBasicDevice();
+    context = createBasicContext(canvas, device);
 
-runWebGPUTests([setUpNextTextureView]);
+    const texture = context.getNextTexture();
+    assert_true(texture instanceof WebGPUTexture, "Successfully acquired next texture.");
 
-successfullyParsed = true;
+    const textureView = texture.createDefaultTextureView();
+    assert_true(textureView instanceof WebGPUTextureView, "Successfully created texture view from next texture.");
+}, "Create texture view from swap chain.");
+
+promise_test(async () => {
+    const depthTexture = device.createTexture(texDescriptor);
+    assert_true(depthTexture instanceof WebGPUTexture, "Successfully created depth texture.");
+}, "Create basic depth texture from device.");
+
+promise_test(async () => {
+    texDescriptor.sampleCount = 4;
+    texDescriptor.format = "r8g8b8a8-unorm";
+    texDescriptor.usage = GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_SRC
+
+    const multisampledTexture = device.createTexture(texDescriptor);
+    assert_true(multisampledTexture instanceof WebGPUTexture, "Successfully created multisampled texture.");
+}, "Create basic 4x multisampled texture.");
+
+promise_test(async () => {
+    texDescriptor.size.depth = 3;
+    texDescriptor.sampleCount = 1;
+    texDescriptor.dimension = "3d";
+
+    const texture3d = device.createTexture(texDescriptor);
+    assert_true(texture3d instanceof WebGPUTexture, "Successfully created basic 3D texture.");
+}, "Create basic 3D texture from device.");
+
+// FIXME: Add tests for 1D textures, textureArrays, and WebGPUTextureViews.
 </script>
-<script src="../resources/js-test-post.js"></script>
+</body>
 </html>

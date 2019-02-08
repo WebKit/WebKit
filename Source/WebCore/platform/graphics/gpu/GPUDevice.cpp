@@ -39,12 +39,19 @@
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
+#include "GPUTexture.h"
+#include "GPUTextureDescriptor.h"
 
 namespace WebCore {
 
 RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
 {
     return GPUBuffer::create(*this, WTFMove(descriptor));
+}
+
+RefPtr<GPUTexture> GPUDevice::tryCreateTexture(GPUTextureDescriptor&& descriptor) const
+{
+    return GPUTexture::tryCreate(*this, WTFMove(descriptor));
 }
 
 RefPtr<GPUBindGroupLayout> GPUDevice::tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const

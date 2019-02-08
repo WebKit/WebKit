@@ -28,12 +28,139 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPUDevice.h"
+#import "GPUTextureDescriptor.h"
+#import "GPUUtils.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Optional.h>
 
 namespace WebCore {
+
+static MTLTextureType mtlTextureTypeForGPUTextureDescriptor(const GPUTextureDescriptor& descriptor)
+{
+    switch (descriptor.dimension) {
+    case GPUTextureDimension::_1d:
+        return (descriptor.arrayLayerCount == 1) ? MTLTextureType1D : MTLTextureType1DArray;
+    case GPUTextureDimension::_2d: {
+        if (descriptor.arrayLayerCount == 1)
+            return (descriptor.sampleCount == 1) ? MTLTextureType2D : MTLTextureType2DMultisample;
+
+        return MTLTextureType2DArray;
+    }
+    case GPUTextureDimension::_3d:
+        return MTLTextureType3D;
+    }
+}
+
+static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(GPUTextureUsageFlags flags)
+{
+    MTLTextureUsage usage = MTLTextureUsageUnknown;
+
+    if (flags & GPUTextureUsage::Storage)
+        usage |= MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
+
+    if (flags & GPUTextureUsage::Sampled) {
+        // SAMPLED is a read-only usage.
+        if (flags & GPUTextureUsage::Storage)
+            return WTF::nullopt;
+
+        usage |= MTLTextureUsageShaderRead | MTLTextureUsagePixelFormatView;
+    }
+
+    if (flags & GPUTextureUsage::OutputAttachment)
+        usage |= MTLTextureUsageRenderTarget;
+
+    return usage;
+}
+
+static MTLStorageMode storageModeForPixelFormatAndSampleCount(MTLPixelFormat format, unsigned long samples)
+{
+    // Depth, Stencil, DepthStencil, and Multisample textures must be allocated with the MTLStorageModePrivate resource option.
+    if (format == MTLPixelFormatDepth32Float_Stencil8 || samples > 1)
+        return MTLStorageModePrivate;
+
+    return MTLStorageModeManaged;
+}
+
+static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char* const functionName, const GPUTextureDescriptor&& descriptor)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+
+    RetainPtr<MTLTextureDescriptor> mtlDescriptor;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    mtlDescriptor = adoptNS([MTLTextureDescriptor new]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!mtlDescriptor) {
+        LOG(WebGPU, "%s: Unable to create new MTLTextureDescriptor!", functionName);
+        return nullptr;
+    }
+
+    // FIXME: Add more validation as constraints are added to spec.
+    auto pixelFormat = static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(descriptor.format));
+
+    auto usage = mtlTextureUsageForGPUTextureUsageFlags(descriptor.usage);
+    if (!usage) {
+        LOG(WebGPU, "%s: Invalid GPUTextureUsageFlags!", functionName);
+        return nullptr;
+    }
+
+    auto storageMode = storageModeForPixelFormatAndSampleCount(pixelFormat, descriptor.sampleCount);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    [mtlDescriptor setWidth:descriptor.size.width];
+    [mtlDescriptor setHeight:descriptor.size.height];
+    [mtlDescriptor setDepth:descriptor.size.depth];
+    [mtlDescriptor setArrayLength:descriptor.arrayLayerCount];
+    [mtlDescriptor setMipmapLevelCount:descriptor.mipLevelCount];
+    [mtlDescriptor setSampleCount:descriptor.sampleCount];
+    [mtlDescriptor setTextureType:mtlTextureTypeForGPUTextureDescriptor(descriptor)];
+    [mtlDescriptor setPixelFormat:pixelFormat];
+    [mtlDescriptor setUsage:*usage];
+
+    [mtlDescriptor setStorageMode:storageMode];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return mtlDescriptor;
+}
+
+RefPtr<GPUTexture> GPUTexture::tryCreate(const GPUDevice& device, GPUTextureDescriptor&& descriptor)
+{
+    const char* const functionName = "GPUTexture::tryCreate()";
+
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "%s: Invalid GPUDevice!", functionName);
+        return nullptr;
+    }
+
+    auto mtlDescriptor = tryCreateMtlTextureDescriptor(functionName, WTFMove(descriptor));
+    if (!mtlDescriptor)
+        return nullptr;
+
+    RetainPtr<MTLTexture> mtlTexture;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    mtlTexture = adoptNS([device.platformDevice() newTextureWithDescriptor:mtlDescriptor.get()]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!mtlTexture) {
+        LOG(WebGPU, "%s: Unable to create MTLTexture!", functionName);
+        return nullptr;
+    }
+
+    return adoptRef(new GPUTexture(WTFMove(mtlTexture)));
+}
 
 Ref<GPUTexture> GPUTexture::create(PlatformTextureSmartPtr&& texture)
 {
@@ -49,7 +176,11 @@ RefPtr<GPUTexture> GPUTexture::createDefaultTextureView()
 {
     RetainPtr<MTLTexture> texture;
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     texture = adoptNS([m_platformTexture newTextureViewWithPixelFormat:m_platformTexture.get().pixelFormat]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!texture) {
         LOG(WebGPU, "GPUTexture::createDefaultTextureView(): Unable to create MTLTexture view!");

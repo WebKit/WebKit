@@ -331,6 +331,7 @@ platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm
 platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm
 platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm
 platform/graphics/gpu/cocoa/GPUTextureMetal.mm
+platform/graphics/gpu/cocoa/GPUUtilsMetal.mm
 platform/graphics/gpu/Texture.cpp
 platform/graphics/gpu/TilingData.cpp
 

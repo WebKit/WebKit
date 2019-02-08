@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "GPUUtils.h"
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_PROTOCOL(MTLTexture);
+#import <Metal/Metal.h>
 
 namespace WebCore {
 
-class GPUDevice;
-
-struct GPUTextureDescriptor;
-
-using PlatformTexture = MTLTexture;
-using PlatformTextureSmartPtr = RetainPtr<MTLTexture>;
-
-class GPUTexture : public RefCounted<GPUTexture> {
-public:
-    static RefPtr<GPUTexture> tryCreate(const GPUDevice&, GPUTextureDescriptor&&);
-    static Ref<GPUTexture> create(PlatformTextureSmartPtr&&);
-
-    PlatformTexture *platformTexture() const { return m_platformTexture.get(); }
-
-    RefPtr<GPUTexture> createDefaultTextureView();
-
-private:
-    explicit GPUTexture(PlatformTextureSmartPtr&&);
-
-    PlatformTextureSmartPtr m_platformTexture;
-};
+PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat format)
+{
+    switch (format) {
+    case GPUTextureFormat::R8g8b8a8Unorm:
+        return MTLPixelFormatRGBA8Unorm;
+    case GPUTextureFormat::R8g8b8a8Uint:
+        return MTLPixelFormatRGBA8Uint;
+    case GPUTextureFormat::B8g8r8a8Unorm:
+        return MTLPixelFormatBGRA8Unorm;
+    case GPUTextureFormat::D32FloatS8Uint:
+        return MTLPixelFormatDepth32Float_Stencil8;
+    }
+}
 
 } // namespace WebCore
 

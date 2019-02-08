@@ -1,3 +1,16 @@
+2019-02-07  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUDevice::createTexture implementation prototype
+        https://bugs.webkit.org/show_bug.cgi?id=194409
+        <rdar://problem/47894312>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update textures-textureviews.html to WPT format and to test creation of textures via the GPUDevice.
+
+        * webgpu/textures-textureviews-expected.txt:
+        * webgpu/textures-textureviews.html:
+
 2019-02-07  Shawn Roberts  <sroberts@apple.com>
 
         fast/hidpi/hidpi-long-page-with-inset-element.html is a flaky image failure

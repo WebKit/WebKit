@@ -38,14 +38,14 @@ class WebGPUTextureView;
 
 class WebGPUTexture : public RefCounted<WebGPUTexture> {
 public:
-    static RefPtr<WebGPUTexture> create(RefPtr<GPUTexture>&&);
+    static Ref<WebGPUTexture> create(RefPtr<GPUTexture>&&);
 
     RefPtr<WebGPUTextureView> createDefaultTextureView();
 
 private:
-    explicit WebGPUTexture(Ref<GPUTexture>&&);
+    explicit WebGPUTexture(RefPtr<GPUTexture>&&);
 
-    Ref<GPUTexture> m_texture;
+    RefPtr<GPUTexture> m_texture;
 };
 
 } // namespace WebCore

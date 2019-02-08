@@ -31,9 +31,9 @@
 #import "GPUDevice.h"
 #import "GPUTexture.h"
 #import "GPUTextureFormat.h"
+#import "GPUUtils.h"
 #import "Logging.h"
 #import "WebGPULayer.h"
-
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -80,36 +80,15 @@ void GPUSwapChain::setDevice(const GPUDevice& device)
     [m_platformSwapLayer setDevice:device.platformDevice()];
 }
 
-static Optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(GPUTextureFormat format)
-{
-    switch (format) {
-    case GPUTextureFormat::R8g8b8a8Unorm:
-        return MTLPixelFormatRGBA8Unorm;
-    case GPUTextureFormat::R8g8b8a8Uint:
-        return MTLPixelFormatRGBA8Uint;
-    case GPUTextureFormat::B8g8r8a8Unorm:
-        return MTLPixelFormatBGRA8Unorm;
-    case GPUTextureFormat::D32FloatS8Uint:
-        return MTLPixelFormatDepth32Float_Stencil8;
-    default:
-        LOG(WebGPU, "GPUSwapChain::setFormat(): Invalid texture format specified!");
-        return WTF::nullopt;
-    }
-}
-
 void GPUSwapChain::setFormat(GPUTextureFormat format)
 {
-    auto result = platformTextureFormatForGPUTextureFormat(format);
-    if (!result)
-        return;
+    auto mtlFormat = static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(format));
 
-    auto mtlResult = static_cast<MTLPixelFormat>(result.value());
-
-    switch (mtlResult) {
+    switch (mtlFormat) {
     case MTLPixelFormatBGRA8Unorm:
     // FIXME: Add the other supported swap layer formats as they are added to GPU spec.
     //  MTLPixelFormatBGRA8Unorm_sRGB, MTLPixelFormatRGBA16Float, MTLPixelFormatBGRA10_XR, and MTLPixelFormatBGRA10_XR_sRGB.
-        [m_platformSwapLayer setPixelFormat:mtlResult];
+        [m_platformSwapLayer setPixelFormat:mtlFormat];
         return;
     default:
         LOG(WebGPU, "GPUSwapChain::setFormat(): Unsupported MTLPixelFormat!");

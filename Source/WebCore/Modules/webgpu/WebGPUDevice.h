@@ -47,7 +47,9 @@ class WebGPUCommandBuffer;
 class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
 class WebGPUShaderModule;
+class WebGPUTexture;
 
+struct GPUTextureDescriptor;
 struct WebGPUBindGroupDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
 struct WebGPURenderPipelineDescriptor;
@@ -61,6 +63,7 @@ public:
     const GPUDevice& device() const { return m_device.get(); }
 
     RefPtr<WebGPUBuffer> createBuffer(WebGPUBufferDescriptor&&) const;
+    Ref<WebGPUTexture> createTexture(GPUTextureDescriptor&&) const;
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;
     Ref<WebGPUPipelineLayout> createPipelineLayout(WebGPUPipelineLayoutDescriptor&&) const;
