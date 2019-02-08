@@ -633,9 +633,9 @@ class DefaultBenchmark extends Benchmark {
             return;
         }
 
-        print("    Startup:", uiFriendlyNumber(this.firstIteration), "ms");
-        print("    Worst Case:", uiFriendlyNumber(this.worst4), "ms");
-        print("    Average:", uiFriendlyNumber(this.average), "ms");
+        print("    Startup:", uiFriendlyNumber(this.firstIteration));
+        print("    Worst Case:", uiFriendlyNumber(this.worst4));
+        print("    Average:", uiFriendlyNumber(this.average));
         print("    Score:", uiFriendlyNumber(this.score));
         if (RAMification) {
             print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
@@ -727,8 +727,8 @@ class WSLBenchmark extends Benchmark {
             return;
         }
 
-        print("    Stdlib:", uiFriendlyNumber(this.stdlib), "ms");
-        print("    Tests:", uiFriendlyNumber(this.mainRun), "ms");
+        print("    Stdlib:", uiFriendlyNumber(this.stdlib));
+        print("    Tests:", uiFriendlyNumber(this.mainRun));
         print("    Score:", uiFriendlyNumber(this.score));
         if (RAMification) {
             print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
@@ -883,8 +883,8 @@ class WasmBenchmark extends Benchmark {
             document.getElementById(this.scoreID).innerHTML = uiFriendlyNumber(this.score);
             return;
         }
-        print("    Startup:", uiFriendlyNumber(this.startupTime), "ms");
-        print("    Run time:", uiFriendlyNumber(this.runTime), "ms");
+        print("    Startup:", uiFriendlyNumber(this.startupTime));
+        print("    Run time:", uiFriendlyNumber(this.runTime));
         if (RAMification) {
             print("    Current Footprint:", uiFriendlyNumber(this.currentFootprint));
             print("    Peak Footprint:", uiFriendlyNumber(this.peakFootprint));
