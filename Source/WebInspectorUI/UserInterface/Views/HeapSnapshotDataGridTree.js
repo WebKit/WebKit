@@ -215,9 +215,12 @@ WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree e
 
     populateTopLevel()
     {
-        // Populate the first level with the different non-internal classes.
+        // Populate the first level with the different classes.
+        let skipInternalOnlyObjects = !WI.settings.debugShowInternalObjectsInHeapSnapshot.value;
+
         for (let [className, {size, retainedSize, count, internalCount, deadCount}] of this.heapSnapshot.categories) {
-            if (count === internalCount)
+            // Possibly skip internal only classes.
+            if (skipInternalOnlyObjects && count === internalCount)
                 continue;
 
             // FIXME: <https://webkit.org/b/157905> Web Inspector: Provide a way to toggle between showing only live objects and live+dead objects

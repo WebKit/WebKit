@@ -165,4 +165,5 @@ WI.settings = {
     filterMultiplexingBackendInspectorProtocolMessages: new WI.Setting("filter-multiplexing-backend-inspector-protocol-messages", true),
     layoutDirection: new WI.Setting("layout-direction-override", "system"),
     pauseForInternalScripts: new WI.Setting("pause-for-internal-scripts", false),
+    debugShowInternalObjectsInHeapSnapshot: new WI.Setting("debug-show-internal-objects-in-heap-snapshot", false),
 };

@@ -1,3 +1,16 @@
+2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Debug setting to show Internal Object Classes in Heap Snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=194445
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WI.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+
 2019-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: close unbalanced quotes and parenthesis when editing values
