@@ -43,6 +43,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "RenderElement.h"
+#include "RenderStyle.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -252,7 +253,7 @@ ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUp
         return { };
 
     auto pseudoStyle = scope().styleResolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, &scope().selectorFilter);
-    if (!pseudoStyle)
+    if (!pseudoElementRendererIsNeeded(pseudoStyle.get()))
         return { };
 
     PseudoElement* pseudoElement = pseudoId == PseudoId::Before ? element.beforePseudoElement() : element.afterPseudoElement();

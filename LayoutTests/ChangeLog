@@ -1,3 +1,14 @@
+2019-02-07  Devin Rousso  <drousso@apple.com>
+
+        PseudoElement created for any ::before/::after selector regardless of whether a content property exists
+        https://bugs.webkit.org/show_bug.cgi?id=194423
+        <rdar://problem/46787260>
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/css/pseudo-creation.html: Added.
+        * inspector/css/pseudo-creation-expected.txt: Added.
+
 2019-02-07  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUDevice::createTexture implementation prototype

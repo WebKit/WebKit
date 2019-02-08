@@ -1,3 +1,19 @@
+2019-02-07  Devin Rousso  <drousso@apple.com>
+
+        PseudoElement created for any ::before/::after selector regardless of whether a content property exists
+        https://bugs.webkit.org/show_bug.cgi?id=194423
+        <rdar://problem/46787260>
+
+        Reviewed by Antti Koivisto.
+
+        Test: inspector/css/pseudo-creation.html
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolvePseudoStyle):
+        We should only be creating `PseudoElement`s if we actually have a `content` proprety in the
+        `PseudoElement`'s style. Otherwise, we end up creating `PseudoElement`s for every CSS rule
+        that has a `::before`/`::after`, only to immediately destroy them as there is nothing to show.
+
 2019-02-07  Chris Dumez  <cdumez@apple.com>
 
         Mark more heap-allocated classes as fast allocated

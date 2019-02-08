@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+.test-pseudo-without-content::before {
+    color: red;
+}
+.test-pseudo-with-content::before {
+    content: "TEST";
+}
+</style>
+<script>
+
+function createElementWithClass(className) {
+    let element = document.body.appendChild(document.createElement("div"));
+    element.classList.add(className);
+}
+
+function removeElementWithClass(className) {
+    let element = document.querySelector(`.${className}`);
+    element.classList.remove(className);
+
+    // Don't remove the element, as that removes the entire subtree rather than just the pseudo element.
+}
+
+function test() {
+    ProtocolTest.debug();
+
+    let documentNode = null;
+    let pseudoElement = null;
+
+    function handlePromiseReject(error) {
+        console.log(error);
+        ProtocolTest.log(error);
+        ProtocolTest.completeTest();
+    }
+
+    function evaluateWithLog(expression) {
+        ProtocolTest.log("");
+        ProtocolTest.log(`Calling "${expression}"...`);
+        return ProtocolTest.evaluateInPage(expression)
+        .catch(handlePromiseReject);
+    }
+
+    function checkElementsWithClass(className, expectedCount) {
+        ProtocolTest.log(`Checking for nodes with class ".${className}"...`);
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.querySelectorAll",
+            params: {
+                nodeId: documentNode.nodeId,
+                selector: `.${className}`,
+            },
+        })
+        .then((result) => {
+            ProtocolTest.expectEqual(result.nodeIds.length, expectedCount, `There should be ${expectedCount} node with the class ".${className}".`);
+        })
+        .catch(handlePromiseReject);
+    }
+
+    function createElementWithClass(className) {
+        return evaluateWithLog(`createElementWithClass("${className}")`)
+        .then(() => checkElementsWithClass(className, 1))
+        .catch(handlePromiseReject);
+    }
+
+    function removeElementWithClass(className) {
+        return evaluateWithLog(`removeElementWithClass("${className}")`)
+        .then(() => checkElementsWithClass(className, 0))
+        .catch(handlePromiseReject);
+    }
+
+    InspectorProtocol.eventHandler["DOM.pseudoElementAdded"] = (response) => {
+        pseudoElement = response.params.pseudoElement;
+
+        ProtocolTest.pass(`Created ::${pseudoElement.pseudoType} pseudo element`);
+    };
+
+    InspectorProtocol.eventHandler["DOM.pseudoElementRemoved"] = (response) => {
+        ProtocolTest.expectEqual(response.params.pseudoElementId, pseudoElement.nodeId, `Removed ::${pseudoElement.pseudoType} pseudo element`);
+    };
+
+    ProtocolTest.log("Requesting document...");
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, (response) => {
+        InspectorProtocol.checkForError(response);
+
+        documentNode = response.result.root;
+
+        Promise.resolve()
+        .then(() => createElementWithClass("test-pseudo-without-content"))
+        .then(() => removeElementWithClass("test-pseudo-without-content"))
+        .then(() => createElementWithClass("test-pseudo-with-content"))
+        .then(() => removeElementWithClass("test-pseudo-with-content"))
+        .then(() => ProtocolTest.completeTest())
+        .catch(handlePromiseReject);
+    });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing when CSS.events.pseudoElementCreated and CSS.events.pseudoElementDestroyed are fired.</p>
+</body>
+</html>
