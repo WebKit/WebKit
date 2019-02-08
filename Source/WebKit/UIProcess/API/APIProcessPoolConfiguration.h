@@ -182,9 +182,6 @@ public:
 #if PLATFORM(COCOA)
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
-
-    bool usesNetworkingDaemon() const { return m_usesNetworkingDaemon; }
-    void setUsesNetworkingDaemon(bool usesNetworkingDaemon) { m_usesNetworkingDaemon = usesNetworkingDaemon; }
 #endif
 
 private:
@@ -238,7 +235,6 @@ private:
 
 #if PLATFORM(COCOA)
     bool m_suppressesConnectionTerminationOnSystemChange { false };
-    bool m_usesNetworkingDaemon { false };
 #endif
 };
 

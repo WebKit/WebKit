@@ -1,3 +1,16 @@
+2019-02-08  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r241197.
+
+        Broke iOS Simulator Debug build and casued 1 API failure on
+        High Sierra
+
+        Reverted changeset:
+
+        "Add SPI to use networking daemon instead of XPC service"
+        https://bugs.webkit.org/show_bug.cgi?id=194427
+        https://trac.webkit.org/changeset/241197
+
 2019-02-08  Beth Dakin  <bdakin@apple.com>
 
         Abstract and discussion comments needed for afterScreenUpdates

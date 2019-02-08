@@ -38,9 +38,7 @@
 
 namespace WebKit {
 
-void XPCInitializationHandler(xpc_object_t);
-
-void XPCEventHandler(xpc_connection_t peer, AuxiliaryProcessType processType)
+static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     static xpc_object_t priorityBoostMessage = nullptr;
 
@@ -49,20 +47,13 @@ void XPCEventHandler(xpc_connection_t peer, AuxiliaryProcessType processType)
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
-                if (processType == AuxiliaryProcessType::XPCService) {
-                    // FIXME: Handle this case more gracefully.
-                    exit(EXIT_FAILURE);
-                } else {
-                    // FIXME: Deref the NetworkProcess object associated with this xpc connection
-                    // once we have a container for such objects.
-                }
+                // FIXME: Handle this case more gracefully.
+                exit(EXIT_FAILURE);
             }
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
-                XPCInitializationHandler(xpc_dictionary_get_value(event, "initialization-message"));
-                
                 CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
@@ -101,10 +92,8 @@ void XPCEventHandler(xpc_connection_t peer, AuxiliaryProcessType processType)
     xpc_connection_resume(peer);
 }
 
-void XPCInitializationHandler(xpc_object_t event)
+int XPCServiceMain(int, const char**)
 {
-    ASSERT(event);
-    ASSERT(xpc_get_type(event) == XPC_TYPE_DICTIONARY);
 #if defined(__i386__)
     // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
     // it's the only of the XPC services that are 32-bit. We should come up with a more targeted #if check.
@@ -115,37 +104,40 @@ void XPCInitializationHandler(xpc_object_t event)
     }
 #endif
 
+    auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 #if PLATFORM(IOS_FAMILY)
-    auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
+    auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
     xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
         setenv(key, xpc_string_get_string_ptr(value), 1);
         return true;
     });
 #endif
 
+    if (bootstrap) {
 #if PLATFORM(MAC)
-    if (const char* webKitBundleVersion = xpc_dictionary_get_string(event, "WebKitBundleVersion")) {
-        CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
-        NSString *expectedBundleVersion = (NSString *)CFBundleGetValueForInfoDictionaryKey(webKitBundle, kCFBundleVersionKey);
+        if (const char* webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion")) {
+            CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
+            NSString *expectedBundleVersion = (NSString *)CFBundleGetValueForInfoDictionaryKey(webKitBundle, kCFBundleVersionKey);
 
-        if (strcmp(webKitBundleVersion, expectedBundleVersion.UTF8String)) {
-            _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion]);
-            __builtin_trap();
+            if (strcmp(webKitBundleVersion, expectedBundleVersion.UTF8String)) {
+                _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion]);
+                __builtin_trap();
+            }
         }
-    }
 #endif
 
-    if (xpc_object_t languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
-        @autoreleasepool {
-            NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
-            NSMutableDictionary *newArguments = [existingArguments mutableCopy];
-            RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
-            xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
-                [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
-                return true;
-            });
-            [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
-            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
+        if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
+            @autoreleasepool {
+                NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+                NSMutableDictionary *newArguments = [existingArguments mutableCopy];
+                RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
+                xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
+                    [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
+                    return true;
+                });
+                [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
+                [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
+            }
         }
     }
 
@@ -161,13 +153,8 @@ void XPCInitializationHandler(xpc_object_t event)
     }
 #endif
 #endif
-}
 
-int XPCServiceMain(int, const char**)
-{
-    xpc_main([] (xpc_connection_t peer) {
-        XPCEventHandler(peer, AuxiliaryProcessType::XPCService);
-    });
+    xpc_main(XPCServiceEventHandler);
     return 0;
 }
 
