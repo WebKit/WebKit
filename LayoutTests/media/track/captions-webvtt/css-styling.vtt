@@ -12,9 +12,23 @@ font-size: 15px;
 }
 
 STYLE
-video::cue {
+::cue {
 color: green;
 font-size: 15px;
+}
+
+NOTE the following style block has a syntax error.
+
+STYLE
+::cue {
+color: blue
+font-size: 25px;
+}
+
+STYLE
+video::cue {
+color: blue;
+font-size: 25px;
 }
 
 hello

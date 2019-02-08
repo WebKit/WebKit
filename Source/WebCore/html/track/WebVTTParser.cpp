@@ -39,6 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"
+#include "StyleSheetContents.h"
 #include "Text.h"
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
@@ -367,6 +368,20 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
 {
     if (!line.isEmpty() && !line.contains("-->"))
         return false;
+    
+    auto styleSheet = m_currentStyleSheet.stripWhiteSpace();
+    
+    // Inline VTT styles must start with ::cue.
+    if (!styleSheet.startsWith("::cue")) {
+        m_currentStyleSheet = emptyString();
+        return true;
+    }
+
+    auto contents = StyleSheetContents::create();
+    if (!contents->parseString(styleSheet)) {
+        m_currentStyleSheet = emptyString();
+        return true;
+    }
     
     m_styleSheets.append(WTFMove(m_currentStyleSheet));
     return true;

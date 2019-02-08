@@ -1,3 +1,13 @@
+2019-02-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Inline WebVTT styles should start with '::cue'
+        https://bugs.webkit.org/show_bug.cgi?id=194227
+        <rdar://problem/47791087>
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/css-styling.vtt:
+
 2019-02-08  Youenn Fablet  <youenn@apple.com>
 
         Running RTCRtpSender.getCapabilities("video") before initial offer breaks VP8
