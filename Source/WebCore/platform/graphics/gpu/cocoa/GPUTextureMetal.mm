@@ -81,7 +81,11 @@ static MTLStorageMode storageModeForPixelFormatAndSampleCount(MTLPixelFormat for
     if (format == MTLPixelFormatDepth32Float_Stencil8 || samples > 1)
         return MTLStorageModePrivate;
 
+#if PLATFORM(MAC)
     return MTLStorageModeManaged;
+#else
+    return MTLStorageModeShared;
+#endif
 }
 
 static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char* const functionName, const GPUTextureDescriptor&& descriptor)
