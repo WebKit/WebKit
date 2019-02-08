@@ -1507,6 +1507,15 @@ void WebProcessPool::updateMaxSuspendedPageCount()
         m_suspendedPages.removeFirst();
 }
 
+bool WebProcessPool::usesNetworkingDaemon() const
+{
+#if PLATFORM(COCOA)
+    return m_configuration->usesNetworkingDaemon();
+#else
+    return false;
+#endif
+}
+    
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
     m_configuration->setCacheModel(cacheModel);

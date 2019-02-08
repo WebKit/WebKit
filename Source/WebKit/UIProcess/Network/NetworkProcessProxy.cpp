@@ -102,7 +102,7 @@ NetworkProcessProxy::~NetworkProcessProxy()
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.processType = ProcessLauncher::ProcessType::Network;
+    launchOptions.processType = m_processPool.usesNetworkingDaemon() ? ProcessLauncher::ProcessType::NetworkDaemon : ProcessLauncher::ProcessType::Network;
     AuxiliaryProcessProxy::getLaunchOptions(launchOptions);
 
     if (processPool().shouldMakeNextNetworkProcessLaunchFailForTesting()) {

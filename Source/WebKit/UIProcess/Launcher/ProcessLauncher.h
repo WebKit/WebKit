@@ -65,6 +65,7 @@ public:
         Plugin64,
 #endif
         Network,
+        NetworkDaemon
     };
 
     struct LaunchOptions {
