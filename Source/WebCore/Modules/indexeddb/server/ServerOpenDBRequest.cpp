@@ -60,7 +60,7 @@ void ServerOpenDBRequest::maybeNotifyRequestBlocked(uint64_t currentVersion)
         return;
 
     uint64_t requestedVersion = isOpenRequest() ?  m_requestData.requestedVersion() : 0;
-    m_connection.notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, requestedVersion);
+    m_connection->notifyOpenDBRequestBlocked(m_requestData.requestIdentifier(), currentVersion, requestedVersion);
 
     m_notifiedBlocked = true;
 }
@@ -69,7 +69,7 @@ void ServerOpenDBRequest::notifyDidDeleteDatabase(const IDBDatabaseInfo& info)
 {
     ASSERT(isDeleteRequest());
 
-    m_connection.didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
+    m_connection->didDeleteDatabase(IDBResultData::deleteDatabaseSuccess(m_requestData.requestIdentifier(), info));
 }
 
 void ServerOpenDBRequest::notifiedConnectionsOfVersionChange(HashSet<uint64_t>&& connectionIdentifiers)
