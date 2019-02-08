@@ -1141,6 +1141,9 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
     bitmapSize.scale(deviceScale, deviceScale);
 
     // Software snapshot will not capture elements rendered with hardware acceleration (WebGL, video, etc).
+    // This code doesn't consider snapshotConfiguration.afterScreenUpdates since the software snapshot always
+    // contains recent updates. If we ever have a UI-side snapshot mechanism on macOS, we will need to factor
+    // in snapshotConfiguration.afterScreenUpdates at that time.
     _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error errorCode) {
         if (errorCode != WebKit::ScriptValueCallback::Error::None) {
             auto error = createNSError(callbackErrorCode(errorCode));
@@ -1167,18 +1170,33 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 
     auto handler = makeBlockPtr(completionHandler);
     CGFloat deviceScale = _page->deviceScaleFactor();
+    RetainPtr<WKWebView> strongSelf = self;
+    auto callSnapshotRect = [strongSelf, rectInViewCoordinates, snapshotWidth, deviceScale, handler] {
+        [strongSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:[strongSelf, handler, deviceScale](CGImageRef snapshotImage) {
+            RetainPtr<NSError> error;
+            RetainPtr<UIImage> uiImage;
+            
+            if (!snapshotImage)
+                error = createNSError(WKErrorUnknown);
+            else
+                uiImage = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
+            
+            handler(uiImage.get(), error.get());
+        }];
+    };
 
-    [self _snapshotRect:rectInViewCoordinates intoImageOfWidth:(snapshotWidth * deviceScale) completionHandler:^(CGImageRef snapshotImage) {
-        RetainPtr<NSError> error;
-        RetainPtr<UIImage> uiImage;
+    if (snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) {
+        callSnapshotRect();
+        return;
+    }
 
-        if (!snapshotImage)
-            error = createNSError(WKErrorUnknown);
-        else
-            uiImage = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
-
-        handler(uiImage.get(), error.get());
-    }];
+    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None) {
+            handler(nil, createNSError(WKErrorUnknown).get());
+            return;
+        }
+        callSnapshotRect();
+    });
 }
 #endif
 

@@ -294,4 +294,125 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+TEST(WKWebView, SnapshotAfterScreenUpdates)
+{
+    // The API tests currently cannot truly test SnapshotConfiguration.afterScreenUpdates since it is only needed
+    // on iOS devices, and we do not currently run API tests on iOS devices. So we expect this test to pass with
+    // afterScreenUpdates set to YES or NO on the configuration. On device, afterScreenUpdates must be YES in order
+    // pass this test.
+    NSInteger viewWidth = 800;
+    NSInteger viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    
+    RetainPtr<PlatformWindow> window;
+    CGFloat backingScaleFactor;
+    
+#if PLATFORM(MAC)
+    window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    backingScaleFactor = [window backingScaleFactor];
+#elif PLATFORM(IOS_FAMILY)
+    window = adoptNS([[UIWindow alloc] initWithFrame:[webView frame]]);
+    [window addSubview:webView.get()];
+    backingScaleFactor = [[window screen] scale];
+#endif
+    
+    [webView loadHTMLString:@"<body style='margin:0'><div id='change-me' style='background-color:red; position:fixed; width:100%; height:100%'></div></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+    
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
+    [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
+    [snapshotConfiguration setAfterScreenUpdates:YES];
+
+    [webView evaluateJavaScript:@"var div = document.getElementById('change-me');div.style.backgroundColor = 'blue';" completionHandler:nil];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        
+        EXPECT_EQ(viewWidth, snapshotImage.size.width);
+        
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        
+        NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
+        NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
+        
+        unsigned char rgba[viewWidthInPixels * viewHeightInPixels * 4];
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+        
+        NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
+        EXPECT_EQ(0, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(255, rgba[pixelIndex + 2]);
+        
+        isDone = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(WKWebView, SnapshotWithoutAfterScreenUpdates)
+{
+    // SnapshotConfiguration.afterScreenUpdates tests currently cannot truly test this API since it is only needed
+    // on iOS devices, and we do not currently run API tests on iOS devices. The expectations below are based on
+    // what we expect in the simulator and on macOS, which is that setting afterScreenUpdates to NO will still
+    // result in a snapshot that includes the recent screen updates. If we get these tests running on iOS device,
+    // then we would expect the pixels to be red instead of blue.
+    NSInteger viewWidth = 800;
+    NSInteger viewHeight = 600;
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    
+    RetainPtr<PlatformWindow> window;
+    CGFloat backingScaleFactor;
+    
+#if PLATFORM(MAC)
+    window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    [[window contentView] addSubview:webView.get()];
+    backingScaleFactor = [window backingScaleFactor];
+#elif PLATFORM(IOS_FAMILY)
+    window = adoptNS([[UIWindow alloc] initWithFrame:[webView frame]]);
+    [window addSubview:webView.get()];
+    backingScaleFactor = [[window screen] scale];
+#endif
+    
+    [webView loadHTMLString:@"<body style='margin:0'><div id='change-me' style='background-color:red; position:fixed; width:100%; height:100%'></div></body>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+    
+    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
+    [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
+    [snapshotConfiguration setAfterScreenUpdates:NO];
+    
+    [webView evaluateJavaScript:@"var div = document.getElementById('change-me');div.style.backgroundColor = 'blue';" completionHandler:nil];
+    
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(PlatformImage snapshotImage, NSError *error) {
+        EXPECT_NULL(error);
+        
+        EXPECT_EQ(viewWidth, snapshotImage.size.width);
+        
+        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
+        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        
+        NSInteger viewWidthInPixels = viewWidth * backingScaleFactor;
+        NSInteger viewHeightInPixels = viewHeight * backingScaleFactor;
+        
+        unsigned char rgba[viewWidthInPixels * viewHeightInPixels * 4];
+        RetainPtr<CGContextRef> context = CGBitmapContextCreate(rgba, viewWidthInPixels, viewHeightInPixels, 8, 4 * viewWidthInPixels, colorSpace.get(), kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGContextDrawImage(context.get(), CGRectMake(0, 0, viewWidthInPixels, viewHeightInPixels), cgImage.get());
+        
+        NSInteger pixelIndex = getPixelIndex(0, 0, viewWidthInPixels);
+        EXPECT_EQ(0, rgba[pixelIndex]);
+        EXPECT_EQ(0, rgba[pixelIndex + 1]);
+        EXPECT_EQ(255, rgba[pixelIndex + 2]);
+        
+        isDone = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 #endif

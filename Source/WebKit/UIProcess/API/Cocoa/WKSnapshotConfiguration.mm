@@ -36,6 +36,7 @@
         return nil;
 
     self.rect = CGRectNull;
+    self.afterScreenUpdates = YES;
     return self;
 }
 
@@ -52,6 +53,7 @@
 
     snapshotConfiguration.rect = self.rect;
     snapshotConfiguration.snapshotWidth = self.snapshotWidth;
+    snapshotConfiguration.afterScreenUpdates = self.afterScreenUpdates;
 
     return snapshotConfiguration;
 }

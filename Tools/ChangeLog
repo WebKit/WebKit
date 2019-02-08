@@ -1,3 +1,16 @@
+2019-02-08  Beth Dakin  <bdakin@apple.com>
+
+        Add afterScreenUpdates to WKSnapshotConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=194362
+        -and corresponding-
+        <rdar://problem/40655528> Please add an "after screen updates" property to 
+        WKSnapshotConfiguration (to solve blank snapshots)
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm:
+        (TEST):
+
 2019-02-08  Benjamin Poulain  <benjamin@webkit.org>
 
         clampTo(): do not convert the input to double when dealing with integers

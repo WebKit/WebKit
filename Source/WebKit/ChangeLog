@@ -1,3 +1,29 @@
+2019-02-08  Beth Dakin  <bdakin@apple.com>
+
+        Add afterScreenUpdates to WKSnapshotConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=194362
+        -and corresponding-
+        <rdar://problem/40655528> Please add an "after screen updates" property to 
+        WKSnapshotConfiguration (to solve blank snapshots)
+
+        Reviewed by Tim Horton.
+
+        This is the WebKit equivalent of - (UIView *)snapshotViewAfterScreenUpdates:(BOOL)afterUpdates;
+        This makes our snapshotting API more predictable and reliable on iOS devices, 
+        which is why the new configuration property defaults to YES.
+
+        New property that defaults to YES.
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h:
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.mm:
+        (-[WKSnapshotConfiguration init]):
+        (-[WKSnapshotConfiguration copyWithZone:]):
+
+        When afterScreenUpdates is set, invoke the snapshot via 
+        callAfterNextPresentationUpdate.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        (-[WKWebView _callCompletionHandler:withSnapshotImage:atDeviceScale:]):
+
 2019-02-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to use networking daemon instead of XPC service
