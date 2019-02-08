@@ -1,5 +1,30 @@
 2019-02-07  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241143. rdar://problem/47908161
+
+    Permit additional IOKit Properties needed by Media PlugIns on older Mac Hardware
+    https://bugs.webkit.org/show_bug.cgi?id=194412
+    <rdar://problem/47820615>
+    
+    Reviewed by Per Arne Vollan.
+    
+    * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241143 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-07  Brent Fulgham  <bfulgham@apple.com>
+
+            Permit additional IOKit Properties needed by Media PlugIns on older Mac Hardware
+            https://bugs.webkit.org/show_bug.cgi?id=194412
+            <rdar://problem/47820615>
+
+            Reviewed by Per Arne Vollan.
+
+            * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
+2019-02-07  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241142. rdar://problem/47908158
 
     Permit additional IOKit Properties needed by older Mac Hardware
