@@ -110,7 +110,7 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     width: 1px;
     top: 1px;
     bottom: 0;
-    background-color: hsla(0, 0%, 0%, 0.05);
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
 }
 
 .timeline-ruler > .markers > .marker {
