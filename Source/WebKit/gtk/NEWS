@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 2.22.6
+=================
+
+What's new in WebKitGTK+ 2.22.6?
+
+  - Make kinetic scrolling slow down smoothly when reaching the ends of
+    pages, instead of abruptly, to better match the GTK+ behaviour.
+  - Fix Web inspector magnifier under Wayland.
+  - Fix garbled rendering of some websites (e.g. YouTube) while scrolling
+    under X11.
+  - Fix several crashes, race conditions, and rendering issues.
+
+=================
 WebKitGTK+ 2.22.5
 =================
 

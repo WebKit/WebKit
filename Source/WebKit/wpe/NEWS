@@ -1,4 +1,13 @@
 =================
+WPE WebKit 2.22.4
+=================
+
+What's new in WPE WebKit 2.22.3?
+
+  - Add missing WebKitVersion.h to the set of installed haders.
+  - Fix several crashes, race conditions, and rendering issues.
+
+=================
 WPE WebKit 2.22.3
 =================
 
