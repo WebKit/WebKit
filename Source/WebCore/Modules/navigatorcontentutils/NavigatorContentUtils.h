@@ -40,6 +40,7 @@ class Navigator;
 typedef int ExceptionCode;
 
 class NavigatorContentUtils final : public Supplement<Page> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigatorContentUtils(std::unique_ptr<NavigatorContentUtilsClient> client)
         : m_client(WTFMove(client))

@@ -45,6 +45,7 @@ class JSCustomElementInterface;
 class QualifiedName;
 
 class CustomElementReactionQueue {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:
     CustomElementReactionQueue(JSCustomElementInterface&);

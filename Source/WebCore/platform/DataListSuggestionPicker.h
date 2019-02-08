@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class DataListSuggestionPicker {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DataListSuggestionPicker() = default;
 

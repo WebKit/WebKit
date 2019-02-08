@@ -37,6 +37,7 @@ namespace WebCore {
 class Navigator;
 
 class NavigatorCredentials final : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NavigatorCredentials();
     virtual ~NavigatorCredentials();

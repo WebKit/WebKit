@@ -44,6 +44,7 @@ class ScriptExecutionContext;
 class UnhandledPromise;
 
 class RejectedPromiseTracker {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RejectedPromiseTracker);
 public:
     explicit RejectedPromiseTracker(ScriptExecutionContext&, JSC::VM&);

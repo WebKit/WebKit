@@ -41,6 +41,7 @@ class FileStreamClient;
 class FileStream;
 
 class WEBCORE_EXPORT AsyncFileStream {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();

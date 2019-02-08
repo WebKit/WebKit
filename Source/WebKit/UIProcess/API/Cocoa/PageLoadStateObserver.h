@@ -31,6 +31,7 @@
 namespace WebKit {
 
 class PageLoadStateObserver : public PageLoadState::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PageLoadStateObserver(id object, NSString *activeURLKey = @"activeURL")
         : m_object(object)

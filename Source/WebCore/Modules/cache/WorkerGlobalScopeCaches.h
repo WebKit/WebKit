@@ -33,6 +33,7 @@ class DOMCacheStorage;
 class WorkerGlobalScope;
 
 class WorkerGlobalScopeCaches : public Supplement<WorkerGlobalScope> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerGlobalScopeCaches(WorkerGlobalScope& scope)
         : m_scope(scope)

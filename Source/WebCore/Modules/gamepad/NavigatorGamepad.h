@@ -37,6 +37,7 @@ class Navigator;
 class PlatformGamepad;
 
 class NavigatorGamepad : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NavigatorGamepad();
     virtual ~NavigatorGamepad();

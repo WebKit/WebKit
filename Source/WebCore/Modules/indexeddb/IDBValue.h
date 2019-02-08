@@ -36,6 +36,7 @@ namespace WebCore {
 class SerializedScriptValue;
 
 class IDBValue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT IDBValue();
     IDBValue(const SerializedScriptValue&);

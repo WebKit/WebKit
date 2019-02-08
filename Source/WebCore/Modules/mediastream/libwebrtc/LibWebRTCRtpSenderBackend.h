@@ -45,6 +45,7 @@ namespace WebCore {
 class LibWebRTCPeerConnectionBackend;
 
 class LibWebRTCRtpSenderBackend final : public RTCRtpSenderBackend {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
         : m_peerConnectionBackend(makeWeakPtr(&backend))

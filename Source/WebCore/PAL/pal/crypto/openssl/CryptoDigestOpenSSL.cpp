@@ -75,6 +75,8 @@ struct CryptoDigestContext {
 
 template <typename SHAContext, typename SHAFunctions>
 struct CryptoDigestContextImpl : public CryptoDigestContext {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     static std::unique_ptr<CryptoDigestContext> create()
     {
         return std::make_unique<CryptoDigestContextImpl>();

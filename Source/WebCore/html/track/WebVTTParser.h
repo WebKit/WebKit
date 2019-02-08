@@ -97,6 +97,7 @@ private:
 };
 
 class WebVTTParser final {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ParseState {
         Initial,

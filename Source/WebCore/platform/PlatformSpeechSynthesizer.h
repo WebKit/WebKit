@@ -59,6 +59,7 @@ protected:
 };
 
 class WEBCORE_EXPORT PlatformSpeechSynthesizer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
 

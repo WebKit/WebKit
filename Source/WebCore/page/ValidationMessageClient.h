@@ -33,6 +33,7 @@ class Document;
 class Element;
 
 class ValidationMessageClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ValidationMessageClient() = default;
 

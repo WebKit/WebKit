@@ -51,6 +51,7 @@ enum class ConstantProperty {
 };
 
 class ConstantPropertyMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ConstantPropertyMap(Document&);
 

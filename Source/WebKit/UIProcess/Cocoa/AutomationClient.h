@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AutomationClient(WKProcessPool *, id <_WKAutomationDelegate>);
     virtual ~AutomationClient();

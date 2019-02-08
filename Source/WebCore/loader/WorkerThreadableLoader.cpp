@@ -89,6 +89,8 @@ void WorkerThreadableLoader::cancel()
 }
 
 struct LoaderTaskOptions {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, Ref<SecurityOrigin>&&);
     ThreadableLoaderOptions options;
     String referrer;

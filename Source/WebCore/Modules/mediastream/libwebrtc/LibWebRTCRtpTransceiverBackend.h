@@ -42,6 +42,7 @@ namespace WebCore {
 class LibWebRTCRtpReceiverBackend;
 
 class LibWebRTCRtpTransceiverBackend final : public RTCRtpTransceiverBackend {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LibWebRTCRtpTransceiverBackend(rtc::scoped_refptr<webrtc::RtpTransceiverInterface>&& rtcTransceiver)
         : m_rtcTransceiver(WTFMove(rtcTransceiver))

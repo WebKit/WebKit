@@ -44,6 +44,7 @@ class WebPage;
 class WebPageProxy;
 
 class RemoteObjectRegistry final : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPage&);
     RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPageProxy&);

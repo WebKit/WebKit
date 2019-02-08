@@ -1,3 +1,16 @@
+2019-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Mark more heap-allocated classes as fast allocated
+        https://bugs.webkit.org/show_bug.cgi?id=194422
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Function.h:
+        (WTF::Function<Out):
+        * wtf/RefCounter.h:
+        * wtf/URL.h:
+        * wtf/text/StringView.cpp:
+
 2019-02-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Block coreservicesd in sandbox.

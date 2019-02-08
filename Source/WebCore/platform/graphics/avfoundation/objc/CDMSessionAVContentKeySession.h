@@ -41,6 +41,7 @@ namespace WebCore {
 class CDMPrivateMediaSourceAVFObjC;
 
 class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CDMSessionAVContentKeySession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient*);
     virtual ~CDMSessionAVContentKeySession();

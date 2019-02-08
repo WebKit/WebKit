@@ -73,6 +73,7 @@ typedef Function<void(const IDBError&, const IDBGetAllResult&)> GetAllResultsCal
 typedef Function<void(const IDBError&, uint64_t)> CountCallback;
 
 class UniqueIDBDatabase : public CanMakeWeakPtr<UniqueIDBDatabase> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     UniqueIDBDatabase(UniqueIDBDatabase&) = delete;

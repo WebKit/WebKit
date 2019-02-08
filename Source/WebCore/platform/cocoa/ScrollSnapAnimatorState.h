@@ -48,6 +48,7 @@ enum class ScrollSnapState {
 };
 
 class ScrollSnapAnimatorState {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     const Vector<LayoutUnit>& snapOffsetsForAxis(ScrollEventAxis axis) const
     {

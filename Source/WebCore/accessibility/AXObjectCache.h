@@ -91,6 +91,7 @@ struct CharacterOffset {
 };
 
 class AXComputedObjectAttributeCache {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AccessibilityObjectInclusion getIgnored(AXID) const;
     void setIgnored(AXID, AccessibilityObjectInclusion);

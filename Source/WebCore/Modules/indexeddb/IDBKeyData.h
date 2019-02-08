@@ -38,6 +38,7 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 class IDBKeyData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBKeyData()
         : m_type(IndexedDB::KeyType::Invalid)

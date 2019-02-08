@@ -242,6 +242,7 @@ private:
 };
 
 class GridTrackSizingAlgorithmStrategy {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LayoutUnit minContentForChild(RenderBox&) const;
     LayoutUnit maxContentForChild(RenderBox&) const;

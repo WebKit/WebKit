@@ -36,6 +36,7 @@ namespace WebCore {
 
 template<typename IDLType>
 class DOMPromiseProxy {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using Value = typename IDLType::StorageType;
 

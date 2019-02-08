@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class GraphicsLayerFactory {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~GraphicsLayerFactory() = default;
 

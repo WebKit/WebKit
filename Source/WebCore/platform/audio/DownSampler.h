@@ -37,6 +37,7 @@ namespace WebCore {
 // DownSampler down-samples the source stream by a factor of 2x.
 
 class DownSampler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DownSampler(size_t inputBlockSize);
 

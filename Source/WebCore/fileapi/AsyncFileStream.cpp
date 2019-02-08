@@ -46,6 +46,8 @@
 namespace WebCore {
 
 struct AsyncFileStream::Internals {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     explicit Internals(FileStreamClient&);
 
     FileStream stream;

@@ -49,6 +49,7 @@ enum class ShouldFetchForSameKey : bool { No, Yes };
 class SQLiteIDBTransaction;
 
 class SQLiteIDBCursor {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteIDBCursor);
 public:
     static std::unique_ptr<SQLiteIDBCursor> maybeCreate(SQLiteIDBTransaction&, const IDBCursorInfo&);

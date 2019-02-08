@@ -40,6 +40,7 @@ typedef struct _GDBusProxy GDBusProxy;
 namespace WebCore {
 
 class LowPowerModeNotifier {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using LowPowerModeChangeCallback = WTF::Function<void(bool isLowPowerModeEnabled)>;
     WEBCORE_EXPORT explicit LowPowerModeNotifier(LowPowerModeChangeCallback&&);

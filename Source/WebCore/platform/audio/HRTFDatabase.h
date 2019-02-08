@@ -40,6 +40,7 @@ namespace WebCore {
 class HRTFKernel;
 
 class HRTFDatabase {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(HRTFDatabase);
 public:
     explicit HRTFDatabase(float sampleRate);

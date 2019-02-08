@@ -41,6 +41,7 @@ class IDBConnectionProxy;
 }
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<WorkerGlobalScope> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerGlobalScopeIndexedDatabase(WorkerGlobalScope&, IDBClient::IDBConnectionProxy&);
     virtual ~WorkerGlobalScopeIndexedDatabase();

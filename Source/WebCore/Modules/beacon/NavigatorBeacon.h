@@ -40,6 +40,7 @@ class Navigator;
 class ResourceError;
 
 class NavigatorBeacon final : public Supplement<Navigator>, private CachedRawResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigatorBeacon(Navigator&);
     ~NavigatorBeacon();

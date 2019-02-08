@@ -31,6 +31,7 @@
 namespace PAL {
 
 class Clock {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<Clock> create();
     virtual ~Clock() = default;

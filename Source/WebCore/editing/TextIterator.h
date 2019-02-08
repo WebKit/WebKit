@@ -100,6 +100,7 @@ private:
 // the chunks it's already stored in, to avoid copying any text.
 
 class TextIterator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit TextIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
     WEBCORE_EXPORT explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);

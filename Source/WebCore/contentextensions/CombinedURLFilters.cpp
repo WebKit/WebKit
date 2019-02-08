@@ -46,6 +46,8 @@ struct PrefixTreeEdge {
 typedef Vector<PrefixTreeEdge, 0, WTF::CrashOnOverflow, 1> PrefixTreeEdges;
 
 struct PrefixTreeVertex {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     PrefixTreeEdges edges;
 };
 

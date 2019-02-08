@@ -36,6 +36,7 @@ namespace WebCore {
 class DOMWindow;
 
 class DOMWindowSpeechSynthesis : public Supplement<DOMWindow>, public DOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowSpeechSynthesis(DOMWindow*);
     virtual ~DOMWindowSpeechSynthesis();

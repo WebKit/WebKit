@@ -36,6 +36,7 @@ class DOMWindow;
 class WebGPU;
 
 class DOMWindowWebGPU : public Supplement<DOMWindow>, public DOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowWebGPU(DOMWindow*);
     virtual ~DOMWindowWebGPU() = default;

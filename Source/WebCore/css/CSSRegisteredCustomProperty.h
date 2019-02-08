@@ -32,6 +32,8 @@ namespace WebCore {
 class CSSCustomPropertyValue;
 
 struct CSSRegisteredCustomProperty {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     const String name;
     const String syntax;
     const bool inherits;

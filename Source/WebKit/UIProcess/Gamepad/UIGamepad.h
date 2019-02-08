@@ -40,6 +40,7 @@ namespace WebKit {
 class GamepadData;
 
 class UIGamepad {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     UIGamepad(WebCore::PlatformGamepad&);
 

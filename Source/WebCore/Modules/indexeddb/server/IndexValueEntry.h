@@ -38,6 +38,7 @@ enum class CursorDuplicity;
 namespace IDBServer {
 
 class IndexValueEntry {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IndexValueEntry(bool unique);
     ~IndexValueEntry();

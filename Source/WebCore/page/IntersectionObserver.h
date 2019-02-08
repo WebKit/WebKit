@@ -48,6 +48,8 @@ struct IntersectionObserverRegistration {
 };
 
 struct IntersectionObserverData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     // IntersectionObservers for which the element that owns this IntersectionObserverData is the root.
     // An IntersectionObserver is only owned by a JavaScript wrapper. ActiveDOMObject::hasPendingActivity
     // is overridden to keep this wrapper alive while the observer has ongoing observations.

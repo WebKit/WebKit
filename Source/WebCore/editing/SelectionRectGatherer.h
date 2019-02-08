@@ -50,6 +50,7 @@ public:
     bool isTextOnly() const { return m_isTextOnly; }
 
     class Notifier {
+        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Notifier);
     public:
         Notifier(SelectionRectGatherer&);

@@ -1,3 +1,57 @@
+2019-02-07  Chris Dumez  <cdumez@apple.com>
+
+        Mark more heap-allocated classes as fast allocated
+        https://bugs.webkit.org/show_bug.cgi?id=194422
+
+        Reviewed by Ryosuke Niwa.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        * PluginProcess/PluginCreationParameters.h:
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/WebEvent.h:
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        * UIProcess/API/APINotificationProvider.h:
+        * UIProcess/API/Cocoa/PageLoadStateObserver.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setInputDelegate:]):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/BackingStore.h:
+        * UIProcess/Cocoa/AutomationClient.h:
+        * UIProcess/Cocoa/DiagnosticLoggingClient.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/FindClient.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/DeviceIdHashSaltStorage.h:
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Gamepad/UIGamepad.h:
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebGeolocationProvider.h:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundleBundleClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/APIInjectedBundleFormClient.h:
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.h:
+        * WebProcess/Network/webrtc/WebRTCResolver.h:
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebPage/DrawingArea.h:
+
 2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK2] Modernize code for applying autocorrection

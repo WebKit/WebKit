@@ -38,6 +38,7 @@ namespace WebCore {
 class AudioBus;
     
 class MultiChannelResampler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:   
     MultiChannelResampler(double scaleFactor, unsigned numberOfChannels);
     

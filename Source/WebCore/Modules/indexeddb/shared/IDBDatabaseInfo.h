@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class IDBDatabaseInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBDatabaseInfo(const String& name, uint64_t version);
 

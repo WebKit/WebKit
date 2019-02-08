@@ -37,6 +37,7 @@ class Page;
 class VRDisplay;
 
 class NavigatorWebVR final : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using GetVRDisplaysPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<VRDisplay>>>;
 

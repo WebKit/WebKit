@@ -46,6 +46,7 @@ class SecurityOrigin;
 namespace WebKit {
 
 class UIDelegate {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit UIDelegate(WKWebView *);
     ~UIDelegate();

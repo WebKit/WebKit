@@ -42,6 +42,7 @@ typedef id PlatformControlInstance;
 #endif
 
 class ControlStates {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum {
         HoverState = 1,

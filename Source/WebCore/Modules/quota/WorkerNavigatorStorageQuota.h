@@ -41,6 +41,7 @@ class StorageQuota;
 class WorkerNavigator;
 
 class WorkerNavigatorStorageQuota : public Supplement<WorkerNavigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WorkerNavigatorStorageQuota();
     virtual ~WorkerNavigatorStorageQuota();

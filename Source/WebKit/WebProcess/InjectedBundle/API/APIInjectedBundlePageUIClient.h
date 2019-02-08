@@ -46,6 +46,7 @@ class SecurityOrigin;
 namespace InjectedBundle {
 
 class PageUIClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PageUIClient() { }
 

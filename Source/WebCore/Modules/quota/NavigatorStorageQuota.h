@@ -41,6 +41,7 @@ class StorageQuota;
 class Navigator;
 
 class NavigatorStorageQuota : public Supplement<Navigator>, public DOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigatorStorageQuota(DOMWindow*);
     virtual ~NavigatorStorageQuota();

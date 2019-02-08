@@ -47,6 +47,7 @@ namespace API {
 namespace InjectedBundle {
 
 class EditorClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~EditorClient() { }
 

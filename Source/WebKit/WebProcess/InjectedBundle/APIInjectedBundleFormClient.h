@@ -47,6 +47,7 @@ class Object;
 namespace InjectedBundle {
 
 class FormClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~FormClient() { }
 

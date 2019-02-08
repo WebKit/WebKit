@@ -60,6 +60,7 @@ class ProcessAssertion
     : public CanMakeWeakPtr<ProcessAssertion>
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ProcessAssertion(ProcessID, AssertionState, Function<void()>&& invalidationCallback = { });
     ProcessAssertion(ProcessID, const String& reason, AssertionState, Function<void()>&& invalidationCallback = { });

@@ -128,6 +128,7 @@ auto StringView::SplitResult::Iterator::operator++() -> Iterator&
 }
 
 class StringView::GraphemeClusters::Iterator::Impl {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Impl(const StringView& stringView, Optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
         : m_stringView(stringView)

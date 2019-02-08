@@ -39,6 +39,7 @@ class Object;
 namespace InjectedBundle {
 
 class Client {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~Client() = default;
 

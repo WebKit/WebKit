@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBGetResult {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBGetResult()
         : m_isDefined(false)

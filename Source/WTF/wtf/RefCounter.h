@@ -36,6 +36,7 @@ enum class RefCounterEvent { Decrement, Increment };
 
 template<typename T>
 class RefCounter {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RefCounter);
 
     class Count {

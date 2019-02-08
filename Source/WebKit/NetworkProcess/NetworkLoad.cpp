@@ -38,6 +38,8 @@ namespace WebKit {
 using namespace WebCore;
 
 struct NetworkLoad::Throttle {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     Throttle(NetworkLoad& load, Seconds delay, ResourceResponse&& response, ResponseCompletionHandler&& handler)
         : timer(load, &NetworkLoad::throttleDelayCompleted)
         , response(WTFMove(response))

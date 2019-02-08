@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBGetAllResult {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     IDBGetAllResult()
     {

@@ -47,6 +47,7 @@ struct RTCDataChannelInit;
 class ScriptExecutionContext;
 
 class LibWebRTCDataChannelHandler final : public RTCDataChannelHandler, private webrtc::DataChannelObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel) : m_channel(WTFMove(channel)) { ASSERT(m_channel); }
     ~LibWebRTCDataChannelHandler();

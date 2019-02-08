@@ -39,6 +39,7 @@ namespace IDBServer {
 class MemoryObjectStore;
 
 class MemoryIDBBackingStore : public IDBBackingStore {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<MemoryIDBBackingStore> create(const IDBDatabaseIdentifier&);
     

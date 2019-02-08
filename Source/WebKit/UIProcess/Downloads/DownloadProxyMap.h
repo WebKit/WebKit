@@ -40,6 +40,7 @@ class NetworkProcessProxy;
 class WebProcessPool;
 
 class DownloadProxyMap {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
 
 public:

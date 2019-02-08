@@ -373,6 +373,7 @@ NS_ASSUME_NONNULL_END
 namespace WebCore {
 
 class WebCoreNSURLSessionDataTaskClient : public PlatformMediaResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebCoreNSURLSessionDataTaskClient(WebCoreNSURLSessionDataTask *task)
         : m_task(task)

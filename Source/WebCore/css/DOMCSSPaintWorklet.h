@@ -39,6 +39,7 @@ class Worklet;
 class DOMCSSNamespace;
 
 class DOMCSSPaintWorklet final : public Supplement<DOMCSSNamespace> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMCSSPaintWorklet(DOMCSSNamespace&) { }
 

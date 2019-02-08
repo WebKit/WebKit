@@ -41,6 +41,7 @@ namespace API {
 namespace InjectedBundle {
 
 class ResourceLoadClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ResourceLoadClient() = default;
 

@@ -39,6 +39,7 @@ ALLOW_UNUSED_PARAMETERS_END
 namespace WebCore {
 
 class LibWebRTCRtpReceiverBackend final : public RTCRtpReceiverBackend {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit LibWebRTCRtpReceiverBackend(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& rtcReceiver)
         : m_rtcReceiver(WTFMove(rtcReceiver))

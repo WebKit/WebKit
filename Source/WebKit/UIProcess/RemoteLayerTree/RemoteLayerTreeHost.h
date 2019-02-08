@@ -41,6 +41,7 @@ class RemoteLayerTreeDrawingAreaProxy;
 class WebPageProxy;
 
 class RemoteLayerTreeHost {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeHost();

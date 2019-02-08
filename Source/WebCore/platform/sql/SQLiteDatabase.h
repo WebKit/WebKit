@@ -46,6 +46,7 @@ class SQLiteStatement;
 class SQLiteTransaction;
 
 class SQLiteDatabase {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     friend class SQLiteTransaction;
 public:

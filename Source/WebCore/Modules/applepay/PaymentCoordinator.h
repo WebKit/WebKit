@@ -45,6 +45,7 @@ struct ShippingContactUpdate;
 struct ShippingMethodUpdate;
 
 class PaymentCoordinator {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT explicit PaymentCoordinator(PaymentCoordinatorClient&);
     WEBCORE_EXPORT ~PaymentCoordinator();

@@ -50,6 +50,7 @@ class NetworkCORSPreflightChecker;
 class NetworkProcess;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class LoadType : bool { MainFrame, Other };
 

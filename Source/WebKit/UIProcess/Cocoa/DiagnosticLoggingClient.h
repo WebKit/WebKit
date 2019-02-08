@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class DiagnosticLoggingClient final : public API::DiagnosticLoggingClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DiagnosticLoggingClient(WKWebView *);
 

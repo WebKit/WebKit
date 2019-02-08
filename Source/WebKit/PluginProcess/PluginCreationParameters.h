@@ -38,6 +38,8 @@ class Encoder;
 namespace WebKit {
 
 struct PluginCreationParameters {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     PluginCreationParameters();
 
     void encode(IPC::Encoder&) const;

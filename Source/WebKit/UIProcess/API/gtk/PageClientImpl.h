@@ -48,6 +48,7 @@ class PageClientImpl : public PageClient
     , public WebFullScreenManagerProxyClient
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PageClientImpl(GtkWidget*);
 

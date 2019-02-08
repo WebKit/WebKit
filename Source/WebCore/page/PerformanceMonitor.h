@@ -35,6 +35,7 @@ namespace WebCore {
 class Page;
 
 class PerformanceMonitor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PerformanceMonitor(Page&);
 

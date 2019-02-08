@@ -56,6 +56,7 @@ namespace WebKit {
 struct WebNavigationDataStore;
 
 class NavigationState final : private PageLoadState::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();

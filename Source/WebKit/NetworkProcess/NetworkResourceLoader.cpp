@@ -64,6 +64,8 @@ namespace WebKit {
 using namespace WebCore;
 
 struct NetworkResourceLoader::SynchronousLoadData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     SynchronousLoadData(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply&& reply)
         : delayedReply(WTFMove(reply))
     {

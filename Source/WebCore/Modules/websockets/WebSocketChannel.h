@@ -153,6 +153,8 @@ private:
         QueuedFrameTypeBlob
     };
     struct QueuedFrame {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
         WebSocketFrame::OpCode opCode;
         QueuedFrameType frameType;
         // Only one of the following items is used, according to the value of frameType.

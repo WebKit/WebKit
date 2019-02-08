@@ -38,6 +38,7 @@ class IDBResourceIdentifier;
 namespace IDBServer {
 
 class MemoryCursor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~MemoryCursor();
 

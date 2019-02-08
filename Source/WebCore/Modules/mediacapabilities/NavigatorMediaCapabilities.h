@@ -33,6 +33,7 @@ class MediaCapabilities;
 class Navigator;
 
 class NavigatorMediaCapabilities final : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NavigatorMediaCapabilities();
     ~NavigatorMediaCapabilities();

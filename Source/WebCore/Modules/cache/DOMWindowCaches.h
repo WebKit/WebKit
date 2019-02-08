@@ -36,6 +36,7 @@ class DOMCacheStorage;
 class ScriptExecutionContext;
 
 class DOMWindowCaches : public Supplement<DOMWindow>, public DOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowCaches(DOMWindow*);
 

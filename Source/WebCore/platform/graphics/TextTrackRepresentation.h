@@ -45,6 +45,7 @@ public:
 };
 
 class TextTrackRepresentation {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<TextTrackRepresentation> create(TextTrackRepresentationClient&);
 

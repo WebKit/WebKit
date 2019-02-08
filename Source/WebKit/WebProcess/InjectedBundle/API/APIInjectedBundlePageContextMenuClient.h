@@ -48,6 +48,7 @@ class Object;
 namespace InjectedBundle {
 
 class PageContextMenuClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PageContextMenuClient() { }
 

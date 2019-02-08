@@ -33,6 +33,7 @@
 namespace IPC {
 
 class ImportanceAssertion {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ImportanceAssertion);
 
 public:

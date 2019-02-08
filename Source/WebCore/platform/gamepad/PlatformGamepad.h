@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class PlatformGamepad {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PlatformGamepad() = default;
 

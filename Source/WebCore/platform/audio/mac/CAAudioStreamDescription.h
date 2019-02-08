@@ -34,6 +34,8 @@ WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioSt
 inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b) { return !(a == b); }
 
 class CAAudioStreamDescription final : public AudioStreamDescription {
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
 
     WEBCORE_EXPORT CAAudioStreamDescription();

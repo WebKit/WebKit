@@ -37,6 +37,7 @@
 namespace WebKit {
 
 class LibWebRTCNetwork {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCNetwork() = default;
 

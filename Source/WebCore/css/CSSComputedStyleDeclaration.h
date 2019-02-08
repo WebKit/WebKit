@@ -50,6 +50,7 @@ enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValues };
 
 class ComputedStyleExtractor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ComputedStyleExtractor(Node*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);
     ComputedStyleExtractor(Element*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);

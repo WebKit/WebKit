@@ -32,6 +32,7 @@ namespace WebCore {
 class Navigator;
 
 class NavigatorWebDriver final : public Supplement<Navigator> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NavigatorWebDriver();
     virtual ~NavigatorWebDriver();

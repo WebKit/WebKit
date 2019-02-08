@@ -43,6 +43,7 @@ namespace WebKit {
 class WebProcessPool;
 
 class WebContextInjectedBundleClient : public API::InjectedBundleClient, public API::Client<WKContextInjectedBundleClientBase> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebContextInjectedBundleClient(const WKContextInjectedBundleClientBase*);
 

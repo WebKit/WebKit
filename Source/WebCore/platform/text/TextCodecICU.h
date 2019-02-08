@@ -59,9 +59,9 @@ private:
 };
 
 struct ICUConverterWrapper {
-    ICUConverterPtr converter { nullptr, ucnv_close };
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    WTF_MAKE_FAST_ALLOCATED;
+    ICUConverterPtr converter { nullptr, ucnv_close };
 };
 
 } // namespace WebCore

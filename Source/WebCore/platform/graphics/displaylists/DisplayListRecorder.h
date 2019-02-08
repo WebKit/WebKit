@@ -48,6 +48,7 @@ namespace DisplayList {
 class DrawingItem;
 
 class Recorder : public GraphicsContextImpl {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Recorder);
 public:
     Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&);

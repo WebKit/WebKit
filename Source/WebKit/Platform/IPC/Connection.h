@@ -263,6 +263,7 @@ private:
 #endif
 
     class MessagesThrottler {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         typedef void (Connection::*DispatchMessagesFunction)();
         MessagesThrottler(Connection&, DispatchMessagesFunction);

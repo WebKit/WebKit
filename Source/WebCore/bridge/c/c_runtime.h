@@ -48,8 +48,7 @@ private:
 };
 
 
-class CMethod : public Method
-{
+class CMethod : public Method {
 public:
     CMethod(NPIdentifier ident) : _methodIdentifier(ident) { }
 

@@ -34,6 +34,7 @@ template<typename> class Function;
 
 template <typename Out, typename... In>
 class Function<Out(In...)> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Function() = default;
     Function(std::nullptr_t) { }

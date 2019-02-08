@@ -44,6 +44,7 @@ enum class PanningModelType {
 // Abstract base class for panning a mono or stereo source.
 
 class Panner {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<Panner> create(PanningModelType, float sampleRate, HRTFDatabaseLoader*);
 

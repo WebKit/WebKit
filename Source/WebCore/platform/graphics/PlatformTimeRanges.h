@@ -37,6 +37,7 @@ class PrintStream;
 namespace WebCore {
 
 class PlatformTimeRanges {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PlatformTimeRanges() { }
     PlatformTimeRanges(const MediaTime& start, const MediaTime& end);

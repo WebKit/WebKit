@@ -36,6 +36,7 @@ namespace WebCore {
 
 // All methods are synchronous.
 class FileStream {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FileStream();
     ~FileStream();

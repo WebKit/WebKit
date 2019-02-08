@@ -58,6 +58,8 @@ using HTMLNames::headTag;
 using HTMLNames::htmlTag;
 
 struct DOMPatchSupport::Digest {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     String sha1;
     String attrsSHA1;
     Node* node;

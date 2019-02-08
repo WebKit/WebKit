@@ -52,6 +52,7 @@ struct KeypressCommand;
 namespace WebKit {
 
 class WebEvent {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
         NoType = -1,

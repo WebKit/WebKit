@@ -332,6 +332,7 @@ using RenderingContext = Variant<
 >;
 
 class DocumentParserYieldToken {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT DocumentParserYieldToken(Document&);
     WEBCORE_EXPORT ~DocumentParserYieldToken();

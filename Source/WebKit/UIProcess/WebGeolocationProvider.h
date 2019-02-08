@@ -42,6 +42,7 @@ namespace WebKit {
 class WebGeolocationManagerProxy;
 
 class WebGeolocationProvider : public API::GeolocationProvider, API::Client<WKGeolocationProviderBase> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebGeolocationProvider(const WKGeolocationProviderBase*);
 

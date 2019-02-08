@@ -37,6 +37,7 @@ class EventTarget;
 class Timer;
 
 class GenericEventQueue {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit GenericEventQueue(EventTarget&);
     ~GenericEventQueue();

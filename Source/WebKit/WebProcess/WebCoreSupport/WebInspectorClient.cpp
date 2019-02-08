@@ -43,6 +43,7 @@ namespace WebKit {
 using namespace WebCore;
 
 class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     RepaintIndicatorLayerClient(WebInspectorClient& inspectorClient)
         : m_inspectorClient(inspectorClient)

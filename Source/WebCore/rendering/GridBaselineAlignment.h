@@ -93,6 +93,7 @@ private:
 // if there is one that is compatible with such item. Otherwise, a new baseline-sharing group is created,
 // compatible with the new item.
 class BaselineContext {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent, LayoutUnit descent);
     const BaselineGroup& sharedGroup(const RenderBox& child, ItemPosition preference) const;

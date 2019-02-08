@@ -37,6 +37,7 @@ OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
 namespace WebCore {
 
 class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
 public:
     explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);

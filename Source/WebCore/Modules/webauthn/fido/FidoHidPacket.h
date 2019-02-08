@@ -44,6 +44,7 @@ namespace fido {
 // FidoHidInitPacket cannot store the entire payload, further payload
 // information is stored in HidContinuationPackets.
 class WEBCORE_EXPORT FidoHidPacket {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FidoHidPacket);
 public:
     FidoHidPacket(Vector<uint8_t>&& data, uint32_t channelId);

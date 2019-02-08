@@ -38,6 +38,7 @@ class IntRect;
 class Node;
 
 class PrintContext : public FrameDestructionObserver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT explicit PrintContext(Frame*);
     WEBCORE_EXPORT ~PrintContext();

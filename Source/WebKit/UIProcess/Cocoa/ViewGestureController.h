@@ -64,6 +64,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 class ViewGestureController : private IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ViewGestureController);
 public:
     ViewGestureController(WebPageProxy&);

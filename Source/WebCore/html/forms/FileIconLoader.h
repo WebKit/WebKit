@@ -43,6 +43,7 @@ public:
 };
 
 class FileIconLoader {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit FileIconLoader(FileIconLoaderClient&);
 

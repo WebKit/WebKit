@@ -49,6 +49,7 @@ public:
 struct URLHash;
 
 class WTF_EXPORT_PRIVATE URL {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Generates a URL which contains a null string.
     URL() { invalidate(); }

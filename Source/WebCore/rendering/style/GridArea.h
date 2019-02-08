@@ -169,6 +169,7 @@ private:
 
 // This represents a grid area that spans in both rows' and columns' direction.
 class GridArea {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // HashMap requires a default constuctor.
     GridArea()

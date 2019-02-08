@@ -38,6 +38,8 @@ class HTMLDocumentParser;
 class ScriptElement;
 
 struct CustomElementConstructionData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     CustomElementConstructionData(Ref<JSCustomElementInterface>&&, const AtomicString& name, Vector<Attribute>&&);
     ~CustomElementConstructionData();
 

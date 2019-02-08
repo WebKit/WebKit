@@ -48,6 +48,7 @@ class SQLiteIDBBackingStore;
 class SQLiteIDBCursor;
 
 class SQLiteIDBTransaction {
+    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(SQLiteIDBTransaction);
 public:
     SQLiteIDBTransaction(SQLiteIDBBackingStore&, const IDBTransactionInfo&);

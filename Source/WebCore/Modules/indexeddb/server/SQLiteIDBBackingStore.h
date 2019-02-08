@@ -46,6 +46,7 @@ namespace IDBServer {
 class SQLiteIDBCursor;
 
 class SQLiteIDBBackingStore : public IDBBackingStore {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler&, uint64_t quota);
     

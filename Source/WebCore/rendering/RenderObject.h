@@ -981,6 +981,7 @@ private:
 
     // FIXME: This should be RenderElementRareData.
     class RenderObjectRareData {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         RenderObjectRareData()
             : m_isDragging(false)

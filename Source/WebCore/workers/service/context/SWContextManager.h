@@ -45,6 +45,7 @@ public:
     WEBCORE_EXPORT static SWContextManager& singleton();
 
     class Connection {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~Connection() { }
 
@@ -93,6 +94,7 @@ private:
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
 
     class ServiceWorkerTerminationRequest {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ServiceWorkerTerminationRequest(SWContextManager&, ServiceWorkerIdentifier, Seconds timeout);
 

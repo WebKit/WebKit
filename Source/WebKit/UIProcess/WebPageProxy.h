@@ -321,6 +321,8 @@ typedef GenericCallback<const WebCore::IntPoint&, uint32_t, uint32_t> TouchesCal
 typedef GenericCallback<const Vector<WebCore::SelectionRect>&> SelectionRectsCallback;
 typedef GenericCallback<const FocusedElementInformation&> FocusedElementInformationCallback;
 struct ElementDidFocusArguments {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     FocusedElementInformation information;
     bool userIsInteracting;
     bool blurPreviousNode;

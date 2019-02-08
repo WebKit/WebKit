@@ -40,6 +40,7 @@ class WebFrame;
 class WebPage;
 
 class WebAutomationSessionProxy : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WebAutomationSessionProxy(const String& sessionIdentifier);
     ~WebAutomationSessionProxy();

@@ -34,6 +34,7 @@ namespace WebCore {
 class SharedBuffer;
 
 class KeyedDecoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedDecoder> decoder(const uint8_t* data, size_t);
 
@@ -143,6 +144,7 @@ private:
 };
 
 class KeyedEncoder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static std::unique_ptr<KeyedEncoder> encoder();
 

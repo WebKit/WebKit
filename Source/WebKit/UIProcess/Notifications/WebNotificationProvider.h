@@ -44,6 +44,7 @@ class WebNotificationManagerProxy;
 class WebPageProxy;
 
 class WebNotificationProvider : public API::NotificationProvider, public API::Client<WKNotificationProviderBase> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebNotificationProvider(const WKNotificationProviderBase*);
 

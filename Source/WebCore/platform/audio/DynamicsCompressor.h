@@ -44,6 +44,7 @@ class AudioBus;
 // making the sound richer, fuller, and more controlled.
 
 class DynamicsCompressor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum {
         ParamThreshold,

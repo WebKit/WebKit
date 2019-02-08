@@ -43,6 +43,7 @@ class DirectConvolver;
 // A ReverbConvolverStage represents the convolution associated with a sub-section of a large impulse response.
 // It incorporates a delay line to account for the offset of the sub-section within the larger impulse response.
 class ReverbConvolverStage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // renderPhase is useful to know so that we can manipulate the pre versus post delay so that stages will perform
     // their heavy work (FFT processing) on different slices to balance the load in a real-time thread.

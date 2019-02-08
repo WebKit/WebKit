@@ -52,6 +52,7 @@ namespace WebCore {
 // and reverse FFT, internally storing the resultant frequency-domain data.
 
 class FFTFrame {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // The constructors, destructor, and methods up to the CROSS-PLATFORM section have platform-dependent implementations.
 

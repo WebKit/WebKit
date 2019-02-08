@@ -51,6 +51,7 @@ class Object;
 namespace InjectedBundle {
 
 class PageLoaderClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PageLoaderClient() = default;
 

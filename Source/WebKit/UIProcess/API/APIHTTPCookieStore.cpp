@@ -118,6 +118,7 @@ void HTTPCookieStore::deleteCookie(const WebCore::Cookie& cookie, CompletionHand
 }
 
 class APIWebCookieManagerProxyObserver : public WebCookieManagerProxy::Observer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit APIWebCookieManagerProxyObserver(API::HTTPCookieStore& cookieStore)
         : m_cookieStore(cookieStore)

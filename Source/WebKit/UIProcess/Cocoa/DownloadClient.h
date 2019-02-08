@@ -43,6 +43,7 @@ class ResourceResponse;
 namespace WebKit {
 
 class DownloadClient final : public API::DownloadClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DownloadClient(id <_WKDownloadDelegate>);
     

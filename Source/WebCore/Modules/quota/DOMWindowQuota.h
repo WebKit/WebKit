@@ -41,6 +41,7 @@ class DOMWindow;
 class StorageInfo;
 
 class DOMWindowQuota : public Supplement<DOMWindow>, public DOMWindowProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DOMWindowQuota(DOMWindow*);
     virtual ~DOMWindowQuota();
