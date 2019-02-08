@@ -4163,13 +4163,21 @@ private:
             return;
         }
             
-        default: {
+        case Array::Int8Array:
+        case Array::Int16Array:
+        case Array::Int32Array:
+        case Array::Uint8Array:
+        case Array::Uint8ClampedArray:
+        case Array::Uint16Array:
+        case Array::Uint32Array:
+        case Array::Float32Array:
+        case Array::Float64Array: {
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             
             TypedArrayType type = m_node->arrayMode().typedArrayType();
-            
-            if (isTypedView(type)) {
+            ASSERT(isTypedView(type));
+            {
                 TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
                 
                 if (isInt(type)) {
@@ -4196,10 +4204,16 @@ private:
                 setDouble(result);
                 return;
             }
-            
+        }
+
+        case Array::AnyTypedArray:
+        case Array::ForceExit:
+        case Array::SelectUsingArguments:
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
-        } }
+        }
     }
     
     void compileGetMyArgumentByVal()
@@ -4488,10 +4502,19 @@ private:
             return;
         }
             
-        default: {
+        case Array::Int8Array:
+        case Array::Int16Array:
+        case Array::Int32Array:
+        case Array::Uint8Array:
+        case Array::Uint8ClampedArray:
+        case Array::Uint16Array:
+        case Array::Uint32Array:
+        case Array::Float32Array:
+        case Array::Float64Array: {
             TypedArrayType type = arrayMode.typedArrayType();
             
-            if (isTypedView(type)) {
+            ASSERT(isTypedView(type));
+            {
                 TypedPointer pointer = TypedPointer(
                     m_heaps.typedArrayProperties,
                     m_out.add(
@@ -4544,10 +4567,20 @@ private:
                 
                 return;
             }
+        }
 
+        case Array::AnyTypedArray:
+        case Array::String:
+        case Array::DirectArguments:
+        case Array::ForceExit:
+        case Array::Generic:
+        case Array::ScopedArguments:
+        case Array::SelectUsingArguments:
+        case Array::SelectUsingPredictions:
+        case Array::Undecided:
+        case Array::Unprofiled:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
-        }
         }
     }
 

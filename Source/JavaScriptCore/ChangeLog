@@ -1,3 +1,56 @@
+2019-02-08  Mark Lam  <mark.lam@apple.com>
+
+        Fix DFG's doesGC() for CheckTierUp*, GetByVal, PutByVal*, and StringCharAt nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=194446
+        <rdar://problem/47926792>
+
+        Reviewed by Saam Barati.
+
+        Fix doesGC() for the following nodes:
+
+            CheckTierUpAtReturn:
+                Calls triggerTierUpNow(), which calls triggerFTLReplacementCompile(),
+                which calls Worklist::completeAllReadyPlansForVM(), which uses DeferGC.
+
+            CheckTierUpInLoop:
+                Calls triggerTierUpNowInLoop(), which calls tierUpCommon(), which calls
+                Worklist::completeAllReadyPlansForVM(), which uses DeferGC.
+
+            CheckTierUpAndOSREnter:
+                Calls triggerOSREntryNow(), which calls tierUpCommon(), which calls
+                Worklist::completeAllReadyPlansForVM(), which uses DeferGC.
+
+            GetByVal:
+                case Array::String calls operationSingleCharacterString(), which calls
+                jsSingleCharacterString(), which can allocate a string.
+
+            PutByValDirect:
+            PutByVal:
+            PutByValAlias:
+                For the DFG only, the integer TypeArrays calls compilePutByValForIntTypedArray(),
+                which may call slow paths operationPutByValDirectStrict(), operationPutByValDirectNonStrict(),
+                operationPutByValStrict(), or operationPutByValNonStrict().  All of these
+                slow paths call putByValInternal(), which may create exception objects, or
+                call the generic JSValue::put() which may execute arbitrary code.
+
+            StringCharAt:
+                Can call operationSingleCharacterString(), which calls jsSingleCharacterString(),
+                which can allocate a string.
+
+        Also fix DFG::SpeculativeJIT::compileGetByValOnString() and FTL's compileStringCharAt()
+        to use the maxSingleCharacterString constant instead of a literal constant.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] SourceProviderCacheItem should be small
