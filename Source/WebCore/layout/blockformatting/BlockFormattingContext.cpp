@@ -298,9 +298,10 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
 void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
-    auto compute = [&](UsedHorizontalValues usedValues) -> WidthAndMargin {
-
+    auto compute = [&](Optional<LayoutUnit> usedWidth) -> WidthAndMargin {
+        auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
         if (layoutBox.isInFlow())
             return Geometry::inFlowWidthAndMargin(layoutState, layoutBox, usedValues);
 
@@ -312,16 +313,15 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
     };
 
     auto widthAndMargin = compute({ });
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
     if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
-        auto maxWidthAndMargin = compute({ *maxWidth, { } });
+        auto maxWidthAndMargin = compute(maxWidth);
         if (widthAndMargin.width > maxWidthAndMargin.width)
             widthAndMargin = maxWidthAndMargin;
     }
 
     auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth).valueOr(0);
-    auto minWidthAndMargin = compute({ minWidth, { } });
+    auto minWidthAndMargin = compute(minWidth);
     if (widthAndMargin.width < minWidthAndMargin.width)
         widthAndMargin = minWidthAndMargin;
 

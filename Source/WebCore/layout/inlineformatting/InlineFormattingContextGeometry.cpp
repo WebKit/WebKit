@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Layout {
 
-WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(LayoutState& layoutState, const Box& formattingContextRoot)
+WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(LayoutState& layoutState, const Box& formattingContextRoot, UsedHorizontalValues usedValues)
 {
     ASSERT(formattingContextRoot.isInFlow());
 
@@ -46,21 +46,19 @@ WidthAndMargin InlineFormattingContext::Geometry::inlineBlockWidthAndMargin(Layo
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.replaced())
-        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot, { });
+        return inlineReplacedWidthAndMargin(layoutState, formattingContextRoot, usedValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
     // If 'width' is 'auto', the used value is the shrink-to-fit width as for floating elements.
     // A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
-    auto& containingBlock = *formattingContextRoot.containingBlock();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(containingBlock).contentBoxWidth();
     // #1
-    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), containingBlockWidth);
+    auto width = computedValueIfNotAuto(formattingContextRoot.style().logicalWidth(), usedValues.containingBlockWidth);
     if (!width)
-        width = shrinkToFitWidth(layoutState, formattingContextRoot);
+        width = shrinkToFitWidth(layoutState, formattingContextRoot, usedValues);
 
     // #2
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, formattingContextRoot);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(formattingContextRoot, usedValues);
 
     return WidthAndMargin { *width, { computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) }, computedHorizontalMargin };
 }

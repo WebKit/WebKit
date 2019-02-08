@@ -90,12 +90,12 @@ protected:
         static LayoutSize inFlowPositionedPositionOffset(const LayoutState&, const Box&);
 
         static HeightAndMargin complicatedCases(const LayoutState&, const Box&, UsedVerticalValues);
-        static LayoutUnit shrinkToFitWidth(LayoutState&, const Box&);
+        static LayoutUnit shrinkToFitWidth(LayoutState&, const Box&, UsedHorizontalValues);
 
-        static Edges computedBorder(const LayoutState&, const Box&);
-        static Optional<Edges> computedPadding(const LayoutState&, const Box&);
+        static Edges computedBorder(const Box&);
+        static Optional<Edges> computedPadding(const Box&, UsedHorizontalValues);
 
-        static ComputedHorizontalMargin computedHorizontalMargin(const LayoutState&, const Box&);
+        static ComputedHorizontalMargin computedHorizontalMargin(const Box&, UsedHorizontalValues);
         static ComputedVerticalMargin computedVerticalMargin(const LayoutState&, const Box&);
 
         static Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);

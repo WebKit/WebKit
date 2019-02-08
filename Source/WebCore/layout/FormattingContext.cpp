@@ -67,22 +67,22 @@ LayoutState& FormattingContext::layoutState() const
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
 
-    auto compute = [&](UsedHorizontalValues usedValues) {
+    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+        auto usedValues = UsedHorizontalValues { containingBlockWidth, usedWidth, { } };
         return Geometry::outOfFlowHorizontalGeometry(layoutState, layoutBox, usedValues);
     };
 
     auto horizontalGeometry = compute({ });
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).paddingBoxWidth();
-
     if (auto maxWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMaxWidth(), containingBlockWidth)) {
-        auto maxHorizontalGeometry = compute({ *maxWidth, { } });
+        auto maxHorizontalGeometry = compute(maxWidth);
         if (horizontalGeometry.widthAndMargin.width > maxHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = maxHorizontalGeometry;
     }
 
     if (auto minWidth = Geometry::computedValueIfNotAuto(layoutBox.style().logicalMinWidth(), containingBlockWidth)) {
-        auto minHorizontalGeometry = compute({ *minWidth, { } });
+        auto minHorizontalGeometry = compute(minWidth);
         if (horizontalGeometry.widthAndMargin.width < minHorizontalGeometry.widthAndMargin.width)
             horizontalGeometry = minHorizontalGeometry;
     }
@@ -127,8 +127,9 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    displayBox.setBorder(Geometry::computedBorder(layoutState, layoutBox));
-    displayBox.setPadding(Geometry::computedPadding(layoutState, layoutBox));
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+    displayBox.setBorder(Geometry::computedBorder(layoutBox));
+    displayBox.setPadding(Geometry::computedPadding(layoutBox, UsedHorizontalValues { containingBlockWidth, { }, { } }));
 }
 
 void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const

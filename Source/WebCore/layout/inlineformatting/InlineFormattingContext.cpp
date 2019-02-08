@@ -97,7 +97,8 @@ void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContaine
 
     computeBorderAndPadding(inlineContainer);
     auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState(), inlineContainer);
+    auto containingBlockWidth = layoutState().displayBoxForLayoutBox(*inlineContainer.containingBlock()).contentBoxWidth();
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, UsedHorizontalValues { containingBlockWidth, { }, { } });
     displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
@@ -105,14 +106,16 @@ void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContaine
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
     WidthAndMargin widthAndMargin;
+    auto usedValues = UsedHorizontalValues { containingBlockWidth, { }, { } };
     if (layoutBox.isFloatingPositioned())
-        widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox, { });
+        widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox, usedValues);
     else if (layoutBox.isInlineBlockBox())
-        widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutState, layoutBox);
+        widthAndMargin = Geometry::inlineBlockWidthAndMargin(layoutState, layoutBox, usedValues);
     else if (layoutBox.replaced())
-        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutState, layoutBox, { });
+        widthAndMargin = Geometry::inlineReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
     else
         ASSERT_NOT_REACHED();
 

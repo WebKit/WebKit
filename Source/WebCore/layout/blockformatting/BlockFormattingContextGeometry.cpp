@@ -136,11 +136,11 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
 
         auto& style = layoutBox.style();
         auto* containingBlock = layoutBox.containingBlock();
-        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*containingBlock).contentBoxWidth();
+        auto containingBlockWidth = usedValues.containingBlockWidth;
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
 
         auto width = computedValueIfNotAuto(usedValues.width ? Length { usedValues.width.value(), Fixed } : style.logicalWidth(), containingBlockWidth);
-        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutState, layoutBox);
+        auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedValues);
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = displayBox.borderLeft();
         auto borderRight = displayBox.borderRight();
