@@ -1,5 +1,15 @@
 2019-02-08  Beth Dakin  <bdakin@apple.com>
 
+        Abstract and discussion comments needed for afterScreenUpdates
+        https://bugs.webkit.org/show_bug.cgi?id=194442
+
+        Reviewed by Wenson Hsieh.
+
+        Forgot to add these comments with https://bugs.webkit.org/show_bug.cgi?id=194362
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h:
+
+2019-02-08  Beth Dakin  <bdakin@apple.com>
+
         Add afterScreenUpdates to WKSnapshotConfiguration
         https://bugs.webkit.org/show_bug.cgi?id=194362
         -and corresponding-
