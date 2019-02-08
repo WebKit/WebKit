@@ -123,15 +123,110 @@ template<> constexpr float defaultMinimumForClamp() { return -std::numeric_limit
 template<> constexpr double defaultMinimumForClamp() { return -std::numeric_limits<double>::max(); }
 template<typename T> constexpr T defaultMaximumForClamp() { return std::numeric_limits<T>::max(); }
 
-template<typename T> inline T clampTo(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
+// Same type in and out.
+template<typename TargetType, typename SourceType>
+typename std::enable_if<std::is_same<TargetType, SourceType>::value, TargetType>::type
+clampTo(SourceType value, TargetType min = defaultMinimumForClamp<TargetType>(), TargetType max = defaultMaximumForClamp<TargetType>())
 {
-    if (value >= static_cast<double>(max))
+    if (value >= max)
         return max;
-    if (value <= static_cast<double>(min))
+    if (value <= min)
         return min;
-    return static_cast<T>(value);
+    return value;
 }
-template<> inline long long int clampTo(double, long long int, long long int); // clampTo does not support long long ints.
+
+// Floating point source.
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::is_floating_point<SourceType>::value
+    && !(std::is_floating_point<TargetType>::value && sizeof(TargetType) > sizeof(SourceType)), TargetType>::type
+clampTo(SourceType value, TargetType min = defaultMinimumForClamp<TargetType>(), TargetType max = defaultMaximumForClamp<TargetType>())
+{
+    if (value >= static_cast<SourceType>(max))
+        return max;
+    if (value <= static_cast<SourceType>(min))
+        return min;
+    return static_cast<TargetType>(value);
+}
+
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::is_floating_point<SourceType>::value
+    && std::is_floating_point<TargetType>::value
+    && (sizeof(TargetType) > sizeof(SourceType)), TargetType>::type
+clampTo(SourceType value, TargetType min = defaultMinimumForClamp<TargetType>(), TargetType max = defaultMaximumForClamp<TargetType>())
+{
+    TargetType convertedValue = static_cast<TargetType>(value);
+    if (convertedValue >= max)
+        return max;
+    if (convertedValue <= min)
+        return min;
+    return convertedValue;
+}
+
+// Source and Target have the same sign and Source is larger or equal to Target
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::numeric_limits<SourceType>::is_integer
+    && std::numeric_limits<TargetType>::is_integer
+    && std::numeric_limits<TargetType>::is_signed == std::numeric_limits<SourceType>::is_signed
+    && sizeof(SourceType) >= sizeof(TargetType), TargetType>::type
+clampTo(SourceType value, TargetType min = defaultMinimumForClamp<TargetType>(), TargetType max = defaultMaximumForClamp<TargetType>())
+{
+    if (value >= static_cast<SourceType>(max))
+        return max;
+    if (value <= static_cast<SourceType>(min))
+        return min;
+    return static_cast<TargetType>(value);
+}
+
+// Clamping a unsigned integer to the max signed value.
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::numeric_limits<SourceType>::is_integer
+    && std::numeric_limits<TargetType>::is_integer
+    && std::numeric_limits<TargetType>::is_signed
+    && !std::numeric_limits<SourceType>::is_signed
+    && sizeof(SourceType) >= sizeof(TargetType), TargetType>::type
+clampTo(SourceType value)
+{
+    TargetType max = std::numeric_limits<TargetType>::max();
+    if (value >= static_cast<SourceType>(max))
+        return max;
+    return static_cast<TargetType>(value);
+}
+
+// Clamping a signed integer into a valid unsigned integer.
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::numeric_limits<SourceType>::is_integer
+    && std::numeric_limits<TargetType>::is_integer
+    && !std::numeric_limits<TargetType>::is_signed
+    && std::numeric_limits<SourceType>::is_signed
+    && sizeof(SourceType) == sizeof(TargetType), TargetType>::type
+clampTo(SourceType value)
+{
+    if (value < 0)
+        return 0;
+    return static_cast<TargetType>(value);
+}
+
+template<typename TargetType, typename SourceType>
+typename std::enable_if<!std::is_same<TargetType, SourceType>::value
+    && std::numeric_limits<SourceType>::is_integer
+    && std::numeric_limits<TargetType>::is_integer
+    && !std::numeric_limits<TargetType>::is_signed
+    && std::numeric_limits<SourceType>::is_signed
+    && (sizeof(SourceType) > sizeof(TargetType)), TargetType>::type
+clampTo(SourceType value)
+{
+    if (value < 0)
+        return 0;
+    TargetType max = std::numeric_limits<TargetType>::max();
+    if (value >= static_cast<SourceType>(max))
+        return max;
+    return static_cast<TargetType>(value);
+}
 
 inline int clampToInteger(double value)
 {

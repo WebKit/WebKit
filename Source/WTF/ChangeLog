@@ -1,3 +1,23 @@
+2019-02-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        clampTo(): do not convert the input to double when dealing with integers
+        https://bugs.webkit.org/show_bug.cgi?id=194263
+        <rdar://problem/47692312>
+
+        Reviewed by Darin Adler.
+
+        Previously, every use of clampTo() was converting the input to double,
+        doing the comparison in double, then casting back to whatever type was needed.
+
+        In many case, that was very wasteful. WebKit has many cases of clampTo() with
+        the same type as input/output, or with integer types of different size/sign.
+
+        This patch adds a few versions of clampTo() for the common cases seen in WebKit.
+        In each case, I tried to minimize the amount of conversion needed at runtime.
+
+        * wtf/MathExtras.h:
+        (clampTo):
+
 2019-02-07  Chris Dumez  <cdumez@apple.com>
 
         Mark more heap-allocated classes as fast allocated

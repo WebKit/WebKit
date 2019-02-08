@@ -1,3 +1,18 @@
+2019-02-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        clampTo(): do not convert the input to double when dealing with integers
+        https://bugs.webkit.org/show_bug.cgi?id=194263
+        <rdar://problem/47692312>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::testClampFloatingPointToFloatingPoint):
+        (TestWebKitAPI::testClampFloatingPointToInteger):
+        (TestWebKitAPI::testClampSameSignIntegers):
+        (TestWebKitAPI::testClampUnsignedToSigned):
+        (TestWebKitAPI::testClampSignedToUnsigned):
+
 2019-02-07  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Respect --dedicated-simulators flag
