@@ -1,3 +1,58 @@
+2019-02-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r241150. rdar://problem/47908154
+
+    Overflow element scrollbar is light for dark mode content.
+    https://bugs.webkit.org/show_bug.cgi?id=194407
+    rdar://problem/45991585
+    
+    Reviewed by Beth Dakin.
+    
+    Source/WebCore:
+    
+    Tested by css-dark-mode/supported-color-schemes-scrollbar.html.
+    
+    * page/ChromeClient.h:
+    (WebCore::FrameView::preferredScrollbarOverlayStyle): Return WTF::nullopt by default to avoid
+    short-circuiting auto detection in recalculateScrollbarOverlayStyle() for clients, like WK1,
+    that do not implement preferredScrollbarOverlayStyle().
+    * page/FrameView.cpp:
+    (WebCore::FrameView::recalculateScrollbarOverlayStyle): Use WTF::nullopt in the false case
+    to auto detect overlay style when page() is null.
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::useDarkAppearance const): Added.
+    * rendering/RenderLayer.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::scrollbarOverlayStyle const): Added Node argument.
+    (WebCore::Internals::scrollbarUsingDarkAppearance const): Added.
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    LayoutTests:
+    
+    Updated tests to look at overflow elements and if dark apearance
+    is used by the scrollbar directly.
+    
+    * css-dark-mode/supported-color-schemes-scrollbar-expected.txt:
+    * css-dark-mode/supported-color-schemes-scrollbar.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241150 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-07  Timothy Hatcher  <timothy@apple.com>
+
+            Overflow element scrollbar is light for dark mode content.
+            https://bugs.webkit.org/show_bug.cgi?id=194407
+            rdar://problem/45991585
+
+            Reviewed by Beth Dakin.
+
+            Updated tests to look at overflow elements and if dark apearance
+            is used by the scrollbar directly.
+
+            * css-dark-mode/supported-color-schemes-scrollbar-expected.txt:
+            * css-dark-mode/supported-color-schemes-scrollbar.html:
+
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r240710. rdar://problem/47776353

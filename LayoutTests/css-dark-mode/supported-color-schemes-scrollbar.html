@@ -9,9 +9,21 @@
 body {
     supported-color-schemes: light dark;
 }
+
+#test {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100px;
+    height: 50px;
+}
+
+#test-content {
+    width: 100px;
+    height: 100px;
+}
 </style>
 
-<body></body>
+<body><div id="test"><div id="test-content"></div></div></body>
 
 <script>
 function test_prop(element, prop, expected) {
@@ -42,7 +54,25 @@ test(function() {
     if (!window.internals)
         return;
     assert_equals(internals.scrollbarOverlayStyle(), "light");
-}, "Scrollbar overlay style is light");
+}, "Document scrollbar overlay style is light");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarUsingDarkAppearance(), true);
+}, "Document scrollbar is using dark appearance");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("test")), "default");
+}, "Element scrollbar overlay style is default");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarUsingDarkAppearance(document.getElementById("test")), true);
+}, "Element scrollbar is using dark appearance");
 
 test(function() {
     let styleElement = document.createElement("style");
@@ -62,5 +92,23 @@ test(function() {
     if (!window.internals)
         return;
     assert_equals(internals.scrollbarOverlayStyle(), "default");
-}, "Scrollbar overlay style is default");
+}, "Document scrollbar overlay style is default");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarUsingDarkAppearance(), false);
+}, "Document scrollbar is using light appearance");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("test")), "default");
+}, "Element scrollbar overlay style is default");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarUsingDarkAppearance(document.getElementById("test")), true);
+}, "Element scrollbar is using dark appearance");
 </script>

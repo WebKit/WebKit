@@ -403,7 +403,7 @@ public:
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
 
-    virtual Optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return ScrollbarOverlayStyleDefault; }
+    virtual Optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return WTF::nullopt; }
 
     virtual void wheelEventHandlersChanged(bool hasHandlers) = 0;
         
