@@ -116,7 +116,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
         return import(absoluteURL);
 
     if (!specifier.startsWith('/') && !specifier.startsWith("./") && !specifier.startsWith("../"))
-        return reject(createError(exec, "Module specifier does not start with \"/\", \"./\", or \"../\"."_s));
+        return reject(createError(exec, makeString("Module specifier: ", specifier, " does not start with \"/\", \"./\", or \"../\"."_s)));
 
     if (specifier.startsWith('/')) {
         absoluteURL = URL(URL({ }, "file://"), specifier);
@@ -126,16 +126,16 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
 
     auto noBaseErrorMessage = "Could not determine the base URL for loading."_s;
     if (sourceOrigin.isNull())
-        return reject(createError(exec, noBaseErrorMessage));
+        return reject(createError(exec, makeString(noBaseErrorMessage, " Referring script has no URL."_s)));
 
     auto referrer = sourceOrigin.string();
     URL baseURL(URL(), referrer);
     if (!baseURL.isValid())
-        return reject(createError(exec, noBaseErrorMessage));
+        return reject(createError(exec, makeString(noBaseErrorMessage, " Referring script's URL is not valid: "_s, baseURL.string())));
 
     URL url(baseURL, specifier);
     if (!url.isValid())
-        return reject(createError(exec, "could not determine a valid URL for module specifier"_s));
+        return reject(createError(exec, makeString("could not determine a valid URL for module specifier. Tried: "_s, url.string())));
 
     return import(url);
 }

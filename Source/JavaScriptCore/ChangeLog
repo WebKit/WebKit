@@ -1,3 +1,13 @@
+2019-02-07  Keith Miller  <keith_miller@apple.com>
+
+        Better error messages for module loader SPI
+        https://bugs.webkit.org/show_bug.cgi?id=194421
+
+        Reviewed by Saam Barati.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderImportModule):
+
 2019-02-07  Mark Lam  <mark.lam@apple.com>
 
         Fix more doesGC() for CheckTraps, GetMapBucket, and Switch nodes.
