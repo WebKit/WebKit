@@ -1,3 +1,36 @@
+2019-02-08  Andy Estes  <aestes@apple.com>
+
+        [WebIDL] Support serializing sequences and FrozenArrays of non-interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=190997
+        <rdar://problem/35983035>
+
+        Reviewed by Brent Fulgham.
+
+        Support serializing sequences and FrozenArrays of types that aren't interfaces. This is
+        needed to properly serialize PaymentAddress, which has a FrozenArray of DOMStrings.
+
+        We should support serializing sequences of interfaces too, but that's slightly more
+        complicated since it involves iterating the sequence and serializing each of its items. I
+        left that as a follow-up task, since I don't see any IDLs that currently need this.
+
+        We also don't support serializing sequences with the CachedAttribute or CustomGetter
+        extended attributes, because WebIDL specifies that a new array should be created when
+        converting an IDL sequence into an ECMAScript value.
+
+        Added bindings test cases to TestSerialization.idl and PaymentAddress test cases to
+        http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetInterfaceForType): Renamed from GetInterfaceForAttribute.
+        (IsSerializableType): Modified to allow sequences and FrozenArrays of non-interface types.
+        (hasCachedAttributeOrCustomGetterExtendedAttribute): Added a helper to determine if an
+        attribute has the CachedAttribute or CustomGetter extended attributes.
+        (IsSerializableAttribute): Checked for sequences with the CachedAttribute or CustomGetter
+        extended attributes before calling IsSerializableType.
+        (GetInterfaceForAttribute): Renamed to GetInterfaceForType.
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/TestSerialization.idl:
+
 2019-02-08  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB tests leak documents

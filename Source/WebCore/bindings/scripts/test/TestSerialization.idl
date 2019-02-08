@@ -37,5 +37,9 @@ interface TestSerialization {
     attribute TestSerializationIndirectInheritance eighthIndirectlyAttribute;
     attribute TestSerializationInheritFinal? ninthOptionalDirectlySerializableAttribute;
 
+    attribute FrozenArray<boolean> tenthFrozenArrayAttribute;
+    attribute sequence<DOMString> eleventhSequenceAttribute;
+    attribute sequence<TestSerializationInheritFinal> twelfthInterfaceSequenceAttribute;
+
     serializer = { attribute };
 };

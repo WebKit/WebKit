@@ -24,9 +24,11 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
@@ -38,6 +40,7 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
+#include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
@@ -74,6 +77,12 @@ JSC::EncodedJSValue jsTestSerializationEighthIndirectlyAttribute(JSC::ExecState*
 bool setJSTestSerializationEighthIndirectlyAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestSerializationNinthOptionalDirectlySerializableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestSerializationNinthOptionalDirectlySerializableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestSerializationTenthFrozenArrayAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestSerializationTenthFrozenArrayAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestSerializationEleventhSequenceAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestSerializationEleventhSequenceAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestSerializationTwelfthInterfaceSequenceAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestSerializationTwelfthInterfaceSequenceAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
 class JSTestSerializationPrototype : public JSC::JSNonFinalObject {
 public:
@@ -131,6 +140,9 @@ static const HashTableValue JSTestSerializationPrototypeTableValues[] =
     { "seventhDirectlySerializableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationSeventhDirectlySerializableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationSeventhDirectlySerializableAttribute) } },
     { "eighthIndirectlyAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationEighthIndirectlyAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationEighthIndirectlyAttribute) } },
     { "ninthOptionalDirectlySerializableAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationNinthOptionalDirectlySerializableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationNinthOptionalDirectlySerializableAttribute) } },
+    { "tenthFrozenArrayAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationTenthFrozenArrayAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationTenthFrozenArrayAttribute) } },
+    { "eleventhSequenceAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationEleventhSequenceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationEleventhSequenceAttribute) } },
+    { "twelfthInterfaceSequenceAttribute", static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestSerializationTwelfthInterfaceSequenceAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestSerializationTwelfthInterfaceSequenceAttribute) } },
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestSerializationPrototypeFunctionToJSON), (intptr_t) (0) } },
 };
 
@@ -489,6 +501,99 @@ bool setJSTestSerializationNinthOptionalDirectlySerializableAttribute(ExecState*
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter>(*state, thisValue, encodedValue, "ninthOptionalDirectlySerializableAttribute");
 }
 
+static inline JSValue jsTestSerializationTenthFrozenArrayAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLFrozenArray<IDLBoolean>>(state, *thisObject.globalObject(), throwScope, impl.tenthFrozenArrayAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestSerializationTenthFrozenArrayAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationTenthFrozenArrayAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "tenthFrozenArrayAttribute");
+}
+
+static inline bool setJSTestSerializationTenthFrozenArrayAttributeSetter(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLFrozenArray<IDLBoolean>>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setTenthFrozenArrayAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestSerializationTenthFrozenArrayAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationTenthFrozenArrayAttributeSetter>(*state, thisValue, encodedValue, "tenthFrozenArrayAttribute");
+}
+
+static inline JSValue jsTestSerializationEleventhSequenceAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLSequence<IDLDOMString>>(state, *thisObject.globalObject(), throwScope, impl.eleventhSequenceAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestSerializationEleventhSequenceAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationEleventhSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "eleventhSequenceAttribute");
+}
+
+static inline bool setJSTestSerializationEleventhSequenceAttributeSetter(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLSequence<IDLDOMString>>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setEleventhSequenceAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestSerializationEleventhSequenceAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationEleventhSequenceAttributeSetter>(*state, thisValue, encodedValue, "eleventhSequenceAttribute");
+}
+
+static inline JSValue jsTestSerializationTwelfthInterfaceSequenceAttributeGetter(ExecState& state, JSTestSerialization& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLSequence<IDLInterface<TestSerializationInheritFinal>>>(state, *thisObject.globalObject(), throwScope, impl.twelfthInterfaceSequenceAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestSerializationTwelfthInterfaceSequenceAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestSerialization>::get<jsTestSerializationTwelfthInterfaceSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "twelfthInterfaceSequenceAttribute");
+}
+
+static inline bool setJSTestSerializationTwelfthInterfaceSequenceAttributeSetter(ExecState& state, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLSequence<IDLInterface<TestSerializationInheritFinal>>>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    AttributeSetter::call(state, throwScope, [&] {
+        return impl.setTwelfthInterfaceSequenceAttribute(WTFMove(nativeValue));
+    });
+    return true;
+}
+
+bool setJSTestSerializationTwelfthInterfaceSequenceAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationTwelfthInterfaceSequenceAttributeSetter>(*state, thisValue, encodedValue, "twelfthInterfaceSequenceAttribute");
+}
+
 JSC::JSObject* JSTestSerialization::serialize(ExecState& state, JSTestSerialization& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
     auto& vm = state.vm();
@@ -531,6 +636,14 @@ JSC::JSObject* JSTestSerialization::serialize(ExecState& state, JSTestSerializat
         result->putDirect(vm, Identifier::fromString(&vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeSerializedValue);
     } else
         result->putDirect(vm, Identifier::fromString(&vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeValue);
+
+    auto tenthFrozenArrayAttributeValue = jsTestSerializationTenthFrozenArrayAttributeGetter(state, thisObject, throwScope);
+    throwScope.assertNoException();
+    result->putDirect(vm, Identifier::fromString(&vm, "tenthFrozenArrayAttribute"), tenthFrozenArrayAttributeValue);
+
+    auto eleventhSequenceAttributeValue = jsTestSerializationEleventhSequenceAttributeGetter(state, thisObject, throwScope);
+    throwScope.assertNoException();
+    result->putDirect(vm, Identifier::fromString(&vm, "eleventhSequenceAttribute"), eleventhSequenceAttributeValue);
 
     return result;
 }

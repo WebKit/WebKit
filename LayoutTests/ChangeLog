@@ -1,3 +1,13 @@
+2019-02-08  Andy Estes  <aestes@apple.com>
+
+        [WebIDL] Support serializing sequences and FrozenArrays of non-interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=190997
+        <rdar://problem/35983035>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html:
+
 2019-02-08  Eric Liang  <ericliang@apple.com>
 
         Check if receive AXPressDidFail notification when performing AXPress action on disabled MenuList.
