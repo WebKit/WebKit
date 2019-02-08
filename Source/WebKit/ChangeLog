@@ -1,3 +1,15 @@
+2019-02-08  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix.
+
+        r241135 modified how entitlements were built up for the macOS. Those
+        changes broke the iOSMac builds. Bring back some deletions in order to
+        fix iOSMac.
+
+        * Configurations/PluginService.64.xcconfig:
+        * Configurations/PluginService.entitlements: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-02-07  Chris Dumez  <cdumez@apple.com>
 
         Mark more heap-allocated classes as fast allocated
