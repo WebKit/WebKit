@@ -41,6 +41,8 @@ enum {
     // P = binary operator precedence
     // K = keyword flag
     // U = unary operator flag
+    //
+    // We must keep the upper 8bit (1byte) region empty. JSTokenType must be 24bits.
     UnaryOpTokenFlag = 128,
     KeywordTokenFlag = 256,
     BinaryOpTokenPrecedenceShift = 9,
@@ -189,6 +191,7 @@ enum JSTokenType {
     INVALID_TEMPLATE_LITERAL_ERRORTOK = 15 | ErrorTokenFlag,
     UNEXPECTED_ESCAPE_ERRORTOK = 16 | ErrorTokenFlag,
 };
+static_assert(static_cast<unsigned>(POW) <= 0x00ffffffU, "JSTokenType must be 24bits.");
 
 struct JSTextPosition {
     JSTextPosition() = default;
