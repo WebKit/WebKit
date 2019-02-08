@@ -1,5 +1,14 @@
 2019-02-07  Jon Davis  <jond@apple.com>
 
+        Fixed animation positioning when homepage animation completes
+        https://bugs.webkit.org/show_bug.cgi?id=194395
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/front-header.php:
+
+2019-02-07  Jon Davis  <jond@apple.com>
+
         Disable the WP emoji polyfill
         https://bugs.webkit.org/show_bug.cgi?id=194394
 

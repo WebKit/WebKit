@@ -46,9 +46,9 @@
         position: absolute;
         width: 100%;
         height: 1261px;
-        background-image: radial-gradient(ellipse closest-corner at center center,hsl(198, 100%, 20%) 0%,hsla(204, 100%, 20%,0) 100%);
+        background-image: radial-gradient(ellipse closest-corner at center center, hsl(198, 100%, 20%) 0%, hsla(204, 100%, 20%, 0) 100%);
         z-index: 4;
-        transform: translateY(-45rem);
+        transform: translateY(-450px);
     }
 
     #template {
@@ -61,7 +61,8 @@
         background-position: 50% 49.5%;
         background-size: 101.5%;
         z-index: 3;
-        transform: translateY(-40rem);    }
+        transform: translateY(-400px);
+    }
 
     #compass {
         position: absolute;
@@ -72,10 +73,12 @@
         background-position: 50% 50%;
         background-size: 98%;
         opacity: 0.3;
-        -webkit-animation: bgspin 360s ease-out;
-        animation: bgspin 360s ease-out;
+        animation-name: bgspin;
+        animation-duration: 360s;
+        animation-timing-function: ease-out;
         z-index: 2;
         will-change: transform;
+        transform: translateY(-400px);
     }
 
     @keyframes bgspin {
@@ -83,18 +86,6 @@
             transform: translateY(-400px) rotate(0);
             -webkit-transform: translateY(-400px) rotate(0deg);
         }
-        to {
-            transform: translateY(-400px) rotate(360);
-            -webkit-transform: translateY(-400px) rotate(360deg);
-        }
-    }
-
-    @-webkit-keyframes bgspin {
-        from {
-            transform: translateY(-400px) rotate(0);
-            -webkit-transform: translateY(-400px) rotate(0deg);
-        }
-
         to {
             transform: translateY(-400px) rotate(360);
             -webkit-transform: translateY(-400px) rotate(360deg);
@@ -148,10 +139,8 @@
     @media (prefers-reduced-motion) {
         #compass {
             animation: none;
-            transform: translateY(-400px);
         }
     }
-
     </style>
 
     <?php if ( is_front_page() && have_posts()): the_post(); ?>
