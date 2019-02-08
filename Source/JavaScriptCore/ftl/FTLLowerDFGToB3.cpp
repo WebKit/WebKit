@@ -6612,7 +6612,7 @@ private:
                 provenValue(m_graph.child(m_node, 1))));
         ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
         m_out.branch(
-            m_out.aboveOrEqual(char16BitValue, m_out.constInt32(0x100)),
+            m_out.above(char16BitValue, m_out.constInt32(maxSingleCharacterString)),
             rarely(bigCharacter), usually(bitsContinuation));
             
         m_out.appendTo(bigCharacter, bitsContinuation);
@@ -11973,7 +11973,7 @@ private:
         LValue char16BitValue = m_out.load16ZeroExt32(m_out.baseIndex(m_heaps.characters16, storage, m_out.zeroExtPtr(from)));
         ValueFromBlock char16Bit = m_out.anchor(char16BitValue);
         m_out.branch(
-            m_out.aboveOrEqual(char16BitValue, m_out.constInt32(0x100)),
+            m_out.above(char16BitValue, m_out.constInt32(maxSingleCharacterString)),
             rarely(bigCharacter), usually(bitsContinuation));
 
         m_out.appendTo(bigCharacter, bitsContinuation);

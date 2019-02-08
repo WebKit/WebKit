@@ -1,5 +1,25 @@
 2019-02-08  Mark Lam  <mark.lam@apple.com>
 
+        Use maxSingleCharacterString in comparisons instead of literal constants.
+        https://bugs.webkit.org/show_bug.cgi?id=194452
+
+        Reviewed by Yusuke Suzuki.
+
+        This way, if we ever change maxSingleCharacterString, it won't break all this code
+        that relies on it being 0xff implicitly.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringSlice):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringGetByValGenerator):
+        (JSC::charToString):
+
+2019-02-08  Mark Lam  <mark.lam@apple.com>
+
         Fix DFG's doesGC() for CheckTierUp*, GetByVal, PutByVal*, and StringCharAt nodes.
         https://bugs.webkit.org/show_bug.cgi?id=194446
         <rdar://problem/47926792>

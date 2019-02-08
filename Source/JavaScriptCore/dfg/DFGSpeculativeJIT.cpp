@@ -1577,7 +1577,7 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     is16Bit.link(&m_jit);
     m_jit.load16(MacroAssembler::BaseIndex(tempGPR, startIndexGPR, MacroAssembler::TimesTwo, 0), tempGPR);
 
-    auto bigCharacter = m_jit.branch32(MacroAssembler::AboveOrEqual, tempGPR, TrustedImm32(0x100));
+    auto bigCharacter = m_jit.branch32(MacroAssembler::Above, tempGPR, TrustedImm32(maxSingleCharacterString));
 
     // 8 bit string values don't need the isASCII check.
     cont8Bit.link(&m_jit);
@@ -2194,7 +2194,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     m_jit.load16(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesTwo, 0), scratchReg);
 
     JITCompiler::Jump bigCharacter =
-        m_jit.branch32(MacroAssembler::AboveOrEqual, scratchReg, TrustedImm32(0x100));
+        m_jit.branch32(MacroAssembler::Above, scratchReg, TrustedImm32(maxSingleCharacterString));
 
     // 8 bit string values don't need the isASCII check.
     cont8Bit.link(&m_jit);
