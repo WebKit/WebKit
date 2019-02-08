@@ -1,3 +1,19 @@
+2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Clicking links in Safari using Apple Pencil is much more difficult after r238475
+        https://bugs.webkit.org/show_bug.cgi?id=194415
+        <rdar://problem/47550281>
+
+        Reviewed by Tim Horton.
+
+        Fix the bug by not firing the Apple-pencil-exclusive tap gesture recognizer in the case where editable images
+        are disabled. This gesture recognizer is only used for inserting editable images, and currently conflicts with
+        the synthetic click gesture recognizer used to recognize clicks from generic digitizer inputs.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView _stylusSingleTapRecognized:]):
+
 2019-02-07  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Block coreservicesd in sandbox.

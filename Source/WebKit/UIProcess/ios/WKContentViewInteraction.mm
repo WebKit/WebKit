@@ -1830,6 +1830,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     CGPoint point = [gestureRecognizer locationInView:self];
 
+    if (gestureRecognizer == _stylusSingleTapGestureRecognizer)
+        return _webView._stylusTapGestureShouldCreateEditableImage;
+
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
         || gestureRecognizer == _doubleTapGestureRecognizer
         || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer
@@ -2076,9 +2079,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_stylusSingleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
-    if (!_webView._stylusTapGestureShouldCreateEditableImage)
-        return;
-
+    ASSERT(_webView._stylusTapGestureShouldCreateEditableImage);
     ASSERT(gestureRecognizer == _stylusSingleTapGestureRecognizer);
     _page->handleStylusSingleTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.location), ++_latestTapID);
 }
