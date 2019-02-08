@@ -668,3 +668,5 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/190627  [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+
+webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]

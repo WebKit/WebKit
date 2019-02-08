@@ -1,3 +1,12 @@
+2019-02-07  Shawn Roberts  <sroberts@apple.com>
+
+        fast/hidpi/hidpi-long-page-with-inset-element.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=172384
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Clicking links in Safari using Apple Pencil is much more difficult after r238475
