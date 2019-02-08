@@ -1,3 +1,20 @@
+2019-02-08  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: CrashLogs.find_all_logs may return a string or a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=194418
+
+        Reviewed by Lucas Forschler.
+
+        Do not include errors trying when finding crashlogs at the end of
+        a run-webkit-tests run since we don't process those errors.
+
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort._look_for_all_crash_logs_in_log_dir):
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort._look_for_all_crash_logs_in_log_dir):
+        * Scripts/webkitpy/port/watch_device.py:
+        (WatchDevicePort._look_for_all_crash_logs_in_log_dir):
+
 2019-02-08  Beth Dakin  <bdakin@apple.com>
 
         Add afterScreenUpdates to WKSnapshotConfiguration

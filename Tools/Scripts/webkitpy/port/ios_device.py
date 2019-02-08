@@ -67,7 +67,7 @@ class IOSDevicePort(IOSPort):
         log_list = {}
         for device in self.devices():
             crash_log = CrashLogs(device, self.path_to_crash_logs(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(device, []))
-            log_list.update(crash_log.find_all_logs(include_errors=True, newer_than=newer_than))
+            log_list.update(crash_log.find_all_logs(newer_than=newer_than))
         return log_list
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True, target_host=None):

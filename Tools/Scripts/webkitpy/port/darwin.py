@@ -113,7 +113,7 @@ class DarwinPort(ApplePort):
 
     def _look_for_all_crash_logs_in_log_dir(self, newer_than):
         crash_log = CrashLogs(self.host, self.path_to_crash_logs(), crash_logs_to_skip=self._crash_logs_to_skip_for_host.get(self.host, []))
-        return crash_log.find_all_logs(include_errors=True, newer_than=newer_than)
+        return crash_log.find_all_logs(newer_than=newer_than)
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True, target_host=None):
         # Note that we do slow-spin here and wait, since it appears the time
