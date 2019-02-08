@@ -557,7 +557,7 @@ a.download {
     border-radius: 4px;
     box-shadow: inset hsla(0, 0%, 0%, 0.07) 0 0 0 1px;
     box-shadow: var(--pagination-button-shadow);
-    height: 2rem;
+    min-height: 2rem;
     font-size: 1.7rem;
     line-height: 1.29412;
     font-weight: 400;
@@ -2511,7 +2511,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     }
 }
 
-@media only screen and (max-height: 415px) {
+@media only screen and (max-height: 415px) and (max-width: 920px) {
 
     .home .site-logo {
         opacity: 1;

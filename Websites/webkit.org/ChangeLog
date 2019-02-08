@@ -1,3 +1,19 @@
+2019-02-07  Jon Davis  <jond@apple.com>
+
+        Fixed responsive design issues for the Contribute drop-down menu and pagination
+        https://bugs.webkit.org/show_bug.cgi?id=194393
+
+        Reviewed by Devin Rousso.
+        
+        The short viewport breakpoint styles should apply for small width
+        windows as well, and pagination styles need to accommodate wrapped 
+        text labels.
+
+        * wp-content/themes/webkit/style.css:
+        (.pagination .page-numbers,):
+        (@media only screen and (max-height: 415px) and (max-width: 920px)):
+        (@media only screen and (max-height: 415px)): Deleted.
+
 2019-02-04  Jon Davis  <jond@apple.com>
 
         Add demos for Intersection Observer API
