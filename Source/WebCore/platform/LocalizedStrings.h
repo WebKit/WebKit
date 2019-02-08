@@ -164,6 +164,7 @@ namespace WebCore {
     String AXListMarkerText();
     String AXImageMapText();
     String AXHeadingText();
+    String AXColorWellText();
     String AXDefinitionText();
     String AXDescriptionListText();
     String AXDescriptionListTermText();

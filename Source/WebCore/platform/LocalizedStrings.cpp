@@ -466,6 +466,11 @@ String AXHeadingText()
     return WEB_UI_STRING("heading", "accessibility role description for headings");
 }
 
+String AXColorWellText()
+{
+    return WEB_UI_STRING("color well", "accessibility role description for a color well");
+}
+
 String AXDefinitionText()
 {
     return WEB_UI_STRING("definition", "role description of ARIA definition role");

@@ -347,6 +347,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     switch (role) {
     case AccessibilityRole::Button:
     case AccessibilityRole::CheckBox:
+    case AccessibilityRole::ColorWell:
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::Heading:
@@ -857,6 +858,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::ToggleButton:
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::CheckBox:
+    case AccessibilityRole::ColorWell:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Slider:
     case AccessibilityRole::MenuButton:
@@ -931,7 +933,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Canvas:
     case AccessibilityRole::Caption:
     case AccessibilityRole::Cell:
-    case AccessibilityRole::ColorWell:
     case AccessibilityRole::Column:
     case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::Definition:
@@ -1116,6 +1117,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
 - (NSString *)accessibilityRoleDescription
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if (m_object->isColorWell())
+        return AXColorWellText();
+
     return m_object->roleDescription();
 }
 
@@ -1392,6 +1399,20 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return nil;
 
     return m_object->placeholderValue();
+}
+
+- (NSString *)accessibilityColorStringValue
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    if (m_object->isColorWell()) {
+        int r, g, b;
+        m_object->colorValue(r, g, b);
+        return [NSString stringWithFormat:@"rgb %7.5f %7.5f %7.5f 1", r / 255., g / 255., b / 255.];
+    }
+
+    return nil;
 }
 
 - (NSString *)accessibilityValue
