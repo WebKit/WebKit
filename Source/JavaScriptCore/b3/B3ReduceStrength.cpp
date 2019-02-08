@@ -1241,7 +1241,8 @@ private:
             // Turn this: Abs(Neg(value))
             // Into this: Abs(value)
             if (m_value->child(0)->opcode() == Neg) {
-                replaceWithIdentity(m_value->child(0)->child(0));
+                m_value->child(0) = m_value->child(0)->child(0);
+                m_changed = true;
                 break;
             }
 

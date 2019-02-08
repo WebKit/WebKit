@@ -1,3 +1,18 @@
+2019-02-07  Robin Morisset  <rmorisset@apple.com>
+
+        Fix Abs(Neg(x)) -> Abs(x) optimization in B3ReduceStrength
+        https://bugs.webkit.org/show_bug.cgi?id=194420
+
+        Reviewed by Saam Barati.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=194250, I added an optimization: Abs(Neg(x)) -> Abs(x).
+        But I introduced two bugs, one is that I actually implemented Abs(Neg(x)) -> x, and the other is that the test is looking at Abs(Abs(x)) instead (both were stupid copy-paste mistakes).
+        This trivial patch fixes both.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testAbsNegArg):
+
 2019-02-07  Keith Miller  <keith_miller@apple.com>
 
         Better error messages for module loader SPI

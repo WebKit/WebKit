@@ -3984,7 +3984,7 @@ void testAbsNegArg(double a)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    Value* neg = root->appendNew<Value>(proc, Abs, Origin(),
+    Value* neg = root->appendNew<Value>(proc, Neg, Origin(),
         root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
     Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
     root->appendNewControlValue(proc, Return, Origin(), abs);
