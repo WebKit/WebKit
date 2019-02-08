@@ -1,5 +1,29 @@
 2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] [WK2] Modernize code for applying autocorrection
+        https://bugs.webkit.org/show_bug.cgi?id=194397
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]):
+
+        Use BlockPtr instead of temporarily storing the completion handler.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Change a LegacySync to Delayed.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applyAutocorrection):
+        (WebKit::WebPage::syncApplyAutocorrection):
+        (WebKit::WebPage::applyAutocorrectionInternal):
+
+2019-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Clicking links in Safari using Apple Pencil is much more difficult after r238475
         https://bugs.webkit.org/show_bug.cgi?id=194415
         <rdar://problem/47550281>

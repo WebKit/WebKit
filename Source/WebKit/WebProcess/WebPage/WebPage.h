@@ -646,7 +646,7 @@ public:
     void replaceSelectedText(const String& oldText, const String& newText);
     void requestAutocorrectionData(const String& textForAutocorrection, CallbackID);
     void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
-    void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
+    void syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&&);
     void requestAutocorrectionContext(CallbackID);
     void autocorrectionContextSync(CompletionHandler<void(WebAutocorrectionContext&&)>&&);
     void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
@@ -1191,6 +1191,7 @@ private:
     void sendPositionInformation(InteractionInformationAtPosition&&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
     WebAutocorrectionContext autocorrectionContext();
+    bool applyAutocorrectionInternal(const String& correction, const String& originalText);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)

@@ -77,7 +77,7 @@ messages -> WebPage LegacyReceiver {
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection, WebKit::CallbackID callbackID)
     ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
-    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) LegacySync
+    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Delayed
     RequestAutocorrectionContext(WebKit::CallbackID callbackID)
     AutocorrectionContextSync() -> (struct WebKit::WebAutocorrectionContext context) Delayed
     GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Delayed

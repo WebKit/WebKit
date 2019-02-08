@@ -175,7 +175,6 @@ struct WKAutoCorrectionData {
     uint64_t fontTraits;
     CGRect textFirstRect;
     CGRect textLastRect;
-    UIWKAutocorrectionCompletionHandler autocorrectionHandler;
 };
 
 }

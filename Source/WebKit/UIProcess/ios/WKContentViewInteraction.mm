@@ -3217,13 +3217,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler
 {
     if (!input || ![input length]) {
-        completionHandler(nil);
+        if (completionHandler)
+            completionHandler(nil);
         return;
     }
 
-    RetainPtr<WKContentView> view = self;
-    _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    _page->requestAutocorrectionData(input, [view](const Vector<WebCore::FloatRect>& rects, const String& fontName, double fontSize, uint64_t traits, WebKit::CallbackBase::Error) {
+    _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& rects, auto& fontName, double fontSize, uint64_t traits, auto) {
         CGRect firstRect = CGRectZero;
         CGRect lastRect = CGRectZero;
         if (rects.size()) {
@@ -3237,9 +3236,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         view->_autocorrectionData.textFirstRect = firstRect;
         view->_autocorrectionData.textLastRect = lastRect;
 
-        view->_autocorrectionData.autocorrectionHandler(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
-        [view->_autocorrectionData.autocorrectionHandler release];
-        view->_autocorrectionData.autocorrectionHandler = nil;
+        if (completion)
+            completion(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
     });
 }
 
@@ -3381,15 +3379,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     const bool useSyncRequest = true;
 
     if (useSyncRequest) {
-        completionHandler(_page->applyAutocorrection(correction, input) ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
+        if (completionHandler)
+            completionHandler(_page->applyAutocorrection(correction, input) ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
         return;
     }
-    _autocorrectionData.autocorrectionHandler = [completionHandler copy];
-    RetainPtr<WKContentView> view = self;
-    _page->applyAutocorrection(correction, input, [view](const String& string, WebKit::CallbackBase::Error error) {
-        view->_autocorrectionData.autocorrectionHandler(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithRects:view->_autocorrectionData.textFirstRect lastRect:view->_autocorrectionData.textLastRect] : nil);
-        [view->_autocorrectionData.autocorrectionHandler release];
-        view->_autocorrectionData.autocorrectionHandler = nil;
+
+    _page->applyAutocorrection(correction, input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& string, auto error) {
+        if (completion)
+            completion(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithRects:view->_autocorrectionData.textFirstRect lastRect:view->_autocorrectionData.textLastRect] : nil);
     });
 }
 

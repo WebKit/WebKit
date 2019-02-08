@@ -1889,9 +1889,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Cal
 
 void WebPage::applyAutocorrection(const String& correction, const String& originalText, CallbackID callbackID)
 {
-    bool correctionApplied;
-    syncApplyAutocorrection(correction, originalText, correctionApplied);
-    send(Messages::WebPageProxy::StringCallback(correctionApplied ? correction : String(), callbackID));
+    send(Messages::WebPageProxy::StringCallback(applyAutocorrectionInternal(correction, originalText) ? correction : String(), callbackID));
 }
 
 Seconds WebPage::eventThrottlingDelay() const
@@ -1912,13 +1910,16 @@ Seconds WebPage::eventThrottlingDelay() const
     return std::min(m_estimatedLatency * 2, 1_s);
 }
 
-void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied)
+void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&& reply)
 {
-    correctionApplied = false;
+    reply(applyAutocorrectionInternal(correction, originalText));
+}
 
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText)
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.selection().isCaretOrRange())
-        return;
+        return false;
 
     RefPtr<Range> range;
     String textForRange;
@@ -1951,17 +1952,14 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
     } else {
         // Range selection.
         range = frame.selection().toNormalizedRange();
-        if (!range) {
-            correctionApplied = false;
-            return;
-        }
+        if (!range)
+            return false;
+
         textForRange = plainTextReplacingNoBreakSpace(range.get());
     }
 
-    if (textForRange != originalText) {
-        correctionApplied = false;
-        return;
-    }
+    if (textForRange != originalText)
+        return false;
     
     // Correctly determine affinity, using logic currently only present in VisiblePosition
     EAffinity affinity = DOWNSTREAM;
@@ -1973,7 +1971,7 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
         frame.editor().insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
     else
         frame.editor().deleteWithDirection(DirectionBackward, CharacterGranularity, false, true);
-    correctionApplied = true;
+    return true;
 }
 
 WebAutocorrectionContext WebPage::autocorrectionContext()
