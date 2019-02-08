@@ -113,6 +113,8 @@ public:
     Optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
     Optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
 
+    void clearFactory() { m_factory = nullptr; }
+
 protected:
     LibWebRTCProvider() = default;
 

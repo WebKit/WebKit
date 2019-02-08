@@ -1,3 +1,14 @@
+2019-02-08  Youenn Fablet  <youenn@apple.com>
+
+        Running RTCRtpSender.getCapabilities("video") before initial offer breaks VP8
+        https://bugs.webkit.org/show_bug.cgi?id=194380
+        <rdar://problem/47916514>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-mute-vp8-expected.txt:
+        * webrtc/video-mute-vp8.html:
+
 2019-02-08  Andy Estes  <aestes@apple.com>
 
         [WebIDL] Support serializing sequences and FrozenArrays of non-interfaces
