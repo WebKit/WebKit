@@ -28,15 +28,24 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
 #include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {
 using namespace JSC;
 
+JSC::JSValue JSIDBCursorWithValue::value(JSC::ExecState& state) const
+{
+    return cachedPropertyValue(state, *this, wrapped().valueWrapper(), [&] {
+        return deserializeIDBValueToJSValue(state, wrapped().value());
+    });
+}
+
 void JSIDBCursorWithValue::visitAdditionalChildren(SlotVisitor& visitor)
 {
     JSIDBCursor::visitAdditionalChildren(visitor);
+    wrapped().valueWrapper().visit(visitor);
 }
 
 } // namespace WebCore

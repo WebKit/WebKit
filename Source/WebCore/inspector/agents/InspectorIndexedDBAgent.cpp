@@ -137,12 +137,12 @@ public:
         }
 
         auto resultValue = result.releaseReturnValue();
-        if (!resultValue || !WTF::holds_alternative<RefPtr<IDBDatabase>>(resultValue.value())) {
+        if (!WTF::holds_alternative<RefPtr<IDBDatabase>>(resultValue)) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
 
-        auto databaseResult = WTF::get<RefPtr<IDBDatabase>>(resultValue.value());
+        auto databaseResult = WTF::get<RefPtr<IDBDatabase>>(resultValue);
         m_executableWithDatabase->execute(*databaseResult);
         databaseResult->close();
     }
@@ -363,7 +363,7 @@ public:
         return this == &other;
     }
 
-    void handleEvent(ScriptExecutionContext&, Event& event) override
+    void handleEvent(ScriptExecutionContext& context, Event& event) override
     {
         if (event.type() != eventNames().successEvent) {
             m_requestCallback->sendFailure("Unexpected event type.");
@@ -379,12 +379,12 @@ public:
         }
         
         auto resultValue = result.releaseReturnValue();
-        if (!resultValue || !WTF::holds_alternative<RefPtr<IDBCursor>>(resultValue.value())) {
+        if (!WTF::holds_alternative<RefPtr<IDBCursor>>(resultValue)) {
             end(false);
             return;
         }
 
-        auto cursor = WTF::get<RefPtr<IDBCursor>>(resultValue.value());
+        auto cursor = WTF::get<RefPtr<IDBCursor>>(resultValue);
 
         if (m_skipCount) {
             if (cursor->advance(m_skipCount).hasException())
@@ -404,10 +404,14 @@ public:
             return;
         }
 
+        auto* state = context.execState();
+        auto key =  toJS(*state, *state->lexicalGlobalObject(), cursor->key());
+        auto primaryKey = toJS(*state, *state->lexicalGlobalObject(), cursor->primaryKey());
+        auto value = deserializeIDBValueToJSValue(*state, cursor->value());
         auto dataEntry = DataEntry::create()
-            .setKey(m_injectedScript.wrapObject(cursor->key(), String(), true))
-            .setPrimaryKey(m_injectedScript.wrapObject(cursor->primaryKey(), String(), true))
-            .setValue(m_injectedScript.wrapObject(cursor->value(), String(), true))
+            .setKey(m_injectedScript.wrapObject(key, String(), true))
+            .setPrimaryKey(m_injectedScript.wrapObject(primaryKey, String(), true))
+            .setValue(m_injectedScript.wrapObject(value, String(), true))
             .release();
         m_result->addItem(WTFMove(dataEntry));
     }

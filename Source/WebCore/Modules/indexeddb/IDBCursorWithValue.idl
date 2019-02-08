@@ -28,5 +28,5 @@
     SkipVTableValidation,
     JSCustomMarkFunction,
 ] interface IDBCursorWithValue : IDBCursor {
-    readonly attribute any value;
+    [CustomGetter] readonly attribute any value;
 };

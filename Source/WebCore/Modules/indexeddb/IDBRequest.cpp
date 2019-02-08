@@ -85,6 +85,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnection
     , m_resourceIdentifier(connectionProxy)
     , m_connectionProxy(connectionProxy)
 {
+    m_result = NullResultType::Empty;
     suspendIfNeeded();
 }
 
@@ -95,6 +96,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_source(&objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
+    m_result = NullResultType::Empty;
     suspendIfNeeded();
 }
 
@@ -111,6 +113,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
         [this] (const auto& value) { this->m_source = IDBRequest::Source { value }; }
     );
 
+    m_result = NullResultType::Empty;
     cursor.setRequest(*this);
 }
 
@@ -121,6 +124,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     , m_source(&index)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
+    m_result = NullResultType::Empty;
     suspendIfNeeded();
 }
 
@@ -132,12 +136,14 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     , m_requestedObjectStoreRecordType(type)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
+    m_result = NullResultType::Empty;
     suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
     : IDBRequest(context, index, transaction)
 {
+    m_result = NullResultType::Empty;
     m_requestedIndexRecordType = requestedRecordType;
 }
 
@@ -145,20 +151,18 @@ IDBRequest::~IDBRequest()
 {
     ASSERT(&originThread() == &Thread::current());
 
-    if (m_result) {
-        WTF::switchOn(m_result.value(),
-            [] (RefPtr<IDBCursor>& cursor) { cursor->clearRequest(); },
-            [] (const auto&) { }
-        );
-    }
+    WTF::switchOn(m_result,
+        [] (RefPtr<IDBCursor>& cursor) { cursor->clearRequest(); },
+        [] (const auto&) { }
+    );
 }
 
-ExceptionOr<Optional<IDBRequest::Result>> IDBRequest::result() const
+ExceptionOr<IDBRequest::Result> IDBRequest::result() const
 {
     if (!isDone())
         return Exception { InvalidStateError, "Failed to read the 'result' property from 'IDBRequest': The request has not finished."_s };
 
-    return Optional<IDBRequest::Result> { m_result };
+    return IDBRequest::Result { m_result };
 }
 
 ExceptionOr<DOMException*> IDBRequest::error() const
@@ -358,11 +362,10 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
     if (!state)
         return;
 
-    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
-    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLIDBKeyData>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyData) } };
+    m_result = keyData;
+    m_resultWrapper = { };
 }
 
 void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
@@ -377,11 +380,10 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
     if (!state)
         return;
 
-    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
-    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLSequence<IDLIDBKeyData>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), keyDatas) } };
+    m_result = keyDatas;
+    m_resultWrapper = { };
 }
 
 void IDBRequest::setResult(const Vector<IDBValue>& values)
@@ -396,11 +398,10 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
     if (!state)
         return;
 
-    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
-    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLSequence<IDLIDBValue>>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), values) } };
+    m_result = values;
+    m_resultWrapper = { };
 }
 
 void IDBRequest::setResult(uint64_t number)
@@ -411,7 +412,8 @@ void IDBRequest::setResult(uint64_t number)
     if (!context)
         return;
 
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), toJS<IDLUnrestrictedDouble>(number) } };
+    m_result = number;
+    m_resultWrapper = { };
 }
 
 void IDBRequest::setResultToStructuredClone(const IDBValue& value)
@@ -428,32 +430,25 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
     if (!state)
         return;
 
-    // FIXME: This conversion should be done lazily, when script needs the JSValues, so that global object
-    // of the IDBRequest wrapper can be used, rather than the lexicalGlobalObject.
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = Result { JSC::Strong<JSC::Unknown> { vm, toJS<IDLIDBValue>(*state, *jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject()), value) } };
+    m_result = value;
+    m_resultWrapper = { };
 }
 
 void IDBRequest::setResultToUndefined()
 {
     ASSERT(&originThread() == &Thread::current());
 
-    auto* context = scriptExecutionContext();
-    if (!context)
-        return;
-
-    m_result = Result { JSC::Strong<JSC::Unknown> { context->vm(), JSC::jsUndefined() } };
+    m_result = NullResultType::Undefined;
+    m_resultWrapper = { };
 }
 
 IDBCursor* IDBRequest::resultCursor()
 {
     ASSERT(&originThread() == &Thread::current());
 
-    if (!m_result)
-        return nullptr;
-
-    return WTF::switchOn(m_result.value(),
+    return WTF::switchOn(m_result,
         [] (const RefPtr<IDBCursor>& cursor) -> IDBCursor* { return cursor.get(); },
         [] (const auto&) -> IDBCursor* { return nullptr; }
     );
@@ -470,7 +465,8 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
 
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
-    m_result = WTF::nullopt;
+    m_result = NullResultType::Empty;
+    m_resultWrapper = { };
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
     m_idbError = IDBError { };
@@ -481,12 +477,13 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     ASSERT(&originThread() == &Thread::current());
     ASSERT(m_pendingCursor);
 
-    m_result = WTF::nullopt;
+    m_result = NullResultType::Empty;
+    m_resultWrapper = { };
 
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
         m_pendingCursor->setGetResult(*this, resultData.getResult());
         if (resultData.getResult().isDefined())
-            m_result = Result { m_pendingCursor };
+            m_result = m_pendingCursor;
     }
 
     m_pendingCursor = nullptr;
@@ -529,7 +526,8 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
     ASSERT(&originThread() == &Thread::current());
 
-    m_result = Result { RefPtr<IDBDatabase> { WTFMove(database) } };
+    m_result = RefPtr<IDBDatabase> { WTFMove(database) };
+    m_resultWrapper = { };
 }
 
 } // namespace WebCore

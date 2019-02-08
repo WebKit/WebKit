@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "JSDOMBinding.h"
 #include "JSIDBCursorWithValue.h"
 
@@ -35,11 +36,27 @@
 namespace WebCore {
 using namespace JSC;
 
+JSC::JSValue JSIDBCursor::key(JSC::ExecState& state) const
+{
+    return cachedPropertyValue(state, *this, wrapped().keyWrapper(), [&] {
+        return toJS(state, *state.lexicalGlobalObject(), wrapped().key());
+    });
+}
+
+JSC::JSValue JSIDBCursor::primaryKey(JSC::ExecState& state) const
+{
+    return cachedPropertyValue(state, *this, wrapped().primaryKeyWrapper(), [&] {
+        return toJS(state, *state.lexicalGlobalObject(), wrapped().primaryKey());
+    });
+}
+
 void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
 {
     auto& cursor = wrapped();
     if (auto* request = cursor.request())
         visitor.addOpaqueRoot(request);
+    cursor.keyWrapper().visit(visitor);
+    cursor.primaryKeyWrapper().visit(visitor);
 }
 
 JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<IDBCursor>&& cursor)

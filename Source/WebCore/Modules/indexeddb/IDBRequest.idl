@@ -31,9 +31,10 @@
     ActiveDOMObject,
     Conditional=INDEXED_DATABASE,
     GenerateIsReachable=Impl,
+    JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
-    readonly attribute (IDBCursor or IDBDatabase or any)? result;
+    [CustomGetter] readonly attribute (IDBCursor or IDBDatabase or any) result;
     readonly attribute DOMException? error;
     readonly attribute (IDBObjectStore or IDBIndex or IDBCursor)? source;
     readonly attribute IDBTransaction transaction;

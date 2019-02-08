@@ -31,8 +31,8 @@
 ] interface IDBCursor {
     readonly attribute (IDBObjectStore or IDBIndex) source;
     readonly attribute IDBCursorDirection direction;
-    readonly attribute any key;
-    readonly attribute any primaryKey;
+    [CustomGetter] readonly attribute any key;
+    [CustomGetter] readonly attribute any primaryKey;
 
     [CallWith=ExecState, MayThrowException] IDBRequest update(any value);
     [MayThrowException] void advance([EnforceRange] unsigned long count);

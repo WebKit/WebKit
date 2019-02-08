@@ -30,6 +30,8 @@
 #include "ExceptionOr.h"
 #include "IDBCursorDirection.h"
 #include "IDBCursorInfo.h"
+#include "IDBValue.h"
+#include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
@@ -52,9 +54,13 @@ public:
 
     const Source& source() const;
     IDBCursorDirection direction() const;
-    JSC::JSValue key() const;
-    JSC::JSValue primaryKey() const;
-    JSC::JSValue value() const;
+
+    IDBKey* key() { return m_key.get(); };
+    IDBKey* primaryKey() { return m_primaryKey.get(); };
+    IDBValue value() { return m_value; };
+    JSValueInWrappedObject& keyWrapper() { return m_keyWrapper; }
+    JSValueInWrappedObject& primaryKeyWrapper() { return m_primaryKeyWrapper; }
+    JSValueInWrappedObject& valueWrapper() { return m_valueWrapper; }
 
     ExceptionOr<Ref<IDBRequest>> update(JSC::ExecState&, JSC::JSValue);
     ExceptionOr<void> advance(unsigned);
@@ -92,14 +98,15 @@ private:
 
     bool m_gotValue { false };
 
-    IDBKeyData m_currentKeyData;
-    IDBKeyData m_currentPrimaryKeyData;
+    RefPtr<IDBKey> m_key;
+    RefPtr<IDBKey> m_primaryKey;
+    IDBKeyData m_keyData;
+    IDBKeyData m_primaryKeyData;
+    IDBValue m_value;
 
-    // FIXME: The following uses of JSC::Strong are incorrect and can lead to storage leaks
-    // due to reference cycles; we should use JSValueInWrappedObject instead.
-    JSC::Strong<JSC::Unknown> m_currentKey;
-    JSC::Strong<JSC::Unknown> m_currentPrimaryKey;
-    JSC::Strong<JSC::Unknown> m_currentValue;
+    JSValueInWrappedObject m_keyWrapper;
+    JSValueInWrappedObject m_primaryKeyWrapper;
+    JSValueInWrappedObject m_valueWrapper;
 };
 
 
@@ -111,21 +118,6 @@ inline const IDBCursor::Source& IDBCursor::source() const
 inline IDBCursorDirection IDBCursor::direction() const
 {
     return m_info.cursorDirection();
-}
-
-inline JSC::JSValue IDBCursor::key() const
-{
-    return m_currentKey.get();
-}
-
-inline JSC::JSValue IDBCursor::primaryKey() const
-{
-    return m_currentPrimaryKey.get();
-}
-
-inline JSC::JSValue IDBCursor::value() const
-{
-    return m_currentValue.get();
 }
 
 } // namespace WebCore

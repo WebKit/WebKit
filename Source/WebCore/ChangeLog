@@ -1,3 +1,61 @@
+2019-02-08  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB tests leak documents
+        https://bugs.webkit.org/show_bug.cgi?id=189435
+        <rdar://problem/44240043>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove use of JSC::Strong in IndexedDatabase.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::continuePrimaryKey):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::deleteFunction):
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::key):
+        (WebCore::IDBCursor::primaryKey):
+        (WebCore::IDBCursor::value):
+        (WebCore::IDBCursor::keyWrapper):
+        (WebCore::IDBCursor::primaryKeyWrapper):
+        (WebCore::IDBCursor::valueWrapper):
+        (WebCore::IDBCursor::key const): Deleted.
+        (WebCore::IDBCursor::primaryKey const): Deleted.
+        (WebCore::IDBCursor::value const): Deleted.
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::putForCursorUpdate):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::result const):
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        (WebCore::IDBRequest::setResultToUndefined):
+        (WebCore::IDBRequest::resultCursor):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::resultWrapper):
+        * Modules/indexeddb/IDBRequest.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::JSIDBCursor::key const):
+        (WebCore::JSIDBCursor::primaryKey const):
+        (WebCore::JSIDBCursor::visitAdditionalChildren):
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        (WebCore::JSIDBCursorWithValue::value const):
+        (WebCore::JSIDBCursorWithValue::visitAdditionalChildren):
+        * bindings/js/JSIDBRequestCustom.cpp: Added.
+        (WebCore::JSIDBRequest::result const):
+        (WebCore::JSIDBRequest::visitAdditionalChildren):
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+
 2019-02-08  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] The used containing block width value is optional
