@@ -1,3 +1,34 @@
+2019-02-07  Michael Saboff  <msaboff@apple.com>
+
+        bmalloc uses more memory on iOS compared to macOS due to physical page size differences
+        https://bugs.webkit.org/show_bug.cgi?id=192389
+
+        Reviewed by Geoffrey Garen.
+
+        Changed small line allocations to be in smallPageSize "virtual page" multiples instead of physical
+        page size increments for sizes less that the physical page size.  This required changing the small
+        page commit / decommit code to work in full physical page increments.  For page classes that are
+        physical page size and larger, there isn't any functional change.
+
+        When scavenging page classes smaller than the physical page size, we need to consider whether or
+        not the adjacent small pages on the same physical page are also free before decommiting that
+        containing page.  When we need to commit more memory, we commit the whole page, and add any
+        adjacent virtual pages that were fully committed as well.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::forEachPage):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::initializeLineMetadata):
+        (bmalloc::Heap::initializePageMetadata):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::__attribute__):
+        (bmalloc::Heap::commitSmallPagesInPhysicalPage):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        * bmalloc/Heap.h:
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::refCount):
+
 2019-01-18  Keith Miller  <keith_miller@apple.com>
 
         gigacage slide should randomize both start and end

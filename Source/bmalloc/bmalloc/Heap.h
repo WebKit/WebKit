@@ -120,6 +120,9 @@ private:
     SmallPage* allocateSmallPage(std::unique_lock<Mutex>&, size_t sizeClass, LineCache&);
     void deallocateSmallLine(std::unique_lock<Mutex>&, Object, LineCache&);
 
+    void tryDecommitSmallPagesInPhysicalPage(std::lock_guard<Mutex>&, BulkDecommit& decommitter, SmallPage*, size_t pageSize);
+    void commitSmallPagesInPhysicalPage(std::unique_lock<Mutex>&, SmallPage*, size_t pageSize);
+
     void allocateSmallChunk(std::unique_lock<Mutex>&, size_t pageClass);
     void deallocateSmallChunk(Chunk*, size_t pageClass);
 

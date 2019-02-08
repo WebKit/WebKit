@@ -50,6 +50,7 @@ public:
     char* address(size_t offset);
     SmallPage* page(size_t offset);
     SmallLine* line(size_t offset);
+    size_t pageNumber(SmallPage*);
 
     char* bytes() { return reinterpret_cast<char*>(this); }
     SmallLine* lines() { return &m_lines[0]; }
@@ -77,7 +78,8 @@ template<typename Function> void forEachPage(Chunk* chunk, size_t pageSize, Func
 {
     // We align to at least the page size so we can service aligned allocations
     // at equal and smaller powers of two, and also so we can vmDeallocatePhysicalPages().
-    size_t metadataSize = roundUpToMultipleOfNonPowerOfTwo(pageSize, sizeof(Chunk));
+    size_t firstPageOffset = max(pageSize, vmPageSize());
+    size_t metadataSize = roundUpToMultipleOfNonPowerOfTwo(firstPageOffset, sizeof(Chunk));
 
     Object begin(chunk, metadataSize);
     Object end(chunk, chunkSize);
