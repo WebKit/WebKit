@@ -1,3 +1,23 @@
+2019-02-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Block coreservicesd in sandbox.
+        https://bugs.webkit.org/show_bug.cgi?id=192670
+
+        Reviewed by Alexey Proskuryakov.
+
+        We should block CoreServices in newer versions of macOS. In order to achieve this we need to avoid calling
+        _RegisterApplication before entering the sandbox, since this call will open up a connection to CoreServices.
+        The call to _RegisterApplication is moved to ChildProcess::updateProcessName, since it is needed to
+        successfully update the process name. The call to ChildProcess::updateProcessName is made after entering
+        the sandbox.
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::initialize):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-02-07  Youenn Fablet  <youenn@apple.com>
 
         Filter out Overconstrainederror.constraint when getUserMedia is not granted

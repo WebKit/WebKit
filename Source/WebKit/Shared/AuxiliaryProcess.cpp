@@ -70,10 +70,11 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
 #endif
 
     initializeProcess(parameters);
-    initializeProcessName(parameters);
 
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
+
+    initializeProcessName(parameters);
 
     // In WebKit2, only the UI process should ever be generating non-default PAL::SessionIDs.
     PAL::SessionID::enableGenerationProtection();

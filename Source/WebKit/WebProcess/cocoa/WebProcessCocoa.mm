@@ -101,6 +101,10 @@
 #import <os/state_private.h>
 #endif
 
+#if HAVE(CSCHECKFIXDISABLE)
+extern "C" void _CSCheckFixDisable();
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -211,6 +215,13 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters&)
 {
 #if PLATFORM(MAC)
+#if HAVE(CSCHECKFIXDISABLE)
+    // _CSCheckFixDisable() needs to be called before checking in with Launch Services.
+    _CSCheckFixDisable();
+#endif
+    // This is necessary so that we are able to set the process' display name.
+    _RegisterApplication(nullptr, nullptr);
+
     updateProcessName();
 #endif
 }
@@ -360,10 +371,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     CGSShutdownServerConnections();
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
-
-    // This is necessary so that we are able to set the process' display name.
-    _RegisterApplication(nullptr, nullptr);
-
 #else
 
     if (![NSApp isRunning]) {
