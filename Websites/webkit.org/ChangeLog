@@ -1,5 +1,14 @@
 2019-02-07  Jon Davis  <jond@apple.com>
 
+        Disable the WP emoji polyfill
+        https://bugs.webkit.org/show_bug.cgi?id=194394
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/functions.php:
+
+2019-02-07  Jon Davis  <jond@apple.com>
+
         Fixed responsive design issues for the Contribute drop-down menu and pagination
         https://bugs.webkit.org/show_bug.cgi?id=194393
 
