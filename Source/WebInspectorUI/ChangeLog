@@ -1,3 +1,18 @@
+2019-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: close unbalanced quotes and parenthesis when editing values
+        https://bugs.webkit.org/show_bug.cgi?id=182523
+        <rdar://problem/37260209>
+
+        Reviewed by Devin Rousso.
+
+        Close CSS comments, append missing closed quotes and right parenthesis.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.completeUnbalancedValue):
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.set rawValue):
+
 2019-02-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make Timeline markers light gray instead of black in dark mode

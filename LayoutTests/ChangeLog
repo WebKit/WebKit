@@ -1,3 +1,16 @@
+2019-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: close unbalanced quotes and parenthesis when editing values
+        https://bugs.webkit.org/show_bug.cgi?id=182523
+        <rdar://problem/37260209>
+
+        Reviewed by Devin Rousso.
+
+        Test common cases of unmatched quotes, parenthesis, comments, and trailing backslashes.
+
+        * inspector/unit-tests/css-completions-expected.txt: Added.
+        * inspector/unit-tests/css-completions.html: Added.
+
 2019-02-08  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test accessibility/set-value-not-work-for-disabled-sliders.html is failing

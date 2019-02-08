@@ -230,6 +230,10 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         this._markModified();
 
+        let suffix = WI.CSSCompletions.completeUnbalancedValue(value);
+        if (suffix)
+            value += suffix;
+
         this._rawValue = value;
         this._value = undefined;
         this._updateStyleText();
