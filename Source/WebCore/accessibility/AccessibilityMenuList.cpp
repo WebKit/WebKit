@@ -45,15 +45,21 @@ Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* rendere
 bool AccessibilityMenuList::press()
 {
 #if !PLATFORM(IOS_FAMILY)
-    RenderMenuList* menuList = static_cast<RenderMenuList*>(renderer());
-    if (menuList->popupIsVisible())
-        menuList->hidePopup();
-    else
-        menuList->showPopup();
+    auto element = this->element();
+    AXObjectCache::AXNotification notification = AXObjectCache::AXPressDidFail;
+    if (element && !element->isDisabledFormControl() && is<RenderMenuList>(renderer())) {
+        RenderMenuList* menuList = downcast<RenderMenuList>(renderer());
+        if (menuList->popupIsVisible())
+            menuList->hidePopup();
+        else
+            menuList->showPopup();
+        notification = AXObjectCache::AXPressDidSucceed;
+    }
+    if (auto cache = axObjectCache())
+        cache->postNotification(element, notification);
     return true;
-#else
-    return false;
 #endif
+    return false;
 }
 
 void AccessibilityMenuList::addChildren()

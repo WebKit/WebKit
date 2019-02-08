@@ -1,3 +1,18 @@
+2019-02-08  Eric Liang  <ericliang@apple.com>
+
+        When performing AXPress, check to see if the menu list is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=193878
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/press-not-work-for-disabled-menu-list.html
+
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::press):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2019-02-07  Devin Rousso  <drousso@apple.com>
 
         PseudoElement created for any ::before/::after selector regardless of whether a content property exists

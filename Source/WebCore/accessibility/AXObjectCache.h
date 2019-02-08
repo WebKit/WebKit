@@ -291,6 +291,8 @@ public:
         AXRowExpanded,
         AXExpandedChanged,
         AXInvalidStatusChanged,
+        AXPressDidSucceed,
+        AXPressDidFail,
         AXPressedStateChanged,
         AXReadOnlyStatusChanged,
         AXRequiredStatusChanged,

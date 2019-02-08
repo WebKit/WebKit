@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+
+<select id="test0" disabled>
+     <option value="1">Cork</option>
+     <option value="2">Cupertino</option>
+     <option value="3">London</option>
+     <option value="4">New York</option>
+     <option value="5">Singapore</option>
+     <option value="6">Tokyo</option>
+</select>
+
+<select id="test1" disabled aria-disabled="false">
+    <option value="1">Cork</option>
+    <option value="2">Cupertino</option>
+    <option value="3">London</option>
+    <option value="4">New York</option>
+    <option value="5">Singapore</option>
+    <option value="6">Tokyo</option>
+</select>
+
+<select id="test2" disabled aria-disabled="true">
+    <option value="1">Cork</option>
+    <option value="2">Cupertino</option>
+    <option value="3">London</option>
+    <option value="4">New York</option>
+    <option value="5">Singapore</option>
+    <option value="6">Tokyo</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+</div>
+
+<script>
+    description("This tests that menu lists that are disabled will not be triggered by AXPress actions.");
+
+    // We don't test for enabled controls because opening menu lists waits on the UI process to display the menu.
+    var numOfTests = 3, notificationCount = 0;
+    var lists = [null, null, null];
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        pressNext(0);
+    }
+
+    function pressNext(testId) {
+        if (testId > numOfTests)
+            return;
+        var menulist = accessibilityController.accessibleElementById("test" + testId);
+        menulist.addNotificationListener(pressListener);
+        menulist.press();
+        lists[testId] = menulist;
+        window.setTimeout(function() {
+            pressNext(testId + 1);
+        }, 0);
+    }
+
+    function pressListener(notification) {
+        if (notification == "AXPressDidFail" || notification == "AXPressDidSucceed")
+            notificationCount++;
+
+        debug("Got notification: " + notification);
+        lists[notificationCount-1].removeNotificationListener(pressListener);
+        if (notificationCount == numOfTests) {
+            finishJSTest();
+        }
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
