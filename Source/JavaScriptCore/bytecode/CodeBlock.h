@@ -121,7 +121,7 @@ public:
 
 protected:
     CodeBlock(VM*, Structure*, CopyParsedBlockTag, CodeBlock& other);
-    CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, RefPtr<SourceProvider>&&, unsigned sourceOffset, unsigned firstLineColumnOffset);
+    CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
     bool finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
@@ -179,7 +179,7 @@ public:
     
     CodeSpecializationKind specializationKind() const
     {
-        return specializationFromIsConstruct(m_isConstructor);
+        return specializationFromIsConstruct(isConstructor());
     }
 
     CodeBlock* alternativeForJettison();    
@@ -211,8 +211,10 @@ public:
 
     void dumpMathICStats();
 
-    bool isStrictMode() const { return m_isStrictMode; }
+    bool isStrictMode() const { return m_unlinkedCode->isStrictMode(); }
+    bool isConstructor() const { return m_unlinkedCode->isConstructor(); }
     ECMAMode ecmaMode() const { return isStrictMode() ? StrictMode : NotStrictMode; }
+    CodeType codeType() const { return m_unlinkedCode->codeType(); }
 
     JSParserScriptMode scriptMode() const { return m_unlinkedCode->scriptMode(); }
 
@@ -221,7 +223,7 @@ public:
 
     inline bool isKnownNotImmediate(int index)
     {
-        if (index == m_thisRegister.offset() && !m_isStrictMode)
+        if (index == thisRegister().offset() && !isStrictMode())
             return true;
 
         if (isConstantRegisterIndex(index))
@@ -263,6 +265,7 @@ public:
         SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
+        std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
         JITCodeMap m_jitCodeMap;
     };
 
@@ -320,6 +323,9 @@ public:
     void setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&&);
     Optional<CodeOrigin> findPC(void* pc);
 
+    void setCalleeSaveRegisters(RegisterSet);
+    void setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList>);
+
     RareCaseProfile* addRareCaseProfile(int bytecodeOffset);
     RareCaseProfile* rareCaseProfileForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset);
     unsigned rareCaseProfileCountForBytecodeOffset(const ConcurrentJSLocker&, int bytecodeOffset);
@@ -374,7 +380,7 @@ public:
         return returnAddress - instructionsBegin;
     }
 
-    const InstructionStream& instructions() const { return *m_instructions; }
+    const InstructionStream& instructions() const { return m_unlinkedCode->instructions(); }
 
     size_t predictedMachineCodeSize();
 
@@ -420,15 +426,13 @@ public:
 
     void jettison(Profiler::JettisonReason, ReoptimizationMode = DontCountReoptimization, const FireDetail* = nullptr);
     
-    ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
-    ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
+    ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
     
     ExecutableToCodeBlockEdge* ownerEdge() const { return m_ownerEdge.get(); }
 
     VM* vm() const { return m_vm; }
 
-    void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
-    VirtualRegister thisRegister() const { return m_thisRegister; }
+    VirtualRegister thisRegister() const { return m_unlinkedCode->thisRegister(); }
 
     bool usesEval() const { return m_unlinkedCode->usesEval(); }
 
@@ -443,11 +447,6 @@ public:
         return m_scopeRegister;
     }
     
-    CodeType codeType() const
-    {
-        return static_cast<CodeType>(m_codeType);
-    }
-
     PutPropertySlot::Context putByIdContext() const
     {
         if (codeType() == EvalCode)
@@ -455,9 +454,9 @@ public:
         return PutPropertySlot::PutById;
     }
 
-    SourceProvider* source() const { return m_source.get(); }
-    unsigned sourceOffset() const { return m_sourceOffset; }
-    unsigned firstLineColumnOffset() const { return m_firstLineColumnOffset; }
+    const SourceCode& source() const { return m_ownerExecutable->source(); }
+    unsigned sourceOffset() const { return m_ownerExecutable->source().startOffset(); }
+    unsigned firstLineColumnOffset() const { return m_ownerExecutable->startColumn(); }
 
     size_t numberOfJumpTargets() const { return m_unlinkedCode->numberOfJumpTargets(); }
     unsigned jumpTarget(int index) const { return m_unlinkedCode->jumpTarget(index); }
@@ -662,10 +661,7 @@ public:
     void countReoptimization();
 
 #if !ENABLE(C_LOOP)
-    void setCalleeSaveRegisters(RegisterSet);
-    void setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList>);
-
-    RegisterAtOffsetList* calleeSaveRegisters() const { return m_calleeSaveRegisters.get(); }
+    const RegisterAtOffsetList* calleeSaveRegisters() const;
 
     static unsigned numberOfLLIntBaselineCalleeSaveRegisters() { return RegisterSet::llintBaselineCalleeSaveRegisters().numberOfSetRegisters(); }
     static size_t llintBaselineCalleeSaveSpaceAsVirtualRegisters();
@@ -834,9 +830,6 @@ public:
     bool m_didFailJITCompilation : 1;
     bool m_didFailFTLCompilation : 1;
     bool m_hasBeenCompiledWithFTL : 1;
-    bool m_isConstructor : 1;
-    bool m_isStrictMode : 1;
-    unsigned m_codeType : 2; // CodeType
 
     // Internal methods for use by validation code. It would be private if it wasn't
     // for the fact that we use it from anonymous namespaces.
@@ -851,6 +844,8 @@ public:
         // Jump Tables
         Vector<SimpleJumpTable> m_switchJumpTables;
         Vector<StringJumpTable> m_stringSwitchJumpTables;
+
+        Vector<std::unique_ptr<ValueProfileAndOperandBuffer>> m_catchProfiles;
 
         DirectEvalCodeCache m_directEvalCodeCache;
     };
@@ -942,8 +937,11 @@ private:
 
     void createRareDataIfNecessary()
     {
-        if (!m_rareData)
-            m_rareData = std::make_unique<RareData>();
+        if (!m_rareData) {
+            auto rareData = std::make_unique<RareData>();
+            WTF::storeStoreFence(); // m_catchProfiles can be touched from compiler threads.
+            m_rareData = WTFMove(rareData);
+        }
     }
 
     void insertBasicBlockBoundariesForControlFlowProfiler();
@@ -962,28 +960,19 @@ private:
             unsigned m_numBreakpoints : 30;
         };
     };
-    WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
-    WriteBarrier<ExecutableBase> m_ownerExecutable;
-    WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
-    VM* m_vm;
-
-    const InstructionStream* m_instructions;
-    const void* m_instructionsRawPointer { nullptr };
     unsigned m_instructionCount { 0 };
-    VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
 
-    RefPtr<SourceProvider> m_source;
-    unsigned m_sourceOffset;
-    unsigned m_firstLineColumnOffset;
+    WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
+    WriteBarrier<ScriptExecutable> m_ownerExecutable;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
+    VM* m_vm;
 
+    const void* m_instructionsRawPointer { nullptr };
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
-#if !ENABLE(C_LOOP)
-    std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
-#endif
 #if ENABLE(JIT)
     std::unique_ptr<JITData> m_jitData;
 #endif
@@ -993,7 +982,6 @@ private:
     CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
 #endif
     RefCountedArray<ValueProfile> m_argumentValueProfiles;
-    Vector<std::unique_ptr<ValueProfileAndOperandBuffer>> m_catchProfiles;
 
     // Constant Pool
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
@@ -1010,6 +998,7 @@ private:
 
     BaselineExecutionCounter m_jitExecuteCounter;
     uint32_t m_osrExitCounter;
+
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
 

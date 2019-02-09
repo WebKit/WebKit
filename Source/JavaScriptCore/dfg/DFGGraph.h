@@ -417,9 +417,9 @@ public:
     ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
-            return m_codeBlock->ownerScriptExecutable();
+            return m_codeBlock->ownerExecutable();
         
-        return inlineCallFrame->baselineCodeBlock->ownerScriptExecutable();
+        return inlineCallFrame->baselineCodeBlock->ownerExecutable();
     }
     
     ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)

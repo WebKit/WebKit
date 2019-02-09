@@ -55,7 +55,7 @@ intptr_t StackFrame::sourceID() const
 {
     if (!m_codeBlock)
         return noSourceID;
-    return m_codeBlock->ownerScriptExecutable()->sourceID();
+    return m_codeBlock->ownerExecutable()->sourceID();
 }
 
 String StackFrame::sourceURL() const
@@ -67,7 +67,7 @@ String StackFrame::sourceURL() const
         return "[native code]"_s;
     }
 
-    String sourceURL = m_codeBlock->ownerScriptExecutable()->sourceURL();
+    String sourceURL = m_codeBlock->ownerExecutable()->sourceURL();
     if (!sourceURL.isNull())
         return sourceURL;
     return emptyString();
@@ -113,7 +113,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     int unusedEndOffset = 0;
     m_codeBlock->expressionRangeForBytecodeOffset(m_bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
 
-    ScriptExecutable* executable = m_codeBlock->ownerScriptExecutable();
+    ScriptExecutable* executable = m_codeBlock->ownerExecutable();
     if (Optional<int> overrideLineNumber = executable->overrideLineNumber(*m_codeBlock->vm()))
         line = overrideLineNumber.value();
 }

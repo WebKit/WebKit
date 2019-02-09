@@ -66,6 +66,16 @@ unsigned RegisterAtOffsetList::indexOf(Reg reg) const
     return UINT_MAX;
 }
 
+const RegisterAtOffsetList& RegisterAtOffsetList::llintBaselineCalleeSaveRegisters()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<RegisterAtOffsetList> result;
+    std::call_once(onceKey, [] {
+        result.construct(RegisterSet::llintBaselineCalleeSaveRegisters());
+    });
+    return result.get();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)

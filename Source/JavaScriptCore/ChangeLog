@@ -1,3 +1,155 @@
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink sizeof(CodeBlock) more
+        https://bugs.webkit.org/show_bug.cgi?id=194419
+
+        Reviewed by Mark Lam.
+
+        This patch further shrinks the size of CodeBlock, from 352 to 296 (304).
+
+        1. CodeBlock copies so many data from ScriptExecutable even if ScriptExecutable
+        has the same information. These data is not touched in CodeBlock::~CodeBlock,
+        so we can just use the data in ScriptExecutable instead of holding it in CodeBlock.
+
+        2. We remove m_instructions pointer since the ownership is managed by UnlinkedCodeBlock.
+        And we do not touch it in CodeBlock::~CodeBlock.
+
+        3. We move m_calleeSaveRegisters from CodeBlock to CodeBlock::JITData. For baseline and LLInt
+        cases, this patch offers RegisterAtOffsetList::llintBaselineCalleeSaveRegisters() which returns
+        singleton to `const RegisterAtOffsetList*` usable for LLInt and Baseline JIT CodeBlocks.
+
+        4. Move m_catchProfiles to RareData and materialize only when op_catch's slow path is called.
+
+        5. Drop ownerScriptExecutable. ownerExecutable() returns ScriptExecutable*.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hash const):
+        (JSC::CodeBlock::sourceCodeForTools const):
+        (JSC::CodeBlock::dumpAssumingJITType const):
+        (JSC::CodeBlock::dumpSource):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::setCalleeSaveRegisters):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffset):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset const):
+        (JSC::CodeBlock::hasOpDebugForLineAndColumn):
+        (JSC::CodeBlock::newReplacement):
+        (JSC::CodeBlock::replacement):
+        (JSC::CodeBlock::computeCapabilityLevel):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::calleeSaveRegisters const):
+        (JSC::CodeBlock::calleeSaveSpaceAsVirtualRegisters):
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::notifyLexicalBindingUpdate):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeOffset):
+        (JSC::CodeBlock::validate):
+        (JSC::CodeBlock::outOfLineJumpTarget):
+        (JSC::CodeBlock::arithProfileForBytecodeOffset):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::specializationKind const):
+        (JSC::CodeBlock::isStrictMode const):
+        (JSC::CodeBlock::isConstructor const):
+        (JSC::CodeBlock::codeType const):
+        (JSC::CodeBlock::isKnownNotImmediate):
+        (JSC::CodeBlock::instructions const):
+        (JSC::CodeBlock::ownerExecutable const):
+        (JSC::CodeBlock::thisRegister const):
+        (JSC::CodeBlock::source const):
+        (JSC::CodeBlock::sourceOffset const):
+        (JSC::CodeBlock::firstLineColumnOffset const):
+        (JSC::CodeBlock::createRareDataIfNecessary):
+        (JSC::CodeBlock::ownerScriptExecutable const): Deleted.
+        (JSC::CodeBlock::setThisRegister): Deleted.
+        (JSC::CodeBlock::calleeSaveRegisters const): Deleted.
+        * bytecode/EvalCodeBlock.h:
+        * bytecode/FunctionCodeBlock.h:
+        * bytecode/GlobalCodeBlock.h:
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        * bytecode/ModuleProgramCodeBlock.h:
+        * bytecode/ProgramCodeBlock.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::toggleBreakpoint):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::sourceID const):
+        (JSC::DebuggerCallFrame::sourceIDForCallFrame):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::location const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::executable):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupportedForInlining):
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::canUseOSRExitFuzzing):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::executableFor):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::restoreCalleeSavesFor):
+        (JSC::DFG::saveCalleeSavesFor):
+        (JSC::DFG::saveOrCopyCalleeSavesFor):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callerSourceOrigin):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegisters):
+        (JSC::StackVisitor::Frame::sourceURL const):
+        (JSC::StackVisitor::Frame::sourceID):
+        (JSC::StackVisitor::Frame::computeLineAndColumn const):
+        * interpreter/StackVisitor.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesFor):
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::setupCalleeSaveRegisters):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Plan::finalize):
+        (JSC::JITWorklist::compileNow):
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::llintBaselineCalleeSaveRegisters):
+        * jit/RegisterAtOffsetList.h:
+        (JSC::RegisterAtOffsetList::at const):
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::sourceID const):
+        (JSC::StackFrame::sourceURL const):
+        (JSC::StackFrame::computeLineAndColumn const):
+
 2019-02-08  Robin Morisset  <rmorisset@apple.com>
 
         B3LowerMacros wrongly sets m_changed to true in the case of AtomicWeakCAS on x86

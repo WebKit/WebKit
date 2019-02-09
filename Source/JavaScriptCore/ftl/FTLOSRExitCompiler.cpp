@@ -419,7 +419,7 @@ static void compileStub(
     jit.checkStackPointerAlignment();
 
     RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
-    RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
     RegisterAtOffsetList* vmCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
     if (exit.isExceptionHandler()) {
@@ -434,7 +434,7 @@ static void compileStub(
             continue;
         }
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
-        RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
+        const RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
         RegisterAtOffset* vmCalleeSave = nullptr; 
         if (exit.isExceptionHandler())
             vmCalleeSave = vmCalleeSaves->find(reg);

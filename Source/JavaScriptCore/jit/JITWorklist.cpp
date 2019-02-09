@@ -65,7 +65,7 @@ public:
         case CompilationSuccessful:
             if (Options::verboseOSR())
                 dataLogF("    JIT compilation successful.\n");
-            m_codeBlock->ownerScriptExecutable()->installCode(m_codeBlock);
+            m_codeBlock->ownerExecutable()->installCode(m_codeBlock);
             m_codeBlock->jitSoon();
             return;
         default:
@@ -309,7 +309,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecode
     
     // OK, just compile it.
     JIT::compile(vm, codeBlock, JITCompilationMustSucceed, loopOSREntryBytecodeOffset);
-    codeBlock->ownerScriptExecutable()->installCode(codeBlock);
+    codeBlock->ownerExecutable()->installCode(codeBlock);
 }
 
 void JITWorklist::finalizePlans(Plans& myPlans)

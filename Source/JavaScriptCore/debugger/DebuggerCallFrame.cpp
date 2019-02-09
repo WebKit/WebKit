@@ -129,7 +129,7 @@ SourceID DebuggerCallFrame::sourceID() const
     if (!isValid())
         return noSourceID;
     if (isTailDeleted())
-        return m_shadowChickenFrame.codeBlock->ownerScriptExecutable()->sourceID();
+        return m_shadowChickenFrame.codeBlock->ownerExecutable()->sourceID();
     return sourceIDForCallFrame(m_validMachineFrame);
 }
 
@@ -316,7 +316,7 @@ SourceID DebuggerCallFrame::sourceIDForCallFrame(CallFrame* callFrame)
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
         return noSourceID;
-    return codeBlock->ownerScriptExecutable()->sourceID();
+    return codeBlock->ownerExecutable()->sourceID();
 }
 
 } // namespace JSC

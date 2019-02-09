@@ -147,7 +147,7 @@ CodeBlockHash CodeBlock::hash() const
 {
     if (!m_hash) {
         RELEASE_ASSERT(isSafeToComputeHash());
-        m_hash = CodeBlockHash(ownerScriptExecutable()->source(), specializationKind());
+        m_hash = CodeBlockHash(ownerExecutable()->source(), specializationKind());
     }
     return m_hash;
 }
@@ -155,9 +155,9 @@ CodeBlockHash CodeBlock::hash() const
 CString CodeBlock::sourceCodeForTools() const
 {
     if (codeType() != FunctionCode)
-        return ownerScriptExecutable()->source().toUTF8();
+        return ownerExecutable()->source().toUTF8();
     
-    SourceProvider* provider = source();
+    SourceProvider* provider = source().provider();
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(ownerExecutable());
     UnlinkedFunctionExecutable* unlinked = executable->unlinkedExecutable();
     unsigned unlinkedStartOffset = unlinked->startOffset();
@@ -195,15 +195,15 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
     out.print(", ", instructionCount());
     if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (ShouldAlwaysBeInlined)");
-    if (ownerScriptExecutable()->neverInline())
+    if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
-    if (ownerScriptExecutable()->neverOptimize())
+    if (ownerExecutable()->neverOptimize())
         out.print(" (NeverOptimize)");
-    else if (ownerScriptExecutable()->neverFTLOptimize())
+    else if (ownerExecutable()->neverFTLOptimize())
         out.print(" (NeverFTLOptimize)");
-    if (ownerScriptExecutable()->didTryToEnterInLoop())
+    if (ownerExecutable()->didTryToEnterInLoop())
         out.print(" (DidTryToEnterInLoop)");
-    if (ownerScriptExecutable()->isStrictMode())
+    if (ownerExecutable()->isStrictMode())
         out.print(" (StrictMode)");
     if (m_didFailJITCompilation)
         out.print(" (JITFail)");
@@ -226,7 +226,7 @@ void CodeBlock::dumpSource()
 
 void CodeBlock::dumpSource(PrintStream& out)
 {
-    ScriptExecutable* executable = ownerScriptExecutable();
+    ScriptExecutable* executable = ownerExecutable();
     if (executable->isFunctionExecutable()) {
         FunctionExecutable* functionExecutable = reinterpret_cast<FunctionExecutable*>(executable);
         StringView source = functionExecutable->source().provider()->getRange(
@@ -294,27 +294,19 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
-    , m_isConstructor(other.m_isConstructor)
-    , m_isStrictMode(other.m_isStrictMode)
-    , m_codeType(other.m_codeType)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
+    , m_instructionCount(other.m_instructionCount)
+    , m_scopeRegister(other.m_scopeRegister)
+    , m_hash(other.m_hash)
     , m_unlinkedCode(*other.vm(), this, other.m_unlinkedCode.get())
     , m_ownerExecutable(*other.vm(), this, other.m_ownerExecutable.get())
     , m_vm(other.m_vm)
-    , m_instructions(other.m_instructions)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
-    , m_instructionCount(other.m_instructionCount)
-    , m_thisRegister(other.m_thisRegister)
-    , m_scopeRegister(other.m_scopeRegister)
-    , m_hash(other.m_hash)
-    , m_source(other.m_source)
-    , m_sourceOffset(other.m_sourceOffset)
-    , m_firstLineColumnOffset(other.m_firstLineColumnOffset)
     , m_constantRegisters(other.m_constantRegisters)
     , m_constantsSourceCodeRepresentation(other.m_constantsSourceCodeRepresentation)
     , m_functionDecls(other.m_functionDecls)
@@ -328,6 +320,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
+    ASSERT(source().provider());
     setNumParameters(other.numParameters());
     
     vm->heap.codeBlockSet().add(this);
@@ -350,8 +343,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
     }
 }
 
-CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
-    JSScope* scope, RefPtr<SourceProvider>&& sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
+CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
     : JSCell(*vm, structure)
     , m_globalObject(*vm, this, scope->globalObject(*vm))
     , m_shouldAlwaysBeInlined(true)
@@ -361,24 +353,16 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
-    , m_isConstructor(unlinkedCodeBlock->isConstructor())
-    , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
-    , m_codeType(unlinkedCodeBlock->codeType())
     , m_numCalleeLocals(unlinkedCodeBlock->numCalleeLocals())
     , m_numVars(unlinkedCodeBlock->numVars())
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
+    , m_scopeRegister(unlinkedCodeBlock->scopeRegister())
     , m_unlinkedCode(*vm, this, unlinkedCodeBlock)
     , m_ownerExecutable(*vm, this, ownerExecutable)
     , m_vm(vm)
-    , m_instructions(&unlinkedCodeBlock->instructions())
-    , m_instructionsRawPointer(m_instructions->rawPointer())
-    , m_thisRegister(unlinkedCodeBlock->thisRegister())
-    , m_scopeRegister(unlinkedCodeBlock->scopeRegister())
-    , m_source(WTFMove(sourceProvider))
-    , m_sourceOffset(sourceOffset)
-    , m_firstLineColumnOffset(firstLineColumnOffset)
+    , m_instructionsRawPointer(unlinkedCodeBlock->instructions().rawPointer())
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
@@ -388,7 +372,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
-    ASSERT(m_source);
+    ASSERT(source().provider());
     setNumParameters(unlinkedCodeBlock->numParameters());
     
     vm->heap.codeBlockSet().add(this);
@@ -462,7 +446,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 const UnlinkedHandlerInfo& unlinkedHandler = unlinkedCodeBlock->exceptionHandler(i);
                 HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
 #if ENABLE(JIT)
-                MacroAssemblerCodePtr<BytecodePtrTag> codePtr = m_instructions->at(unlinkedHandler.target)->isWide()
+                MacroAssemblerCodePtr<BytecodePtrTag> codePtr = instructions().at(unlinkedHandler.target)->isWide()
                     ? LLInt::getWideCodePtr<BytecodePtrTag>(op_catch)
                     : LLInt::getCodePtr<BytecodePtrTag>(op_catch);
                 handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(codePtr.retagged<ExceptionHandlerPtrTag>()));
@@ -495,10 +479,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             }
         }
     }
-
-#if !ENABLE(C_LOOP)
-    setCalleeSaveRegisters(RegisterSet::llintBaselineCalleeSaveRegisters());
-#endif
 
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
@@ -543,7 +523,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    for (const auto& instruction : *m_instructions) {
+    const InstructionStream& instructionStream = instructions();
+    for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
         m_instructionCount += opcodeLengths[opcodeID];
         switch (opcodeID) {
@@ -805,7 +786,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (vm.controlFlowProfiler())
         insertBasicBlockBoundariesForControlFlowProfiler();
 
-    // Set optimization thresholds only after m_instructions is initialized, since these
+    // Set optimization thresholds only after instructions is initialized, since these
     // rely on the instruction count (and are in theory permitted to also inspect the
     // instruction stream to more accurate assess the cost of tier-up).
     optimizeAfterWarmUp();
@@ -1090,8 +1071,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
 
     if (jitType() == JITCode::InterpreterThunk) {
         const Vector<InstructionStream::Offset>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
+        const InstructionStream& instructionStream = instructions();
         for (size_t i = 0; i < propertyAccessInstructions.size(); ++i) {
-            auto instruction = m_instructions->at(propertyAccessInstructions[i]);
+            auto instruction = instructionStream.at(propertyAccessInstructions[i]);
             if (instruction->is<OpPutById>()) {
                 auto& metadata = instruction->as<OpPutById>().metadata(this);
                 StructureID oldStructureID = metadata.m_oldStructureID;
@@ -1220,8 +1202,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
         structure.clear();
     };
 
+    const InstructionStream& instructionStream = instructions();
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
-        const auto curInstruction = m_instructions->at(propertyAccessInstructions[i]);
+        const auto curInstruction = instructionStream.at(propertyAccessInstructions[i]);
         switch (curInstruction->opcodeID()) {
         case op_get_by_id: {
             auto& metadata = curInstruction->as<OpGetById>().metadata(this);
@@ -1528,6 +1511,18 @@ unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(const ConcurrentJSLock
     return 0;
 }
 
+void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
+{
+    ConcurrentJSLocker locker(m_lock);
+    ensureJITData(locker).m_calleeSaveRegisters = std::make_unique<RegisterAtOffsetList>(calleeSaveRegisters);
+}
+
+void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
+{
+    ConcurrentJSLocker locker(m_lock);
+    ensureJITData(locker).m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
+}
+
 void CodeBlock::resetJITData()
 {
     RELEASE_ASSERT(!JITCode::isJIT(jitType()));
@@ -1716,14 +1711,16 @@ CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex origina
 
 void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
 {
-    auto instruction = m_instructions->at(bytecodeOffset);
+    auto& instruction = instructions().at(bytecodeOffset);
     OpCatch op = instruction->as<OpCatch>();
     auto& metadata = op.metadata(this);
     if (!!metadata.m_buffer) {
 #if !ASSERT_DISABLED
         ConcurrentJSLocker locker(m_lock);
         bool found = false;
-        for (auto& profile : m_catchProfiles) {
+        auto* rareData = m_rareData.get();
+        ASSERT(rareData);
+        for (auto& profile : rareData->m_catchProfiles) {
             if (profile.get() == metadata.m_buffer) {
                 found = true;
                 break;
@@ -1746,7 +1743,7 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(const OpCatch
     // we can avoid profiling them and extracting them when doing OSR entry
     // into the DFG.
 
-    auto nextOffset = m_instructions->at(bytecodeOffset).next().offset();
+    auto nextOffset = instructions().at(bytecodeOffset).next().offset();
     FastBitVector liveLocals = bytecodeLiveness.getLivenessInfoAtBytecodeOffset(this, nextOffset);
     Vector<VirtualRegister> liveOperands;
     liveOperands.reserveInitialCapacity(liveLocals.bitCount());
@@ -1762,16 +1759,17 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeOffsetSlow(const OpCatch
     for (unsigned i = 0; i < profiles->m_size; ++i)
         profiles->m_buffer.get()[i].m_operand = liveOperands[i].offset();
 
+    createRareDataIfNecessary();
+
     // The compiler thread will read this pointer value and then proceed to dereference it
     // if it is not null. We need to make sure all above stores happen before this store so
     // the compiler thread reads fully initialized data.
     WTF::storeStoreFence(); 
 
     op.metadata(this).m_buffer = profiles.get();
-
     {
         ConcurrentJSLocker locker(m_lock);
-        m_catchProfiles.append(WTFMove(profiles));
+        m_rareData->m_catchProfiles.append(WTFMove(profiles));
     }
 }
 
@@ -1794,7 +1792,7 @@ void CodeBlock::removeExceptionHandlerForCallSite(CallSiteIndex callSiteIndex)
 unsigned CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
-    return ownerScriptExecutable()->firstLine() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
+    return ownerExecutable()->firstLine() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
 unsigned CodeBlock::columnNumberForBytecodeOffset(unsigned bytecodeOffset)
@@ -1811,14 +1809,15 @@ unsigned CodeBlock::columnNumberForBytecodeOffset(unsigned bytecodeOffset)
 void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
 {
     m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset, line, column);
-    divot += m_sourceOffset;
+    divot += sourceOffset();
     column += line ? 1 : firstLineColumnOffset();
-    line += ownerScriptExecutable()->firstLine();
+    line += ownerExecutable()->firstLine();
 }
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, unsigned column)
 {
-    for (const auto& it : *m_instructions) {
+    const InstructionStream& instructionStream = instructions();
+    for (const auto& it : instructionStream) {
         if (it->is<OpDebug>()) {
             int unused;
             unsigned opDebugLine;
@@ -1896,7 +1895,7 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* inco
 
 CodeBlock* CodeBlock::newReplacement()
 {
-    return ownerScriptExecutable()->newReplacementCodeBlockFor(specializationKind());
+    return ownerExecutable()->newReplacementCodeBlockFor(specializationKind());
 }
 
 #if ENABLE(JIT)
@@ -1905,7 +1904,7 @@ CodeBlock* CodeBlock::replacement()
     const ClassInfo* classInfo = this->classInfo(*vm());
 
     if (classInfo == FunctionCodeBlock::info())
-        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(m_isConstructor ? CodeForConstruct : CodeForCall);
+        return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(isConstructor() ? CodeForConstruct : CodeForCall);
 
     if (classInfo == EvalCodeBlock::info())
         return jsCast<EvalExecutable*>(ownerExecutable())->codeBlock();
@@ -1925,7 +1924,7 @@ DFG::CapabilityLevel CodeBlock::computeCapabilityLevel()
     const ClassInfo* classInfo = this->classInfo(*vm());
 
     if (classInfo == FunctionCodeBlock::info()) {
-        if (m_isConstructor)
+        if (isConstructor())
             return DFG::functionForConstructCapabilityLevel(this);
         return DFG::functionForCallCapabilityLevel(this);
     }
@@ -2006,7 +2005,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.
         if (!jitCode()->dfgCommon()->invalidate()) {
             // We've already been invalidated.
-            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable())));
+            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerExecutable())));
             return;
         }
     }
@@ -2038,11 +2037,11 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     // Jettison can happen during GC. We don't want to install code to a dead executable
     // because that would add a dead object to the remembered set.
-    if (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable()))
+    if (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerExecutable()))
         return;
 
     // This accomplishes (2).
-    ownerScriptExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
+    ownerExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
 
 #if ENABLE(DFG_JIT)
     if (DFG::shouldDumpDisassembly())
@@ -2196,15 +2195,17 @@ unsigned CodeBlock::reoptimizationRetryCounter() const
 }
 
 #if !ENABLE(C_LOOP)
-void CodeBlock::setCalleeSaveRegisters(RegisterSet calleeSaveRegisters)
+const RegisterAtOffsetList* CodeBlock::calleeSaveRegisters() const
 {
-    m_calleeSaveRegisters = std::make_unique<RegisterAtOffsetList>(calleeSaveRegisters);
+#if ENABLE(JIT)
+    if (auto* jitData = m_jitData.get()) {
+        if (const RegisterAtOffsetList* registers = jitData->m_calleeSaveRegisters.get())
+            return registers;
+    }
+#endif
+    return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
 }
 
-void CodeBlock::setCalleeSaveRegisters(std::unique_ptr<RegisterAtOffsetList> registerAtOffsetList)
-{
-    m_calleeSaveRegisters = WTFMove(registerAtOffsetList);
-}
     
 static size_t roundCalleeSaveSpaceAsVirtualRegisters(size_t calleeSaveRegisters)
 {
@@ -2220,7 +2221,7 @@ size_t CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters()
 
 size_t CodeBlock::calleeSaveSpaceAsVirtualRegisters()
 {
-    return roundCalleeSaveSpaceAsVirtualRegisters(m_calleeSaveRegisters->size());
+    return roundCalleeSaveSpaceAsVirtualRegisters(calleeSaveRegisters()->size());
 }
 #endif
 
@@ -2398,7 +2399,7 @@ auto CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState
 
     bool didTryToEnterInLoop = false;
     for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
-        if (inlineCallFrame->baselineCodeBlock->ownerScriptExecutable()->didTryToEnterInLoop()) {
+        if (inlineCallFrame->baselineCodeBlock->ownerExecutable()->didTryToEnterInLoop()) {
             didTryToEnterInLoop = true;
             break;
         }
@@ -2555,7 +2556,7 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 
 ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset)
 {
-    auto instruction = m_instructions->at(bytecodeOffset);
+    auto instruction = instructions().at(bytecodeOffset);
     switch (instruction->opcodeID()) {
 #define CASE(Op) \
     case Op::opcodeID: \
@@ -2629,10 +2630,12 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonAr
         profile.computeUpdatedPrediction(locker);
     });
 
-    for (auto& profileBucket : m_catchProfiles) {
-        profileBucket->forEach([&] (ValueProfileAndOperand& profile) {
-            profile.m_profile.computeUpdatedPrediction(locker);
-        });
+    if (auto* rareData = m_rareData.get()) {
+        for (auto& profileBucket : rareData->m_catchProfiles) {
+            profileBucket->forEach([&] (ValueProfileAndOperand& profile) {
+                profile.m_profile.computeUpdatedPrediction(locker);
+            });
+        }
     }
     
 #if ENABLE(DFG_JIT)
@@ -2753,7 +2756,8 @@ void CodeBlock::notifyLexicalBindingUpdate()
         return symbolTable->contains(locker, uid);
     };
 
-    for (const auto& instruction : *m_instructions) {
+    const InstructionStream& instructionStream = instructions();
+    for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
         switch (opcodeID) {
         case op_resolve_scope: {
@@ -2888,7 +2892,7 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 
 ValueProfile* CodeBlock::tryGetValueProfileForBytecodeOffset(int bytecodeOffset)
 {
-    auto instruction = m_instructions->at(bytecodeOffset);
+    auto instruction = instructions().at(bytecodeOffset);
     switch (instruction->opcodeID()) {
 
 #define CASE(Op) \
@@ -2942,7 +2946,8 @@ void CodeBlock::validate()
         }
     }
      
-    for (const auto& instruction : *m_instructions) {
+    const InstructionStream& instructionStream = instructions();
+    for (const auto& instruction : instructionStream) {
         OpcodeID opcode = instruction->opcodeID();
         if (!!baselineAlternative()->handlerForBytecodeOffset(instruction.offset())) {
             if (opcode == op_catch || opcode == op_enter) {
@@ -2999,12 +3004,12 @@ const Instruction* CodeBlock::outOfLineJumpTarget(const Instruction* pc)
 {
     int offset = bytecodeOffset(pc);
     int target = m_unlinkedCode->outOfLineJumpOffset(offset);
-    return m_instructions->at(offset + target).ptr();
+    return instructions().at(offset + target).ptr();
 }
 
 ArithProfile* CodeBlock::arithProfileForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
 {
-    return arithProfileForPC(m_instructions->at(bytecodeOffset).ptr());
+    return arithProfileForPC(instructions().at(bytecodeOffset).ptr());
 }
 
 ArithProfile* CodeBlock::arithProfileForPC(const Instruction* pc)
@@ -3055,7 +3060,7 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
         // Because op_profile_control_flow is emitted at the beginning of every basic block, finding 
         // the next op_profile_control_flow will give us the text range of a single basic block.
         size_t startIdx = bytecodeOffsets[i];
-        auto instruction = m_instructions->at(startIdx);
+        auto instruction = instructions().at(startIdx);
         RELEASE_ASSERT(instruction->opcodeID() == op_profile_control_flow);
         auto bytecode = instruction->as<OpProfileControlFlow>();
         auto& metadata = bytecode.metadata(this);
@@ -3063,11 +3068,11 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
         int basicBlockEndOffset;
         if (i + 1 < offsetsLength) {
             size_t endIdx = bytecodeOffsets[i + 1];
-            auto endInstruction = m_instructions->at(endIdx);
+            auto endInstruction = instructions().at(endIdx);
             RELEASE_ASSERT(endInstruction->opcodeID() == op_profile_control_flow);
             basicBlockEndOffset = endInstruction->as<OpProfileControlFlow>().m_textOffset - 1;
         } else {
-            basicBlockEndOffset = m_sourceOffset + ownerScriptExecutable()->source().length() - 1; // Offset before the closing brace.
+            basicBlockEndOffset = sourceOffset() + ownerExecutable()->source().length() - 1; // Offset before the closing brace.
             basicBlockStartOffset = std::min(basicBlockStartOffset, basicBlockEndOffset); // Some start offsets may be at the closing brace, ensure it is the offset before.
         }
 
@@ -3095,7 +3100,7 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
             continue;
         }
 
-        BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(ownerScriptExecutable()->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
+        BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(ownerExecutable()->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
 
         // Find all functions that are enclosed within the range: [basicBlockStartOffset, basicBlockEndOffset]
         // and insert these functions' start/end offsets as gaps in the current BasicBlockLocation.

@@ -245,7 +245,7 @@ DebuggerLocation DebuggerScope::location() const
     if (!codeBlock)
         return DebuggerLocation();
 
-    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
+    ScriptExecutable* executable = codeBlock->ownerExecutable();
     return DebuggerLocation(executable);
 }
 

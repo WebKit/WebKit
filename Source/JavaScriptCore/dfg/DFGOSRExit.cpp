@@ -80,7 +80,7 @@ static void restoreCalleeSavesFor(Context& context, CodeBlock* codeBlock)
 {
     ASSERT(codeBlock);
 
-    RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
     RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
     unsigned registerCount = calleeSaves->size();
 
@@ -103,7 +103,7 @@ static void saveCalleeSavesFor(Context& context, CodeBlock* codeBlock)
     auto& stack = context.stack();
     ASSERT(codeBlock);
 
-    RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
     unsigned registerCount = calleeSaves->size();
 
@@ -182,7 +182,7 @@ static void saveOrCopyCalleeSavesFor(Context& context, CodeBlock* codeBlock, Vir
     Frame frame(context.fp(), context.stack());
     ASSERT(codeBlock);
 
-    RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
+    const RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
     unsigned registerCount = calleeSaves->size();
 

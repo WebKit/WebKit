@@ -94,7 +94,7 @@ public:
         bool hasLineAndColumnInfo() const;
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column) const;
 
-        RegisterAtOffsetList* calleeSaveRegisters();
+        const RegisterAtOffsetList* calleeSaveRegisters();
 
         ClonedArguments* createArguments();
         CallFrame* callFrame() const { return m_callFrame; }
