@@ -1,3 +1,14 @@
+2019-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in r241237 again
+        https://bugs.webkit.org/show_bug.cgi?id=194469
+
+        After the measurement, this patch was unrelated to recent regression.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isSubString const):
+        (WTF::StringImpl::createSubstringSharingImpl):
+
 2019-02-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241237.
