@@ -57,7 +57,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -359,9 +358,9 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
     if (m_document) {
         String message;
         if (error.isNull())
-            message = "WebSocket network error";
+            message = "WebSocket network error"_s;
         else if (error.localizedDescription().isNull())
-            message = "WebSocket network error: error code " + String::number(error.errorCode());
+            message = makeString("WebSocket network error: error code ", error.errorCode());
         else
             message = "WebSocket network error: " + error.localizedDescription();
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, message);
@@ -404,7 +403,7 @@ void WebSocketChannel::didFail(int errorCode)
     ASSERT(m_blobLoaderStatus == BlobLoaderStarted);
     m_blobLoader = nullptr;
     m_blobLoaderStatus = BlobLoaderFailed;
-    fail("Failed to load Blob: error code = " + String::number(errorCode)); // FIXME: Generate human-friendly reason message.
+    fail(makeString("Failed to load Blob: error code = ", errorCode)); // FIXME: Generate human-friendly reason message.
     deref();
 }
 
@@ -549,12 +548,12 @@ bool WebSocketChannel::processFrame()
 
     // Validate the frame data.
     if (WebSocketFrame::isReservedOpCode(frame.opCode)) {
-        fail("Unrecognized frame opcode: " + String::number(frame.opCode));
+        fail(makeString("Unrecognized frame opcode: ", static_cast<unsigned>(frame.opCode)));
         return false;
     }
 
     if (frame.reserved2 || frame.reserved3) {
-        fail("One or more reserved bits are on: reserved2 = " + String::number(frame.reserved2) + ", reserved3 = " + String::number(frame.reserved3));
+        fail(makeString("One or more reserved bits are on: reserved2 = ", static_cast<unsigned>(frame.reserved2), ", reserved3 = ", static_cast<unsigned>(frame.reserved3)));
         return false;
     }
 
@@ -565,14 +564,14 @@ bool WebSocketChannel::processFrame()
 
     // All control frames must not be fragmented.
     if (WebSocketFrame::isControlOpCode(frame.opCode) && !frame.final) {
-        fail("Received fragmented control frame: opcode = " + String::number(frame.opCode));
+        fail(makeString("Received fragmented control frame: opcode = ", static_cast<unsigned>(frame.opCode)));
         return false;
     }
 
     // All control frames must have a payload of 125 bytes or less, which means the frame must not contain
     // the "extended payload length" field.
     if (WebSocketFrame::isControlOpCode(frame.opCode) && WebSocketFrame::needsExtendedLengthField(frame.payloadLength)) {
-        fail("Received control frame having too long payload: " + String::number(frame.payloadLength) + " bytes");
+        fail(makeString("Received control frame having too long payload: ", frame.payloadLength, " bytes"));
         return false;
     }
 

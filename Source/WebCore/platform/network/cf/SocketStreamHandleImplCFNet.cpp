@@ -673,7 +673,7 @@ void SocketStreamHandleImpl::reportErrorToClient(CFErrorRef error)
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
-            description = "OSStatus Error " + String::number(errorCode) + ": " + descriptionOSStatus;
+            description = makeString("OSStatus Error ", errorCode, ": ", descriptionOSStatus);
     }
 
     ALLOW_DEPRECATED_DECLARATIONS_END

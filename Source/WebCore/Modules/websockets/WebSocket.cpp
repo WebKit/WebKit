@@ -234,7 +234,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     if (!portAllowed(m_url)) {
         String message;
         if (m_url.port())
-            message = makeString("WebSocket port ", String::number(m_url.port().value()), " blocked");
+            message = makeString("WebSocket port ", static_cast<unsigned>(m_url.port().value()), " blocked");
         else
             message = "WebSocket without port blocked"_s;
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);

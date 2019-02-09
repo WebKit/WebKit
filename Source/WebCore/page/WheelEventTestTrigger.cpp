@@ -89,6 +89,7 @@ void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier
 }
 
 #if !LOG_DISABLED
+
 static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReasonSet> reasons)
 {
     LOG(WheelEventTestTriggers, "   WheelEventTestTrigger::dumpState:");
@@ -97,12 +98,13 @@ static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifi
         StringBuilder reasons;
         for (const auto& reason : scrollRegion.value) {
             if (!reasons.isEmpty())
-                reasons.append(", ");
-            reasons.append(String::number(reason));
+                reasons.appendLiteral(", ");
+            reasons.appendNumber(static_cast<unsigned>(reason));
         }
         LOG(WheelEventTestTriggers, "     Reasons: %s", reasons.toString().utf8().data());
     }
 }
+
 #endif
     
 void WheelEventTestTrigger::triggerTestTimerFired()

@@ -54,6 +54,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -974,7 +975,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
             continue;
 
         StackFrame& frame = stackTrace.frames.first();
-        String frameDescription = makeString(frame.displayName(m_vm), ":", String::number(frame.sourceID()));
+        String frameDescription = makeString(frame.displayName(m_vm), ':', frame.sourceID());
         functionCounts.add(frameDescription, 0).iterator->value++;
     }
 

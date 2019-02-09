@@ -321,7 +321,7 @@ URL PageSerializer::urlForBlankFrame(Frame* frame)
     auto iter = m_blankFrameURLs.find(frame);
     if (iter != m_blankFrameURLs.end())
         return iter->value;
-    String url = "wyciwyg://frame/" + String::number(m_blankFrameCounter++);
+    String url = makeString("wyciwyg://frame/", m_blankFrameCounter++);
     URL fakeURL({ }, url);
     m_blankFrameURLs.add(frame, fakeURL);
     return fakeURL;

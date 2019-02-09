@@ -323,20 +323,20 @@ static String dataDetectorStringForPath(NSIndexPath *path)
     case 0:
         return { };
     case 1:
-        return String::number((unsigned long)[path indexAtPosition:0]);
+        return String::number([path indexAtPosition:0]);
     case 2: {
         StringBuilder stringBuilder;
-        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:0]);
+        stringBuilder.appendNumber([path indexAtPosition:0]);
         stringBuilder.append('/');
-        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:1]);
+        stringBuilder.appendNumber([path indexAtPosition:1]);
         return stringBuilder.toString();
     }
     default: {
         StringBuilder stringBuilder;
-        stringBuilder.appendNumber((unsigned long)[path indexAtPosition:0]);
+        stringBuilder.appendNumber([path indexAtPosition:0]);
         for (NSUInteger i = 1 ; i < length ; i++) {
             stringBuilder.append('/');
-            stringBuilder.appendNumber((unsigned long)[path indexAtPosition:i]);
+            stringBuilder.appendNumber([path indexAtPosition:i]);
         }
 
         return stringBuilder.toString();

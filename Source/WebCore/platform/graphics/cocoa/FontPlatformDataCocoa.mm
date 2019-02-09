@@ -26,7 +26,7 @@
 
 #import "SharedBuffer.h"
 #import <pal/spi/cocoa/CoreTextSPI.h>
-#import <wtf/text/WTFString.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <CoreText/CoreText.h>
@@ -197,12 +197,16 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 }
 
 #if !LOG_DISABLED
+
 String FontPlatformData::description() const
 {
-    auto fontDescription = adoptCF(CFCopyDescription(font()));
-    return String(fontDescription.get()) + " " + String::number(m_size)
-        + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " synthetic oblique" : "") + (m_orientation == FontOrientation::Vertical ? " vertical orientation" : "");
+    String fontDescription { adoptCF(CFCopyDescription(font())).get() };
+    return makeString(fontDescription, ' ', m_size,
+        (m_syntheticBold ? " synthetic bold" : ""),
+        (m_syntheticOblique ? " synthetic oblique" : ""),
+        (m_orientation == FontOrientation::Vertical ? " vertical orientation" : ""));
 }
+
 #endif
 
 } // namespace WebCore

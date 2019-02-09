@@ -37,7 +37,7 @@
 #include <thread>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -205,7 +205,7 @@ void SQLiteDatabase::setMaximumSize(int64_t size)
     LockHolder locker(m_authorizerLock);
     enableAuthorizer(false);
 
-    SQLiteStatement statement(*this, "PRAGMA max_page_count = " + String::number(newMaxPageCount));
+    SQLiteStatement statement(*this, makeString("PRAGMA max_page_count = ", newMaxPageCount));
     statement.prepare();
     if (statement.step() != SQLITE_ROW)
         LOG_ERROR("Failed to set maximum size of database to %lli bytes", static_cast<long long>(size));
@@ -264,7 +264,7 @@ int64_t SQLiteDatabase::totalSize()
 
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
 {
-    executeCommand("PRAGMA synchronous = " + String::number(sync));
+    executeCommand(makeString("PRAGMA synchronous = ", static_cast<unsigned>(sync)));
 }
 
 void SQLiteDatabase::setBusyTimeout(int ms)

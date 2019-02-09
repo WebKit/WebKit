@@ -29,7 +29,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -335,7 +335,7 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     if (!strcmp(propertyName, "font-family"))
         return style->fontDescription().firstFamily();
     if (!strcmp(propertyName, "size"))
-        return String::number(style->pageSize().width.value()) + ' ' + String::number(style->pageSize().height.value());
+        return makeString(FormattedNumber::fixedPrecision(style->pageSize().width.value()), ' ', FormattedNumber::fixedPrecision(style->pageSize().height.value()));
 
     return makeString("pageProperty() unimplemented for: ", propertyName);
 }
@@ -350,8 +350,7 @@ String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, in
     IntSize pageSize(width, height);
     frame->document()->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
 
-    return "(" + String::number(pageSize.width()) + ", " + String::number(pageSize.height()) + ") " +
-           String::number(marginTop) + ' ' + String::number(marginRight) + ' ' + String::number(marginBottom) + ' ' + String::number(marginLeft);
+    return makeString('(', pageSize.width(), ", ", pageSize.height(), ") ", marginTop, ' ', marginRight, ' ', marginBottom, ' ', marginLeft);
 }
 
 bool PrintContext::beginAndComputePageRectsWithPageSize(Frame& frame, const FloatSize& pageSizeInPixels)

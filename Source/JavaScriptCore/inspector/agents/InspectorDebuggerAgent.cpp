@@ -57,8 +57,7 @@ const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 // create objects in the same group.
 static String objectGroupForBreakpointAction(const ScriptBreakpointAction& action)
 {
-    static NeverDestroyed<String> objectGroup(MAKE_STATIC_STRING_IMPL("breakpoint-action-"));
-    return makeString(objectGroup.get(), String::number(action.identifier));
+    return makeString("breakpoint-action-", action.identifier);
 }
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
@@ -447,7 +446,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int li
     int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
     bool isRegex = optionalURLRegex;
 
-    String breakpointIdentifier = (isRegex ? "/" + url + "/" : url) + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
+    String breakpointIdentifier = makeString(isRegex ? "/" : "", url, isRegex ? "/:" : ":", lineNumber, ':', columnNumber);
     if (m_javaScriptBreakpoints.contains(breakpointIdentifier)) {
         errorString = "Breakpoint at specified location already exists."_s;
         return;
@@ -540,7 +539,7 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON:
         return;
     }
 
-    String breakpointIdentifier = String::number(sourceID) + ':' + String::number(breakpoint.line) + ':' + String::number(breakpoint.column);
+    String breakpointIdentifier = makeString(sourceID, ':', breakpoint.line, ':', breakpoint.column);
     ScriptBreakpoint scriptBreakpoint(breakpoint.line, breakpoint.column, condition, breakpointActions, autoContinue, ignoreCount);
     didSetBreakpoint(breakpoint, breakpointIdentifier, scriptBreakpoint);
 

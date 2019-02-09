@@ -29,7 +29,7 @@
 
 #include "DocumentIdentifier.h"
 #include "ServiceWorkerTypes.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ struct ServiceWorkerClientIdentifier {
 
     unsigned hash() const;
 
-    String toString() const { return String::number(serverConnectionIdentifier.toUInt64()) + "-" +  String::number(contextIdentifier.toUInt64()); }
+    String toString() const { return makeString(serverConnectionIdentifier.toUInt64(), '-', contextIdentifier.toUInt64()); }
     static Optional<ServiceWorkerClientIdentifier> fromString(StringView);
 
     template<class Encoder> void encode(Encoder&) const;

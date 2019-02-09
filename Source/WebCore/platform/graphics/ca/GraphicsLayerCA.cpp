@@ -268,7 +268,7 @@ static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
 
 static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index, int subIndex)
 {
-    return animationName + '_' + String::number(property) + '_' + String::number(index) + '_' + String::number(subIndex);
+    return makeString(animationName, '_', static_cast<unsigned>(property), '_', index, '_', subIndex);
 }
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)

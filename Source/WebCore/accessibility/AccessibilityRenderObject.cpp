@@ -3676,7 +3676,7 @@ String AccessibilityRenderObject::positionalDescriptionForMSAA() const
     // See "positional descriptions",
     // https://wiki.mozilla.org/Accessibility/AT-Windows-API
     if (isHeading())
-        return "L" + String::number(headingLevel());
+        return makeString('L', headingLevel());
 
     // FIXME: Add positional descriptions for other elements.
     return String();

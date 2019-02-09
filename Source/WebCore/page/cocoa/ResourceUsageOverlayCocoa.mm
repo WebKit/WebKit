@@ -458,7 +458,7 @@ void ResourceUsageOverlay::platformDraw(CGContextRef context)
     CGContextClearRect(context, viewBounds);
 
     static CGColorRef colorForLabels = createColor(0.9, 0.9, 0.9, 1);
-    showText(context, 10, 20, colorForLabels, makeString("        CPU: ", FormattedNumber::fixedPrecision(data.cpu.last())));
+    showText(context, 10, 20, colorForLabels, makeString("        CPU: ", FormattedNumber::fixedPrecision(data.cpu.last(), 6, KeepTrailingZeros)));
     showText(context, 10, 30, colorForLabels, "  Footprint: " + formatByteNumber(memoryFootprint()));
     showText(context, 10, 40, colorForLabels, "   External: " + formatByteNumber(data.totalExternalSize.last()));
 

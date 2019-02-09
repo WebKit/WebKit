@@ -27,7 +27,7 @@
 
 #include "ProcessIdentifier.h"
 #include <wtf/Hasher.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -79,10 +79,12 @@ inline unsigned MessagePortIdentifier::hash() const
 }
 
 #if !LOG_DISABLED
+
 inline String MessagePortIdentifier::logString() const
 {
-    return makeString(String::number(processIdentifier.toUInt64()), "-", String::number(portIdentifier.toUInt64()));
+    return makeString(processIdentifier.toUInt64(), '-', portIdentifier.toUInt64());
 }
+
 #endif
 
 } // namespace WebCore

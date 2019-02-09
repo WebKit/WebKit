@@ -248,9 +248,9 @@ static String processFileDateString(const FTPTime& fileTime)
     String dateString;
 
     if (fileTime.tm_year > -1)
-        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(fileTime.tm_year));
+        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", ", fileTime.tm_year);
     else
-        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(now.year()));
+        dateString = makeString(months[month], ' ', fileTime.tm_mday, ", ", now.year());
 
     return dateString + timeOfDay;
 }

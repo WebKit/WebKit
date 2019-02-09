@@ -465,8 +465,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // handled by numberToString.
     ASSERT(std::isfinite(x));
 
-    NumberToStringBuffer buffer;
-    return JSValue::encode(jsString(exec, String(numberToFixedWidthString(x, decimalPlaces, buffer))));
+    return JSValue::encode(jsString(exec, String::numberToStringFixedWidth(x, decimalPlaces)));
 }
 
 // toPrecision converts a number to a string, taking an argument specifying a
@@ -502,8 +501,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
 
-    NumberToStringBuffer buffer;
-    return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
+    return JSValue::encode(jsString(exec, String::number(x, significantFigures, KeepTrailingZeros)));
 }
 
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)

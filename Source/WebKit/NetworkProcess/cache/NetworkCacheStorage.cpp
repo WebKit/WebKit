@@ -37,6 +37,7 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -144,7 +145,7 @@ public:
 
 static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
 {
-    String versionSubdirectory = versionDirectoryPrefix + String::number(Storage::version);
+    String versionSubdirectory = makeString(versionDirectoryPrefix, Storage::version);
     return FileSystem::pathByAppendingComponent(baseDirectoryPath, versionSubdirectory);
 }
 

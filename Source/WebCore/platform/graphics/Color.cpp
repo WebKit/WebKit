@@ -378,10 +378,7 @@ String Color::cssText() const
     builder.appendNumber(static_cast<unsigned char>(blue()));
     if (colorHasAlpha) {
         builder.appendLiteral(", ");
-
-        NumberToStringBuffer buffer;
-        bool shouldTruncateTrailingZeros = true;
-        builder.append(numberToFixedPrecisionString(alpha() / 255.0f, 6, buffer, shouldTruncateTrailingZeros));
+        builder.appendNumber(alpha() / 255.0f);
     }
         
     builder.append(')');

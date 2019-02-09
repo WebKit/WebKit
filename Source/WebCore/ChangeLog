@@ -1,3 +1,140 @@
+2019-01-30  Darin Adler  <darin@apple.com>
+
+        Eliminate unnecessary String temporaries by using StringConcatenateNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=194021
+
+        Reviewed by Geoffrey Garen.
+
+        For floating point numbers, String::number gives a fixed precision result,
+        stripping trailing zeroes. When possible, I changed the code to instead use the
+        equivalent of String::numberToStringECMAScript, which is what makeString does by
+        default for floating point, gives the same results for many cases, and gives
+        better results in many others. However, for floats, we do not yet have a good
+        implementation, so instead I used FormattedNumber::fixedPrecision to match
+        the old behavior.
+
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::loggingString const): Remove String::number and let
+        makeString do the conversion without allocating/destroying a String.
+        * Modules/websockets/ThreadableWebSocketChannel.cpp:
+        (WebCore::ThreadableWebSocketChannel::create): Ditto.
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Ditto. Added a cast to "unsigned" to sidestep the
+        ambiguity with 16-bit unsigned types that are sometimes used for numbers (uint16_t)
+        and sometimes used for UTF-16 code units (UChar) and can be the same type.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didFailSocketStream): Use ASCIILiteral when intializing
+        a string instead of just a normal C literal. Switched to makeString so we could
+        remove String::number and do the conversion without allocating/destroying a String.
+        (WebCore::WebSocketChannel::didFail): Ditto.
+        (WebCore::WebSocketChannel::processFrame): Ditto.
+        * Modules/websockets/WebSocketFrame.cpp:
+        (WebCore::WebSocketFrame::parseFrame): Ditto.
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake): Ditto.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::positionalDescriptionForMSAA const): Ditto.
+        * bindings/js/JSDOMConvertNumbers.cpp:
+        (WebCore::rangeErrorString): Ditto.
+        * css/CSSAspectRatioValue.cpp:
+        (WebCore::CSSAspectRatioValue::customCSSText const): Ditto. Used
+        FormattedNumber::fixedPrecision since these are floats.
+
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::toString const): Use
+        StringBuilder::builder.appendECMAScriptNumber instead of
+        String::numberToStringECMAScript so we can do it without allocating/destroying
+        a String.
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::toString const): Ditto.
+
+        * dom/MessagePortIdentifier.h:
+        (WebCore::MessagePortIdentifier::logString const): Remove String::number and let
+        makeString do the conversion without allocating/destroying a String.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::dataDetectorStringForPath): Remove unnecessary type casts on values
+        passed to String::number and to StringBuilder::appendNumber. These could do
+        harm if the values were out of range, and should not be necessary.
+
+        * history/BackForwardItemIdentifier.h:
+        (WebCore::BackForwardItemIdentifier::logString const): Remove String::number
+        and let makeString do the conversion without allocating/destroying a String.
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString): Ditto.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getUniformLocation): Ditto.
+        (WebCore::WebGLRenderingContextBase::checkTextureCompleteness): Ditto.
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::didReceiveResponse): Ditto.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously): Ditto.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFailLoadingManifest): Ditto.
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::urlForBlankFrame): Ditto.
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty): Ditto.
+        (WebCore::PrintContext::pageSizeAndMarginsInPixels): Ditto.
+
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::dumpState): Use StringBuilder::appendNumber instead of
+        String::number so we can do it without allocating/destroying a String.
+        Also use StringBuilder::appendLiteral on a literal.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw): Pass explicit
+        KeepTrailingZeros to FormattedNumber::fixedPrecision to preserve behavior,
+        since default is now to truncate trailing zeros.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::cssText): Use StringBuilder::appendNumber instead of
+        calling numberToFixedPrecisionString to do the same thing.
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::cssText): Ditto.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::animationIdentifier): Remove String::number and let makeString
+        do the conversion without allocating/destroying a String. Had to add
+        a typecast to convert the enumeration into an integer.
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+        (WebCore::PlatformCAFilters::setFiltersOnLayer): Ditto.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::description const): Ditto.
+
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockMediaSample::MockMediaSample): Use AtomicString::number
+        instead of String::number to avoid unneccessarily allocating an additional
+        temporary String when an AtomicString already exists.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::reportErrorToClient): Remove String::number
+        and let makeString do the conversion without allocating/destroying a String.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setMaximumSize): Ditto.
+        (WebCore::SQLiteDatabase::setSynchronous): Ditto. Had to add a typecast to
+        convert the enumeration into an integer.
+        * svg/SVGAngleValue.cpp:
+        (WebCore::SVGAngleValue::valueAsString const): Ditto.
+        * svg/SVGLengthValue.cpp:
+        (WebCore::SVGLengthValue::valueAsString const): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::Internals::configurationForViewport): Ditto. Used
+        FormattedNumber::fixedPrecision since these are floats.
+        (WebCore::Internals::getCurrentCursorInfo): Use StringBuilder::appendNumber
+        instead of calling numberToFixedPrecisionString to do the same thing.
+        (WebCore::Internals::queueMicroTask): Remove String::number and let makeString
+        do the conversion without allocating/destroying a String.
+        (WebCore::appendOffsets): Use StringBuilder::appendNumber instead of
+        String::number so we can do it without allocating/destroying a String.
+
+        * workers/service/ServiceWorkerClientIdentifier.h:
+        (WebCore::ServiceWorkerClientIdentifier::toString const): Remove String::number
+        and let makeString do the conversion without allocating/destroying a String.
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::databaseFilenameFromVersion): Ditto.
+
 2019-02-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add intrinsic width support for basic inline containers

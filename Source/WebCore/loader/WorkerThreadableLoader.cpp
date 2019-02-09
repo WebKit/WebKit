@@ -52,8 +52,6 @@
 
 namespace WebCore {
 
-static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMode";
-
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerGlobalScope& workerGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
     : m_workerGlobalScope(workerGlobalScope)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiator))
@@ -71,8 +69,7 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerGlobalScope& worker
     WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
 
     // Create a unique mode just for this synchronous resource load.
-    String mode = loadResourceSynchronouslyMode;
-    mode.append(String::number(runLoop.createUniqueId()));
+    String mode = makeString("loadResourceSynchronouslyMode", runLoop.createUniqueId());
 
     auto loader = WorkerThreadableLoader::create(workerGlobalScope, client, mode, WTFMove(request), options, String());
     MessageQueueWaitResult result = MessageQueueMessageReceived;

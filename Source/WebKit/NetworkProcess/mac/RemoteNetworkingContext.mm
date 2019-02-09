@@ -37,9 +37,9 @@
 #import <WebCore/ResourceError.h>
 #import <pal/SessionID.h>
 #import <wtf/MainThread.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
 {
@@ -58,7 +58,7 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& netw
     if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty())
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
-    networkProcess.ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
+    networkProcess.ensureSession(sessionID, makeString(base, '.', sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 
     auto* session = networkProcess.storageSession(sessionID);
     for (const auto& cookie : parameters.pendingCookies)

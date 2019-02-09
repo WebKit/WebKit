@@ -104,10 +104,10 @@ private:
 
 class FormattedNumber {
 public:
-    static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, bool truncateTrailingZeros = false)
+    static FormattedNumber fixedPrecision(double number, unsigned significantFigures = 6, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy = TruncateTrailingZeros)
     {
         FormattedNumber numberFormatter;
-        numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, truncateTrailingZeros);
+        numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
         numberFormatter.m_length = strlen(numberFormatter.m_buffer);
         return numberFormatter;
     }

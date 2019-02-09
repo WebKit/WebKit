@@ -1,3 +1,14 @@
+2019-02-04  Darin Adler  <darin@apple.com>
+
+        Eliminate unnecessary String temporaries by using StringConcatenateNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=194021
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        (TestWebKitAPI::TEST): Change tests to use EXPECT_STREQ so failure messages are easier
+        to understand. Updated tests for changes to FormattedNumber::fixedPrecision.
+
 2019-02-09  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add intrinsic width support for basic inline containers

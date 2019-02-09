@@ -72,7 +72,7 @@ static const String recordsTableSchemaAlternate()
 
 static inline String databaseFilenameFromVersion(uint64_t version)
 {
-    return makeString("ServiceWorkerRegistrations-", String::number(version), ".sqlite3");
+    return makeString("ServiceWorkerRegistrations-", version, ".sqlite3");
 }
 
 static const String& databaseFilename()

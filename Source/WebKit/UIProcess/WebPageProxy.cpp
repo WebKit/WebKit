@@ -1535,7 +1535,7 @@ void WebPageProxy::clearInspectorTargets()
 
 void WebPageProxy::createInspectorTargets()
 {
-    String pageTargetId = makeString("page-", String::number(m_pageID));
+    String pageTargetId = makeString("page-", m_pageID);
     m_inspectorController->createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
 }
 

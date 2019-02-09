@@ -29,7 +29,7 @@
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringView.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -232,7 +232,7 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(const String& string)
 
 String SVGLengthValue::valueAsString() const
 {
-    return String::number(m_valueInSpecifiedUnits) + lengthTypeToString(extractType(m_unit));
+    return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), lengthTypeToString(extractType(m_unit)));
 }
 
 ExceptionOr<void> SVGLengthValue::newValueSpecifiedUnits(unsigned short type, float value)

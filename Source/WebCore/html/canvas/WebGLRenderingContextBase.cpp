@@ -2986,7 +2986,7 @@ RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGL
             info.name = info.name.left(info.name.length() - 3);
         // If it's an array, we need to iterate through each element, appending "[index]" to the name.
         for (GC3Dint index = 0; index < info.size; ++index) {
-            String uniformName = info.name + "[" + String::number(index) + "]";
+            String uniformName = makeString(info.name, '[', index, ']');
 
             if (name == uniformName || name == info.name)
                 return WebGLUniformLocation::create(program, uniformLocation, info.type);
@@ -5287,10 +5287,9 @@ bool WebGLRenderingContextBase::checkTextureCompleteness(const char* functionNam
         RefPtr<WebGLTexture> tex2D;
         RefPtr<WebGLTexture> texCubeMap;
         if (prepareToDraw) {
-            String msg(String("texture bound to texture unit ") + String::number(badTexture)
-                + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
-                + " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.");
-            printToConsole(MessageLevel::Error, "WebGL: " + String(functionName) + ": " + msg);
+            printToConsole(MessageLevel::Error, makeString("WebGL: ", functionName, ": texture bound to texture unit ", badTexture,
+                " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
+                " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled."));
             tex2D = m_blackTexture2D.get();
             texCubeMap = m_blackTextureCubeMap.get();
         } else {

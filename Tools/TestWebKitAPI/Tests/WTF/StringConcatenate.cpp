@@ -42,115 +42,118 @@ struct S {
 
 TEST(WTF, StringConcatenate)
 {
-    EXPECT_EQ("hello world", makeString("hello", " ", "world"));
+    EXPECT_STREQ("hello world", makeString("hello", " ", "world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_Int)
 {
     EXPECT_EQ(5u, WTF::lengthOfNumberAsStringSigned(17890));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890 , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890l , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ll , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world"));
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890 , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890l , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ll , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world").utf8().data());
 
     EXPECT_EQ(6u, WTF::lengthOfNumberAsStringSigned(-17890));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890 , " world"));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890l , " world"));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890ll , " world"));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world"));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world"));
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890 , " world").utf8().data());
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890l , " world").utf8().data());
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890ll , " world").utf8().data());
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world").utf8().data());
 
     EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0));
-    EXPECT_EQ("hello 0 world", makeString("hello ", 0 , " world"));
+    EXPECT_STREQ("hello 0 world", makeString("hello ", 0 , " world").utf8().data());
 
-    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<signed char>(42) , " world"));
-    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<short>(42) , " world"));
-    EXPECT_EQ("hello 1 world", makeString("hello ", &arr[1] - &arr[0] , " world"));
+    EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<signed char>(42) , " world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<short>(42) , " world").utf8().data());
+    EXPECT_STREQ("hello 1 world", makeString("hello ", &arr[1] - &arr[0] , " world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_Unsigned)
 {
     EXPECT_EQ(5u, WTF::lengthOfNumberAsStringUnsigned(17890u));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890u , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ul , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890ull , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world"));
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890u , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ul , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ull , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world").utf8().data());
 
     EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0u));
-    EXPECT_EQ("hello 0 world", makeString("hello ", 0u , " world"));
+    EXPECT_STREQ("hello 0 world", makeString("hello ", 0u , " world").utf8().data());
 
-    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world"));
+    EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world").utf8().data());
 #if PLATFORM(WIN) || (U_ICU_VERSION_MAJOR_NUM >= 59 && !PLATFORM(COCOA))
-    EXPECT_EQ("hello 42 world", makeString("hello ", static_cast<unsigned short>(42) , " world"));
+    EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<unsigned short>(42) , " world").utf8().data());
 #else
-    EXPECT_EQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world")); // Treated as a character.
+    EXPECT_STREQ("hello * world", makeString("hello ", static_cast<unsigned short>(42) , " world").utf8().data()); // Treated as a character.
 #endif
-    EXPECT_EQ("hello 4 world", makeString("hello ", sizeof(int) , " world")); // size_t
-    EXPECT_EQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world")); // size_t
-    EXPECT_EQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world"));
+    EXPECT_STREQ("hello 4 world", makeString("hello ", sizeof(int) , " world").utf8().data()); // size_t
+    EXPECT_STREQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world").utf8().data()); // size_t
+    EXPECT_STREQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_Float)
 {
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890.0f , " world"));
-    EXPECT_EQ("hello 17890.5 world", makeString("hello ", 17890.5f , " world"));
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890.0f , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.5 world", makeString("hello ", 17890.5f , " world").utf8().data());
 
-    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890.0f , " world"));
-    EXPECT_EQ("hello -17890.5 world", makeString("hello ", -17890.5f , " world"));
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890.0f , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.5 world", makeString("hello ", -17890.5f , " world").utf8().data());
 
-    EXPECT_EQ("hello 0 world", makeString("hello ", 0.0f , " world"));
+    EXPECT_STREQ("hello 0 world", makeString("hello ", 0.0f , " world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_Double)
 {
-    EXPECT_EQ("hello 17890 world", makeString("hello ", 17890.0 , " world"));
-    EXPECT_EQ("hello 17890.5 world", makeString("hello ", 17890.5 , " world"));
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890.0 , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.5 world", makeString("hello ", 17890.5 , " world").utf8().data());
 
-    EXPECT_EQ("hello -17890 world", makeString("hello ", -17890.0 , " world"));
-    EXPECT_EQ("hello -17890.5 world", makeString("hello ", -17890.5 , " world"));
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890.0 , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.5 world", makeString("hello ", -17890.5 , " world").utf8().data());
 
-    EXPECT_EQ("hello 0 world", makeString("hello ", 0.0 , " world"));
+    EXPECT_STREQ("hello 0 world", makeString("hello ", 0.0 , " world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_FormattedDoubleFixedPrecision)
 {
-    EXPECT_EQ("hello 17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0) , " world"));
-    EXPECT_EQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 3) , " world"));
-    EXPECT_EQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8) , " world"));
-    EXPECT_EQ("hello 17890 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8, true) , " world"));
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 6, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 3, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.0, 8) , " world").utf8().data());
 
-    EXPECT_EQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5) , " world"));
-    EXPECT_EQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 3) , " world"));
-    EXPECT_EQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8) , " world"));
-    EXPECT_EQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8, true) , " world"));
+    EXPECT_STREQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5) , " world").utf8().data());
+    EXPECT_STREQ("hello 1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 3, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(17890.5, 8) , " world").utf8().data());
 
-    EXPECT_EQ("hello -17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0) , " world"));
-    EXPECT_EQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 3) , " world"));
-    EXPECT_EQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8) , " world"));
-    EXPECT_EQ("hello -17890 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8, true) , " world"));
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.0 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 6, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 3, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.0, 8) , " world").utf8().data());
 
-    EXPECT_EQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5) , " world"));
-    EXPECT_EQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 3) , " world"));
-    EXPECT_EQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8) , " world"));
-    EXPECT_EQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8, true) , " world"));
+    EXPECT_STREQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5) , " world").utf8().data());
+    EXPECT_STREQ("hello -1.79e+4 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 3, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.5 world", makeString("hello ", FormattedNumber::fixedPrecision(-17890.5, 8) , " world").utf8().data());
 
-    EXPECT_EQ("hello 0.00000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0) , " world"));
-    EXPECT_EQ("hello 0.00 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 3) , " world"));
-    EXPECT_EQ("hello 0.0000000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8) , " world"));
-    EXPECT_EQ("hello 0 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8, true) , " world"));
+    EXPECT_STREQ("hello 0 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.00000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 6, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.00 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 3, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 0.0000000 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8, KeepTrailingZeros) , " world").utf8().data());
+    EXPECT_STREQ("hello 0 world", makeString("hello ", FormattedNumber::fixedPrecision(0.0, 8) , " world").utf8().data());
 }
 
 TEST(WTF, StringConcatenate_FormattedDoubleFixedWidth)
 {
-    EXPECT_EQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedWidth(17890.0, 3) , " world"));
-    EXPECT_EQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedWidth(17890.5, 3) , " world"));
+    EXPECT_STREQ("hello 17890.000 world", makeString("hello ", FormattedNumber::fixedWidth(17890.0, 3) , " world").utf8().data());
+    EXPECT_STREQ("hello 17890.500 world", makeString("hello ", FormattedNumber::fixedWidth(17890.5, 3) , " world").utf8().data());
 
-    EXPECT_EQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedWidth(-17890.0, 3) , " world"));
-    EXPECT_EQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedWidth(-17890.5, 3) , " world"));
+    EXPECT_STREQ("hello -17890.000 world", makeString("hello ", FormattedNumber::fixedWidth(-17890.0, 3) , " world").utf8().data());
+    EXPECT_STREQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedWidth(-17890.5, 3) , " world").utf8().data());
 
-    EXPECT_EQ("hello 0.000 world", makeString("hello ", FormattedNumber::fixedWidth(0.0, 3) , " world"));
+    EXPECT_STREQ("hello 0.000 world", makeString("hello ", FormattedNumber::fixedWidth(0.0, 3) , " world").utf8().data());
 }
 
 }

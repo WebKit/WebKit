@@ -664,17 +664,17 @@ void ApplicationCacheGroup::didFailLoadingManifest(ApplicationCacheResourceLoade
         break;
     case ApplicationCacheResourceLoader::Error::NotFound:
         InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, m_frame->loader().cancelledError(m_manifestLoader->resource()->resourceRequest()));
-        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a ", String::number(m_manifestLoader->resource()->response().httpStatusCode()), " response."));
+        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a ", m_manifestLoader->resource()->response().httpStatusCode(), " response."));
         manifestNotFound();
         break;
     case ApplicationCacheResourceLoader::Error::NotOK:
         InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, m_frame->loader().cancelledError(m_manifestLoader->resource()->resourceRequest()));
-        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a ", String::number(m_manifestLoader->resource()->response().httpStatusCode()), " response."));
+        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because the manifest had a ", m_manifestLoader->resource()->response().httpStatusCode(), " response."));
         cacheUpdateFailed();
         break;
     case ApplicationCacheResourceLoader::Error::RedirectForbidden:
         InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, m_frame->loader().cancelledError(m_manifestLoader->resource()->resourceRequest()));
-        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, makeString("Application Cache manifest could not be fetched, because a redirection was attempted."));
+        m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, "Application Cache manifest could not be fetched, because a redirection was attempted."_s);
         cacheUpdateFailed();
         break;
     case ApplicationCacheResourceLoader::Error::CannotCreateResource:

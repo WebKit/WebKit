@@ -486,8 +486,7 @@ static void detachViewForPage(PDFPageInfo& page)
         return [NSURL URLWithString:url.relativeString relativeToURL:documentURL];
 
     if (NSUInteger pageNumber = linkAnnotation.pageNumber) {
-        String anchorString = "#page"_s;
-        anchorString.append(String::number(pageNumber));
+        String anchorString = makeString("#page", pageNumber);
         return [NSURL URLWithString:anchorString relativeToURL:documentURL];
     }
 

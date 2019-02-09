@@ -33,6 +33,7 @@
 #include "JSGenericTypedArrayView.h"
 #include "TypeError.h"
 #include "TypedArrays.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace JSC {
 
@@ -390,7 +391,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     if (Optional<uint32_t> index = parseIndex(propertyName)) {
         auto throwTypeErrorIfNeeded = [&] (const char* errorMessage) -> bool {
             if (shouldThrow)
-                throwTypeError(exec, scope, makeString(errorMessage, String::number(*index)));
+                throwTypeError(exec, scope, makeString(errorMessage, *index));
             return false;
         };
 

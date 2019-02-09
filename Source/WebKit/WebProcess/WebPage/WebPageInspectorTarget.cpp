@@ -41,7 +41,7 @@ WebPageInspectorTarget::WebPageInspectorTarget(WebPage& page)
 
 String WebPageInspectorTarget::identifier() const
 {
-    return makeString("page-", String::number(m_page.pageID()));
+    return makeString("page-", m_page.pageID());
 }
 
 void WebPageInspectorTarget::connect(Inspector::FrontendChannel& channel)

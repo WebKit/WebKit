@@ -203,7 +203,7 @@ void InspectorConsoleAgent::count(JSC::ExecState* state, Ref<ScriptArguments>&& 
 
     // FIXME: Web Inspector should have a better UI for counters, but for now we just log an updated counter value.
 
-    String message = makeString(title, ": ", String::number(result.iterator->value));
+    String message = makeString(title, ": ", result.iterator->value);
     addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Debug, message, WTFMove(callStack)));
 }
 

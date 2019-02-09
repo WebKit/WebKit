@@ -48,7 +48,7 @@ Ref<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecuti
     if (is<WorkerGlobalScope>(context)) {
         WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
         WorkerRunLoop& runLoop = workerGlobalScope.thread().runLoop();
-        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", String::number(runLoop.createUniqueId())), provider);
+        return WorkerThreadableWebSocketChannel::create(workerGlobalScope, client, makeString("webSocketChannelMode", runLoop.createUniqueId()), provider);
     }
 
     return WebSocketChannel::create(downcast<Document>(context), client, provider);

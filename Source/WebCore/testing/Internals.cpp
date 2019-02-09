@@ -1799,7 +1799,7 @@ ExceptionOr<String> Internals::configurationForViewport(float devicePixelRatio, 
     restrictMinimumScaleFactorToViewportSize(attributes, IntSize(availableWidth, availableHeight), devicePixelRatio);
     restrictScaleFactorToInitialScaleIfNotUserScalable(attributes);
 
-    return String { "viewport size " + String::number(attributes.layoutSize.width()) + "x" + String::number(attributes.layoutSize.height()) + " scale " + String::number(attributes.initialScale) + " with limits [" + String::number(attributes.minimumScale) + ", " + String::number(attributes.maximumScale) + "] and userScalable " + (attributes.userScalable ? "true" : "false") };
+    return makeString("viewport size ", FormattedNumber::fixedPrecision(attributes.layoutSize.width()), 'x', FormattedNumber::fixedPrecision(attributes.layoutSize.height()), " scale ", FormattedNumber::fixedPrecision(attributes.initialScale), " with limits [", FormattedNumber::fixedPrecision(attributes.minimumScale), ", ", FormattedNumber::fixedPrecision(attributes.maximumScale), "] and userScalable ", (attributes.userScalable ? "true" : "false"));
 }
 
 ExceptionOr<bool> Internals::wasLastChangeUserEdit(Element& textField)
@@ -3332,8 +3332,7 @@ ExceptionOr<String> Internals::getCurrentCursorInfo()
 #if ENABLE(MOUSE_CURSOR_SCALE)
     if (cursor.imageScaleFactor() != 1) {
         result.appendLiteral(" scale=");
-        NumberToStringBuffer buffer;
-        result.append(numberToFixedPrecisionString(cursor.imageScaleFactor(), 8, buffer, true));
+        result.appendNumber(cursor.imageScaleFactor(), 8);
     }
 #endif
     return result.toString();
@@ -4149,7 +4148,7 @@ void Internals::queueMicroTask(int testNumber)
         return;
 
     auto microtask = std::make_unique<ActiveDOMCallbackMicrotask>(MicrotaskQueue::mainThreadQueue(), *document, [document, testNumber]() {
-        document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", String::number(testNumber), " has run."));
+        document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", testNumber, " has run."));
     });
 
     MicrotaskQueue::mainThreadQueue().append(WTFMove(microtask));
@@ -4177,7 +4176,7 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
         else
             justStarting = false;
 
-        builder.append(String::number(coordinate.toUnsigned()));
+        builder.appendNumber(coordinate.toUnsigned());
     }
     builder.appendLiteral(" }");
 }

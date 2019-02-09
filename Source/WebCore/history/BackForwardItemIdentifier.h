@@ -28,7 +28,7 @@
 #include "ProcessIdentifier.h"
 #include <wtf/DebugUtilities.h>
 #include <wtf/Hasher.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -48,10 +48,12 @@ struct BackForwardItemIdentifier {
 };
 
 #if !LOG_DISABLED
+
 inline const char* BackForwardItemIdentifier::logString() const
 {
-    return debugString(String::number(processIdentifier.toUInt64()), "-", String::number(itemIdentifier.toUInt64()));
+    return debugString(makeString(processIdentifier.toUInt64(), '-', itemIdentifier.toUInt64()));
 }
+
 #endif
 
 inline bool operator==(const BackForwardItemIdentifier& a, const BackForwardItemIdentifier& b)

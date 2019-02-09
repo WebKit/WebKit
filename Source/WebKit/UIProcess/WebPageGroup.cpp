@@ -73,7 +73,7 @@ static WebPageGroupData pageGroupData(const String& identifier)
     if (!identifier.isEmpty())
         data.identifier = identifier;
     else
-        data.identifier = makeString("__uniquePageGroupID-", String::number(data.pageGroupID));
+        data.identifier = makeString("__uniquePageGroupID-", data.pageGroupID);
 
     return data;
 }

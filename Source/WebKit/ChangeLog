@@ -1,3 +1,38 @@
+2019-01-30  Darin Adler  <darin@apple.com>
+
+        Eliminate unnecessary String temporaries by using StringConcatenateNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=194021
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::escapeIDForJSON): Use an ASCIILiteral to create a String.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeVersionedDirectoryPath): Remove String::number and let
+        makeString do the conversion without allocating/destroying a String.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm: Removed "using namespace WebCore".
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession): Remove String::number
+        and let makeString do the conversion without allocating/destroying a String.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp: Removed "using namespace WebCore".
+        (WebKit::registerMDNSNameCallback): Added explicit WebCore prefix as needed.
+        (WebKit::NetworkMDNSRegister::registerMDNSName): Ditto. Also remove String::number
+        and let makeString do the conversion without allocating/destroying a String.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::pageGroupData): Remove String::number and let makeString do the conversion
+        without allocating/destroying a String.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createInspectorTargets): Ditto.
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        (-[WKLegacyPDFView _URLForLinkAnnotation:]): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::uniqueWorldName): Ditto.
+        * WebProcess/WebPage/WebPageInspectorTarget.cpp:
+        (WebKit::WebPageInspectorTarget::identifier const): Ditto.
+
 2019-02-09  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Fix typo in the newly added API

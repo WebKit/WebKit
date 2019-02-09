@@ -1,3 +1,27 @@
+2019-01-30  Darin Adler  <darin@apple.com>
+
+        Eliminate unnecessary String temporaries by using StringConcatenateNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=194021
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::count): Remove String::number and let
+        makeString do the conversion without allocating/destroying a String.
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::objectGroupForBreakpointAction): Ditto.
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl): Ditto.
+        (Inspector::InspectorDebuggerAgent::setBreakpoint): Ditto.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty): Ditto.
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToFixed): Use String::numberToStringFixedWidth instead
+        of calling numberToFixedWidthString to do the same thing.
+        (JSC::numberProtoFuncToPrecision): Use String::number instead of calling
+        numberToFixedPrecisionString to do the same thing.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::reportTopFunctions): Ditto.
+
 2019-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in r241237 again

@@ -959,7 +959,7 @@ static String escapeForJSON(String s)
 
 static String escapeIDForJSON(const Optional<uint64_t>& value)
 {
-    return value ? String::number(value.value()) : String("None");
+    return value ? String::number(value.value()) : String("None"_s);
 };
 
 void NetworkResourceLoader::logCookieInformation() const

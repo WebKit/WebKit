@@ -24,7 +24,7 @@
 
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringView.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -66,11 +66,11 @@ String SVGAngleValue::valueAsString() const
 {
     switch (m_unitType) {
     case SVG_ANGLETYPE_DEG:
-        return String::number(m_valueInSpecifiedUnits) + "deg";
+        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "deg");
     case SVG_ANGLETYPE_RAD:
-        return String::number(m_valueInSpecifiedUnits) + "rad";
+        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "rad");
     case SVG_ANGLETYPE_GRAD:
-        return String::number(m_valueInSpecifiedUnits) + "grad";
+        return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "grad");
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
         return String::number(m_valueInSpecifiedUnits);

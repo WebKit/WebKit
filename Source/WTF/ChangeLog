@@ -1,3 +1,22 @@
+2019-01-30  Darin Adler  <darin@apple.com>
+
+        Eliminate unnecessary String temporaries by using StringConcatenateNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=194021
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/URL.cpp:
+        (WTF::URL::setPort): Remove String::number and let makeString do the conversion
+        without allocating/destroying a String. Added a cast to "unsigned" to sidestep the
+        ambiguity with 16-bit unsigned types that are sometimes used for numbers (uint16_t)
+        and sometimes used for UTF-16 code units (UChar) and can be the same type.
+
+        * wtf/text/StringConcatenateNumbers.h:
+        Changed FormattedNumber::fixedPrecision to more closely match String::number and
+        StringBuilder::appendNumber by defaulting to truncating trailing zeros and using
+        a named enumeration for the truncation policy rather than a boolean.
+
+
 2019-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in r241237 again
