@@ -85,11 +85,12 @@ private:
         static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&, UsedHorizontalValues);
     };
 
-    void layoutFormattingContextRoot(const Box&) const;
-    void computeWidthAndHeightForReplacedInlineBox(const Box&) const;
-    void computeMarginBorderAndPadding(const InlineContainer&) const;
+    void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
+    void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
+    void computeBorderAndPadding(const Box&, UsedHorizontalValues) const;
+    void computeMarginBorderAndPadding(const InlineContainer&, UsedHorizontalValues) const;
     void computeHeightAndMargin(const Box&) const;
-    void computeWidthAndMargin(const Box&) const;
+    void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
     void collectInlineContent(InlineRunProvider&) const;
     InstrinsicWidthConstraints instrinsicWidthConstraints() const override;

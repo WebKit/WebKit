@@ -1,3 +1,14 @@
+2019-02-09  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add intrinsic width support for basic inline containers
+        https://bugs.webkit.org/show_bug.cgi?id=194473
+
+        Reviewed by Antti Koivisto.
+
+        Expand tests coverage (11 new tests -> 798)
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt: not sure why run-singly keeps producing different ordering.
+
 2019-02-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix MiniBrowser's entitlements

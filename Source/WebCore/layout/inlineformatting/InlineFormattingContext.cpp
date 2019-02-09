@@ -71,15 +71,16 @@ void InlineFormattingContext::layout() const
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& root = downcast<Container>(this->root());
+    auto usedValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(root).contentBoxWidth(), { }, { } };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     // Compute width/height for non-text content and margin/border/padding for inline containers.
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext())
-            layoutFormattingContextRoot(*layoutBox);
+            layoutFormattingContextRoot(*layoutBox, usedValues);
         else if (is<Container>(*layoutBox))
-            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox));
+            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox), usedValues);
         else if (layoutBox->isReplaced())
-            computeWidthAndHeightForReplacedInlineBox(*layoutBox);
+            computeWidthAndHeightForReplacedInlineBox(*layoutBox, usedValues);
         layoutBox = nextInPreOrder(*layoutBox, root);
     }
 
@@ -89,27 +90,70 @@ void InlineFormattingContext::layout() const
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root << ")");
 }
 
-void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContainer& inlineContainer) const
+FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints() const
+{
+    ASSERT(!layoutState().formattingStateForBox(root()).instrinsicWidthConstraints(root()));
+    ASSERT(is<Container>(root()));
+
+    auto& layoutState = this->layoutState();
+    auto& root = downcast<Container>(this->root());
+
+    auto usedValues = UsedHorizontalValues { { }, { }, { } };
+    auto* layoutBox = root.firstInFlowOrFloatingChild();
+    while (layoutBox) {
+        if (layoutBox->establishesFormattingContext() || layoutBox->isReplaced())
+            ASSERT_NOT_IMPLEMENTED_YET();
+        else if (is<Container>(*layoutBox))
+            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox), usedValues);
+        layoutBox = nextInPreOrder(*layoutBox, root);
+    }
+
+    InlineRunProvider inlineRunProvider;
+    collectInlineContent(inlineRunProvider);
+
+    auto maximumLineWidth = [&](auto availableWidth) {
+        LayoutUnit maxContentLogicalRight;
+        auto lineBreaker = InlineLineBreaker { layoutState, formattingState().inlineContent(), inlineRunProvider.runs() };
+        LayoutUnit lineLogicalRight;
+        while (auto run = lineBreaker.nextRun(lineLogicalRight, availableWidth, !lineLogicalRight)) {
+            if (run->position == InlineLineBreaker::Run::Position::LineBegin)
+                lineLogicalRight = 0;
+            lineLogicalRight += run->width;
+
+            maxContentLogicalRight = std::max(maxContentLogicalRight, lineLogicalRight);
+        }
+        return maxContentLogicalRight;
+    };
+
+    auto instrinsicWidthConstraints = FormattingContext::InstrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
+    layoutState.formattingStateForBox(root).setInstrinsicWidthConstraints(root, instrinsicWidthConstraints);
+    return instrinsicWidthConstraints;
+}
+
+void InlineFormattingContext::computeBorderAndPadding(const Box& layoutBox, UsedHorizontalValues usedValues) const
+{
+    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
+    displayBox.setBorder(Geometry::computedBorder(layoutBox));
+    displayBox.setPadding(Geometry::computedPadding(layoutBox, usedValues));
+}
+
+void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const
 {
     // Non-replaced, non-formatting root containers (<span></span>) don't have width property -> non width computation. 
     ASSERT(!inlineContainer.replaced());
     ASSERT(!inlineContainer.establishesFormattingContext());
 
-    computeBorderAndPadding(inlineContainer);
+    computeBorderAndPadding(inlineContainer, usedValues);
     auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
-    auto containingBlockWidth = layoutState().displayBoxForLayoutBox(*inlineContainer.containingBlock()).contentBoxWidth();
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, UsedHorizontalValues { containingBlockWidth, { }, { } });
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, usedValues);
     displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
-void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
+void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
     auto& layoutState = this->layoutState();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
-
     WidthAndMargin widthAndMargin;
-    auto usedValues = UsedHorizontalValues { containingBlockWidth, { }, { } };
     if (layoutBox.isFloatingPositioned())
         widthAndMargin = Geometry::floatingWidthAndMargin(layoutState, layoutBox, usedValues);
     else if (layoutBox.isInlineBlockBox())
@@ -144,12 +188,12 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& root) const
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedHorizontalValues usedValues) const
 {
     ASSERT(root.isFloatingPositioned() || root.isInlineBlockBox());
 
-    computeBorderAndPadding(root);
-    computeWidthAndMargin(root);
+    computeBorderAndPadding(root, usedValues);
+    computeWidthAndMargin(root, usedValues);
     // Swich over to the new formatting context (the one that the root creates).
     auto formattingContext = layoutState().createFormattingContext(root);
     formattingContext->layout();
@@ -159,14 +203,14 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root) const
     formattingContext->layoutOutOfFlowDescendants(root);
 }
 
-void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox) const
+void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
     ASSERT(layoutBox.replaced());
 
-    computeBorderAndPadding(layoutBox);
-    computeWidthAndMargin(layoutBox);
+    computeBorderAndPadding(layoutBox, usedValues);
+    computeWidthAndMargin(layoutBox, usedValues);
     computeHeightAndMargin(layoutBox);
 }
 
@@ -290,41 +334,6 @@ void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunP
             }
         }
     }
-}
-
-FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints() const
-{
-    auto& formattingStateForRoot = layoutState().formattingStateForBox(root());
-    if (auto instrinsicWidthConstraints = formattingStateForRoot.instrinsicWidthConstraints(root()))
-        return *instrinsicWidthConstraints;
-
-    auto& inlineFormattingState = formattingState();
-    InlineRunProvider inlineRunProvider;
-    collectInlineContent(inlineRunProvider);
-
-    // Compute width for non-text content.
-    for (auto& inlineRun : inlineRunProvider.runs()) {
-        if (inlineRun.isText())
-            continue;
-
-        computeWidthAndMargin(inlineRun.inlineItem().layoutBox());
-    }
-
-    auto maximumLineWidth = [&](auto availableWidth) {
-        LayoutUnit maxContentLogicalRight;
-        InlineLineBreaker lineBreaker(layoutState(), inlineFormattingState.inlineContent(), inlineRunProvider.runs());
-        LayoutUnit lineLogicalRight;
-        while (auto run = lineBreaker.nextRun(lineLogicalRight, availableWidth, !lineLogicalRight)) {
-            if (run->position == InlineLineBreaker::Run::Position::LineBegin)
-                lineLogicalRight = 0;
-            lineLogicalRight += run->width;
-
-            maxContentLogicalRight = std::max(maxContentLogicalRight, lineLogicalRight);
-        }
-        return maxContentLogicalRight;
-    };
-
-    return FormattingContext::InstrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
 }
 
 }
