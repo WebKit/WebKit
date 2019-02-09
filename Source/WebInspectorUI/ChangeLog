@@ -1,3 +1,19 @@
+2019-02-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: show keyboard shortcut in export tooltip
+        https://bugs.webkit.org/show_bug.cgi?id=194454
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView):
+        (WI.AuditTestContentView.prototype.get saveData):
+        (WI.AuditTestContentView.prototype._exportResult): Added.
+        (WI.AuditTestContentView.prototype._handleExportButtonNavigationItemClicked):
+        (WI.AuditTestContentView.prototype._exportAudit): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: easier way to select a single line

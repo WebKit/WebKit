@@ -34,6 +34,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         this.element.classList.add("audit-test");
 
         this._exportButtonNavigationItem = new WI.ButtonNavigationItem("audit-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
+        this._exportButtonNavigationItem.tooltip = WI.UIString("Export result (%s)").format(WI.saveKeyboardShortcut.displayName);
         this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportButtonNavigationItemClicked, this);
@@ -65,7 +66,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     get saveData()
     {
-        return {customSaveHandler: () => { this._exportAudit(); }};
+        return {customSaveHandler: () => { this._exportResult(); }};
     }
 
     get result()
@@ -262,7 +263,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     // Private
 
-    _exportAudit()
+    _exportResult()
     {
         WI.auditManager.export(this.representedObject.result);
     }
@@ -280,7 +281,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     _handleExportButtonNavigationItemClicked(event)
     {
-        this._exportAudit();
+        this._exportResult();
     }
 
     _handleTestChanged(event)
