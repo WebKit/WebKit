@@ -1,3 +1,11 @@
+2019-02-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: fix typos in tests
+
+        Unreviewed test gardening.
+
+        * inspector/css/force-page-appearance.html:
+
 2019-02-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings

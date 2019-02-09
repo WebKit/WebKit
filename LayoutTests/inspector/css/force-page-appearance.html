@@ -36,7 +36,7 @@ function test() {
     suite.addTestCase({
         name: "Force appearance to Dark",
         test(resolve, reject) {
-            // Styles should referesh when dark apeparance is forced.
+            // Styles should refresh when dark appearance is forced.
             WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
                 InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
                 nodeStyles.refresh();
@@ -76,7 +76,7 @@ function test() {
     suite.addTestCase({
         name: "Force appearance to Light",
         test(resolve, reject) {
-            // Styles should referesh when light apeparance is forced.
+            // Styles should refresh when dark appearance is forced.
             WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
                 InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
                 nodeStyles.refresh();
@@ -97,7 +97,7 @@ function test() {
     suite.addTestCase({
         name: "Disable forced appearance",
         test(resolve, reject) {
-            // Styles should referesh when forced apeparance is disabled.
+            // Styles should refresh when forced appearance is disabled.
             WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
                 InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
                 nodeStyles.refresh();
