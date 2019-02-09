@@ -1,3 +1,19 @@
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Use BufferInternal StringImpl if substring StringImpl takes more memory
+        https://bugs.webkit.org/show_bug.cgi?id=194469
+
+        Reviewed by Geoffrey Garen.
+
+        Because pointer is large and aligned in 64bit in 64bit architecture, BufferSubstring StringImpl
+        implementation takes more memory than BufferInternal StringImpl implementation for small strings.
+        And BufferInternal StringImpl does not have a problem like, small substring StringImpl keeps super
+        large owner StringImpl. This patch calculates the required size of memory and selects the more efficient one.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isSubString const):
+        (WTF::StringImpl::createSubstringSharingImpl):
+
 2019-02-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to use networking daemon instead of XPC service
