@@ -636,10 +636,7 @@ inline JSString* jsSubstring(VM* vm, const String& s, unsigned offset, unsigned 
         if (c <= maxSingleCharacterString)
             return vm->smallStrings.singleCharacterString(c);
     }
-    auto impl = StringImpl::createSubstringSharingImpl(*s.impl(), offset, length);
-    if (impl->isSubString())
-        return JSString::createHasOtherOwner(*vm, WTFMove(impl));
-    return JSString::create(*vm, WTFMove(impl));
+    return JSString::createHasOtherOwner(*vm, StringImpl::createSubstringSharingImpl(*s.impl(), offset, length));
 }
 
 inline JSString* jsOwnedString(VM* vm, const String& s)

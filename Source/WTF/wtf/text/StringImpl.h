@@ -297,7 +297,9 @@ public:
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
 
+#if STRING_STATS
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
+#endif
 
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const LChar* characters, unsigned length);
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const UChar* characters, unsigned length, ConversionMode = LenientConversion);
@@ -935,20 +937,10 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     if (!length)
         return *empty();
 
-    // Coyping the thing would save more memory sometimes, largely due to the size of pointer.
-    size_t substringSize = allocationSize<StringImpl*>(1);
-    if (rep.is8Bit()) {
-        if (substringSize >= allocationSize<LChar>(length))
-            return create(rep.m_data8 + offset, length);
-    } else {
-        if (substringSize >= allocationSize<UChar>(length))
-            return create(rep.m_data16 + offset, length);
-    }
-
     auto* ownerRep = ((rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep);
 
     // We allocate a buffer that contains both the StringImpl struct as well as the pointer to the owner string.
-    auto* stringImpl = static_cast<StringImpl*>(fastMalloc(substringSize));
+    auto* stringImpl = static_cast<StringImpl*>(fastMalloc(allocationSize<StringImpl*>(1)));
     if (rep.is8Bit())
         return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
     return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
