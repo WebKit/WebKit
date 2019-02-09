@@ -1,3 +1,15 @@
+2019-02-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix MiniBrowser's entitlements
+        https://bugs.webkit.org/show_bug.cgi?id=192431
+
+        Reviewed by Joseph Pecoraro.
+
+        MiniBrowser's Extensions Manager was broken. The entitlement was missing for opening
+        files, making it impossible to load any extension.
+
+        * MiniBrowser/MiniBrowser.entitlements:
+
 2019-02-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings
