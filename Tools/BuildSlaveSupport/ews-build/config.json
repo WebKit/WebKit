@@ -205,18 +205,21 @@
   "builders": [
     {
       "name": "Style-EWS",
+      "shortname": "style",
       "factory": "StyleFactory",
       "platform": "*",
       "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "GTK-Webkit2-EWS",
+      "shortname": "gtk",
       "factory": "GTKFactory",
       "platform": "gtk",
       "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
     },
     {
       "name": "iOS-11-Build-EWS",
+      "shortname": "ios",
       "factory": "iOSBuildFactory",
       "platform": "ios-11",
       "configuration": "release",
@@ -225,6 +228,7 @@
     },
     {
       "name": "iOS-11-Simulator-Build-EWS",
+      "shortname": "ios-sim",
       "factory": "iOSBuildFactory",
       "platform": "ios-simulator-11",
       "configuration": "release",
@@ -234,6 +238,7 @@
     },
     {
       "name": "iOS-11-Simulator-WK2-Tests-EWS",
+      "shortname": "ios-wk2",
       "factory": "iOSTestsFactory",
       "platform": "ios-simulator-11",
       "configuration": "release",
@@ -242,6 +247,7 @@
     },
     {
       "name": "macOS-High-Sierra-Release-Build-EWS",
+      "shortname": "mac",
       "factory": "macOSBuildFactory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -251,6 +257,7 @@
     },
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
+      "shortname": "mac-wk1",
       "factory": "macOSWK1Factory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -259,6 +266,7 @@
     },
     {
       "name": "macOS-High-Sierra-Release-WK2-Tests-EWS",
+      "shortname": "mac-wk2",
       "factory": "macOSWK2Factory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -267,6 +275,7 @@
     },
     {
       "name": "macOS-High-Sierra-Debug-Build-EWS",
+      "shortname": "mac-debug",
       "factory": "macOSBuildFactory",
       "platform": "mac-highsierra",
       "configuration": "debug",
@@ -276,6 +285,7 @@
     },
     {
       "name": "macOS-High-Sierra-Debug-WK1-Tests-EWS",
+      "shortname": "mac-debug-wk1",
       "factory": "macOSWK1Factory",
       "platform": "mac-highsierra",
       "configuration": "debug",
@@ -284,6 +294,7 @@
     },
     {
       "name": "macOS-High-Sierra-Release-32bit-Build-EWS",
+      "shortname": "mac-32bit",
       "factory": "macOSBuildFactory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -293,6 +304,7 @@
     },
     {
       "name": "macOS-High-Sierra-Release-32bit-WK2-Tests-EWS",
+      "shortname": "mac-32bit-wk2",
       "factory": "macOSWK2Factory",
       "platform": "mac-highsierra",
       "configuration": "release",
@@ -301,24 +313,28 @@
     },
     {
       "name": "Windows-EWS",
+      "shortname": "win",
       "factory": "WindowsFactory",
       "platform": "win",
       "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204", "ews205", "ews206", "ews207", "ews208"]
     },
     {
       "name": "WinCairo-EWS",
+      "shortname": "wincairo",
       "factory": "WinCairoFactory",
       "platform": "wincairo",
       "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
     },
     {
       "name": "WPE-EWS",
+      "shortname": "wpe",
       "factory": "WPEFactory",
       "platform": "wpe",
       "workernames": ["igalia-wpe-ews", "aperez-wpe-gcc5-ews", "aperez-wpe-gcc6-ews"]
     },
     {
       "name": "JSC-Tests-EWS",
+      "shortname": "jsc",
       "factory": "JSCTestsFactory",
       "platform": "jsc-only",
       "configuration": "release",
@@ -326,30 +342,35 @@
     },
     {
       "name": "Bindings-Tests-EWS",
+      "shortname": "bindings",
       "factory": "BindingsFactory",
       "platform": "*",
       "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPy-Tests-EWS",
+      "shortname": "webkitpy",
       "factory": "WebKitPyFactory",
       "platform": "*",
       "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS",
+      "shortname": "webkitperl",
       "factory": "WebKitPerlFactory",
       "platform": "*",
       "workernames": ["ews151", "webkit-misc"]
     },
     {
       "name": "API-Tests-iOS-Simulator-EWS",
+      "shortname": "api-ios",
       "factory": "APITestsFactory",
       "platform": "*",
       "workernames": ["ews152", "ews153", "webkit-misc"]
     },
     {
       "name": "API-Tests-macOS-EWS",
+      "shortname": "api-mac",
       "factory": "APITestsFactory",
       "platform": "*",
       "workernames": ["ews151", "ews152", "ews153", "webkit-misc"]

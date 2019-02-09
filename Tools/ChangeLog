@@ -1,3 +1,14 @@
+2019-02-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add short name to config.json
+        https://bugs.webkit.org/show_bug.cgi?id=194456
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/config.json: Added short name.
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Set the short name as the builder description.
+
 2019-02-08  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: CrashLogs.find_all_logs may return a string or a dictionary
