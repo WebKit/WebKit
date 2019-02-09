@@ -578,10 +578,16 @@ WI.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingController e
             if (!isDot && !isExpression)
                 break;
 
-            // Disallow operators. We want the hovered expression to be just a single operand.
-            // Also, some operators can modify values, such as pre-increment and assignment operators.
-            if (isExpression && token.type.includes("operator"))
-                break;
+            if (isExpression) {
+                // Disallow operators. We want the hovered expression to be just a single operand.
+                // Also, some operators can modify values, such as pre-increment and assignment operators.
+                if (token.type.includes("operator"))
+                    break;
+
+                // Don't break out of a template string quasi group.
+                if (token.type.includes("string-2"))
+                    break;
+            }
 
             expression = token.string + expression;
             expressionStartPosition.ch = token.start;

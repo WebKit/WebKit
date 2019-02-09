@@ -1,5 +1,19 @@
 2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Debugger Popover should work with value in template string `${identifier}`
+        https://bugs.webkit.org/show_bug.cgi?id=194459
+        <rdar://problem/47932564>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WI.CodeMirrorTokenTrackingController.prototype._processJavaScriptExpression):
+        When walking backwards to get the full expression we were walking outside
+        of the interpolation group `outside ${inside}`. Stop walking backwards once
+        we cross the boundary.
+
+2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Import / Export Heap Snapshots
         https://bugs.webkit.org/show_bug.cgi?id=194448
         <rdar://problem/47928093>
