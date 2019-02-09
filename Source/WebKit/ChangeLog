@@ -1,3 +1,14 @@
+2019-02-08  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative fix for Mojave API test after r241223
+        https://bugs.webkit.org/show_bug.cgi?id=194427
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCInitializationHandler):
+        (WebKit::XPCServiceMain):
+        Set the __APPLEEVENTSSERVICENAME environment variable before handling any xpc messages like we used to.
+        I'll worry about making things right in the daemon later.
+
 2019-02-08  Chris Dumez  <cdumez@apple.com>
 
         [WK2][macOS] Avoid creating new CVDisplayLink objects for each WebProcess

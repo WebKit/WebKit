@@ -108,19 +108,6 @@ void XPCInitializationHandler(xpc_object_t event)
 
     static std::once_flag once;
     std::call_once(once, [event] {
-#if PLATFORM(MAC)
-        // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
-        setenv("__APPLEEVENTSSERVICENAME", "", 1);
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-        // We don't need to talk to the dock.
-        if (Class nsApplicationClass = NSClassFromString(@"NSApplication")) {
-            if ([nsApplicationClass respondsToSelector:@selector(_preventDockConnections)])
-                [nsApplicationClass _preventDockConnections];
-        }
-#endif
-#endif
-
 #if defined(__i386__)
         // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
         // it's the only of the XPC services that are 32-bit. We should come up with a more targeted #if check.
@@ -169,6 +156,19 @@ void XPCInitializationHandler(xpc_object_t event)
 
 int XPCServiceMain(int, const char**)
 {
+#if PLATFORM(MAC)
+    // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
+    setenv("__APPLEEVENTSSERVICENAME", "", 1);
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // We don't need to talk to the dock.
+    if (Class nsApplicationClass = NSClassFromString(@"NSApplication")) {
+        if ([nsApplicationClass respondsToSelector:@selector(_preventDockConnections)])
+            [nsApplicationClass _preventDockConnections];
+    }
+#endif
+#endif
+
     xpc_main([] (xpc_connection_t peer) {
         XPCEventHandler(peer, AuxiliaryProcessType::XPCService);
     });
