@@ -230,6 +230,7 @@ private:
                         m_insertionSet.insertIntConstant(m_index, expectedValue, mask(width)));
                     
                     atomic->child(0) = maskedExpectedValue;
+                    m_changed = true;
                 }
                 
                 if (atomic->opcode() == AtomicStrongCAS) {
@@ -238,9 +239,9 @@ private:
                         m_insertionSet.insertClone(m_index, atomic));
                     
                     atomic->replaceWithIdentity(newValue);
+                    m_changed = true;
                 }
-                
-                m_changed = true;
+
                 break;
             }
                 

@@ -1,3 +1,14 @@
+2019-02-08  Robin Morisset  <rmorisset@apple.com>
+
+        B3LowerMacros wrongly sets m_changed to true in the case of AtomicWeakCAS on x86
+        https://bugs.webkit.org/show_bug.cgi?id=194460
+
+        Reviewed by Mark Lam.
+
+        Trivial fix, should already be covered by testAtomicWeakCAS in testb3.cpp.
+
+        * b3/B3LowerMacros.cpp:
+
 2019-02-08  Mark Lam  <mark.lam@apple.com>
 
         Use maxSingleCharacterString in comparisons instead of literal constants.
