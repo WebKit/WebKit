@@ -37,6 +37,50 @@ JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
 bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 size_t normalizePrototypeChain(CallFrame*, JSCell*, bool& sawPolyProto);
 
+// This is a lower bound on the extra memory we expect to write if we were to allocate a rope instead of copying.
+// Note, it doesn't differentiate between 8 and 16-bit strings because 16-bit strings are relatively rare.
+constexpr unsigned minRopeStringLength = sizeof(JSRopeString);
+
+ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, JSString* s2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length1 = u1.length();
+    if (!length1)
+        return s2;
+    unsigned length2 = s2->length();
+    if (!length2)
+        return jsString(&vm, u1);
+
+    if (length1 + length2 >= minRopeStringLength)
+        return jsString(exec, jsString(&vm, u1), s2);
+
+    const String& u2 = s2->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSString::create(vm, makeString(u1, u2).releaseImpl().releaseNonNull());
+}
+
+ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, const String& u2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length1 = s1->length();
+    if (!length1)
+        return jsString(&vm, u2);
+    unsigned length2 = u2.length();
+    if (!length2)
+        return s1;
+
+    if (length1 + length2 >= minRopeStringLength)
+        return jsString(exec, s1, jsString(&vm, u2));
+
+    const String& u1 = s1->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSString::create(vm, makeString(u1, u2).releaseImpl().releaseNonNull());
+}
+
 ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
     VM& vm = exec->vm();
@@ -54,7 +98,14 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
         return nullptr;
     }
 
-    return JSRopeString::create(vm, s1, s2);
+    if (length1 + length2 >= minRopeStringLength)
+        return JSRopeString::create(vm, s1, s2);
+
+    const String& u1 = s1->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    const String& u2 = s2->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSString::create(vm, makeString(u1, u2).releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JSString* s3)
@@ -79,7 +130,17 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JS
         throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
-    return JSRopeString::create(vm, s1, s2, s3);
+
+    if (length1 + length2 + length3 >= minRopeStringLength)
+        return JSRopeString::create(vm, s1, s2, s3);
+
+    const String& u1 = s1->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    const String& u2 = s2->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    const String& u3 = s3->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSString::create(vm, makeString(u1, u2, u3).releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
@@ -109,7 +170,10 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
         return nullptr;
     }
 
-    return JSRopeString::create(*vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
+    if (length1 + length2 + length3 >= minRopeStringLength)
+        return JSRopeString::create(*vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
+
+    return JSString::create(*vm, makeString(u1, u2, u3).releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)
@@ -325,16 +389,31 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
 //    13962   Add case: 5 3
 //    4000    Add case: 3 5
 
+
+ALWAYS_INLINE JSValue jsAddNonNumber(CallFrame* callFrame, JSValue v1, JSValue v2)
+{
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(!v1.isNumber() || !v2.isNumber());
+
+    if (v1.isString() && !v2.isObject()) {
+        if (v2.isString())
+            RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), asString(v2)));
+        String s2 = v2.toWTFString(callFrame);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), s2));
+    }
+
+    // All other cases are pretty uncommon
+    RELEASE_AND_RETURN(scope, jsAddSlowCase(callFrame, v1, v2));
+}
+
 ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
     if (v1.isNumber() && v2.isNumber())
         return jsNumber(v1.asNumber() + v2.asNumber());
         
-    if (v1.isString() && !v2.isObject())
-        return jsString(callFrame, asString(v1), v2.toString(callFrame));
-
-    // All other cases are pretty uncommon
-    return jsAddSlowCase(callFrame, v1, v2);
+    return jsAddNonNumber(callFrame, v1, v2);
 }
 
 ALWAYS_INLINE JSValue jsSub(ExecState* exec, JSValue v1, JSValue v2)

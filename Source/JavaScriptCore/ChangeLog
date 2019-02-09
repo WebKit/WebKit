@@ -1,3 +1,28 @@
+2019-02-08  Keith Miller  <keith_miller@apple.com>
+
+        We should only make rope strings when concatenating strings long enough.
+        https://bugs.webkit.org/show_bug.cgi?id=194465
+
+        Reviewed by Saam Barati.
+
+        This patch stops us from allocating a rope string if the resulting
+        rope would be smaller than the size of the JSRopeString object we
+        would need to allocate.
+
+        This patch also adds paths so that we don't unnecessarily allocate
+        JSString cells for primitives we are going to concatenate with a
+        string anyway.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSString.h:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsAdd):
+
 2019-02-08  Saam barati  <sbarati@apple.com>
 
         Nodes that rely on being dominated by CheckInBounds should have a child edge to it

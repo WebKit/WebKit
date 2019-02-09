@@ -486,6 +486,8 @@ private:
 
 
     friend JSString* jsString(ExecState*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, const String&, JSString*);
+    friend JSString* jsString(ExecState*, JSString*, const String&);
     friend JSString* jsString(ExecState*, JSString*, JSString*, JSString*);
     friend JSString* jsString(ExecState*, const String&, const String&, const String&);
 };
