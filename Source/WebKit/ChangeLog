@@ -1,3 +1,41 @@
+2019-02-08  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][macOS] Avoid creating new CVDisplayLink objects for each WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=194463
+
+        Reviewed by Tim Horton.
+
+        Avoid creating new CVDisplayLink objects for each WebProcess. We really only need one per
+        display, creating such object is expensive and it is even worse in a PSON world where we
+        swap process on navigation.
+
+        This patch moves the DisplayLink storing from WebProcessProxy to WebProcessPool. Also,
+        a DisplayLink can now be associated to several IPC connections instead of having a 1:1
+        mapping. When a DisplayLink no longer has any observers, we now merely stop it instead
+        of destroying it.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::startDisplayLink):
+        (WebKit::WebProcessPool::stopDisplayLink):
+        (WebKit::WebProcessPool::stopDisplayLinks):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::processWillShutDown):
+        (WebKit::WebProcessProxy::shutDown):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        (WebKit::DisplayLink::removeObservers):
+        (WebKit::DisplayLink::hasObservers const):
+        (WebKit::DisplayLink::displayLinkCallback):
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::startDisplayLink):
+        (WebKit::WebProcessProxy::stopDisplayLink):
+
 2019-02-08  Alexander Mikhaylenko  <exalm7659@gmail.com>
 
         [GTK] Implement back/forward touchpad gesture

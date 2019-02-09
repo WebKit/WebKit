@@ -71,6 +71,10 @@ OBJC_CLASS NSObject;
 OBJC_CLASS NSString;
 #endif
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+#include "DisplayLink.h"
+#endif
+
 namespace API {
 class AutomationClient;
 class CustomProtocolManagerClient;
@@ -206,6 +210,12 @@ public:
     void resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&&);
     void clearPluginClientPolicies();
     const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies() const { return m_pluginLoadClientPolicies; }
+#endif
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    void startDisplayLink(IPC::Connection&, unsigned observerID, uint32_t displayID);
+    void stopDisplayLink(IPC::Connection&, unsigned observerID, uint32_t displayID);
+    void stopDisplayLinks(IPC::Connection&);
 #endif
 
     void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
@@ -729,6 +739,10 @@ private:
     HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     bool m_sandboxEnabled { false };

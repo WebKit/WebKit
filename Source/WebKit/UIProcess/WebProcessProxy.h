@@ -50,10 +50,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-#include "DisplayLink.h"
-#endif
-
 namespace API {
 class Navigation;
 class PageConfiguration;
@@ -420,10 +416,6 @@ private:
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
-#endif
-
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
-    Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
 #endif
 };
 

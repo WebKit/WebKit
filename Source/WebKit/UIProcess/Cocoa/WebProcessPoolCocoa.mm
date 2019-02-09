@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -467,6 +467,37 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
     _CFNetworkResetHSTSHostsSinceDate(nullptr, (__bridge CFDateRef)startDate);
     _CFNetworkResetHSTSHostsSinceDate(privateBrowsingSession(), (__bridge CFDateRef)startDate);
 }
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+void WebProcessPool::startDisplayLink(IPC::Connection& connection, unsigned observerID, uint32_t displayID)
+{
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            displayLink->addObserver(connection, observerID);
+            return;
+        }
+    }
+    auto displayLink = std::make_unique<DisplayLink>(displayID);
+    displayLink->addObserver(connection, observerID);
+    m_displayLinks.append(WTFMove(displayLink));
+}
+
+void WebProcessPool::stopDisplayLink(IPC::Connection& connection, unsigned observerID, uint32_t displayID)
+{
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            displayLink->removeObserver(connection, observerID);
+            return;
+        }
+    }
+}
+
+void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
+{
+    for (auto& displayLink : m_displayLinks)
+        displayLink->removeObservers(connection);
+}
+#endif
 
 // FIXME: Deprecated. Left here until a final decision is made.
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)

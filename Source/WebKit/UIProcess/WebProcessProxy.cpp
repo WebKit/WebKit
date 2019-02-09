@@ -162,6 +162,11 @@ WebProcessProxy::~WebProcessProxy()
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    if (state() == State::Running)
+        processPool().stopDisplayLinks(*connection());
+#endif
+
     if (m_webConnection)
         m_webConnection->invalidate();
 
@@ -239,6 +244,10 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 {
     ASSERT_UNUSED(connection, this->connection() == &connection);
+
+#if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    processPool().stopDisplayLinks(connection);
+#endif
 
     for (auto& page : m_pageMap.values())
         page->webProcessWillShutDown();
