@@ -13036,8 +13036,8 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
 
 void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 {
-    SpeculateCellOperand base(this, node->child1());
-    SpeculateStrictInt32Operand index(this, node->child2());
+    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
     GPRTemporary result(this);
 
     GPRReg baseGPR = base.gpr();
@@ -13049,8 +13049,8 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
     switch (mode.type()) {
     case Array::Int32:
     case Array::Contiguous: {
-        ASSERT(!!node->child3());
-        StorageOperand storage(this, node->child3());
+        ASSERT(!!m_graph.varArgChild(node, 2));
+        StorageOperand storage(this, m_graph.varArgChild(node, 2));
         GPRTemporary scratch(this);
 
         GPRReg storageGPR = storage.gpr();
@@ -13073,8 +13073,8 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         break;
     }
     case Array::Double: {
-        ASSERT(!!node->child3());
-        StorageOperand storage(this, node->child3());
+        ASSERT(!!m_graph.varArgChild(node, 2));
+        StorageOperand storage(this, m_graph.varArgChild(node, 2));
         FPRTemporary scratch(this);
         FPRReg scratchFPR = scratch.fpr();
         GPRReg storageGPR = storage.gpr();
@@ -13091,8 +13091,8 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         break;
     }
     case Array::ArrayStorage: {
-        ASSERT(!!node->child3());
-        StorageOperand storage(this, node->child3());
+        ASSERT(!!m_graph.varArgChild(node, 2));
+        StorageOperand storage(this, m_graph.varArgChild(node, 2));
         GPRTemporary scratch(this);
 
         GPRReg storageGPR = storage.gpr();

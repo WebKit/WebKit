@@ -1,3 +1,35 @@
+2019-02-08  Saam barati  <sbarati@apple.com>
+
+        Nodes that rely on being dominated by CheckInBounds should have a child edge to it
+        https://bugs.webkit.org/show_bug.cgi?id=194334
+        <rdar://problem/47844327>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSSALoweringPhase.cpp:
+        (JSC::DFG::SSALoweringPhase::lowerBoundsCheck):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckInBounds):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(CodeBlock) more

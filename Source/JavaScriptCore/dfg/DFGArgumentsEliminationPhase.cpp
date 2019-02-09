@@ -770,14 +770,15 @@ private:
                                 arg += inlineCallFrame->stackOffset;
                             data = m_graph.m_stackAccessData.add(arg, FlushedJSValue);
                             
+                            Node* check = nullptr;
                             if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
-                                insertionSet.insertNode(
+                                check = insertionSet.insertNode(
                                     nodeIndex, SpecNone, CheckInBounds, node->origin,
                                     m_graph.varArgChild(node, 1), Edge(getArrayLength(candidate), Int32Use));
                             }
                             
                             result = insertionSet.insertNode(
-                                nodeIndex, node->prediction(), GetStack, node->origin, OpInfo(data));
+                                nodeIndex, node->prediction(), GetStack, node->origin, OpInfo(data), Edge(check, UntypedUse));
                         }
                     }
                     

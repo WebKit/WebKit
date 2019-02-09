@@ -340,7 +340,9 @@ private:
                 JSValue right = m_state.forNode(node->child2()).value();
                 if (left && right && left.isInt32() && right.isInt32()
                     && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
-                    node->remove(m_graph);
+
+                    Node* zero = m_insertionSet.insertConstant(indexInBlock, node->origin, jsNumber(0));
+                    node->convertToIdentityOn(zero);
                     eliminated = true;
                     break;
                 }
@@ -409,10 +411,11 @@ private:
                 
                 Node* length = emitCodeToGetArgumentsArrayLength(
                     m_insertionSet, arguments, indexInBlock, node->origin);
-                m_insertionSet.insertNode(
+                Node* check = m_insertionSet.insertNode(
                     indexInBlock, SpecNone, CheckInBounds, node->origin,
                     node->child2(), Edge(length, Int32Use));
                 node->convertToGetStack(data);
+                node->child1() = Edge(check, UntypedUse);
                 eliminated = true;
                 break;
             }

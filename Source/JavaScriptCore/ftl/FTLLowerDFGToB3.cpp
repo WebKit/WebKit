@@ -3876,6 +3876,10 @@ private:
         speculate(
             OutOfBounds, noValue(), 0,
             m_out.aboveOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+
+        // Even though we claim to have JSValue result, no user of us should
+        // depend on our value. Users of this node just need to maintain that
+        // we dominate them.
     }
     
     void compileGetByVal()
@@ -10422,12 +10426,13 @@ private:
     
     void compileHasIndexedProperty()
     {
+        LValue base = lowCell(m_graph.varArgChild(m_node, 0));
+        LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
         case Array::Contiguous: {
-            LValue base = lowCell(m_node->child1());
-            LValue index = lowInt32(m_node->child2());
-            LValue storage = lowStorage(m_node->child3());
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
             IndexedAbstractHeap& heap = m_node->arrayMode().type() == Array::Int32 ?
@@ -10448,7 +10453,7 @@ private:
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
             LValue checkHoleResultValue =
-                m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_node->child2())));
+                m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
 
@@ -10462,9 +10467,7 @@ private:
             return;
         }
         case Array::Double: {
-            LValue base = lowCell(m_node->child1());
-            LValue index = lowInt32(m_node->child2());
-            LValue storage = lowStorage(m_node->child3());
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
             
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
@@ -10483,7 +10486,7 @@ private:
             } else
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
-            LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_node->child2()));
+            LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
@@ -10499,9 +10502,7 @@ private:
         }
 
         case Array::ArrayStorage: {
-            LValue base = lowCell(m_node->child1());
-            LValue index = lowInt32(m_node->child2());
-            LValue storage = lowStorage(m_node->child3());
+            LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
 
             LBasicBlock slowCase = m_out.newBlock();
@@ -10519,7 +10520,7 @@ private:
                 lastNext = m_out.insertNewBlocksBefore(slowCase);
 
             LValue checkHoleResultValue =
-                m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_node->child2())));
+                m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
             m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
 
@@ -10534,8 +10535,6 @@ private:
         }
 
         default: {
-            LValue base = lowCell(m_node->child1());
-            LValue index = lowInt32(m_node->child2());
             LValue internalMethodType = m_out.constInt32(static_cast<int32_t>(m_node->internalMethodType()));
             setBoolean(m_out.notZero64(vmCall(Int64, m_out.operation(operationHasIndexedPropertyByInt), m_callFrame, base, index, internalMethodType)));
             break;

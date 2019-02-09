@@ -3458,11 +3458,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckInBounds: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
-        if (left && right && left.isInt32() && right.isInt32()
-            && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32())) {
+        if (left && right && left.isInt32() && right.isInt32() && static_cast<uint32_t>(left.asInt32()) < static_cast<uint32_t>(right.asInt32()))
             m_state.setFoundConstants(true);
-            break;
-        }
+
+        // We claim we result in Int32. It's not really important what our result is (though we
+        // don't want to claim we may result in the empty value), other nodes with data flow edges
+        // to us just do that to maintain the invariant that they can't be hoisted higher than us.
+        // So we just arbitrarily pick Int32. In some ways, StorageResult may be the more correct
+        // thing to do here. We pick NodeResultJS because it makes converting this to an identity
+        // easier.
+        setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
         
