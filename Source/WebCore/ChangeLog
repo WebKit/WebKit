@@ -1,3 +1,31 @@
+2019-02-08  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Optimize ResourceResponse::platformLazyInit()
+        https://bugs.webkit.org/show_bug.cgi?id=194438
+
+        Reviewed by Alex Christensen.
+
+        Optimize ResourceResponse::platformLazyInit(). Most of the CPU time currently goes into getting the
+        HTTP headers from CFNetwork:
+        """
+        Sample Count, Samples %, CPU %, Symbol
+        46, 0.0%, 0.0%, WebCore::initializeHTTPHeaders(WebCore::OnlyCommonHeaders, NSHTTPURLResponse*, WebCore::HTTPHeaderMap&) (in WebCore)
+        34, 0.0%, 0.0%,     HTTPHeaderDict::copyAsOrdinaryDict(__CFAllocator const*) const (in CFNetwork)
+        11, 0.0%, 0.0%,     CFDictionaryApplyFunction (in CoreFoundation)
+        """
+
+        We currently have 2 levels of initialization: CommonFieldsOnly & AllFields. With WebKit2, most ResourceResponses get sent over IPC
+        and thus end up getting initialized twice, once with CommonFieldsOnly and then with AllFields.
+        This would cause us to call the expensive HTTPHeaderDict::copyAsOrdinaryDict() twice instead of once, simply to initialize the common
+        HTTP headers first and then the uncommon ones later.
+
+        This patch updates ResourceResponse::platformLazyInit() to initialize all HTTP headers at once, as soon as CommonFieldsOnly
+        initialization is requested, so that we no longer copy all HTTP headers twice.
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::initializeHTTPHeaders):
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2019-02-08  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Build fix for MTLStorageMode availability on different Cocoa platforms
