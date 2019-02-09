@@ -79,6 +79,7 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                 let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                snapshot.snapshotStringData = snapshotStringData;
                 WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
             });
         });

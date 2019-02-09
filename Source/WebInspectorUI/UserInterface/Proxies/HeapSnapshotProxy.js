@@ -25,7 +25,7 @@
 
 WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 {
-    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories)
+    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories, imported)
     {
         super();
 
@@ -37,6 +37,8 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
         this._totalObjectCount = totalObjectCount;
         this._liveSize = liveSize;
         this._categories = Map.fromObject(categories);
+        this._imported = imported;
+        this._snapshotStringData = null;
 
         console.assert(!this.invalid);
 
@@ -49,8 +51,8 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 
     static deserialize(objectId, serializedSnapshot)
     {
-        let {identifier, title, totalSize, totalObjectCount, liveSize, categories} = serializedSnapshot;
-        return new WI.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories);
+        let {identifier, title, totalSize, totalObjectCount, liveSize, categories, imported} = serializedSnapshot;
+        return new WI.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories, imported);
     }
 
     static invalidateSnapshotProxies()
@@ -73,7 +75,18 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
     get totalObjectCount() { return this._totalObjectCount; }
     get liveSize() { return this._liveSize; }
     get categories() { return this._categories; }
+    get imported() { return this._imported; }
     get invalid() { return this._proxyObjectId === 0; }
+
+    get snapshotStringData()
+    {
+        return this._snapshotStringData;
+    }
+
+    set snapshotStringData(data)
+    {
+        this._snapshotStringData = data;
+    }
 
     updateForCollectionEvent(event)
     {

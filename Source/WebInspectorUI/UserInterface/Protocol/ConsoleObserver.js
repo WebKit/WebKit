@@ -53,6 +53,7 @@ WI.ConsoleObserver = class ConsoleObserver
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshot(snapshotStringData, title || null, ({objectId, snapshot: serializedSnapshot}) => {
             let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+            snapshot.snapshotStringData = snapshotStringData;
             WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
         });
     }

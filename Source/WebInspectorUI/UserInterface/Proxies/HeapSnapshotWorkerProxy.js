@@ -66,6 +66,12 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
         this.performAction("createSnapshotDiff", ...arguments);
     }
 
+    createImportedSnapshot(snapshotStringData, title, callback)
+    {
+        const imported = true;
+        this.performAction("createSnapshot", snapshotStringData, title, imported, callback);
+    }
+
     // Public
 
     performAction(actionName)

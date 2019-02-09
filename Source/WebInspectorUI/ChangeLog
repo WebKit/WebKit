@@ -1,5 +1,90 @@
 2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Import / Export Heap Snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=194448
+        <rdar://problem/47928093>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Proxies/HeapSnapshotProxy.js:
+        (WI.HeapSnapshotProxy):
+        (WI.HeapSnapshotProxy.deserialize):
+        (WI.HeapSnapshotProxy.prototype.get imported):
+        (WI.HeapSnapshotProxy.prototype.get snapshotStringData):
+        (WI.HeapSnapshotProxy.prototype.set snapshotStringData):
+        Include an "imported" state on the HeapSnapshot and allow for
+        stashing the snapshotStringData on the main thread side.
+
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js:
+        (WI.HeapSnapshotWorkerProxy.prototype.createImportedSnapshot):
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshotWorker.js:
+        (HeapSnapshotWorker.prototype.clearSnapshots):
+        (HeapSnapshotWorker.prototype.createSnapshot):
+        Provide a specialized way to create an imported HeapSnapshot.
+        Track imported snapshots separately since they won't want to
+        be searched for live/dead objects due to active recording GCs.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot):
+        (HeapSnapshot.updateCategoriesAndMetadata):
+        (HeapSnapshot.allocationBucketCounts):
+        (HeapSnapshot.instancesWithClassName):
+        (HeapSnapshot.prototype.nodeWithIdentifier):
+        (HeapSnapshot.prototype.dominatedNodes):
+        (HeapSnapshot.prototype.retainedNodes):
+        (HeapSnapshot.prototype.retainers):
+        (HeapSnapshot.prototype.updateDeadNodesAndGatherCollectionData):
+        (HeapSnapshot.prototype.serialize):
+        (HeapSnapshot.prototype.serializeNode):
+        (HeapSnapshot.prototype._buildPostOrderIndexes):
+        (HeapSnapshot.prototype._buildDominatorIndexes):
+        (HeapSnapshot.prototype._buildRetainedSizes):
+        (HeapSnapshot.prototype._gcRootPathes.visitNode):
+        (HeapSnapshot.prototype._gcRootPathes):
+        Construct a HeapSnapshot knowinng whether or not it is imported.
+        Imported snapshots may be the "GCDebugging" snapshot type which
+        differs from "Inspector" by the number of node fields. So keep
+        the node field count a member instead of a global constant
+        in order to work with both snapshot types.
+
+        * UserInterface/Models/HeapAllocationsInstrument.js:
+        (WI.HeapAllocationsInstrument.prototype._takeHeapSnapshot):
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WI.ConsoleObserver.prototype.heapSnapshot):
+        * UserInterface/Protocol/HeapObserver.js:
+        (WI.HeapObserver.prototype.trackingStart):
+        (WI.HeapObserver.prototype.trackingComplete):
+        Stash the original string JSON data on the main thread side
+        where we already have the data.
+
+        * UserInterface/Views/HeapAllocationsTimelineOverviewGraph.js:
+        (WI.HeapAllocationsTimelineOverviewGraph.prototype.layout):
+        Don't show [S] icons for imported snapshots with no timestamp.
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        (WI.HeapAllocationsTimelineView.prototype.get navigationItems):
+        (WI.HeapAllocationsTimelineView.prototype._importButtonNavigationItemClicked):
+        (WI.HeapAllocationsTimelineView.prototype._takeHeapSnapshotClicked):
+        Import button that just creates a new snapshot.
+
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView):
+        (WI.HeapSnapshotContentView.prototype.get navigationItems):
+        (WI.HeapSnapshotContentView.prototype.get supportsSave):
+        (WI.HeapSnapshotContentView.prototype.get saveData):
+        (WI.HeapSnapshotContentView.prototype._exportSnapshot):
+        Export button that saves the original data.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForRecord):
+        Specialized display string for imported snapshots.
+
+2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Add Debug setting to show Internal Object Classes in Heap Snapshot
         https://bugs.webkit.org/show_bug.cgi?id=194445
 

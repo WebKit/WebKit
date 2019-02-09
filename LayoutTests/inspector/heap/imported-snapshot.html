@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot.imported");
+
+    suite.addTestCase({
+        name: "HeapSnapshot.imported",
+        description: "createSnapshot() and createImportedSnapshot() differences.",
+        test(resolve, reject) {
+            HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
+                InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
+
+                const importedTitle = "Imported Snapshot";
+                let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    snapshot.snapshotStringData = snapshotStringData;
+                    workerProxy.createImportedSnapshot(snapshotStringData, importedTitle, ({objectId, snapshot: serializedSnapshot}) => {
+                        let importedSnapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        importedSnapshot.snapshotStringData = snapshotStringData;
+
+                        InspectorTest.expectFalse(snapshot.imported, "Normal snapshot is not imported.");
+                        InspectorTest.expectNull(snapshot.title, "Normal snapshot title should not be set.");
+                        InspectorTest.expectTrue(importedSnapshot.imported, "Imported snapshot is imported.");
+                        InspectorTest.expectEqual(importedSnapshot.title, importedTitle, "Imported snapshot title should be set.");
+                        resolve();
+                    });
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for an imported HeapSnapshot.</p>
+</body>
+</html>

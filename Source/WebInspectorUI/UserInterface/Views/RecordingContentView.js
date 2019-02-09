@@ -147,8 +147,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         return {customSaveHandler: () => { this._exportRecording(); }};
     }
 
-    // Protected
-
     initialLayout()
     {
         let previewHeader = this.element.appendChild(document.createElement("header"));

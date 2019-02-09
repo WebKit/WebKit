@@ -36,6 +36,7 @@ const nodeIdOffset = 0;
 const nodeSizeOffset = 1;
 const nodeClassNameOffset = 2;
 const nodeInternalOffset = 3;
+const gcDebuggingNodeFieldCount = 7;
 
 // edges
 // [<0:fromId>, <1:toId>, <2:typeTableIndex>, <3:edgeDataIndexOrEdgeNameIndex>]
@@ -73,21 +74,24 @@ let nextSnapshotIdentifier = 1;
 
 HeapSnapshot = class HeapSnapshot
 {
-    constructor(objectId, snapshotDataString, title = null)
+    constructor(objectId, snapshotDataString, title = null, imported = false)
     {
         this._identifier = nextSnapshotIdentifier++;
         this._objectId = objectId;
         this._title = title;
+        this._imported = imported;
 
         let json = JSON.parse(snapshotDataString);
         snapshotDataString = null;
 
         let {version, type, nodes, nodeClassNames, edges, edgeTypes, edgeNames} = json;
         console.assert(version === 1, "Expect JavaScriptCore Heap Snapshot version 1");
-        console.assert(!type || type === "Inspector", "Expect an Inspector Heap Snapshot");
+        console.assert(!type || (type === "Inspector" || type === "GCDebugging"), "Expect an Inspector / GCDebugging Heap Snapshot");
+
+        this._nodeFieldCount = type === "GCDebugging" ? gcDebuggingNodeFieldCount : nodeFieldCount;
 
         this._nodes = nodes;
-        this._nodeCount = nodes.length / nodeFieldCount;
+        this._nodeCount = nodes.length / this._nodeFieldCount;
 
         this._edges = edges;
         this._edgeCount = edges.length / edgeFieldCount;
@@ -99,8 +103,8 @@ HeapSnapshot = class HeapSnapshot
         this._totalSize = 0;
         this._nodeIdentifierToOrdinal = new Map; // <node identifier> => nodeOrdinal
         this._lastNodeIdentifier = 0;
-        for (let nodeIndex = 0; nodeIndex < nodes.length; nodeIndex += nodeFieldCount) {
-            let nodeOrdinal = nodeIndex / nodeFieldCount;
+        for (let nodeIndex = 0; nodeIndex < nodes.length; nodeIndex += this._nodeFieldCount) {
+            let nodeOrdinal = nodeIndex / this._nodeFieldCount;
             let nodeIdentifier = nodes[nodeIndex + nodeIdOffset];
             this._nodeIdentifierToOrdinal.set(nodeIdentifier, nodeOrdinal);
             this._totalSize += nodes[nodeIndex + nodeSizeOffset];
@@ -151,9 +155,9 @@ HeapSnapshot = class HeapSnapshot
         let nodeOrdinalIsDead = snapshot._nodeOrdinalIsDead;
 
         // Skip the <root> node.
-        let firstNodeIndex = nodeFieldCount;
+        let firstNodeIndex = snapshot._nodeFieldCount;
         let firstNodeOrdinal = 1;
-        for (let nodeIndex = firstNodeIndex, nodeOrdinal = firstNodeOrdinal; nodeIndex < nodes.length; nodeIndex += nodeFieldCount, nodeOrdinal++) {
+        for (let nodeIndex = firstNodeIndex, nodeOrdinal = firstNodeOrdinal; nodeIndex < nodes.length; nodeIndex += snapshot._nodeFieldCount, nodeOrdinal++) {
             if (allowNodeIdentifierCallback && !allowNodeIdentifierCallback(nodes[nodeIndex + nodeIdOffset]))
                 continue;
 
@@ -191,10 +195,10 @@ HeapSnapshot = class HeapSnapshot
         let nodes = snapshot._nodes;
 
         // Skip the <root> node.
-        let firstNodeIndex = nodeFieldCount;
+        let firstNodeIndex = snapshot._nodeFieldCount;
 
     outer:
-        for (let nodeIndex = firstNodeIndex; nodeIndex < nodes.length; nodeIndex += nodeFieldCount) {
+        for (let nodeIndex = firstNodeIndex; nodeIndex < nodes.length; nodeIndex += snapshot._nodeFieldCount) {
             if (allowNodeIdentifierCallback && !allowNodeIdentifierCallback(nodes[nodeIndex + nodeIdOffset]))
                 continue;
 
@@ -219,9 +223,9 @@ HeapSnapshot = class HeapSnapshot
         let nodeClassNamesTable = snapshot._nodeClassNamesTable;
 
         // Skip the <root> node.
-        let firstNodeIndex = nodeFieldCount;
+        let firstNodeIndex = snapshot._nodeFieldCount;
         let firstNodeOrdinal = 1;
-        for (let nodeIndex = firstNodeIndex, nodeOrdinal = firstNodeOrdinal; nodeIndex < nodes.length; nodeIndex += nodeFieldCount, nodeOrdinal++) {
+        for (let nodeIndex = firstNodeIndex, nodeOrdinal = firstNodeOrdinal; nodeIndex < nodes.length; nodeIndex += snapshot._nodeFieldCount, nodeOrdinal++) {
             if (allowNodeIdentifierCallback && !allowNodeIdentifierCallback(nodes[nodeIndex + nodeIdOffset]))
                 continue;
 
@@ -253,7 +257,7 @@ HeapSnapshot = class HeapSnapshot
     nodeWithIdentifier(nodeIdentifier)
     {
         let nodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
-        let nodeIndex = nodeOrdinal * nodeFieldCount;
+        let nodeIndex = nodeOrdinal * this._nodeFieldCount;
         return this.serializeNode(nodeIndex);
     }
 
@@ -297,7 +301,7 @@ HeapSnapshot = class HeapSnapshot
         let targetNodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
         for (let nodeOrdinal = 0; nodeOrdinal < this._nodeCount; ++nodeOrdinal) {
             if (this._nodeOrdinalToDominatorNodeOrdinal[nodeOrdinal] === targetNodeOrdinal)
-                dominatedNodes.push(nodeOrdinal * nodeFieldCount);
+                dominatedNodes.push(nodeOrdinal * this._nodeFieldCount);
         }
 
         return dominatedNodes.map(this.serializeNode, this);
@@ -313,7 +317,7 @@ HeapSnapshot = class HeapSnapshot
         for (; this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier; edgeIndex += edgeFieldCount) {
             let toNodeIdentifier = this._edges[edgeIndex + edgeToIdOffset];
             let toNodeOrdinal = this._nodeIdentifierToOrdinal.get(toNodeIdentifier);
-            let toNodeIndex = toNodeOrdinal * nodeFieldCount;
+            let toNodeIndex = toNodeOrdinal * this._nodeFieldCount;
             retainedNodes.push(toNodeIndex);
             edges.push(edgeIndex);
         }
@@ -334,7 +338,7 @@ HeapSnapshot = class HeapSnapshot
         let incomingEdgeIndexEnd = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal + 1];
         for (let edgeIndex = incomingEdgeIndex; edgeIndex < incomingEdgeIndexEnd; ++edgeIndex) {
             let fromNodeOrdinal = this._incomingNodes[edgeIndex];
-            let fromNodeIndex = fromNodeOrdinal * nodeFieldCount;
+            let fromNodeIndex = fromNodeOrdinal * this._nodeFieldCount;
             retainers.push(fromNodeIndex);
             edges.push(this._incomingEdges[edgeIndex]);
         }
@@ -347,6 +351,9 @@ HeapSnapshot = class HeapSnapshot
 
     updateDeadNodesAndGatherCollectionData(snapshots)
     {
+        console.assert(!this._imported, "Should never use an imported snapshot to modify snapshots");
+        console.assert(snapshots.every((x) => !x._imported), "Should never modify nodes of imported snapshots");
+
         let previousSnapshotIndex = snapshots.indexOf(this) - 1;
         let previousSnapshot = snapshots[previousSnapshotIndex];
         if (!previousSnapshot)
@@ -356,7 +363,7 @@ HeapSnapshot = class HeapSnapshot
 
         // All of the node identifiers that could have existed prior to this snapshot.
         let known = new Map;
-        for (let nodeIndex = 0; nodeIndex < this._nodes.length; nodeIndex += nodeFieldCount) {
+        for (let nodeIndex = 0; nodeIndex < this._nodes.length; nodeIndex += this._nodeFieldCount) {
             let nodeIdentifier = this._nodes[nodeIndex + nodeIdOffset];
             if (nodeIdentifier > lastNodeIdentifier)
                 continue;
@@ -365,7 +372,7 @@ HeapSnapshot = class HeapSnapshot
 
         // Determine which node identifiers have since been deleted.
         let collectedNodesList = [];
-        for (let nodeIndex = 0; nodeIndex < previousSnapshot._nodes.length; nodeIndex += nodeFieldCount) {
+        for (let nodeIndex = 0; nodeIndex < previousSnapshot._nodes.length; nodeIndex += this._nodeFieldCount) {
             let nodeIdentifier = previousSnapshot._nodes[nodeIndex + nodeIdOffset];
             let wasDeleted = !known.has(nodeIdentifier);
             if (wasDeleted)
@@ -403,20 +410,21 @@ HeapSnapshot = class HeapSnapshot
             totalObjectCount: this._nodeCount - 1, // <root>.
             liveSize: this._liveSize,
             categories: this._categories,
+            imported: this._imported,
         };
     }
 
     serializeNode(nodeIndex)
     {
-        console.assert((nodeIndex % nodeFieldCount) === 0, "Invalid nodeIndex to serialize");
+        console.assert((nodeIndex % this._nodeFieldCount) === 0, "Invalid nodeIndex to serialize");
 
         let nodeIdentifier = this._nodes[nodeIndex + nodeIdOffset];
-        let nodeOrdinal = nodeIndex / nodeFieldCount;
+        let nodeOrdinal = nodeIndex / this._nodeFieldCount;
         let edgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
         let hasChildren = this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier;
 
         let dominatorNodeOrdinal = this._nodeOrdinalToDominatorNodeOrdinal[nodeOrdinal];
-        let dominatorNodeIndex = dominatorNodeOrdinal * nodeFieldCount;
+        let dominatorNodeIndex = dominatorNodeOrdinal * this._nodeFieldCount;
         let dominatorNodeIdentifier = this._nodes[dominatorNodeIndex + nodeIdOffset];
 
         return {
@@ -533,7 +541,7 @@ HeapSnapshot = class HeapSnapshot
 
         while (stackTop >= 0) {
             let nodeOrdinal = stackNodes[stackTop];
-            let nodeIdentifier = this._nodes[(nodeOrdinal * nodeFieldCount) + nodeIdOffset];
+            let nodeIdentifier = this._nodes[(nodeOrdinal * this._nodeFieldCount) + nodeIdOffset];
             let edgeIndex = stackEdges[stackTop];
 
             if (this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier) {
@@ -657,7 +665,7 @@ HeapSnapshot = class HeapSnapshot
                     changed = true;
 
                     let outgoingEdgeIndex = this._nodeOrdinalToFirstOutgoingEdge[nodeOrdinal];
-                    let nodeIdentifier = this._nodes[(nodeOrdinal * nodeFieldCount) + nodeIdOffset];
+                    let nodeIdentifier = this._nodes[(nodeOrdinal * this._nodeFieldCount) + nodeIdOffset];
                     for (let edgeIndex = outgoingEdgeIndex; this._edges[edgeIndex + edgeFromIdOffset] === nodeIdentifier; edgeIndex += edgeFieldCount) {
                         let toNodeIdentifier = this._edges[edgeIndex + edgeToIdOffset];
                         let toNodeOrdinal = this._nodeIdentifierToOrdinal.get(toNodeIdentifier);
@@ -678,7 +686,7 @@ HeapSnapshot = class HeapSnapshot
     _buildRetainedSizes(postOrderIndexToNodeOrdinal)
     {
         // Self size.
-        for (let nodeIndex = 0, nodeOrdinal = 0; nodeOrdinal < this._nodeCount; nodeIndex += nodeFieldCount, nodeOrdinal++)
+        for (let nodeIndex = 0, nodeOrdinal = 0; nodeOrdinal < this._nodeCount; nodeIndex += this._nodeFieldCount, nodeOrdinal++)
             this._nodeOrdinalToRetainedSizes[nodeOrdinal] = this._nodes[nodeIndex + nodeSizeOffset];
 
         // Attribute size to dominator.
@@ -731,7 +739,7 @@ HeapSnapshot = class HeapSnapshot
         {
             if (this._nodeOrdinalIsGCRoot[nodeOrdinal]) {
                 let fullPath = currentPath.slice();
-                let nodeIndex = nodeOrdinal * nodeFieldCount;
+                let nodeIndex = nodeOrdinal * this._nodeFieldCount;
                 fullPath.push({node: nodeIndex});
                 paths.push(fullPath);
                 return;
@@ -741,7 +749,7 @@ HeapSnapshot = class HeapSnapshot
                 return;
             visited[nodeOrdinal] = 1;
 
-            let nodeIndex = nodeOrdinal * nodeFieldCount;
+            let nodeIndex = nodeOrdinal * this._nodeFieldCount;
             currentPath.push({node: nodeIndex});
 
             // Loop in reverse order because edges were added in reverse order.
@@ -750,7 +758,7 @@ HeapSnapshot = class HeapSnapshot
             let incomingEdgeIndexEnd = this._nodeOrdinalToFirstIncomingEdge[nodeOrdinal + 1];
             for (let incomingEdgeIndex = incomingEdgeIndexEnd - 1; incomingEdgeIndex >= incomingEdgeIndexStart; --incomingEdgeIndex) {
                 let fromNodeOrdinal = this._incomingNodes[incomingEdgeIndex];
-                let fromNodeIndex = fromNodeOrdinal * nodeFieldCount;
+                let fromNodeIndex = fromNodeOrdinal * this._nodeFieldCount;
                 let fromNodeIsInternal = this._nodes[fromNodeIndex + nodeInternalOffset];
                 if (fromNodeIsInternal)
                     continue;

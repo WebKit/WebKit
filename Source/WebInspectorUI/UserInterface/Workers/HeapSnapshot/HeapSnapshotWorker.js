@@ -47,20 +47,23 @@ HeapSnapshotWorker = class HeapSnapshotWorker
         this._snapshots = [];
     }
 
-    createSnapshot(snapshotString, title)
+    createSnapshot(snapshotString, title, imported)
     {
         let objectId = this._nextObjectId++;
-        let snapshot = new HeapSnapshot(objectId, snapshotString, title);
-        this._snapshots.push(snapshot);
+        let snapshot = new HeapSnapshot(objectId, snapshotString, title, imported);
         this._objects.set(objectId, snapshot);
 
-        if (this._snapshots.length > 1) {
-            setTimeout(() => {
-                let collectionData = snapshot.updateDeadNodesAndGatherCollectionData(this._snapshots);
-                if (!collectionData || !collectionData.affectedSnapshots.length)
-                    return;
-                this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
-            }, 0);
+        if (!imported) {
+            this._snapshots.push(snapshot);
+
+            if (this._snapshots.length > 1) {
+                setTimeout(() => {
+                    let collectionData = snapshot.updateDeadNodesAndGatherCollectionData(this._snapshots);
+                    if (!collectionData || !collectionData.affectedSnapshots.length)
+                        return;
+                    this.sendEvent("HeapSnapshot.CollectionEvent", collectionData);
+                }, 0);
+            }            
         }
 
         return {objectId, snapshot: snapshot.serialize()};

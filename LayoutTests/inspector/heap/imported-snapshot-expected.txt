@@ -1,0 +1,11 @@
+Test for an imported HeapSnapshot.
+
+
+== Running test suite: HeapSnapshot.imported
+-- Running test case: HeapSnapshot.imported
+PASS: Should not have an error creating a snapshot.
+PASS: Normal snapshot is not imported.
+PASS: Normal snapshot title should not be set.
+PASS: Imported snapshot is imported.
+PASS: Imported snapshot title should be set.
+

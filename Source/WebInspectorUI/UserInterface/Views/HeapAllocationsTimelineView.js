@@ -59,6 +59,11 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             },
         };
 
+        this._importButtonNavigationItem = new WI.ButtonNavigationItem("import", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+        this._importButtonNavigationItem.toolTip = WI.UIString("Import");
+        this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._importButtonNavigationItemClicked, this);
+
         let snapshotTooltip = WI.UIString("Take snapshot");
         this._takeHeapSnapshotButtonItem = new WI.ButtonNavigationItem("take-snapshot", snapshotTooltip, "Images/Camera.svg", 16, 16);
         this._takeHeapSnapshotButtonItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._takeHeapSnapshotClicked, this);
@@ -184,7 +189,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
     get navigationItems()
     {
         if (this._showingSnapshotList) {
-            let items = [this._takeHeapSnapshotButtonItem, this._compareHeapSnapshotsButtonItem];
+            let items = [this._importButtonNavigationItem, this._takeHeapSnapshotButtonItem, this._compareHeapSnapshotsButtonItem];
             if (this._selectingComparisonHeapSnapshots)
                 items.push(this._compareHeapSnapshotHelpTextItem);
             return items;
@@ -212,6 +217,22 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         }
 
         return components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
+    }
+
+    get supportsSave()
+    {
+        if (this._showingSnapshotList)
+            return false;
+
+        if (!this._contentViewContainer.currentContentView)
+            return false;
+
+        return this._contentViewContainer.currentContentView.supportsSave;
+    }
+
+    get saveData()
+    {
+        return this._contentViewContainer.currentContentView.saveData;
     }
 
     selectRecord(record)
@@ -382,12 +403,27 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         this._compareHeapSnapshotsButtonItem.enabled = hasAtLeastTwoValidSnapshots;
     }
 
+    _importButtonNavigationItemClicked()
+    {
+        WI.FileUtilities.importText(function(result) {
+            let snapshotStringData = result.text;
+            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+            workerProxy.createImportedSnapshot(snapshotStringData, result.filename, ({objectId, snapshot: serializedSnapshot}) => {
+                let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                snapshot.snapshotStringData = snapshotStringData;
+                const timestamp = NaN;
+                WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+            });
+        });
+    }
+
     _takeHeapSnapshotClicked()
     {
         HeapAgent.snapshot(function(error, timestamp, snapshotStringData) {
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
                 let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                snapshot.snapshotStringData = snapshotStringData;
                 WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
             });
         });

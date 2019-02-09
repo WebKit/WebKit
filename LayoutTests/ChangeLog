@@ -1,3 +1,15 @@
+2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Import / Export Heap Snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=194448
+        <rdar://problem/47928093>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/heap/imported-snapshot-expected.txt: Added.
+        * inspector/heap/imported-snapshot.html: Added.
+        * platform/mac/TestExpectations:
+
 2019-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: close unbalanced quotes and parenthesis when editing values

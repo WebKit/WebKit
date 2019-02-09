@@ -73,6 +73,9 @@ WI.HeapAllocationsTimelineOverviewGraph = class HeapAllocationsTimelineOverviewG
         }
 
         for (let record of visibleRecords) {
+            if (isNaN(record.timestamp))
+                continue;
+
             const halfImageWidth = 8;
             let x = xScale(record.timestamp) - halfImageWidth;
             if (x <= 1)
