@@ -734,21 +734,6 @@ static NEVER_INLINE bool isNonLatin1IdentStart(UChar c)
     return u_hasBinaryProperty(c, UCHAR_ID_START);
 }
 
-static ALWAYS_INLINE bool isLatin1(LChar)
-{
-    return true;
-}
-
-static ALWAYS_INLINE bool isLatin1(UChar c)
-{
-    return c < 256;
-}
-
-static ALWAYS_INLINE bool isLatin1(UChar32 c)
-{
-    return !(c & ~0xFF);
-}
-
 static inline bool isIdentStart(LChar c)
 {
     return typesOfLatin1Characters[c] == CharacterIdentifierStart;

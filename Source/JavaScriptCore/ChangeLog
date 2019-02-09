@@ -1,3 +1,13 @@
+2019-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, Lexer should use isLatin1 implementation in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=194466
+
+        Follow-up after r241233 pointed by Darin.
+
+        * parser/Lexer.cpp:
+        (JSC::isLatin1): Deleted.
+
 2019-02-09  Darin Adler  <darin@apple.com>
 
         Eliminate unnecessary String temporaries by using StringConcatenateNumbers
