@@ -3557,21 +3557,21 @@ gboolean webkit_settings_get_enable_back_forward_navigation_gestures(WebKitSetti
 /**
  * webkit_settings_set_enable_back_forward_navigation_gestures:
  * @settings: a #WebKitSettings
- * @enableed: value to be set
+ * @enabled: value to be set
  *
  * Set the #WebKitSettings:enable-back-forward-navigation-gestures property.
  *
  * Since: 2.24
  */
-void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings* settings, gboolean enableed)
+void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (priv->enableBackForwardNavigationGestures == enableed)
+    if (priv->enableBackForwardNavigationGestures == enabled)
         return;
 
-    priv->enableBackForwardNavigationGestures = enableed;
+    priv->enableBackForwardNavigationGestures = enabled;
     g_object_notify(G_OBJECT(settings), "enable-back-forward-navigation-gestures");
 }
 

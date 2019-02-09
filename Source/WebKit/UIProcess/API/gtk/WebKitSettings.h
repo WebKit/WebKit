@@ -477,7 +477,7 @@ webkit_settings_get_enable_back_forward_navigation_gestures    (WebKitSettings *
 
 WEBKIT_API void
 webkit_settings_set_enable_back_forward_navigation_gestures    (WebKitSettings *settings,
-                                                                gboolean        enableed);
+                                                                gboolean        enabled);
 
 WEBKIT_API guint32
 webkit_settings_font_size_to_points                            (guint32 pixels);
