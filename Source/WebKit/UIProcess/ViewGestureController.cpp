@@ -23,20 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ViewGestureController.h"
+#include "config.h"
+#include "ViewGestureController.h"
 
-#import "Logging.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "ViewGestureControllerMessages.h"
-#import "WebBackForwardList.h"
-#import "WebFullScreenManagerProxy.h"
-#import "WebPageProxy.h"
-#import "WebProcessProxy.h"
-#import <wtf/MathExtras.h>
-#import <wtf/NeverDestroyed.h>
-#import <wtf/text/StringBuilder.h>
-#import <wtf/text/StringConcatenateNumbers.h>
+#include "APINavigation.h"
+#include "Logging.h"
+#include "ViewGestureControllerMessages.h"
+#include "WebBackForwardList.h"
+#include "WebFullScreenManagerProxy.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+#include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
+
+#if PLATFORM(COCOA)
+#include "RemoteLayerTreeDrawingAreaProxy.h"
+#endif
+
+#if !PLATFORM(IOS_FAMILY)
+#include "ProvisionalPageProxy.h"
+#include "ViewGestureGeometryCollectorMessages.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -44,10 +53,17 @@ using namespace WebCore;
 static const Seconds swipeSnapshotRemovalWatchdogAfterFirstVisuallyNonEmptyLayoutDuration { 3_s };
 static const Seconds swipeSnapshotRemovalActiveLoadMonitoringInterval { 250_ms };
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
 static const Seconds swipeSnapshotRemovalWatchdogDuration = 5_s;
 #else
 static const Seconds swipeSnapshotRemovalWatchdogDuration = 3_s;
+#endif
+
+#if !PLATFORM(IOS_FAMILY)
+static const float minimumHorizontalSwipeDistance = 15;
+static const float minimumScrollEventRatioForSwipe = 0.5;
+
+static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
 static HashMap<uint64_t, ViewGestureController*>& viewGestureControllersForAllPages()
@@ -60,8 +76,11 @@ static HashMap<uint64_t, ViewGestureController*>& viewGestureControllersForAllPa
 ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
     , m_pendingSwipeTracker(webPageProxy, *this)
+#endif
+#if PLATFORM(GTK)
+    , m_swipeProgressTracker(webPageProxy, *this)
 #endif
 {
     connectToProcess();
@@ -123,12 +142,12 @@ void ViewGestureController::didEndGesture()
     m_activeGestureType = ViewGestureType::None;
     m_currentGestureID = 0;
 }
-    
+
 void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)
 {
     m_alternateBackForwardListSourcePage = makeWeakPtr(page);
 }
-    
+
 bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 {
     if (!m_swipeGestureEnabled)
@@ -149,11 +168,11 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 void ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame()
 {
     m_snapshotRemovalTracker.resume();
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
     requestRenderTreeSizeNotificationIfNeeded();
 #endif
 
-    if (auto loadCallback = WTFMove(m_loadCallback))
+    if (auto loadCallback = std::exchange(m_loadCallback, nullptr))
         loadCallback();
 }
 
@@ -262,17 +281,16 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
 
     if (event & ViewGestureController::SnapshotRemovalTracker::ScrollPositionRestoration)
         description.append("ScrollPositionRestoration ");
-    
+
     return description.toString();
 }
 
 
 void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
 {
-    auto sinceStart = MonotonicTime::now() - m_startTime;
-    RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %{public}s", sinceStart.milliseconds(), log.utf8().data());
+    RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", (MonotonicTime::now() - m_startTime).milliseconds(), log.utf8().data());
 }
-    
+
 void ViewGestureController::SnapshotRemovalTracker::resume()
 {
     if (isPaused() && m_outstandingEvents)
@@ -289,7 +307,7 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
     log("start");
 
     startWatchdog(swipeSnapshotRemovalWatchdogDuration);
-    
+
     // Initially start out paused; we'll resume when the load is committed.
     // This avoids processing callbacks from earlier loads.
     pause();
@@ -372,5 +390,234 @@ void ViewGestureController::SnapshotRemovalTracker::startWatchdog(Seconds durati
     log(makeString("(re)started watchdog timer for ", FormattedNumber::fixedWidth(duration.seconds(), 1), " seconds"));
     m_watchdogTimer.startOneShot(duration);
 }
+
+#if !PLATFORM(IOS_FAMILY)
+static bool deltaShouldCancelSwipe(FloatSize delta)
+{
+    return std::abs(delta.height()) >= std::abs(delta.width()) * minimumScrollEventRatioForSwipe;
+}
+
+ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, ViewGestureController& viewGestureController)
+    : m_viewGestureController(viewGestureController)
+    , m_webPageProxy(webPageProxy)
+{
+}
+
+bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(PlatformScrollEvent event, ViewGestureController::SwipeDirection& potentialSwipeDirection)
+{
+    if (!scrollEventCanStartSwipe(event) || !scrollEventCanInfluenceSwipe(event))
+        return false;
+
+    FloatSize size = scrollEventGetScrollingDeltas(event);
+
+    if (deltaShouldCancelSwipe(size))
+        return false;
+
+    bool isPinnedToLeft = m_shouldIgnorePinnedState || m_webPageProxy.isPinnedToLeftSide();
+    bool isPinnedToRight = m_shouldIgnorePinnedState || m_webPageProxy.isPinnedToRightSide();
+
+    bool tryingToSwipeBack = size.width() > 0 && isPinnedToLeft;
+    bool tryingToSwipeForward = size.width() < 0 && isPinnedToRight;
+    if (m_webPageProxy.userInterfaceLayoutDirection() != WebCore::UserInterfaceLayoutDirection::LTR)
+        std::swap(tryingToSwipeBack, tryingToSwipeForward);
+
+    if (!tryingToSwipeBack && !tryingToSwipeForward)
+        return false;
+
+    potentialSwipeDirection = tryingToSwipeBack ? SwipeDirection::Back : SwipeDirection::Forward;
+    return m_viewGestureController.canSwipeInDirection(potentialSwipeDirection);
+}
+
+bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent event)
+{
+    if (scrollEventCanEndSwipe(event)) {
+        reset("gesture ended");
+        return false;
+    }
+
+    if (m_state == State::None) {
+        if (!scrollEventCanBecomeSwipe(event, m_direction))
+            return false;
+
+        if (!m_shouldIgnorePinnedState && m_webPageProxy.willHandleHorizontalScrollEvents()) {
+            m_state = State::WaitingForWebCore;
+            LOG(ViewGestures, "Swipe Start Hysteresis - waiting for WebCore to handle event");
+        }
+    }
+
+    if (m_state == State::WaitingForWebCore)
+        return false;
+
+    return tryToStartSwipe(event);
+}
+
+void ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore(PlatformScrollEvent event)
+{
+    if (m_state != State::WaitingForWebCore)
+        return;
+
+    LOG(ViewGestures, "Swipe Start Hysteresis - WebCore didn't handle event");
+    m_state = State::None;
+    m_cumulativeDelta = FloatSize();
+    tryToStartSwipe(event);
+}
+
+bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(PlatformScrollEvent event)
+{
+    ASSERT(m_state != State::WaitingForWebCore);
+
+    if (m_state == State::None) {
+        SwipeDirection direction;
+        if (!scrollEventCanBecomeSwipe(event, direction))
+            return false;
+    }
+
+    if (!scrollEventCanInfluenceSwipe(event))
+        return false;
+
+    m_cumulativeDelta += scrollEventGetScrollingDeltas(event);
+    LOG(ViewGestures, "Swipe Start Hysteresis - consumed event, cumulative delta (%0.2f, %0.2f)", m_cumulativeDelta.width(), m_cumulativeDelta.height());
+
+    if (deltaShouldCancelSwipe(m_cumulativeDelta)) {
+        reset("cumulative delta became too vertical");
+        return false;
+    }
+
+    if (std::abs(m_cumulativeDelta.width()) >= minimumHorizontalSwipeDistance)
+        m_viewGestureController.startSwipeGesture(event, m_direction);
+    else
+        m_state = State::InsufficientMagnitude;
+
+    return true;
+}
+
+void ViewGestureController::PendingSwipeTracker::reset(const char* resetReasonForLogging)
+{
+    if (m_state != State::None)
+        LOG(ViewGestures, "Swipe Start Hysteresis - reset; %s", resetReasonForLogging);
+
+    m_state = State::None;
+    m_cumulativeDelta = FloatSize();
+}
+
+void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDirection direction)
+{
+    ASSERT(m_activeGestureType == ViewGestureType::None);
+
+    m_pendingSwipeTracker.reset("starting to track swipe");
+
+    m_webPageProxy.recordAutomaticNavigationSnapshot();
+
+    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Back) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    if (!targetItem)
+        return;
+
+    trackSwipeGesture(event, direction, targetItem);
+}
+
+bool ViewGestureController::isPhysicallySwipingLeft(SwipeDirection direction) const
+{
+    bool isLTR = m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::LTR;
+    bool isSwipingForward = direction == SwipeDirection::Forward;
+    return isLTR != isSwipingForward;
+}
+
+bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, float topContentInset)
+{
+    float deviceScaleFactor = m_webPageProxy.deviceScaleFactor();
+    if (snapshot.deviceScaleFactor() != deviceScaleFactor)
+        return false;
+
+    FloatSize unobscuredSwipeLayerSizeInDeviceCoordinates = swipeLayerSize - FloatSize(0, topContentInset);
+    unobscuredSwipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
+    if (snapshot.size() != unobscuredSwipeLayerSizeInDeviceCoordinates)
+        return false;
+
+    return true;
+}
+
+void ViewGestureController::forceRepaintIfNeeded()
+{
+    if (m_activeGestureType != ViewGestureType::Swipe)
+        return;
+
+    if (m_hasOutstandingRepaintRequest)
+        return;
+
+    m_hasOutstandingRepaintRequest = true;
+
+    uint64_t pageID = m_webPageProxy.pageID();
+    GestureID gestureID = m_currentGestureID;
+    m_webPageProxy.forceRepaint(VoidCallback::create([pageID, gestureID] (CallbackBase::Error error) {
+        if (auto gestureController = controllerForGesture(pageID, gestureID))
+            gestureController->removeSwipeSnapshot();
+    }));
+}
+
+void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetItem, bool cancelled)
+{
+    m_webPageProxy.navigationGestureWillEnd(!cancelled, targetItem);
+}
+
+void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, bool cancelled)
+{
+    ASSERT(m_activeGestureType == ViewGestureType::Swipe);
+    ASSERT(targetItem);
+
+#if PLATFORM(MAC)
+    m_swipeCancellationTracker = nullptr;
+#endif
+
+    if (cancelled) {
+        removeSwipeSnapshot();
+        m_webPageProxy.navigationGestureDidEnd(false, *targetItem);
+        return;
+    }
+
+    uint64_t renderTreeSize = 0;
+    if (ViewSnapshot* snapshot = targetItem->snapshot())
+        renderTreeSize = snapshot->renderTreeSize();
+    auto renderTreeSizeThreshold = renderTreeSize * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
+
+    m_webPageProxy.navigationGestureDidEnd(true, *targetItem);
+    m_webPageProxy.goToBackForwardItem(*targetItem);
+
+    auto* currentItem = m_webPageProxy.backForwardList().currentItem();
+    // The main frame will not be navigated so hide the snapshot right away.
+    if (currentItem && currentItem->itemIsClone(*targetItem)) {
+        removeSwipeSnapshot();
+        return;
+    }
+
+    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
+        | SnapshotRemovalTracker::MainFrameLoad
+        | SnapshotRemovalTracker::SubresourceLoads
+        | SnapshotRemovalTracker::ScrollPositionRestoration;
+
+    if (renderTreeSizeThreshold) {
+        desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
+        m_snapshotRemovalTracker.setRenderTreeSizeThreshold(renderTreeSizeThreshold);
+    }
+
+    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
+
+    // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
+    // we never show the old page content, instead showing the snapshot background color.
+
+    if (ViewSnapshot* snapshot = targetItem->snapshot())
+        m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
+}
+
+void ViewGestureController::requestRenderTreeSizeNotificationIfNeeded()
+{
+    if (!m_snapshotRemovalTracker.hasOutstandingEvent(SnapshotRemovalTracker::RenderTreeSizeThreshold))
+        return;
+
+    auto& process = m_webPageProxy.provisionalPageProxy() ? m_webPageProxy.provisionalPageProxy()->process() : m_webPageProxy.process();
+    auto threshold = m_snapshotRemovalTracker.renderTreeSizeThreshold();
+
+    process.send(Messages::ViewGestureGeometryCollector::SetRenderTreeSizeNotificationThreshold(threshold), m_webPageProxy.pageID());
+}
+#endif
 
 } // namespace WebKit

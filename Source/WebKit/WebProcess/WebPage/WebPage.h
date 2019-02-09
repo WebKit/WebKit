@@ -1579,9 +1579,13 @@ private:
     WebCore::FloatPoint m_accessibilityPosition;
     
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
+#endif
 
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     UniqueRef<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
+#endif
 
+#if PLATFORM(COCOA)
     RetainPtr<NSDictionary> m_dataDetectionContext;
 #endif
 

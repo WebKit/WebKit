@@ -21,11 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> ViewGestureGeometryCollector {
+#if PLATFORM(COCOA)
     CollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin)
+#endif
+
+#if PLATFORM(MAC)
+    CollectGeometryForMagnificationGesture()
+#endif
 
 #if !PLATFORM(IOS_FAMILY)
-    CollectGeometryForMagnificationGesture()
-
     SetRenderTreeSizeNotificationThreshold(uint64_t size)
 #endif
 }

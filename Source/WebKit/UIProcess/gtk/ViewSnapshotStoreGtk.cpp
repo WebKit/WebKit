@@ -23,32 +23,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebMemoryPressureHandlerCocoa.h"
+#include "config.h"
+#include "ViewSnapshotStore.h"
 
-#import "ViewSnapshotStore.h"
-#import "WebProcessPool.h"
-#import <wtf/MemoryPressureHandler.h>
+#include <WebCore/CairoUtilities.h>
 
 namespace WebKit {
+using namespace WebCore;
 
-void installMemoryPressureHandler()
+Ref<ViewSnapshot> ViewSnapshot::create(RefPtr<cairo_surface_t>&& surface)
 {
-    // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
-    // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
-    // and you can only have one WebCore::MemoryPressureHandler.
+    return adoptRef(*new ViewSnapshot(WTFMove(surface)));
+}
 
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
+ViewSnapshot::ViewSnapshot(RefPtr<cairo_surface_t>&& surface)
+    : m_surface(WTFMove(surface))
+{
+    if (hasImage())
+        ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
+}
+
+bool ViewSnapshot::hasImage() const
+{
+    return !!m_surface;
+}
+
+void ViewSnapshot::clearImage()
+{
+    if (!hasImage())
         return;
 
-    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous) {
-        ViewSnapshotStore::singleton().discardSnapshotImages();
+    ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
-        for (auto* processPool : WebProcessPool::allProcessPools())
-            processPool->handleMemoryPressureWarning(critical);
-    });
-    memoryPressureHandler.install();
+    m_surface = nullptr;
+}
+
+size_t ViewSnapshot::imageSizeInBytes() const
+{
+    if (!m_surface)
+        return 0;
+
+    cairo_surface_t* surface = m_surface.get();
+    int stride = cairo_image_surface_get_stride(surface);
+    int height = cairo_image_surface_get_width(surface);
+
+    return stride * height;
+}
+
+WebCore::IntSize ViewSnapshot::size() const
+{
+    if (!m_surface)
+        return { };
+
+    cairo_surface_t* surface = m_surface.get();
+    int width = cairo_image_surface_get_width(surface);
+    int height = cairo_image_surface_get_height(surface);
+
+    return { width, height };
 }
 
 } // namespace WebKit

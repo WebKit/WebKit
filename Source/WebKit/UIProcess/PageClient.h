@@ -254,7 +254,6 @@ public:
     virtual void assistiveTechnologyMakeFirstResponder() = 0;
     virtual void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) = 0;
     virtual CALayer *acceleratedCompositingRootLayer() const = 0;
-    virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;
 #if ENABLE(MAC_GESTURE_EVENTS)
     virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) = 0;
 #endif
@@ -262,6 +261,7 @@ public:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual void selectionDidChange() = 0;
+    virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;
 #endif
 
 #if USE(APPKIT)

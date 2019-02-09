@@ -31,6 +31,7 @@
 #include "APIProcessPoolConfiguration.h"
 #include "Logging.h"
 #include "WebCookieManagerProxy.h"
+#include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
@@ -67,6 +68,12 @@ static bool initializeRemoteInspectorServer(const char* address)
 }
 #endif
 
+static bool memoryPressureMonitorDisabled()
+{
+    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
+}
+
 void WebProcessPool::platformInitialize()
 {
 #if ENABLE(REMOTE_INSPECTOR)
@@ -75,6 +82,9 @@ void WebProcessPool::platformInitialize()
             g_unsetenv("WEBKIT_INSPECTOR_SERVER");
     }
 #endif
+
+    if (!memoryPressureMonitorDisabled())
+        installMemoryPressureHandler();
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
@@ -87,8 +97,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     if (forceComplexText && !strcmp(forceComplexText, "0"))
         parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
 
-    const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
-    if (disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1"))
+    if (memoryPressureMonitorDisabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
 
 #if USE(GSTREAMER)

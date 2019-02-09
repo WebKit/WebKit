@@ -36,7 +36,7 @@
 #import "TextChecker.h"
 #import "VersionChecks.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WebMemoryPressureHandlerCocoa.h"
+#import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessCreationParameters.h"
@@ -123,7 +123,12 @@ void WebProcessPool::platformInitialize()
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
 
-    installMemoryPressureHandler();
+    // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
+    // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
+    // and you can only have one WebCore::MemoryPressureHandler.
+
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
+        installMemoryPressureHandler();
 
     setLegacyCustomProtocolManagerClient(std::make_unique<LegacyCustomProtocolManagerClient>());
 }

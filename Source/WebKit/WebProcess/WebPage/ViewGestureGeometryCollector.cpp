@@ -44,9 +44,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "SmartMagnificationControllerMessages.h"
-#endif
-
-#if PLATFORM(MAC)
+#else
 #include "ViewGestureControllerMessages.h"
 #endif
 
@@ -59,7 +57,7 @@ static const double minimumScaleDifferenceForZooming = 0.3;
 
 ViewGestureGeometryCollector::ViewGestureGeometryCollector(WebPage& webPage)
     : m_webPage(webPage)
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
     , m_renderTreeSizeNotificationThreshold(0)
 #endif
 {
@@ -237,12 +235,12 @@ void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, Flo
 
 void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double& viewportMinimumScale, double& viewportMaximumScale) const
 {
-#if PLATFORM(MAC)
-    viewportMinimumScale = 0;
-    viewportMaximumScale = std::numeric_limits<double>::max();
-#else
+#if PLATFORM(IOS_FAMILY)
     viewportMinimumScale = m_webPage.minimumPageScaleFactor();
     viewportMaximumScale = m_webPage.maximumPageScaleFactor();
+#else
+    viewportMinimumScale = 0;
+    viewportMaximumScale = std::numeric_limits<double>::max();
 #endif
 }
 
@@ -253,7 +251,9 @@ void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
     bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame()->handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
+#endif
 
+#if !PLATFORM(IOS_FAMILY)
 void ViewGestureGeometryCollector::setRenderTreeSizeNotificationThreshold(uint64_t size)
 {
     m_renderTreeSizeNotificationThreshold = size;
@@ -273,8 +273,7 @@ void ViewGestureGeometryCollector::mainFrameDidLayout()
 {
 #if PLATFORM(IOS_FAMILY)
     m_cachedTextLegibilityScales.reset();
-#endif
-#if PLATFORM(MAC)
+#else
     sendDidHitRenderTreeSizeThresholdIfNeeded();
 #endif
 }

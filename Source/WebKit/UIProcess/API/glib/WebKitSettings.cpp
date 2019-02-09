@@ -80,6 +80,9 @@ struct _WebKitSettingsPrivate {
     bool allowModalDialogs { false };
     bool zoomTextOnly { false };
     double screenDpi { 96 };
+#if PLATFORM(GTK)
+    bool enableBackForwardNavigationGestures { false };
+#endif
 };
 
 /**
@@ -161,6 +164,7 @@ enum {
     PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS,
 #if PLATFORM(GTK)
     PROP_HARDWARE_ACCELERATION_POLICY,
+    PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES,
 #endif
 };
 
@@ -381,6 +385,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_HARDWARE_ACCELERATION_POLICY:
         webkit_settings_set_hardware_acceleration_policy(settings, static_cast<WebKitHardwareAccelerationPolicy>(g_value_get_enum(value)));
         break;
+    case PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES:
+        webkit_settings_set_enable_back_forward_navigation_gestures(settings, g_value_get_boolean(value));
+        break;
 #endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -559,6 +566,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
 #if PLATFORM(GTK)
     case PROP_HARDWARE_ACCELERATION_POLICY:
         g_value_set_enum(value, webkit_settings_get_hardware_acceleration_policy(settings));
+        break;
+    case PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES:
+        g_value_set_boolean(value, webkit_settings_get_enable_back_forward_navigation_gestures(settings));
         break;
 #endif
     default:
@@ -1442,6 +1452,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("The policy to decide how to enable and disable hardware acceleration"),
             WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY,
             WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-back-forward-navigation-gestures:
+     *
+     * Enable or disable horizontal swipe gesture for back-forward navigation.
+     *
+     * Since: 2.24
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES,
+        g_param_spec_boolean("enable-back-forward-navigation-gestures",
+            _("Enable back-forward navigation gestures"),
+            _("Whether horizontal swipe gesture will trigger back-forward navigation"),
+            FALSE,
             readWriteConstructParamFlags));
 #endif // PLATFOTM(GTK)
 }
@@ -3510,6 +3535,44 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
 
     if (changed)
         g_object_notify(G_OBJECT(settings), "hardware-acceleration-policy");
+}
+
+/**
+ * webkit_settings_get_enable_back_forward_navigation_gestures:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-back-forward-navigation-gestures property.
+ *
+ * Returns: %TRUE if horizontal swipe gesture will trigger back-forward navigaiton or %FALSE otherwise.
+ *
+ * Since: 2.24
+ */
+gboolean webkit_settings_get_enable_back_forward_navigation_gestures(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->enableBackForwardNavigationGestures;
+}
+
+/**
+ * webkit_settings_set_enable_back_forward_navigation_gestures:
+ * @settings: a #WebKitSettings
+ * @enableed: value to be set
+ *
+ * Set the #WebKitSettings:enable-back-forward-navigation-gestures property.
+ *
+ * Since: 2.24
+ */
+void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings* settings, gboolean enableed)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->enableBackForwardNavigationGestures == enableed)
+        return;
+
+    priv->enableBackForwardNavigationGestures = enableed;
+    g_object_notify(G_OBJECT(settings), "enable-back-forward-navigation-gestures");
 }
 
 /**

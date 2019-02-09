@@ -205,9 +205,12 @@ UIProcess/_WKWebViewPrintFormatter.mm
 UIProcess/ApplicationStateTracker.mm
 UIProcess/HighPerformanceGraphicsUsageSampler.cpp
 UIProcess/PerActivityStateCPUUsageSampler.cpp
+UIProcess/ViewGestureController.cpp
+UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebDataListSuggestionsDropdown.cpp
 UIProcess/WebMediaSessionFocusManager.cpp
 UIProcess/WebMediaSessionFocusManagerClient.cpp
+UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WKImagePreviewViewController.mm
 UIProcess/WKInspectorHighlightView.mm
 
@@ -338,8 +341,6 @@ UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/VersionChecks.mm
 UIProcess/Cocoa/VideoFullscreenManagerProxy.mm
-UIProcess/Cocoa/ViewGestureController.cpp
-UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
@@ -426,7 +427,7 @@ UIProcess/mac/ServicesController.mm
 UIProcess/mac/TextCheckerMac.mm
 UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
 UIProcess/mac/ViewGestureControllerMac.mm
-UIProcess/mac/ViewSnapshotStore.mm
+UIProcess/mac/ViewSnapshotStoreMac.mm
 UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebCookieManagerProxyMac.mm

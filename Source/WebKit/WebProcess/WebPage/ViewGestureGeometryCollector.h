@@ -55,6 +55,8 @@ private:
 
 #if PLATFORM(MAC)
     void collectGeometryForMagnificationGesture();
+#endif
+#if !PLATFORM(IOS_FAMILY)
     void setRenderTreeSizeNotificationThreshold(uint64_t);
     void sendDidHitRenderTreeSizeThresholdIfNeeded();
 #endif
@@ -69,10 +71,9 @@ private:
 
     WebPage& m_webPage;
 
-#if PLATFORM(MAC)
+#if !PLATFORM(IOS_FAMILY)
     uint64_t m_renderTreeSizeNotificationThreshold;
-#endif
-#if PLATFORM(IOS_FAMILY)
+#else
     Optional<std::pair<double, double>> m_cachedTextLegibilityScales;
 #endif
 };

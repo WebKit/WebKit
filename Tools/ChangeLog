@@ -1,3 +1,13 @@
+2019-02-08  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Implement back/forward touchpad gesture
+        https://bugs.webkit.org/show_bug.cgi?id=193919
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings): Add a test for 'enable-back-forward-navigation-gestures' property.
+
 2019-02-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to use networking daemon instead of XPC service

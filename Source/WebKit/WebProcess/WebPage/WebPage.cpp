@@ -363,7 +363,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     , m_viewGestureGeometryCollector(makeUniqueRef<ViewGestureGeometryCollector>(*this))
 #elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
@@ -4218,7 +4218,7 @@ void WebPage::mainFrameDidLayout()
         m_cachedPageCount = pageCount;
     }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     m_viewGestureGeometryCollector->mainFrameDidLayout();
 #endif
 #if PLATFORM(IOS_FAMILY)

@@ -1230,7 +1230,7 @@ public:
     void recordNavigationSnapshot(WebBackForwardListItem&);
     void requestFocusedElementInformation(Function<void(const FocusedElementInformation&, CallbackBase::Error)>&&);
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> takeViewSnapshot();
 #endif
 

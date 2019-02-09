@@ -32,6 +32,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "ViewSnapshotStore.h"
 #include "WebColorPickerGtk.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
@@ -67,6 +68,16 @@ std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProc
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
 {
+    WebPageProxy* pageProxy = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    ASSERT(pageProxy);
+
+    // During the gesture, the page may be displayed with an offset.
+    // To avoid visual glitches, redraw the whole page.
+    if (pageProxy->isShowingNavigationGestureSnapshot()) {
+        gtk_widget_queue_draw(m_viewWidget);
+        return;
+    }
+
     gtk_widget_queue_draw_region(m_viewWidget, toCairoRegion(region).get());
 }
 
@@ -255,6 +266,11 @@ void PageClientImpl::selectionDidChange()
         webkitWebViewSelectionDidChange(WEBKIT_WEB_VIEW(m_viewWidget));
 }
 
+RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
+{
+    return webkitWebViewBaseTakeViewSnapshot(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
 void PageClientImpl::didChangeContentSize(const IntSize& size)
 {
     webkitWebViewBaseSetContentsSize(WEBKIT_WEB_VIEW_BASE(m_viewWidget), size);
@@ -404,6 +420,12 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
+    ViewGestureController& controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    if (controller.isSwipeGestureEnabled()) {
+        controller.wheelEventWasNotHandledByWebCore(&event.nativeEvent()->scroll);
+        return;
+    }
+
     webkitWebViewBaseForwardNextWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
     gtk_main_do_event(event.nativeEvent());
 }
@@ -434,18 +456,37 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem&)
 
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
+    gtk_widget_queue_draw(m_viewWidget);
+}
+
+void PageClientImpl::didStartProvisionalLoadForMainFrame()
+{
+    webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
+    webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::didFinishLoadForMainFrame()
 {
+    webkitWebViewBaseDidFinishLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
-void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType)
+void PageClientImpl::didFailLoadForMainFrame()
 {
+    webkitWebViewBaseDidFailLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+{
+    webkitWebViewBaseDidSameDocumentNavigationForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget), type);
+}
+
+void PageClientImpl::didRestoreScrollPosition()
+{
+    webkitWebViewBaseDidRestoreScrollPosition(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
 void PageClientImpl::didChangeBackgroundColor()

@@ -468,7 +468,7 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
     m_page->backForwardRemovedItem(backForwardListItem.itemID());
 
     backForwardListItem.setSuspendedPage(nullptr);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     backForwardListItem.setSnapshot(nullptr);
 #endif
 }

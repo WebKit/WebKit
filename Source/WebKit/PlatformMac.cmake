@@ -161,6 +161,8 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/PerActivityStateCPUUsageSampler.cpp
+    UIProcess/ViewGestureController.cpp
+    UIProcess/ViewSnapshotStore.cpp
 
     UIProcess/Automation/WebAutomationSession.cpp
 
@@ -253,7 +255,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/SessionStateCoding.mm
     UIProcess/Cocoa/UIDelegate.mm
     UIProcess/Cocoa/VersionChecks.mm
-    UIProcess/Cocoa/ViewGestureController.cpp
     UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
     UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
@@ -291,7 +292,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/TextCheckerMac.mm
     UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
     UIProcess/mac/ViewGestureControllerMac.mm
-    UIProcess/mac/ViewSnapshotStore.mm
+    UIProcess/mac/ViewSnapshotStoreMac.mm
     UIProcess/mac/WKFullScreenWindowController.mm
     UIProcess/mac/WKImmediateActionController.mm
     UIProcess/mac/WKInspectorViewController.mm
@@ -466,8 +467,9 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
+    UIProcess/ViewGestureController.messages.in
+
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
-    UIProcess/Cocoa/ViewGestureController.messages.in
 
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 

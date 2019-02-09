@@ -189,10 +189,13 @@
 #include "TouchBarMenuItemData.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
-#include "ViewSnapshotStore.h"
 #include <WebCore/RunLoopObserver.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <wtf/MachSendRight.h>
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include "ViewSnapshotStore.h"
 #endif
 
 #if PLATFORM(GTK)
@@ -1348,7 +1351,7 @@ void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
     if (!m_shouldRecordNavigationSnapshots)
         return;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     ViewSnapshotStore::singleton().recordSnapshot(*this, item);
 #else
     UNUSED_PARAM(item);
@@ -7470,7 +7473,7 @@ void WebPageProxy::setEditableElementIsFocused(bool editableElementIsFocused)
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 RefPtr<ViewSnapshot> WebPageProxy::takeViewSnapshot()
 {
     return pageClient().takeViewSnapshot();

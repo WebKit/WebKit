@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ViewSnapshotStore.h"
 
-#import "WebBackForwardList.h"
-#import "WebPageProxy.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/IOSurface.h>
 
@@ -35,29 +33,8 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-static const size_t maximumSnapshotCacheSize = 50 * (1024 * 1024);
-#else
-static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
-#endif
-
 namespace WebKit {
 using namespace WebCore;
-
-ViewSnapshotStore::ViewSnapshotStore()
-{
-}
-
-ViewSnapshotStore::~ViewSnapshotStore()
-{
-    discardSnapshotImages();
-}
-
-ViewSnapshotStore& ViewSnapshotStore::singleton()
-{
-    static ViewSnapshotStore& store = *new ViewSnapshotStore;
-    return store;
-}
 
 #if !HAVE(IOSURFACE) && HAVE(CORE_ANIMATION_RENDER_SERVER)
 CAContext *ViewSnapshotStore::snapshottingContext()
@@ -76,59 +53,6 @@ CAContext *ViewSnapshotStore::snapshottingContext()
     return context;
 }
 #endif
-
-void ViewSnapshotStore::didAddImageToSnapshot(ViewSnapshot& snapshot)
-{
-    bool isNewEntry = m_snapshotsWithImages.add(&snapshot).isNewEntry;
-    ASSERT_UNUSED(isNewEntry, isNewEntry);
-    m_snapshotCacheSize += snapshot.imageSizeInBytes();
-}
-
-void ViewSnapshotStore::willRemoveImageFromSnapshot(ViewSnapshot& snapshot)
-{
-    bool removed = m_snapshotsWithImages.remove(&snapshot);
-    ASSERT_UNUSED(removed, removed);
-    m_snapshotCacheSize -= snapshot.imageSizeInBytes();
-}
-
-void ViewSnapshotStore::pruneSnapshots(WebPageProxy& webPageProxy)
-{
-    if (m_snapshotCacheSize <= maximumSnapshotCacheSize)
-        return;
-
-    ASSERT(!m_snapshotsWithImages.isEmpty());
-
-    // FIXME: We have enough information to do smarter-than-LRU eviction (making use of the back-forward lists, etc.)
-
-    m_snapshotsWithImages.first()->clearImage();
-}
-
-void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwardListItem& item)
-{
-    if (webPageProxy.isShowingNavigationGestureSnapshot())
-        return;
-
-    pruneSnapshots(webPageProxy);
-
-    webPageProxy.willRecordNavigationSnapshot(item);
-
-    auto snapshot = webPageProxy.takeViewSnapshot();
-    if (!snapshot)
-        return;
-
-    snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
-    snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
-    snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
-    snapshot->setViewScrollPosition(WebCore::roundedIntPoint(webPageProxy.viewScrollPosition()));
-
-    item.setSnapshot(WTFMove(snapshot));
-}
-
-void ViewSnapshotStore::discardSnapshotImages()
-{
-    while (!m_snapshotsWithImages.isEmpty())
-        m_snapshotsWithImages.first()->clearImage();
-}
 
 #if HAVE(IOSURFACE)
 Ref<ViewSnapshot> ViewSnapshot::create(std::unique_ptr<WebCore::IOSurface> surface)
@@ -154,11 +78,6 @@ ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInByte
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
-}
-
-ViewSnapshot::~ViewSnapshot()
-{
-    clearImage();
 }
 
 #if HAVE(IOSURFACE)

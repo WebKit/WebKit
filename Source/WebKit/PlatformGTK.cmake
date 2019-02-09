@@ -35,7 +35,11 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
+    UIProcess/ViewGestureController.messages.in
+
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
+
+    WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES

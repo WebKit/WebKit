@@ -501,6 +501,16 @@ static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebVie
 }
 
 #if PLATFORM(GTK)
+static void enableBackForwardNavigationGesturesChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
+{
+    gboolean enable = webkit_settings_get_enable_back_forward_navigation_gestures(settings);
+
+    ViewGestureController& controller = webkitWebViewBaseViewGestureController(WEBKIT_WEB_VIEW_BASE(webView));
+    controller.setSwipeGestureEnabled(enable);
+
+    getPage(webView).setShouldRecordNavigationSnapshots(enable);
+}
+
 static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -581,10 +591,16 @@ static void webkitWebViewUpdateSettings(WebKitWebView* webView)
     page.setPreferences(*webkitSettingsGetPreferences(settings));
     page.setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
     page.setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+#if PLATFORM(GTK)
+    enableBackForwardNavigationGesturesChanged(settings, nullptr, webView);
+#endif
 
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
     g_signal_connect(settings, "notify::user-agent", G_CALLBACK(userAgentChanged), webView);
+#if PLATFORM(GTK)
+    g_signal_connect(settings, "notify::enable-back-forward-navigation-gestures", G_CALLBACK(enableBackForwardNavigationGesturesChanged), webView);
+#endif
 }
 
 static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView)
@@ -596,6 +612,9 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(allowModalDialogsChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
+#if PLATFORM(GTK)
+    g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(enableBackForwardNavigationGesturesChanged), webView);
+#endif
 }
 
 #if PLATFORM(GTK)

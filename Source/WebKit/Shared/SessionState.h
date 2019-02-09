@@ -25,10 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
 #include "ViewSnapshotStore.h"
-#endif
-
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -133,7 +130,7 @@ struct BackForwardListItemState {
     WebCore::BackForwardItemIdentifier identifier;
 
     PageState pageState;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> snapshot;
 #endif
 };

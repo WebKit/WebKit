@@ -63,7 +63,6 @@ $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
-$(PROJECT_DIR)/UIProcess/Cocoa/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
@@ -72,6 +71,7 @@ $(PROJECT_DIR)/UIProcess/Plugins/PluginProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/RemoteWebInspectorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/UserContent/WebUserContentControllerProxy.messages.in
+$(PROJECT_DIR)/UIProcess/ViewGestureController.messages.in
 $(PROJECT_DIR)/UIProcess/VisitedLinkStore.messages.in
 $(PROJECT_DIR)/UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebCookieManagerProxy.messages.in

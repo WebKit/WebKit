@@ -472,6 +472,13 @@ WEBKIT_API void
 webkit_settings_set_hardware_acceleration_policy               (WebKitSettings *settings,
                                                                 WebKitHardwareAccelerationPolicy policy);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_back_forward_navigation_gestures    (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_back_forward_navigation_gestures    (WebKitSettings *settings,
+                                                                gboolean        enableed);
+
 WEBKIT_API guint32
 webkit_settings_font_size_to_points                            (guint32 pixels);
 

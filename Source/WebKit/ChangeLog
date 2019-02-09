@@ -1,3 +1,276 @@
+2019-02-08  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Implement back/forward touchpad gesture
+        https://bugs.webkit.org/show_bug.cgi?id=193919
+
+        Reviewed by Michael Catanzaro.
+
+        Move ViewSnapshotStore and ViewGestureController from Cocoa/Mac directory
+        to UIProcess/, also move some parts of mac/ViewGestreControllerMac.mm to
+        ViewGestureController.cpp, split up Mac- and iOS-specific parts of
+        ViewSnapshotStore.cpp into mac/ViewSnapshotMac.mm, then implement 2-finger
+        touchpad swipe back-forward gesture for GTK based on that.
+
+        To avoid name conflict, rename existing ViewGestureController class inside
+        UIProcess/API/gtk/WebKitWebViewBase.cpp into TouchGestureController.
+
+        Since GTK gestures can only work with 3 or 4 fingers, treat horizontal
+        scrolling events as a swipe as long as there's nowhere to scroll in that
+        direction and web page doesn't handle the scrolling.
+
+        This is only allowed for touchpads, even though it can theoretically work
+        with touch mice and trackpoints.
+
+        The gesture requires every item in back-forward list to have a snapshot.
+        There's already an existing infrastructure for that, so the patch changes
+        a bunch of #if PLATFORM(COCOA) statements to also check for GTK platform.
+        The snapshots have to be taken in sync, so the implementation draws webview
+        widget into a Cairo image surface.
+
+        The gesture is disabled by default, and can be enabled by setting the newly
+        added 'enable-back-forward-navigation-gestures' property in WebKitSettings to
+        true.
+
+        Gesture drawing is implemented via Cairo. When the gesture is active, the
+        actual page is drawn into a Cairo group, which is then drawn together with
+        a given snapshot, as well as dimming and a drop shadow over the "lower" layer.
+
+        Also add a memory pressure handler that clears snapshot store when low on memory.
+
+        * DerivedSources-input.xcfilelist:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * Shared/SessionState.h: Add snapshot to back-forward items for GTK.
+        * Shared/WebBackForwardListItem.h: Add snapshot to back-forward items for GTK.
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        Added 'enable-back-forward-navigation-gestures' property for enabling the gesture.
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_back_forward_navigation_gestures): Added, GTK only.
+        (webkit_settings_set_enable_back_forward_navigation_gestures): Added, GTK only.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (enableBackForwardNavigationGesturesChanged): Added, GTK only.
+        (webkitWebViewUpdateSettings):
+        (webkitWebViewDisconnectSettingsSignalHandlers):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay): Redraw the whole screen instead of a region during the gesture.
+        (WebKit::PageClientImpl::takeViewSnapshot): Added.
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore): Pass unhandled events to the gesture controller.
+        (WebKit::PageClientImpl::didRemoveNavigationGestureSnapshot): Redraw the widget immediately after removing snapshot.
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame): Added, send a notification to the gesture controller.
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):  Send a notification to the gesture controller.
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):  Send a notification to the gesture controller.
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):  Added, send a notification to the gesture controller.
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):  Send a notification to the gesture controller.
+        (WebKit::PageClientImpl::didRestoreScrollPosition):  Added, send a notification to the gesture controller.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitSettings.h:
+        Add webkit_settings_get_enable_back_forward_navigation_gestures() and webkit_settings_get_enable_back_forward_navigation_gestures()
+        to public API.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDraw): Pass drawing to ViewGestureController during the gesture.
+        (webkitWebViewBaseScrollEvent): Pass scroll events to ViewGestureController during the gesture.
+        (webkitWebViewBaseGestureController): Renamed ViewGestureController to TouchGestureController.
+        (webkitWebViewBaseViewGestureController): Added.
+        (webkitWebViewBaseCreateWebPage): Create an instance of ViewGestureController.
+        (webkitWebViewBaseTakeViewSnapshot): Added.
+        (webkitWebViewBaseDidStartProvisionalLoadForMainFrame): Added.
+        (webkitWebViewBaseDidFirstVisuallyNonEmptyLayoutForMainFrame): Added.
+        (webkitWebViewBaseDidFinishLoadForMainFrame): Added.
+        (webkitWebViewBaseDidFailLoadForMainFrame): Added.
+        (webkitWebViewBaseDidSameDocumentNavigationForMainFrame): Added.
+        (webkitWebViewBaseDidRestoreScrollPosition): Added.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Mentioned the added functions in docs.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize): Move the check from WebMemoryPressureHandlerCocoa.mm here.
+        * UIProcess/PageClient.h: Add takeViewSnapshot() for GTK.
+        * UIProcess/ViewGestureController.cpp: Renamed from Source/WebKit/UIProcess/Cocoa/ViewGestureController.cpp.
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::disconnectFromProcess):
+        (WebKit::ViewGestureController::connectToProcess):
+        (WebKit::ViewGestureController::controllerForGesture):
+        (WebKit::ViewGestureController::takeNextGestureID):
+        (WebKit::ViewGestureController::willBeginGesture):
+        (WebKit::ViewGestureController::didEndGesture):
+        (WebKit::ViewGestureController::setAlternateBackForwardListSourcePage):
+        (WebKit::ViewGestureController::canSwipeInDirection const):
+        (WebKit::ViewGestureController::didStartProvisionalOrSameDocumentLoadForMainFrame):
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        (WebKit::ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::ViewGestureController::didRepaintAfterNavigation):
+        (WebKit::ViewGestureController::didHitRenderTreeSizeThreshold):
+        (WebKit::ViewGestureController::didRestoreScrollPosition):
+        (WebKit::ViewGestureController::didReachMainFrameLoadTerminalState):
+        (WebKit::ViewGestureController::didSameDocumentNavigationForMainFrame):
+        (WebKit::ViewGestureController::checkForActiveLoads):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::SnapshotRemovalTracker):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventsDescription):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::log const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::resume):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::start):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::reset):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventOccurred):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediately):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::startWatchdog):
+        (WebKit::deltaShouldCancelSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::PendingSwipeTracker):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::handleEvent):
+        (WebKit::ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore):
+        (WebKit::ViewGestureController::PendingSwipeTracker::tryToStartSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::reset):
+        (WebKit::ViewGestureController::startSwipeGesture):
+        (WebKit::ViewGestureController::isPhysicallySwipingLeft const):
+        (WebKit::ViewGestureController::shouldUseSnapshotForSize):
+        (WebKit::ViewGestureController::forceRepaintIfNeeded):
+        (WebKit::ViewGestureController::willEndSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::requestRenderTreeSizeNotificationIfNeeded):
+        * UIProcess/ViewGestureController.h: Renamed from Source/WebKit/UIProcess/Cocoa/ViewGestureController.h.
+        (WebKit::ViewGestureController::wheelEventWasNotHandledByWebCore):
+        (WebKit::ViewGestureController::shouldIgnorePinnedState):
+        (WebKit::ViewGestureController::setShouldIgnorePinnedState):
+        (WebKit::ViewGestureController::hasActiveMagnificationGesture const):
+        (WebKit::ViewGestureController::setCustomSwipeViews):
+        (WebKit::ViewGestureController::setCustomSwipeViewsTopContentInset):
+        (WebKit::ViewGestureController::setDidMoveSwipeSnapshotCallback):
+        (WebKit::ViewGestureController::backgroundColorForCurrentSnapshot const):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+        (WebKit::ViewGestureController::didFailLoadForMainFrame):
+        (WebKit::ViewGestureController::setSwipeGestureEnabled):
+        (WebKit::ViewGestureController::isSwipeGestureEnabled):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::pause):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::isPaused const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::hasRemovalCallback const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::renderTreeSizeThreshold const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::setRenderTreeSizeThreshold):
+        (WebKit::ViewGestureController::PendingSwipeTracker::shouldIgnorePinnedState):
+        (WebKit::ViewGestureController::PendingSwipeTracker::setShouldIgnorePinnedState):
+        (WebKit::ViewGestureController::SwipeProgressTracker::progress const):
+        (WebKit::ViewGestureController::SwipeProgressTracker::direction const):
+        * UIProcess/ViewGestureController.messages.in: Renamed from Source/WebKit/UIProcess/Cocoa/ViewGestureController.messages.in.
+        * UIProcess/ViewSnapshotStore.cpp: Copied from Source/WebKit/UIProcess/mac/ViewSnapshotStore.mm.
+        (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::~ViewSnapshotStore):
+        (WebKit::ViewSnapshotStore::singleton):
+        (WebKit::ViewSnapshotStore::didAddImageToSnapshot):
+        (WebKit::ViewSnapshotStore::willRemoveImageFromSnapshot):
+        (WebKit::ViewSnapshotStore::pruneSnapshots):
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+        (WebKit::ViewSnapshotStore::discardSnapshotImages):
+        (WebKit::ViewSnapshot::~ViewSnapshot):
+        * UIProcess/ViewSnapshotStore.h: Renamed from Source/WebKit/UIProcess/mac/ViewSnapshotStore.h.
+        (WebKit::ViewSnapshot::setRenderTreeSize):
+        (WebKit::ViewSnapshot::renderTreeSize const):
+        (WebKit::ViewSnapshot::setBackgroundColor):
+        (WebKit::ViewSnapshot::backgroundColor const):
+        (WebKit::ViewSnapshot::setViewScrollPosition):
+        (WebKit::ViewSnapshot::viewScrollPosition const):
+        (WebKit::ViewSnapshot::setDeviceScaleFactor):
+        (WebKit::ViewSnapshot::deviceScaleFactor const):
+        (WebKit::ViewSnapshot::surface const):
+        (WebKit::ViewSnapshot::imageSizeInBytes const):
+        (WebKit::ViewSnapshot::size const):
+        (WebKit::ViewSnapshotStore::setDisableSnapshotVolatilityForTesting):
+        (WebKit::ViewSnapshotStore::disableSnapshotVolatilityForTesting const):
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::didRemoveItem): Unset snapshot for GTK.
+        * UIProcess/WebMemoryPressureHandler.cpp: Copied from Source/WebKit/UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.mm.
+        (WebKit::installMemoryPressureHandler):
+        * UIProcess/WebMemoryPressureHandler.h: Renamed from Source/WebKit/UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.h.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordNavigationSnapshot): Take snapshots for GTK.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp: Added. This is a port of
+        UIProcess/mac/ViewGestureControllerMac.mm. SwipeProgressTracker class is a
+        re-implementation of trackSwipeEventWithOptions.
+        (WebKit::isEventStop):
+        (WebKit::ViewGestureController::platformTeardown):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas):
+        (WebKit::ViewGestureController::handleScrollWheelEvent):
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::ViewGestureController::SwipeProgressTracker::SwipeProgressTracker):
+        (WebKit::ViewGestureController::SwipeProgressTracker::startTracking):
+        (WebKit::ViewGestureController::SwipeProgressTracker::reset):
+        (WebKit::ViewGestureController::SwipeProgressTracker::handleEvent):
+        (WebKit::ViewGestureController::SwipeProgressTracker::startAnimation):
+        (WebKit::easeOutCubic):
+        (WebKit::ViewGestureController::SwipeProgressTracker::onAnimationTick):
+        (WebKit::ViewGestureController::SwipeProgressTracker::endAnimation):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        (WebKit::ViewGestureController::draw):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting):
+        * UIProcess/gtk/ViewSnapshotStoreGtk.cpp: Renamed from Source/WebKit/UIProcess/Cocoa/WebMemoryPressureHandlerCocoa.mm.
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::hasImage const):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::imageSizeInBytes const):
+        (WebKit::ViewSnapshot::size const):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::memoryPressureMonitorDisabled): Added.
+        (WebKit::WebProcessPool::platformInitialize): Install memory pressure handler.
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Use memoryPressureMonitorDisabled().
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        Moved many functions into UIProcess/ViewGestureController.cpp
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanStartSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanEndSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanInfluenceSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventGetScrollingDeltas):
+        (WebKit::ViewGestureController::trackSwipeGesture):
+        (WebKit::scrollEventCanInfluenceSwipe): Deleted.
+        (WebKit::deltaShouldCancelSwipe): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::PendingSwipeTracker): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::handleEvent): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::eventWasNotHandledByWebCore): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::tryToStartSwipe): Deleted.
+        (WebKit::ViewGestureController::PendingSwipeTracker::reset): Deleted.
+        (WebKit::ViewGestureController::willEndSwipeGesture): Deleted.
+        (WebKit::ViewGestureController::shouldUseSnapshotForSize): Deleted.
+        (WebKit::ViewGestureController::isPhysicallySwipingLeft const): Deleted.
+        (WebKit::ViewGestureController::endSwipeGesture): Deleted.
+        (WebKit::ViewGestureController::forceRepaintIfNeeded): Deleted.
+        (WebKit::ViewGestureController::requestRenderTreeSizeNotificationIfNeeded): Deleted.
+        * UIProcess/mac/ViewSnapshotStoreMac.mm: Renamed from Source/WebKit/UIProcess/mac/ViewSnapshotStore.mm.
+        (WebKit::ViewSnapshotStore::snapshottingContext):
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::setSurface):
+        (WebKit::ViewSnapshot::hasImage const):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::setVolatile):
+        (WebKit::ViewSnapshot::asLayerContents):
+        (WebKit::ViewSnapshot::asImageForTesting):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        Make SetRenderTreeSizeNotificationThreshold() cross-platform.
+        (WebKit::ViewGestureGeometryCollector::ViewGestureGeometryCollector):
+        (WebKit::ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales const):
+        (WebKit::ViewGestureGeometryCollector::mainFrameDidLayout):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        Start using ViewGestureGeometryCollector for GTK.
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-02-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to use networking daemon instead of XPC service
