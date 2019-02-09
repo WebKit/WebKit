@@ -1,5 +1,15 @@
 2019-02-08  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Ensure that every builder in config.json has short name
+        https://bugs.webkit.org/show_bug.cgi?id=194461
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py: Updated unit-tests.
+
+2019-02-08  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Add short name to config.json
         https://bugs.webkit.org/show_bug.cgi?id=194456
 

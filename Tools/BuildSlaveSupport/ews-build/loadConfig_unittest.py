@@ -39,7 +39,7 @@ class ConfigDotJSONTest(unittest.TestCase):
         cwd = os.path.dirname(os.path.abspath(__file__))
         config = json.load(open(os.path.join(cwd, 'config.json')))
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
-                              'defaultProperties', 'env', 'factory', 'locks', 'name', 'platform', 'properties', 'tags',
+                              'defaultProperties', 'env', 'factory', 'locks', 'name', 'platform', 'properties', 'shortname', 'tags',
                               'triggers', 'workernames', 'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
@@ -107,44 +107,49 @@ class TestcheckValidBuilder(unittest.TestCase):
             loadConfig.checkValidBuilder({}, {'platform': 'mac-sierra'})
         self.assertEqual(context.exception.args, ('Builder "{\'platform\': \'mac-sierra\'}" does not have name defined.',))
 
+    def test_builder_with_missing_shortname(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'platform': 'mac-sierra', 'name': 'mac-wk2(test)'})
+        self.assertEqual(context.exception.args, ('Builder "mac-wk2(test)" does not have short name defined. This name is needed for EWS status bubbles.',))
+
     def test_builder_with_invalid_identifier(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2(test)'})
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2(test)', 'shortname': 'mac-wk2'})
         self.assertEqual(context.exception.args, ('Builder name mac-wk2(test) is not a valid buildbot identifier.',))
 
     def test_builder_with_extra_long_name(self):
         longName = 'a' * 71
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': longName})
+            loadConfig.checkValidBuilder({}, {'name': longName, 'shortname': 'a'})
         self.assertEqual(context.exception.args, ('Builder name {} is longer than maximum allowed by Buildbot (70 characters).'.format(longName),))
 
     def test_builder_with_invalid_configuration(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'configuration': 'asan'})
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'asan'})
         self.assertEqual(context.exception.args, ('Invalid configuration: asan for builder: mac-wk2',))
 
     def test_builder_with_missing_factory(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'configuration': 'release'})
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'release'})
         self.assertEqual(context.exception.args, ('Builder mac-wk2 does not have factory defined.',))
 
     def test_builder_with_missing_scheduler(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'triggers': ['api-tests-mac-ews']})
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'triggers': ['api-tests-mac-ews']})
         self.assertEqual(context.exception.args, ('Trigger: api-tests-mac-ews in builder mac-wk2 does not exist in list of Trigerrable schedulers.',))
 
     def test_builder_with_missing_platform(self):
         with self.assertRaises(Exception) as context:
-            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory'})
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory'})
         self.assertEqual(context.exception.args, ('Builder mac-wk2 does not have platform defined.',))
 
     def test_valid_builder(self):
-        loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra'})
+        loadConfig.checkValidBuilder({}, {'name': 'macOS-High-Sierra-WK2-EWS', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra'})
 
 
 class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        self.WK2Builder = {'name': 'mac-wk2', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'workernames': ['ews101', 'ews102']}
+        self.WK2Builder = {'name': 'macOS-High-Sierra-WK2-EWS', 'shortname': 'mac-wk2', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'workernames': ['ews101', 'ews102']}
         self.ews101 = {'name': 'ews101', 'platform': 'mac-sierra'}
         self.ews102 = {'name': 'ews102', 'platform': 'ios-11'}
         super(TestcheckWorkersAndBuildersForConsistency, self).__init__(*args, **kwargs)
@@ -152,12 +157,12 @@ class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
     def test_checkWorkersAndBuildersForConsistency(self):
         with self.assertRaises(Exception) as context:
             loadConfig.checkWorkersAndBuildersForConsistency({}, [], [self.WK2Builder])
-        self.assertEqual(context.exception.args, ('Builder mac-wk2 has worker ews101, which is not defined in workers list!',))
+        self.assertEqual(context.exception.args, ('Builder macOS-High-Sierra-WK2-EWS has worker ews101, which is not defined in workers list!',))
 
     def test_checkWorkersAndBuildersForConsistency1(self):
         with self.assertRaises(Exception) as context:
             loadConfig.checkWorkersAndBuildersForConsistency({}, [self.ews101, self.ews102], [self.WK2Builder])
-        self.assertEqual(context.exception.args, ('Builder mac-wk2 is for platform mac-sierra, but has worker ews102 for platform ios-11!',))
+        self.assertEqual(context.exception.args, ('Builder macOS-High-Sierra-WK2-EWS is for platform mac-sierra, but has worker ews102 for platform ios-11!',))
 
     def test_success(self):
         loadConfig.checkWorkersAndBuildersForConsistency({}, [self.ews101, {'name': 'ews102', 'platform': 'mac-sierra'}], [self.WK2Builder])

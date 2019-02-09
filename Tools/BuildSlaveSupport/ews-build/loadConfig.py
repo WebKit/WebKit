@@ -102,6 +102,9 @@ def checkValidBuilder(config, builder):
     if not builder.get('name'):
         raise Exception('Builder "{}" does not have name defined.'.format(builder))
 
+    if not builder.get('shortname'):
+        raise Exception('Builder "{}" does not have short name defined. This name is needed for EWS status bubbles.'.format(builder.get('name')))
+
     if not buildbot_identifiers.ident_re.match(builder['name']):
         raise Exception('Builder name {} is not a valid buildbot identifier.'.format(builder['name']))
 
