@@ -1,3 +1,25 @@
+2019-02-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Ask platform for generic font family mappings
+        https://bugs.webkit.org/show_bug.cgi?id=187723
+        <rdar://problem/41892438>
+
+        Reviewed by Brent Fulgham.
+
+        Update the tests to work with this new model.
+
+        * fast/text/international/font-fallback-to-common-script-expected.html: Removed.
+        * fast/text/international/font-fallback-to-common-script.html: Removed. This test is no longer testing
+        anything relevant.
+        * fast/text/international/lang-sensitive-fonts-expected.html:
+        * fast/text/international/lang-sensitive-fonts-xml-expected.html:
+        * fast/text/international/lang-sensitive-fonts-xml.xhtml:
+        * fast/text/international/lang-sensitive-fonts.html:
+        * fast/text/international/locale-sensitive-fonts-expected.html:
+        * fast/text/international/locale-sensitive-fonts.html:
+        * fast/text/ja-sans-serif-expected-mismatch.html: Added.
+        * fast/text/ja-sans-serif.html: Added.
+
 2019-02-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Import / Export Heap Snapshots

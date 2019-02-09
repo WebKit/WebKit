@@ -1,3 +1,56 @@
+2019-02-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Ask platform for generic font family mappings
+        https://bugs.webkit.org/show_bug.cgi?id=187723
+        <rdar://problem/41892438>
+
+        Reviewed by Brent Fulgham.
+
+        WebKit API allows setting the generic font families for the USCRIPT_COMMON script.
+        When trying to style a character with a generic font family, we first look to see if
+        we have a mapping for the particular script the character is rendered with, and if we
+        don't find a match, we then check USCRIPT_COMMON.
+
+        In the Cocoa ports, the only way families get set for non-USCRIPT_COMMON scripts (aka
+        the only scripts which won't use the API families) is in
+        SettingsBase::initializeDefaultFontFamilies(). That function only sets the families
+        for the CJK scripts.
+
+        The mappings inside SettingsBase are incorrect and conflict with our policy regarding
+        user-installed fonts. Instead, we should be consulting with the platform for some of
+        these mappings, by calling CTFontDescriptorCreateForCSSFamily(). However, the WebKit
+        API still has to work to set the mappings for untagged content. Therefore, we use the
+        system mappings for language-tagged content, and the API mappings for non-language-tagged
+        content. This is a good balance that makes sure we always have a good mapping for every
+        language, but API clients can still set the mappings, too.
+
+        Test: fast/text/ja-sans-serif.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSFontSelector.cpp:
+        (WebCore::resolveGenericFamily):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontFamily):
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::initializeDefaultFontFamilies):
+        (WebCore::osakaMonoIsInstalled): Deleted.
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::platformResolveGenericFamily):
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::computeSpecializedChineseLocale):
+        (WebCore::cachedSpecializedChineseLocale):
+        (WebCore::languageChanged):
+        (WebCore::FontDescription::platformResolveGenericFamily):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::SystemFontDatabaseCoreText::clear):
+        (WebCore::SystemFontDatabaseCoreText::serifFamily):
+        (WebCore::SystemFontDatabaseCoreText::sansSerifFamily):
+        (WebCore::SystemFontDatabaseCoreText::cursiveFamily):
+        (WebCore::SystemFontDatabaseCoreText::fantasyFamily):
+        (WebCore::SystemFontDatabaseCoreText::monospaceFamily):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(CodeBlock) more

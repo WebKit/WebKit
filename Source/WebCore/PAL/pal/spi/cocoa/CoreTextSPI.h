@@ -79,6 +79,13 @@ extern const CFStringRef kCTFontPostScriptNameAttribute;
 extern const CFStringRef kCTFontUserInstalledAttribute;
 extern const CFStringRef kCTFontFallbackOptionAttribute;
 
+extern const CFStringRef kCTFontCSSFamilySerif;
+extern const CFStringRef kCTFontCSSFamilySansSerif;
+extern const CFStringRef kCTFontCSSFamilyCursive;
+extern const CFStringRef kCTFontCSSFamilyFantasy;
+extern const CFStringRef kCTFontCSSFamilyMonospace;
+extern const CFStringRef kCTFontCSSFamilySystemUI;
+
 bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
 
 CGSize CTRunGetInitialAdvance(CTRunRef);
@@ -87,6 +94,7 @@ void CTRunGetBaseAdvancesAndOrigins(CTRunRef, CFRange, CGSize baseAdvances[], CG
 CTTypesetterRef CTTypesetterCreateWithUniCharProviderAndOptions(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon, CFDictionaryRef options);
 bool CTFontGetVerticalGlyphsForCharacters(CTFontRef, const UniChar characters[], CGGlyph glyphs[], CFIndex count);
 void CTFontGetUnsummedAdvancesForGlyphsAndStyle(CTFontRef, CTFontOrientation, CGFontRenderingStyle, const CGGlyph[], CGSize advances[], CFIndex count);
+CTFontDescriptorRef CTFontDescriptorCreateForCSSFamily(CFStringRef cssFamily, CFStringRef language);
 
 CTFontDescriptorRef CTFontDescriptorCreateForUIType(CTFontUIFontType, CGFloat size, CFStringRef language);
 CTFontDescriptorRef CTFontDescriptorCreateWithTextStyle(CFStringRef style, CFStringRef size, CFStringRef language);
