@@ -1,5 +1,17 @@
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] CachedTypes should use jsString instead of JSString::create
+        https://bugs.webkit.org/show_bug.cgi?id=194471
+
+        Reviewed by Mark Lam.
+
+        Use jsString() here because JSString::create is a bit low-level API and it requires some invariant like "length is not zero".
+
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedJSValue::decode const):
+
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Increase StructureIDTable initial capacity
         https://bugs.webkit.org/show_bug.cgi?id=194468
 

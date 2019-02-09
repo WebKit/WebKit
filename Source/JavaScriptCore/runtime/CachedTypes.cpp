@@ -1112,8 +1112,8 @@ public:
             v = this->buffer<CachedSymbolTable>()->decode(decoder);
             break;
         case EncodedType::String: {
-            UniquedStringImpl* impl = this->buffer<CachedUniquedStringImpl>()->decode(decoder);
-            v = JSString::create(decoder.vm(), adoptRef(*impl));
+            StringImpl* impl = this->buffer<CachedUniquedStringImpl>()->decode(decoder);
+            v = jsString(&decoder.vm(), adoptRef(*impl));
             break;
         }
         case EncodedType::ImmutableButterfly:
