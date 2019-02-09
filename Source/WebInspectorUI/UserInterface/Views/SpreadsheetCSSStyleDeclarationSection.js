@@ -45,6 +45,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._isMousePressed = false;
         this._mouseDownIndex = NaN;
+        this._mouseDownPoint = null;
+        this._boundHandleWindowMouseMove = null;
     }
 
     // Public
@@ -404,8 +406,13 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let propertyIndex = parseInt(propertyElement.dataset.propertyIndex);
         if (event.shiftKey && this._propertiesEditor.hasSelectedProperties())
             this._propertiesEditor.extendSelectedProperties(propertyIndex);
-        else
+        else {
             this._propertiesEditor.deselectProperties();
+            this._mouseDownPoint = WI.Point.fromEvent(event);
+            if (!this._boundHandleWindowMouseMove)
+                this._boundHandleWindowMouseMove = this._handleWindowMouseMove.bind(this);
+            window.addEventListener("mousemove", this._boundHandleWindowMouseMove);
+        }
 
         if (propertyElement.parentNode) {
             this._mouseDownIndex = propertyIndex;
@@ -421,6 +428,22 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             event.stop();
         }
         this._stopSelection();
+    }
+
+    _handleWindowMouseMove(event)
+    {
+        console.assert(this._mouseDownPoint);
+
+        if (this._mouseDownPoint.distance(WI.Point.fromEvent(event)) < 8)
+            return;
+
+        if (!this._propertiesEditor.hasSelectedProperties()) {
+            console.assert(!isNaN(this._mouseDownIndex));
+            this._propertiesEditor.selectProperties(this._mouseDownIndex, this._mouseDownIndex);
+        }
+
+        window.removeEventListener("mousemove", this._boundHandleWindowMouseMove);
+        this._mouseDownPoint = null;
     }
 
     _handleClick(event)
@@ -457,6 +480,9 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._isMousePressed = false;
         this._mouseDownIndex = NaN;
         this._element.classList.remove("selecting");
+
+        window.removeEventListener("mousemove", this._boundHandleWindowMouseMove);
+        this._mouseDownPoint = null;
     }
 
     _highlightNodesWithSelector()
