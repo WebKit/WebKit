@@ -1,5 +1,23 @@
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Increase StructureIDTable initial capacity
+        https://bugs.webkit.org/show_bug.cgi?id=194468
+
+        Reviewed by Mark Lam.
+
+        Currently, # of structures just after initializing JSGlobalObject (precisely, initializing GlobalObject in
+        JSC shell), 281, already exceeds the current initial value 256. We should increase the capacity since
+        unnecessary resizing requires more operations, keeps old StructureID array until GC happens, and makes
+        more memory dirty. We also remove some structures that are no longer used.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::callbackObjectStructure const):
+        (JSC::JSGlobalObject::propertyNameIteratorStructure const): Deleted.
+        * runtime/StructureIDTable.h:
+        * runtime/VM.h:
+
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] String.fromCharCode's slow path always generates 16bit string
         https://bugs.webkit.org/show_bug.cgi?id=194466
 

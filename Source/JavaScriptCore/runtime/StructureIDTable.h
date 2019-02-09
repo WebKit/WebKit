@@ -106,7 +106,7 @@ private:
 
     StructureOrOffset* table() const { return m_table.get(); }
     
-    static const size_t s_initialSize = 256;
+    static constexpr size_t s_initialSize = 512;
 
     Vector<UniqueArray<StructureOrOffset>> m_oldTables;
 
