@@ -38,7 +38,9 @@
 
 namespace WebKit {
 
-static void XPCServiceEventHandler(xpc_connection_t peer)
+void XPCInitializationHandler(xpc_object_t);
+
+void XPCEventHandler(xpc_connection_t peer, AuxiliaryProcessType processType)
 {
     static xpc_object_t priorityBoostMessage = nullptr;
 
@@ -47,13 +49,20 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_TERMINATION_IMMINENT) {
-                // FIXME: Handle this case more gracefully.
-                exit(EXIT_FAILURE);
+                if (processType == AuxiliaryProcessType::XPCService) {
+                    // FIXME: Handle this case more gracefully.
+                    exit(EXIT_FAILURE);
+                } else {
+                    // FIXME: Deref the NetworkProcess object associated with this xpc connection
+                    // once we have a container for such objects.
+                }
             }
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
+                XPCInitializationHandler(xpc_dictionary_get_value(event, "initialization-message"));
+                
                 CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
@@ -92,30 +101,46 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-int XPCServiceMain(int, const char**)
+void XPCInitializationHandler(xpc_object_t event)
 {
-#if defined(__i386__)
-    // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
-    // it's the only of the XPC services that are 32-bit. We should come up with a more targeted #if check.
-    @autoreleasepool {
-        // We must set the state of AppleMagnifiedMode before NSApplication initialization so that the value will be in
-        // place before Cocoa startup logic runs and caches the value.
-        [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"AppleMagnifiedMode" : @YES }];
-    }
-#endif
+    ASSERT(event);
+    ASSERT(xpc_get_type(event) == XPC_TYPE_DICTIONARY);
 
-    auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
-#if PLATFORM(IOS_FAMILY)
-    auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
-    xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
-        setenv(key, xpc_string_get_string_ptr(value), 1);
-        return true;
-    });
-#endif
-
-    if (bootstrap) {
+    static std::once_flag once;
+    std::call_once(once, [event] {
 #if PLATFORM(MAC)
-        if (const char* webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion")) {
+        // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
+        setenv("__APPLEEVENTSSERVICENAME", "", 1);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+        // We don't need to talk to the dock.
+        if (Class nsApplicationClass = NSClassFromString(@"NSApplication")) {
+            if ([nsApplicationClass respondsToSelector:@selector(_preventDockConnections)])
+                [nsApplicationClass _preventDockConnections];
+        }
+#endif
+#endif
+
+#if defined(__i386__)
+        // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
+        // it's the only of the XPC services that are 32-bit. We should come up with a more targeted #if check.
+        @autoreleasepool {
+            // We must set the state of AppleMagnifiedMode before NSApplication initialization so that the value will be in
+            // place before Cocoa startup logic runs and caches the value.
+            [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"AppleMagnifiedMode" : @YES }];
+        }
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+        auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
+        xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
+            setenv(key, xpc_string_get_string_ptr(value), 1);
+            return true;
+        });
+#endif
+
+#if PLATFORM(MAC)
+        if (const char* webKitBundleVersion = xpc_dictionary_get_string(event, "WebKitBundleVersion")) {
             CFBundleRef webKitBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
             NSString *expectedBundleVersion = (NSString *)CFBundleGetValueForInfoDictionaryKey(webKitBundle, kCFBundleVersionKey);
 
@@ -126,7 +151,7 @@ int XPCServiceMain(int, const char**)
         }
 #endif
 
-        if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
+        if (xpc_object_t languages = xpc_dictionary_get_value(event, "OverrideLanguages")) {
             @autoreleasepool {
                 NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
                 NSMutableDictionary *newArguments = [existingArguments mutableCopy];
@@ -139,22 +164,14 @@ int XPCServiceMain(int, const char**)
                 [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments forName:NSArgumentDomain];
             }
         }
-    }
+    });
+}
 
-#if PLATFORM(MAC)
-    // Don't allow Apple Events in WebKit processes. This can be removed when <rdar://problem/14012823> is fixed.
-    setenv("__APPLEEVENTSSERVICENAME", "", 1);
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
-    // We don't need to talk to the dock.
-    if (Class nsApplicationClass = NSClassFromString(@"NSApplication")) {
-        if ([nsApplicationClass respondsToSelector:@selector(_preventDockConnections)])
-            [nsApplicationClass _preventDockConnections];
-    }
-#endif
-#endif
-
-    xpc_main(XPCServiceEventHandler);
+int XPCServiceMain(int, const char**)
+{
+    xpc_main([] (xpc_connection_t peer) {
+        XPCEventHandler(peer, AuxiliaryProcessType::XPCService);
+    });
     return 0;
 }
 

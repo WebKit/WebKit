@@ -1,3 +1,14 @@
+2019-02-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to use networking daemon instead of XPC service
+        https://bugs.webkit.org/show_bug.cgi?id=194427
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/spi/darwin/XPCSPI.h:
+        Instead of using XPC bootstrap SPI, we just send a separate message.
+        xpc_copy_bootstrap does not seem to work in  daemons.
+
 2019-02-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241197.

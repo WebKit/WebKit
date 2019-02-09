@@ -69,7 +69,9 @@ typedef void (^xpc_handler_t)(xpc_object_t);
 typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 
 #define XPC_ARRAY_APPEND ((size_t)(-1))
+#define XPC_CONNECTION_MACH_SERVICE_LISTENER (1 << 0)
 #define XPC_ERROR_CONNECTION_INVALID XPC_GLOBAL_OBJECT(_xpc_error_connection_invalid)
+#define XPC_ERROR_KEY_DESCRIPTION _xpc_error_key_description
 #define XPC_ERROR_TERMINATION_IMMINENT XPC_GLOBAL_OBJECT(_xpc_error_termination_imminent)
 #define XPC_TYPE_ARRAY (&_xpc_type_array)
 #define XPC_TYPE_BOOL (&_xpc_type_bool)
@@ -78,6 +80,8 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 #define XPC_TYPE_ENDPOINT (&_xpc_type_endpoint)
 #define XPC_TYPE_ERROR (&_xpc_type_error)
 #define XPC_TYPE_STRING (&_xpc_type_string)
+
+extern const char * const _xpc_error_key_description;
 
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
@@ -152,8 +156,6 @@ void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
-void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t bootstrap);
-xpc_object_t xpc_copy_bootstrap(void);
 void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
 
 void xpc_array_append_value(xpc_object_t xarray, xpc_object_t value);

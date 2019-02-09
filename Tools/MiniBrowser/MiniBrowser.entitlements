@@ -7,6 +7,7 @@
 	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
 	<array>
 		<string>com.apple.Safari.SafeBrowsing.Service</string>
+		<string>com.apple.WebKit.NetworkingDaemon</string>
 	</array>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
