@@ -127,6 +127,12 @@ struct StringStats {
 
 #endif
 
+template<typename CharacterType> inline bool isLatin1(CharacterType character)
+{
+    using UnsignedCharacterType = typename std::make_unsigned<CharacterType>::type;
+    return static_cast<UnsignedCharacterType>(character) <= static_cast<UnsignedCharacterType>(0xFF);
+}
+
 class StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
@@ -1226,3 +1232,4 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String
 using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
+using WTF::isLatin1;

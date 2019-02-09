@@ -1,3 +1,22 @@
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] String.fromCharCode's slow path always generates 16bit string
+        https://bugs.webkit.org/show_bug.cgi?id=194466
+
+        Reviewed by Keith Miller.
+
+        String.fromCharCode(a1) has a fast path and the most frequently used. And String.fromCharCode(a1, a2, ...)
+        goes to the slow path. However, in the slow path, we always create 16bit string. 16bit string takes 2x memory,
+        and even worse, taints ropes 16bit if 16bit string is included in the given rope. We find that acorn-wtb
+        creates very large strings multiple times with String.fromCharCode, and String.fromCharCode always produces
+        16bit string. However, only few strings are actually 16bit strings. This patch attempts to make 8bit string
+        as much as possible.
+
+        It improves non JIT acorn-wtb's peak and current memory footprint by 6% and 3% respectively.
+
+        * runtime/StringConstructor.cpp:
+        (JSC::stringFromCharCode):
+
 2019-02-08  Keith Miller  <keith_miller@apple.com>
 
         We should only make rope strings when concatenating strings long enough.

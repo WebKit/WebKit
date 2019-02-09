@@ -289,7 +289,7 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsign
     auto string = createUninitializedInternalNonEmpty(length, data);
 
     for (size_t i = 0; i < length; ++i) {
-        if (characters[i] & 0xFF00)
+        if (!isLatin1(characters[i]))
             return create(characters, length);
         data[i] = static_cast<LChar>(characters[i]);
     }
@@ -414,7 +414,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingInde
         if (!(character & ~0x7F))
             data8[i] = toASCIILower(character);
         else {
-            ASSERT(u_tolower(character) <= 0xFF);
+            ASSERT(isLatin1(u_tolower(character)));
             data8[i] = static_cast<LChar>(u_tolower(character));
         }
     }
@@ -459,7 +459,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
                 ++numberSharpSCharacters;
             ASSERT(u_toupper(character) <= 0xFFFF);
             UChar upper = u_toupper(character);
-            if (UNLIKELY(upper > 0xFF)) {
+            if (UNLIKELY(!isLatin1(upper))) {
                 // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
                 goto upconvert;
             }
@@ -480,7 +480,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
                 *dest++ = 'S';
                 *dest++ = 'S';
             } else {
-                ASSERT(u_toupper(character) <= 0xFF);
+                ASSERT(isLatin1(u_toupper(character)));
                 *dest++ = static_cast<LChar>(u_toupper(character));
             }
         }
@@ -628,7 +628,7 @@ SlowPath:
                 if (isASCII(character))
                     data8[i] = toASCIILower(character);
                 else {
-                    ASSERT(u_foldCase(character, U_FOLD_CASE_DEFAULT) <= 0xFF);
+                    ASSERT(isLatin1(u_foldCase(character, U_FOLD_CASE_DEFAULT)));
                     data8[i] = static_cast<LChar>(u_foldCase(character, U_FOLD_CASE_DEFAULT));
                 }
             }
@@ -1253,12 +1253,12 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
         return *this;
 
     if (is8Bit()) {
-        if (target > 0xFF) {
+        if (!isLatin1(target)) {
             // Looking for a 16-bit character in an 8-bit string, so we're done.
             return *this;
         }
 
-        if (replacement <= 0xFF) {
+        if (isLatin1(replacement)) {
             LChar* data;
             LChar oldChar = static_cast<LChar>(target);
             LChar newChar = static_cast<LChar>(replacement);

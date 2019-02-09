@@ -146,7 +146,7 @@ void String::append(UChar character)
         m_impl = StringImpl::create(&character, 1);
         return;
     }
-    if (character <= 0xFF && is8Bit()) {
+    if (isLatin1(character) && is8Bit()) {
         append(static_cast<LChar>(character));
         return;
     }
@@ -829,7 +829,7 @@ CString String::latin1() const
 
     for (unsigned i = 0; i < length; ++i) {
         UChar ch = characters[i];
-        characterBuffer[i] = ch > 0xff ? '?' : ch;
+        characterBuffer[i] = !isLatin1(ch) ? '?' : ch;
     }
 
     return result;

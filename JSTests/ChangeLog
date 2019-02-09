@@ -1,3 +1,14 @@
+2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] String.fromCharCode's slow path always generates 16bit string
+        https://bugs.webkit.org/show_bug.cgi?id=194466
+
+        Reviewed by Keith Miller.
+
+        * stress/string-from-char-code-slow-path.js: Added.
+        (shouldBe):
+        (testWithLength):
+
 2019-02-08  Saam barati  <sbarati@apple.com>
 
         Nodes that rely on being dominated by CheckInBounds should have a child edge to it

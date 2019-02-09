@@ -83,13 +83,26 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
         return JSValue::encode(jsSingleCharacterString(exec, code));
     }
 
-    UChar* buf;
-    auto impl = StringImpl::createUninitialized(length, buf);
+    LChar* buf8Bit;
+    auto impl8Bit = StringImpl::createUninitialized(length, buf8Bit);
     for (unsigned i = 0; i < length; ++i) {
-        buf[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
+        UChar character = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (UNLIKELY(!isLatin1(character))) {
+            UChar* buf16Bit;
+            auto impl16Bit = StringImpl::createUninitialized(length, buf16Bit);
+            StringImpl::copyCharacters(buf16Bit, buf8Bit, i);
+            buf16Bit[i] = character;
+            ++i;
+            for (; i < length; ++i) {
+                buf16Bit[i] = static_cast<UChar>(exec->uncheckedArgument(i).toUInt32(exec));
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            }
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl16Bit))));
+        }
+        buf8Bit[i] = static_cast<LChar>(character);
     }
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(exec, WTFMove(impl8Bit))));
 }
 
 JSString* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
