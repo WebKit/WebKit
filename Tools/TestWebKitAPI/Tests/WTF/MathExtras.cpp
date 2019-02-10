@@ -318,6 +318,25 @@ TEST(WTF, clampFloatToInt)
     EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740991)), std::numeric_limits<int32_t>::max());
     EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740992)), std::numeric_limits<int32_t>::max());
     EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740993)), std::numeric_limits<int32_t>::max());
+
+    // Test the double at the edge of max/min and max-1/min+1.
+    double intMax = static_cast<double>(std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(intMax), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax, 0)), std::numeric_limits<int32_t>::max() - 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax, std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::max());
+
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax - 1., 0)), std::numeric_limits<int32_t>::max() - 2);
+    EXPECT_EQ(clampTo<int32_t>(intMax - 1), std::numeric_limits<int32_t>::max() - 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax - 1., std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::max() - 1);
+
+    double intMin = static_cast<double>(std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(intMin), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin, 0)), std::numeric_limits<int32_t>::min() + 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin, -std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::min());
+
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin + 1, 0)), std::numeric_limits<int32_t>::min() + 2);
+    EXPECT_EQ(clampTo<int32_t>(intMin + 1), std::numeric_limits<int32_t>::min() + 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin + 1, -std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::min() + 1);
 }
 
 template<typename TargetType, typename SourceType>
