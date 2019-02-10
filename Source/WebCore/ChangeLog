@@ -1,5 +1,28 @@
 2019-02-10  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add intrinsic width support for inline-block boxes
+        https://bugs.webkit.org/show_bug.cgi?id=194479
+
+        Reviewed by Antti Koivisto.
+
+        Compute the intrinsic width for the inline-block (formatting context root) and set it as the content box width while
+        laying out the content for the min/max width.
+
+        <div style="position: absolute">before<span id=inline-block style="display: inline-block">inline_block content<span>after</div>
+
+        The "inline-block" formatting root returns "inline_block" width for the minimum and "inline_block width" for
+        the maximum width. These min/max values are used to figure out the intrinsic width for the parent <div>.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeMargin const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
+2019-02-10  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add intrinsic width support for replaced boxes
         https://bugs.webkit.org/show_bug.cgi?id=194478
 

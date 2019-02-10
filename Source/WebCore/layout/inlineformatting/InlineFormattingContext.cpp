@@ -94,20 +94,27 @@ void InlineFormattingContext::layout() const
 
 FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsicWidthConstraints() const
 {
-    ASSERT(!layoutState().formattingStateForBox(root()).instrinsicWidthConstraints(root()));
     ASSERT(is<Container>(root()));
 
     auto& layoutState = this->layoutState();
     auto& root = downcast<Container>(this->root());
+    if (auto instrinsicWidthConstraints = layoutState.formattingStateForBox(root).instrinsicWidthConstraints(root))
+        return *instrinsicWidthConstraints;
 
-    auto usedValues = UsedHorizontalValues { { }, { }, { } };
+    Vector<const Box*> formattingContextRootList;
+    auto usedValues = UsedHorizontalValues { };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     while (layoutBox) {
-        if (layoutBox->establishesFormattingContext())
+        if (layoutBox->isFloatingPositioned())
             ASSERT_NOT_IMPLEMENTED_YET();
-        else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
+        else if (layoutBox->isInlineBlockBox()) {
+            computeIntrinsicWidthForFormattingContextRoot(*layoutBox);
+            formattingContextRootList.append(layoutBox);
+        } else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
             computeBorderAndPadding(*layoutBox, usedValues);
-            if (layoutBox->isReplaced())
+            // inline-block and replaced.
+            auto needsWidthComputation = layoutBox->isReplaced() || layoutBox->establishesFormattingContext();
+            if (needsWidthComputation)
                 computeWidthAndMargin(*layoutBox, usedValues);
             else {
                 // Simple inline container with no intrinsic width <span>.
@@ -124,6 +131,13 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
         LayoutUnit maxContentLogicalRight;
         auto lineBreaker = InlineLineBreaker { layoutState, formattingState().inlineContent(), inlineRunProvider.runs() };
         LayoutUnit lineLogicalRight;
+
+        // Switch to the min/max formatting root width values before formatting the lines.
+        for (auto* formattingRoot : formattingContextRootList) {
+            auto instrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).instrinsicWidthConstraints(*formattingRoot);
+            layoutState.displayBoxForLayoutBox(*formattingRoot).setContentBoxWidth(availableWidth ? instrinsicWidths->maximum : instrinsicWidths->minimum);
+        }
+
         while (auto run = lineBreaker.nextRun(lineLogicalRight, availableWidth, !lineLogicalRight)) {
             if (run->position == InlineLineBreaker::Run::Position::LineBegin)
                 lineLogicalRight = 0;
@@ -139,11 +153,20 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
     return instrinsicWidthConstraints;
 }
 
+void InlineFormattingContext::computeIntrinsicWidthForFormattingContextRoot(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.establishesFormattingContext());
+
+    auto usedValues = UsedHorizontalValues { };
+    computeBorderAndPadding(layoutBox, usedValues);
+    computeMargin(downcast<InlineContainer>(layoutBox), usedValues);
+    layoutState().createFormattingContext(layoutBox)->instrinsicWidthConstraints();
+}
+
 void InlineFormattingContext::computeMargin(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const
 {
-    // Non-replaced, non-formatting root containers (<span></span>) don't have width property -> non width computation. 
+    // Non-replaced and formatting root containers (<span></span>) don't have width property -> non width computation.
     ASSERT(!inlineContainer.replaced());
-    ASSERT(!inlineContainer.establishesFormattingContext());
 
     auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, usedValues);

@@ -86,6 +86,7 @@ private:
     };
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
+    void computeIntrinsicWidthForFormattingContextRoot(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
     void computeMargin(const InlineContainer&, UsedHorizontalValues) const;
     void computeBorderAndPadding(const Box&, UsedHorizontalValues) const;

@@ -132,6 +132,10 @@ struct UsedHorizontalValues {
         {
         }
 
+    explicit UsedHorizontalValues()
+        {
+        }
+
     Optional<LayoutUnit> containingBlockWidth;
     Optional<LayoutUnit> width;
     Optional<UsedHorizontalMargin> margin;
