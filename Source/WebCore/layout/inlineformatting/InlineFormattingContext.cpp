@@ -77,9 +77,11 @@ void InlineFormattingContext::layout() const
     while (layoutBox) {
         if (layoutBox->establishesFormattingContext())
             layoutFormattingContextRoot(*layoutBox, usedValues);
-        else if (is<Container>(*layoutBox))
-            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox), usedValues);
-        else if (layoutBox->isReplaced())
+        else if (is<Container>(*layoutBox)) {
+            auto& inlineContainer = downcast<InlineContainer>(*layoutBox);
+            computeMargin(inlineContainer, usedValues);
+            computeBorderAndPadding(inlineContainer, usedValues);
+        } else if (layoutBox->isReplaced())
             computeWidthAndHeightForReplacedInlineBox(*layoutBox, usedValues);
         layoutBox = nextInPreOrder(*layoutBox, root);
     }
@@ -101,10 +103,17 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
     auto usedValues = UsedHorizontalValues { { }, { }, { } };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     while (layoutBox) {
-        if (layoutBox->establishesFormattingContext() || layoutBox->isReplaced())
+        if (layoutBox->establishesFormattingContext())
             ASSERT_NOT_IMPLEMENTED_YET();
-        else if (is<Container>(*layoutBox))
-            computeMarginBorderAndPadding(downcast<InlineContainer>(*layoutBox), usedValues);
+        else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
+            computeBorderAndPadding(*layoutBox, usedValues);
+            if (layoutBox->isReplaced())
+                computeWidthAndMargin(*layoutBox, usedValues);
+            else {
+                // Simple inline container with no intrinsic width <span>.
+                computeMargin(downcast<InlineContainer>(*layoutBox), usedValues);
+            }
+        }
         layoutBox = nextInPreOrder(*layoutBox, root);
     }
 
@@ -130,24 +139,23 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
     return instrinsicWidthConstraints;
 }
 
-void InlineFormattingContext::computeBorderAndPadding(const Box& layoutBox, UsedHorizontalValues usedValues) const
-{
-    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
-    displayBox.setBorder(Geometry::computedBorder(layoutBox));
-    displayBox.setPadding(Geometry::computedPadding(layoutBox, usedValues));
-}
-
-void InlineFormattingContext::computeMarginBorderAndPadding(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const
+void InlineFormattingContext::computeMargin(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const
 {
     // Non-replaced, non-formatting root containers (<span></span>) don't have width property -> non width computation. 
     ASSERT(!inlineContainer.replaced());
     ASSERT(!inlineContainer.establishesFormattingContext());
 
-    computeBorderAndPadding(inlineContainer, usedValues);
     auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
     auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, usedValues);
     displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
+}
+
+void InlineFormattingContext::computeBorderAndPadding(const Box& layoutBox, UsedHorizontalValues usedValues) const
+{
+    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
+    displayBox.setBorder(Geometry::computedBorder(layoutBox));
+    displayBox.setPadding(Geometry::computedPadding(layoutBox, usedValues));
 }
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
@@ -191,6 +199,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 void InlineFormattingContext::layoutFormattingContextRoot(const Box& root, UsedHorizontalValues usedValues) const
 {
     ASSERT(root.isFloatingPositioned() || root.isInlineBlockBox());
+    ASSERT(usedValues.containingBlockWidth);
 
     computeBorderAndPadding(root, usedValues);
     computeWidthAndMargin(root, usedValues);
@@ -208,6 +217,7 @@ void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Bo
     ASSERT(!layoutBox.isContainer());
     ASSERT(!layoutBox.establishesFormattingContext());
     ASSERT(layoutBox.replaced());
+    ASSERT(usedValues.containingBlockWidth);
 
     computeBorderAndPadding(layoutBox, usedValues);
     computeWidthAndMargin(layoutBox, usedValues);

@@ -1,3 +1,20 @@
+2019-02-10  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add intrinsic width support for replaced boxes
+        https://bugs.webkit.org/show_bug.cgi?id=194478
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layout const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        (WebCore::Layout::InlineFormattingContext::computeMargin const):
+        (WebCore::Layout::InlineFormattingContext::computeBorderAndPadding const):
+        (WebCore::Layout::InlineFormattingContext::layoutFormattingContextRoot const):
+        (WebCore::Layout::InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox const):
+        (WebCore::Layout::InlineFormattingContext::computeMarginBorderAndPadding const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
 2019-02-10  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Add missing return type to lambda
