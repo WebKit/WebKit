@@ -1,3 +1,25 @@
+2019-02-10  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Add missing return type to lambda
+        https://bugs.webkit.org/show_bug.cgi?id=194414
+
+        Reviewed by Darin Adler.
+
+        Since g_signal_connect() is untyped, a compiler error was not
+        generated when a lambda with a missing GstFlowReturn return type was
+        provided for a signal that expects it.
+
+        This used to work before r240784 because a recent function call had
+        set GST_FLOW_OK in the return value register and it happened to
+        survive until the lambda function call ended. Starting on that commit
+        such return value was removed and it stopped working on debug.
+
+        Of course, the actual problem is in the signature of the lambda
+        function, and this patch fixes that.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+
 2019-02-09  Darin Adler  <darin@apple.com>
 
         Eliminate unnecessary String temporaries by using StringConcatenateNumbers

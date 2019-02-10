@@ -204,8 +204,9 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
             appendPipeline->didReceiveInitializationSegment();
         });
     }), this);
-    g_signal_connect(m_appsink.get(), "new-sample", G_CALLBACK(+[](GstElement* appsink, AppendPipeline* appendPipeline) {
+    g_signal_connect(m_appsink.get(), "new-sample", G_CALLBACK(+[](GstElement* appsink, AppendPipeline* appendPipeline) -> GstFlowReturn {
         appendPipeline->handleAppsinkNewSampleFromStreamingThread(appsink);
+        return GST_FLOW_OK;
     }), this);
     g_signal_connect(m_appsink.get(), "eos", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
         // basesrc will emit an EOS after it has received a GST_FLOW_ERROR. That's the only case we are expecting.
