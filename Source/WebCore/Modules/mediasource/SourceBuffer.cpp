@@ -735,7 +735,7 @@ static bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::valu
 
 static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMap::MapType& samples, SourceBuffer::TrackBuffer& trackBuffer, const SourceBuffer* buffer, const char* logPrefix)
 {
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     MediaTime earliestSample = MediaTime::positiveInfiniteTime();
     MediaTime latestSample = MediaTime::zeroTime();
     size_t bytesRemoved = 0;
@@ -750,13 +750,13 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     PlatformTimeRanges erasedRanges;
     for (const auto& sampleIt : samples) {
         const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         size_t startBufferSize = trackBuffer.samples.sizeInBytes();
 #endif
 
         const RefPtr<MediaSample>& sample = sampleIt.second;
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         if (willLog)
             logger.debug(buffer->logChannel(), logIdentifier, "removing sample ", *sampleIt.second);
 #endif
@@ -771,7 +771,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
         auto endTime = startTime + sample->duration();
         erasedRanges.add(startTime, endTime);
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         bytesRemoved += startBufferSize - trackBuffer.samples.sizeInBytes();
         if (startTime < earliestSample)
             earliestSample = startTime;
@@ -808,7 +808,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     if (additionalErasedRanges.length())
         erasedRanges.unionWith(additionalErasedRanges);
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     if (bytesRemoved && willLog)
         logger.debug(buffer->logChannel(), logIdentifier, "removed ", bytesRemoved, ", start = ", earliestSample, ", end = ", latestSample);
 #endif

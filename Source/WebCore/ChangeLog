@@ -1,3 +1,12 @@
+2019-02-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK Debug build fix after r241148.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::removeSamplesFromTrackBuffer):
+        SourceBuffer::logClassName and friends are declared for
+        !RELEASE_LOG_DISABLED builds so adapt calling sites accordingly.
+
 2019-02-10  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add intrinsic width support for inline-block boxes
