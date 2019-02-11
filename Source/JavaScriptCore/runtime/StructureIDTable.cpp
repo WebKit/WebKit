@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,7 @@
 namespace JSC {
 
 StructureIDTable::StructureIDTable()
-    : m_firstFreeOffset(0)
-    , m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
+    : m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
     , m_size(0)
     , m_capacity(s_initialSize)
 {
@@ -96,6 +95,9 @@ StructureID StructureIDTable::allocateID(Structure* structure)
 
     StructureID result = m_firstFreeOffset;
     m_firstFreeOffset = table()[m_firstFreeOffset].offset;
+    if (!m_firstFreeOffset)
+        m_lastFreeOffset = 0;
+
     table()[result].structure = structure;
     ASSERT(!isNuked(result));
     return result;
@@ -110,8 +112,23 @@ void StructureIDTable::deallocateID(Structure* structure, StructureID structureI
 #if USE(JSVALUE64)
     ASSERT(structureID != s_unusedID);
     RELEASE_ASSERT(table()[structureID].structure == structure);
-    table()[structureID].offset = m_firstFreeOffset;
-    m_firstFreeOffset = structureID;
+
+    if (!m_firstFreeOffset) {
+        table()[structureID].offset = 0;
+        m_firstFreeOffset = structureID;
+        m_lastFreeOffset = structureID;
+        return;
+    }
+
+    bool insertAtHead = m_weakRandom.getUint32() & 1;
+    if (insertAtHead) {
+        table()[structureID].offset = m_firstFreeOffset;
+        m_firstFreeOffset = structureID;
+    } else {
+        table()[structureID].offset = 0;
+        table()[m_lastFreeOffset].offset = structureID;
+        m_lastFreeOffset = structureID;
+    }
 #else
     UNUSED_PARAM(structure);
     UNUSED_PARAM(structureID);
