@@ -52,11 +52,11 @@ public:
     virtual void layout() const = 0;
     void layoutOutOfFlowDescendants(const Box&) const;
 
-    struct InstrinsicWidthConstraints {
+    struct IntrinsicWidthConstraints {
         LayoutUnit minimum;
         LayoutUnit maximum;
     };
-    virtual InstrinsicWidthConstraints instrinsicWidthConstraints() const = 0;
+    virtual IntrinsicWidthConstraints intrinsicWidthConstraints() const = 0;
 
     static Display::Box mapBoxToAncestor(const LayoutState&, const Box&, const Container& ancestor);
     static LayoutUnit mapTopToAncestor(const LayoutState&, const Box&, const Container& ancestor);

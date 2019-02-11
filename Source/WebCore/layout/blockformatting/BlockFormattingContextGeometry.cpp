@@ -279,14 +279,14 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowWidthAndMargin(const Layo
     return inFlowReplacedWidthAndMargin(layoutState, layoutBox, usedValues);
 }
 
-bool BlockFormattingContext::Geometry::instrinsicWidthConstraintsNeedChildrenWidth(const Box& layoutBox)
+bool BlockFormattingContext::Geometry::intrinsicWidthConstraintsNeedChildrenWidth(const Box& layoutBox)
 {
     if (!is<Container>(layoutBox) || !downcast<Container>(layoutBox).hasInFlowOrFloatingChild())
         return false;
     return layoutBox.style().width().isAuto();
 }
 
-FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::instrinsicWidthConstraints(const LayoutState& layoutState, const Box& layoutBox)
+FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const LayoutState& layoutState, const Box& layoutBox)
 {
     auto& style = layoutBox.style();
     if (auto width = fixedValue(style.logicalWidth()))
@@ -307,8 +307,8 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::
             continue;
         auto& formattingState = layoutState.formattingStateForBox(child);
         ASSERT(formattingState.isBlockFormattingState());
-        auto childInstrinsicWidthConstraints = formattingState.instrinsicWidthConstraints(child);
-        ASSERT(childInstrinsicWidthConstraints);
+        auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraints(child);
+        ASSERT(childIntrinsicWidthConstraints);
         
         auto& style = child.style();
         auto horizontalMarginBorderAndPadding = fixedValue(style.marginStart()).valueOr(0)
@@ -318,8 +318,8 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::Geometry::
             + LayoutUnit { style.borderRightWidth() }
             + fixedValue(style.marginEnd()).valueOr(0);
 
-        minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childInstrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
-        maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childInstrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 
+        minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childIntrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
+        maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childIntrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 
     }
 
     return { minimumIntrinsicWidth, maximumIntrinsicWidth };

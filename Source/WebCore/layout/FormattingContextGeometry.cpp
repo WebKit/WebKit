@@ -248,8 +248,8 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutStat
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
     ASSERT(usedValues.containingBlockWidth.hasValue());
     auto availableWidth = *usedValues.containingBlockWidth;
-    auto instrinsicWidthConstraints = layoutState.createFormattingContext(formattingRoot)->instrinsicWidthConstraints();
-    return std::min(std::max(instrinsicWidthConstraints.minimum, availableWidth), instrinsicWidthConstraints.maximum);
+    auto intrinsicWidthConstraints = layoutState.createFormattingContext(formattingRoot)->intrinsicWidthConstraints();
+    return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)

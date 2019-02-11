@@ -392,19 +392,19 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     MarginCollapse::updateMarginAfterForPreviousSibling(layoutState, layoutBox);
 }
 
-FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints() const
+FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::intrinsicWidthConstraints() const
 {
     auto& layoutState = this->layoutState();
     auto& formattingRoot = root();
     auto& formattingStateForRoot = layoutState.formattingStateForBox(formattingRoot);
-    if (auto instrinsicWidthConstraints = formattingStateForRoot.instrinsicWidthConstraints(formattingRoot))
-        return *instrinsicWidthConstraints;
+    if (auto intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints(formattingRoot))
+        return *intrinsicWidthConstraints;
 
     // Can we just compute them without checking the children?
-    if (!Geometry::instrinsicWidthConstraintsNeedChildrenWidth(formattingRoot)) {
-        auto instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, formattingRoot);
-        formattingStateForRoot.setInstrinsicWidthConstraints(formattingRoot, instrinsicWidthConstraints);
-        return instrinsicWidthConstraints;
+    if (!Geometry::intrinsicWidthConstraintsNeedChildrenWidth(formattingRoot)) {
+        auto intrinsicWidthConstraints = Geometry::intrinsicWidthConstraints(layoutState, formattingRoot);
+        formattingStateForRoot.setIntrinsicWidthConstraints(formattingRoot, intrinsicWidthConstraints);
+        return intrinsicWidthConstraints;
     }
 
     // Visit the in-flow descendants and compute their min/max intrinsic width if needed.
@@ -421,15 +421,15 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
     while (!queue.isEmpty()) {
         while (true) {
             auto& childBox = *queue.last();
-            auto skipDescendants = formattingState.instrinsicWidthConstraints(childBox) || !Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox) || childBox.establishesFormattingContext();
+            auto skipDescendants = formattingState.intrinsicWidthConstraints(childBox) || !Geometry::intrinsicWidthConstraintsNeedChildrenWidth(childBox) || childBox.establishesFormattingContext();
 
             if (skipDescendants) {
-                InstrinsicWidthConstraints instrinsicWidthConstraints;
-                if (!Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox))
-                    instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, childBox);
+                IntrinsicWidthConstraints intrinsicWidthConstraints;
+                if (!Geometry::intrinsicWidthConstraintsNeedChildrenWidth(childBox))
+                    intrinsicWidthConstraints = Geometry::intrinsicWidthConstraints(layoutState, childBox);
                 else if (childBox.establishesFormattingContext())
-                    instrinsicWidthConstraints = layoutState.createFormattingContext(childBox)->instrinsicWidthConstraints();
-                formattingState.setInstrinsicWidthConstraints(childBox, instrinsicWidthConstraints);
+                    intrinsicWidthConstraints = layoutState.createFormattingContext(childBox)->intrinsicWidthConstraints();
+                formattingState.setIntrinsicWidthConstraints(childBox, intrinsicWidthConstraints);
 
                 queue.removeLast();
                 if (!childBox.nextInFlowOrFloatingSibling())
@@ -443,7 +443,7 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
         // Compute min/max intrinsic width bottom up.
         while (!queue.isEmpty()) {
             auto& childBox = *queue.takeLast();
-            formattingState.setInstrinsicWidthConstraints(childBox, Geometry::instrinsicWidthConstraints(layoutState, childBox)); 
+            formattingState.setIntrinsicWidthConstraints(childBox, Geometry::intrinsicWidthConstraints(layoutState, childBox)); 
             // Move over to the next sibling or take the next box in the queue.
             if (!is<Container>(childBox) || !downcast<Container>(childBox).nextInFlowOrFloatingSibling())
                 continue;
@@ -451,9 +451,9 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
         }
     }
 
-    auto instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, formattingRoot);
-    formattingStateForRoot.setInstrinsicWidthConstraints(formattingRoot, instrinsicWidthConstraints); 
-    return instrinsicWidthConstraints;
+    auto intrinsicWidthConstraints = Geometry::intrinsicWidthConstraints(layoutState, formattingRoot);
+    formattingStateForRoot.setIntrinsicWidthConstraints(formattingRoot, intrinsicWidthConstraints); 
+    return intrinsicWidthConstraints;
 }
 
 LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutBox, const UsedVerticalMargin& verticalMargin) const

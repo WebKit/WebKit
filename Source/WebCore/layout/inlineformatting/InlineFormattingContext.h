@@ -94,7 +94,7 @@ private:
     void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
     void collectInlineContent(InlineRunProvider&) const;
-    InstrinsicWidthConstraints instrinsicWidthConstraints() const override;
+    IntrinsicWidthConstraints intrinsicWidthConstraints() const override;
 
     InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 };

@@ -51,9 +51,9 @@ public:
     void markNeedsLayout(const Box&, StyleDiff);
     bool needsLayout(const Box&);
 
-    void setInstrinsicWidthConstraints(const Box&,  FormattingContext::InstrinsicWidthConstraints);
-    void clearInstrinsicWidthConstraints(const Box&);
-    Optional<FormattingContext::InstrinsicWidthConstraints> instrinsicWidthConstraints(const Box&) const;
+    void setIntrinsicWidthConstraints(const Box&,  FormattingContext::IntrinsicWidthConstraints);
+    void clearIntrinsicWidthConstraints(const Box&);
+    Optional<FormattingContext::IntrinsicWidthConstraints> intrinsicWidthConstraints(const Box&) const;
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }
     bool isInlineFormattingState() const { return m_type == Type::Inline; }
@@ -67,27 +67,27 @@ protected:
 private:
     LayoutState& m_layoutState;
     Ref<FloatingState> m_floatingState;
-    HashMap<const Box*, FormattingContext::InstrinsicWidthConstraints> m_instrinsicWidthConstraints;
+    HashMap<const Box*, FormattingContext::IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     Type m_type;
 };
 
-inline void FormattingState::setInstrinsicWidthConstraints(const Box& layoutBox, FormattingContext::InstrinsicWidthConstraints instrinsicWidthConstraints)
+inline void FormattingState::setIntrinsicWidthConstraints(const Box& layoutBox, FormattingContext::IntrinsicWidthConstraints intrinsicWidthConstraints)
 {
-    ASSERT(!m_instrinsicWidthConstraints.contains(&layoutBox));
+    ASSERT(!m_intrinsicWidthConstraints.contains(&layoutBox));
     ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
-    m_instrinsicWidthConstraints.set(&layoutBox, instrinsicWidthConstraints);
+    m_intrinsicWidthConstraints.set(&layoutBox, intrinsicWidthConstraints);
 }
 
-inline void FormattingState::clearInstrinsicWidthConstraints(const Box& layoutBox)
+inline void FormattingState::clearIntrinsicWidthConstraints(const Box& layoutBox)
 {
-    m_instrinsicWidthConstraints.remove(&layoutBox);
+    m_intrinsicWidthConstraints.remove(&layoutBox);
 }
 
-inline Optional<FormattingContext::InstrinsicWidthConstraints> FormattingState::instrinsicWidthConstraints(const Box& layoutBox) const
+inline Optional<FormattingContext::IntrinsicWidthConstraints> FormattingState::intrinsicWidthConstraints(const Box& layoutBox) const
 {
     ASSERT(&m_layoutState.formattingStateForBox(layoutBox) == this);
-    auto iterator = m_instrinsicWidthConstraints.find(&layoutBox);
-    if (iterator == m_instrinsicWidthConstraints.end())
+    auto iterator = m_intrinsicWidthConstraints.find(&layoutBox);
+    if (iterator == m_intrinsicWidthConstraints.end())
         return { };
     return iterator->value;
 }
