@@ -50,6 +50,8 @@ public:
     void layout() const override;
 
 private:
+    void computeIntrinsicWidthConstraints() const override;
+
     class LineLayout {
     public:
         LineLayout(const InlineFormattingContext&);
@@ -94,7 +96,6 @@ private:
     void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
 
     void collectInlineContent(InlineRunProvider&) const;
-    IntrinsicWidthConstraints intrinsicWidthConstraints() const override;
 
     InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 };

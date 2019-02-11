@@ -92,14 +92,13 @@ void InlineFormattingContext::layout() const
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root << ")");
 }
 
-FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::intrinsicWidthConstraints() const
+void InlineFormattingContext::computeIntrinsicWidthConstraints() const
 {
     ASSERT(is<Container>(root()));
 
     auto& layoutState = this->layoutState();
     auto& root = downcast<Container>(this->root());
-    if (auto intrinsicWidthConstraints = layoutState.formattingStateForBox(root).intrinsicWidthConstraints(root))
-        return *intrinsicWidthConstraints;
+    ASSERT(!layoutState.formattingStateForBox(root).intrinsicWidthConstraints(root));
 
     Vector<const Box*> formattingContextRootList;
     auto usedValues = UsedHorizontalValues { };
@@ -150,7 +149,6 @@ FormattingContext::IntrinsicWidthConstraints InlineFormattingContext::intrinsicW
 
     auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
     layoutState.formattingStateForBox(root).setIntrinsicWidthConstraints(root, intrinsicWidthConstraints);
-    return intrinsicWidthConstraints;
 }
 
 void InlineFormattingContext::computeIntrinsicWidthForFormattingContextRoot(const Box& layoutBox) const
@@ -160,7 +158,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingContextRoot(cons
     auto usedValues = UsedHorizontalValues { };
     computeBorderAndPadding(layoutBox, usedValues);
     computeMargin(downcast<InlineContainer>(layoutBox), usedValues);
-    layoutState().createFormattingContext(layoutBox)->intrinsicWidthConstraints();
+    layoutState().createFormattingContext(layoutBox)->computeIntrinsicWidthConstraints();
 }
 
 void InlineFormattingContext::computeMargin(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const

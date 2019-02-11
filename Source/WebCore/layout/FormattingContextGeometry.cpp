@@ -238,6 +238,7 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutStat
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &formattingRoot << ")");
     ASSERT(formattingRoot.establishesFormattingContext());
+    ASSERT(usedValues.containingBlockWidth.hasValue());
 
     // Calculation of the shrink-to-fit width is similar to calculating the width of a table cell using the automatic table layout algorithm.
     // Roughly: calculate the preferred width by formatting the content without breaking lines other than where explicit line breaks occur,
@@ -246,10 +247,14 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(LayoutState& layoutStat
     // 'padding-left', 'padding-right', 'border-right-width', 'margin-right', and the widths of any relevant scroll bars.
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
-    ASSERT(usedValues.containingBlockWidth.hasValue());
+    auto& formattingStateForRoot = layoutState.formattingStateForBox(formattingRoot);
+    auto intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints(formattingRoot);
+    if (!intrinsicWidthConstraints) {
+        layoutState.createFormattingContext(formattingRoot)->computeIntrinsicWidthConstraints();
+        intrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints(formattingRoot);
+    }
     auto availableWidth = *usedValues.containingBlockWidth;
-    auto intrinsicWidthConstraints = layoutState.createFormattingContext(formattingRoot)->intrinsicWidthConstraints();
-    return std::min(std::max(intrinsicWidthConstraints.minimum, availableWidth), intrinsicWidthConstraints.maximum);
+    return std::min(std::max(intrinsicWidthConstraints->minimum, availableWidth), intrinsicWidthConstraints->maximum);
 }
 
 VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)
