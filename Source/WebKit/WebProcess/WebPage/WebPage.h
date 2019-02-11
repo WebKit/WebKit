@@ -584,7 +584,6 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
-    void prepareToSendUserMediaPermissionRequest();
     void captureDevicesChanged();
 #endif
 

@@ -122,13 +122,6 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/TextStream.h>
 
-#if ENABLE(MEDIA_STREAM)
-#import "CelestialSPI.h"
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
-SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
-SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -3154,22 +3147,6 @@ bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
     return false;
 #endif
 }
-
-#if ENABLE(MEDIA_STREAM)
-void WebPage::prepareToSendUserMediaPermissionRequest()
-{
-    static std::once_flag once;
-    std::call_once(once, [] {
-        if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
-            return;
-
-        NSError *error = nil;
-        [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(WebCore::presentingApplicationPID()) forKey:getAVSystemController_PIDToInheritApplicationStateFrom() error:&error];
-        if (error)
-            WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
-    });
-}
-#endif
 
 } // namespace WebKit
 

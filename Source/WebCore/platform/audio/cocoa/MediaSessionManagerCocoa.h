@@ -45,6 +45,7 @@ public:
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
     uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
     bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
+    void prepareToSendUserMediaPermissionRequest() final;
 
 protected:
     void scheduleUpdateNowPlayingInfo() override;
@@ -57,12 +58,14 @@ protected:
     void clientCharacteristicsChanged(PlatformMediaSession&) override;
     void sessionCanProduceAudioChanged(PlatformMediaSession&) override;
 
+    virtual void providePresentingApplicationPIDIfNecessary() { }
+
     PlatformMediaSession* nowPlayingEligibleSession();
 
 private:
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
-    
+
     // For testing purposes only.
     String m_lastUpdatedNowPlayingTitle;
     double m_lastUpdatedNowPlayingDuration { NAN };

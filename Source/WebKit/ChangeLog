@@ -1,3 +1,20 @@
+2019-02-11  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Notify AVSystemController of our presenting PID before registering as a Now Playing app.
+        https://bugs.webkit.org/show_bug.cgi?id=194504
+
+        Reviewed by Eric Carlson.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::requestUserMediaAccess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userMediaPermissionRequestManager):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+
 2019-02-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241272 and r241276.
