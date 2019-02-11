@@ -139,9 +139,12 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
     BOOL _wasHandled;
 }
 
+// Deprecated. Remove once UIKit adopts -initWithMouseEventType taking modifiers.
 - (WebEvent *)initWithMouseEventType:(WebEventType)type
                            timeStamp:(CFTimeInterval)timeStamp
                             location:(CGPoint)point;
+
+- (WebEvent *)initWithMouseEventType:(WebEventType)type timeStamp:(CFTimeInterval)timeStamp location:(CGPoint)point modifiers:(WebEventFlags)modifiers;
 
 - (WebEvent *)initWithScrollWheelEventWithTimeStamp:(CFTimeInterval)timeStamp
                                            location:(CGPoint)point
