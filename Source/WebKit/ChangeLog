@@ -1,3 +1,11 @@
+2019-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal iOS build after r241272
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Declare the _modifierFlags when using the internal SDK also.
+
 2019-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html does not work on iPad

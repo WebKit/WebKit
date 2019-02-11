@@ -358,10 +358,6 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
 - (CGSize)_legacy_sizeWithFont:(UIFont *)font minFontSize:(CGFloat)minFontSize actualFontSize:(CGFloat *)actualFontSize forWidth:(CGFloat)width lineBreakMode:(NSLineBreakMode)lineBreakMode;
 @end
 
-@interface UIGestureRecognizer ()
-@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
-@end
-
 @interface UITapGestureRecognizer ()
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
@@ -1035,6 +1031,10 @@ typedef NSInteger UICompositingMode;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface UIGestureRecognizer ()
+@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+@end
 
 // FIXME: <rdar://problem/47714562>
 @interface UIWebTouchEventsGestureRecognizer (Staging_47634092)
