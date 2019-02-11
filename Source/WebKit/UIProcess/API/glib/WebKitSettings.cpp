@@ -166,6 +166,7 @@ enum {
     PROP_HARDWARE_ACCELERATION_POLICY,
     PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES,
 #endif
+    PROP_ENABLE_JAVASCRIPT_MARKUP,
 };
 
 static void webKitSettingsDispose(GObject* object)
@@ -389,6 +390,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_enable_back_forward_navigation_gestures(settings, g_value_get_boolean(value));
         break;
 #endif
+    case PROP_ENABLE_JAVASCRIPT_MARKUP:
+        webkit_settings_set_enable_javascript_markup(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -571,6 +575,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, webkit_settings_get_enable_back_forward_navigation_gestures(settings));
         break;
 #endif
+    case PROP_ENABLE_JAVASCRIPT_MARKUP:
+        g_value_set_boolean(value, webkit_settings_get_enable_javascript_markup(settings));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -1469,6 +1476,23 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             FALSE,
             readWriteConstructParamFlags));
 #endif // PLATFOTM(GTK)
+
+    /**
+     * WebKitSettings:enable-javascript-markup:
+     *
+     * Determines whether or not JavaScript markup is allowed in document. When this setting is disabled,
+     * all JavaScript-related elements and attributes are removed from the document during parsing. Note that
+     * executing JavaScript is still allowed if #WebKitSettings:enable-javascript is %TRUE.
+     *
+     * Since: 2.24
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_JAVASCRIPT_MARKUP,
+        g_param_spec_boolean("enable-javascript-markup",
+            _("Enable JavaScript Markup"),
+            _("Enable JavaScript in document markup."),
+            TRUE,
+            readWriteConstructParamFlags));
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -3611,3 +3635,42 @@ guint32 webkit_settings_font_size_to_pixels(guint32 points)
     return std::round(points * WebCore::screenDPI() / 72);
 }
 #endif // PLATFORM(GTK)
+
+/**
+ * webkit_settings_get_enable_javascript_markup:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-javascript-markup property.
+ *
+ * Returns: %TRUE if JavaScript markup is enabled or %FALSE otherwise.
+ *
+ * Since: 2.24
+ */
+gboolean webkit_settings_get_enable_javascript_markup(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->javaScriptMarkupEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_javascript_markup:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-javascript-markup property.
+ *
+ * Since: 2.24
+ */
+void webkit_settings_set_enable_javascript_markup(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->javaScriptMarkupEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setJavaScriptMarkupEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-javascript-markup");
+}

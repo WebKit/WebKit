@@ -1,3 +1,17 @@
+2019-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add enable-javascript-markup setting
+        https://bugs.webkit.org/show_bug.cgi?id=193439
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases to check the new setting.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        (testWebKitSettingsJavaScriptMarkup):
+        (beforeAll):
+
 2019-02-10  Darin Adler  <darin@apple.com>
 
         Switch uses of StringBuilder with String::format for hex numbers to use HexNumber.h instead

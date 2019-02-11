@@ -485,6 +485,13 @@ webkit_settings_font_size_to_points                            (guint32 pixels);
 WEBKIT_API guint32
 webkit_settings_font_size_to_pixels                            (guint32 points);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_javascript_markup                   (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_javascript_markup                   (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

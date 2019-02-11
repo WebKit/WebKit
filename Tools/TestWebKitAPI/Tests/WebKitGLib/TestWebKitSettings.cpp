@@ -355,6 +355,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_true(webkit_settings_get_enable_back_forward_navigation_gestures(settings));
 #endif
 
+    // JavaScript markup is enabled by default.
+    g_assert_true(webkit_settings_get_enable_javascript_markup(settings));
+    webkit_settings_set_enable_javascript_markup(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_javascript_markup(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 
@@ -425,6 +430,31 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
 }
 #endif // PLATFORM(GTK)
 
+static void testWebKitSettingsJavaScriptMarkup(WebViewTest* test, gconstpointer)
+{
+    webkit_settings_set_enable_javascript_markup(webkit_web_view_get_settings(test->m_webView), FALSE);
+    static const char* html =
+        "<html>"
+        " <head>"
+        "  <title>No JavaScript allowed</title>"
+        "  <script>document.title = 'JavaScript allowed from head script'</script>"
+        " </head>"
+        " <body onload='document.title = \"JavaScript allowed from body onload attribute\"'>"
+        "  <p>No JavaScript markup should be allowed</p>"
+        "  <script>document.title = 'JavaScript allowed from body script'</script>"
+        " </body>"
+        "</html>";
+    test->loadHtml(html, nullptr);
+    test->waitUntilLoadFinished();
+
+    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "No JavaScript allowed");
+    auto* jsResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('script').length", nullptr);
+    g_assert(jsResult);
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(jsResult), ==, 0);
+
+    webkit_settings_set_enable_javascript_markup(webkit_web_view_get_settings(test->m_webView), TRUE);
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -451,6 +481,7 @@ void beforeAll()
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitSettings", "user-agent", testWebKitSettingsUserAgent);
 #endif
+    WebViewTest::add("WebKitSettings", "javascript-markup", testWebKitSettingsJavaScriptMarkup);
 }
 
 void afterAll()
