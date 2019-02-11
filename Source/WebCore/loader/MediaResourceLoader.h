@@ -75,7 +75,6 @@ public:
 
     // PlatformMediaResource
     void stop() override;
-    void setDefersLoading(bool) override;
     bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck; }
 
     // CachedRawResourceClient
