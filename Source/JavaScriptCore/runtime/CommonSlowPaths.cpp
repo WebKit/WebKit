@@ -517,11 +517,19 @@ SLOW_PATH_DECL(slow_path_add)
     auto bytecode = pc->as<OpAdd>();
     JSValue v1 = GET_C(bytecode.m_lhs).jsValue();
     JSValue v2 = GET_C(bytecode.m_rhs).jsValue();
+    JSValue result;
 
     ArithProfile& arithProfile = *exec->codeBlock()->arithProfileForPC(pc);
     arithProfile.observeLHSAndRHS(v1, v2);
 
-    JSValue result = jsAdd(exec, v1, v2);
+    if (v1.isString() && !v2.isObject()) {
+        JSString* v2String = v2.toString(exec);
+        if (LIKELY(!throwScope.exception()))
+            result = jsString(exec, asString(v1), v2String);
+    } else if (v1.isNumber() && v2.isNumber())
+        result = jsNumber(v1.asNumber() + v2.asNumber());
+    else
+        result = jsAddSlowCase(exec, v1, v2);
 
     RETURN_WITH_PROFILING(result, {
         updateArithProfileForBinaryArithOp(exec, pc, result, v1, v2);
