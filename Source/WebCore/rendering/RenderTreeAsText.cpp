@@ -150,21 +150,17 @@ String quoteAndEscapeNonPrintables(StringView s)
     for (unsigned i = 0; i != s.length(); ++i) {
         UChar c = s[i];
         if (c == '\\') {
-            result.append('\\');
-            result.append('\\');
+            result.appendLiteral("\\\\");
         } else if (c == '"') {
-            result.append('\\');
-            result.append('"');
+            result.appendLiteral("\\\"");
         } else if (c == '\n' || c == noBreakSpace)
             result.append(' ');
         else {
             if (c >= 0x20 && c < 0x7F)
                 result.append(c);
             else {
-                result.append('\\');
-                result.append('x');
-                result.append('{');
-                appendUnsignedAsHex(c, result); 
+                result.appendLiteral("\\x{");
+                appendUnsignedAsHex(c, result);
                 result.append('}');
             }
         }

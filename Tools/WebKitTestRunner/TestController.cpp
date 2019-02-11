@@ -70,7 +70,6 @@
 #include <string>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/CryptographicallyRandomNumber.h>
-#include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RefCounted.h>

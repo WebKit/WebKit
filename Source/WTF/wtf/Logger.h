@@ -272,7 +272,7 @@ struct LogArgument<Logger::LogSiteIdentifier> {
         }
         builder.append(value.methodName);
         builder.append('(');
-        appendUnsigned64AsHex(value.objectPtr, builder);
+        appendUnsignedAsHex(value.objectPtr, builder);
         builder.appendLiteral(") ");
         return builder.toString();
     }

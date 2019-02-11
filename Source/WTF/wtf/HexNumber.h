@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <array>
 #include <wtf/text/StringConcatenate.h>
 
 namespace WTF {
@@ -45,67 +46,35 @@ inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMod
     destination.append(hexDigits[byte & 0xF]);
 }
 
-template<typename T>
-inline void placeByteAsHexCompressIfPossible(unsigned char byte, T& destination, unsigned& index, HexConversionMode mode = Uppercase)
+template<typename NumberType, typename DestinationType>
+inline void appendUnsignedAsHex(NumberType number, DestinationType& destination, HexConversionMode mode = Uppercase)
 {
-    auto* hexDigits = Internal::hexDigitsForMode(mode);
-    if (byte >= 0x10)
-        destination[index++] = hexDigits[byte >> 4];
-    destination[index++] = hexDigits[byte & 0xF];
-}
-
-template<typename T>
-inline void placeByteAsHex(unsigned char byte, T& destination, HexConversionMode mode = Uppercase)
-{
-    auto* hexDigits = Internal::hexDigitsForMode(mode);
-    *destination++ = hexDigits[byte >> 4];
-    *destination++ = hexDigits[byte & 0xF];
-}
-
-template<typename T>
-inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMode mode = Uppercase)
-{
-    auto* hexDigits = Internal::hexDigitsForMode(mode);
-    Vector<LChar, 8> result;
+    // Each byte can generate up to two digits.
+    std::array<LChar, sizeof(NumberType) * 2> buffer;
+    auto start = buffer.end();
+    auto unsignedNumber = static_cast<typename std::make_unsigned<NumberType>::type>(number);
+    auto hexDigits = Internal::hexDigitsForMode(mode);
     do {
-        result.append(hexDigits[number % 16]);
-        number >>= 4;
-    } while (number > 0);
-
-    result.reverse();
-    destination.append(result.data(), result.size());
-}
-    
-template<typename T>
-inline void appendUnsigned64AsHex(uint64_t number, T& destination, HexConversionMode mode = Uppercase)
-{
-    auto* hexDigits = Internal::hexDigitsForMode(mode);
-    Vector<LChar, 8> result;
-    do {
-        result.append(hexDigits[number % 16]);
-        number >>= 4;
-    } while (number > 0);
-    
-    result.reverse();
-    destination.append(result.data(), result.size());
+        ASSERT(start > buffer.begin());
+        *--start = hexDigits[unsignedNumber & 0xF];
+        unsignedNumber >>= 4;
+    } while (unsignedNumber);
+    destination.append(&*start, buffer.end() - start);
 }
 
-// Same as appendUnsignedAsHex, but using exactly 'desiredDigits' for the conversion.
-template<typename T>
-inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsigned desiredDigits, HexConversionMode mode = Uppercase)
+// Same as appendUnsignedAsHex, but zero-padding to get at least the desired number of digits.
+template<typename NumberType, typename DestinationType>
+inline void appendUnsignedAsHexFixedSize(NumberType number, DestinationType& destination, unsigned desiredDigits, HexConversionMode mode = Uppercase)
 {
-    ASSERT(desiredDigits);
-
-    auto* hexDigits = Internal::hexDigitsForMode(mode);
-    Vector<LChar, 8> result;
+    unsigned digits = 0;
+    auto unsignedNumber = static_cast<typename std::make_unsigned<NumberType>::type>(number);
     do {
-        result.append(hexDigits[number % 16]);
-        number >>= 4;
-    } while (result.size() < desiredDigits);
-
-    ASSERT(result.size() == desiredDigits);
-    result.reverse();
-    destination.append(result.data(), result.size());
+        ++digits;
+        unsignedNumber >>= 4;
+    } while (unsignedNumber);
+    for (; digits < desiredDigits; ++digits)
+        destination.append('0');
+    appendUnsignedAsHex(number, destination, mode);
 }
 
 } // namespace WTF
@@ -113,6 +82,4 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
 using WTF::appendByteAsHex;
 using WTF::appendUnsignedAsHex;
 using WTF::appendUnsignedAsHexFixedSize;
-using WTF::placeByteAsHex;
-using WTF::placeByteAsHexCompressIfPossible;
 using WTF::Lowercase;

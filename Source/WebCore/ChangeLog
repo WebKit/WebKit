@@ -1,3 +1,30 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Switch uses of StringBuilder with String::format for hex numbers to use HexNumber.h instead
+        https://bugs.webkit.org/show_bug.cgi?id=194485
+
+        Reviewed by Daniel Bates.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::encodeProtocolString): Use appendUnsignedAsHexFixedSize instead of String::format.
+
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize const): Fixed style of many return statements
+        that called a function returning void; doesn't match WebKit's prevailing style.
+        Also use break instead of return. Used appendLiteral instead of append in many
+        cases, and append character instead of single-character literal in others.
+        Use appendUnsignedAsHex instead of String::format.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::generateHashedName): Use appendUnsignedAsHex instad of appendUnsigned64AsHex.
+        Should come back here and use makeString once we make HexNumber.h work with that.
+
+        * platform/mac/WebCoreNSURLExtras.mm: Removed unnecessary include of HexNumber.h.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables): Use appendLiteral instead of multiple calls
+        to character append. Touched because it was next to a call to appendUnsignedAsHex.
+
 2019-02-10  Pablo Saavedra  <psaavedra@igalia.com>
 
         libWPEWebKit-0.1.so: undefined reference to `JSC::JSValue::asCell() const

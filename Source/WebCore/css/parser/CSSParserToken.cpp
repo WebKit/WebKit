@@ -34,6 +34,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include <limits.h>
+#include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -392,7 +393,8 @@ void CSSParserToken::serialize(StringBuilder& builder) const
         break;
     case FunctionToken:
         serializeIdentifier(value().toString(), builder);
-        return builder.append('(');
+        builder.append('(');
+        break;
     case AtKeywordToken:
         builder.append('@');
         serializeIdentifier(value().toString(), builder);
@@ -402,76 +404,107 @@ void CSSParserToken::serialize(StringBuilder& builder) const
         serializeIdentifier(value().toString(), builder, (getHashTokenType() == HashTokenUnrestricted));
         break;
     case UrlToken:
-        builder.append("url(");
+        builder.appendLiteral("url(");
         serializeIdentifier(value().toString(), builder);
-        return builder.append(')');
+        builder.append(')');
+        break;
     case DelimiterToken:
-        if (delimiter() == '\\')
-            return builder.append("\\\n");
-        return builder.append(delimiter());
+        if (delimiter() == '\\') {
+            builder.appendLiteral("\\\n");
+            break;
+        }
+        builder.append(delimiter());
+        break;
     case NumberToken:
         // These won't properly preserve the NumericValueType flag
         if (m_numericSign == PlusSign)
             builder.append('+');
-        return builder.appendNumber(numericValue());
+        builder.appendNumber(numericValue());
+        break;
     case PercentageToken:
         builder.appendNumber(numericValue());
-        return builder.append('%');
+        builder.append('%');
+        break;
     case DimensionToken:
         // This will incorrectly serialize e.g. 4e3e2 as 4000e2
         builder.appendNumber(numericValue());
         serializeIdentifier(value().toString(), builder);
         break;
     case UnicodeRangeToken:
-        return builder.append(String::format("U+%X-%X", unicodeRangeStart(), unicodeRangeEnd()));
+        builder.appendLiteral("U+");
+        appendUnsignedAsHex(unicodeRangeStart(), builder);
+        builder.append('-');
+        appendUnsignedAsHex(unicodeRangeEnd(), builder);
+        break;
     case StringToken:
-        return serializeString(value().toString(), builder);
+        serializeString(value().toString(), builder);
+        break;
 
     case IncludeMatchToken:
-        return builder.append("~=");
+        builder.appendLiteral("~=");
+        break;
     case DashMatchToken:
-        return builder.append("|=");
+        builder.appendLiteral("|=");
+        break;
     case PrefixMatchToken:
-        return builder.append("^=");
+        builder.appendLiteral("^=");
+        break;
     case SuffixMatchToken:
-        return builder.append("$=");
+        builder.appendLiteral("$=");
+        break;
     case SubstringMatchToken:
-        return builder.append("*=");
+        builder.appendLiteral("*=");
+        break;
     case ColumnToken:
-        return builder.append("||");
+        builder.appendLiteral("||");
+        break;
     case CDOToken:
-        return builder.append("<!--");
+        builder.appendLiteral("<!--");
+        break;
     case CDCToken:
-        return builder.append("-->");
+        builder.appendLiteral("-->");
+        break;
     case BadStringToken:
-        return builder.append("'\n");
+        builder.appendLiteral("'\n");
+        break;
     case BadUrlToken:
-        return builder.append("url(()");
+        builder.appendLiteral("url(()");
+        break;
     case WhitespaceToken:
-        return builder.append(' ');
+        builder.append(' ');
+        break;
     case ColonToken:
-        return builder.append(':');
+        builder.append(':');
+        break;
     case SemicolonToken:
-        return builder.append(';');
+        builder.append(';');
+        break;
     case CommaToken:
-        return builder.append(',');
+        builder.append(',');
+        break;
     case LeftParenthesisToken:
-        return builder.append('(');
+        builder.append('(');
+        break;
     case RightParenthesisToken:
-        return builder.append(')');
+        builder.append(')');
+        break;
     case LeftBracketToken:
-        return builder.append('[');
+        builder.append('[');
+        break;
     case RightBracketToken:
-        return builder.append(']');
+        builder.append(']');
+        break;
     case LeftBraceToken:
-        return builder.append('{');
+        builder.append('{');
+        break;
     case RightBraceToken:
-        return builder.append('}');
+        builder.append('}');
+        break;
 
     case EOFToken:
     case CommentToken:
         ASSERT_NOT_REACHED();
-        return;
+        break;
     }
 }
 

@@ -975,7 +975,7 @@ static String generateHashedName(const String& name)
     uint64_t number = nameHashForShader(name.utf8().data(), name.length());
     StringBuilder builder;
     builder.appendLiteral("webgl_");
-    appendUnsigned64AsHex(number, builder, Lowercase);
+    appendUnsignedAsHex(number, builder, Lowercase);
     return builder.toString();
 }
 

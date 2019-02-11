@@ -27,11 +27,9 @@
  */
 
 #import "config.h"
-#import <Foundation/Foundation.h>
 #import "NSURLExtras.h"
 
 #import <wtf/Function.h>
-#import <wtf/HexNumber.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URLHelpers.h>

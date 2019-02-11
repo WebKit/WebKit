@@ -1,3 +1,26 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Switch uses of StringBuilder with String::format for hex numbers to use HexNumber.h instead
+        https://bugs.webkit.org/show_bug.cgi?id=194485
+
+        Reviewed by Daniel Bates.
+
+        * wtf/HexNumber.h: Removed unused functions placeByteAsHexCompressIfPossible and
+        placeByteAsHex. Can always bring them back if someone needs them. Updated
+        appendUnsignedAsHex to be a template so we can use it on any integer type,
+        got rid of unnecessary use of Vector and unnecessary reversing, and got rid of
+        appendUnsigned64AsHex since callers can now just use appendUnsignedAsHex.
+        Rewrote appendUnsignedAsHexFixedSize to share mode code rather than replicating.
+
+        * wtf/Logger.h: Use appendUnsignedAsHex instead of appendUnsigned64AsHex.
+
+        * wtf/URL.cpp: Removed unnecessary include of HexNumber.h.
+
+        * wtf/cocoa/NSURLExtras.h: Added missing include of Foundation.h that was
+        worked around in NSURLExtras.mm.
+        * wtf/cocoa/NSURLExtras.mm: Removed unnecessary includes of HexNumber.h
+        and Foundation.h.
+
 2019-02-09  Darin Adler  <darin@apple.com>
 
         Eliminate unnecessary String temporaries by using StringConcatenateNumbers

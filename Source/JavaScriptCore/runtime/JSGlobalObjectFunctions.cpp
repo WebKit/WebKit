@@ -145,7 +145,7 @@ static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape, const Cha
             // 4-d-vi-1. Let jOctet be the value at index j within Octets.
             // 4-d-vi-2. Let S be a String containing three code units "%XY" where XY are two uppercase hexadecimal digits encoding the value of jOctet.
             // 4-d-vi-3. Let R be a new String value computed by concatenating the previous value of R and S.
-            builder.append(static_cast<LChar>('%'));
+            builder.append('%');
             appendByteAsHex(utf8OctetsBuffer[index], builder);
         }
     }
@@ -600,8 +600,8 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
                 if (doNotEscape.get(static_cast<LChar>(u)))
                     builder.append(*c);
                 else {
-                    builder.append(static_cast<LChar>('%'));
-                    appendByteAsHex(static_cast<LChar>(u), builder);
+                    builder.append('%');
+                    appendByteAsHex(u, builder);
                 }
             }
             return jsString(exec, builder.toString());
@@ -611,14 +611,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         for (unsigned k = 0; k < view.length(); k++, c++) {
             UChar u = c[0];
             if (u >= doNotEscape.size()) {
-                builder.append(static_cast<LChar>('%'));
-                builder.append(static_cast<LChar>('u'));
+                builder.appendLiteral("%u");
                 appendByteAsHex(u >> 8, builder);
                 appendByteAsHex(u & 0xFF, builder);
             } else if (doNotEscape.get(static_cast<LChar>(u)))
                 builder.append(*c);
             else {
-                builder.append(static_cast<LChar>('%'));
+                builder.append('%');
                 appendByteAsHex(u, builder);
             }
         }

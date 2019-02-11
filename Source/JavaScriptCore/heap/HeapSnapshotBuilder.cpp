@@ -34,6 +34,7 @@
 #include "JSCast.h"
 #include "PreventCollectionScope.h"
 #include "VM.h"
+#include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -434,10 +435,11 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
             json.append(',');
             json.appendNumber(labelIndex);
-            json.append(',');
-            json.append(String::format("\"%p\"", node.cell)); // FIXME: Should add StringBuilder::appendAddress(void*).
-            json.append(',');
-            json.append(String::format("\"%p\"", wrappedAddress));
+            json.appendLiteral(",\"");
+            appendUnsignedAsHex(reinterpret_cast<uintptr_t>(node.cell), json, Lowercase);
+            json.appendLiteral("\",\"");
+            appendUnsignedAsHex(reinterpret_cast<uintptr_t>(wrappedAddress), json, Lowercase);
+            json.append('"');
         }
     };
 

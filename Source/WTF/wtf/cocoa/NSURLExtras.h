@@ -28,8 +28,7 @@
 
 #pragma once
 
-@class NSString;
-@class NSURL;
+#import <Foundation/Foundation.h>
 
 namespace WTF {
 
