@@ -1,3 +1,18 @@
+2019-02-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        GCHeapInspector: Show the retained sizes in more places
+        https://bugs.webkit.org/show_bug.cgi?id=194464
+
+        Reviewed by Simon Fraser.
+
+        * GCHeapInspector/gc-heap-inspector.html:
+        * GCHeapInspector/script/interface.js:
+        (HeapInspectorUtils.humanReadableSize):
+        (HeapInspectorUtils.spanForNode.let.nodeHTML.node.className.span):
+        (HeapInspectorUtils.spanForNode.span.span):
+        (HeapSnapshotInspector.prototype.buildAllObjectsByType):
+        (HeapSnapshotInspector.prototype.buildRoots):
+
 2019-02-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Mouse/Touch/Pointer events are missing modifier keys

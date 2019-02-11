@@ -37,8 +37,8 @@ class HeapInspectorUtils
     {
         var i = -1;
         if (sizeInBytes < 512)
-            return sizeInBytes + '&thinsp;B';
-        var byteUnits = ['&thinsp;KB', '&thinsp;MB', '&thinsp;GB'];
+            return sizeInBytes + 'B';
+        var byteUnits = ['KB', 'MB', 'GB'];
         do {
             sizeInBytes = sizeInBytes / 1024;
             i++;
@@ -75,7 +75,7 @@ class HeapInspectorUtils
 
         let wrappedAddressString = node.wrappedAddress ? `wrapped ${node.wrappedAddress}` : '';
 
-        let nodeHTML = node.className + ` <span class="node-id">${node.id}</span> <span class="node-address">cell ${node.address} ${wrappedAddressString}</span> <span class="node-size">(retains ${HeapInspectorUtils.humanReadableSize(node.retainedSize)})</span>`;
+        let nodeHTML = node.className + ` <span class="node-id">${node.id}</span> <span class="node-address">cell ${node.address} ${wrappedAddressString}</span> <span class="node-size retained-size">(retains ${HeapInspectorUtils.humanReadableSize(node.retainedSize)})</span>`;
     
         if (node.label.length)
             nodeHTML += ` <span class="node-label">“${node.label}”</span>`;
@@ -273,6 +273,11 @@ class HeapSnapshotInspector
 
             let details = DOMUtils.createDetails(`${category.className} (${category.count})`);
             
+            let summaryElement = details.firstChild;
+            let sizeElement = summaryElement.appendChild(document.createElement('span'));
+            sizeElement.className = 'retained-size';
+            sizeElement.textContent = ' ' + HeapInspectorUtils.humanReadableSize(category.retainedSize);
+            
             let instanceListElement = document.createElement('ul');
             instanceListElement.className = 'instance-list';
             
@@ -314,6 +319,13 @@ class HeapSnapshotInspector
             })
 
             let details = DOMUtils.createDetails(`${rootClassName} (${rootsOfType.length})`);
+
+            let summaryElement = details.firstChild;
+            let retainedSize = rootsOfType.reduce((accumulator, node) => accumulator + node.retainedSize, 0);
+            let sizeElement = summaryElement.appendChild(document.createElement('span'));
+            sizeElement.className = 'retained-size';
+            sizeElement.textContent = ' ' + HeapInspectorUtils.humanReadableSize(retainedSize);
+
             let rootsTypeList = document.createElement('ul')
             rootsTypeList.className = 'instance-list';
 
