@@ -47,8 +47,22 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
     if (sourceCode instanceof WI.Resource) {
         if (sourceCode.urlComponents.scheme !== "data") {
             contextMenu.appendItem(WI.UIString("Copy as cURL"), () => {
-                sourceCode.generateCURLCommand();
+                InspectorFrontendHost.copyText(sourceCode.generateCURLCommand());
             });
+
+            contextMenu.appendSeparator();
+
+            contextMenu.appendItem(WI.UIString("Copy HTTP Request"), () => {
+                InspectorFrontendHost.copyText(sourceCode.stringifyHTTPRequest());
+            });
+
+            if (sourceCode.hasResponse()) {
+                contextMenu.appendItem(WI.UIString("Copy HTTP Response"), () => {
+                    InspectorFrontendHost.copyText(sourceCode.stringifyHTTPResponse());
+                });
+            }
+
+            contextMenu.appendSeparator();
         }
     }
 

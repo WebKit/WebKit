@@ -1061,9 +1061,52 @@ WI.Resource = class Resource extends WI.SourceCode
                 command.push("--data-binary " + escapeStringPosix(this.requestData));
         }
 
-        let curlCommand = command.join(" \\\n");
-        InspectorFrontendHost.copyText(curlCommand);
-        return curlCommand;
+        return command.join(" \\\n");
+    }
+
+    stringifyHTTPRequest()
+    {
+        let lines = [];
+
+        let protocol = this.protocol || "";
+        if (protocol === "h2") {
+            // HTTP/2 Request pseudo headers:
+            // https://tools.ietf.org/html/rfc7540#section-8.1.2.3
+            lines.push(`:method: ${this.requestMethod}`);
+            lines.push(`:scheme: ${this.urlComponents.scheme}`);
+            lines.push(`:authority: ${WI.h2Authority(this.urlComponents)}`);
+            lines.push(`:path: ${WI.h2Path(this.urlComponents)}`);
+        } else {
+            // HTTP/1.1 request line:
+            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
+            lines.push(`${this.requestMethod} ${this.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
+        }
+
+        for (let key in this.requestHeaders)
+            lines.push(`${key}: ${this.requestHeaders[key]}`);
+
+        return lines.join("\n") + "\n";
+    }
+
+    stringifyHTTPResponse()
+    {
+        let lines = [];
+
+        let protocol = this.protocol || "";
+        if (protocol === "h2") {
+            // HTTP/2 Response pseudo headers:
+            // https://tools.ietf.org/html/rfc7540#section-8.1.2.4
+            lines.push(`:status: ${this.statusCode}`);
+        } else {
+            // HTTP/1.1 response status line:
+            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
+            lines.push(`${protocol ? protocol.toUpperCase() + " " : ""}${this.statusCode} ${this.statusText}`);
+        }
+
+        for (let key in this.responseHeaders)
+            lines.push(`${key}: ${this.responseHeaders[key]}`);
+
+        return lines.join("\n") + "\n";
     }
 
     async showCertificate()
