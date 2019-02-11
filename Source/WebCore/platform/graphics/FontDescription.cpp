@@ -71,11 +71,4 @@ void FontDescription::setLocale(const AtomicString& locale)
     m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
-#if !PLATFORM(COCOA)
-AtomicString FontDescription::platformResolveGenericFamily(UScriptCode, const AtomicString&, const AtomicString&)
-{
-    return nullAtom();
-}
-#endif
-
 } // namespace WebCore

@@ -101,13 +101,6 @@ public:
     enum class ClientUse { ForSystemUI, ForTextStyle };
 
     Vector<RetainPtr<CTFontDescriptorRef>> cascadeList(const FontCascadeDescription&, const AtomicString& cssFamily, ClientUse, AllowUserInstalledFonts);
-
-    String serifFamily(const String& locale);
-    String sansSerifFamily(const String& locale);
-    String cursiveFamily(const String& locale);
-    String fantasyFamily(const String& locale);
-    String monospaceFamily(const String& locale);
-
     void clear();
 
 private:
@@ -121,12 +114,6 @@ private:
     static CascadeListParameters systemFontParameters(const FontCascadeDescription&, const AtomicString& familyName, ClientUse, AllowUserInstalledFonts);
 
     HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::CascadeListParametersHash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
-
-    HashMap<String, String> m_serifFamilies;
-    HashMap<String, String> m_sansSeriferifFamilies;
-    HashMap<String, String> m_cursiveFamilies;
-    HashMap<String, String> m_fantasyFamilies;
-    HashMap<String, String> m_monospaceFamilies;
 };
 
 }

@@ -27,8 +27,6 @@
 #include "FontDescription.h"
 
 #include "SystemFontDatabaseCoreText.h"
-#include <mutex>
-#include <wtf/Language.h>
 
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
 
@@ -137,57 +135,6 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
             --index;
     }
     ASSERT_NOT_REACHED();
-    return nullAtom();
-}
-
-static String computeSpecializedChineseLocale()
-{
-    const Vector<String>& preferredLanguages = userPreferredLanguages();
-    for (auto& language : preferredLanguages) {
-        if (equalIgnoringASCIICase(language, "zh") || startsWithLettersIgnoringASCIICase(language, "zh-"))
-            return language;
-    }
-    return "zh-hans"_str; // We have no signal. Pick one option arbitrarily.
-}
-
-static String& cachedSpecializedChineseLocale()
-{
-    static NeverDestroyed<String> specializedChineseLocale;
-    return specializedChineseLocale.get();
-}
-
-static void languageChanged(void*)
-{
-    cachedSpecializedChineseLocale() = computeSpecializedChineseLocale();
-}
-
-AtomicString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomicString& locale, const AtomicString& familyName)
-{
-    if (script == USCRIPT_COMMON)
-        return nullAtom();
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        static int dummy;
-        addLanguageChangeObserver(&dummy, &languageChanged); // We will never remove the observer, so all we need is a non-null pointer.
-        languageChanged(nullptr);
-    });
-
-    // FIXME: Delete this once <rdar://problem/47682577> is fixed.
-    auto& usedLocale = script == USCRIPT_HAN ? cachedSpecializedChineseLocale() : locale.string();
-
-    // FIXME: Use the system font database to handle standardFamily
-    if (familyName == serifFamily)
-        return SystemFontDatabaseCoreText::singleton().serifFamily(usedLocale);
-    if (familyName == sansSerifFamily)
-        return SystemFontDatabaseCoreText::singleton().sansSerifFamily(usedLocale);
-    if (familyName == cursiveFamily)
-        return SystemFontDatabaseCoreText::singleton().cursiveFamily(usedLocale);
-    if (familyName == fantasyFamily)
-        return SystemFontDatabaseCoreText::singleton().fantasyFamily(usedLocale);
-    if (familyName == monospaceFamily)
-        return SystemFontDatabaseCoreText::singleton().monospaceFamily(usedLocale);
-
     return nullAtom();
 }
 

@@ -1720,6 +1720,7 @@ bool ComputedStyleExtractor::useFixedFontDefaultSize()
     return style->fontDescription().useFixedDefaultSize();
 }
 
+
 static CSSValueID identifierForFamily(const AtomicString& family)
 {
     if (family == cursiveFamily)

@@ -21,10 +21,14 @@ font.
 <div style="font-family: 'Ahem'">this is ahem font</div>
 <div lang="zh-CN">this is ahem font</div>
 <div id="target1" lang="ar">this is ahem font</div>
+<div id="target2" lang="ar" style="font-family: sans-serif">this is ahem font</div>
 <div xml:lang="zh-CN">this is ahem font</div>
 </div>
 <script>
 document.getElementById("target1").lang = "zh-CN";
+
+document.getElementById("target2").lang = "zh-CN";
+document.getElementById("target2").style.fontFamily = "fantasy";
 </script>
 </body>
 </html>

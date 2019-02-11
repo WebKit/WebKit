@@ -1067,13 +1067,16 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     do {
-        if (auto parsedValue = consumeGenericFamily(range))
+        RefPtr<CSSValue> parsedValue = consumeGenericFamily(range);
+        if (parsedValue) {
             list->append(parsedValue.releaseNonNull());
-        else {
-            if (auto parsedValue = consumeFamilyName(range))
+        } else {
+            parsedValue = consumeFamilyName(range);
+            if (parsedValue) {
                 list->append(parsedValue.releaseNonNull());
-            else
+            } else {
                 return nullptr;
+            }
         }
     } while (consumeCommaIncludingWhitespace(range));
     return list;

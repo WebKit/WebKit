@@ -80,11 +80,6 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
 void SystemFontDatabaseCoreText::clear()
 {
     m_systemFontCache.clear();
-    m_serifFamilies.clear();
-    m_sansSeriferifFamilies.clear();
-    m_cursiveFamilies.clear();
-    m_fantasyFamilies.clear();
-    m_monospaceFamilies.clear();
 }
 
 RetainPtr<CTFontRef> SystemFontDatabaseCoreText::applyWeightItalicsAndFallbackBehavior(CTFontRef font, CGFloat weight, bool italic, float size, AllowUserInstalledFonts allowUserInstalledFonts)
@@ -175,56 +170,6 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
 Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(const FontCascadeDescription& description, const AtomicString& cssFamily, ClientUse clientUse, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     return cascadeList(systemFontParameters(description, cssFamily, clientUse, allowUserInstalledFonts), clientUse);
-}
-
-String SystemFontDatabaseCoreText::serifFamily(const String& locale)
-{
-    return m_serifFamilies.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(kCTFontCSSFamilySerif, locale.createCFString().get()));
-        return adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
-    }).iterator->value;
-}
-
-String SystemFontDatabaseCoreText::sansSerifFamily(const String& locale)
-{
-    return m_sansSeriferifFamilies.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(kCTFontCSSFamilySansSerif, locale.createCFString().get()));
-        return adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
-    }).iterator->value;
-}
-
-String SystemFontDatabaseCoreText::cursiveFamily(const String& locale)
-{
-    return m_cursiveFamilies.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(kCTFontCSSFamilyCursive, locale.createCFString().get()));
-        return adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
-    }).iterator->value;
-}
-
-String SystemFontDatabaseCoreText::fantasyFamily(const String& locale)
-{
-    return m_fantasyFamilies.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(kCTFontCSSFamilyFantasy, locale.createCFString().get()));
-        return adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
-    }).iterator->value;
-}
-
-String SystemFontDatabaseCoreText::monospaceFamily(const String& locale)
-{
-    return m_monospaceFamilies.ensure(locale, [&] {
-        auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(kCTFontCSSFamilyMonospace, locale.createCFString().get()));
-        String result = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(descriptor.get(), kCTFontFamilyNameAttribute))).get();
-#if PLATFORM(MAC) && ENABLE(MONOSPACE_FONT_EXCEPTION)
-        // In general, CoreText uses Monaco for monospaced (see: Terminal.app and Xcode.app).
-        // For now, we want to use Courier for web compatibility, until we have more time to do compatibility testing.
-        if (equalLettersIgnoringASCIICase(result, "monaco"))
-            return "Courier"_str;
-#elif PLATFORM(IOS_FAMILY) && ENABLE(MONOSPACE_FONT_EXCEPTION)
-        if (equalLettersIgnoringASCIICase(result, "courier new"))
-            return "Courier"_str;
-#endif
-        return result;
-    }).iterator->value;
 }
 
 }

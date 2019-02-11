@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x512
-  RenderBlock {HTML} at (0,0) size 800x513
-    RenderBody {BODY} at (8,8) size 784x489
+layer at (0,0) size 800x511
+  RenderBlock {HTML} at (0,0) size 800x512
+    RenderBody {BODY} at (8,8) size 784x488
       RenderBlock {UL} at (185,0) size 414x192
         RenderListItem {LI} at (0,48) size 284x72
           RenderBlock {A} at (123,0) size 161x139 [color=#CCCCCC]
@@ -62,6 +62,6 @@ layer at (0,0) size 800x512
             RenderBlock {SPAN} at (8,61) size 144x21 [color=#000000]
               RenderText {#text} at (59,0) size 26x20
                 text run at (59,0) width 26: "exit"
-      RenderBlock {P} at (0,403) size 784x86
-        RenderText {#text} at (331,32) size 122x21
-          text run at (331,32) width 122: "Ceci n'est pas Flash."
+      RenderBlock {P} at (0,403) size 784x85
+        RenderText {#text} at (327,32) size 130x19
+          text run at (327,32) width 130: "Ceci n'est pas Flash."
