@@ -39,6 +39,7 @@
 #include "B3PatchpointSpecial.h"
 #include "B3Procedure.h"
 #include "B3ProcedureInlines.h"
+#include "BinarySwitch.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
@@ -1523,26 +1524,60 @@ auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
 
 auto AirIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack) -> PartialResult
 {
-    for (size_t i = 0; i < targets.size(); ++i)
-        unifyValuesWithBlock(expressionStack, targets[i]->resultForBranch());
-    unifyValuesWithBlock(expressionStack, defaultTarget.resultForBranch());
-
-    // FIXME: Emit either a jump table or a binary switch here.
-    // https://bugs.webkit.org/show_bug.cgi?id=194053
-
-    for (size_t i = 0; i < targets.size(); ++i) {
-        BasicBlock* target = targets[i]->targetBlockForBranch();
-        BasicBlock* continuation = m_code.addBlock();
-        auto constant = g64();
-        append(Move, Arg::bigImm(i), constant);
-        append(Branch32, Arg::relCond(MacroAssembler::Equal), constant, condition);
-        m_currentBlock->setSuccessors(target, continuation);
-
-        m_currentBlock = continuation;
+    auto& successors = m_currentBlock->successors();
+    ASSERT(successors.isEmpty());
+    for (const auto& target : targets) {
+        unifyValuesWithBlock(expressionStack, target->resultForBranch());
+        successors.append(target->targetBlockForBranch());
     }
+    unifyValuesWithBlock(expressionStack, defaultTarget.resultForBranch());
+    successors.append(defaultTarget.targetBlockForBranch());
 
-    append(Jump);
-    m_currentBlock->setSuccessors(defaultTarget.targetBlockForBranch());
+    ASSERT(condition.type() == Type::I32);
+
+    // FIXME: We should consider dynamically switching between a jump table
+    // and a binary switch depending on the number of successors.
+    // https://bugs.webkit.org/show_bug.cgi?id=194477
+
+    size_t numTargets = targets.size();
+
+    auto* patchpoint = addPatchpoint(B3::Void);
+    patchpoint->effects = B3::Effects::none();
+    patchpoint->effects.terminal = true;
+
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        Vector<int64_t> cases;
+        cases.reserveInitialCapacity(numTargets);
+        for (size_t i = 0; i < numTargets; ++i)
+            cases.uncheckedAppend(i);
+
+        GPRReg valueReg = params[0].gpr();
+        BinarySwitch binarySwitch(valueReg, cases, BinarySwitch::Int32);
+
+        Vector<CCallHelpers::Jump> caseJumps;
+        caseJumps.resize(numTargets);
+
+        while (binarySwitch.advance(jit)) {
+            unsigned value = binarySwitch.caseValue();
+            unsigned index = binarySwitch.caseIndex();
+            ASSERT_UNUSED(value, value == index);
+            ASSERT(index < numTargets);
+            caseJumps[index] = jit.jump();
+        }
+
+        CCallHelpers::JumpList fallThrough = binarySwitch.fallThrough();
+
+        Vector<Box<CCallHelpers::Label>> successorLabels = params.successorLabels();
+        ASSERT(successorLabels.size() == caseJumps.size() + 1);
+
+        params.addLatePath([=, caseJumps = WTFMove(caseJumps), successorLabels = WTFMove(successorLabels)] (CCallHelpers& jit) {
+            for (size_t i = 0; i < numTargets; ++i)
+                caseJumps[i].linkTo(*successorLabels[i], &jit);                
+            fallThrough.linkTo(*successorLabels[numTargets], &jit);
+        });
+    });
+
+    emitPatchpoint(patchpoint, TypedTmp(), condition);
 
     return { };
 }

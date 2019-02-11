@@ -1,3 +1,16 @@
+2019-02-10  Saam barati  <sbarati@apple.com>
+
+        BBQ-Air: Emit better code for switch
+        https://bugs.webkit.org/show_bug.cgi?id=194053
+
+        Reviewed by Yusuke Suzuki.
+
+        Instead of emitting a linear set of jumps for Switch, this patch
+        makes the BBQ-Air backend emit a binary switch.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+
 2019-02-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, Lexer should use isLatin1 implementation in WTF
