@@ -1,3 +1,23 @@
+2019-02-10  Mark Lam  <mark.lam@apple.com>
+
+        Remove the RELEASE_ASSERT check for duplicate cases in the BinarySwitch constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=194493
+        <rdar://problem/36380852>
+
+        Reviewed by Yusuke Suzuki.
+
+        Having duplicate cases in the BinarySwitch is not a correctness issue.  It is
+        however not good for performance and memory usage.  As such, a debug ASSERT will
+        do.  We'll also do an audit of the clients of BinarySwitch to see if it's
+        possible to be instantiated with duplicate cases in
+        https://bugs.webkit.org/show_bug.cgi?id=194492 later.
+
+        Also added some value dumps to the RELEASE_ASSERT to help debug the issue when we
+        see duplicate cases.
+
+        * jit/BinarySwitch.cpp:
+        (JSC::BinarySwitch::BinarySwitch):
+
 2019-02-10  Darin Adler  <darin@apple.com>
 
         Switch uses of StringBuilder with String::format for hex numbers to use HexNumber.h instead
