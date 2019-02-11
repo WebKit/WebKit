@@ -1129,6 +1129,10 @@ public:
     void didFinishLoadingApplicationManifest(uint64_t, const Optional<WebCore::ApplicationManifest>&);
 #endif
 
+#if PLATFORM(WPE)
+    int releaseHostFileDescriptor() { return m_hostFileDescriptor.releaseFileDescriptor(); }
+#endif
+
     void updateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers);
 
     UserContentControllerIdentifier userContentControllerIdentifier() const { return m_userContentController->identifier(); }
@@ -1820,6 +1824,10 @@ private:
 
     const String m_overrideContentSecurityPolicy;
     const Optional<double> m_cpuLimit;
+
+#if PLATFORM(WPE)
+    IPC::Attachment m_hostFileDescriptor;
+#endif
 
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;

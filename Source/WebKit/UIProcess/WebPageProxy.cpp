@@ -6869,6 +6869,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.overrideContentSecurityPolicy = m_overrideContentSecurityPolicy;
     parameters.cpuLimit = m_cpuLimit;
 
+#if PLATFORM(WPE)
+    parameters.hostFileDescriptor = pageClient().hostFileDescriptor();
+#endif
+
     for (auto& iterator : m_urlSchemeHandlersByScheme)
         parameters.urlSchemeHandlers.set(iterator.key, iterator.value->identifier());
 

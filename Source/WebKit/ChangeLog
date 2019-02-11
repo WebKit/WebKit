@@ -1,3 +1,42 @@
+2019-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Do not use a sync IPC message to send the host FD to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=194216
+
+        Reviewed by Darin Adler.
+
+        It can be sent as a web page creation parameter instead.
+
+        * PlatformWPE.cmake:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * SourcesWPE.txt:
+        * UIProcess/API/wpe/CompositingManagerProxy.cpp: Removed.
+        * UIProcess/API/wpe/CompositingManagerProxy.h: Removed.
+        * UIProcess/API/wpe/CompositingManagerProxy.messages.in: Removed.
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::hostFileDescriptor):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/API/wpe/WPEView.h:
+        (WKWPE::View::create):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_hostFileDescriptor):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::releaseHostFileDescriptor):
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::AcceleratedSurfaceWPE):
+        (WebKit::AcceleratedSurfaceWPE::initialize):
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.h:
+        * WebProcess/WebPage/wpe/CompositingManager.cpp: Removed.
+        * WebProcess/WebPage/wpe/CompositingManager.h: Removed.
+
 2019-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add enable-javascript-markup setting

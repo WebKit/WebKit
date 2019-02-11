@@ -51,6 +51,11 @@ struct wpe_view_backend* PageClientImpl::viewBackend()
     return m_view.backend();
 }
 
+IPC::Attachment PageClientImpl::hostFileDescriptor()
+{
+    return wpe_view_backend_get_renderer_host_fd(m_view.backend());
+}
+
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
     return std::make_unique<AcceleratedDrawingAreaProxy>(m_view.page(), process);

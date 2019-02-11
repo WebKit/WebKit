@@ -156,6 +156,9 @@ struct WebPageCreationParameters {
     bool smartInsertDeleteEnabled;
     Vector<String> additionalSupportedImageTypes;
 #endif
+#if PLATFORM(WPE)
+    IPC::Attachment hostFileDescriptor;
+#endif
     bool appleMailPaginationQuirkEnabled;
     bool appleMailLinesClampEnabled;
     bool shouldScaleViewToFitDocument;

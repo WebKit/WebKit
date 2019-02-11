@@ -41,7 +41,6 @@ std::unique_ptr<AcceleratedSurfaceWPE> AcceleratedSurfaceWPE::create(WebPage& we
 AcceleratedSurfaceWPE::AcceleratedSurfaceWPE(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
 {
-    m_compositingManager.establishConnection(webPage);
 }
 
 AcceleratedSurfaceWPE::~AcceleratedSurfaceWPE()
@@ -51,7 +50,7 @@ AcceleratedSurfaceWPE::~AcceleratedSurfaceWPE()
 
 void AcceleratedSurfaceWPE::initialize()
 {
-    m_backend = wpe_renderer_backend_egl_target_create(m_compositingManager.releaseConnectionFd());
+    m_backend = wpe_renderer_backend_egl_target_create(m_webPage.releaseHostFileDescriptor());
     static struct wpe_renderer_backend_egl_target_client s_client = {
         // frame_complete
         [](void* data)

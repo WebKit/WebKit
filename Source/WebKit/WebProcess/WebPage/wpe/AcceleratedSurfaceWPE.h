@@ -28,7 +28,6 @@
 #if PLATFORM(WPE)
 
 #include "AcceleratedSurface.h"
-#include "CompositingManager.h"
 
 struct wpe_renderer_backend_egl_target;
 
@@ -55,7 +54,6 @@ public:
 private:
     AcceleratedSurfaceWPE(WebPage&, Client&);
 
-    CompositingManager m_compositingManager;
     struct wpe_renderer_backend_egl_target* m_backend { nullptr };
 };
 

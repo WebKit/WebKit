@@ -483,6 +483,9 @@ public:
     virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
 #endif
 
+#if PLATFORM(WPE)
+    virtual IPC::Attachment hostFileDescriptor() = 0;
+#endif
 };
 
 } // namespace WebKit

@@ -143,6 +143,8 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final { }
 
+    IPC::Attachment hostFileDescriptor() final;
+
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 
     WKWPE::View& m_view;

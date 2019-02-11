@@ -404,6 +404,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
+#if PLATFORM(WPE)
+    , m_hostFileDescriptor(WTFMove(parameters.hostFileDescriptor))
+#endif
 {
     ASSERT(m_pageID);
 

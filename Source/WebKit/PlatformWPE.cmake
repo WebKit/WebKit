@@ -77,8 +77,6 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 
-    UIProcess/API/wpe/CompositingManagerProxy.messages.in
-
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
 )
 
