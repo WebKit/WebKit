@@ -1,3 +1,17 @@
+2019-02-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Do not try to create empty egl windows
+        https://bugs.webkit.org/show_bug.cgi?id=194497
+
+        Reviewed by Žan Doberšek.
+
+        In AcceleratedSurfaceWPE we ensure the size we pass to wpe is at least 0x0, but wl_egl_window_create() returns
+        nullptr if 0 is passed as width or height. We should use at least 1x1 instead.
+
+        * WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp:
+        (WebKit::AcceleratedSurfaceWPE::initialize):
+        (WebKit::AcceleratedSurfaceWPE::clientResize):
+
 2019-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Do not use a sync IPC message to send the host FD to the web process
