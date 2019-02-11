@@ -1,14 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/canvas/buffer-offscreen-test.html
-[ 1: PASS ] gl1 != null is true
-[ 2: PASS ] gl2 != null is true
-[ 3: PASS ] gl1.getContextAttributes().preserveDrawingBuffer == false is true
-[ 4: PASS ] gl2.getContextAttributes().preserveDrawingBuffer == false is true
-[ 5: PASS ] cleared corner should be blue, stencil should be preserved
-[ 6: FAIL ] remainder of buffer should be cleared at (0, 0) expected: 0,0,0,0 was 255,0,0,255
-[ 7: PASS ] cleared corner should be blue, stencil should be preserved
-[ 8: PASS ] remainder of buffer should be un-cleared red
-[ 9: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

@@ -1,0 +1,17 @@
+Font attributes. The font-family should list three families:
+
+font-family: monospace, "Lucida Grande", sans-serif;
+font-size: 16px;
+font-stretch: normal;
+font-style: normal;
+font-synthesis: style weight small-caps;
+font-variant: normal;
+font-weight: normal;
+font-optical-sizing: auto;
+font-variant-ligatures: normal;
+font-variant-position: normal;
+font-variant-caps: normal;
+font-variant-numeric: normal;
+font-variant-alternates: normal;
+font-variant-east-asian: normal;
+

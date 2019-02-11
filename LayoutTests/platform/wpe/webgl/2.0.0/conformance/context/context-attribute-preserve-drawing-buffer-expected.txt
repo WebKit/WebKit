@@ -1,9 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/context/context-attribute-preserve-drawing-buffer.html
-[ 1: PASS ] successfullyParsed is true
-[ 2: FAIL ] Did not render ok with preserveDrawingBuffer false.
-[ 3: PASS ] Rendered ok with preserveDrawingBuffer true.
-[ 4: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

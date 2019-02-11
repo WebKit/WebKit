@@ -1,3 +1,22 @@
+2019-02-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Adding additional baselines after font variations
+        enablement. Additionally rebaselining a couple other WPT and WebGL tests.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/getComputedStyle: Added.
+        * platform/wpe/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/wpe/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Added.
+        * platform/wpe/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+        * platform/wpe/fast/dom/52776-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/wpe/svg/css/getComputedStyle-basic-expected.txt: Added.
+        * platform/wpe/webgl/2.0.0/conformance/canvas/buffer-offscreen-test-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/canvas/buffer-preserve-test-expected.txt:
+        * platform/wpe/webgl/2.0.0/conformance/context/context-attribute-preserve-drawing-buffer-expected.txt:
+
 2019-02-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241167.
