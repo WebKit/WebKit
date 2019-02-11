@@ -29,12 +29,11 @@ window.UIHelper = class UIHelper {
         eventSender.mouseUp();
     }
 
-    static tapAt(x, y, modifiers=[])
+    static tapAt(x, y)
     {
         console.assert(this.isIOS());
 
         if (!this.isWebKit2()) {
-            console.assert(!modifiers || !modifiers.length);
             eventSender.addTouchPoint(x, y);
             eventSender.touchStart();
             eventSender.releaseTouchPoint(0);
@@ -44,7 +43,7 @@ window.UIHelper = class UIHelper {
 
         return new Promise((resolve) => {
             testRunner.runUIScript(`
-                uiController.singleTapAtPointWithModifiers(${x}, ${y}, ${JSON.stringify(modifiers)}, function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });
@@ -566,14 +565,14 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.drawSquareInEditableImage()`, resolve));
     }
 
-    static stylusTapAt(x, y, modifiers=[])
+    static stylusTapAt(x, y)
     {
         if (!this.isWebKit2())
             return Promise.resolve();
 
         return new Promise((resolve) => {
             testRunner.runUIScript(`
-                uiController.stylusTapAtPointWithModifiers(${x}, ${y}, 2, 1, 0.5, ${JSON.stringify(modifiers)}, function() {
+                uiController.stylusTapAtPoint(${x}, ${y}, 2, 1, 0.5, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });

@@ -265,10 +265,6 @@ void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef)
 {
 }
 
-void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
-{
-}
-
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef)
 {
 }
@@ -294,10 +290,6 @@ void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
 }
 
 void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
-{
-}
-
-void UIScriptController::stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef modifierArray, JSValueRef callback)
 {
 }
 

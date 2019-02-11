@@ -1160,11 +1160,6 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 }
 #endif
 
-inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
-{
-    return [recognizer respondsToSelector:@selector(_modifierFlags)] ? recognizer.modifierFlags : 0;
-}
-
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     if (!_page->isValid())
@@ -1177,7 +1172,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
 #if ENABLE(TOUCH_EVENTS)
-    WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, gestureRecognizerModifierFlags(gestureRecognizer) };
+    WebKit::NativeWebTouchEvent nativeWebTouchEvent(lastTouchEvent);
     nativeWebTouchEvent.setCanPreventNativeGestures(!_canSendTouchEventsAsynchronously || [gestureRecognizer isDefaultPrevented]);
 
 #if ENABLE(POINTER_EVENTS)
@@ -2060,7 +2055,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         break;
     case UIGestureRecognizerStateEnded:
         if (_highlightLongPressCanClick && _positionInformation.isElement) {
-            [self _attemptClickAtLocation:gestureRecognizer.startPoint modifierFlags:gestureRecognizerModifierFlags(gestureRecognizer)];
+            [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
             [self _finishInteraction];
         } else
             [self _cancelInteraction];
@@ -2079,7 +2074,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = YES;
-    _page->handleTwoFingerTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.centroid), WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), ++_latestTapID);
+    _page->handleTwoFingerTapAtPoint(WebCore::roundedIntPoint(gestureRecognizer.centroid), ++_latestTapID);
 }
 
 - (void)_stylusSingleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
@@ -2201,7 +2196,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     [_inputPeripheral endEditing];
-    _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart);
+    _page->commitPotentialTap(_layerTreeTransactionIdAtLastTouchStart);
 
     if (!_isExpectingFastSingleTapCommit)
         [self _finishInteraction];
@@ -2234,7 +2229,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _smartMagnificationController->handleResetMagnificationGesture(gestureRecognizer.location);
 }
 
-- (void)_attemptClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags
+- (void)_attemptClickAtLocation:(CGPoint)location
 {
     if (![self isFirstResponder]) {
         if (!_inputViewUpdateDeferrer)
@@ -2243,7 +2238,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     [_inputPeripheral endEditing];
-    _page->handleTap(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastTouchStart);
+    _page->handleTap(location, _layerTreeTransactionIdAtLastTouchStart);
 }
 
 - (void)setUpTextSelectionAssistant
@@ -5416,7 +5411,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
 {
-    [self _attemptClickAtLocation:location modifierFlags:0];
+    [self _attemptClickAtLocation:location];
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
@@ -6423,22 +6418,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
 }
 
-static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags)
-{
-    WebEventFlags eventFlags = 0;
-    if (flags & UIKeyModifierShift)
-        eventFlags |= WebEventFlagMaskLeftShiftKey;
-    if (flags & UIKeyModifierControl)
-        eventFlags |= WebEventFlagMaskLeftControlKey;
-    if (flags & UIKeyModifierAlternate)
-        eventFlags |= WebEventFlagMaskLeftOptionKey;
-    if (flags & UIKeyModifierCommand)
-        eventFlags |= WebEventFlagMaskLeftCommandKey;
-    if (flags & UIKeyModifierAlphaShift)
-        eventFlags |= WebEventFlagMaskLeftCapsLockKey;
-    return eventFlags;
-}
-
 - (void)_hoverGestureRecognizerChanged:(UIGestureRecognizer *)gestureRecognizer
 {
     if (!_page->isValid())
@@ -6460,7 +6439,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
         break;
     }
 
-    auto event = adoptNS([[::WebEvent alloc] initWithMouseEventType:WebEventMouseMoved timeStamp:timestamp location:point modifiers:webEventFlagsForUIKeyModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer))]);
+    auto event = adoptNS([[::WebEvent alloc] initWithMouseEventType:WebEventMouseMoved timeStamp:timestamp location:point]);
     _page->handleMouseEvent(WebKit::NativeWebMouseEvent(event.get()));
 }
 #endif

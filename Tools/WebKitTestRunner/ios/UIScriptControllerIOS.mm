@@ -63,45 +63,7 @@ static NSDictionary *toNSDictionary(CGRect rect)
         @"height": @(rect.size.height)
     };
 }
-
-static unsigned arrayLength(JSContextRef context, JSObjectRef array)
-{
-    auto lengthString = adopt(JSStringCreateWithUTF8CString("length"));
-    if (auto lengthValue = JSObjectGetProperty(context, array, lengthString.get(), nullptr))
-        return static_cast<unsigned>(JSValueToNumber(context, lengthValue, nullptr));
-    return 0;
-}
-
-static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
-{
-    if (!arrayValue)
-        return { };
-
-    // The value may either be a string with a single modifier or an array of modifiers.
-    if (JSValueIsString(context, arrayValue)) {
-        auto string = toWTFString(toWK(adopt(JSValueToStringCopy(context, arrayValue, nullptr))));
-        return { string };
-    }
-
-    if (!JSValueIsObject(context, arrayValue))
-        return { };
-    JSObjectRef array = const_cast<JSObjectRef>(arrayValue);
-    unsigned length = arrayLength(context, array);
-    Vector<String> modifiers;
-    modifiers.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i) {
-        JSValueRef exception = nullptr;
-        JSValueRef value = JSObjectGetPropertyAtIndex(context, array, i, &exception);
-        if (exception)
-            continue;
-        auto string = adopt(JSValueToStringCopy(context, value, &exception));
-        if (exception)
-            continue;
-        modifiers.append(toWTFString(toWK(string.get())));
-    }
-    return modifiers;
-}
-
+    
 void UIScriptController::checkForOutstandingCallbacks()
 {
     if (![[HIDEventGenerator sharedHIDEventGenerator] checkForOutstandingCallbacks])
@@ -231,29 +193,12 @@ void UIScriptController::liftUpAtPoint(long x, long y, long touchCount, JSValueR
 
 void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef callback)
 {
-    singleTapAtPointWithModifiers(x, y, nullptr, callback);
-}
-
-void UIScriptController::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
-{
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
-    for (auto& modifierFlag : modifierFlags)
-        [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
     [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y) completionBlock:^{
         if (!m_context)
             return;
-        for (size_t i = modifierFlags.size(); i; ) {
-            --i;
-            [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
-        }
-        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{
-            if (!m_context)
-                return;
-            m_context->asyncTaskComplete(callbackID);
-        }];
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
 
@@ -306,33 +251,16 @@ void UIScriptController::stylusUpAtPoint(long x, long y, JSValueRef callback)
 
 void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef callback)
 {
-    stylusTapAtPointWithModifiers(x, y, azimuthAngle, altitudeAngle, pressure, nullptr, callback);
-}
-
-void UIScriptController::stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, JSValueRef modifierArray, JSValueRef callback)
-{
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-
-    auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
-    for (auto& modifierFlag : modifierFlags)
-        [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
     auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
         if (!m_context)
             return;
-        for (size_t i = modifierFlags.size(); i; ) {
-            --i;
-            [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
-        }
-        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{
-            if (!m_context)
-                return;
-            m_context->asyncTaskComplete(callbackID);
-        }];
+        m_context->asyncTaskComplete(callbackID);
     }];
 }
-
+    
 void convertCoordinates(NSMutableDictionary *event)
 {
     if (event[HIDEventTouchesKey]) {
@@ -419,6 +347,44 @@ void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef characte
             return;
         m_context->asyncTaskComplete(callbackID);
     }];
+}
+
+static unsigned arrayLength(JSContextRef context, JSObjectRef array)
+{
+    auto lengthString = adopt(JSStringCreateWithUTF8CString("length"));
+    if (auto lengthValue = JSObjectGetProperty(context, array, lengthString.get(), nullptr))
+        return static_cast<unsigned>(JSValueToNumber(context, lengthValue, nullptr));
+    return 0;
+}
+
+static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayValue)
+{
+    if (!arrayValue)
+        return { };
+
+    // The value may either be a string with a single modifier or an array of modifiers.
+    if (JSValueIsString(context, arrayValue)) {
+        auto string = toWTFString(toWK(adopt(JSValueToStringCopy(context, arrayValue, nullptr))));
+        return { string };
+    }
+
+    if (!JSValueIsObject(context, arrayValue))
+        return { };
+    JSObjectRef array = const_cast<JSObjectRef>(arrayValue);
+    unsigned length = arrayLength(context, array);
+    Vector<String> modifiers;
+    modifiers.reserveInitialCapacity(length);
+    for (unsigned i = 0; i < length; ++i) {
+        JSValueRef exception = nullptr;
+        JSValueRef value = JSObjectGetPropertyAtIndex(context, array, i, &exception);
+        if (exception)
+            continue;
+        auto string = adopt(JSValueToStringCopy(context, value, &exception));
+        if (exception)
+            continue;
+        modifiers.append(toWTFString(toWK(string.get())));
+    }
+    return modifiers;
 }
 
 static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, bool isKeyDown)

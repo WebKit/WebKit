@@ -23,35 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "WebEvent.h"
+#ifndef NativeWebTouchEvent_h
+#define NativeWebTouchEvent_h
 
 #if ENABLE(TOUCH_EVENTS)
 
+#include "WebEvent.h"
+
 #if PLATFORM(IOS_FAMILY)
-#if defined(__OBJC__)
-#include <UIKit/UIKit.h>
 struct _UIWebTouchEvent;
-#endif
 #elif PLATFORM(GTK)
 #include <WebCore/GUniquePtrGtk.h>
 #elif USE(LIBWPE)
 #include <wpe/wpe.h>
 #endif
 
-#endif // ENABLE(TOUCH_EVENTS)
-
 namespace WebKit {
-
-#if ENABLE(TOUCH_EVENTS)
 
 class NativeWebTouchEvent : public WebTouchEvent {
 public:
 #if PLATFORM(IOS_FAMILY)
-#if defined(__OBJC__)
-    explicit NativeWebTouchEvent(const _UIWebTouchEvent*, UIKeyModifierFlags);
-#endif
+    explicit NativeWebTouchEvent(const _UIWebTouchEvent*);
 #elif PLATFORM(GTK)
     NativeWebTouchEvent(GdkEvent*, Vector<WebPlatformTouchPoint>&&);
     NativeWebTouchEvent(const NativeWebTouchEvent&);
@@ -64,7 +56,7 @@ public:
 #endif
 
 private:
-#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
+#if PLATFORM(IOS_FAMILY)
     Vector<WebPlatformTouchPoint> extractWebTouchPoint(const _UIWebTouchEvent*);
 #endif
 
@@ -75,10 +67,8 @@ private:
 #endif
 };
 
+} // namespace WebKit
+
 #endif // ENABLE(TOUCH_EVENTS)
 
-#if PLATFORM(IOS_FAMILY) && defined(__OBJC__)
-OptionSet<WebEvent::Modifier> webEventModifierFlags(UIKeyModifierFlags);
-#endif
-
-} // namespace WebKit
+#endif // NativeWebTouchEvent_h

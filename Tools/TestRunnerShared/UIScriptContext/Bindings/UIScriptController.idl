@@ -56,7 +56,6 @@ interface UIScriptController {
     void touchDownAtPoint(long x, long y, long touchCount, object callback);
     void liftUpAtPoint(long x, long y, long touchCount, object callback);
     void singleTapAtPoint(long x, long y, object callback);
-    void singleTapAtPointWithModifiers(long x, long y, object modifierArray, object callback);
     void doubleTapAtPoint(long x, long y, object callback);
     void dragFromPointToPoint(long startX, long startY, long endX, long endY, double durationSeconds, object callback);
 
@@ -66,7 +65,6 @@ interface UIScriptController {
     void stylusMoveToPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, object callback);
     void stylusUpAtPoint(long x, long y, object callback);
     void stylusTapAtPoint(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, object callback);
-    void stylusTapAtPointWithModifiers(long x, long y, float azimuthAngle, float altitudeAngle, float pressure, object modifierArray, object callback);
 
     void enterText(DOMString text);
     void typeCharacterUsingHardwareKeyboard(DOMString character, object callback);

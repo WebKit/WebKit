@@ -2,12 +2,11 @@
 <html>
 <head>
 <script src="../../../resources/ui-helper.js"></script>
-<script src="../resources/compute-subsets.js"></script>
 <script src="resources/key-tester.js"></script>
 <script>
 const modiferKeySubsetsToTest = computeSubsets(["metaKey", "altKey"]);
 for (const k of keysExcludingDeadAndSkippedKeys) {
-    for (const modifiers of computeSubsets(modifierKeys))
+    for (const modifiers of modiferKeySubsetsToTest)
         tests.push(new KeyCommand(k, modifiers));
 }
 </script>

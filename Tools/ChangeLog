@@ -1,3 +1,21 @@
+2019-02-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r241272 and r241276.
+        https://bugs.webkit.org/show_bug.cgi?id=194514
+
+        Broke the Apple Internal build and the fix requires human
+        intervention :( (Requested by dydz on #webkit).
+
+        Reverted changesets:
+
+        "[iOS] Mouse/Touch/Pointer events are missing modifier keys"
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+        https://trac.webkit.org/changeset/241272
+
+        "Fix internal iOS build after r241272"
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+        https://trac.webkit.org/changeset/241276
+
 2019-02-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241269.
