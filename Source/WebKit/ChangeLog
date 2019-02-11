@@ -1,3 +1,68 @@
+2019-02-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Mouse/Touch/Pointer events are missing modifier keys
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+        <rdar://problem/45929460>
+
+        Reviewed by Tim Horton.
+
+        Make use of UIKit SPI to retreive the modifier flags when dispatching mouse and touch events.
+        Add new WebKit SPI for iOS, -[WKNavigationAction modifierFlags], to retrieve the the modifier
+        flags held when a navigation action was initiated.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose SPI.
+        * Shared/NativeWebTouchEvent.h: Re-arrange macro guards so that we can expose the helper function
+        WebKit::webEventModifierFlags(). This is a bit more involved that usual since this header is included
+        from both C++ and Objective-C source files. It only makes sense to expose this function when
+        compiling as part of an Objective-C source file.
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent): Modified to take the modifier flags held down
+        when the platform touch event was received and pass them through to the base constructor.
+        (WebKit::webEventModifierFlags): Added. Converts from the platform-speciifc UIKeyModifierFlags to
+        OptionSet<WebKit::WebEvent::Modifier>.
+        * Shared/ios/WebIOSEventFactory.h:
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::toUIKeyModifierFlags): Added. Converts from OptionSet<WebKit::WebEvent::Modifier>
+        to the platform-specific UIKeyModifierFlags.
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction modifierFlags]): Added.
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (gestureRecognizerModifierFlags): Added.
+
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _singleTapCommited:]):
+        Pass modifier flags through.
+
+        (-[WKContentView _attemptClickAtLocation:modifierFlags:]): Added.
+        (-[WKContentView actionSheetAssistant:openElementAtLocation:]): This is invoked when a person opens a link
+        via the action sheet. We don't have access to the modifier flags to pass. It also seems like an implementation
+        detail that this action is implemented via mouse click and we should re-evaluate this decision in light of
+        the fact tht the action sheet is browser UI and we tend to be very reserved on what UI actions are visible
+        to the page. On Mac, opening a link via the context menu is not visible to the page, at least from a mouse
+        event perspective.
+        (webEventFlagsForUIKeyModifierFlags): Added.
+        (-[WKContentView _hoverGestureRecognizerChanged:]): Pass modifier flags through.
+        (-[WKContentView _attemptClickAtLocation:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+        (WebKit::WebPageProxy::commitPotentialTap):
+        (WebKit::WebPageProxy::handleTap):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+        Pass modifier flags through.
+
 2019-02-11  Youenn Fablet  <youenn@apple.com>
 
         Filter out Overconstrainederror.constraint when getUserMedia is not granted

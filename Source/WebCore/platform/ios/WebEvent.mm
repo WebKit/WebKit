@@ -49,19 +49,20 @@ using WebCore::windowsKeyCodeForCharCode;
 @synthesize timestamp = _timestamp;
 @synthesize wasHandled = _wasHandled;
 
-- (WebEvent *)initWithMouseEventType:(WebEventType)type
-                           timeStamp:(CFTimeInterval)timeStamp
-                            location:(CGPoint)point
+- (WebEvent *)initWithMouseEventType:(WebEventType)type timeStamp:(CFTimeInterval)timeStamp location:(CGPoint)point
+{
+    return [self initWithMouseEventType:type timeStamp:timeStamp location:point modifiers:0];
+}
+
+- (WebEvent *)initWithMouseEventType:(WebEventType)type timeStamp:(CFTimeInterval)timeStamp location:(CGPoint)point modifiers:(WebEventFlags)modifiers
 {
     self = [super init];
     if (!self)
         return nil;
-    
     _type = type;
     _timestamp = timeStamp;
-
     _locationInWindow = point;
-    
+    _modifierFlags = modifiers;
     return self;
 }
 

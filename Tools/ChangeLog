@@ -1,3 +1,29 @@
+2019-02-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Mouse/Touch/Pointer events are missing modifier keys
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+        <rdar://problem/45929460>
+
+        Reviewed by Tim Horton.
+
+        Add support infrastructure for testing touch and stylus taps when holding modifier keys. 
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+        (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+        (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::arrayLength):
+        (WTR::parseModifierArray):
+        (WTR::UIScriptController::singleTapAtPoint): Implemented in terms of singleTapAtPointWithModifiers().
+        (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+        (WTR::UIScriptController::stylusTapAtPoint): Implemented in terms of stylusTapAtPointWithModifiers().
+        (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+
 2019-02-11  Darshan Kadu  <dkadu@igalia.com>
 
         DumpRenderTree should report unknown options

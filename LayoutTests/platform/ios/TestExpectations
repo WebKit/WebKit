@@ -3210,3 +3210,8 @@ webkit.org/b/193955 compositing/iframes/remove-reinsert-webview-with-iframe.html
 webkit.org/b/153337 pageoverlay/overlay-installation.html [ Pass Failure ]
 webkit.org/b/153337 pageoverlay/overlay-large-document-scrolled.html [ Pass Failure ]
 webkit.org/b/153337 pageoverlay/overlay-large-document.html [ Pass Failure ]
+
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/45970040>.
+fast/events/touch/ios/touch-events-with-modifiers.html [ Skip ]
+fast/events/touch/ios/mouse-events-with-modifiers.html [ Skip ]
+fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]

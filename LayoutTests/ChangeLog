@@ -1,3 +1,36 @@
+2019-02-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Mouse/Touch/Pointer events are missing modifier keys
+        https://bugs.webkit.org/show_bug.cgi?id=191446
+        <rdar://problem/45929460>
+
+        Reviewed by Tim Horton.
+
+        Refactor existing iOS key events tests to share code. Add new tests to ensure touch and mouse events
+        have accurate modifier key details.
+
+        * fast/events/ios/key-events-meta-alt-combinations.html:
+        * fast/events/ios/resources/key-tester.js:
+        (computeSubsets.compareByModifierOrder): Deleted.
+        * fast/events/resources/compute-subsets.js: Added.
+        (computeSubsets.compareByOriginalArrayOrder):
+        (computeSubsets):
+        * fast/events/touch/ios/mouse-events-with-modifiers-expected.txt: Added.
+        * fast/events/touch/ios/mouse-events-with-modifiers.html: Added.
+        * fast/events/touch/ios/pointer-events-with-modifiers-expected.txt: Added.
+        * fast/events/touch/ios/pointer-events-with-modifiers.html: Added.
+        * fast/events/touch/ios/touch-events-with-modifiers-expected.txt: Added.
+        * fast/events/touch/ios/touch-events-with-modifiers.html: Added.
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt: Update expected result
+        due to changes to ui-helper.js.
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt: Ditto.
+        * platform/ios/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.tapAt.return.new.Promise):
+        (window.UIHelper.tapAt):
+        (window.UIHelper.stylusTapAt.return.new.Promise):
+        (window.UIHelper.stylusTapAt):
+
 2019-02-11  Youenn Fablet  <youenn@apple.com>
 
         Filter out Overconstrainederror.constraint when getUserMedia is not granted

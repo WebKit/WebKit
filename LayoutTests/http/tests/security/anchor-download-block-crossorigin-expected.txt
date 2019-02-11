@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 107: The download attribute on anchor was ignored because its href URL has a different security origin.
+CONSOLE MESSAGE: line 108: The download attribute on anchor was ignored because its href URL has a different security origin.
 Tests that the download attribute is ignored if the link is cross origin.
 
 It should navigate the subframe instead of downloading the file.

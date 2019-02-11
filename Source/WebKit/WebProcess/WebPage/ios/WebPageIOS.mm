@@ -534,7 +534,7 @@ void WebPage::updateSelectionAppearance()
         didChangeSelection();
 }
 
-void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location)
+void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
     Frame& mainframe = m_page->mainFrame();
@@ -543,7 +543,12 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     WKStartObservingContentChanges();
     WKStartObservingDOMTimerScheduling();
 
-    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
+    // FIXME: Pass caps lock state.
+    bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
+    bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
+    bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
+    bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
+    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
     WKStopObservingDOMTimerScheduling();
@@ -551,6 +556,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
+    m_pendingSyntheticClickModifiers = { };
 
     if (m_isClosed)
         return;
@@ -560,15 +566,16 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
         // The move event caused new contents to appear. Don't send the click event.
         LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
         return;
-    case WKContentIndeterminateChange:
+    case WKContentIndeterminateChange: {
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
         m_pendingSyntheticClickNode = nodeRespondingToClick;
         m_pendingSyntheticClickLocation = location;
+        m_pendingSyntheticClickModifiers = modifiers;
         LOG(ContentObservation, "handleSyntheticClick: Observed some change, but can't decide it yet -> wait.");
         return;
-    case WKContentNoChange:
+    } case WKContentNoChange:
         LOG(ContentObservation, "handleSyntheticClick: No change was observed -> click.");
-        completeSyntheticClick(nodeRespondingToClick, location, WebCore::OneFingerTap);
+        completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
         return;
     }
     ASSERT_NOT_REACHED();
@@ -582,15 +589,16 @@ void WebPage::completePendingSyntheticClickForContentChangeObserver()
     // Only dispatch the click if the document didn't get changed by any timers started by the move event.
     if (WKObservedContentChange() == WKContentNoChange) {
         LOG(ContentObservation, "No chage was observed -> click.");
-        completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation, WebCore::OneFingerTap);
+        completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation, m_pendingSyntheticClickModifiers, WebCore::OneFingerTap);
     } else
         LOG(ContentObservation, "Observed meaningful visible change -> hover.");
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
+    m_pendingSyntheticClickModifiers = { };
 }
 
-void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location, SyntheticClickType syntheticClickType)
+void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, SyntheticClickType syntheticClickType)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
     Frame& mainframe = m_page->mainFrame();
@@ -603,11 +611,17 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
     bool tapWasHandled = false;
     m_lastInteractionLocation = roundedAdjustedPoint;
 
-    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, syntheticClickType));
+    // FIXME: Pass caps lock state.
+    bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
+    bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
+    bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
+    bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
+
+    tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType));
     if (m_isClosed)
         return;
 
-    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, syntheticClickType));
+    tapWasHandled |= mainframe.eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType));
     if (m_isClosed)
         return;
 
@@ -627,7 +641,7 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 }
 
-void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransactionId)
+void WebPage::handleTap(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
 {
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
@@ -644,7 +658,7 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
     }
 #endif
     else
-        handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
+        handleSyntheticClick(nodeRespondingToClick, adjustedPoint, modifiers);
 }
 
 void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
@@ -739,7 +753,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
 #endif
 }
 
-void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
+void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t requestID)
 {
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
@@ -755,7 +769,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
     } else
 #endif
-        completeSyntheticClick(nodeRespondingToClick, adjustedPoint, WebCore::TwoFingerTap);
+        completeSyntheticClick(nodeRespondingToClick, adjustedPoint, modifiers, WebCore::TwoFingerTap);
 }
 
 void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
@@ -800,7 +814,7 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 #endif
 }
 
-void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
+void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
 {
     if (!m_potentialTapNode || (!m_potentialTapNode->renderer() && !is<HTMLAreaElement>(m_potentialTapNode.get()))) {
         commitPotentialTapFailed();
@@ -824,7 +838,7 @@ void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
             commitPotentialTapFailed();
         } else
 #endif
-            handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
+            handleSyntheticClick(nodeRespondingToClick, adjustedPoint, modifiers);
     } else
         commitPotentialTapFailed();
 
