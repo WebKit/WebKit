@@ -29,10 +29,13 @@
 #include "config.h"
 #include "FetchRequest.h"
 
+#include "Document.h"
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
+#include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -141,6 +144,31 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
     return { };
 }
 
+static inline bool needsSignalQuirk(ScriptExecutionContext& context)
+{
+    if (!is<Document>(context))
+        return false;
+
+    auto& document = downcast<Document>(context);
+    if (!document.settings().needsSiteSpecificQuirks())
+        return false;
+
+    auto host = document.topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "leetcode.com") || equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
+}
+
+static inline Optional<Exception> processInvalidSignal(ScriptExecutionContext& context)
+{
+    ASCIILiteral message { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
+    context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+
+    if (needsSignalQuirk(context))
+        return { };
+
+    RELEASE_LOG_ERROR(ResourceLoading, "FetchRequestInit.signal should be undefined, null or an AbortSignal object.");
+    return Exception { TypeError, message };
+}
+
 ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 {
     ASSERT(scriptExecutionContext());
@@ -164,8 +192,8 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
             m_signal->follow(*signal);
         else if (!init.signal.isUndefinedOrNull())  {
-            ASCIILiteral consoleMessage { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
-            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+                return WTFMove(*exception);
         }
     }
 
@@ -202,8 +230,8 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         if (auto* signal = JSAbortSignal::toWrapped(scriptExecutionContext()->vm(), init.signal))
             m_signal->follow(*signal);
         else if (!init.signal.isNull()) {
-            ASCIILiteral consoleMessage { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
-            scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, consoleMessage);
+            if (auto exception = processInvalidSignal(*scriptExecutionContext()))
+                return WTFMove(*exception);
         }
 
     } else
