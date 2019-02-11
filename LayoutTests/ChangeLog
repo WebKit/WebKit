@@ -1,3 +1,13 @@
+2019-02-11  Youenn Fablet  <youenn@apple.com>
+
+        Filter out Overconstrainederror.constraint when getUserMedia is not granted
+        https://bugs.webkit.org/show_bug.cgi?id=194240
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/overconstrainederror-constraint-expected.txt: Added.
+        * fast/mediastream/overconstrainederror-constraint.html: Added.
+
 2019-02-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241229.
