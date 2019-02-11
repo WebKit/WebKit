@@ -1,3 +1,28 @@
+2019-02-11  Daniel Bates  <dabates@apple.com>
+
+        Separate out outline-style: auto user-agent appearance from Mac animated focus ring drawing
+        https://bugs.webkit.org/show_bug.cgi?id=193591
+
+        Reviewed by Simon Fraser.
+
+        Untangle the Mac-specific concept of animated focus ring drawing from the concepts of using
+        the fancy shrink-wrapped focus ring appearance and using the platform focus ring color when
+        outline-style: auto.
+
+        No functionality changed. So, no new tests.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::drawFocusRing):
+        (WebCore::drawFocusRingToContextAtTime):
+        Change some macro guards.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::usePlatformFocusRingColorForOutlineStyleAuto): Added.
+        (WebCore::useShrinkWrappedFocusRingForOutlineStyleAuto): Added.
+        (WebCore::drawFocusRing): Added.
+        (WebCore::RenderElement::paintFocusRing): Write in terms of drawFocusRing().
+
 2019-02-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241229.
