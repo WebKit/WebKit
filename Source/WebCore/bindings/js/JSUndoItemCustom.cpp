@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JSUndoItem.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 
