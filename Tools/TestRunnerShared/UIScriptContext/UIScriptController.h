@@ -116,6 +116,8 @@ public:
 
     JSObjectRef contentsOfUserInterfaceItem(JSStringRef) const;
     void overridePreference(JSStringRef preference, JSStringRef value);
+
+    bool isPresentingModally() const;
     
     double contentOffsetX() const;
     double contentOffsetY() const;

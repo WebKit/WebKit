@@ -487,6 +487,12 @@ void UIScriptController::setTimePickerValue(long hour, long minute)
     [webView setTimePickerValueToHour:hour minute:minute];
 }
 
+bool UIScriptController::isPresentingModally() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return !!webView.window.rootViewController.presentedViewController;
+}
+
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
 {
     UIEdgeInsets contentInsets = scrollView.contentInset;
@@ -986,6 +992,15 @@ JSObjectRef UIScriptController::attachmentInfo(JSStringRef jsAttachmentIdentifie
 NSUndoManager *UIScriptController::platformUndoManager() const
 {
     return [(UIView *)[TestController::singleton().mainWebView()->platformView() valueForKeyPath:@"_currentContentView"] undoManager];
+}
+
+JSObjectRef UIScriptController::calendarType() const
+{
+    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    NSString *calendarTypeString = [contentView valueForKeyPath:@"formInputControl.dateTimePickerCalendarType"];
+    auto jsContext = m_context->jsContext();
+    return JSValueToObject(jsContext, [JSValue valueWithObject:calendarTypeString inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
 }

@@ -344,6 +344,11 @@ JSRetainPtr<JSStringRef> UIScriptController::formInputLabel() const
     return nullptr;
 }
 
+bool UIScriptController::isPresentingModally() const
+{
+    return false;
+}
+
 double UIScriptController::contentOffsetX() const
 {
     return 0;

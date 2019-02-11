@@ -183,6 +183,11 @@ void UIScriptController::selectFormAccessoryPickerRow(long rowIndex)
 {
 }
 
+bool UIScriptController::isPresentingModally() const
+{
+    return false;
+}
+
 JSRetainPtr<JSStringRef> UIScriptController::textContentType() const
 {
     return nullptr;

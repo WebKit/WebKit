@@ -214,4 +214,9 @@ NSUndoManager *UIScriptController::platformUndoManager() const
     return TestController::singleton().mainWebView()->platformView().undoManager;
 }
 
+JSObjectRef UIScriptController::calendarType() const
+{
+    return nullptr;
+}
+
 } // namespace WTR

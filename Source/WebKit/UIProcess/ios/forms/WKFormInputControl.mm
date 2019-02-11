@@ -53,6 +53,7 @@ using namespace WebKit;
 }
 - (id)initWithView:(WKContentView *)view datePickerMode:(UIDatePickerMode)mode;
 - (WKDateTimePopoverViewController *)viewController;
+@property (nonatomic, readonly) NSString *calendarType;
 @end
 
 @interface WKDateTimePicker : NSObject<WKFormControl> {
@@ -239,7 +240,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 // WKFormInputControl
 @implementation WKFormInputControl {
-    RetainPtr<id<WKFormControl>> _control;
+    RetainPtr<NSObject <WKFormControl>> _control;
 }
 
 - (instancetype)initWithView:(WKContentView *)view
@@ -298,12 +299,18 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 @end
 
 @implementation WKFormInputControl (WKTesting)
+
 - (NSString *)dateTimePickerCalendarType
 {
-    if ([(NSObject *)_control.get() isKindOfClass:WKDateTimePicker.class])
+    if ([_control isKindOfClass:WKDateTimePicker.class])
         return [(WKDateTimePicker *)_control.get() calendarType];
+
+    if ([_control isKindOfClass:WKDateTimePopover.class])
+        return [(WKDateTimePopover *)_control.get() calendarType];
+
     return nil;
 }
+
 @end
 
 @implementation WKDateTimePopoverViewController
@@ -386,6 +393,12 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 - (UIView *)controlView
 {
     return nil;
+}
+
+- (NSString *)calendarType
+{
+    WKDateTimePicker *dateTimePicker = (WKDateTimePicker *)self.viewController.innerControl;
+    return dateTimePicker.datePicker.calendar.calendarIdentifier;
 }
 
 @end

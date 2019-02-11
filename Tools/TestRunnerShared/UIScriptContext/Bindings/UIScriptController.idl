@@ -232,6 +232,7 @@ interface UIScriptController {
     void setMinimumEffectiveWidth(double effectiveWidth);
 
     void resignFirstResponder();
+    readonly attribute boolean isPresentingModally;
 
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;

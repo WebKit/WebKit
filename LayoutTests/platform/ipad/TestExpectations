@@ -46,6 +46,4 @@ webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-cha
 webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
 webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
 
-webkit.org/b/194313 fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html [ Skip ]
-
 webkit.org/b/194314 fast/forms/ios/scroll-to-reveal-focused-select.html

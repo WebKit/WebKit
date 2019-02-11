@@ -220,6 +220,37 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingKeyboard()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.isShowingKeyboard", result => resolve(result === "true"));
+        });
+    }
+
+    static isPresentingModally()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.isPresentingModally", result => resolve(result === "true"));
+        });
+    }
+
+    static deactivateFormControl(element)
+    {
+        if (!this.isWebKit2() || !this.isIOS()) {
+            element.blur();
+            return Promise.resolve();
+        }
+
+        return new Promise(async resolve => {
+            element.blur();
+            while (await this.isPresentingModally())
+                continue;
+            while (await this.isShowingKeyboard())
+                continue;
+            resolve();
+        });
+    }
+
     static waitForKeyboardToHide()
     {
         if (!this.isWebKit2() || !this.isIOS())
@@ -419,7 +450,7 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 uiController.uiScriptComplete(uiController.isShowingDataListSuggestions);
-            })()`, result => resolve(result === "true" ? true : false));
+            })()`, result => resolve(result === "true"));
         });
     }
 

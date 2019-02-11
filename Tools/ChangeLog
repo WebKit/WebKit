@@ -1,3 +1,26 @@
+2019-02-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/forms/ios/force-gregorian-calendar-for-credit-card-expiry.html does not work on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=194313
+
+        Reviewed by Tim Horton.
+
+        Add a helper to determine whether the web view is presenting modal UI.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isPresentingModally const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::isPresentingModally const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::calendarType const): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isPresentingModally const):
+        (WTR::UIScriptController::calendarType const):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::calendarType const):
+
 2019-02-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         GCHeapInspector: Show the retained sizes in more places

@@ -11,12 +11,14 @@
         }
 
         #target0, #target1 {
-            font-size: 150px;
+            font-size: 40px;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <input type='date' id='target0' autocomplete='cc-exp'>
+    <br>
     <input type='date' id='target1'>
     <pre id="output"></pre>
     <script>
@@ -32,13 +34,7 @@
             output.appendChild(paragraph);
         }
 
-        function toString(value)
-        {
-            return `{ calendarType = ${value} }`;
-        }
-
         (async () => {
-
             if (!window.testRunner || !testRunner.runUIScript) {
                 appendOutput(`This test checks if a gregorian calendar is presented when a date input control marked
                     as a credit card expiry date field (ie. through autocomplete='cc-exp') is tapped on Safari iOS. For
@@ -46,23 +42,16 @@
                 return;
             }
 
-            await UIHelper.setDefaultCalendarType("japanese");
-            await UIHelper.activateElement(target0);
-            appendOutput("Date input control marked as 'cc-exp' (default calendar set to japanese):");
-            appendOutput(toString(await UIHelper.calendarType()));
-
-            await UIHelper.activateElement(target1);
-            appendOutput("Date input control not marked as 'cc-exp' (default calendar set to japanese):");
-            appendOutput(toString(await UIHelper.calendarType()));
-
-            await UIHelper.setDefaultCalendarType("gregorian");
-            await UIHelper.activateElement(target0);
-            appendOutput("Date input control marked as 'cc-exp' (default calendar set to gregorian):");
-            appendOutput(toString(await UIHelper.calendarType()));
-
-            await UIHelper.activateElement(target1);
-            appendOutput("Date input control not marked as 'cc-exp' (default calendar set to gregorian):");
-            appendOutput(toString(await UIHelper.calendarType()));
+            for (const calendarType of ["japanese", "gregorian"]) {
+                await UIHelper.setDefaultCalendarType(calendarType);
+                for (const element of [target0, target1]) {
+                    await UIHelper.activateFormControl(element);
+                    const isCreditCardField = element.getAttribute("autocomplete") === "cc-exp";
+                    appendOutput(`Date input control${isCreditCardField ? "" : " not"} marked as 'cc-exp' (default calendar set to ${calendarType}):`);
+                    appendOutput(`{ calendarType = ${await UIHelper.calendarType()} }`);
+                    await UIHelper.deactivateFormControl(element);
+                }
+            }
 
             testRunner.notifyDone();
 
