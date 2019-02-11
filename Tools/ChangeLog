@@ -1,3 +1,16 @@
+2019-02-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] GstMappedBuffer testsuite build fails
+        https://bugs.webkit.org/show_bug.cgi?id=194495
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix the build by explicitely adding the gstreamer1.0-audio include
+        directories to the include path.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+
 2019-02-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add enable-javascript-markup setting
