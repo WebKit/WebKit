@@ -106,7 +106,7 @@ protected:
     {
         auto length = getTextLength(itemId);
         std::vector<TCHAR> buffer(length + 1, 0);
-        GetWindowText(item(itemId), buffer.data(), length);
+        GetWindowText(item(itemId), buffer.data(), length + 1);
         return std::wstring { buffer.data() };
     }
 

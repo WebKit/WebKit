@@ -1,3 +1,13 @@
+2019-02-11  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WinCairo][MiniBrowser] Basic authentication always fails.
+        https://bugs.webkit.org/show_bug.cgi?id=194496
+
+        Reviewed by Don Olmstead.
+
+        * MiniBrowser/win/DialogHelper.h:
+        (Dialog::getText):
+
 2019-02-11  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] GstMappedBuffer testsuite build fails
