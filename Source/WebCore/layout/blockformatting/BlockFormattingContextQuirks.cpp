@@ -68,7 +68,8 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
     auto& documentBox = layoutBox.isDocumentBox() ? layoutBox : *layoutBox.parent();
     auto& documentBoxDisplayBox = layoutState.displayBoxForLayoutBox(documentBox);
 
-    auto strechedHeight = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox)).contentBoxHeight();
+    auto& initialContainingBlockDisplayBox = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox));
+    auto strechedHeight = initialContainingBlockDisplayBox.contentBoxHeight();
     strechedHeight -= documentBoxDisplayBox.verticalBorder() + documentBoxDisplayBox.verticalPadding().valueOr(0);
 
     LayoutUnit totalVerticalMargin;
@@ -80,7 +81,7 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedInFlowHeight(const Layo
         // Here is the quirky part for body box:
         // Stretch the body using the initial containing block's height and shrink it with document box's margin/border/padding.
         // This looks extremely odd when html has non-auto height.
-        auto documentBoxVerticalMargin = Geometry::computedVerticalMargin(layoutState, documentBox);
+        auto documentBoxVerticalMargin = Geometry::computedVerticalMargin(documentBox, UsedHorizontalValues { initialContainingBlockDisplayBox.contentBoxWidth() });
         strechedHeight -= (documentBoxVerticalMargin.before.valueOr(0) + documentBoxVerticalMargin.after.valueOr(0));
 
         auto& bodyBoxDisplayBox = layoutState.displayBoxForLayoutBox(layoutBox);

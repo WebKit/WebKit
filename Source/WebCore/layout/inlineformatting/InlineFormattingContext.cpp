@@ -71,7 +71,7 @@ void InlineFormattingContext::layout() const
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     auto& root = downcast<Container>(this->root());
-    auto usedValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(root).contentBoxWidth(), { }, { } };
+    auto usedValues = UsedHorizontalValues { layoutState().displayBoxForLayoutBox(root).contentBoxWidth() };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     // Compute width/height for non-text content and margin/border/padding for inline containers.
     while (layoutBox) {
@@ -204,7 +204,7 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     HeightAndMargin heightAndMargin;
     if (layoutBox.isFloatingPositioned())
-        heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox, { });
+        heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox, { }, UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() });
     else if (layoutBox.isInlineBlockBox())
         heightAndMargin = Geometry::inlineBlockHeightAndMargin(layoutState, layoutBox);
     else if (layoutBox.replaced())

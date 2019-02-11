@@ -295,7 +295,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeomet
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
     auto isStaticallyPositioned = !top && !bottom;
     auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
     auto paddingTop = displayBox.paddingTop().valueOr(0);
     auto paddingBottom = displayBox.paddingBottom().valueOr(0);
@@ -560,7 +560,7 @@ VerticalGeometry FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry(
     auto bottom = computedValueIfNotAuto(style.logicalBottom(), containingBlockWidth);
     auto isStaticallyPositioned = !top && !bottom;
     auto height = inlineReplacedHeightAndMargin(layoutState, layoutBox, usedValues).height;
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
     auto paddingTop = displayBox.paddingTop().valueOr(0);
@@ -727,7 +727,7 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
     return { *left, *right, { width, { *usedMarginStart, *usedMarginEnd }, computedHorizontalMargin } };
 }
 
-HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)
+HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues, UsedHorizontalValues usedHorizontalValues)
 {
     ASSERT(!layoutBox.replaced());
     // TODO: Use complicated-case for document renderer for now (see BlockFormattingContext::Geometry::inFlowHeightAndMargin).
@@ -743,7 +743,7 @@ HeightAndMargin FormattingContext::Geometry::complicatedCases(const LayoutState&
     // 2. If 'height' is 'auto', the height depends on the element's descendants per 10.6.7.
 
     auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, usedHorizontalValues);
     // #1
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
     // #2
@@ -823,13 +823,13 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowHorizontalGeometry(Layo
     return outOfFlowReplacedHorizontalGeometry(layoutState, layoutBox, usedValues);
 }
 
-HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedValues)
+HeightAndMargin FormattingContext::Geometry::floatingHeightAndMargin(const LayoutState& layoutState, const Box& layoutBox, UsedVerticalValues usedVerticalValues, UsedHorizontalValues usedHorizontalValues)
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (!layoutBox.replaced())
-        return complicatedCases(layoutState, layoutBox, usedValues);
-    return floatingReplacedHeightAndMargin(layoutState, layoutBox, usedValues);
+        return complicatedCases(layoutState, layoutBox, usedVerticalValues, usedHorizontalValues);
+    return floatingReplacedHeightAndMargin(layoutState, layoutBox, usedVerticalValues);
 }
 
 WidthAndMargin FormattingContext::Geometry::floatingWidthAndMargin(LayoutState& layoutState, const Box& layoutBox, UsedHorizontalValues usedValues)
@@ -856,7 +856,8 @@ HeightAndMargin FormattingContext::Geometry::inlineReplacedHeightAndMargin(const
     //    the height of the largest rectangle that has a 2:1 ratio, has a height not greater than 150px, and has a width not greater than the device width.
 
     // #1
-    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+    auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
     auto& style = layoutBox.style();
     auto replaced = layoutBox.replaced();
@@ -1064,11 +1065,10 @@ ComputedHorizontalMargin FormattingContext::Geometry::computedHorizontalMargin(c
     return { computedValueIfNotAuto(style.marginStart(), containingBlockWidth), computedValueIfNotAuto(style.marginEnd(), containingBlockWidth) };
 }
 
-ComputedVerticalMargin FormattingContext::Geometry::computedVerticalMargin(const LayoutState& layoutState, const Box& layoutBox)
+ComputedVerticalMargin FormattingContext::Geometry::computedVerticalMargin(const Box& layoutBox, UsedHorizontalValues usedValues)
 {
     auto& style = layoutBox.style();
-    auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
-
+    auto containingBlockWidth = usedValues.containingBlockWidth.valueOr(0);
     return { computedValueIfNotAuto(style.marginBefore(), containingBlockWidth), computedValueIfNotAuto(style.marginAfter(), containingBlockWidth) };
 }
 

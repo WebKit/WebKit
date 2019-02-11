@@ -81,7 +81,7 @@ protected:
         static VerticalGeometry outOfFlowVerticalGeometry(const LayoutState&, const Box&, UsedVerticalValues);
         static HorizontalGeometry outOfFlowHorizontalGeometry(LayoutState&, const Box&, UsedHorizontalValues);
 
-        static HeightAndMargin floatingHeightAndMargin(const LayoutState&, const Box&, UsedVerticalValues);
+        static HeightAndMargin floatingHeightAndMargin(const LayoutState&, const Box&, UsedVerticalValues, UsedHorizontalValues);
         static WidthAndMargin floatingWidthAndMargin(LayoutState&, const Box&, UsedHorizontalValues);
 
         static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutState&, const Box&, UsedVerticalValues);
@@ -89,14 +89,14 @@ protected:
 
         static LayoutSize inFlowPositionedPositionOffset(const LayoutState&, const Box&);
 
-        static HeightAndMargin complicatedCases(const LayoutState&, const Box&, UsedVerticalValues);
+        static HeightAndMargin complicatedCases(const LayoutState&, const Box&, UsedVerticalValues, UsedHorizontalValues);
         static LayoutUnit shrinkToFitWidth(LayoutState&, const Box&, UsedHorizontalValues);
 
         static Edges computedBorder(const Box&);
         static Optional<Edges> computedPadding(const Box&, UsedHorizontalValues);
 
         static ComputedHorizontalMargin computedHorizontalMargin(const Box&, UsedHorizontalValues);
-        static ComputedVerticalMargin computedVerticalMargin(const LayoutState&, const Box&);
+        static ComputedVerticalMargin computedVerticalMargin(const Box&, UsedHorizontalValues);
 
         static Optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
         static Optional<LayoutUnit> fixedValue(const Length& geometryProperty);

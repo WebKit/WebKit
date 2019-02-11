@@ -58,7 +58,8 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
         // and relatively positioned boxes are considered without their offset). Note that the child box may be an anonymous block box.
 
         auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-        auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutState, layoutBox);
+        auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
+        auto computedVerticalMargin = Geometry::computedVerticalMargin(layoutBox, UsedHorizontalValues { containingBlockWidth });
         auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
         auto borderAndPaddingTop = displayBox.borderTop() + displayBox.paddingTop().valueOr(0);
         auto height = usedValues.height ? usedValues.height.value() : computedHeightValue(layoutState, layoutBox, HeightType::Normal);
@@ -258,7 +259,8 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
     else {
         // 10.6.6 Complicated cases
         // Block-level, non-replaced elements in normal flow when 'overflow' does not compute to 'visible' (except if the 'overflow' property's value has been propagated to the viewport).
-        heightAndMargin = complicatedCases(layoutState, layoutBox, usedValues);
+        auto usedHorizontalValues = UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() };
+        heightAndMargin = complicatedCases(layoutState, layoutBox, usedValues, usedHorizontalValues);
     }
 
     if (!Quirks::needsStretching(layoutState, layoutBox))

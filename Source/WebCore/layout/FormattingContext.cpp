@@ -129,7 +129,7 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox) const
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
     displayBox.setBorder(Geometry::computedBorder(layoutBox));
-    displayBox.setPadding(Geometry::computedPadding(layoutBox, UsedHorizontalValues { containingBlockWidth, { }, { } }));
+    displayBox.setPadding(Geometry::computedPadding(layoutBox, UsedHorizontalValues { containingBlockWidth }));
 }
 
 void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const

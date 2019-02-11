@@ -341,7 +341,7 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
             return Geometry::inFlowHeightAndMargin(layoutState, layoutBox, usedValues);
 
         if (layoutBox.isFloatingPositioned())
-            return Geometry::floatingHeightAndMargin(layoutState, layoutBox, usedValues);
+            return Geometry::floatingHeightAndMargin(layoutState, layoutBox, usedValues, UsedHorizontalValues { layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth() });
 
         ASSERT_NOT_REACHED();
         return { };
