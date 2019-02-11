@@ -47,6 +47,30 @@ struct TestOptions {
     bool enableCSSLogical { false };
     bool adClickAttributionEnabled { false };
     std::string jscOptions;
+    // FIXME: Implement the following test options,
+    // https://bugs.webkit.org/show_bug.cgi?id=194396
+    bool enableCSSCustomPropertiesAndValues { false };
+    bool useFlexibleViewport { false };
+    bool useThreadedScrolling { true };
+    bool enableDarkModeCSS { true };
+    bool enableCSSTypedOM { false };
+    bool punchOutWhiteBackgrounds { false };
+    bool enableEditableImages { false};
+    bool useCharacterSelectionGranularity { false };
+    bool spellCheckingDots { false };
+    bool enableCSSPaintingAPI { false };
+    bool enablePointerEvents { true };
+    bool useMockScrollbars { false };
+    bool ignoresViewportScaleLimits { true };
+    bool shouldIgnoreMetaViewport { false };
+    bool enableProcessSwapOnNavigation { false };
+    bool runSingly { false };
+    bool enableWebAPIStatistics { false };
+    bool enableSourceBufferChangeType { true };
+    bool needsSiteSpecificQuirks { false };
+    bool modernMediaControls { true };
+    bool enableWebGL2 { false };
+    std::string applicationManifest;
 
     TestOptions(const std::string& pathOrURL, const std::string& absolutePath);
     bool webViewIsCompatibleWithOptions(const TestOptions&) const;

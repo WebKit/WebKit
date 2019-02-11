@@ -1,3 +1,17 @@
+2019-02-11  Darshan Kadu  <dkadu@igalia.com>
+
+        DumpRenderTree should report unknown options
+        https://bugs.webkit.org/show_bug.cgi?id=191303
+
+        Reviewed by Frédéric Wang.
+
+        Added RELEASE_ASSERT_NOT_REACHED for DumpRenderTree/TestOptions.cpp
+        to report unknown options.
+        Added and assigned test options which are currently used in tests.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+
 2019-02-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241229.

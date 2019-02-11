@@ -75,7 +75,7 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "enableAttachmentElement")
             enableAttachmentElement = parseBooleanTestHeaderValue(value);
-        if (key == "useAcceleratedDrawing")
+        else if (key == "useAcceleratedDrawing")
             useAcceleratedDrawing = parseBooleanTestHeaderValue(value);
         else if (key == "enableIntersectionObserver")
             enableIntersectionObserver = parseBooleanTestHeaderValue(value);
@@ -111,6 +111,52 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableCSSLogical = parseBooleanTestHeaderValue(value);
         else if (key == "internal:AdClickAttributionEnabled")
             adClickAttributionEnabled = parseBooleanTestHeaderValue(value);
+        else if (key == "applicationManifest")
+            applicationManifest = value;
+        else if (key == "experimental:CSSCustomPropertiesAndValuesEnabled")
+            enableCSSCustomPropertiesAndValues = parseBooleanTestHeaderValue(value);
+        else if (key == "useFlexibleViewport")
+            useFlexibleViewport = parseBooleanTestHeaderValue(value);
+        else if (key == "useThreadedScrolling")
+            useThreadedScrolling  = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:DarkModeCSSEnabled")
+            enableDarkModeCSS = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:CSSTypedOMEnabled")
+            enableCSSTypedOM = parseBooleanTestHeaderValue(value);
+        else if (key == "punchOutWhiteBackgrounds")
+            punchOutWhiteBackgrounds = parseBooleanTestHeaderValue(value);
+        else if (key == "enableEditableImages")
+            enableEditableImages = parseBooleanTestHeaderValue(value);
+        else if (key == "useCharacterSelectionGranularity")
+            useCharacterSelectionGranularity = parseBooleanTestHeaderValue(value);
+        else if (key == "spellCheckingDots")
+            spellCheckingDots = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:CSSPaintingAPIEnabled")
+            enableCSSPaintingAPI = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:PointerEventsEnabled")
+            enablePointerEvents = parseBooleanTestHeaderValue(value);
+        else if (key =="useMockScrollbars")
+            useMockScrollbars = parseBooleanTestHeaderValue(value);
+        else if (key =="ignoresViewportScaleLimits")
+            ignoresViewportScaleLimits = parseBooleanTestHeaderValue(value);
+        else if (key =="shouldIgnoreMetaViewport")
+            shouldIgnoreMetaViewport = parseBooleanTestHeaderValue(value);
+        else if (key =="enableProcessSwapOnNavigation")
+            enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
+        else if (key =="runSingly")
+            runSingly = parseBooleanTestHeaderValue(value);
+        else if (key =="internal:WebAPIStatisticsEnabled")
+            enableWebAPIStatistics = parseBooleanTestHeaderValue(value);
+        else if (key =="internal:SourceBufferChangeTypeEnabled")
+            enableSourceBufferChangeType = parseBooleanTestHeaderValue(value);
+        else if (key =="needsSiteSpecificQuirks")
+            needsSiteSpecificQuirks = parseBooleanTestHeaderValue(value);
+        else if (key =="modernMediaControls")
+            modernMediaControls = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:WebGL2Enabled")
+            enableWebGL2 = parseBooleanTestHeaderValue(value);
+        else
+            RELEASE_ASSERT_NOT_REACHED();
         pairStart = pairEnd + 1;
     }
 }
