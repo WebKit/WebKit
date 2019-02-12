@@ -203,9 +203,6 @@ void ProcessLauncher::launchProcess()
     auto errorHandlerImpl = [weakProcessLauncher = makeWeakPtr(*this), listeningPort] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
-        if (event)
-            LOG_ERROR("Error launching auxiliary process: %s", xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
-
         auto processLauncher = weakProcessLauncher.get();
         if (!processLauncher)
             return;

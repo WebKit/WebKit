@@ -1,3 +1,13 @@
+2019-02-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove noisy and unnecessary logs added in r241223
+        https://bugs.webkit.org/show_bug.cgi?id=194427
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Errors occur all the time in the XPC connection's event handler, like when a process terminates.
+        We don't need to print an "error" every time any process terminates.
+
 2019-02-11  Brian Burg  <bburg@apple.com>
 
         [Cocoa] Web Automation: client callbacks are not called if delegate does not override
