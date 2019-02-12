@@ -4266,6 +4266,16 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [self executeEditCommandWithCallback:@"deleteForward"];
 }
 
+- (void)_deleteToEndOfParagraph
+{
+    [self executeEditCommandWithCallback:@"deleteToEndOfParagraph"];
+}
+
+- (void)_transpose
+{
+    [self executeEditCommandWithCallback:@"transpose"];
+}
+
 - (UITextInputArrowKeyHistory *)_moveUp:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history
 {
     [self executeEditCommandWithCallback:extending ? @"moveUpAndModifySelection" : @"moveUp"];

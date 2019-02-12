@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+#test {
+    border: 1px solid black;
+    height: 500px;
+    width: 500px;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<p id="manual-instructions" class="hide">To run this test by hand, place the text insertion point before the 'h' in the text below and press Control + k.</p>
+<div id="console"></div>
+<div id="test" contenteditable="true">ah</div>
+<script>
+window.jsTestIsAsync = true;
+
+let testElement = document.getElementById("test");
+let mutationObserver = null;
+
+function handleMutation()
+{
+    mutationObserver.disconnect();
+    shouldBeEqualToString('document.getElementById("test").textContent', "a");
+    document.body.removeChild(testElement);
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        document.getElementById("manual-instructions").classList.remove("hidden");
+
+    mutationObserver = new MutationObserver(handleMutation);
+    mutationObserver.observe(testElement, { subtree:true, characterData: true });
+
+    function handleFocus() {
+        window.getSelection().setBaseAndExtent(testElement.firstChild, 1, testElement.firstChild, 1); // Put caret before the 'h'.
+        if (window.testRunner)
+            UIHelper.keyDown("k", ["ctrlKey"]);
+    }
+    testElement.addEventListener("focus", handleFocus, { once: true });
+    if (window.testRunner)
+        UIHelper.activateElement(testElement);
+}
+
+description("Tests that pressing Control + k in a content-editable field deletes to the end of the paragraph.");
+runTest();
+</script>
+</body>
+</html>

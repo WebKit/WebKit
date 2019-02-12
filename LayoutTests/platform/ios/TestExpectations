@@ -3215,3 +3215,7 @@ webkit.org/b/153337 pageoverlay/overlay-large-document.html [ Pass Failure ]
 fast/events/touch/ios/touch-events-with-modifiers.html [ Skip ]
 fast/events/touch/ios/mouse-events-with-modifiers.html [ Skip ]
 fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]
+
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/44928156>.
+fast/events/ios/key-command-delete-to-end-of-paragraph.html [ Skip ]
+fast/events/ios/key-command-transpose.html [ Skip ]

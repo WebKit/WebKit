@@ -1,3 +1,20 @@
+2019-02-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Adopt SPI to support Emacs bindings: transpose and delete to end of paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=194505
+        <rdar://problem/47743533>
+
+        Reviewed by Tim Horton.
+
+        Add tests to ensure that Control + t and Control + k perform a transpose and delete to the
+        end of the line/paragraph. Skip the tests for now until we have the UIKit fix <rdar://problem/44928156>.
+
+        * fast/events/ios/key-command-delete-to-end-of-paragraph-expected.txt: Added.
+        * fast/events/ios/key-command-delete-to-end-of-paragraph.html: Added.
+        * fast/events/ios/key-command-transpose-expected.txt: Added.
+        * fast/events/ios/key-command-transpose.html: Added.
+        * platform/ios/TestExpectations: Skip tests for now.
+
 2019-02-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Add content extensions support in WKTR and unskip layout tests
