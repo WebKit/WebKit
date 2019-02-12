@@ -1,3 +1,17 @@
+2019-02-12  Dean Jackson  <dino@apple.com>
+
+        BitmapRenderer should handle existing ImageBuffers
+        https://bugs.webkit.org/show_bug.cgi?id=194555
+        <rdar://problem/47857150>
+
+        Reviewed by Tim Horton.
+
+        Test that creates a canvas, triggers an ImageBuffer to be created, then
+        creates the bitmaprenderer context.
+
+        * fast/canvas/bitmaprenderer-created-after-toBlob-expected.txt: Added.
+        * fast/canvas/bitmaprenderer-created-after-toBlob.html: Added.
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove setDefersLoading infrastructure from WebKit2
