@@ -44,8 +44,6 @@
 
 namespace bmalloc {
 
-static_assert(isPowerOfTwo(smallPageSize), "");
-
 Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
     : m_kind(kind)
     , m_vmPageSizePhysical(vmPageSizePhysical())
@@ -95,7 +93,7 @@ size_t Heap::gigacageSize()
 void Heap::initializeLineMetadata()
 {
     size_t sizeClassCount = bmalloc::sizeClass(smallLineSize);
-    size_t smallLineCount = smallPageSize / smallLineSize;
+    size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
     m_smallLineMetadata.grow(sizeClassCount * smallLineCount);
 
     for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass) {
@@ -104,7 +102,7 @@ void Heap::initializeLineMetadata()
 
         size_t object = 0;
         size_t line = 0;
-        while (object < smallPageSize) {
+        while (object < m_vmPageSizePhysical) {
             line = object / smallLineSize;
             size_t leftover = object % smallLineSize;
 
@@ -118,7 +116,7 @@ void Heap::initializeLineMetadata()
         }
 
         // Don't allow the last object in a page to escape the page.
-        if (object > smallPageSize) {
+        if (object > m_vmPageSizePhysical) {
             BASSERT(pageMetadata[line].objectCount);
             --pageMetadata[line].objectCount;
         }
@@ -130,18 +128,11 @@ void Heap::initializePageMetadata()
     auto computePageSize = [&](size_t sizeClass) {
         size_t size = objectSize(sizeClass);
         if (sizeClass < bmalloc::sizeClass(smallLineSize))
-            return smallPageSize;
+            return m_vmPageSizePhysical;
 
-        // We want power of 2 pageSizes sizes below physical page size and multiples of physical pages size above that.
-        size_t pageSize = smallPageSize;
-        for (; pageSize < m_vmPageSizePhysical; pageSize *= 2) {
-            RELEASE_BASSERT(pageSize <= chunkSize / 2);
-            size_t waste = pageSize % size;
-            if (waste <= pageSize / pageSizeWasteFactor)
-                return pageSize;
-        }
-
-        for (; pageSize < pageSizeMax; pageSize += m_vmPageSizePhysical) {
+        for (size_t pageSize = m_vmPageSizePhysical;
+            pageSize < pageSizeMax;
+            pageSize += m_vmPageSizePhysical) {
             RELEASE_BASSERT(pageSize <= chunkSize / 2);
             size_t waste = pageSize % size;
             if (waste <= pageSize / pageSizeWasteFactor)
@@ -197,17 +188,14 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter)
                     continue;
 
                 size_t pageSize = bmalloc::pageSize(&list - &m_freePages[0]);
-                if (pageSize >= m_vmPageSizePhysical) {
-                    size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
-                    m_freeableMemory -= decommitSize;
-                    m_footprint -= decommitSize;
-                    decommitter.addEager(page->begin()->begin(), pageSize);
-                    page->setHasPhysicalPages(false);
-#if ENABLE_PHYSICAL_PAGE_MAP
-                    m_physicalPageMap.decommit(page->begin()->begin(), pageSize);
+                size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
+                m_freeableMemory -= decommitSize;
+                m_footprint -= decommitSize;
+                decommitter.addEager(page->begin()->begin(), pageSize);
+                page->setHasPhysicalPages(false);
+#if ENABLE_PHYSICAL_PAGE_MAP 
+                m_physicalPageMap.decommit(page->begin()->begin(), pageSize);
 #endif
-                } else
-                    tryDecommitSmallPagesInPhysicalPage(lock, decommitter, page, pageSize);
             }
         }
     }
@@ -279,63 +267,6 @@ void Heap::allocateSmallChunk(std::unique_lock<Mutex>& lock, size_t pageClass)
     m_freePages[pageClass].push(chunk);
 }
 
-void Heap::tryDecommitSmallPagesInPhysicalPage(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, SmallPage* smallPage, size_t pageSize)
-{
-    Chunk* chunk = Chunk::get(smallPage);
-
-    char* pageBegin = smallPage->begin()->begin();
-    char* physicalPageBegin = roundDownToMultipleOf(m_vmPageSizePhysical, pageBegin);
-
-    // The first page in a physical page takes care of decommitting its physical neighbors
-    if (pageBegin != physicalPageBegin)
-        return;
-
-    size_t beginPageOffset = chunk->offset(physicalPageBegin);
-    size_t endPageOffset = beginPageOffset + m_vmPageSizePhysical;
-
-    Object begin(chunk, beginPageOffset);
-    Object end(chunk, endPageOffset);
-
-    for (auto it = begin; it + pageSize <= end; it = it + pageSize) {
-        if (it.page()->refCount(lock))
-            return;
-    }
-
-    size_t decommitSize = m_vmPageSizePhysical;
-    m_freeableMemory -= decommitSize;
-    m_footprint -= decommitSize;
-
-    decommitter.addEager(physicalPageBegin, decommitSize);
-
-    for (auto it = begin; it + pageSize <= end; it = it + pageSize)
-        it.page()->setHasPhysicalPages(false);
-#if ENABLE_PHYSICAL_PAGE_MAP
-    m_physicalPageMap.decommit(smallPage, decommitSize);
-#endif
-}
-
-void Heap::commitSmallPagesInPhysicalPage(std::unique_lock<Mutex>&, SmallPage* page, size_t pageSize)
-{
-    Chunk* chunk = Chunk::get(page);
-
-    char* physicalPageBegin = roundDownToMultipleOf(m_vmPageSizePhysical, page->begin()->begin());
-
-    size_t beginPageOffset = chunk->offset(physicalPageBegin);
-    size_t endPageOffset = beginPageOffset + m_vmPageSizePhysical;
-
-    Object begin(chunk, beginPageOffset);
-    Object end(chunk, endPageOffset);
-
-    m_footprint += m_vmPageSizePhysical;
-    vmAllocatePhysicalPagesSloppy(physicalPageBegin, m_vmPageSizePhysical);
-
-    for (auto it = begin; it + pageSize <= end; it = it + pageSize)
-        it.page()->setHasPhysicalPages(true);
-#if ENABLE_PHYSICAL_PAGE_MAP
-    m_physicalPageMap.commit(begin.page(), m_vmPageSizePhysical);
-#endif
-}
-
 void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
 {
     m_objectTypes.set(chunk, ObjectType::Large);
@@ -394,15 +325,12 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
             m_freeableMemory -= physicalSize;
         else {
             m_scavenger->scheduleIfUnderMemoryPressure(pageSize);
-            if (pageSize >= m_vmPageSizePhysical) {
-                m_footprint += physicalSize;
-                vmAllocatePhysicalPagesSloppy(page->begin()->begin(), pageSize);
-                page->setHasPhysicalPages(true);
-#if ENABLE_PHYSICAL_PAGE_MAP
-                m_physicalPageMap.commit(page->begin()->begin(), pageSize);
+            m_footprint += physicalSize;
+            vmAllocatePhysicalPagesSloppy(page->begin()->begin(), pageSize);
+            page->setHasPhysicalPages(true);
+#if ENABLE_PHYSICAL_PAGE_MAP 
+            m_physicalPageMap.commit(page->begin()->begin(), pageSize);
 #endif
-            } else
-                commitSmallPagesInPhysicalPage(lock, page, pageSize);
         }
 
         return page;
@@ -462,7 +390,7 @@ void Heap::allocateSmallBumpRangesByMetadata(
     SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
     SmallLine* lines = page->begin();
     BASSERT(page->hasFreeLines(lock));
-    size_t smallLineCount = smallPageSize / smallLineSize;
+    size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
     LineMetadata* pageMetadata = &m_smallLineMetadata[sizeClass * smallLineCount];
     
     auto findSmallBumpRange = [&](size_t& lineNumber) {

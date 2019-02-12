@@ -1,3 +1,18 @@
+2019-02-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r241182.
+        https://bugs.webkit.org/show_bug.cgi?id=194547
+
+        causes a 2-3% Speedometer2 regression. (Requested by
+        keith_miller on #webkit).
+
+        Reverted changeset:
+
+        "bmalloc uses more memory on iOS compared to macOS due to
+        physical page size differences"
+        https://bugs.webkit.org/show_bug.cgi?id=192389
+        https://trac.webkit.org/changeset/241182
+
 2019-02-07  Michael Saboff  <msaboff@apple.com>
 
         bmalloc uses more memory on iOS compared to macOS due to physical page size differences

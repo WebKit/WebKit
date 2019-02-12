@@ -41,8 +41,7 @@ public:
     void ref(std::unique_lock<Mutex>&);
     bool deref(std::unique_lock<Mutex>&);
     unsigned refCount(std::unique_lock<Mutex>&) { return m_refCount; }
-    unsigned refCount(std::lock_guard<Mutex>&) { return m_refCount; }
-
+    
     size_t sizeClass() { return m_sizeClass; }
     void setSizeClass(size_t sizeClass) { m_sizeClass = sizeClass; }
     
