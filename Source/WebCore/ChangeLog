@@ -1,3 +1,16 @@
+2019-02-12  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebCore::ScrollingTree::updateTreeFromStateNode
+        https://bugs.webkit.org/show_bug.cgi?id=194538
+        <rdar://problem/47841926>
+
+        Reviewed by Zalan Bujtas.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+
+        Make sure we don't leave node entry behind in m_nodeMap in case we failed to add it to the parent.
+
 2019-02-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove redundant InlineFormattingContext::computeBorderAndPadding
