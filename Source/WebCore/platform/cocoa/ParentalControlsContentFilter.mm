@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,7 +55,7 @@ std::unique_ptr<ParentalControlsContentFilter> ParentalControlsContentFilter::cr
 
 static inline bool canHandleResponse(const ResourceResponse& response)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOSMAC)
     return response.url().protocolIs("https");
 #else
     return response.url().protocolIsInHTTPFamily();
@@ -99,7 +99,7 @@ Ref<SharedBuffer> ParentalControlsContentFilter::replacementData() const
 #if ENABLE(CONTENT_FILTERING)
 ContentFilterUnblockHandler ParentalControlsContentFilter::unblockHandler() const
 {
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     return ContentFilterUnblockHandler { "unblock"_s, m_webFilterEvaluator };
 #else
     return { };

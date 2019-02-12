@@ -1,3 +1,13 @@
+2019-02-12  Andy Estes  <aestes@apple.com>
+
+        [iOSMac] Enable Parental Controls Content Filtering
+        https://bugs.webkit.org/show_bug.cgi?id=194521
+        <rdar://39732376>
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-02-11  Mark Lam  <mark.lam@apple.com>
 
         Randomize insertion of deallocated StructureIDs into the StructureIDTable's free list.
