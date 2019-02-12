@@ -69,7 +69,7 @@ protected:
     FormattingState& formattingState() const { return m_formattingState; }
     const Box& root() const { return *m_root; }
 
-    void computeBorderAndPadding(const Box&) const;
+    void computeBorderAndPadding(const Box&, Optional<UsedHorizontalValues> = WTF::nullopt) const;
 
 #ifndef NDEBUG
     virtual void validateGeometryConstraintsAfterLayout() const;
