@@ -476,13 +476,6 @@ void NetworkDataTaskCocoa::resume()
     [m_task resume];
 }
 
-void NetworkDataTaskCocoa::suspend()
-{
-    if (m_failureTimer.isActive())
-        m_failureTimer.stop();
-    [m_task suspend];
-}
-
 NetworkDataTask::State NetworkDataTaskCocoa::state() const
 {
     switch ([m_task state]) {

@@ -59,7 +59,6 @@ public:
 private:
     NetworkDataTaskBlob(NetworkSession&, WebCore::BlobRegistryImpl&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::ContentSniffingPolicy, const Vector<RefPtr<WebCore::BlobDataFileReference>>&);
 
-    void suspend() override;
     void cancel() override;
     void resume() override;
     void invalidateAndCancel() override;

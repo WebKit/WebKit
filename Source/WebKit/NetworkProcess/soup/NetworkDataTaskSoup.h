@@ -46,7 +46,6 @@ public:
 private:
     NetworkDataTaskSoup(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation);
 
-    void suspend() override;
     void cancel() override;
     void resume() override;
     void invalidateAndCancel() override;

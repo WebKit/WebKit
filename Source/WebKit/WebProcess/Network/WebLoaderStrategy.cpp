@@ -277,7 +277,6 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     // If there is no WebFrame then this resource cannot be authenticated with the client.
     loadParameters.clientCredentialPolicy = (loadParameters.webFrameID && loadParameters.webPageID && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
-    loadParameters.defersLoading = resourceLoader.defersLoading();
     loadParameters.needsCertificateInfo = resourceLoader.shouldIncludeCertificateInfo();
     loadParameters.maximumBufferingTime = maximumBufferingTime;
     loadParameters.options = resourceLoader.options();
@@ -426,10 +425,9 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     loader->detachFromCoreLoader();
 }
 
-void WebLoaderStrategy::setDefersLoading(ResourceLoader& resourceLoader, bool defers)
+void WebLoaderStrategy::setDefersLoading(ResourceLoader&, bool)
 {
-    ResourceLoadIdentifier identifier = resourceLoader.identifier();
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetDefersLoading(identifier, defers), 0);
+    ASSERT_NOT_REACHED();
 }
 
 void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader*, const URL&)

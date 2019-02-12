@@ -235,16 +235,6 @@ void NetworkDataTaskSoup::resume()
     }
 }
 
-void NetworkDataTaskSoup::suspend()
-{
-    ASSERT(m_state != State::Suspended);
-    if (m_state == State::Canceling || m_state == State::Completed)
-        return;
-    m_state = State::Suspended;
-
-    stopTimeout();
-}
-
 void NetworkDataTaskSoup::cancel()
 {
     if (m_state == State::Canceling || m_state == State::Completed)

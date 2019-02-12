@@ -60,7 +60,6 @@ public:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     void transferSandboxExtensionToDownload(Download&);
 
-    void suspend() override;
     void cancel() override;
     void resume() override;
     void invalidateAndCancel() override { }

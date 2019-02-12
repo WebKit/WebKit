@@ -138,8 +138,6 @@ void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool
     setMainThreadCallbacksPaused(paused);
 
     for (auto& page : pageGroup.pages()) {
-        page->setDefersLoading(paused);
-
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             setJavaScriptPaused(*frame, paused);
 

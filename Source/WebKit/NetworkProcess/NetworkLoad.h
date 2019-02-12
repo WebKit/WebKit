@@ -47,7 +47,6 @@ public:
     NetworkLoad(NetworkLoadClient&, WebCore::BlobRegistryImpl*, NetworkLoadParameters&&, NetworkSession&);
     ~NetworkLoad();
 
-    void setDefersLoading(bool);
     void cancel();
 
     bool isAllowedToAskUserForCredentials() const;

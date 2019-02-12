@@ -386,18 +386,6 @@ void NetworkConnectionToWebProcess::pageLoadCompleted(uint64_t webPageID)
     stopAllNetworkActivityTrackingForPage(webPageID);
 }
 
-void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier identifier, bool defers)
-{
-    RELEASE_ASSERT(identifier);
-    RELEASE_ASSERT(RunLoop::isMain());
-
-    RefPtr<NetworkResourceLoader> loader = m_networkResourceLoaders.get(identifier);
-    if (!loader)
-        return;
-
-    loader->setDefersLoading(defers);
-}
-
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
     m_networkProcess->prefetchDNS(hostname);

@@ -94,7 +94,6 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     : m_parameters { WTFMove(parameters) }
     , m_connection { connection }
     , m_fileReferences(connection.resolveBlobReferences(m_parameters))
-    , m_defersLoading { parameters.defersLoading }
     , m_isAllowedToAskUserForCredentials { m_parameters.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials }
     , m_bufferingTimer { *this, &NetworkResourceLoader::bufferingTimerFired }
     , m_cache { sessionID().isEphemeral() ? nullptr : connection.networkProcess().cache() }
@@ -165,11 +164,6 @@ void NetworkResourceLoader::start()
     ASSERT(RunLoop::isMain());
 
     m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainResource(), sessionID());
-
-    if (m_defersLoading) {
-        RELEASE_LOG_IF_ALLOWED("start: Loading is deferred (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d, parentPID = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, isMainResource(), isSynchronous(), m_parameters.parentPID);
-        return;
-    }
 
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
@@ -272,7 +266,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     }
 
     NetworkLoadParameters parameters = m_parameters;
-    parameters.defersLoading = m_defersLoading;
     parameters.networkActivityTracker = m_networkActivityTracker;
     if (m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
@@ -297,33 +290,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     m_networkLoad = std::make_unique<NetworkLoad>(*this, &m_connection->blobRegistry(), WTFMove(parameters), *networkSession);
 
     RELEASE_LOG_IF_ALLOWED("startNetworkLoad: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", description = %{public}s)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, m_networkLoad->description().utf8().data());
-
-    if (m_defersLoading) {
-        RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Created, but deferred (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")",
-            m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
-    }
-}
-
-void NetworkResourceLoader::setDefersLoading(bool defers)
-{
-    if (m_defersLoading == defers)
-        return;
-    m_defersLoading = defers;
-
-    if (defers)
-        RELEASE_LOG_IF_ALLOWED("setDefersLoading: Deferring resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
-    else
-        RELEASE_LOG_IF_ALLOWED("setDefersLoading: Resuming deferred resource load (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
-
-    if (m_networkLoad) {
-        m_networkLoad->setDefersLoading(defers);
-        return;
-    }
-
-    if (!m_defersLoading && !m_wasStarted)
-        start();
-    else
-        RELEASE_LOG_IF_ALLOWED("setDefersLoading: defers = %d, but nothing to do (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_defersLoading, m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
 }
 
 void NetworkResourceLoader::cleanup(LoadResult result)
