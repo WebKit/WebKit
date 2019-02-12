@@ -1,3 +1,14 @@
+2019-02-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Add content extensions support in WKTR and unskip layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=193622
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake: Enable CONTENT_EXTENSIONS by default.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+        * Source/cmake/WebKitFeatures.cmake: Add a private CONTENT_EXTENSIONS option.
+
 2019-02-07  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Implement GStreamer based holepunch

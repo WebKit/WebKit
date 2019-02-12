@@ -1393,6 +1393,7 @@ loader/PingLoader.cpp
 loader/PolicyChecker.cpp
 loader/ProgressTracker.cpp
 loader/ResourceCryptographicDigest.cpp
+loader/ResourceLoadInfo.cpp
 loader/ResourceLoadNotifier.cpp
 loader/ResourceLoadObserver.cpp
 loader/ResourceLoadStatistics.cpp

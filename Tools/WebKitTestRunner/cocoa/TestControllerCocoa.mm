@@ -238,8 +238,8 @@ void TestController::setDefaultCalendarType(NSString *identifier)
     if (!m_calendarSwizzler)
         m_calendarSwizzler = std::make_unique<ClassMethodSwizzler>([NSCalendar class], @selector(currentCalendar), reinterpret_cast<IMP>(swizzledCalendar));
 }
-    
-void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
+
+void TestController::resetContentExtensions()
 {
 #if WK_API_ENABLED
     __block bool doneRemoving = false;
@@ -249,13 +249,21 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     platformRunUntil(doneRemoving, noTimeout);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
+    if (auto* webView = mainWebView()) {
+        TestRunnerWKWebView *platformView = webView->platformView();
+        [platformView.configuration.userContentController _removeAllUserContentFilters];
+    }
+#endif
+}
 
+void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
+{
+#if WK_API_ENABLED
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarIdentifier = nil;
     
     if (auto* webView = mainWebView()) {
         TestRunnerWKWebView *platformView = webView->platformView();
-        [platformView.configuration.userContentController _removeAllUserContentFilters];
         platformView._viewScale = 1;
         platformView._minimumEffectiveDeviceWidth = 0;
 

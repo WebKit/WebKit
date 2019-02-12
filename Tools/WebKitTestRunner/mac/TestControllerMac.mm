@@ -118,7 +118,7 @@ void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& optio
     options.shouldShowWebView = shouldShowWebView();
 }
 
-void TestController::platformConfigureViewForTest(const TestInvocation& test)
+void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
 #if WK_API_ENABLED
     if (!test.urlContains("contentextensions/"))
@@ -151,6 +151,10 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     }];
     platformRunUntil(doneCompiling, noTimeout);
 #endif
+}
+
+void TestController::platformConfigureViewForTest(const TestInvocation& test)
+{
 }
 
 static NSSet *allowedFontFamilySet()

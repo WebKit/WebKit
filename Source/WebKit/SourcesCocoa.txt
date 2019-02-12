@@ -221,7 +221,6 @@ UIProcess/API/APIWebsiteDataRecord.cpp
 UIProcess/API/C/WKContextMenuListener.cpp
 UIProcess/API/C/WKMediaSessionFocusManager.cpp
 UIProcess/API/C/WKTestingSupport.cpp
-UIProcess/API/C/WKUserContentExtensionStoreRef.cpp
 UIProcess/API/C/WKUserScriptRef.cpp
 
 UIProcess/API/C/cg/WKIconDatabaseCG.cpp

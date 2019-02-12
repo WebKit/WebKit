@@ -34,6 +34,22 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKUserContentExtensionStoreGetTypeID();
 
+WK_EXPORT WKUserContentExtensionStoreRef WKUserContentExtensionStoreCreate(WKStringRef path);
+
+typedef uint32_t WKUserContentExtensionStoreResult;
+enum {
+    kWKUserContentExtensionStoreSuccess = 0,
+    kWKUserContentExtensionStoreLookupFailed,
+    kWKUserContentExtensionStoreVersionMismatch,
+    kWKUserContentExtensionStoreCompileFailed,
+    kWKUserContentExtensionStoreRemoveFailed,
+};
+
+typedef void (*WKUserContentExtensionStoreFunction)(WKUserContentFilterRef, WKUserContentExtensionStoreResult, void*);
+WK_EXPORT void WKUserContentExtensionStoreCompile(WKUserContentExtensionStoreRef, WKStringRef identifier, WKStringRef jsonSource, void* context, WKUserContentExtensionStoreFunction callback);
+WK_EXPORT void WKUserContentExtensionStoreLookup(WKUserContentExtensionStoreRef, WKStringRef identifier, void* context, WKUserContentExtensionStoreFunction callback);
+WK_EXPORT void WKUserContentExtensionStoreRemove(WKUserContentExtensionStoreRef, WKStringRef identifier, void* context, WKUserContentExtensionStoreFunction callback);
+
 #ifdef __cplusplus
 }
 #endif

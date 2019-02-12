@@ -348,6 +348,7 @@ UIProcess/API/C/WKResourceCacheManager.cpp
 UIProcess/API/C/WKSessionStateRef.cpp
 UIProcess/API/C/WKTextChecker.cpp
 UIProcess/API/C/WKUserContentControllerRef.cpp
+UIProcess/API/C/WKUserContentExtensionStoreRef.cpp
 UIProcess/API/C/WKUserMediaPermissionCheck.cpp
 UIProcess/API/C/WKUserMediaPermissionRequest.cpp
 UIProcess/API/C/WKWebsiteDataStoreRef.cpp

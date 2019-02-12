@@ -107,6 +107,7 @@ public:
 
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKContextRef context() { return m_context.get(); }
+    WKUserContentControllerRef userContentController() { return m_userContentController.get(); }
 
     EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
 
@@ -147,6 +148,10 @@ public:
     OriginSettings& settingsForOrigin(const String&);
     unsigned userMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
     void resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
+
+    // Content Extensions.
+    void configureContentExtensionForTest(const TestInvocation&);
+    void resetContentExtensions();
 
     // Policy delegate.
     void setCustomPolicyDelegate(bool enabled, bool permissive);
@@ -459,6 +464,7 @@ private:
     std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
+    WKRetainPtr<WKUserContentControllerRef> m_userContentController;
 
 #if PLATFORM(IOS_FAMILY)
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;

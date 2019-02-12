@@ -1,3 +1,37 @@
+2019-02-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Add content extensions support in WKTR and unskip layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=193622
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/cache/NetworkCacheData.h: Define an adoptAndMapFile() implementation
+        for GFileIOStream objects.
+        * NetworkProcess/cache/NetworkCacheDataSoup.cpp:
+        (WebKit::NetworkCache::adoptAndMapFile): Added implementation, which extracts the file
+        descriptor from a GFileIOStream, as it inherits from GFileDescriptorBased, and then
+        reuses the version of adoptAndMapFile() which takes a file descritor for the actual work.
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (Webkit::NetworkLoadChecker::checkRequest): Use "this" when referring to
+        processContentExtensionRulesForLoad() in order to avoid ambiguity.
+        * Sources.txt: Add WKUserContentExtensionStoreRef.cpp, all ports use it now.
+        * SourcesCocoa.txt: Remove WKUserContentExtensionStoreRef.cpp, because it is not
+        Cocoa-specific anymore.
+        * SourcesGTK.txt: Add APIContentRuleListStoreGLib.cpp.
+        * SourcesWPE.txt: Ditto.
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (WKUserContentExtensionStoreCreate): Added.
+        (toResult): Added.
+        (WKUserContentExtensionStoreCompile): Added.
+        (WKUserContentExtensionStoreLookup): Added.
+        (WKUserContentExtensionStoreRemove): Added.
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.h: Add declarations for the new C API
+        functions and for the WKUserContentExtensionStoreResult status enum.
+        * UIProcess/API/glib/APIContentRuleListStoreGLib.cpp: Added.
+        (API::ContentRuleListStore::defaultStorePath): Add a dummy implementation. The public API
+        for the GLib based ports (GTK+ and WPE) will not allow using the default store and will
+        always indicating a path.
+
 2019-02-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Mouse/Touch/Pointer events are missing modifier keys

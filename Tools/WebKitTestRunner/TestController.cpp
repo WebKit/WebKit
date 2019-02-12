@@ -60,6 +60,8 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKTextChecker.h>
+#include <WebKit/WKUserContentControllerRef.h>
+#include <WebKit/WKUserContentExtensionStoreRef.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <algorithm>
@@ -537,7 +539,9 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
     WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
-    WKPageConfigurationSetUserContentController(pageConfiguration.get(), adoptWK(WKUserContentControllerCreate()).get());
+
+    m_userContentController = adoptWK(WKUserContentControllerCreate());
+    WKPageConfigurationSetUserContentController(pageConfiguration.get(), userContentController());
     return pageConfiguration;
 }
 
@@ -932,6 +936,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
 
+    // Reset Content Extensions.
+    resetContentExtensions();
+
     m_shouldDownloadUndisplayableMIMETypes = false;
 
     m_workQueueManager.clearWorkQueue();
@@ -1102,12 +1109,13 @@ static std::string testPath(WKURLRef url)
         auto path = adoptWK(WKURLCopyPath(url));
         auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(path.get()));
         auto length = WKStringGetUTF8CString(path.get(), buffer.data(), buffer.size());
+        RELEASE_ASSERT(length > 0);
 #if OS(WINDOWS)
         // Remove the first '/' if it starts with something like "/C:/".
         if (length >= 4 && buffer[0] == '/' && buffer[2] == ':' && buffer[3] == '/')
             return std::string(buffer.data() + 1, length - 1);
 #endif
-        return std::string(buffer.data(), length);
+        return std::string(buffer.data(), length - 1);
     }
     return std::string();
 }
@@ -1327,9 +1335,118 @@ void TestController::configureViewForTest(const TestInvocation& test)
     ensureViewSupportsOptionsForTest(test);
     updateWebViewSizeForTest(test);
     updateWindowScaleForTest(mainWebView(), test);
-
+    configureContentExtensionForTest(test);
     platformConfigureViewForTest(test);
 }
+
+#if ENABLE(CONTENT_EXTENSIONS) && !PLATFORM(COCOA)
+struct ContentExtensionStoreCallbackContext {
+    explicit ContentExtensionStoreCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+
+    TestController& testController;
+    uint32_t status { kWKUserContentExtensionStoreSuccess };
+    WKRetainPtr<WKUserContentFilterRef> filter;
+    bool done { false };
+};
+
+static void contentExtensionStoreCallback(WKUserContentFilterRef filter, uint32_t status, void* userData)
+{
+    auto* context = static_cast<ContentExtensionStoreCallbackContext*>(userData);
+    context->status = status;
+    context->filter = filter ? adoptWK(filter) : nullptr;
+    context->done = true;
+    context->testController.notifyDone();
+}
+
+static std::string contentExtensionJSONPath(WKURLRef url)
+{
+    auto path = testPath(url);
+    if (path.length())
+        return path + ".json";
+
+    auto p = adoptWK(WKURLCopyPath(url));
+    auto buffer = std::vector<char>(WKStringGetMaximumUTF8CStringSize(p.get()));
+    const auto length = WKStringGetUTF8CString(p.get(), buffer.data(), buffer.size());
+    return std::string("LayoutTests/http/tests") + std::string(buffer.data(), length - 1) + ".json";
+}
+#endif
+
+#if !PLATFORM(COCOA)
+#if ENABLE(CONTENT_EXTENSIONS)
+void TestController::configureContentExtensionForTest(const TestInvocation& test)
+{
+    const char* contentExtensionsPath = libraryPathForTesting();
+    if (!contentExtensionsPath)
+        contentExtensionsPath = "/tmp/wktr-contentextensions";
+
+    if (!test.urlContains("contentextensions/")) {
+        WKPageSetUserContentExtensionsEnabled(m_mainWebView->page(), false);
+        return;
+    }
+
+    std::string jsonFilePath(contentExtensionJSONPath(test.url()));
+    std::ifstream jsonFile(jsonFilePath);
+    if (!jsonFile.good()) {
+        WTFLogAlways("Could not open file '%s'", jsonFilePath.c_str());
+        return;
+    }
+
+    std::string jsonFileContents {std::istreambuf_iterator<char>(jsonFile), std::istreambuf_iterator<char>()};
+    auto jsonSource = adoptWK(WKStringCreateWithUTF8CString(jsonFileContents.c_str()));
+
+    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
+    ASSERT(extensionStore);
+
+    auto filterIdentifier = adoptWK(WKStringCreateWithUTF8CString("TestContentExtension"));
+
+    ContentExtensionStoreCallbackContext context(*this);
+    WKUserContentExtensionStoreCompile(extensionStore.get(), filterIdentifier.get(), jsonSource.get(), &context, contentExtensionStoreCallback);
+    runUntil(context.done, noTimeout);
+    ASSERT(context.status == kWKUserContentExtensionStoreSuccess);
+    ASSERT(context.filter);
+
+    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), true);
+    WKUserContentControllerAddUserContentFilter(userContentController(), context.filter.get());
+}
+
+void TestController::resetContentExtensions()
+{
+    if (!mainWebView())
+        return;
+
+    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), false);
+
+    const char* contentExtensionsPath = libraryPathForTesting();
+    if (!contentExtensionsPath)
+        return;
+
+    WKUserContentControllerRemoveAllUserContentFilters(userContentController());
+
+    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
+    ASSERT(extensionStore);
+
+    auto filterIdentifier = adoptWK(WKStringCreateWithUTF8CString("TestContentExtension"));
+
+    ContentExtensionStoreCallbackContext context(*this);
+    WKUserContentExtensionStoreRemove(extensionStore.get(), filterIdentifier.get(), &context, contentExtensionStoreCallback);
+    runUntil(context.done, noTimeout);
+    ASSERT(!context.filter);
+}
+#else // ENABLE(CONTENT_EXTENSIONS)
+void TestController::configureContentExtensionForTest(const TestInvocation&)
+{
+}
+
+void TestController::resetContentExtensions()
+{
+}
+#endif // ENABLE(CONTENT_EXTENSIONS)
+#endif // !PLATFORM(COCOA)
 
 class CommandTokenizer {
 public:

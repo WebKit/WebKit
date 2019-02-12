@@ -62,6 +62,7 @@ my (
     $cachePartitioningSupport,
     $channelMessagingSupport,
     $cloopSupport,
+    $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
     $css3TextSupport,
@@ -226,6 +227,9 @@ my @features = (
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", value => \$channelMessagingSupport },
+
+    { option => "content-extensions", desc => "Toggle Content Extensions support",
+      define => "ENABLE_CONTENT_EXTENSIONS", value => \$contentExtensionsSupport },
 
     { option => "content-filtering", desc => "Toggle content filtering support",
       define => "ENABLE_CONTENT_FILTERING", value => \$contentFilteringSupport },

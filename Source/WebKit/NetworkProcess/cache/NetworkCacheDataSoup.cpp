@@ -33,6 +33,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#if USE(GLIB) && !PLATFORM(WIN)
+#include <gio/gfiledescriptorbased.h>
+#endif
+
 namespace WebKit {
 namespace NetworkCache {
 
@@ -125,6 +129,15 @@ Data Data::adoptMap(void* map, size_t size, int fd)
     GRefPtr<SoupBuffer> buffer = adoptGRef(soup_buffer_new_with_owner(map, size, wrapper, reinterpret_cast<GDestroyNotify>(deleteMapWrapper)));
     return { WTFMove(buffer), fd };
 }
+
+#if USE(GLIB) && !PLATFORM(WIN)
+Data adoptAndMapFile(GFileIOStream* stream, size_t offset, size_t size)
+{
+    GInputStream* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(stream));
+    int fd = g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream));
+    return adoptAndMapFile(fd, offset, size);
+}
+#endif
 
 RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
 {

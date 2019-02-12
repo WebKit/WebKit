@@ -123,6 +123,34 @@ fast/images/object-image.html [ WontFix Pass ]
 # The 64 bits release bot has been made to use 8 bpp depth, so this won't pass there.
 webkit.org/b/121951 fast/dom/Window/window-screen-properties.html [ Failure Pass ]
 
+# Content extensions, the failures need up-to-date expectations.
+http/tests/contentextensions/basic-filter.html [ Failure ]
+http/tests/contentextensions/block-cookies-in-csp-report.php [ Failure ]
+http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html [ Failure Timeout ]
+http/tests/contentextensions/block-cookies-in-ping.html [ Failure ]
+http/tests/contentextensions/block-cookies-send.html [ Failure ]
+http/tests/contentextensions/block-csp-report.php [ Failure ]
+http/tests/contentextensions/block-everything-unless-domain-redirect.php [ Failure ]
+http/tests/contentextensions/block-image-load-in-onunload.html [ Failure Timeout ]
+http/tests/contentextensions/block-ping.html [ Failure ]
+http/tests/contentextensions/character-set-basic-support.html [ Failure ]
+http/tests/contentextensions/css-display-none.html [ Failure ]
+http/tests/contentextensions/domain-rules.html [ Failure ]
+http/tests/contentextensions/fetch-redirect-blocked.html [ Failure ]
+http/tests/contentextensions/filters-with-quantifiers-combined.html [ Failure ]
+http/tests/contentextensions/hide-on-csp-report.php [ Failure ]
+http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Failure ]
+http/tests/contentextensions/hide-on-ping.html [ Failure ]
+http/tests/contentextensions/injected-script-callback.html [ Failure ]
+http/tests/contentextensions/main-resource-redirect-blocked.php [ Failure ]
+http/tests/contentextensions/main-resource-redirect-error.html [ Failure ]
+http/tests/contentextensions/media-filtered.html [ Failure ]
+http/tests/contentextensions/reload-without-contentextensions.html [ Failure ]
+http/tests/contentextensions/subresource-redirect-blocked.html [ Failure ]
+http/tests/contentextensions/text-track-blocked.html [ Failure ]
+http/tests/contentextensions/top-url.html [ Failure ]
+http/tests/contentextensions/whitelist.html [ Failure ]
+
 # This test requires Mac ObjC bindings, although it currently passes
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
 
@@ -3815,6 +3843,8 @@ fast/text/emoji-gender-fe0f-6.html [ Pass ]
 fast/text/emoji-gender-fe0f-7.html [ Pass ]
 fast/text/emoji-gender-fe0f-8.html [ Pass ]
 fast/text/emoji-gender-fe0f-9.html [ Pass ]
+
+http/tests/contentextensions [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ Pass ]

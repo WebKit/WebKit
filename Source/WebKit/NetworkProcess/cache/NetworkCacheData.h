@@ -98,6 +98,9 @@ private:
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
 Data adoptAndMapFile(int fd, size_t offset, size_t);
+#if USE(GLIB) && !PLATFORM(WIN)
+Data adoptAndMapFile(GFileIOStream*, size_t offset, size_t);
+#endif
 Data mapFile(const char* path);
 
 using Salt = std::array<uint8_t, 8>;
