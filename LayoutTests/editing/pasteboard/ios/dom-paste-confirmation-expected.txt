@@ -1,0 +1,18 @@
+Click here to copy
+Click here to copy
+Click here to copy
+Verifies that a callout is shown when the page programmatically triggers paste, and that tapping the callout allows the paste to happen. To manually test, tap the text on the bottom, tap the editable area above, and then select 'Paste' in the resulting callout menu. The text 'Click here to copy' should be pasted twice in the editable area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS document.queryCommandSupported('Paste') is true
+PASS document.queryCommandEnabled('Paste') is true
+PASS event.clipboardData.getData('text/plain') is "Click here to copy"
+PASS document.execCommand('Paste') is true
+PASS event.clipboardData.getData('text/plain') is "Click here to copy"
+PASS document.execCommand('Paste') is true
+PASS editor.textContent is "Click here to copyClick here to copy"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

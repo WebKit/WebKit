@@ -980,6 +980,12 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 -(void)remove;
 @end
 
+@interface UIURLDragPreviewView : UIView
++ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
+@end
+
+#endif
+
 @interface UICalloutBar : UIView
 + (void)fadeSharedCalloutBar;
 @end
@@ -990,12 +996,6 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @interface UITextEffectsWindow : UIAutoRotatingWindow
 + (UITextEffectsWindow *)sharedTextEffectsWindow;
 @end
-
-@interface UIURLDragPreviewView : UIView
-+ (instancetype)viewWithTitle:(NSString *)title URL:(NSURL *)url;
-@end
-
-#endif
 
 @interface _UIVisualEffectLayerConfig : NSObject
 + (instancetype)layerWithFillColor:(UIColor *)fillColor opacity:(CGFloat)opacity filterType:(NSString *)filterType;

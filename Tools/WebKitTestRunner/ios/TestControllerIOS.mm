@@ -53,6 +53,7 @@ static BOOL overrideIsInHardwareKeyboardMode()
 namespace WTR {
 
 static bool isDoneWaitingForKeyboardToDismiss = true;
+static bool isDoneWaitingForMenuToDismiss = true;
 
 static void handleKeyboardWillHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
@@ -62,6 +63,16 @@ static void handleKeyboardWillHideNotification(CFNotificationCenterRef, void*, C
 static void handleKeyboardDidHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     isDoneWaitingForKeyboardToDismiss = true;
+}
+
+static void handleMenuWillHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    isDoneWaitingForMenuToDismiss = false;
+}
+
+static void handleMenuDidHideNotification(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    isDoneWaitingForMenuToDismiss = true;
 }
 
 void TestController::notifyDone()
@@ -79,6 +90,8 @@ void TestController::platformInitialize()
     auto center = CFNotificationCenterGetLocalCenter();
     CFNotificationCenterAddObserver(center, this, handleKeyboardWillHideNotification, (CFStringRef)UIKeyboardWillHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleKeyboardDidHideNotification, (CFStringRef)UIKeyboardDidHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, this, handleMenuWillHideNotification, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(center, this, handleMenuDidHideNotification, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 
     // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
     // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
@@ -92,6 +105,8 @@ void TestController::platformDestroy()
     auto center = CFNotificationCenterGetLocalCenter();
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardWillHideNotification, nullptr);
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardDidHideNotification, nullptr);
+    CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr);
+    CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr);
 }
 
 void TestController::initializeInjectedBundlePath()
@@ -119,6 +134,7 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 {
     cocoaResetStateToConsistentValues(options);
 
+    UIMenuController.sharedMenuController.menuVisible = NO;
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
 
@@ -145,6 +161,7 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
     }
 
     runUntil(isDoneWaitingForKeyboardToDismiss, m_currentInvocation->shortTimeout());
+    runUntil(isDoneWaitingForMenuToDismiss, m_currentInvocation->shortTimeout());
 
     if (shouldRestoreFirstResponder)
         [mainWebView()->platformView() becomeFirstResponder];

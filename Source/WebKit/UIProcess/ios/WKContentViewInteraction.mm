@@ -740,6 +740,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_willHideMenu:) name:UIMenuControllerWillHideMenuNotification object:nil];
     [center addObserver:self selector:@selector(_didHideMenu:) name:UIMenuControllerDidHideMenuNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
 
@@ -2810,11 +2811,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [super targetForAction:action withSender:sender];
 }
 
+- (void)_willHideMenu:(NSNotification *)notification
+{
+    [self _handleDOMPasteRequestWithResult:NO];
+}
+
 - (void)_didHideMenu:(NSNotification *)notification
 {
     _showingTextStyleOptions = NO;
     [_textSelectionAssistant hideTextStyleOptions];
-    [self _handleDOMPasteRequestWithResult:NO];
 }
 
 - (void)_keyboardDidRequestDismissal:(NSNotification *)notification

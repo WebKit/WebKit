@@ -87,6 +87,9 @@ UserGestureIndicator::~UserGestureIndicator()
     if (!isMainThread())
         return;
     
+    if (auto token = currentToken())
+        token->resetDOMPasteAccess();
+
     currentToken() = m_previousToken;
 }
 

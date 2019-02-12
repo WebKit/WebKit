@@ -1,3 +1,96 @@
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow pages to trigger programmatic paste from script on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+        <rdar://problem/47808810>
+
+        Reviewed by Tim Horton.
+
+        Add support for interacting with the callout bar on iOS during layout tests. See below for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformSetDidShowMenuCallback):
+        (WTR::UIScriptController::platformSetDidHideMenuCallback):
+        (WTR::UIScriptController::rectForMenuAction const):
+
+        Add new mechanisms to make it possible to interact with and query the state of the callout menu on iOS. This
+        includes determining the rect (in content view coordinates) of the menu's controls, and callbacks to register
+        for when the menu is shown or hidden.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidShowMenuCallback):
+        (WTR::UIScriptController::didShowMenuCallback const):
+        (WTR::UIScriptController::setDidHideMenuCallback):
+        (WTR::UIScriptController::didHideMenuCallback const):
+        (WTR::UIScriptController::platformSetDidShowMenuCallback):
+        (WTR::UIScriptController::platformSetDidHideMenuCallback):
+        (WTR::UIScriptController::rectForMenuAction const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+
+        Add a new test option to determine whether DOM paste is enabled. DOM paste is currently enabled everywhere by
+        default, but these new programmatic paste tests require it to be disabled in order for confirmation UI to show.
+
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::calendarType const):
+        (WTR::UIScriptController::platformUndoManager const):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView _didShowMenu]):
+        (-[TestRunnerWKWebView _didHideMenu]):
+
+        Listen to when the callout bar is presented and dismissed, and invoke testing callbacks as needed.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::handleMenuWillHideNotification):
+        (WTR::handleMenuDidHideNotification):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformDestroy):
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Additionally ensure that any callout menu presented by a previous layout test is dismissed before running the
+        next test by hiding the callout bar if necessary, and then waiting for the "DidHide" notification.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::forEachViewInHierarchy):
+        (WTR::findViewInHierarchyOfType):
+
+        Move `forEachViewInHierarchy` so that we can use it throughout the file, and then add some additional helper
+        functions that dig through a given view's hierarchy in search of a view of a given class.
+
+        (WTR::UIScriptController::selectionStartGrabberViewRect const):
+        (WTR::UIScriptController::selectionEndGrabberViewRect const):
+        (WTR::UIScriptController::selectionCaretViewRect const):
+        (WTR::UIScriptController::selectionRangeViewRects const):
+        (WTR::UIScriptController::platformSetDidShowMenuCallback):
+        (WTR::UIScriptController::platformSetDidHideMenuCallback):
+
+        Tweak these to use `platformContentView` instead of grabbing the content view from WKWebView directly.
+
+        (WTR::UIScriptController::rectForMenuAction const):
+
+        Add a new UIScriptController method to get the rect of the action in the contextual menu (on iOS, this is the
+        callout bar) whose label matches the given string.
+
+        (WTR::UIScriptController::platformContentView const):
+
+        Add a `platformContentView()` helper on UIScriptController so that we can stop grabbing the value for key
+        "_currentContentView" from various places in this file. Additionally, rewrite `platformUndoManager()` in terms
+        of this new helper, and move the code out from iOS/macOS-specific files into UIScriptControllerCocoa.
+
+        (WTR::UIScriptController::platformUndoManager const): Deleted.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::platformContentView const):
+        (WTR::UIScriptController::platformUndoManager const): Deleted.
+
 2019-02-12  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: No option to only show unexpected failures in results.html for iPad

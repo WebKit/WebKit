@@ -205,6 +205,28 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
     return m_context->callbackWithID(CallbackTypeDidHideKeyboard);
 }
 
+void UIScriptController::setDidShowMenuCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidShowMenu);
+    platformSetDidShowMenuCallback();
+}
+
+JSValueRef UIScriptController::didShowMenuCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidShowMenu);
+}
+
+void UIScriptController::setDidHideMenuCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidHideMenu);
+    platformSetDidHideMenuCallback();
+}
+
+JSValueRef UIScriptController::didHideMenuCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidHideMenu);
+}
+
 #if !PLATFORM(COCOA)
 
 void UIScriptController::zoomToScale(double, JSValueRef)
@@ -500,6 +522,19 @@ void UIScriptController::platformSetDidShowKeyboardCallback()
 
 void UIScriptController::platformSetDidHideKeyboardCallback()
 {
+}
+
+void UIScriptController::platformSetDidShowMenuCallback()
+{
+}
+
+void UIScriptController::platformSetDidHideMenuCallback()
+{
+}
+
+JSObjectRef UIScriptController::rectForMenuAction(JSStringRef) const
+{
+    return nullptr;
 }
 
 void UIScriptController::platformClearAllCallbacks()

@@ -32,6 +32,8 @@
 #include <wtf/Ref.h>
 
 OBJC_CLASS NSUndoManager;
+OBJC_CLASS NSView;
+OBJC_CLASS UIView;
 
 namespace WebCore {
 class FloatRect;
@@ -156,6 +158,14 @@ public:
 
     bool isShowingKeyboard() const;
 
+    void setDidHideMenuCallback(JSValueRef);
+    JSValueRef didHideMenuCallback() const;
+
+    void setDidShowMenuCallback(JSValueRef);
+    JSValueRef didShowMenuCallback() const;
+
+    JSObjectRef rectForMenuAction(JSStringRef action) const;
+
     void setDidEndScrollingCallback(JSValueRef);
     JSValueRef didEndScrollingCallback() const;
 
@@ -230,12 +240,21 @@ private:
     void platformSetDidEndZoomingCallback();
     void platformSetDidShowKeyboardCallback();
     void platformSetDidHideKeyboardCallback();
+    void platformSetDidShowMenuCallback();
+    void platformSetDidHideMenuCallback();
     void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
     void platformPlayBackEventStream(JSStringRef, JSValueRef);
 
 #if PLATFORM(COCOA)
     NSUndoManager *platformUndoManager() const;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    UIView *platformContentView() const;
+#endif
+#if PLATFORM(MAC)
+    NSView *platformContentView() const;
 #endif
 
     JSClassRef wrapperClass() final;

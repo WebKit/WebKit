@@ -102,6 +102,44 @@ static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayV
     return modifiers;
 }
 
+static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
+{
+    BOOL stop = NO;
+    mapFunction(view, &stop);
+    if (stop)
+        return YES;
+
+    for (UIView *subview in view.subviews) {
+        stop = forEachViewInHierarchy(subview, mapFunction);
+        if (stop)
+            break;
+    }
+    return stop;
+}
+
+static UIView *findViewInHierarchyOfType(UIView *view, Class viewClass)
+{
+    __block RetainPtr<UIView> foundView;
+    forEachViewInHierarchy(view, ^(UIView *subview, BOOL *stop) {
+        if (![subview isKindOfClass:viewClass])
+            return;
+
+        foundView = subview;
+        *stop = YES;
+    });
+    return foundView.autorelease();
+}
+
+static NSArray<UIView *> *findAllViewsInHierarchyOfType(UIView *view, Class viewClass)
+{
+    __block RetainPtr<NSMutableArray> views = adoptNS([[NSMutableArray alloc] init]);
+    forEachViewInHierarchy(view, ^(UIView *subview, BOOL *stop) {
+        if ([subview isKindOfClass:viewClass])
+            [views addObject:subview];
+    });
+    return views.autorelease();
+}
+
 void UIScriptController::checkForOutstandingCallbacks()
 {
     if (![[HIDEventGenerator sharedHIDEventGenerator] checkForOutstandingCallbacks])
@@ -629,8 +667,7 @@ JSObjectRef UIScriptController::textSelectionCaretRect() const
 
 JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
 {
-    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = platformContentView();
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto frameInContentCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"startGrabber"] frame] toView:contentView];
     frameInContentCoordinates = CGRectIntersection(contentView.bounds, frameInContentCoordinates);
@@ -640,8 +677,7 @@ JSObjectRef UIScriptController::selectionStartGrabberViewRect() const
 
 JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
 {
-    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = platformContentView();
     UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto frameInContentCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"endGrabber"] frame] toView:contentView];
     frameInContentCoordinates = CGRectIntersection(contentView.bounds, frameInContentCoordinates);
@@ -651,8 +687,7 @@ JSObjectRef UIScriptController::selectionEndGrabberViewRect() const
 
 JSObjectRef UIScriptController::selectionCaretViewRect() const
 {
-    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = platformContentView();
     UIView *caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
     auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -660,8 +695,7 @@ JSObjectRef UIScriptController::selectionCaretViewRect() const
 
 JSObjectRef UIScriptController::selectionRangeViewRects() const
 {
-    WKWebView *webView = TestController::singleton().mainWebView()->platformView();
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = platformContentView();
     UIView *rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto rectsAsDictionaries = adoptNS([[NSMutableArray alloc] init]);
     NSArray *textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
@@ -825,6 +859,58 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
     };
 }
 
+void UIScriptController::platformSetDidShowMenuCallback()
+{
+    TestController::singleton().mainWebView()->platformView().didShowMenuCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidShowMenu);
+    };
+}
+
+void UIScriptController::platformSetDidHideMenuCallback()
+{
+    TestController::singleton().mainWebView()->platformView().didHideMenuCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidHideMenu);
+    };
+}
+
+JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
+{
+    auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
+
+    UIWindow *windowForButton = nil;
+    UIButton *buttonForAction = nil;
+    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+        if (![window isKindOfClass:UITextEffectsWindow.class])
+            continue;
+
+        UIView *calloutBar = findViewInHierarchyOfType(window, UICalloutBar.class);
+        if (!calloutBar)
+            continue;
+
+        for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
+            NSString *buttonTitle = [button titleForState:UIControlStateNormal];
+            if (!buttonTitle.length)
+                continue;
+
+            if (![buttonTitle isEqualToString:(__bridge NSString *)action.get()])
+                continue;
+
+            buttonForAction = button;
+            windowForButton = window;
+        }
+    }
+
+    if (!buttonForAction)
+        return nullptr;
+
+    CGRect rectInRootViewCoordinates = [buttonForAction convertRect:buttonForAction.bounds toView:platformContentView()];
+    return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
+}
+
 void UIScriptController::platformSetDidEndScrollingCallback()
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
@@ -868,21 +954,6 @@ void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView _completeBackSwipeForTesting];
-}
-
-static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
-{
-    BOOL stop = NO;
-    mapFunction(view, &stop);
-    if (stop)
-        return YES;
-
-    for (UIView *subview in view.subviews) {
-        stop = forEachViewInHierarchy(subview, mapFunction);
-        if (stop)
-            break;
-    }
-    return stop;
 }
 
 bool UIScriptController::isShowingDataListSuggestions() const
@@ -989,9 +1060,9 @@ JSObjectRef UIScriptController::attachmentInfo(JSStringRef jsAttachmentIdentifie
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:attachmentInfoDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-NSUndoManager *UIScriptController::platformUndoManager() const
+UIView *UIScriptController::platformContentView() const
 {
-    return [(UIView *)[TestController::singleton().mainWebView()->platformView() valueForKeyPath:@"_currentContentView"] undoManager];
+    return [TestController::singleton().mainWebView()->platformView() valueForKeyPath:@"_currentContentView"];
 }
 
 JSObjectRef UIScriptController::calendarType() const

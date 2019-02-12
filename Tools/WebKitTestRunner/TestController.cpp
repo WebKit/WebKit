@@ -748,7 +748,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);
-    WKPreferencesSetDOMPasteAllowed(preferences, true);
+    WKPreferencesSetDOMPasteAllowed(preferences, options.domPasteAllowed);
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
 #if ENABLE(FULLSCREEN_API)
@@ -1269,6 +1269,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.applicationManifest = parseStringTestHeaderValueAsRelativePath(value, pathOrURL);
         else if (key == "allowCrossOriginSubresourcesToAskForCredentials")
             testOptions.allowCrossOriginSubresourcesToAskForCredentials = parseBooleanTestHeaderValue(value);
+        else if (key == "domPasteAllowed")
+            testOptions.domPasteAllowed = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnNavigation")
             testOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnWindowOpen")

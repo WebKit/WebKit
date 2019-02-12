@@ -1,3 +1,47 @@
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow pages to trigger programmatic paste from script on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+        <rdar://problem/47808810>
+
+        Reviewed by Tim Horton.
+
+        Add new tests to exercise programmatic pasting.
+
+        * TestExpectations:
+        * editing/pasteboard/ios/dom-paste-confirmation-expected.txt: Added.
+        * editing/pasteboard/ios/dom-paste-confirmation.html: Added.
+
+        Verify that the user can tap "Paste" to allow programmatic pasting.
+
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations-expected.txt: Added.
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations.html: Added.
+
+        Verify that DOM paste access isn't carried over when using `setTimeout` in a user gesture event handler.
+
+        * editing/pasteboard/ios/dom-paste-rejection-expected.txt: Added.
+        * editing/pasteboard/ios/dom-paste-rejection.html: Added.
+
+        Verify that resigning first responder dismisses the callout bar and does not allow programmatic pasting.
+
+        * editing/pasteboard/ios/dom-paste-requires-user-gesture-expected.txt: Added.
+        * editing/pasteboard/ios/dom-paste-requires-user-gesture.html: Added.
+
+        Verify that user gesture is required to present the callout menu for a programmatic paste request.
+
+        * editing/pasteboard/ios/resources/dom-paste-helper.js: Added.
+        (return.new.Promise.):
+        (async._waitForOrTriggerPasteMenu):
+        (async.triggerPasteMenuAfterTapAt):
+        (async.waitForPasteMenu):
+
+        Add helpers to summon, wait for, and interact with the callout bar when the page attempts to trigger a paste.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
+        Skip editing/pasteboard/ios by default, and enable it only in the modern WebKit port of iOS.
+
 2019-02-12  Dean Jackson  <dino@apple.com>
 
         BitmapRenderer should handle existing ImageBuffers

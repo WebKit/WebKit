@@ -324,6 +324,19 @@ void UIScriptController::platformSetDidHideKeyboardCallback()
 {
 }
 
+void UIScriptController::platformSetDidShowMenuCallback()
+{
+}
+
+void UIScriptController::platformSetDidHideMenuCallback()
+{
+}
+
+JSObjectRef UIScriptController::rectForMenuAction(JSStringRef) const
+{
+    return nullptr;
+}
+
 void UIScriptController::platformSetDidEndScrollingCallback()
 {
 }

@@ -57,6 +57,7 @@ struct TestOptions {
     bool shouldShowTouches { false };
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
+    bool domPasteAllowed { true };
     bool enableProcessSwapOnNavigation { true };
     bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
@@ -105,6 +106,7 @@ struct TestOptions {
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
+            || domPasteAllowed != options.domPasteAllowed
             || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
             || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter

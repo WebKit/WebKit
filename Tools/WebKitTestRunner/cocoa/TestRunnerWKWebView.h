@@ -43,6 +43,8 @@
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
 @property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
+@property (nonatomic, copy) void (^didShowMenuCallback)(void);
+@property (nonatomic, copy) void (^didHideMenuCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;

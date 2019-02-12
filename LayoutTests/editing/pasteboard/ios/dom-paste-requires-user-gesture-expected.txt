@@ -1,0 +1,13 @@
+Click here to copy
+Click here to copy
+Verifies that no callout is shown when the page programmatically triggers paste outside the scope of user interaction. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS document.execCommand('Paste') is true
+PASS document.execCommand('Paste') is false
+PASS editor.textContent is "Click here to copy"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

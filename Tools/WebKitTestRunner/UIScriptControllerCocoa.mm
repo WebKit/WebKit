@@ -190,4 +190,9 @@ JSRetainPtr<JSStringRef> UIScriptController::firstRedoLabel() const
     return JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName);
 }
 
+NSUndoManager *UIScriptController::platformUndoManager() const
+{
+    return platformContentView().undoManager;
+}
+
 } // namespace WTR

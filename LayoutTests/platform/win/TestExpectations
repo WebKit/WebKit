@@ -1157,6 +1157,7 @@ media/track/track-in-band-cues-added-once.html [ Skip ] # Timeout
 ###### Pasteboard
 ###### These tests are very flaky.
 editing/pasteboard/ [ Pass Failure ]
+editing/pasteboard/ios [ Skip ]
 [ Debug ] editing/pasteboard/copy-crash.html [ Skip ] # Debug Assertion
 [ Debug ] editing/pasteboard/copy-crash-with-extraneous-attribute.html [ Skip ] # Debug Assertion
 [ Debug ] editing/pasteboard/testcase-9507.html [ Skip ] # Debug Assertion

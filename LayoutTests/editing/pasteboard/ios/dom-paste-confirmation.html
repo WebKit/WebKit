@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ domPasteAllowed=false useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="./resources/dom-paste-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+}
+
+#copy, #editor {
+    text-align: center;
+}
+
+#copy {
+    font-size: 40px;
+    width: 100%;
+    height: 50px;
+    border: 1px dashed black;
+}
+
+#editor {
+    width: 100%;
+    height: 100px;
+    border: 1px dashed silver;
+}
+</style>
+</head>
+<body>
+<div id="editor" contenteditable></div>
+<div id="copy">Click here to copy</div>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+jsTestIsAsync = true;
+
+const copy = document.getElementById("copy");
+const editor = document.getElementById("editor");
+
+description("Verifies that a callout is shown when the page programmatically triggers paste, and that tapping the callout allows the paste to happen. To manually test, tap the text on the bottom, tap the editable area above, and then select 'Paste' in the resulting callout menu. The text 'Click here to copy' should be pasted <strong><em>twice</em></strong> in the editable area.");
+
+copy.addEventListener("click", () => {
+    getSelection().selectAllChildren(copy);
+    document.execCommand("Copy");
+    getSelection().removeAllRanges();
+});
+
+editor.addEventListener("paste", event => shouldBeEqualToString("event.clipboardData.getData('text/plain')", "Click here to copy"));
+editor.addEventListener("click", event => {
+    getSelection().setPosition(editor);
+    shouldBe("document.queryCommandSupported('Paste')", "true");
+    shouldBe("document.queryCommandEnabled('Paste')", "true");
+    shouldBe("document.execCommand('Paste')", "true");
+    document.execCommand('InsertParagraph');
+    shouldBe("document.execCommand('Paste')", "true");
+    shouldBeEqualToString("editor.textContent", "Click here to copyClick here to copy");
+    event.preventDefault();
+    editor.blur();
+});
+
+(async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateAt(160, 125);
+    await triggerPasteMenuAfterTapAt(160, 50);
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

@@ -1,3 +1,25 @@
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow pages to trigger programmatic paste from script on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+        <rdar://problem/47808810>
+
+        Reviewed by Tim Horton.
+
+        Tests: editing/pasteboard/ios/dom-paste-confirmation.html
+               editing/pasteboard/ios/dom-paste-consecutive-confirmations.html
+               editing/pasteboard/ios/dom-paste-rejection.html
+               editing/pasteboard/ios/dom-paste-requires-user-gesture.html
+
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::~UserGestureIndicator):
+
+        Reset a gesture token's DOM paste access when exiting the scope of a user gesture. This prevents DOM paste
+        access permissions from leaking into `setTimeout()` callbacks when we forward user gesture tokens.
+
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureToken::resetDOMPasteAccess):
+
 2019-02-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: IsolatedTree: Implement more attributes

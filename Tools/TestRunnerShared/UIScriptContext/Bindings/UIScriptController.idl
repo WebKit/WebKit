@@ -223,6 +223,10 @@ interface UIScriptController {
     attribute object didHideKeyboardCallback;
     readonly attribute boolean isShowingKeyboard;
 
+    attribute object didShowMenuCallback;
+    attribute object didHideMenuCallback;
+    object rectForMenuAction(DOMString action);
+
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;
 

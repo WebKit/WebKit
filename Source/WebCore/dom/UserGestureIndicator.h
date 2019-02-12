@@ -66,6 +66,7 @@ public:
 
     DOMPasteAccessPolicy domPasteAccessPolicy() const { return m_domPasteAccessPolicy; }
     void didRequestDOMPasteAccess(bool granted) { m_domPasteAccessPolicy = granted ? DOMPasteAccessPolicy::Granted : DOMPasteAccessPolicy::Denied; }
+    void resetDOMPasteAccess() { m_domPasteAccessPolicy = DOMPasteAccessPolicy::NotRequestedYet; }
 
 private:
     UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType)
