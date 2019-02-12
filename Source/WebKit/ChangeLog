@@ -1,3 +1,20 @@
+2019-02-11  Brian Burg  <bburg@apple.com>
+
+        [Cocoa] Web Automation: client callbacks are not called if delegate does not override
+        https://bugs.webkit.org/show_bug.cgi?id=194519
+        <rdar://problem/47981961>
+
+        Reviewed by Joseph Pecoraro.
+
+        Call the completion handler directly if the delegate does not implement the relevant method.
+
+        * UIProcess/Cocoa/AutomationSessionClient.mm:
+        (WebKit::AutomationSessionClient::requestNewPageWithOptions):
+        (WebKit::AutomationSessionClient::requestSwitchToPage):
+        (WebKit::AutomationSessionClient::requestHideWindowOfPage):
+        (WebKit::AutomationSessionClient::requestRestoreWindowOfPage):
+        (WebKit::AutomationSessionClient::requestMaximizeWindowOfPage):
+
 2019-02-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Adopt SPI to support Emacs bindings: transpose and delete to end of paragraph
