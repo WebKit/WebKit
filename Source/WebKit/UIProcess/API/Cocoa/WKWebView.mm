@@ -1185,7 +1185,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         }];
     };
 
-    if (snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) {
+    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfter(WebKit::SDKVersion::FirstWithSnapshotAfterScreenUpdates)) {
         callSnapshotRect();
         return;
     }

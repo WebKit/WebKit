@@ -32,6 +32,8 @@
 #else
 #define DYLD_IOS_VERSION_FIRST_WITH_LAZY_GESTURE_RECOGNIZER_INSTALLATION 0
 #define DYLD_IOS_VERSION_FIRST_WITH_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION 0
+#define DYLD_IOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES 0
+#define DYLD_MACOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES 0
 #endif
 
 namespace WebKit {
@@ -50,12 +52,14 @@ enum class SDKVersion : uint32_t {
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_IOS_VERSION_12_0,
     FirstWithLazyGestureRecognizerInstallation = DYLD_IOS_VERSION_FIRST_WITH_LAZY_GESTURE_RECOGNIZER_INSTALLATION,
     FirstWithProcessSwapOnCrossSiteNavigation = DYLD_IOS_VERSION_FIRST_WITH_PROCESS_SWAP_ON_CROSS_SITE_NAVIGATION,
+    FirstWithSnapshotAfterScreenUpdates = DYLD_IOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
     FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13,
     FirstWithExpiredOnlyReloadBehavior = DYLD_MACOSX_VERSION_10_13,
     FirstWithMainThreadReleaseAssertionInWebPageProxy = DYLD_MACOSX_VERSION_10_14,
+    FirstWithSnapshotAfterScreenUpdates = DYLD_MACOS_VERSION_FIRST_WITH_SNAPSHOT_AFTER_SCREEN_UPDATES,
 #endif
 };
 
