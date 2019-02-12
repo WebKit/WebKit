@@ -225,9 +225,8 @@ class PortTest(unittest.TestCase):
     def test_uses_test_expectations_file(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
-        port.path_to_test_expectations_file = lambda: '/mock-results/TestExpectations'
         self.assertFalse(port.uses_test_expectations_file())
-        port._filesystem = MockFileSystem({'/mock-results/TestExpectations': ''})
+        port._filesystem = MockFileSystem({'/mock-checkout/LayoutTests/platform/foo/TestExpectations': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
     def test_find_no_paths_specified(self):

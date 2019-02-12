@@ -1,3 +1,19 @@
+2019-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: No option to only show unexpected failures in results.html for iPad
+        https://bugs.webkit.org/show_bug.cgi?id=194554
+        <rdar://problem/47922442>
+
+        Rubber-stamped by Aakash Jain.
+
+        Just because a TestExpecations file does not exist for a specific platform does not mean that
+        TestExpecations are not being used, given that platforms inherit test expectations.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.uses_test_expectations_file): Check all possible locations of a TestExpectations file.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (PortTest.test_uses_test_expectations_file):
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove setDefersLoading infrastructure from WebKit2

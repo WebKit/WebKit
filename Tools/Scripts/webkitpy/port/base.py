@@ -1157,7 +1157,10 @@ class Port(object):
     def uses_test_expectations_file(self):
         # This is different from checking test_expectations() is None, because
         # some ports have Skipped files which are returned as part of test_expectations().
-        return self._filesystem.exists(self.path_to_test_expectations_file())
+        for path in self.default_baseline_search_path():
+            if self._filesystem.exists(self._filesystem.join(path, 'TestExpectations')):
+                return True
+        return False
 
     def warn_if_bug_missing_in_test_expectations(self):
         return False
