@@ -1,3 +1,30 @@
+2019-02-12  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r238955, r240494): Soft-linking optional Lookup.framework triggers release assertion when missing
+        <https://webkit.org/b/194529>
+        <rdar://problem/47924449>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/cocoa/SoftLinking.h:
+        (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL): Rename
+        SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION() to this
+        and change `assertion` argument to `isOptional`.  Pass
+        `isOptional` to framework##Library() method to control assertion
+        behavior.  Only check RELEASE_ASSERT() if `!isOptional`, else
+        that code should be optimized out by the compiler.  This fixes
+        the crash.
+        (NO_ASSERT): Remove macro since it's no longer used.
+        (SOFT_LINK_IS_OPTIONAL): Add macro to use for soft-linking
+        optional classes.
+        (SOFT_LINK_IS_NOT_OPTIONAL): Add macro to use for soft-linking
+        non-optional classes.
+        (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT): Update to use new
+        SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL() macro.
+        (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT): Ditto.
+        (SOFT_LINK_CLASS_FOR_SOURCE): Ditto.
+        (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL): Ditto.
+
 2019-02-12  Andy Estes  <aestes@apple.com>
 
         [iOSMac] Enable Parental Controls Content Filtering

@@ -1,3 +1,30 @@
+2019-02-12  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r238955, r240494): Soft-linking optional Lookup.framework triggers release assertion when missing
+        <https://webkit.org/b/194529>
+        <rdar://problem/47924449>
+
+        Reviewed by Eric Carlson.
+
+        * SourcesCocoa.txt:
+        - Do not include DataDetectorsCoreSoftLink.mm in unified
+          sources.
+        * WebCore.xcodeproj/project.pbxproj:
+        - Add DataDetectorsCoreSoftLink.mm to the WebCore target now
+          that it isn't part of the unifed sources.
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        - Switch from using SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL() to
+          SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE() when linking
+          DataDetectorsCore.framework. None of the other macros assume
+          this framework is optional, and it was likely made optional
+          originally because the framework was new to iOS and thus
+          didn't exist on older versions.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        - Change use of SOFT_LINK_CLASS_FOR_SOURCE() macros to
+          SOFT_LINK_CLASS() since the latter can only be used with
+          SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation).  This broke after
+          the fix for <wtf/SoftLinking.h> was applied.
+
 2019-02-12  Youenn Fablet  <youenn@apple.com>
 
         Make use of is<SubresourceLoader>

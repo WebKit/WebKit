@@ -1233,6 +1233,7 @@
 		43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */ = {isa = PBXBuildFile; fileRef = 43EDD67D1B485DBF00640E75 /* CombinedFiltersAlphabet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		445775E520472F73008DCE5D /* LocalDefaultSystemAppearance.h in Headers */ = {isa = PBXBuildFile; fileRef = 445775E420472F73008DCE5D /* LocalDefaultSystemAppearance.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4463CF682212FA68001A8577 /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4471710C205AF945000A116E /* MediaQueryParserContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -32921,6 +32922,7 @@
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
 				1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */,
 				BE23480C18A9870B00E4B6E8 /* DataCue.cpp in Sources */,
+				4463CF682212FA68001A8577 /* DataDetectorsCoreSoftLink.mm in Sources */,
 				E58B45BB20AD07DD00991025 /* DataListButtonElement.cpp in Sources */,
 				515BE18F1D54F5FB00DD7C68 /* EmptyGamepadProvider.cpp in Sources */,
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,

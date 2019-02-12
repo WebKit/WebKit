@@ -189,7 +189,7 @@ platform/cf/SharedBufferCF.cpp
 
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
-platform/cocoa/DataDetectorsCoreSoftLink.mm
+platform/cocoa/DataDetectorsCoreSoftLink.mm @no-unify
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
