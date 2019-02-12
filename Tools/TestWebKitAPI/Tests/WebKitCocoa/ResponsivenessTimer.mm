@@ -60,6 +60,7 @@ TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
 {
     auto processPoolConfiguration = adoptNS([_WKProcessPoolConfiguration new]);
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [processPool _setMaximumNumberOfProcesses:1];
     auto delegate = adoptNS([ResponsivenessTimerDelegate new]);
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);

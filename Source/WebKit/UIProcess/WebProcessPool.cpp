@@ -406,6 +406,11 @@ void WebProcessPool::setLegacyCustomProtocolManagerClient(std::unique_ptr<API::C
 #endif
 }
 
+void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
+{
+    m_configuration->setMaximumProcessCount(maximumNumberOfProcesses);
+}
+
 void WebProcessPool::setCustomWebContentServiceBundleIdentifier(const String& customWebContentServiceBundleIdentifier)
 {
     // Guard against API misuse.
@@ -1089,8 +1094,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore& websiteDataStore)
 {
-    if (!usesSingleWebProcess())
-        return createNewWebProcess(websiteDataStore);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=168676
+    // Once WebsiteDataStores are truly per-view instead of per-process, remove this nonsense.
 
 #if PLATFORM(COCOA)
     bool mustMatchDataStore = API::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
@@ -1098,6 +1103,10 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     bool mustMatchDataStore = false;
 #endif
 
+    if (m_processes.size() < maximumNumberOfProcesses())
+        return createNewWebProcess(websiteDataStore);
+
+    WebProcessProxy* processToReuse = nullptr;
     for (auto& process : m_processes) {
         if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
             continue;
@@ -1105,9 +1114,11 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
         if (is<ServiceWorkerProcessProxy>(*process))
             continue;
 #endif
-        return *process;
+        // Choose the process with fewest pages.
+        if (!processToReuse || processToReuse->pageCount() > process->pageCount())
+            processToReuse = process.get();
     }
-    return createNewWebProcess(websiteDataStore);
+    return processToReuse ? *processToReuse : createNewWebProcess(websiteDataStore);
 }
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
@@ -1293,7 +1304,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
 
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
-    if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation() || usesSingleWebProcess())
+    if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation())
         return;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
@@ -2162,9 +2173,6 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
         return createNewWebProcess(page.websiteDataStore());
     };
-
-    if (usesSingleWebProcess())
-        return completionHandler(page.process(), nullptr, "Single WebProcess mode is enabled"_s);
 
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         return completionHandler(createNewProcess(), nullptr, "Process swap was requested by the client"_s);
