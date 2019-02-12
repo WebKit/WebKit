@@ -31,7 +31,7 @@
 #include "GPUInputStateDescriptor.h"
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineStageDescriptor.h"
-
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,7 +45,7 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
         TriangleStrip
     };
 
-    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, GPUPipelineStageDescriptor&& fragment, PrimitiveTopology topology, GPUDepthStencilStateDescriptor&& depth, GPUInputStateDescriptor&& input)
+    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, GPUPipelineStageDescriptor&& fragment, PrimitiveTopology topology, Optional<GPUDepthStencilStateDescriptor>&& depth, GPUInputStateDescriptor&& input)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , vertexStage(WTFMove(vertex))
         , fragmentStage(WTFMove(fragment))
@@ -58,7 +58,7 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase {
     GPUPipelineStageDescriptor vertexStage;
     GPUPipelineStageDescriptor fragmentStage;
     PrimitiveTopology primitiveTopology;
-    GPUDepthStencilStateDescriptor depthStencilState;
+    Optional<GPUDepthStencilStateDescriptor> depthStencilState;
     GPUInputStateDescriptor inputState;
 };
 

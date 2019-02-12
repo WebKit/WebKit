@@ -11,7 +11,32 @@ function createBasicContext(canvas, device) {
     return context;
 }
 
-function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor, primitiveTopology = "triangleStrip") {
+function createBasicDepthStateDescriptor() {
+    return {
+        depthWriteEnabled: true,
+        depthCompare: "less"
+    };
+}
+
+function createBasicDepthTexture(canvas, device) {
+    const depthSize = {
+        width: canvas.width,
+        height: canvas.height,
+        depth: 1
+    };
+
+    return device.createTexture({
+        size: depthSize,
+        arrayLayerCount: 1,
+        mipLevelCount: 1,
+        sampleCount: 1,
+        dimension: "2d",
+        format: "d32-float-s8-uint",
+        usage: GPUTextureUsage.OUTPUT_ATTACHMENT
+    });
+}
+
+function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor, depthStateDescriptor, primitiveTopology = "triangleStrip") {
     const vertexStageDescriptor = {
         module: shaderModule,
         entryPoint: "vertex_main" 
@@ -34,12 +59,17 @@ function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDes
     if (inputStateDescriptor)
         pipelineDescriptor.inputState = inputStateDescriptor;
 
+    if (depthStateDescriptor)
+        pipelineDescriptor.depthStencilState = depthStateDescriptor;
+
     return device.createRenderPipeline(pipelineDescriptor);
 }
 
 function beginBasicRenderPass(context, commandBuffer) {
     const basicAttachment = {
         attachment: context.getNextTexture().createDefaultTextureView(),
+        loadOp: "clear",
+        storeOp: "store",
         clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }
     }
 

@@ -296,8 +296,11 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    // Depth Stencil state is separate from the render pipeline state in Metal.
-    auto depthStencil = tryCreateMtlDepthStencilState(functionName, descriptor.depthStencilState, device);
+    // Depth Stencil state is optional and separate from the render pipeline state in Metal.
+    RetainPtr<MTLDepthStencilState> depthStencil;
+
+    if (descriptor.depthStencilState)
+        depthStencil = tryCreateMtlDepthStencilState(functionName, *descriptor.depthStencilState, device);
 
     auto pipeline = tryCreateMtlRenderPipelineState(functionName, descriptor, device);
     if (!pipeline)

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="vertex-buffer-triangle-strip-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct VertexIn
+{
+    float4 position [[attribute(0)]];
+};
+
+struct VertexOut
+{
+    float4 position [[position]];
+    float4 color;
+};
+
+vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]], uint iid [[instance_id]])
+{
+    VertexOut vOut;
+    vOut.position = vertexIn.position;
+
+    if (iid == 0) {
+        vOut.position.z = 0.5;
+        vOut.color = float4(1, 0, 0, 1);
+    } else {
+        vOut.color = float4(0, 1, 0, 1);
+    }
+
+    return vOut;
+}
+
+fragment float4 fragment_main(VertexOut v [[stage_in]])
+{
+    return v.color;
+}
+`
+
+function createVertexBuffer(device) {
+    const bufferSize = 4 * 4 * 4;
+    const buffer = device.createBuffer({ size: bufferSize, usage: WebGPUBufferUsage.MAP_WRITE });
+    
+    let floatArray = new Float32Array(buffer.mapping);
+
+    const vertices = [
+        // float4 xyzw
+        -1, 1, 0, 1,
+        -1, -1, 0, 1,
+        1, 1, 0, 1,
+        1, -1, 0, 1
+    ];
+
+    floatArray.set(vertices);
+
+    return buffer;
+}
+
+function createInputStateDescriptor() {
+    return {
+        indexFormat: WebGPUIndexFormat.UINT32,
+        attributes: [{
+            shaderLocation: 0,
+            inputSlot: 0,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+        }],
+        inputs: [{
+            inputSlot: 0,
+            stride: 4 * 4,
+            stepMode: WebGPUInputStepMode.VERTEX
+        }]
+    }
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    const vertexBuffer = createVertexBuffer(device);
+    const inputStateDescriptor = createInputStateDescriptor();
+    const depthStateDescriptor = createBasicDepthStateDescriptor();
+    const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor, depthStateDescriptor);
+    const commandBuffer = device.createCommandBuffer();
+
+    const basicAttachment = {
+        attachment: context.getNextTexture().createDefaultTextureView(),
+        loadOp: "clear",
+        storeOp: "store",
+        clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }
+    };
+
+    const depthAttachment = {
+        attachment: createBasicDepthTexture(canvas, device).createDefaultTextureView(),
+        depthLoadOp: "clear",
+        depthStoreOp: "store",
+        clearDepth: 1.0
+    };
+
+    const encoder = commandBuffer.beginRenderPass({
+        colorAttachments: [basicAttachment],
+        depthStencilAttachment: depthAttachment
+    });
+
+    encoder.setVertexBuffers(0, [vertexBuffer], [0]);
+    encoder.setPipeline(pipeline);
+    encoder.draw(4, 2, 0, 0);
+    encoder.endPass();
+
+    device.getQueue().submit([commandBuffer]);
+    context.present();
+}
+
+test();
+</script>

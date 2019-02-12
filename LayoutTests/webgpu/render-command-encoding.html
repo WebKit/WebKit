@@ -12,9 +12,10 @@
 let commandBuffer, renderPassEncoder;
 
 function beginPass() {
-    // Default a loadOp, storeOp in the implementation for now.
     const colorAttachmentDescriptor = {
         attachment: context.getNextTexture().createDefaultTextureView(),
+        loadOp: "clear",
+        storeOp: "store",
         clearColor: { r: 0.35, g: 0.65, b: 0.85, a: 1.0 }
     }
 

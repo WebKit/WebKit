@@ -135,9 +135,10 @@ function render() {
         return;
     }
 
-    // FIXME: Default a loadOp, and storeOp in the implementation for now.
     const colorAttachmentDescriptor = {
         attachment : textureView,
+        loadOp: "clear",
+        storeOp: "store",
         clearColor : { r: 0.35, g: 0.65, b: 0.85, a: 1.0 }
     }
 

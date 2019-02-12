@@ -40,29 +40,113 @@
 
 namespace WebCore {
 
-RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer& buffer, GPURenderPassDescriptor&& descriptor)
+static MTLLoadAction loadActionForGPULoadOp(GPULoadOp op)
 {
-    PlatformRenderPassEncoderSmartPtr mtlEncoder;
+    switch (op) {
+    case GPULoadOp::Clear:
+        return MTLLoadActionClear;
+    case GPULoadOp::Load:
+        return MTLLoadActionLoad;
+    }
 
-    // FIXME: Default to colorAttachments[0] and this loadOp, storeOp for now.
-    const auto& attachmentDescriptor = descriptor.colorAttachments[0];
-    const auto& color = attachmentDescriptor.clearColor;
+    ASSERT_NOT_REACHED();
+}
+
+static MTLStoreAction storeActionForGPUStoreOp(GPUStoreOp op)
+{
+    switch (op) {
+    case GPUStoreOp::Store:
+        return MTLStoreActionStore;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+static bool populateMtlColorAttachmentsArray(MTLRenderPassColorAttachmentDescriptorArray *array, const Vector<GPURenderPassColorAttachmentDescriptor>& descriptors, const char* const functionName)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+
+    for (unsigned i = 0; i < descriptors.size(); ++i) {
+        const auto& descriptor = descriptors[i];
+        if (!descriptor.attachment->platformTexture()) {
+            LOG(WebGPU, "%s: Invalid MTLTexture for color attachment %u!", functionName, i);
+            return false;
+        }
+        const auto& color = descriptor.clearColor;
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+        auto mtlAttachment = retainPtr([array objectAtIndexedSubscript:i]);
+        [mtlAttachment setTexture:descriptor.attachment->platformTexture()];
+        [mtlAttachment setClearColor:MTLClearColorMake(color.r, color.g, color.b, color.a)];
+        [mtlAttachment setLoadAction:loadActionForGPULoadOp(descriptor.loadOp)];
+        [mtlAttachment setStoreAction:storeActionForGPUStoreOp(descriptor.storeOp)];
+
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
+    return true;
+}
+
+static bool populateMtlDepthStencilAttachment(MTLRenderPassDepthAttachmentDescriptor *mtlAttachment, const GPURenderPassDepthStencilAttachmentDescriptor& descriptor, const char* const functionName)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+
+    if (!descriptor.attachment->platformTexture()) {
+        LOG(WebGPU, "%s: Invalid MTLTexture for depth attachment!", functionName);
+        return false;
+    }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    auto mtlDescriptor = adoptNS([MTLRenderPassDescriptor new]);
+    [mtlAttachment setTexture:descriptor.attachment->platformTexture()];
+    [mtlAttachment setClearDepth:descriptor.clearDepth];
+    [mtlAttachment setLoadAction:loadActionForGPULoadOp(descriptor.depthLoadOp)];
+    [mtlAttachment setStoreAction:storeActionForGPUStoreOp(descriptor.depthStoreOp)];
 
-    mtlDescriptor.get().colorAttachments[0].texture = attachmentDescriptor.attachment->platformTexture();
-    mtlDescriptor.get().colorAttachments[0].loadAction = MTLLoadActionClear;
-    mtlDescriptor.get().colorAttachments[0].storeAction = MTLStoreActionStore;
-    mtlDescriptor.get().colorAttachments[0].clearColor = MTLClearColorMake(color.r, color.g, color.b, color.a);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return true;
+}
+
+RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer& buffer, GPURenderPassDescriptor&& descriptor)
+{
+    const char* const functionName = "GPURenderPassEncoder::create()";
+
+    RetainPtr<MTLRenderPassDescriptor> mtlDescriptor;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    mtlDescriptor = adoptNS([MTLRenderPassDescriptor new]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    if (!mtlDescriptor) {
+        LOG(WebGPU, "%s: Unable to create MTLRenderPassDescriptor!", functionName);
+        return nullptr;
+    }
+
+    if (!populateMtlColorAttachmentsArray(mtlDescriptor.get().colorAttachments, descriptor.colorAttachments, functionName))
+        return nullptr;
+
+    if (descriptor.depthStencilAttachment
+        && !populateMtlDepthStencilAttachment(mtlDescriptor.get().depthAttachment, *descriptor.depthStencilAttachment, functionName))
+        return nullptr;
+
+    PlatformRenderPassEncoderSmartPtr mtlEncoder;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     mtlEncoder = retainPtr([buffer.platformCommandBuffer() renderCommandEncoderWithDescriptor:mtlDescriptor.get()]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlEncoder) {
-        LOG(WebGPU, "GPURenderPassEncoder::create(): Unable to create MTLRenderCommandEncoder!");
+        LOG(WebGPU, "%s: Unable to create MTLRenderCommandEncoder!", functionName);
         return nullptr;
     }
 

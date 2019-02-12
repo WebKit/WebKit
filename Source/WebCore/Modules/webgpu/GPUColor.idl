@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,22 +22,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "WebGPUColor.h"
-#include "WebGPUTextureView.h"
-
-namespace WebCore {
-
-struct WebGPURenderPassColorAttachmentDescriptor {
-    RefPtr<WebGPUTextureView> attachment;
-
-    WebGPUColor clearColor;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary GPUColor {
+    float r;
+    float g;
+    float b;
+    float a;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

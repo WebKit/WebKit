@@ -1,3 +1,54 @@
+2019-02-12  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] DepthStencilAttachment implementation
+        https://bugs.webkit.org/show_bug.cgi?id=194458
+        <rdar://problem/47932446>
+
+        Reviewed by Dean Jackson.
+
+        Implement ability to provide a depth attachment to the render pass encoder. Also implement
+        GPULoad/StoreOp and update color attachments' implementation for full functionality.
+
+        Test: webgpu/depth-enabled-triangle-strip.html
+
+        Update project files for new symbols:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/webgpu/GPUColor.idl: Renamed from WebGPUColor.idl
+        * Modules/webgpu/GPULoadOp.idl: Added. Interface for attachment operation enum.
+        * Modules/webgpu/GPUStoreOp.idl: Ditto.
+        * Modules/webpug/WebGPUColor.h: Removed.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Refactored descriptor validation logic out of this file.
+        (WebCore::WebGPUCommandBuffer::beginRenderPass):
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp: Added. Now owns code for validating descriptors.
+        (WebCore::WebGPURenderPassDescriptor::validateAndConvertToGPUVersion const):
+        * Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.h/idl: Removed. Code moved into WebGPURenderPassDescriptor.
+        * Modules/webgpu/WebGPURenderPassDescriptor.h: Move sub-descriptor definitions into this file.
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl: Ditto.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Make depthStencilState optional to match API update.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl: Ditto.
+        * Modules/webgpu/WebGPUTextureView.h:
+        * platform/graphics/gpu/GPULoadOp.h: Added.
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.h: Removed (moved into GPURenderPassDescriptor).
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Mirror WebGPU* changes.
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Make depthStencilState optional.
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/GPUStoreOp.h: Added.
+        * platform/graphics/gpu/GPUTexture.h:
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::loadActionForGPULoadOp): Added.
+        (WebCore::storeActionForGPUStoreOp): Added.
+        (WebCore::populateMtlColorAttachmentsArray): Added. Create all expected color attachments, rather than just the first.
+        (WebCore::populateMtlDepthStencilAttachment): Added.
+        (WebCore::GPURenderPassEncoder::create):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Make depthStencilState optional.
+        (WebCore::GPURenderPipeline::create):
+
 2019-02-12  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r238955, r240494): Soft-linking optional Lookup.framework triggers release assertion when missing

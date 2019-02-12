@@ -27,14 +27,44 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassColorAttachmentDescriptor.h"
-
+#include "GPUColor.h"
+#include "GPULoadOp.h"
+#include "GPUStoreOp.h"
+#include "GPUTexture.h"
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+struct GPURenderPassColorAttachmentDescriptorBase {
+    GPULoadOp loadOp;
+    GPUStoreOp storeOp;
+    GPUColor clearColor;
+};
+
+struct GPURenderPassColorAttachmentDescriptor final : GPURenderPassColorAttachmentDescriptorBase {
+    GPURenderPassColorAttachmentDescriptor(Ref<GPUTexture>&&, GPULoadOp, GPUStoreOp, GPUColor);
+
+    Ref<GPUTexture> attachment;
+};
+
+struct GPURenderPassDepthStencilAttachmentDescriptorBase {
+    GPULoadOp depthLoadOp;
+    GPUStoreOp depthStoreOp;
+    float clearDepth;
+
+    // FIXME: Add stencil support.
+};
+
+struct GPURenderPassDepthStencilAttachmentDescriptor final : GPURenderPassDepthStencilAttachmentDescriptorBase {
+    GPURenderPassDepthStencilAttachmentDescriptor(Ref<GPUTexture>&&, GPULoadOp, GPUStoreOp, float);
+
+    Ref<GPUTexture> attachment;
+};
+
 struct GPURenderPassDescriptor {
     Vector<GPURenderPassColorAttachmentDescriptor> colorAttachments;
+    Optional<GPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
 };
 
 } // namespace WebCore

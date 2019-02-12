@@ -357,6 +357,7 @@ Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
 Modules/webgpu/WebGPURenderingContext.cpp
+Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
@@ -2765,10 +2766,13 @@ JSFillMode.cpp
 JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSGPUColor.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
 JSGPUExtent3D.cpp
+JSGPULoadOp.cpp
 JSGPURequestAdapterOptions.cpp
+JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
 JSGPUTextureDimension.cpp
 JSGPUTextureFormat.cpp
@@ -3313,7 +3317,6 @@ JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
 JSWebGPUBufferDescriptor.cpp
 JSWebGPUBufferUsage.cpp
-JSWebGPUColor.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUDevice.cpp
 JSWebGPUIndexFormat.cpp
@@ -3326,7 +3329,6 @@ JSWebGPUPipelineLayoutDescriptor.cpp
 JSWebGPUPipelineStageDescriptor.cpp
 JSWebGPUProgrammablePassEncoder.cpp
 JSWebGPURenderingContext.cpp
-JSWebGPURenderPassColorAttachmentDescriptor.cpp
 JSWebGPURenderPassDescriptor.cpp
 JSWebGPURenderPassEncoder.cpp
 JSWebGPURenderPipeline.cpp

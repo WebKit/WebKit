@@ -372,10 +372,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
+    $(WebCore)/Modules/webgpu/GPUColor.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
+    $(WebCore)/Modules/webgpu/GPULoadOp.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
+    $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDimension.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
@@ -392,7 +395,6 @@ JS_BINDING_IDLS = \
 	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferUsage.idl \
-    $(WebCore)/Modules/webgpu/WebGPUColor.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
     $(WebCore)/Modules/webgpu/WebGPUIndexFormat.idl \
@@ -404,7 +406,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineStageDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl \
-    $(WebCore)/Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPipeline.idl \

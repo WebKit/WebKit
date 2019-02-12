@@ -32,6 +32,7 @@
 #include "WebGPUInputStateDescriptor.h"
 #include "WebGPUPipelineDescriptorBase.h"
 #include "WebGPUPipelineStageDescriptor.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
     WebGPUPipelineStageDescriptor vertexStage;
     WebGPUPipelineStageDescriptor fragmentStage;
     PrimitiveTopology primitiveTopology;
-    GPUDepthStencilStateDescriptor depthStencilState;
+    Optional<GPUDepthStencilStateDescriptor> depthStencilState;
     WebGPUInputStateDescriptor inputState;
 };
 

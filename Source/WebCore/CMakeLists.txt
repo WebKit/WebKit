@@ -462,10 +462,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdriver/NavigatorWebDriver.idl
 
     Modules/webgpu/DOMWindowWebGPU.idl
+    Modules/webgpu/GPUColor.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
     Modules/webgpu/GPUExtent3D.idl
+    Modules/webgpu/GPULoadOp.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
+    Modules/webgpu/GPUStoreOp.idl
     Modules/webgpu/GPUTextureDescriptor.idl
     Modules/webgpu/GPUTextureDimension.idl
     Modules/webgpu/GPUTextureFormat.idl
@@ -482,7 +485,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUBufferBinding.idl
     Modules/webgpu/WebGPUBufferDescriptor.idl
     Modules/webgpu/WebGPUBufferUsage.idl
-    Modules/webgpu/WebGPUColor.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUIndexFormat.idl
@@ -494,7 +496,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUPipelineStageDescriptor.idl
     Modules/webgpu/WebGPUProgrammablePassEncoder.idl
     Modules/webgpu/WebGPUQueue.idl
-    Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl
     Modules/webgpu/WebGPURenderPassDescriptor.idl
     Modules/webgpu/WebGPURenderPassEncoder.idl
     Modules/webgpu/WebGPURenderPipeline.idl

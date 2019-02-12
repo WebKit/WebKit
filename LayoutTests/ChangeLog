@@ -1,3 +1,27 @@
+2019-02-12  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] DepthStencilAttachment implementation
+        https://bugs.webkit.org/show_bug.cgi?id=194458
+        <rdar://problem/47932446>
+
+        Reviewed by Dean Jackson.
+
+        Add test and update utility functions for depth texture attachments. Update others to specify their 
+        loadOp and storeOp for all render pass attachments, as these are no longer provided by default by the implementation.
+
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/depth-enabled-triangle-strip-expected.html: Added.
+        * webgpu/depth-enabled-triangle-strip.html: Added.
+        * webgpu/js/basic-webgpu-functions.js:
+        (render):
+        * webgpu/js/webgpu-functions.js:
+        (createBasicDepthStateDescriptor):
+        (createBasicDepthTexture):
+        (beginBasicRenderPass):
+        (createBasicPipeline): Deleted.
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-passes.html:
+
 2019-02-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Fix flaky accessibility/loading-iframe-sends-notification.html

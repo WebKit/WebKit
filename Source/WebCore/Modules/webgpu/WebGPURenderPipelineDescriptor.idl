@@ -40,7 +40,7 @@ enum WebGPUPrimitiveTopology {
     WebGPUPipelineStageDescriptor fragmentStage;
 
     WebGPUPrimitiveTopology primitiveTopology;
-    GPUDepthStencilStateDescriptor depthStencilState;
+    GPUDepthStencilStateDescriptor? depthStencilState;
     WebGPUInputStateDescriptor inputState;
 /* To Be Implemented:
     sequence<WebGPUBlendStateDescriptor> blendStates;

@@ -27,8 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_PROTOCOL(MTLTexture);

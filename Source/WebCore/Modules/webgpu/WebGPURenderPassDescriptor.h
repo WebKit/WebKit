@@ -27,14 +27,29 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPURenderPassColorAttachmentDescriptor.h"
-
+#include "GPURenderPassDescriptor.h"
+#include "WebGPUTextureView.h"
+#include <wtf/Optional.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+struct GPURenderPassDescriptor;
+
+struct WebGPURenderPassColorAttachmentDescriptor : GPURenderPassColorAttachmentDescriptorBase {
+    RefPtr<WebGPUTextureView> attachment;
+};
+
+struct WebGPURenderPassDepthStencilAttachmentDescriptor : GPURenderPassDepthStencilAttachmentDescriptorBase {
+    RefPtr<WebGPUTextureView> attachment;
+};
+
 struct WebGPURenderPassDescriptor {
+    Optional<GPURenderPassDescriptor> validateAndConvertToGPUVersion() const;
+
     Vector<WebGPURenderPassColorAttachmentDescriptor> colorAttachments;
+    Optional<WebGPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
 };
 
 } // namespace WebCore
