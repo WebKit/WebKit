@@ -32,7 +32,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         super(timeline, extraArguments);
 
         this._recording = extraArguments.recording;
-        this._maxUsage = -Infinity;
 
         this.element.classList.add("cpu");
 
@@ -77,8 +76,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     reset()
     {
         super.reset();
-
-        this._maxUsage = -Infinity;
 
         this.clear();
     }
@@ -194,8 +191,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     {
         let cpuTimelineRecord = event.data.record;
         console.assert(cpuTimelineRecord instanceof WI.CPUTimelineRecord);
-
-        this._maxUsage = Math.max(this._maxUsage, cpuTimelineRecord.usage);
 
         if (cpuTimelineRecord.startTime >= this.startTime && cpuTimelineRecord.endTime <= this.endTime)
             this.needsLayout();
