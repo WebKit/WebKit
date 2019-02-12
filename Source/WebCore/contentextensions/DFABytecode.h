@@ -126,6 +126,7 @@ static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruc
     case DFABytecodeInstruction::Terminate:
         return sizeof(DFABytecodeInstruction);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
     
 } // namespace ContentExtensions    

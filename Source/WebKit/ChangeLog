@@ -1,3 +1,12 @@
+2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix build warnings after content extensions enablement
+        https://bugs.webkit.org/show_bug.cgi?id=193622
+        <rdar://problem/47982850>
+
+        * UIProcess/API/C/WKUserContentExtensionStoreRef.cpp:
+        (toResult):
+
 2019-02-12  Tim Horton  <timothy_horton@apple.com>
 
         Switching focus from a UITextField to an editable WKWebView causes the keyboard to dance

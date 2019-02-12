@@ -1,3 +1,15 @@
+2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix build warnings after content extensions enablement
+        https://bugs.webkit.org/show_bug.cgi?id=193622
+        <rdar://problem/47982850>
+
+        * contentextensions/DFABytecode.h:
+        (WebCore::ContentExtensions::instructionSizeWithArguments):
+        * contentextensions/DFABytecodeCompiler.h:
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::URLFilterParser::statusString):
+
 2019-02-12  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] DepthStencilAttachment implementation

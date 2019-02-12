@@ -68,6 +68,8 @@ static inline WKUserContentExtensionStoreResult toResult(const std::error_code& 
     case API::ContentRuleListStore::Error::RemoveFailed:
         return kWKUserContentExtensionStoreRemoveFailed;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 #endif
 

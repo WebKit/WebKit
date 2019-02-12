@@ -403,6 +403,8 @@ String URLFilterParser::statusString(ParseStatus status)
     case InvalidQuantifier:
         return "Arbitrary atom repetitions are not supported.";
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
     
 } // namespace ContentExtensions
