@@ -274,8 +274,12 @@ void CSSFontSelector::fontCacheInvalidated()
     dispatchInvalidationCallbacks();
 }
 
-static const AtomicString& resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
+static AtomicString resolveGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
+    auto platformResult = FontDescription::platformResolveGenericFamily(fontDescription.script(), fontDescription.locale(), familyName);
+    if (!platformResult.isNull())
+        return platformResult;
+
     if (!document)
         return familyName;
 

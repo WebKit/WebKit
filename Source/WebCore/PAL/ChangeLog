@@ -1,3 +1,13 @@
+2019-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Ask platform for generic font family mappings
+        https://bugs.webkit.org/show_bug.cgi?id=187723
+        <rdar://problem/41892438>
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2019-02-11  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Notify AVSystemController of our presenting PID before registering as a Now Playing app.
