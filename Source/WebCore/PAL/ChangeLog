@@ -1,3 +1,27 @@
+2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Sleep disabler code should inhibit idle when a "System" sleep disabler is requested
+        https://bugs.webkit.org/show_bug.cgi?id=194500
+
+        Reviewed by Carlos Garcia Campos.
+
+        There are three things wrong with the comment at the top of SleepDisablerGLib's constructor:
+
+        (1) Nowadays, GNOME suspends the computer automatically on inactivity, and we actually do
+            want to prevent that.
+
+        (2) Inhibiting idle does affect the autosuspend countdown. So the current code should
+            prevent automatic suspend, just not manual suspend. (I think I stand by my comment that
+            we do not want to inhibit normal suspend, since that would just be annoying.)
+
+        (3) I don't know why I thought HTMLMediaElement::shouldDisableSleep was suspicious.
+
+        Anyway, the behavior we want is to ignore the Type argument and just always inhibit idle.
+        That is, treat type=System the same way we current treat type=Display.
+
+        * pal/system/glib/SleepDisablerGLib.cpp:
+        (PAL::SleepDisablerGLib::SleepDisablerGLib):
+
 2019-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings

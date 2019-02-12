@@ -41,15 +41,13 @@ SleepDisablerGLib::SleepDisablerGLib(const char* reason, Type type)
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_reason(reason)
 {
-    // We don't support suspend ("System") inhibitors, only idle inhibitors.
-    // To get suspend inhibitors, we'd need to use the fancy GNOME
-    // SessionManager API, which requires registering as a client application,
-    // which is not practical from the web process. Secondly, because the only
-    // current use of a suspend inhibitor in WebKit,
-    // HTMLMediaElement::shouldDisableSleep, is suspicious. There's really no
-    // valid reason for WebKit to ever block suspend, only idle.
-    if (type != SleepDisabler::Type::Display)
-        return;
+    // We ignore Type because we always want to inhibit both screen lock and
+    // suspend, but only when idle. There is no reason for WebKit to ever block
+    // a user from manually suspending the computer, so inhibiting idle
+    // suffices. There's also probably no good reason for code taking a sleep
+    // disabler to differentiate between lock and suspend on our platform. If we
+    // ever need this distinction, which seems unlikely, then we'll need to
+    // audit all use of SleepDisabler.
 
     // First, try to use the ScreenSaver API.
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SESSION, static_cast<GDBusProxyFlags>(G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES | G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS),
