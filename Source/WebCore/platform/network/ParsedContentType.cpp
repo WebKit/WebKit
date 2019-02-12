@@ -32,13 +32,15 @@
 #include "config.h"
 #include "ParsedContentType.h"
 
+#include "HTTPParsers.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 static void skipSpaces(const String& input, unsigned& startIndex)
 {
-    while (startIndex < input.length() && input[startIndex] == ' ')
+    while (startIndex < input.length() && isHTTPSpace(input[startIndex]))
         ++startIndex;
 }
 
@@ -96,8 +98,11 @@ static Optional<SubstringRange> parseQuotedString(const String& input, unsigned&
     if (quotedStringEnd >= inputLength)
         return WTF::nullopt;
 
-    if (input[quotedStringEnd++] != '"' || quotedStringEnd >= inputLength)
-        return WTF::nullopt;
+    if (input[quotedStringEnd++] != '"' || quotedStringEnd >= inputLength) {
+        if (mode == Mode::Rfc2045)
+            return WTF::nullopt;
+        return SubstringRange(quotedStringStart, quotedStringEnd - quotedStringStart);
+    }
 
     bool lastCharacterWasBackslash = false;
     char currentCharacter;
@@ -114,7 +119,9 @@ static Optional<SubstringRange> parseQuotedString(const String& input, unsigned&
         if (lastCharacterWasBackslash)
             lastCharacterWasBackslash = false;
     }
-    return SubstringRange(quotedStringStart, quotedStringEnd - quotedStringStart - 1);
+    if (input[quotedStringEnd - 1] == '"')
+        return SubstringRange(quotedStringStart, quotedStringEnd - quotedStringStart - 1);
+    return SubstringRange(quotedStringStart, quotedStringEnd - quotedStringStart);
 }
 
 static String substringForRange(const String& string, const SubstringRange& range)
@@ -190,7 +197,7 @@ static bool containsNewline(UChar ch)
 
 bool ParsedContentType::parseContentType(Mode mode)
 {
-    if (m_contentType.find(containsNewline) != notFound)
+    if (mode == Mode::Rfc2045 && m_contentType.find(containsNewline) != notFound)
         return false;
     unsigned index = 0;
     unsigned contentTypeLength = m_contentType.length();
@@ -311,19 +318,19 @@ String ParsedContentType::charset() const
 
 String ParsedContentType::parameterValueForName(const String& name) const
 {
-    return m_parameters.get(name);
+    return m_parameterValues.get(name);
 }
 
 size_t ParsedContentType::parameterCount() const
 {
-    return m_parameters.size();
+    return m_parameterValues.size();
 }
 
 void ParsedContentType::setContentType(const SubstringRange& contentRange, Mode mode)
 {
     m_mimeType = substringForRange(m_contentType, contentRange).stripWhiteSpace();
     if (mode == Mode::MimeSniff)
-        m_mimeType.convertToASCIILowercase();
+        m_mimeType = m_mimeType.convertToASCIILowercase();
 }
 
 static bool isNonTokenCharacter(UChar ch)
@@ -338,12 +345,33 @@ static bool isNonQuotedStringTokenCharacter(UChar ch)
 
 void ParsedContentType::setContentTypeParameter(const String& keyName, const String& keyValue, Mode mode)
 {
+    String name = keyName;
     if (mode == Mode::MimeSniff) {
-        if (m_parameters.contains(keyName) || keyName.find(isNonTokenCharacter) != notFound || keyValue.find(isNonQuotedStringTokenCharacter) != notFound)
+        if (m_parameterValues.contains(keyName) || keyName.find(isNonTokenCharacter) != notFound || keyValue.find(isNonQuotedStringTokenCharacter) != notFound)
             return;
-        keyName.convertToASCIILowercase();
+        name = name.convertToASCIILowercase();
     }
-    m_parameters.set(keyName, keyValue);
+    m_parameterValues.set(name, keyValue);
+    m_parameterNames.append(name);
+}
+
+String ParsedContentType::serialize() const
+{
+    StringBuilder builder;
+    builder.append(m_mimeType);
+    for (auto& name : m_parameterNames) {
+        builder.append(';');
+        builder.append(name);
+        builder.append('=');
+        String value = m_parameterValues.get(name);
+        if (value.isEmpty() || value.find(isNonTokenCharacter) != notFound) {
+            builder.append('"');
+            builder.append(value);
+            builder.append('"');
+        } else
+            builder.append(value);
+    }
+    return builder.toString();
 }
 
 }

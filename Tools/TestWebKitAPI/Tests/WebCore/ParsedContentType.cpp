@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <WebCore/ParsedContentType.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -96,6 +97,150 @@ TEST(ParsedContentType, Rfc2045)
     EXPECT_FALSE(isValidContentType("text/plain;test=\"value", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=\"value\"foo", Mode::Rfc2045));
     EXPECT_FALSE(isValidContentType("text/plain;test=\"value\"foo;foo=bar", Mode::Rfc2045));
+}
+
+// The word "escape" here just means a format easy to read in test results.
+// It doesn't have to be a format suitable for other users or even one
+// that is completely unambiguous.
+static const char* escapeNonASCIIPrintableCharacters(StringView string)
+{
+    static char resultBuffer[100];
+    size_t i = 0;
+    auto append = [&i] (char character) {
+        if (i < sizeof(resultBuffer))
+            resultBuffer[i++] = character;
+    };
+    auto appendNibble = [append] (char nibble) {
+        if (nibble)
+            append(lowerNibbleToASCIIHexDigit(nibble));
+    };
+    auto appendLastNibble = [append] (char nibble) {
+        append(lowerNibbleToASCIIHexDigit(nibble));
+    };
+    for (auto character : string.codePoints()) {
+        if (isASCIIPrintable(character))
+            append(character);
+        else {
+            append('{');
+            for (unsigned i = 32 - 4; i; i -= 4)
+                appendNibble(character >> i);
+            appendLastNibble(character);
+            append('}');
+        }
+    }
+    if (i == sizeof(resultBuffer))
+        return "";
+    resultBuffer[i] = '\0';
+    return resultBuffer;
+}
+
+static const char* serializeIfValid(const String& input)
+{
+    if (Optional<ParsedContentType> parsedContentType = ParsedContentType::create(input))
+        return escapeNonASCIIPrintableCharacters(parsedContentType->serialize());
+    return "NOTVALID";
+}
+
+TEST(ParsedContentType, Serialize)
+{
+    EXPECT_STREQ(serializeIfValid(""), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(";"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/\0"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/ "), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/plain"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain\0"), "text/plain");
+    EXPECT_STREQ(serializeIfValid(" text/plain"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\ttext/plain"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\ntext/plain"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\rtext/plain"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\btext/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/plain "), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain\t"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain\n"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain\r"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain\b"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(" text/plain "), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\ttext/plain\t"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\ntext/plain\n"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\rtext/plain\r"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("\btext/plain\b"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/PLAIN"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text /plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/ plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text / plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("te xt/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/pla in"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\t/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/\tplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\t/\tplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("te\txt/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/pla\tin"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\n/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/\nplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\n/\nplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("te\nxt/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/pla\nin"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\r/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/\rplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text\r/\rplain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("te\rxt/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/pla\rin"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("†/†"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/\xD8\x88\x12\x34"), "NOTVALID");
+
+    EXPECT_STREQ(serializeIfValid("text/plain;"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain; test"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;\ttest"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;\ntest"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;\rtest"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;\btest"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test "), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\t"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\n"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\r"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\b"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test="), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;TEST=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=VALUE"), "text/plain;test=VALUE");
+    EXPECT_STREQ(serializeIfValid("text/plain; test=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;\ttest=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;\ntest=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;\rtest=value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;\btest=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;\0test=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test =value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\t=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\n=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\r=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test\b=value"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test= value"), "text/plain;test=\" value\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\tvalue"), "text/plain;test=\"{9}value\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\nvalue"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\rvalue"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\bvalue"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value "), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value\t"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value\n"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value\r"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value\b"), "text/plain");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"value\""), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"value"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\""), "text/plain;test=\"\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"value\"foo"), "text/plain;test=value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"value\"foo;foo=bar"), "text/plain;test=value;foo=bar");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"val\\ue\""), "text/plain;test=\"val\\ue\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"val\\\"ue\""), "text/plain;test=\"val\\\"ue\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test='value'"), "text/plain;test='value'");
+    EXPECT_STREQ(serializeIfValid("text/plain;test='value"), "text/plain;test='value");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=value'"), "text/plain;test=value'");
 }
 
 } // namespace TestWebKitAPI

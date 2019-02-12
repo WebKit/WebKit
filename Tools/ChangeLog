@@ -1,3 +1,18 @@
+2019-02-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement serializing in MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=193909
+
+        Reviewed by Darin Adler.
+
+        Add various tests involving upper case, non-ASCII, control/null characters,
+        various HTTP whitespace, single quotes and an unpaired surrogate.
+
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+        (TestWebKitAPI::escapeNonASCIIPrintableCharacters):
+        (TestWebKitAPI::serializeIfValid):
+        (TestWebKitAPI::TEST):
+
 2019-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings
