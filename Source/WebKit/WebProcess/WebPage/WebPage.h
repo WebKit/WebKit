@@ -1559,7 +1559,7 @@ private:
     
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
 
-    UniqueRef<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
+    std::unique_ptr<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
 
     RetainPtr<NSDictionary> m_dataDetectionContext;
 #endif

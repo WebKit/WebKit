@@ -360,7 +360,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
 #if PLATFORM(COCOA)
-    , m_viewGestureGeometryCollector(makeUniqueRef<ViewGestureGeometryCollector>(*this))
+    , m_viewGestureGeometryCollector(std::make_unique<ViewGestureGeometryCollector>(*this))
 #elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
 #endif
@@ -739,12 +739,6 @@ WebPage::~WebPage()
 {
     ASSERT(!m_page);
 
-    auto& webProcess = WebProcess::singleton();
-#if ENABLE(ASYNC_SCROLLING)
-    if (m_useAsyncScrolling)
-        webProcess.eventDispatcher().removeScrollingTreeForPage(this);
-#endif
-
     platformDetach();
     
     m_sandboxExtensionTracker.invalidate();
@@ -758,16 +752,6 @@ WebPage::~WebPage()
     if (m_footerBanner)
         m_footerBanner->detachFromPage();
 #endif // !PLATFORM(IOS_FAMILY)
-
-    webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
-
-    // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
-    webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
-    webProcess.removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
-    webProcess.removeMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID);
-#if ENABLE(FULLSCREEN_API)
-    webProcess.removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
-#endif
 
 #ifndef NDEBUG
     webPageCounter.decrement();
@@ -1304,6 +1288,23 @@ void WebPage::close()
 
     bool isRunningModal = m_isRunningModal;
     m_isRunningModal = false;
+
+    auto& webProcess = WebProcess::singleton();
+#if ENABLE(ASYNC_SCROLLING)
+    if (m_useAsyncScrolling)
+        webProcess.eventDispatcher().removeScrollingTreeForPage(this);
+#endif
+    webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
+    // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
+    webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::RemoteWebInspectorUI::messageReceiverName(), m_pageID);
+#if ENABLE(FULLSCREEN_API)
+    webProcess.removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
+#endif
+#if PLATFORM(COCOA)
+    m_viewGestureGeometryCollector = nullptr;
+#endif
 
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_pageID);
@@ -4180,7 +4181,8 @@ void WebPage::mainFrameDidLayout()
     }
 
 #if PLATFORM(COCOA)
-    m_viewGestureGeometryCollector->mainFrameDidLayout();
+    if (m_viewGestureGeometryCollector)
+        m_viewGestureGeometryCollector->mainFrameDidLayout();
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (FrameView* frameView = mainFrameView()) {
