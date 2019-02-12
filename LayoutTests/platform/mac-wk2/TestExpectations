@@ -763,8 +763,8 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 webkit.org/b/185962 media/video-play-require-user-gesture.html [ Pass Failure ]
 webkit.org/b/185962 media/video-play-audio-require-user-gesture.html [ Pass Failure ]
 
-webkit.org/b/185994 [ Debug ] fast/text/user-installed-fonts/shadow-family.html [ Pass ImageOnlyFailure ]
-webkit.org/b/185994 [ Debug ] fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ImageOnlyFailure ]
+webkit.org/b/185994 fast/text/user-installed-fonts/shadow-family.html [ Pass ImageOnlyFailure ]
+webkit.org/b/185994 fast/text/user-installed-fonts/shadow-postscript-family.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/25010307>
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePayError.html [ Pass ]
