@@ -253,6 +253,13 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         super.needsLayout();
     }
 
+    didLayoutSubtree()
+    {
+        super.didLayoutSubtree();
+
+        this.updateSelectedRecord();
+    }
+
     // TimelineRecordBar delegate
 
     timelineRecordBarClicked(timelineRecordBar)
