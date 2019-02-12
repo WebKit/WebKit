@@ -475,7 +475,6 @@ Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/wpt/beacon/contentextensions/ [ Skip ]
 
 http/tests/contentdispositionattachmentsandbox [ Skip ]
-http/tests/contentextensions [ Skip ]
 http/tests/contentfiltering [ Skip ]
 http/tests/download [ Skip ]
 http/tests/fileapi [ Skip ]
@@ -611,6 +610,9 @@ imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.
 
 # Font variations
 fast/text/variations [ Pass ]
+
+# Content Extensions
+http/tests/contentextensions [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
@@ -816,6 +818,35 @@ webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Fa
 webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+# Content extensions, the failures need up-to-date expectations.
+http/tests/contentextensions/basic-filter.html [ Failure ]
+http/tests/contentextensions/block-cookies-in-csp-report.php [ Failure ]
+http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html [ Timeout Failure ]
+http/tests/contentextensions/block-cookies-in-ping.html [ Failure ]
+http/tests/contentextensions/block-cookies-send.html [ Failure ]
+http/tests/contentextensions/block-csp-report.php [ Failure ]
+http/tests/contentextensions/block-everything-unless-domain-redirect.php [ Failure ]
+http/tests/contentextensions/block-image-load-in-onunload.html [ Timeout Failure ]
+http/tests/contentextensions/block-ping.html [ Failure ]
+http/tests/contentextensions/character-set-basic-support.html [ Failure ]
+http/tests/contentextensions/css-display-none.html [ Failure ]
+http/tests/contentextensions/domain-rules.html [ Failure ]
+http/tests/contentextensions/fetch-redirect-blocked.html [ Failure ]
+http/tests/contentextensions/filters-with-quantifiers-combined.html [ Failure ]
+http/tests/contentextensions/hide-on-csp-report.php [ Failure ]
+http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Failure ]
+http/tests/contentextensions/hide-on-ping.html [ Failure ]
+http/tests/contentextensions/injected-script-callback.html [ Failure ]
+http/tests/contentextensions/main-resource-redirect-blocked.php [ Failure ]
+http/tests/contentextensions/main-resource-redirect-error.html [ Failure ]
+http/tests/contentextensions/media-filtered.html [ Failure ]
+http/tests/contentextensions/plugin-doesnt-crash.html [ Timeout Failure ]
+http/tests/contentextensions/reload-without-contentextensions.html [ Failure ]
+http/tests/contentextensions/subresource-redirect-blocked.html [ Failure ]
+http/tests/contentextensions/text-track-blocked.html [ Failure ]
+http/tests/contentextensions/top-url.html [ Failure ]
+http/tests/contentextensions/whitelist.html [ Failure ]
 
 # Unknown
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
