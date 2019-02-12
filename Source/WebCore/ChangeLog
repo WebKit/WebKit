@@ -1,3 +1,11 @@
+2019-02-11  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; add a HAVE_CELESTIAL guard around Celestial framework usage.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary):
+
 2019-02-12  Antti Koivisto  <antti@apple.com>
 
         Crash in WebCore::ScrollingTree::updateTreeFromStateNode

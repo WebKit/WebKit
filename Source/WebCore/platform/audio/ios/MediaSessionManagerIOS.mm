@@ -52,9 +52,11 @@ SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionOptionKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *)
 
+#if HAVE(CELESTIAL)
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
 SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
 SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
+#endif
 
 #if HAVE(MEDIA_PLAYER) && !PLATFORM(WATCHOS)
 SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
@@ -177,6 +179,7 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 
 void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
 {
+#if HAVE(CELESTIAL)
     if (m_havePresentedApplicationPID)
         return;
     m_havePresentedApplicationPID = true;
@@ -188,6 +191,7 @@ void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
     [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(presentingApplicationPID()) forKey:getAVSystemController_PIDToInheritApplicationStateFrom() error:&error];
     if (error)
         WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
+#endif
 }
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
