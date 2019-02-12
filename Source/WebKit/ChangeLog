@@ -1,3 +1,19 @@
+2019-02-12  Tim Horton  <timothy_horton@apple.com>
+
+        Find on Page shouldn't zoom in on matches
+        https://bugs.webkit.org/show_bug.cgi?id=194557
+        <rdar://problem/42087017>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.messages.in:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::scrollToRect):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator):
+        Only scroll to reveal the find result, do not zoom in.
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow pages to trigger programmatic paste from script on iOS

@@ -106,15 +106,12 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
     m_findIndicatorOverlay->setNeedsDisplay();
 
     if (shouldAnimate) {
-        FloatRect visibleContentRect = m_webPage->mainFrameView()->unobscuredContentRectIncludingScrollbars();
-
         bool isReplaced;
         const VisibleSelection& visibleSelection = selectedFrame.selection().selection();
         FloatRect renderRect = visibleSelection.start().containerNode()->renderRect(&isReplaced);
-
         IntRect startRect = visibleSelection.visibleStart().absoluteCaretBounds();
 
-        m_webPage->send(Messages::SmartMagnificationController::Magnify(startRect.center(), renderRect, visibleContentRect, m_webPage->minimumPageScaleFactor(), m_webPage->maximumPageScaleFactor()));
+        m_webPage->send(Messages::SmartMagnificationController::ScrollToRect(startRect.center(), renderRect));
     }
 
     m_isShowingFindIndicator = true;

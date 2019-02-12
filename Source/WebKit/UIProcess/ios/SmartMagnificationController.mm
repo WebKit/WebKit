@@ -128,6 +128,11 @@ void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRe
     [m_contentView _zoomToRect:targetRect withOrigin:origin fitEntireRect:NO minimumScale:minimumScale maximumScale:maximumScale minimumScrollDistance:0];
 }
 
+void SmartMagnificationController::scrollToRect(FloatPoint origin, FloatRect targetRect)
+{
+    [m_contentView _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
