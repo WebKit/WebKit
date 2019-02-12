@@ -95,8 +95,8 @@ WI.Timeline = class Timeline extends WI.Object
 
     recordsInTimeRange(startTime, endTime, includeRecordBeforeStart)
     {
-        let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.timestamp);
-        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.timestamp);
+        let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.startTime);
+        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.startTime);
 
         // Include the record right before the start time.
         if (includeRecordBeforeStart && lowerIndex > 0)
