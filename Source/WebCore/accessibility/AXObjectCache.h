@@ -469,6 +469,8 @@ private:
     ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
     ListHashSet<Element*> m_deferredSelectedChildredChangedList;
+    ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildredChangedList;
+    ListHashSet<Node*> m_deferredChildrenChangedNodeList;
     HashMap<Element*, String> m_deferredTextFormControlValue;
     HashMap<Element*, QualifiedName> m_deferredAttributeChange;
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;

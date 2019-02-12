@@ -1,3 +1,17 @@
+2019-02-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AXObjectCache::childrenChanged shouldn't update layout or style during another style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=182280
+        <rdar://problem/37018386>
+
+        Reviewed by Alan Bujtas.
+
+        * accessibility/aria-hidden-update.html:
+        * accessibility/aria-hidden-updates-alldescendants.html:
+        * accessibility/image-load-on-delay.html:
+        * accessibility/mac/aria-hidden-changes-for-non-ignored-elements.html:
+        * accessibility/removed-anonymous-block-child-causes-crash.html:
+
 2019-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings

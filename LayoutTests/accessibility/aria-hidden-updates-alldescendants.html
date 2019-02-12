@@ -26,6 +26,7 @@
     description("This tests that if aria-hidden changes on an element, all it's existing children will update their children caches");
 
     if (window.accessibilityController) {
+          jsTestIsAsync = true;
           document.getElementById("main").focus();
           
           var main = accessibilityController.focusedElement;
@@ -37,12 +38,14 @@
           var group = document.getElementsByTagName('main')[0];
           var items = group.getElementsByTagName('div');          
           items[0].removeAttribute('aria-hidden');
-
-          // After removing aria-hidden, the new count should be 2.
-          shouldBe("main.childrenCount", "2");          
+          setTimeout(function() {
+              // After removing aria-hidden, the new count should be 2.
+              shouldBe("main.childrenCount", "2");          
           
-          // And most importantly, the DIV that was made non-hidden should have one child now.
-          shouldBe("main.childAtIndex(1).childrenCount", "1");
+              // And most importantly, the DIV that was made non-hidden should have one child now.
+              shouldBe("main.childAtIndex(1).childrenCount", "1");
+              finishJSTest();
+          }, 0);
     }
 
 </script>

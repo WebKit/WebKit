@@ -1786,6 +1786,10 @@ void AccessibilityObject::updateBackingStore()
         if (!document->view()->layoutContext().isInRenderTreeLayout() && !document->inRenderTreeUpdate() && !document->inStyleRecalc())
             document->updateLayoutIgnorePendingStylesheets();
     }
+
+    if (auto cache = axObjectCache())
+        cache->performDeferredCacheUpdate();
+    
     updateChildrenIfNecessary();
 }
 #endif

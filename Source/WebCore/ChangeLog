@@ -1,3 +1,31 @@
+2019-02-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AXObjectCache::childrenChanged shouldn't update layout or style during another style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=182280
+        <rdar://problem/37018386>
+
+        Reviewed by Alan Bujtas.
+
+        Remove the possibility that changing children calls back into updating layout by
+        handling children changes in a deferred manner.
+
+        This follows the same architecture as many other deferred changes, but also requires us to check deferred changes
+        in updateBackingStore, because things like aria-hidden changes won't trigger a layout, but will require us to update children.
+
+        A few tests had to be modified to no longer change the tree and then check the children immediately. 
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (convertToNSArray):
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+
 2019-02-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Ask platform for generic font family mappings

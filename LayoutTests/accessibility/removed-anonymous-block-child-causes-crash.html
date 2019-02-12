@@ -8,6 +8,8 @@
     }
 
     function queryIsEnabledOnDecendants(accessibilityObject) {
+        if (!accessibilityObject)
+            return;
         accessibilityObject.isEnabled
 
         var count = accessibilityObject.childrenCount;
