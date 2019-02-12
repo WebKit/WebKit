@@ -1,3 +1,28 @@
+2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Unsafe g_unsetenv() use in WebProcessPool::platformInitialize
+        https://bugs.webkit.org/show_bug.cgi?id=194370
+
+        Reviewed by Darin Adler.
+
+        It is incorrect to use g_unsetenv() here because it is MT-Unsafe. We know that it is
+        impossible and unreasonable to expect the application has not started other threads at this
+        point, and threads will be calling getenv(). WebKit itself has probably already started
+        threads of its own.
+
+        Fortunately, the remote inspector in the web process is already prepared to deal with
+        failure to connect to the inspector server, so we don't need to do anything except stop
+        messing with the environment.
+
+        Note these files are copies of each other. I'll merge them together in a follow-up patch.
+
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::WebProcessPool::platformInitialize):
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::WebProcessPool::platformInitialize):
+
 2019-02-08  Beth Dakin  <bdakin@apple.com>
 
         Ensure old binaries have old snapshotting behaviors

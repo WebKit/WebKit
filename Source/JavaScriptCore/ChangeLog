@@ -1,3 +1,19 @@
+2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Unsafe g_unsetenv() use in WebProcessPool::platformInitialize
+        https://bugs.webkit.org/show_bug.cgi?id=194370
+
+        Reviewed by Darin Adler.
+
+        Change a couple WTFLogAlways to use g_warning, for good measure. Of course this isn't
+        necessary, but it will make errors more visible.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::start):
+        (Inspector::dbusConnectionCallAsyncReadyCallback):
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::start):
+
 2019-02-12  Andy Estes  <aestes@apple.com>
 
         [iOSMac] Enable Parental Controls Content Filtering
