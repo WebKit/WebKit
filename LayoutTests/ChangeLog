@@ -1,3 +1,16 @@
+2019-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Fix flaky accessibility/loading-iframe-sends-notification.html
+        https://bugs.webkit.org/show_bug.cgi?id=194546
+
+        Reviewed by Zalan Bujtas.
+
+        This test was relying on timing between load events being sent and accessibility events being sent.
+        We don't need to do that, we can more directly test this interplay.
+
+        * accessibility/loading-iframe-sends-notification-expected.txt:
+        * accessibility/loading-iframe-sends-notification.html:
+
 2019-02-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed WPE gardening. Unskip content extensions tests after r241283

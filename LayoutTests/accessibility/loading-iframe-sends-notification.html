@@ -42,8 +42,6 @@
 
     function runTest()
     {
-        window.gotIframeNotification = false;
-
         if (window.accessibilityController) {
             window.root = accessibilityController.rootElement;
 
@@ -59,23 +57,15 @@
                     return;
 
                 debug("Got notification on iframe.");
-                gotIframeNotification = true;
 
                 // Check that the button within the iframe is now reachable from the root.
                 shouldBeTrue("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
+                accessibilityController.removeNotificationListener();
+                finishJSTest();
             });
         }
 
         window.iframeElement = document.getElementById("iframe");
-        iframeElement.addEventListener("load", function() {
-            window.setTimeout(function() {
-                shouldBeTrue("gotIframeNotification");
-                if (window.accessibilityController)
-                    accessibilityController.removeNotificationListener();
-
-                finishJSTest();
-            }, 10);
-        }, false);
 
         // Load content into the iframe. This will trigger the event
         // handler above, which will check that the accessibility tree
