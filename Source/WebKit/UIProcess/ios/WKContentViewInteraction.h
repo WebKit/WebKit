@@ -49,6 +49,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
@@ -313,6 +314,7 @@ struct WKAutoCorrectionData {
     BOOL _focusRequiresStrongPasswordAssistance;
 
     BOOL _hasSetUpInteractions;
+    CompletionHandler<void(bool)> _domPasteRequestHandler;
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
@@ -433,6 +435,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_accessibilityStoreSelection;
 - (void)_accessibilityClearSelection;
 - (WKFormInputSession *)_formInputSession;
+
+- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 
 @property (nonatomic, readonly) WebKit::InteractionInformationAtPosition currentPositionInformation;
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;

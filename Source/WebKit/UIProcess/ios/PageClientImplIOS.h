@@ -224,6 +224,8 @@ private:
     void requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&&) override;
 #endif
 
+    void requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&&) final;
+
 #if ENABLE(DATA_INTERACTION)
     void didPerformDragOperation(bool handled) override;
     void didHandleDragStartRequest(bool started) override;

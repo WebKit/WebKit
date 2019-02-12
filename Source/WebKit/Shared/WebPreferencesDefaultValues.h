@@ -242,3 +242,9 @@ bool defaultCustomPasteboardDataEnabled();
 #define DEFAULT_INPUT_TYPE_COLOR_ENABLED true
 #define DEFAULT_DATALIST_ELEMENT_ENABLED true
 #endif
+
+#if PLATFORM(IOS)
+#define DEFAULT_DOM_PASTE_ACCESS_REQUESTS_ENABLED true
+#else
+#define DEFAULT_DOM_PASTE_ACCESS_REQUESTS_ENABLED false
+#endif

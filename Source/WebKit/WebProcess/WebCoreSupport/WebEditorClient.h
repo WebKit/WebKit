@@ -89,6 +89,8 @@ private:
     void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
+    bool requestDOMPasteAccess() final;
+
     bool canCopyCut(WebCore::Frame*, bool defaultValue) const final;
     bool canPaste(WebCore::Frame*, bool defaultValue) const final;
     bool canUndo() const final;

@@ -175,6 +175,8 @@ public:
     bool hasHadUserInteraction() const { return m_hasHadUserInteraction; }
     void setHasHadUserInteraction() { m_hasHadUserInteraction = true; }
 
+    bool requestDOMPasteAccess();
+
 // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);

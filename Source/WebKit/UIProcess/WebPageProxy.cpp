@@ -5439,6 +5439,11 @@ void WebPageProxy::setNeedsPlainTextQuirk(bool needsPlainTextQuirk)
     m_needsPlainTextQuirk = needsPlainTextQuirk;
 }
 
+void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_pageClient->requestDOMPasteAccess(elementRect, WTFMove(completionHandler));
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)

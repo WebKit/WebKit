@@ -190,6 +190,8 @@ private:
     void registerRedoStep(UndoStep&) final;
     void clearUndoRedoOperations() final { }
 
+    bool requestDOMPasteAccess() final { return false; }
+
     bool canCopyCut(Frame*, bool defaultValue) const final { return defaultValue; }
     bool canPaste(Frame*, bool defaultValue) const final { return defaultValue; }
     bool canUndo() const final { return false; }

@@ -142,6 +142,8 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final { }
 
+    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&) final;
+
     // Members of PageClientImpl class
     DefaultUndoController m_undoController;
 

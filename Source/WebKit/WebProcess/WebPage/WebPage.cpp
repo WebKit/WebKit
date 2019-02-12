@@ -6424,6 +6424,15 @@ void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callba
     callback(wasGranted);
 }
 
+bool WebPage::requestDOMPasteAccess()
+{
+    bool granted = false;
+    if (!sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(rectForElementAtInteractionLocation()), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(granted)))
+        return false;
+
+    return granted;
+}
+
 void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
 {
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
@@ -6497,7 +6506,16 @@ void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const
 void WebPage::updateCurrentModifierState(OptionSet<PlatformEvent::Modifier> modifiers)
 {
     PlatformKeyboardEvent::setCurrentModifierState(modifiers);
-}    
+}
+
+#if !PLATFORM(IOS_FAMILY)
+
+WebCore::IntRect WebPage::rectForElementAtInteractionLocation() const
+{
+    return { };
+}
+
+#endif // !PLATFORM(IOS_FAMILY)
 
 } // namespace WebKit
 

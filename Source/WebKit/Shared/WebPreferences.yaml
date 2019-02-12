@@ -1534,6 +1534,13 @@ AdClickAttributionEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 
+DOMPasteAccessRequestsEnabled:
+  type: bool
+  defaultValue: DEFAULT_DOM_PASTE_ACCESS_REQUESTS_ENABLED
+  humanReadableName: "DOM Paste Access Requests"
+  humanReadableDescription: "Enable DOM Paste Access Requests"
+  category: internal
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

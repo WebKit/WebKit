@@ -465,6 +465,8 @@ public:
     virtual void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) = 0;
 #endif
 
+    virtual void requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&&) = 0;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }

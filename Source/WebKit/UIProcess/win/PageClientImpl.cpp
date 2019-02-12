@@ -357,4 +357,9 @@ HWND PageClientImpl::viewWidget()
     return m_view.window();
 }
 
+void PageClientImpl::requestDOMPasteAccess(const IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 } // namespace WebKit

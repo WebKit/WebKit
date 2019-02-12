@@ -95,6 +95,7 @@
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
+#include "UserGestureIndicator.h"
 #include "UserScript.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
@@ -657,6 +658,35 @@ bool Frame::selectionChangeCallbacksDisabled() const
     return m_selectionChangeCallbacksDisabled;
 }
 #endif // PLATFORM(IOS_FAMILY)
+
+bool Frame::requestDOMPasteAccess()
+{
+    if (m_settings->javaScriptCanAccessClipboard() && m_settings->DOMPasteAllowed())
+        return true;
+
+    if (!m_settings->domPasteAccessRequestsEnabled() || !m_doc)
+        return false;
+
+    auto gestureToken = UserGestureIndicator::currentUserGesture();
+    if (!gestureToken || !gestureToken->processingUserGesture())
+        return false;
+
+    switch (gestureToken->domPasteAccessPolicy()) {
+    case DOMPasteAccessPolicy::Granted:
+        return true;
+    case DOMPasteAccessPolicy::Denied:
+        return false;
+    case DOMPasteAccessPolicy::NotRequestedYet: {
+        auto* client = m_editor->client();
+        if (!client)
+            return false;
+
+        bool granted = client->requestDOMPasteAccess();
+        gestureToken->didRequestDOMPasteAccess(granted);
+        return granted;
+    }
+    }
+}
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {

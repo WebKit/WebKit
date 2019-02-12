@@ -740,7 +740,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
+    [center addObserver:self selector:@selector(_didHideMenu:) name:UIMenuControllerDidHideMenuNotification object:nil];
     [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
 
     _showingTextStyleOptions = NO;
@@ -886,6 +886,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(POINTER_EVENTS)
     [self _resetPanningPreventionFlags];
 #endif
+    [self _handleDOMPasteRequestWithResult:NO];
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -1143,8 +1144,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
     bool superDidResign = [super resignFirstResponder];
 
-    if (superDidResign)
+    if (superDidResign) {
+        [self _handleDOMPasteRequestWithResult:NO];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
+    }
 
     return superDidResign;
 }
@@ -1178,8 +1181,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
-    if (lastTouchEvent->type == UIWebTouchEventTouchBegin)
+    if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
+        [self _handleDOMPasteRequestWithResult:NO];
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+    }
 
 #if ENABLE(TOUCH_EVENTS)
     WebKit::NativeWebTouchEvent nativeWebTouchEvent { lastTouchEvent, gestureRecognizerModifierFlags(gestureRecognizer) };
@@ -1980,6 +1985,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_webView.configuration._textInteractionGesturesEnabled)
         return NO;
 
+    if (_domPasteRequestHandler)
+        return NO;
+
     if (_suppressSelectionAssistantReasons)
         return NO;
 
@@ -2397,7 +2405,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 #define FORWARD_ACTION_TO_WKWEBVIEW(_action) \
     - (void)_action:(id)sender \
     { \
+        SEL action = @selector(_action:);\
+        [self _willPerformAction:action sender:sender];\
         [_webView _action:sender]; \
+        [self _didPerformAction:action sender:sender];\
     }
 
 FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
@@ -2642,11 +2653,17 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
+    if (_domPasteRequestHandler)
+        return action == @selector(paste:);
+
     return [_webView canPerformAction:action withSender:sender];
 }
 
 - (BOOL)canPerformActionForWebView:(SEL)action withSender:(id)sender
 {
+    if (_domPasteRequestHandler)
+        return action == @selector(paste:);
+
     if (action == @selector(_nextAccessoryTab:))
         return hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.hasNextNode;
     if (action == @selector(_previousAccessoryTab:))
@@ -2793,10 +2810,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [super targetForAction:action withSender:sender];
 }
 
-- (void)_resetShowingTextStyle:(NSNotification *)notification
+- (void)_didHideMenu:(NSNotification *)notification
 {
     _showingTextStyleOptions = NO;
     [_textSelectionAssistant hideTextStyleOptions];
+    [self _handleDOMPasteRequestWithResult:NO];
 }
 
 - (void)_keyboardDidRequestDismissal:(NSNotification *)notification
@@ -2818,6 +2836,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)pasteForWebView:(id)sender
 {
+    if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:YES])
+        return;
+
     _page->executeEditCommand("paste"_s);
 }
 
@@ -2945,6 +2966,28 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)_accessibilityClearSelection
 {
     _page->storeSelectionForAccessibility(false);
+}
+
+- (BOOL)_handleDOMPasteRequestWithResult:(BOOL)allowPaste
+{
+    if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
+        [self hideGlobalMenuController];
+        pasteHandler(allowPaste);
+        return YES;
+    }
+    return NO;
+}
+
+- (void)_willPerformAction:(SEL)action sender:(id)sender
+{
+    if (action != @selector(paste:))
+        [self _handleDOMPasteRequestWithResult:NO];
+}
+
+- (void)_didPerformAction:(SEL)action sender:(id)sender
+{
+    if (action == @selector(paste:))
+        [self _handleDOMPasteRequestWithResult:NO];
 }
 
 // UIWKInteractionViewProtocol
@@ -4094,6 +4137,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
+    [self _handleDOMPasteRequestWithResult:NO];
+
     _keyWebEventHandler = makeBlockPtr(completionHandler);
     _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent));
 }
@@ -4791,6 +4836,47 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     _focusedElementInformation.inputMode = mode;
     [self reloadInputViews];
 #endif
+}
+
+- (void)showGlobalMenuControllerInRect:(CGRect)rect
+{
+    UIMenuController *controller = UIMenuController.sharedMenuController;
+#if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
+    [controller showMenuFromView:self rect:rect];
+#else
+    [controller setTargetRect:rect inView:self];
+    [controller setMenuVisible:YES animated:YES];
+#endif
+}
+
+- (void)hideGlobalMenuController
+{
+    UIMenuController *controller = UIMenuController.sharedMenuController;
+#if HAVE(MENU_CONTROLLER_SHOW_HIDE_API)
+    [controller hideMenuFromView:self];
+#else
+    [controller setMenuVisible:NO animated:YES];
+#endif
+}
+
+- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+{
+    if (auto existingCompletionHandler = std::exchange(_domPasteRequestHandler, WTFMove(completionHandler))) {
+        ASSERT_NOT_REACHED();
+        existingCompletionHandler(false);
+    }
+
+    WebCore::IntRect menuControllerRect = elementRect;
+
+    const CGFloat maximumElementWidth = 300;
+    const CGFloat maximumElementHeight = 120;
+    if (elementRect.isEmpty() || elementRect.width() > maximumElementWidth || elementRect.height() > maximumElementHeight) {
+        const CGFloat interactionLocationMargin = 10;
+        menuControllerRect = { WebCore::IntPoint(_lastInteractionLocation), { } };
+        menuControllerRect.inflate(interactionLocationMargin);
+    }
+
+    [self showGlobalMenuControllerInRect:menuControllerRect];
 }
 
 - (void)_didReceiveEditorStateUpdateAfterFocus

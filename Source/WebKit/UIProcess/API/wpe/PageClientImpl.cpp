@@ -389,4 +389,9 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& /* initialFrame
 
 #endif // ENABLE(FULLSCREEN_API)
 
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 } // namespace WebKit

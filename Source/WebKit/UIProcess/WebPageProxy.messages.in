@@ -254,6 +254,7 @@ messages -> WebPageProxy {
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
     SetNeedsHiddenContentEditableQuirk(bool needsHiddenContentEditableQuirk)
     SetNeedsPlainTextQuirk(bool needsPlainTextQuirk)
+    RequestDOMPasteAccess(WebCore::IntRect elementRect) -> (bool granted) Delayed
 
     # Find messages
     DidCountStringMatches(String string, uint32_t matchCount)

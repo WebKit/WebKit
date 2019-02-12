@@ -837,6 +837,11 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&& completionHandler)
+{
+    [m_contentView _requestDOMPasteAccessWithElementRect:elementRect completionHandler:WTFMove(completionHandler)];
+}
+
 #if HAVE(PENCILKIT)
 RetainPtr<WKDrawingView> PageClientImpl::createDrawingView(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
 {

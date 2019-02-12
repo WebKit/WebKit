@@ -908,8 +908,13 @@ static bool executePaste(Frame& frame, Event*, EditorCommandSource source, const
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
         frame.editor().paste();
-    } else
-        frame.editor().paste();
+        return true;
+    }
+
+    if (!frame.requestDOMPasteAccess())
+        return false;
+
+    frame.editor().paste();
     return true;
 }
 
@@ -934,8 +939,13 @@ static bool executePasteAndMatchStyle(Frame& frame, Event*, EditorCommandSource 
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
         frame.editor().pasteAsPlainText();
-    } else
-        frame.editor().pasteAsPlainText();
+        return true;
+    }
+
+    if (!frame.requestDOMPasteAccess())
+        return false;
+
+    frame.editor().pasteAsPlainText();
     return true;
 }
 
@@ -944,8 +954,13 @@ static bool executePasteAsPlainText(Frame& frame, Event*, EditorCommandSource so
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
         frame.editor().pasteAsPlainText();
-    } else
-        frame.editor().pasteAsPlainText();
+        return true;
+    }
+
+    if (!frame.requestDOMPasteAccess())
+        return false;
+
+    frame.editor().pasteAsPlainText();
     return true;
 }
 
@@ -954,8 +969,13 @@ static bool executePasteAsQuotation(Frame& frame, Event*, EditorCommandSource so
     if (source == CommandFromMenuOrKeyBinding) {
         UserTypingGestureIndicator typingGestureIndicator(frame);
         frame.editor().pasteAsQuotation();
-    } else
-        frame.editor().pasteAsQuotation();
+        return true;
+    }
+
+    if (!frame.requestDOMPasteAccess())
+        return false;
+
+    frame.editor().pasteAsQuotation();
     return true;
 }
 
@@ -1220,7 +1240,8 @@ static bool supportedPaste(Frame* frame)
     if (!frame)
         return false;
 
-    bool defaultValue = frame->settings().javaScriptCanAccessClipboard() && frame->settings().DOMPasteAllowed();
+    auto& settings = frame->settings();
+    bool defaultValue = (settings.javaScriptCanAccessClipboard() && settings.DOMPasteAllowed()) || settings.domPasteAccessRequestsEnabled();
 
     EditorClient* client = frame->editor().client();
     return client ? client->canPaste(frame, defaultValue) : defaultValue;

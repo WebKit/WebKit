@@ -144,6 +144,7 @@ private:
     void didFinishProcessingAllPendingMouseEvents() final { }
 
     IPC::Attachment hostFileDescriptor() final;
+    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&) final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 

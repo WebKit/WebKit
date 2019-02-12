@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DOMPasteAccessPolicy.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
@@ -63,6 +64,9 @@ public:
         m_destructionObservers.append(WTFMove(observer));
     }
 
+    DOMPasteAccessPolicy domPasteAccessPolicy() const { return m_domPasteAccessPolicy; }
+    void didRequestDOMPasteAccess(bool granted) { m_domPasteAccessPolicy = granted ? DOMPasteAccessPolicy::Granted : DOMPasteAccessPolicy::Denied; }
+
 private:
     UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType)
         : m_state(state)
@@ -73,6 +77,7 @@ private:
     ProcessingUserGestureState m_state = NotProcessingUserGesture;
     Vector<WTF::Function<void (UserGestureToken&)>> m_destructionObservers;
     UserGestureType m_gestureType;
+    DOMPasteAccessPolicy m_domPasteAccessPolicy { DOMPasteAccessPolicy::NotRequestedYet };
 };
 
 class UserGestureIndicator {

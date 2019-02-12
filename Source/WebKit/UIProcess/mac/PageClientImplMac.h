@@ -30,6 +30,7 @@
 #include "CorrectionPanel.h"
 #include "PageClientImplCocoa.h"
 #include "WebFullScreenManagerProxy.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 
 @class WKEditorUndoTarget;
@@ -214,6 +215,8 @@ private:
     void navigationGestureDidEnd() override;
     void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
     void didRemoveNavigationGestureSnapshot() override;
+
+    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&& completion) final { completion(false); }
 
     NSView *activeView() const;
     NSWindow *activeWindow() const;

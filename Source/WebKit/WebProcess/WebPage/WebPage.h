@@ -658,7 +658,6 @@ public:
     void setFocusedElementValue(const String&);
     void setFocusedElementValueAsNumber(double);
     void setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection);
-    WebCore::IntRect rectForElementAtInteractionLocation();
     void updateSelectionAppearance();
     void getSelectionContext(CallbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
@@ -1148,6 +1147,9 @@ public:
         cancelGesturesBlockedOnSynchronousReplies();
         return sendSync(WTFMove(message), WTFMove(reply), m_pageID, Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
     }
+
+    bool requestDOMPasteAccess();
+    WebCore::IntRect rectForElementAtInteractionLocation() const;
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);

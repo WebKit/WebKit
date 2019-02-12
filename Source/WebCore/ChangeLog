@@ -1,3 +1,59 @@
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow pages to trigger programmatic paste from script on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+        <rdar://problem/47808810>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for allowing script to trigger programmatic paste commands. Currently on macOS and iOS, the ability
+        to trigger programmatic paste (i.e. `document.execCommand('Paste');`) is disabled by default, such that
+        execCommand is simply a no-op that returns false. This policy is a privacy measure (common among other major
+        browsers) that prevents untrusted web content from sniffing content from the system pasteboard (even on user
+        interaction, since unintended user interaction occasionally happens as well!).
+
+        In order to make it possible for web pages to programmatically paste without opening the door to privacy and
+        security issues, we make paste commands triggered from bindings present platform UI on iOS, in the form of a
+        callout bar with the single option to paste. This UI is dismissed upon any user interaction; furthermore, any
+        user interaction short of explicitly triggering the "Paste" action subsequently prevents the page from executing
+        the paste (and causes execCommand to return false). However, if the paste action is chosen by the user, we
+        instead follow through with the programmatic paste command.
+
+        New tests to come in a followup patch.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMPasteAccessPolicy.h: Added.
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureToken::domPasteAccessPolicy const):
+        (WebCore::UserGestureToken::didRequestDOMPasteAccess):
+
+        Add helpers on UserGestureToken to update and query the current DOM paste access policy. The access policies are
+        "NotRequestedYet" (i.e. pending a response from the user), "Granted" (the user has granted DOM paste access to
+        the page), or "Denied" (the user has prevented the page from reading the contents of the clipboard). When DOM
+        paste access is granted or rejected, make this decision sticky until the end of the current user gesture.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executePaste):
+        (WebCore::executePasteAndMatchStyle):
+        (WebCore::executePasteAsPlainText):
+        (WebCore::executePasteAsQuotation):
+
+        When executing a paste command where the source is DOM bindings, request DOM paste if needed before proceeding
+        with the paste.
+
+        (WebCore::supportedPaste):
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::requestDOMPasteAccess):
+
+        Add a helper method that requests access to the clipboard on behalf of script when pasting.
+
+        * page/Frame.h:
+        * page/Settings.yaml:
+
+        Introduce a new WebCore setting, used to gate DOM paste access requests.
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove setDefersLoading infrastructure from WebKit2

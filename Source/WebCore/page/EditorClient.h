@@ -98,6 +98,8 @@ public:
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 
+    virtual bool requestDOMPasteAccess() = 0;
+
     // Notify an input method that a composition was voluntarily discarded by WebCore, so that it could clean up too.
     // This function is not called when a composition is closed per a request from an input method.
     virtual void discardedComposition(Frame*) = 0;

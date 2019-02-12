@@ -81,6 +81,7 @@ private:
     String replacementURLForResource(Ref<WebCore::SharedBuffer>&& resourceData, const String& mimeType) final;
 
     void setInsertionPasteboard(const String&) final;
+    bool requestDOMPasteAccess() final { return false; }
 
 #if USE(APPKIT)
     void uppercaseWord() final;

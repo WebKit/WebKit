@@ -1,3 +1,129 @@
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow pages to trigger programmatic paste from script on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+        <rdar://problem/47808810>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
+        Add an internal setting to enable or disable DOM paste access requests. This is on by default in iOS only
+        (excluding watchOS and Apple TV), and is additionally disabled on macOS.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+
+        Plumb DOM paste access requests from the web process (WebEditorClient) to the view (WKContentView). As per the
+        usual, this involves WebEditorClient, WebPage, WebPageProxy, PageClient and finally WKContentView.
+
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestDOMPasteAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Bail from any pending DOM paste access handler the moment we start handling touches on the web view, or if the
+        web view resigns first responder, or if the web process crashes.
+
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Reject text selection gestures while waiting for DOM paste access.
+
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
+        If we're handling a DOM paste, always return YES to allow the callout bar to show the "Paste" option.
+
+        (-[WKContentView _didHideMenu:]):
+
+        If the menu is programmatically hidden by the app while handling a DOM paste request, immediately reject the DOM
+        paste request.
+
+        (-[WKContentView pasteForWebView:]):
+
+        Adjust -pasteForWebView: on WKContentView to first check whether there's an outstanding DOM paste completion
+        handler to invoke, instead of telling the page to execute a paste command.
+
+        (-[WKContentView _handleDOMPasteRequestWithResult:]):
+
+        Add a helper to take and invoke the current DOM paste completion handler (if it exists) with the given result,
+        and then dismiss the shared callout bar. Returns whether or not the paste completion handler exists. Invoked
+        from various sources of user interaction or significant state changes (e.g. following a web process crash in
+        -cleanupInteraction).
+
+        (-[WKContentView _willPerformAction:sender:]):
+        (-[WKContentView _didPerformAction:sender:]):
+
+        Add hooks to detect when WKContentView is executing an editing action. This is to ensure that the page doesn't
+        get stuck in a bad state in the case where WKWebView has been subclassed, overrides `-paste:`, and does not
+        invoke the superclass method (which calls back into `-[WKContentView pasteForWebView:]`). There are a few
+        possibilities here:
+        1. WKWebView's `-paste:` action is not overridden. In this case, we will call back into `-pasteForWebView:`,
+           which will notice that we have a pending paste completion handler and invoke it.
+        2. WKWebView's `-paste:` action is overridden and does not call back into the content view. In this case, we
+           will invoke the paste completion handler in `-_didPerformAction:sender:`.
+        3. WKWebView's `-canPerformAction:withSender:` is overridden to include additional actions. In this case, we may
+           get a call to invoke a different action selector while waiting for a potential paste action. If this happens,
+           prevent the DOM paste in `-_willPerformAction:sender:` prior to handling the other action.
+
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+
+        Dismiss DOM paste UI upon handling any key event.
+
+        (-[WKContentView showGlobalMenuControllerInRect:]):
+        (-[WKContentView hideGlobalMenuController]):
+
+        Helper methods to present and dismiss the global UIMenuController, that accounts for available platform APIs for
+        presenting or dismissing the menu controller on iOS.
+
+        (-[WKContentView _requestDOMPasteAccessWithElementRect:completionHandler:]):
+
+        Attempt to find a good target presentation rect when showing the callout menu. First, we will try to use the
+        rect of the element the user has interacted with when triggering the paste. If such an element is too large or
+        does not exist, we fall back to presenting the callout menu near the user's last touch location (with a small
+        amount of margin, such that the action doesn't overlap with the user's finger, stylus, etc.).
+
+        (-[WKContentView _resetShowingTextStyle:]): Deleted.
+
+        Rename this to `-_didHideMenu:`.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/win/PageClientImpl.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestDOMPasteAccess):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestDOMPasteAccess):
+
+        Add more plumbing and method stubs.
+
+        (WebKit::WebPage::updateCurrentModifierState):
+        (WebKit::WebPage::rectForElementAtInteractionLocation const):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rectForElementAtInteractionLocation const):
+        (WebKit::WebPage::rectForElementAtInteractionLocation): Deleted.
+
+        Mark this method as const, add a platform-agnostic stub, and adopt it for the purposes of determining where to
+        position the callout bar when pasting.
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove setDefersLoading infrastructure from WebKit2

@@ -514,4 +514,9 @@ bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(
 }
 #endif
 
+void PageClientImpl::requestDOMPasteAccess(const IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(false);
+}
+
 } // namespace WebKit

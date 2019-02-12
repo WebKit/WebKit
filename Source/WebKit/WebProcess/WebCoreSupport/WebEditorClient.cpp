@@ -359,6 +359,11 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
 }
 
+bool WebEditorClient::requestDOMPasteAccess()
+{
+    return m_page->requestDOMPasteAccess();
+}
+
 #if PLATFORM(WIN)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {

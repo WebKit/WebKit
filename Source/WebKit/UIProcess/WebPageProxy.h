@@ -1659,6 +1659,8 @@ private:
     void setNeedsHiddenContentEditableQuirk(bool);
     void setNeedsPlainTextQuirk(bool);
 
+    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&);
+
     // Back/Forward list management
     void backForwardAddItem(BackForwardListItemState&&);
     void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);

@@ -511,7 +511,7 @@ void WebPage::advanceToNextMisspelling(bool)
     notImplemented();
 }
 
-IntRect WebPage::rectForElementAtInteractionLocation()
+IntRect WebPage::rectForElementAtInteractionLocation() const
 {
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_lastInteractionLocation, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent);
     Node* hitNode = result.innerNode();
