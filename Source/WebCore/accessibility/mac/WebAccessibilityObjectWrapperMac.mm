@@ -1609,7 +1609,7 @@ IGNORE_WARNINGS_END
     else if (m_object->isTextControl())
         objectAttributes = textAttrs;
     
-    else if (m_object->isLink() || m_object->isImage())
+    else if (_axBackingObject->isLink() || _axBackingObject->isImage())
         objectAttributes = anchorAttrs;
     
     else if (is<AccessibilityTable>(*m_object) && downcast<AccessibilityTable>(*m_object).isExposableThroughAccessibility())
@@ -1802,15 +1802,47 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [NSNumber numberWithFloat:screenRect.height()];
 }
 
+- (size_t)childrenVectorSize
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (_AXUIElementRequestServicedBySecondaryAXThread())
+        return self.isolatedTreeNode->children().size();
+#endif
+    
+    return m_object->children().size();
+}
+
+- (NSArray<WebAccessibilityObjectWrapper *> *)childrenVectorArray
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (_AXUIElementRequestServicedBySecondaryAXThread()) {
+        auto treeNode = self.isolatedTreeNode;
+        auto nodeChildren = treeNode->children();
+        Vector<RefPtr<AXIsolatedTreeNode>> children;
+        children.reserveInitialCapacity(nodeChildren.size());
+        auto tree = treeNode->tree();
+        for (auto childID : nodeChildren)
+            children.uncheckedAppend(tree->nodeForID(child));
+        return (NSArray *)convertToNSArray(children);
+    }
+#endif
+    return (NSArray *)convertToNSArray(m_object->children());
+}
+
 - (NSValue *)position
 {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (_AXUIElementRequestServicedBySecondaryAXThread())
+        return [NSValue valueWithPoint:(NSPoint)_axBackingObject->relativeFrame().location()];
+#endif
+        
     auto rect = snappedIntRect(m_object->elementRect());
     
     // The Cocoa accessibility API wants the lower-left corner.
     auto floatPoint = FloatPoint(rect.x(), rect.maxY());
 
     auto floatRect = FloatRect(floatPoint, FloatSize());
-    CGPoint cgPoint = [self convertRectToSpace:floatRect space:ScreenSpace].origin;
+    CGPoint cgPoint = [self convertRectToSpace:floatRect space:AccessibilityConversionSpace::Screen].origin;
     return [NSValue valueWithPoint:NSPointFromCGPoint(cgPoint)];
 }
 
@@ -2029,7 +2061,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return NSAccessibilityDecrementArrowSubrole;
     }
     
-    if (m_object->isFileUploadButton())
+    if (_axBackingObject->isFileUploadButton())
         return @"AXFileUploadButton";
     
     if (m_object->isTreeItem())
@@ -2309,7 +2341,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
     
-    if (m_object->isFileUploadButton())
+    if (_axBackingObject->isFileUploadButton())
         return AXFileUploadButtonText();
     
     // Only returning for DL (not UL or OL) because description changed with HTML5 from 'definition list' to
@@ -2429,16 +2461,16 @@ IGNORE_WARNINGS_END
             return scrollViewParent;
         
         // Tree item (changed to AXRows) can only report the tree (AXOutline) as its parent.
-        if (m_object->isTreeItem()) {
-            AccessibilityObject* parent = m_object->parentObjectUnignored();
+        if (_axBackingObject->isTreeItem()) {
+            auto parent = _axBackingObject->parentObjectInterfaceUnignored();
             while (parent) {
                 if (parent->isTree())
                     return parent->wrapper();
-                parent = parent->parentObjectUnignored();
+                parent = parent->parentObjectInterfaceUnignored();
             }
         }
         
-        AccessibilityObject* parent = m_object->parentObjectUnignored();
+        auto parent = _axBackingObject->parentObjectInterfaceUnignored();
         if (!parent)
             return nil;
         
@@ -2451,7 +2483,7 @@ IGNORE_WARNINGS_END
     }
     
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
-        if (m_object->children().isEmpty()) {
+        if (!self.childrenVectorSize) {
             NSArray* children = [self renderWidgetChildren];
             if (children != nil)
                 return children;
@@ -2466,17 +2498,17 @@ IGNORE_WARNINGS_END
         if (m_object->isTreeItem()) {
             AccessibilityObject::AccessibilityChildrenVector contentCopy;
             m_object->ariaTreeItemContent(contentCopy);
-            return convertToNSArray(contentCopy);
+            return (NSArray *)convertToNSArray(contentCopy);
         }
         
-        return convertToNSArray(m_object->children());
+        return self.childrenVectorArray;
     }
     
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
         if (m_object->canHaveSelectedChildren()) {
             AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
             m_object->selectedChildren(selectedChildrenCopy);
-            return convertToNSArray(selectedChildrenCopy);
+            return (NSArray *)convertToNSArray(selectedChildrenCopy);
         }
         return nil;
     }
@@ -2485,7 +2517,7 @@ IGNORE_WARNINGS_END
         if (m_object->isListBox()) {
             AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
             m_object->visibleChildren(visibleChildrenCopy);
-            return convertToNSArray(visibleChildrenCopy);
+            return (NSArray *)convertToNSArray(visibleChildrenCopy);
         }
         else if (m_object->isList())
             return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
@@ -2498,7 +2530,7 @@ IGNORE_WARNINGS_END
         if ([attributeName isEqualToString:@"AXLinkUIElements"]) {
             AccessibilityObject::AccessibilityChildrenVector links;
             downcast<AccessibilityRenderObject>(*m_object).getDocumentLinks(links);
-            return convertToNSArray(links);
+            return (NSArray *)convertToNSArray(links);
         }
         if ([attributeName isEqualToString:@"AXLoaded"])
             return [NSNumber numberWithBool:m_object->isLoaded()];
@@ -2543,7 +2575,7 @@ IGNORE_WARNINGS_END
             if (m_object->isPasswordField() || m_object->selectionEnd() > 0)
                 return nil;
             
-            AccessibilityObject* focusedObject = m_object->focusedUIElement();
+            auto focusedObject = downcast<AccessibilityObject>(m_object->focusedUIElement());
             if (focusedObject != m_object)
                 return nil;
             
@@ -2716,56 +2748,60 @@ IGNORE_WARNINGS_END
         if (m_object->isTabList()) {
             AccessibilityObject::AccessibilityChildrenVector tabsChildren;
             m_object->tabChildren(tabsChildren);
-            return convertToNSArray(tabsChildren);
+            return (NSArray *)convertToNSArray(tabsChildren);
         }
     }
     
     if ([attributeName isEqualToString:NSAccessibilityContentsAttribute]) {
         // The contents of a tab list are all the children except the tabs.
         if (m_object->isTabList()) {
-            const auto& children = m_object->children();
-            AccessibilityObject::AccessibilityChildrenVector tabsChildren;
-            m_object->tabChildren(tabsChildren);
-            
-            AccessibilityObject::AccessibilityChildrenVector contents;
-            unsigned childrenSize = children.size();
-            for (unsigned k = 0; k < childrenSize; ++k) {
-                if (tabsChildren.find(children[k]) == WTF::notFound)
-                    contents.append(children[k]);
+            auto children = self.childrenVectorArray;
+            AccessibilityObject::AccessibilityChildrenVector tabs;
+            m_object->tabChildren(tabs);
+            auto tabsChildren = (NSArray *)convertToNSArray(tabs);
+
+            NSMutableArray *contents = [NSMutableArray array];
+            for (id childWrapper in children) {
+                if ([tabsChildren containsObject:childWrapper])
+                    [contents addObject:childWrapper];
             }
-            return convertToNSArray(contents);
+            return contents;
         } else if (m_object->isScrollView()) {
             // A scrollView's contents are everything except the scroll bars.
-            AccessibilityObject::AccessibilityChildrenVector contents;
-            for (const auto& child : m_object->children()) {
-                if (!child->isScrollbar())
-                    contents.append(child);
+            auto children = self.childrenVectorArray;
+            NSMutableArray *contents = [NSMutableArray array];
+
+            for (WebAccessibilityObjectWrapper *childWrapper in children) {
+                if (auto backingObject = [childWrapper axBackingObject]) {
+                    if (!backingObject->isScrollbar())
+                        [contents addObject:childWrapper];
+                }
             }
-            return convertToNSArray(contents);
+            return contents;
         }
     }
     
     if (is<AccessibilityTable>(*m_object) && downcast<AccessibilityTable>(*m_object).isExposableThroughAccessibility()) {
         auto& table = downcast<AccessibilityTable>(*m_object);
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute])
-            return convertToNSArray(table.rows());
+            return (NSArray *)convertToNSArray(table.rows());
         
         if ([attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector visibleRows;
             table.visibleRows(visibleRows);
-            return convertToNSArray(visibleRows);
+            return (NSArray *)convertToNSArray(visibleRows);
         }
         
         // TODO: distinguish between visible and non-visible columns
         if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute]) {
-            return convertToNSArray(table.columns());
+            return (NSArray *)convertToNSArray(table.columns());
         }
         
         if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
             m_object->selectedChildren(selectedChildrenCopy);
-            return convertToNSArray(selectedChildrenCopy);
+            return (NSArray *)convertToNSArray(selectedChildrenCopy);
         }
         
         // HTML tables don't support these
@@ -2776,7 +2812,7 @@ IGNORE_WARNINGS_END
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
             table.columnHeaders(columnHeaders);
-            return convertToNSArray(columnHeaders);
+            return (NSArray *)convertToNSArray(columnHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
@@ -2789,13 +2825,13 @@ IGNORE_WARNINGS_END
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowHeaders;
             table.rowHeaders(rowHeaders);
-            return convertToNSArray(rowHeaders);
+            return (NSArray *)convertToNSArray(rowHeaders);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityVisibleCellsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector cells;
             table.cells(cells);
-            return convertToNSArray(cells);
+            return (NSArray *)convertToNSArray(cells);
         }
         
         if ([attributeName isEqualToString:NSAccessibilityColumnCountAttribute])
@@ -2819,7 +2855,7 @@ IGNORE_WARNINGS_END
         // rows attribute for a column is the list of all the elements in that column at each row
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] ||
             [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
-            return convertToNSArray(column.children());
+            return (NSArray *)convertToNSArray(column.children());
         }
         if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
             AccessibilityObject* header = column.headerObject();
@@ -2844,12 +2880,12 @@ IGNORE_WARNINGS_END
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector columnHeaders;
             cell.columnHeaders(columnHeaders);
-            return convertToNSArray(columnHeaders);
+            return (NSArray *)convertToNSArray(columnHeaders);
         }
         if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowHeaders;
             cell.rowHeaders(rowHeaders);
-            return convertToNSArray(rowHeaders);
+            return (NSArray *)convertToNSArray(rowHeaders);
         }
         if ([attributeName isEqualToString:NSAccessibilityARIAColumnIndexAttribute])
             return @(cell.axColumnIndex());
@@ -2862,12 +2898,12 @@ IGNORE_WARNINGS_END
         if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
             m_object->selectedChildren(selectedChildrenCopy);
-            return convertToNSArray(selectedChildrenCopy);
+            return (NSArray *)convertToNSArray(selectedChildrenCopy);
         }
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             m_object->ariaTreeRows(rowsCopy);
-            return convertToNSArray(rowsCopy);
+            return (NSArray *)convertToNSArray(rowsCopy);
         }
         
         // TreeRoles do not support columns, but Mac AX expects to be able to ask about columns at the least.
@@ -2905,11 +2941,11 @@ IGNORE_WARNINGS_END
         if (m_object->isTreeItem()) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             m_object->ariaTreeItemDisclosedRows(rowsCopy);
-            return convertToNSArray(rowsCopy);
+            return (NSArray *)convertToNSArray(rowsCopy);
         } else if (is<AccessibilityARIAGridRow>(*m_object)) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             downcast<AccessibilityARIAGridRow>(*m_object).disclosedRows(rowsCopy);
-            return convertToNSArray(rowsCopy);
+            return (NSArray *)convertToNSArray(rowsCopy);
         }
     }
     
@@ -2965,7 +3001,7 @@ IGNORE_WARNINGS_END
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
         m_object->linkedUIElements(linkedUIElements);
-        return convertToNSArray(linkedUIElements);
+        return (NSArray *)convertToNSArray(linkedUIElements);
     }
     
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
@@ -3046,7 +3082,7 @@ IGNORE_WARNINGS_END
     if ([attributeName isEqualToString:NSAccessibilityOwnsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector ariaOwns;
         m_object->ariaOwnsElements(ariaOwns);
-        return convertToNSArray(ariaOwns);
+        return (NSArray *)convertToNSArray(ariaOwns);
     }
     
     if ([attributeName isEqualToString:NSAccessibilityARIAPosInSetAttribute])
@@ -3188,18 +3224,16 @@ IGNORE_WARNINGS_END
     if ([attributeName isEqualToString:@"AXDetailsElements"]) {
         AccessibilityObject::AccessibilityChildrenVector details;
         m_object->ariaDetailsElements(details);
-        return convertToNSArray(details);
+        return (NSArray *)convertToNSArray(details);
     }
 
-    if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute]) {
-        auto rect = FloatRect(snappedIntRect(m_object->elementRect()));
-        return [NSValue valueWithRect:NSRectFromCGRect([self convertRectToSpace:rect space:PageSpace])];
-    }
-    
+    if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute])
+        return [NSValue valueWithRect:NSRectFromCGRect(_axBackingObject->relativeFrame())];
+
     if ([attributeName isEqualToString:@"AXErrorMessageElements"]) {
         AccessibilityObject::AccessibilityChildrenVector errorMessages;
         m_object->ariaErrorMessageElements(errorMessages);
-        return convertToNSArray(errorMessages);
+        return (NSArray *)convertToNSArray(errorMessages);
     }
 
     // Multi-selectable
@@ -3223,7 +3257,7 @@ IGNORE_WARNINGS_END
     if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector ariaControls;
         m_object->ariaControlsElements(ariaControls);
-        return convertToNSArray(ariaControls);
+        return (NSArray *)convertToNSArray(ariaControls);
     }
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
@@ -3259,12 +3293,11 @@ IGNORE_WARNINGS_END
     if (![self updateObjectBackingStore])
         return nil;
     
-    RefPtr<AccessibilityObject> focusedObj = m_object->focusedUIElement();
-    
-    if (!focusedObj)
+    auto focusedObject = _axBackingObject->focusedUIElement();
+    if (!focusedObject)
         return nil;
     
-    return focusedObj->wrapper();
+    return focusedObject->wrapper();
 }
 
 - (id)accessibilityHitTest:(NSPoint)point
@@ -3272,8 +3305,8 @@ IGNORE_WARNINGS_END
     if (![self updateObjectBackingStore])
         return nil;
     
-    m_object->updateChildrenIfNecessary();
-    RefPtr<AccessibilityObject> axObject = m_object->accessibilityHitTest(IntPoint(point));
+    _axBackingObject->updateChildrenIfNecessary();
+    AccessibilityObjectInterface* axObject = _axBackingObject->accessibilityHitTest(IntPoint(point));
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
             return [axObject->wrapper() attachmentView];
@@ -3344,9 +3377,9 @@ IGNORE_WARNINGS_END
     if (![self updateObjectBackingStore])
         return YES;
     
-    if (m_object->isAttachment())
+    if (_axBackingObject->isAttachment())
         return [[self attachmentView] accessibilityIsIgnored];
-    return m_object->accessibilityIsIgnored();
+    return _axBackingObject->accessibilityIsIgnored();
 }
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
@@ -3959,7 +3992,7 @@ IGNORE_WARNINGS_END
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         AccessibilityObject::AccessibilityChildrenVector results;
         m_object->findMatchingObjects(&criteria, results);
-        return convertToNSArray(results);
+        return (NSArray *)convertToNSArray(results);
     }
     
     if ([attribute isEqualToString:NSAccessibilityEndTextMarkerForBoundsParameterizedAttribute]) {
@@ -4317,16 +4350,19 @@ IGNORE_WARNINGS_END
     if (m_object->isTree())
         return [super accessibilityIndexOfChild:child];
     
-    const auto& children = m_object->children();
-    
-    if (children.isEmpty())
+    NSArray *children = self.childrenVectorArray;
+    if (!children.count)
         return [[self renderWidgetChildren] indexOfObject:child];
     
-    unsigned count = children.size();
-    for (unsigned k = 0; k < count; ++k) {
-        WebAccessibilityObjectWrapper* wrapper = children[k]->wrapper();
-        if (wrapper == child || (children[k]->isAttachment() && [wrapper attachmentView] == child))
-            return k;
+    NSUInteger count = [children count];
+    for (NSUInteger i = 0; i < count; ++i) {
+        WebAccessibilityObjectWrapper *wrapper = children[i];
+        auto backingObject = [wrapper axBackingObject];
+        if (!backingObject)
+            continue;
+
+        if (wrapper == child || (backingObject->isAttachment() && [wrapper attachmentView] == child))
+            return i;
     }
     
     return NSNotFound;
@@ -4344,11 +4380,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (m_object->isTree() || m_object->isTreeItem())
             return [[self accessibilityAttributeValue:NSAccessibilityChildrenAttribute] count];
         
-        const auto& children = m_object->children();
-        if (children.isEmpty())
+        auto childrenSize = self.childrenVectorSize;
+        if (!childrenSize)
             return [[self renderWidgetChildren] count];
         
-        return children.size();
+        return childrenSize;
     }
     
     return [super accessibilityArrayAttributeCount:attribute];
@@ -4361,7 +4397,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
     
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
-        if (m_object->children().isEmpty()) {
+        if (!self.childrenVectorSize) {
             NSArray *children = [self renderWidgetChildren];
             if (!children)
                 return nil;
@@ -4372,14 +4408,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             
             NSUInteger arrayLength = std::min(childCount - index, maxCount);
             return [children subarrayWithRange:NSMakeRange(index, arrayLength)];
-        } else if (m_object->isTree() || m_object->isTreeItem()) {
+        }
+
+        if (_axBackingObject->isTree() || _axBackingObject->isTreeItem()) {
             // Tree objects return their rows as their children & tree items return their contents sans rows.
             // We can use the original method in this case.
             return [super accessibilityArrayAttributeValues:attribute index:index maxCount:maxCount];
         }
         
-        const auto& children = m_object->children();
-        unsigned childCount = children.size();
+        auto children = self.childrenVectorArray;
+        unsigned childCount = [children count];
         if (index >= childCount)
             return nil;
         
@@ -4387,14 +4425,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         
         NSMutableArray *subarray = [NSMutableArray arrayWithCapacity:available];
         for (unsigned added = 0; added < available; ++index, ++added) {
-            WebAccessibilityObjectWrapper* wrapper = children[index]->wrapper();
-            if (wrapper) {
-                // The attachment view should be returned, otherwise AX palindrome errors occur.
-                if (children[index]->isAttachment() && [wrapper attachmentView])
-                    [subarray addObject:[wrapper attachmentView]];
-                else
-                    [subarray addObject:wrapper];
-            }
+            WebAccessibilityObjectWrapper* wrapper = children[index];
+            // The attachment view should be returned, otherwise AX palindrome errors occur.
+            BOOL isAttachment = [wrapper isKindOfClass:[WebAccessibilityObjectWrapper class]] && wrapper.axBackingObject->isAttachment() && [wrapper attachmentView];
+            [subarray addObject:isAttachment ? [wrapper attachmentView] : wrapper];
         }
         
         return subarray;

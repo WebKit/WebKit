@@ -501,7 +501,7 @@ inline void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectC
 inline void AXComputedObjectAttributeCache::setIgnored(AXID, AccessibilityObjectInclusion) { }
 inline AXObjectCache::AXObjectCache(Document& document) : m_document(document), m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired), m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired), m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired), m_focusModalNodeTimer(*this, &AXObjectCache::focusModalNodeTimerFired), m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired) { }
 inline AXObjectCache::~AXObjectCache() { }
-inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
+inline AccessibilityObjectInterface* AXObjectCache::focusedUIElementForPage(const Page*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }

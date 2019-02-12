@@ -3186,7 +3186,6 @@ IntRect WebPage::rootViewToScreen(const IntRect& rect)
     return screenRect;
 }
     
-#if PLATFORM(IOS_FAMILY)
 IntPoint WebPage::accessibilityScreenToRootView(const IntPoint& point)
 {
     IntPoint windowPoint;
@@ -3200,7 +3199,6 @@ IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
     sendSync(Messages::WebPageProxy::RootViewToAccessibilityScreen(rect), Messages::WebPageProxy::RootViewToAccessibilityScreen::Reply(screenRect));
     return screenRect;
 }
-#endif
 
 KeyboardUIMode WebPage::keyboardUIMode()
 {

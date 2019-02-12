@@ -34,6 +34,8 @@
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
 #include "AccessibleSetValueEvent.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -480,6 +482,39 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) co
             break;
     }
     return previous;
+}
+    
+FloatRect AccessibilityObject::convertFrameToSpace(const FloatRect& frameRect, AccessibilityConversionSpace conversionSpace) const
+{
+    ASSERT(isMainThread());
+    
+    // Find the appropriate scroll view to use to convert the contents to the window.
+    const auto parentAccessibilityScrollView = ancestorAccessibilityScrollView(false /* includeSelf */);
+    auto* parentScrollView = parentAccessibilityScrollView ? parentAccessibilityScrollView->scrollView() : nullptr;
+
+    auto snappedFrameRect = snappedIntRect(IntRect(frameRect));
+    if (parentScrollView)
+        snappedFrameRect = parentScrollView->contentsToRootView(snappedFrameRect);
+    
+    if (conversionSpace == AccessibilityConversionSpace::Screen) {
+        auto page = this->page();
+        if (!page)
+            return snappedFrameRect;
+
+        // If we have an empty chrome client (like SVG) then we should use the page
+        // of the scroll view parent to help us get to the screen rect.
+        if (parentAccessibilityScrollView && page->chrome().client().isEmptyChromeClient())
+            page = parentAccessibilityScrollView->page();
+        
+        snappedFrameRect = page->chrome().rootViewToAccessibilityScreen(snappedFrameRect);
+    }
+    
+    return snappedFrameRect;
+}
+    
+FloatRect AccessibilityObject::relativeFrame() const
+{
+    return convertFrameToSpace(elementRect(), AccessibilityConversionSpace::Page);
 }
 
 AccessibilityObject* AccessibilityObject::nextSiblingUnignored(int limit) const
@@ -1793,13 +1828,18 @@ void AccessibilityObject::updateBackingStore()
     updateChildrenIfNecessary();
 }
 #endif
-    
+
+const AccessibilityScrollView* AccessibilityObject::ancestorAccessibilityScrollView(bool includeSelf) const
+{
+    return downcast<AccessibilityScrollView>(AccessibilityObject::matchedParent(*this, includeSelf, [] (const auto& object) {
+        return is<AccessibilityScrollView>(object);
+    }));
+}
+
 ScrollView* AccessibilityObject::scrollViewAncestor() const
 {
-    if (const AccessibilityObject* scrollParent = AccessibilityObject::matchedParent(*this, true, [] (const AccessibilityObject& object) {
-        return is<AccessibilityScrollView>(object);
-    }))
-        return downcast<AccessibilityScrollView>(*scrollParent).scrollView();
+    if (auto parentScrollView = ancestorAccessibilityScrollView(true/* includeSelf */))
+        return parentScrollView->scrollView();
     
     return nullptr;
 }
@@ -2643,7 +2683,7 @@ bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
     return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatusValue) : !liveRegionStatusValue.isEmpty();
 }
 
-AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObjectInterface* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
 { 
     // Send the hit test back into the sub-frame if necessary.
     if (isAttachment()) {
@@ -2672,13 +2712,13 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     return nullptr;
 }
     
-AccessibilityObject* AccessibilityObject::focusedUIElement() const
+AccessibilityObjectInterface* AccessibilityObject::focusedUIElement() const
 {
-    Document* doc = document();
-    if (!doc)
+    Document* document = this->document();
+    if (!document)
         return nullptr;
     
-    Page* page = doc->page();
+    Page* page = document->page();
     if (!page)
         return nullptr;
     

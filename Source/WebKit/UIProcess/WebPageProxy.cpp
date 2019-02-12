@@ -5062,7 +5062,6 @@ IntRect WebPageProxy::syncRootViewToScreen(const IntRect& viewRect)
     return pageClient().rootViewToScreen(viewRect);
 }
 
-#if PLATFORM(IOS_FAMILY)
 void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
 {
     windowPoint = pageClient().accessibilityScreenToRootView(screenPoint);
@@ -5072,7 +5071,6 @@ void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, IntRec
 {
     result = pageClient().rootViewToAccessibilityScreen(viewRect);
 }
-#endif
 
 void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&& reply)
 {

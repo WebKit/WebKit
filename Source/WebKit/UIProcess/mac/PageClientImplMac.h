@@ -121,10 +121,8 @@ private:
 #if PLATFORM(MAC)
     WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) override;
 #endif
-#if PLATFORM(IOS_FAMILY)
-    virtual WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) = 0;
-    virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
-#endif
+    WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
 
     void pinnedStateWillChange() final;
     void pinnedStateDidChange() final;

@@ -112,10 +112,8 @@ private:
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) const final;
 
-#if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
-#endif
 
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::Frame&, const WebCore::IntSize&) const final;

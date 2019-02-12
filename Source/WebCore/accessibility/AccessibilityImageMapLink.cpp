@@ -93,7 +93,7 @@ URL AccessibilityImageMapLink::url() const
     return m_areaElement->href();
 }
 
-void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& textOrder)
+void AccessibilityImageMapLink::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     String description = accessibilityDescription();
     if (!description.isEmpty())

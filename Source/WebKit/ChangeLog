@@ -1,3 +1,28 @@
+2019-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: IsolatedTree: Implement more attributes
+        https://bugs.webkit.org/show_bug.cgi?id=193911
+        <rdar://problem/47599217>
+
+        Reviewed by Daniel Bates.
+
+        * Platform/spi/mac/AccessibilityPrivSPI.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase clientSupportsIsolatedTree]):
+        (-[WKAccessibilityWebPageObjectBase isolatedTreeRootObject]):
+        (-[WKAccessibilityWebPageObjectBase accessibilityRootObjectWrapper]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject IGNORE_WARNINGS_END]):
+        (-[WKAccessibilityWebPageObject convertScreenPointToRootView:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeSizeValue]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributePositionValue]):
+        (-[WKAccessibilityWebPageObject accessibilityDataDetectorValue:point:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow pages to trigger programmatic paste from script on iOS

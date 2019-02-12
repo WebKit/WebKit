@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAccessibilityWebPageObjectBase_h
-#define WKAccessibilityWebPageObjectBase_h
+#pragma once
 
-namespace WebKit {
-class WebPage;
-}
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface WKAccessibilityWebPageObjectBase : NSObject {
-    WebKit::WebPage* m_page;
-    uint64_t m_pageID;
-    id m_parent;
-    bool m_hasPlugin;
-}
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundef"
+#include <HIServices/AccessibilityPriv.h>
+#pragma clang diagnostic pop
 
-- (void)setWebPage:(WebKit::WebPage*)page;
-- (void)setRemoteParent:(id)parent;
+#else
 
-- (id)accessibilityRootObjectWrapper;
-- (id)accessibilityFocusedUIElement;
+typedef CF_ENUM(int32_t, AXClientType)
+{
+    kAXClientTypeNoActiveRequestFound  = 0,
+    kAXClientTypeUnknown,
+    kAXClientTypeRaft,
+    kAXClientTypeXCUITest,
+    kAXClientTypeXCTest,
+    kAXClientTypeScripter2,
+    kAXClientTypeSystemEvents,
+    kAXClientTypeVoiceOver,
+    kAXClientTypeAssistiveControl,
+    kAXClientTypeFullKeyboardAccess,
+    kAXClientTypeDictation,
+};
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (BOOL)clientSupportsIsolatedTree;
-#endif
+extern AXClientType _AXGetClientForCurrentRequestUntrusted(void);
 
-@end
-
-#endif // WKAccessibilityWebPageObjectBase_h
+#endif // PLATFORM(APPLE_INTERNAL_SDK)

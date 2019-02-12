@@ -1,3 +1,145 @@
+2019-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: IsolatedTree: Implement more attributes
+        https://bugs.webkit.org/show_bug.cgi?id=193911
+        <rdar://problem/47599217>
+
+        Reviewed by Daniel Bates.
+
+        Make use of new HIServices SPI to use a secondary AX thread.
+        Store root node/focused node status in IsolatedTree rather than on the element.
+        Implement the following attributes: children, parent, isIgnored, isTree, isTreeItem, relativeFrame, speechHint, title, description.
+        Implement hit-testing using relative-frames.
+        Ensure that WKAccessibilityWebPageObject queries happen on main thread when they need to.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::generateIsolatedAccessibilityTree):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        * accessibility/AccessibilityAttachment.cpp:
+        (WebCore::AccessibilityAttachment::accessibilityText const):
+        (WebCore::AccessibilityAttachment::accessibilityText): Deleted.
+        * accessibility/AccessibilityAttachment.h:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::accessibilityText const):
+        (WebCore::AccessibilityImageMapLink::accessibilityText): Deleted.
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::accessibilityText const):
+        (WebCore::AccessibilityMediaControl::accessibilityText): Deleted.
+        * accessibility/AccessibilityMediaControls.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::accessibilityText const):
+        (WebCore::AccessibilityNodeObject::accessibilityText): Deleted.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::convertFrameToSpace const):
+        (WebCore::AccessibilityObject::relativeFrame const):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest const):
+        (WebCore::AccessibilityObject::focusedUIElement const):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::accessibilityText const):
+        (WebCore::AccessibilityObject::isLink const): Deleted.
+        (WebCore::AccessibilityObject::isImage const): Deleted.
+        (WebCore::AccessibilityObject::isAttachment const): Deleted.
+        (WebCore::AccessibilityObject::isFileUploadButton const): Deleted.
+        (WebCore::AccessibilityObject::isImageMapLink const): Deleted.
+        (WebCore::AccessibilityObject::isMediaControlLabel const): Deleted.
+        (WebCore::AccessibilityObject::isTree const): Deleted.
+        (WebCore::AccessibilityObject::isTreeItem const): Deleted.
+        (WebCore::AccessibilityObject::isScrollbar const): Deleted.
+        (WebCore::AccessibilityObject::accessibilityHitTest const): Deleted.
+        (WebCore::AccessibilityObject::accessibilityText): Deleted.
+        (WebCore::AccessibilityObject::roleValue const): Deleted.
+        (WebCore::AccessibilityObject::wrapper const): Deleted.
+        * accessibility/AccessibilityObjectInterface.h: Replaced.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isTabItemSelected const):
+        (WebCore::AccessibilityRenderObject::remoteSVGElementHitTest const):
+        (WebCore::AccessibilityRenderObject::elementAccessibilityHitTest const):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest const):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::accessibilityText const):
+        (WebCore::AccessibilitySVGElement::accessibilityText): Deleted.
+        * accessibility/AccessibilitySVGElement.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::accessibilityHitTest const):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::fileUploadButtonReturnsValueInTitle const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper fileUploadButtonReturnsValueInTitle]): Deleted.
+        * accessibility/isolatedtree: Replaced.
+        * accessibility/isolatedtree/AXIsolatedTree.cpp: Added.
+        (WebCore::AXIsolatedTree::treePageCache):
+        (WebCore::AXIsolatedTree::AXIsolatedTree):
+        (WebCore::AXIsolatedTree::nodeInTreeForID):
+        (WebCore::AXIsolatedTree::nodeForID const):
+        (WebCore::AXIsolatedTree::focusedUIElement):
+        (WebCore::AXIsolatedTree::setRootNodeID):
+        (WebCore::AXIsolatedTree::setFocusedNodeID):
+        (WebCore::AXIsolatedTree::setInitialRequestInProgress):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h: Added.
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp: Added.
+        (WebCore::AXIsolatedTreeNode::AXIsolatedTreeNode):
+        (WebCore::AXIsolatedTreeNode::~AXIsolatedTreeNode):
+        (WebCore::AXIsolatedTreeNode::initializeAttributeData):
+        (WebCore::AXIsolatedTreeNode::setProperty):
+        (WebCore::AXIsolatedTreeNode::setParent):
+        (WebCore::AXIsolatedTreeNode::setTreeIdentifier):
+        (WebCore::AXIsolatedTreeNode::focusedUIElement const):
+        (WebCore::AXIsolatedTreeNode::parentObjectInterfaceUnignored const):
+        (WebCore::AXIsolatedTreeNode::accessibilityHitTest const):
+        (WebCore::AXIsolatedTreeNode::tree const):
+        (WebCore::AXIsolatedTreeNode::rectAttributeValue const):
+        (WebCore::AXIsolatedTreeNode::stringAttributeValue const):
+        * accessibility/isolatedtree/AXIsolatedTreeNode.h: Added.
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::associateIsolatedTreeNode):
+        * accessibility/mac/AccessibilityObjectBase.mm: Added.
+        (WebCore::AccessibilityObject::speechHintAttributeValue const):
+        (WebCore::AccessibilityObject::descriptionAttributeValue const):
+        (WebCore::AccessibilityObject::titleAttributeValue const):
+        (WebCore::AccessibilityObject::helpTextAttributeValue const):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::fileUploadButtonReturnsValueInTitle const):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (addChildToArray):
+        (convertToNSArray):
+        (-[WebAccessibilityObjectWrapperBase isolatedTreeNode]):
+        (-[WebAccessibilityObjectWrapperBase detach]):
+        (-[WebAccessibilityObjectWrapperBase updateObjectBackingStore]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityObject]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityTitle]):
+        (-[WebAccessibilityObjectWrapperBase axBackingObject]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityDescription]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilitySpeechHint]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityHelpText]):
+        (convertPathToScreenSpaceFunction):
+        (-[WebAccessibilityObjectWrapperBase convertRectToSpace:space:]):
+        (-[WebAccessibilityObjectWrapperBase ariaLandmarkRoleDescription]):
+        (-[WebAccessibilityObjectWrapperBase titleTagShouldBeUsedInDescriptionField]): Deleted.
+        (-[WebAccessibilityObjectWrapperBase fileUploadButtonReturnsValueInTitle]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper IGNORE_WARNINGS_END]):
+        (-[WebAccessibilityObjectWrapper childrenVectorSize]):
+        (-[WebAccessibilityObjectWrapper childrenVectorArray]):
+        (-[WebAccessibilityObjectWrapper position]):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[WebAccessibilityObjectWrapper accessibilityFocusedUIElement]):
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[WebAccessibilityObjectWrapper accessibilityIndexOfChild:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:]):
+        (-[WebAccessibilityObjectWrapper accessibilityArrayAttributeValues:index:maxCount:]):
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow pages to trigger programmatic paste from script on iOS

@@ -84,7 +84,7 @@ bool AccessibilityAttachment::computeAccessibilityIsIgnored() const
     return false;
 }
     
-void AccessibilityAttachment::accessibilityText(Vector<AccessibilityText>& textOrder)
+void AccessibilityAttachment::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     HTMLAttachmentElement* attachmentElement = this->attachmentElement();
     if (!attachmentElement)

@@ -2948,7 +2948,7 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedAccessibilityTree()
     
     Vector<Ref<AXIsolatedTreeNode>> nodeChanges;
     auto root = createIsolatedAccessibilityTreeHierarchy(*rootObject(), InvalidAXID, *tree, nodeChanges);
-    root->setIsRootNode(true);
+    tree->setRootNodeID(root->identifier());
     tree->appendNodeChanges(nodeChanges);
 
     return makeRef(*tree);

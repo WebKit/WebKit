@@ -1660,7 +1660,7 @@ bool AccessibilityRenderObject::isTabItemSelected() const
     // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
     // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
     // focus inside of it.
-    AccessibilityObject* focusedElement = focusedUIElement();
+    AccessibilityObject* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
     if (!focusedElement)
         return false;
     
@@ -2335,7 +2335,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTM
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint& point) const
+AccessibilityObjectInterface* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint& point) const
 {
     AccessibilityObject* remote = remoteSVGRootElement(Create);
     if (!remote)
@@ -2345,7 +2345,7 @@ AccessibilityObject* AccessibilityRenderObject::remoteSVGElementHitTest(const In
     return remote->accessibilityHitTest(IntPoint(offset));
 }
 
-AccessibilityObject* AccessibilityRenderObject::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObjectInterface* AccessibilityRenderObject::elementAccessibilityHitTest(const IntPoint& point) const
 {
     if (isSVGImage())
         return remoteSVGElementHitTest(point);
@@ -2359,7 +2359,7 @@ static bool shouldUseShadowHostForHitTesting(Node* shadowHost)
     return shadowHost && !shadowHost->hasTagName(videoTag);
 }
 
-AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
+AccessibilityObjectInterface* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
 {
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
@@ -2393,7 +2393,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     result->updateChildrenIfNecessary();
 
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
-    result = result->elementAccessibilityHitTest(point);
+    result = static_cast<AccessibilityObject*>(result->elementAccessibilityHitTest(point));
     
     if (result && result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
@@ -3444,7 +3444,7 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
             result.append(descendant);
             return;
         }
-        if (AccessibilityObject* focusedElement = focusedUIElement()) {
+        if (AccessibilityObject* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement())) {
             result.append(focusedElement);
             return;
         }

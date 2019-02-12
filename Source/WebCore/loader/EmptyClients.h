@@ -108,11 +108,8 @@ class EmptyChromeClient : public ChromeClient {
 
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
-
-#if PLATFORM(IOS_FAMILY)
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
-#endif
 
     PlatformPageClient platformPageClient() const final { return 0; }
     void contentsSizeChanged(Frame&, const IntSize&) const final { }

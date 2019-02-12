@@ -106,7 +106,7 @@ Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType&
     return fallback;
 }
 
-void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textOrder)
+void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     String description = accessibilityDescription();
     if (!description.isEmpty())

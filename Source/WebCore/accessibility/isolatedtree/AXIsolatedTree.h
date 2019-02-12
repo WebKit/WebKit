@@ -36,48 +36,56 @@ namespace WebCore {
 
 class Page;
 
-typedef unsigned AXIsolatedTreeID;
-    
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
+class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>, public CanMakeWeakPtr<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
 
 public:
     static Ref<AXIsolatedTree> create();
     virtual ~AXIsolatedTree();
 
-    // Creation must happen on main thread.
     static Ref<AXIsolatedTree> createTreeForPageID(uint64_t pageID);
+    WEBCORE_EXPORT static Ref<AXIsolatedTree> initializePageTreeForID(uint64_t pageID, AXObjectCache&);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForPageID(uint64_t pageID);
     WEBCORE_EXPORT static RefPtr<AXIsolatedTree> treeForID(AXIsolatedTreeID);
 
     WEBCORE_EXPORT RefPtr<AXIsolatedTreeNode> rootNode();
+    WEBCORE_EXPORT RefPtr<AXIsolatedTreeNode> focusedUIElement();
     RefPtr<AXIsolatedTreeNode> nodeForID(AXID) const;
+    static RefPtr<AXIsolatedTreeNode> nodeInTreeForID(AXIsolatedTreeID, AXID);
 
     // Call on main thread
     void appendNodeChanges(Vector<Ref<AXIsolatedTreeNode>>&);
     void removeNode(AXID);
 
+    void setRootNodeID(AXID);
+    void setFocusedNodeID(AXID);
+    
     // Call on AX thread
     WEBCORE_EXPORT void applyPendingChanges();
 
+    WEBCORE_EXPORT void setInitialRequestInProgress(bool);
     AXIsolatedTreeID treeIdentifier() const { return m_treeID; }
 
 private:
     AXIsolatedTree();
 
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache();
-    static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treePageCache();
-    
+    static HashMap<uint64_t, Ref<AXIsolatedTree>>& treePageCache();
+
     // Only access on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedTreeNode>> m_readerThreadNodeMap;
 
     // Written to by main thread under lock, accessed and applied by AX thread.
     Vector<Ref<AXIsolatedTreeNode>> m_pendingAppends;
     Vector<AXID> m_pendingRemovals;
+    AXID m_pendingFocusedNodeID;
+    AXID m_pendingRootNodeID;
     Lock m_changeLogLock;
 
     AXIsolatedTreeID m_treeID;
-    AXID m_rootNodeID;
+    AXID m_rootNodeID { InvalidAXID };
+    AXID m_focusedNodeID { InvalidAXID };
+    bool m_initialRequestInProgress;
 };
 
 } // namespace WebCore

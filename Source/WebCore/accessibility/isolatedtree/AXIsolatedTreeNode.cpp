@@ -34,7 +34,6 @@ namespace WebCore {
 
 AXIsolatedTreeNode::AXIsolatedTreeNode(const AccessibilityObject& object)
     : m_identifier(object.axObjectID())
-    , m_initialized(false)
 {
     ASSERT(isMainThread());
     initializeAttributeData(object);
@@ -55,6 +54,18 @@ void AXIsolatedTreeNode::initializeAttributeData(const AccessibilityObject& obje
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsMediaControlLabel, object.isMediaControlLabel());
+    setProperty(AXPropertyName::IsLink, object.isLink());
+    setProperty(AXPropertyName::IsImageMapLink, object.isImageMapLink());
+    setProperty(AXPropertyName::IsImage, object.isImage());
+    setProperty(AXPropertyName::IsFileUploadButton, object.isFileUploadButton());
+    setProperty(AXPropertyName::IsAccessibilityIgnored, object.accessibilityIsIgnored());
+    setProperty(AXPropertyName::IsTree, object.isTree());
+    setProperty(AXPropertyName::IsScrollbar, object.isScrollbar());
+    setProperty(AXPropertyName::RelativeFrame, object.relativeFrame());
+    setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::Title, object.titleAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::Description, object.descriptionAttributeValue().isolatedCopy());
+    setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
 }
 
 void AXIsolatedTreeNode::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
@@ -74,56 +85,107 @@ void AXIsolatedTreeNode::appendChild(AXID axID)
     m_children.append(axID);
 }
 
+void AXIsolatedTreeNode::setParent(AXID parent)
+{
+    ASSERT(isMainThread());
+    m_parent = parent;
+}
+
+void AXIsolatedTreeNode::setTreeIdentifier(AXIsolatedTreeID treeIdentifier)
+{
+    m_treeIdentifier = treeIdentifier;
+    if (auto tree = AXIsolatedTree::treeForID(m_treeIdentifier))
+        m_cachedTree = makeWeakPtr(tree.get());
+}
+
+AccessibilityObjectInterface* AXIsolatedTreeNode::focusedUIElement() const
+{
+    if (auto focusedElement = tree()->focusedUIElement())
+        return focusedElement.get();
+    return nullptr;
+}
+    
+AccessibilityObjectInterface* AXIsolatedTreeNode::parentObjectInterfaceUnignored() const
+{
+    return tree()->nodeForID(parent()).get();
+}
+
+AccessibilityObjectInterface* AXIsolatedTreeNode::accessibilityHitTest(const IntPoint& point) const
+{
+    if (!relativeFrame().contains(point))
+        return nullptr;
+    for (auto childID : children()) {
+        auto child = tree()->nodeForID(childID);
+        ASSERT(child);
+        if (child && child->relativeFrame().contains(point))
+            return child->accessibilityHitTest(point);
+    }
+    return const_cast<AXIsolatedTreeNode*>(this);
+}
+
+AXIsolatedTree* AXIsolatedTreeNode::tree() const
+{
+    return m_cachedTree.get();
+}
+
+FloatRect AXIsolatedTreeNode::rectAttributeValue(AXPropertyName propertyName) const
+{
+    auto value = m_attributeMap.get(propertyName);
+    return WTF::switchOn(value,
+        [&zeroRect] (Optional<FloatRect> typedValue) {
+            if (!typedValue)
+                return FloatRect { };
+            return typedValue.value();
+        },
+        [] (auto&) { return FloatRect { }; }
+    );
+}
+
 double AXIsolatedTreeNode::doubleAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value, [&] (double& typedValue) {
-        return typedValue;
-    }, [&] (auto&) {
-        return 0.0;
-    });
+    return WTF::switchOn(value,
+        [&] (double& typedValue) { return typedValue; },
+        [] (auto&) { return 0; }
+    );
 }
 
 unsigned AXIsolatedTreeNode::unsignedAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value, [&] (unsigned& typedValue) {
-        return typedValue;
-    }, [&] (auto&) {
-        return 0;
-    });
+    return WTF::switchOn(value,
+        [&] (unsigned& typedValue) { return typedValue; },
+        [] (auto&) { return 0; }
+    );
 }
 
 bool AXIsolatedTreeNode::boolAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value, [&] (bool& typedValue) {
-        return typedValue;
-    }, [&] (auto&) {
-        return false;
-    });
+    return WTF::switchOn(value,
+        [&] (bool& typedValue) { return typedValue; },
+        [] (auto&) { return false; }
+    );
 }
 
-const String& AXIsolatedTreeNode::stringAttributeValue(AXPropertyName propertyName) const
+const String AXIsolatedTreeNode::stringAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value, [&] (String& typedValue) {
-        return typedValue;
-    }, [&] (auto&) {
-        return nullAtom();
-    });
+    return WTF::switchOn(value,
+        [&] (String& typedValue) { return typedValue; },
+        [] (auto&) { return emptyString(); }
+    );
 }
 
 int AXIsolatedTreeNode::intAttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_attributeMap.get(propertyName);
-    return WTF::switchOn(value, [&] (int& typedValue) {
-        return typedValue;
-    }, [&] (auto&) {
-        return 0;
-    });
+    return WTF::switchOn(value,
+        [&] (int& typedValue) { return typedValue; },
+        [] (auto&) { return 0; }
+    );
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE((ACCESSIBILITY_ISOLATED_TREE)

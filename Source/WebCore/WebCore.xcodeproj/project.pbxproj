@@ -6617,6 +6617,7 @@
 		293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollView.h; sourceTree = "<group>"; };
 		29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextUndoInsertionMarkupMac.mm; sourceTree = "<group>"; };
+		294BDAE621FF582A0051077B /* AccessibilityObjectBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectBase.mm; sourceTree = "<group>"; };
 		297BE3D916C043D8003316BD /* PlatformSpeechSynthesizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesizer.cpp; sourceTree = "<group>"; };
 		2981ABC4131822EC00D12F2A /* AccessibilityMathMLElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMathMLElement.cpp; sourceTree = "<group>"; };
 		2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
@@ -17403,6 +17404,7 @@
 		29A812050FBB9B5200510293 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				294BDAE621FF582A0051077B /* AccessibilityObjectBase.mm */,
 				29A812440FBB9CA900510293 /* AccessibilityObjectMac.mm */,
 				29A812470FBB9CA900510293 /* AXObjectCacheMac.mm */,
 				29A812450FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h */,

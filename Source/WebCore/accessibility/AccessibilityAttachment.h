@@ -48,7 +48,7 @@ private:
     String roleDescription() const override;
     float valueForRange() const override;
     bool computeAccessibilityIsIgnored() const override;
-    void accessibilityText(Vector<AccessibilityText>&) override;
+    void accessibilityText(Vector<AccessibilityText>&) const override;
     explicit AccessibilityAttachment(RenderAttachment*);
 };
     

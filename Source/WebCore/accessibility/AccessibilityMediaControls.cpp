@@ -138,7 +138,7 @@ const String& AccessibilityMediaControl::controlTypeName() const
     return nullAtom();
 }
 
-void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& textOrder)
+void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     String description = accessibilityDescription();
     if (!description.isEmpty())

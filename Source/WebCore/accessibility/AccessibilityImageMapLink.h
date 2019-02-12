@@ -70,7 +70,7 @@ private:
     void detachFromParent() override;
     Path elementPath() const override;
     RenderElement* imageMapLinkRenderer() const;
-    void accessibilityText(Vector<AccessibilityText>&) override;
+    void accessibilityText(Vector<AccessibilityText>&) const override;
     bool isImageMapLink() const override { return true; }
     bool supportsPath() const override { return true; }
 

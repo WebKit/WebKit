@@ -53,7 +53,7 @@ protected:
     bool computeAccessibilityIsIgnored() const override;
 
 private:
-    void accessibilityText(Vector<AccessibilityText>&) override;
+    void accessibilityText(Vector<AccessibilityText>&) const override;
 };
 
 

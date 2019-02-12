@@ -453,6 +453,16 @@ IntRect PageClientImpl::rootViewToWindow(const WebCore::IntRect& rect)
     return enclosingIntRect(tempRect);
 }
 
+IntPoint PageClientImpl::accessibilityScreenToRootView(const IntPoint& point)
+{
+    return screenToRootView(point);
+}
+
+IntRect PageClientImpl::rootViewToAccessibilityScreen(const IntRect& rect)
+{
+    return rootViewToScreen(rect);
+}
+
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
     m_impl->doneWithKeyEvent(event.nativeEvent(), eventWasHandled);

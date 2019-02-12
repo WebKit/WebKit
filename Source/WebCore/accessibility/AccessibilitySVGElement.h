@@ -44,7 +44,7 @@ protected:
     explicit AccessibilitySVGElement(RenderObject*);
 
 private:
-    void accessibilityText(Vector<AccessibilityText>&) final;
+    void accessibilityText(Vector<AccessibilityText>&) const final;
     AccessibilityRole determineAccessibilityRole() final;
     AccessibilityRole determineAriaRoleAttribute() const final;
     bool inheritsPresentationalRole() const final;

@@ -1587,10 +1587,8 @@ private:
     void setIsResizable(bool isResizable);
     void screenToRootView(const WebCore::IntPoint& screenPoint, Messages::WebPageProxy::ScreenToRootView::DelayedReply&&);
     void rootViewToScreen(const WebCore::IntRect& viewRect, Messages::WebPageProxy::RootViewToScreen::DelayedReply&&);
-#if PLATFORM(IOS_FAMILY)
     void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
     void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
-#endif
     void runBeforeUnloadConfirmPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();

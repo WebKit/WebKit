@@ -561,11 +561,8 @@ public:
 
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&);
-    
-#if PLATFORM(IOS_FAMILY)
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&);
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&);
-#endif
     
     RefPtr<WebImage> scaledSnapshotWithOptions(const WebCore::IntRect&, double additionalScaleFactor, SnapshotOptions);
 

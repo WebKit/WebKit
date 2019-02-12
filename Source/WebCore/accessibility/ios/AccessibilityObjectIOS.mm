@@ -41,6 +41,12 @@ void AccessibilityObject::detachFromParent()
 {
 }
 
+// On iOS, we don't have to return the value in the title. We can return the actual title, given the API.
+bool AccessibilityObject::fileUploadButtonReturnsValueInTitle() const
+{
+    return false;
+}
+
 void AccessibilityObject::overrideAttachmentParent(AccessibilityObject*)
 {
 }

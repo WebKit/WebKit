@@ -123,6 +123,7 @@ CFTypeID AXTextMarkerRangeGetTypeID();
 CoreDragRef CoreDragGetCurrentDrag();
 OSStatus CoreDragSetImage(CoreDragRef, CGPoint imageOffset, CoreDragImageSpec*, CGSRegionObj imageShape, float overallAlpha);
 const UInt8* AXTextMarkerGetBytePtr(AXTextMarkerRef);
+bool _AXUIElementRequestServicedBySecondaryAXThread(void);
 OSStatus SetApplicationIsDaemon(Boolean);
 
 WTF_EXTERN_C_END

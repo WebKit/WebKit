@@ -77,7 +77,7 @@ static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* co
 
     IntPoint pos = atkToContents(core(component), coordType, x, y);
 
-    AccessibilityObject* target = core(component)->accessibilityHitTest(pos);
+    AccessibilityObject* target = downcast<AccessibilityObject>(core(component)->accessibilityHitTest(pos));
     if (!target)
         return 0;
     g_object_ref(target->wrapper());

@@ -32,6 +32,7 @@ accessibility/ios/AXObjectCacheIOS.mm
 accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 
 accessibility/mac/AXObjectCacheMac.mm
+accessibility/mac/AccessibilityObjectBase.mm
 accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm @no-unify
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm @no-unify

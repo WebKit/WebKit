@@ -180,7 +180,7 @@ protected:
 
 private:
     bool isAccessibilityNodeObject() const final { return true; }
-    void accessibilityText(Vector<AccessibilityText>&) override;
+    void accessibilityText(Vector<AccessibilityText>&) const override;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
     void alternativeText(Vector<AccessibilityText>&) const;
     void visibleText(Vector<AccessibilityText>&) const;

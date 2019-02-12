@@ -1473,7 +1473,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     }
 }
 
-void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textOrder)
+void AccessibilityNodeObject::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     titleElementText(textOrder);
     alternativeText(textOrder);

@@ -25,10 +25,31 @@
 
 #pragma once
 
+#include "LayoutRect.h"
+#include <wtf/RefCounted.h>
+
+#if PLATFORM(WIN)
+#include "AccessibilityObjectWrapperWin.h"
+#include "COMPtr.h"
+#endif
+
+#if PLATFORM(COCOA)
+OBJC_CLASS WebAccessibilityObjectWrapper;
+typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
+#elif PLATFORM(GTK)
+typedef struct _AtkObject AtkObject;
+typedef struct _AtkObject AccessibilityObjectWrapper;
+#elif PLATFORM(WPE)
+class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
+#else
+class AccessibilityObjectWrapper;
+#endif
+
 namespace WebCore {
 
 typedef unsigned AXID;
 extern const AXID InvalidAXID;
+typedef unsigned AXIsolatedTreeID;    
 
 enum class AccessibilityRole {
     Annotation = 1,
@@ -186,6 +207,29 @@ public:
     virtual bool isMediaControlLabel() const = 0;
     virtual AccessibilityRole roleValue() const = 0;
     virtual bool isAttachment() const = 0;
+    virtual bool isLink() const = 0;
+    virtual bool isImageMapLink() const = 0;
+    virtual bool isImage() const = 0;
+    virtual bool isFileUploadButton() const = 0;
+    virtual bool isTree() const = 0;
+    virtual bool isTreeItem() const = 0;
+    virtual bool isScrollbar() const = 0;
+    virtual bool accessibilityIsIgnored() const = 0;
+    virtual FloatRect relativeFrame() const = 0;
+    virtual AccessibilityObjectInterface* parentObjectInterfaceUnignored() const = 0;
+    virtual AccessibilityObjectInterface* focusedUIElement() const = 0;
+    virtual bool isAccessibilityObject() const { return false; }
+    
+#if PLATFORM(COCOA)
+    virtual String speechHintAttributeValue() const = 0;
+    virtual String descriptionAttributeValue() const = 0;
+    virtual String helpTextAttributeValue() const = 0;
+    virtual String titleAttributeValue() const = 0;
+#endif
+
+    virtual AccessibilityObjectWrapper* wrapper() const = 0;
+    virtual AccessibilityObjectInterface* accessibilityHitTest(const IntPoint&) const = 0;
+    virtual void updateChildrenIfNecessary() = 0;
 };
 
-}
+} // namespace WebCore

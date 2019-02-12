@@ -106,7 +106,7 @@ public:
     bool ariaRoleHasPresentationalChildren() const override;
     
     // Should be called on the root accessibility object to kick off a hit test.
-    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObjectInterface* accessibilityHitTest(const IntPoint&) const override;
 
     Element* anchorElement() const override;
     
@@ -239,7 +239,7 @@ private:
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
-    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObjectInterface* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
@@ -249,7 +249,7 @@ private:
     void detachRemoteSVGRoot();
     enum CreationChoice { Create, Retrieve };
     AccessibilitySVGRoot* remoteSVGRootElement(CreationChoice createIfNecessary) const;
-    AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
+    AccessibilityObjectInterface* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
     bool supportsPath() const override;
 

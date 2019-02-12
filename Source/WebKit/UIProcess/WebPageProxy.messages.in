@@ -61,15 +61,12 @@ messages -> WebPageProxy {
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Delayed
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Delayed
     RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Delayed
+    AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) LegacySync
+    RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) LegacySync
 
 #if PLATFORM(COCOA)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message)
     HideValidationMessage()
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) LegacySync
-    RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) LegacySync
 #endif
 
     RunBeforeUnloadConfirmPanel(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> (bool shouldClose) Delayed

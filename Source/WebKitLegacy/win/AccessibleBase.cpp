@@ -684,18 +684,18 @@ HRESULT AccessibleBase::get_accFocus(_Out_ VARIANT* pvFocusedChild)
     if (!m_object)
         return E_FAIL;
 
-    AccessibilityObject* focusedObj = m_object->focusedUIElement();
-    if (!focusedObj)
+    auto focusedObject = downcast<AccessibilityObject>(m_object->focusedUIElement());
+    if (!focusedObject)
         return S_FALSE;
 
-    if (focusedObj == m_object) {
+    if (focusedObject == m_object) {
         V_VT(pvFocusedChild) = VT_I4;
         V_I4(pvFocusedChild) = CHILDID_SELF;
         return S_OK;
     }
 
     V_VT(pvFocusedChild) = VT_DISPATCH;
-    V_DISPATCH(pvFocusedChild) = wrapper(focusedObj);
+    V_DISPATCH(pvFocusedChild) = wrapper(focusedObject);
     V_DISPATCH(pvFocusedChild)->AddRef();
     return S_OK;
 }
@@ -810,22 +810,22 @@ HRESULT AccessibleBase::accHitTest(long x, long y, _Out_ VARIANT* pvChildAtPoint
         return E_FAIL;
 
     IntPoint point = m_object->documentFrameView()->screenToContents(IntPoint(x, y));
-    AccessibilityObject* childObj = m_object->accessibilityHitTest(point);
+    auto childObject = downcast<AccessibilityObject>(m_object->accessibilityHitTest(point));
 
-    if (!childObj) {
+    if (!childObject) {
         // If we did not hit any child objects, test whether the point hit us, and
         // report that.
         if (!m_object->boundingBoxRect().contains(point))
             return S_FALSE;
-        childObj = m_object;
+        childObject = m_object;
     }
 
-    if (childObj == m_object) {
+    if (childObject == m_object) {
         V_VT(pvChildAtPoint) = VT_I4;
         V_I4(pvChildAtPoint) = CHILDID_SELF;
     } else {
         V_VT(pvChildAtPoint) = VT_DISPATCH;
-        V_DISPATCH(pvChildAtPoint) = static_cast<IDispatch*>(wrapper(childObj));
+        V_DISPATCH(pvChildAtPoint) = static_cast<IDispatch*>(wrapper(childObject));
         V_DISPATCH(pvChildAtPoint)->AddRef();
     }
     return S_OK;
