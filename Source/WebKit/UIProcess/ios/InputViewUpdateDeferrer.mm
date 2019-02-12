@@ -32,15 +32,15 @@
 
 namespace WebKit {
 
-InputViewUpdateDeferrer::InputViewUpdateDeferrer()
+InputViewUpdateDeferrer::InputViewUpdateDeferrer(UIView *view)
+    : m_view(view)
 {
-    [[UIPeripheralHost sharedInstance] _beginIgnoringReloadInputViews];
+    [m_view _beginPinningInputViews];
 }
 
 InputViewUpdateDeferrer::~InputViewUpdateDeferrer()
 {
-    if ([[UIPeripheralHost sharedInstance] _endIgnoringReloadInputViews])
-        [[UIPeripheralHost sharedInstance] forceReloadInputViews];
+    [m_view _endPinningInputViews];
 }
     
 }

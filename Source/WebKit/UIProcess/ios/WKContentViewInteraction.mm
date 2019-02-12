@@ -1091,17 +1091,22 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     if (_resigningFirstResponder)
         return NO;
 
+    if (!_inputViewUpdateDeferrer)
+        _inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>(self);
+
     BOOL didBecomeFirstResponder;
     {
         SetForScope<BOOL> becomingFirstResponder { _becomingFirstResponder, YES };
         didBecomeFirstResponder = [super becomeFirstResponder];
     }
 
-    if (didBecomeFirstResponder)
+    if (didBecomeFirstResponder) {
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
 
-    if (didBecomeFirstResponder && [self canShowNonEmptySelectionView])
-        [_textSelectionAssistant activateSelection];
+        if ([self canShowNonEmptySelectionView])
+            [_textSelectionAssistant activateSelection];
+    } else
+        _inputViewUpdateDeferrer = nullptr;
 
     return didBecomeFirstResponder;
 }
@@ -2177,11 +2182,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
-    if (![self isFirstResponder]) {
-        if (!_inputViewUpdateDeferrer)
-            _inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>();
+    if (![self isFirstResponder])
         [self becomeFirstResponder];
-    }
 
     ASSERT(_potentialTapInProgress);
 
@@ -2236,11 +2238,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_attemptClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags
 {
-    if (![self isFirstResponder]) {
-        if (!_inputViewUpdateDeferrer)
-            _inputViewUpdateDeferrer = std::make_unique<WebKit::InputViewUpdateDeferrer>();
+    if (![self isFirstResponder])
         [self becomeFirstResponder];
-    }
 
     [_inputPeripheral endEditing];
     _page->handleTap(location, WebKit::webEventModifierFlags(modifierFlags), _layerTreeTransactionIdAtLastTouchStart);
@@ -4591,7 +4590,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
-    _inputViewUpdateDeferrer = nullptr;
+    auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 
     _didAccessoryTabInitiateFocus = _isChangingFocusUsingAccessoryTab;
 

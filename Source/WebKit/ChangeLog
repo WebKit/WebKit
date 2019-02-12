@@ -1,3 +1,33 @@
+2019-02-12  Tim Horton  <timothy_horton@apple.com>
+
+        Switching focus from a UITextField to an editable WKWebView causes the keyboard to dance
+        https://bugs.webkit.org/show_bug.cgi?id=194524
+        <rdar://problem/35481797>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.h:
+        * UIProcess/ios/InputViewUpdateDeferrer.mm:
+        (WebKit::InputViewUpdateDeferrer::InputViewUpdateDeferrer):
+        (WebKit::InputViewUpdateDeferrer::~InputViewUpdateDeferrer):
+        Make use of the per-responder and much safer input view pinning mechanism.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _attemptClickAtLocation:modifierFlags:]):
+        Always temporarily pin input views when becoming first responder; there are
+        many paths (such as through the text interaction assistant) that can
+        focus us on tap, trying to cover them all is a fool's errand. We'll
+        just get out the big hammer and call it in becomeFirstResponder.
+        This also means we can remove it from _singleTapCommitted and _attemptClick...
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Don't release the input view pinning until we return from _elementDidFocus;
+        it does the rebuilding synchronously, so we need to have actually updated
+        all of the prerequisites of -inputView before depinning.
+
 2019-02-12  Youenn Fablet  <youenn@apple.com>
 
         Make use of is<SubresourceLoader>

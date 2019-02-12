@@ -321,6 +321,8 @@ typedef enum {
 @interface UIResponder ()
 - (void)_handleKeyUIEvent:(UIEvent *)event;
 - (void)_wheelChangedWithEvent:(UIEvent *)event;
+- (void)_beginPinningInputViews;
+- (void)_endPinningInputViews;
 @end
 
 @class FBSDisplayConfiguration;
@@ -1078,9 +1080,6 @@ typedef NSInteger UICompositingMode;
 @end
 
 @interface UIPeripheralHost (IPI)
-- (void)_beginIgnoringReloadInputViews;
-- (int)_endIgnoringReloadInputViews;
-- (void)forceReloadInputViews;
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
 @end
 

@@ -24,16 +24,21 @@
  */
 
 #import <wtf/Noncopyable.h>
+#import <wtf/WeakObjCPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+
+OBJC_CLASS UIView;
 
 namespace WebKit {
 
 class InputViewUpdateDeferrer {
     WTF_MAKE_NONCOPYABLE(InputViewUpdateDeferrer);
 public:
-    InputViewUpdateDeferrer();
+    explicit InputViewUpdateDeferrer(UIView *);
     ~InputViewUpdateDeferrer();
+
+    WeakObjCPtr<UIView> m_view;
 };
 
 }
