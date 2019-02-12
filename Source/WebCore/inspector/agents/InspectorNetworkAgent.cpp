@@ -500,8 +500,8 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
     bool isNotModified = response.httpStatusCode() == 304;
 
     CachedResource* cachedResource = nullptr;
-    if (resourceLoader && resourceLoader->isSubresourceLoader() && !isNotModified)
-        cachedResource = static_cast<SubresourceLoader*>(resourceLoader)->cachedResource();
+    if (is<SubresourceLoader>(resourceLoader) && !isNotModified)
+        cachedResource = downcast<SubresourceLoader>(resourceLoader)->cachedResource();
     if (!cachedResource && loader)
         cachedResource = InspectorPageAgent::cachedResource(loader->frame(), response.url());
 

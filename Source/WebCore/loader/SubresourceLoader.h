@@ -137,3 +137,7 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SubresourceLoader)
+static bool isType(const WebCore::ResourceLoader& loader) { return loader.isSubresourceLoader(); }
+SPECIALIZE_TYPE_TRAITS_END()

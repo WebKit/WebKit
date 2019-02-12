@@ -1,3 +1,17 @@
+2019-02-12  Youenn Fablet  <youenn@apple.com>
+
+        Make use of is<SubresourceLoader>
+        https://bugs.webkit.org/show_bug.cgi?id=194541
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        * loader/SubresourceLoader.h:
+        (isType):
+
 2019-02-12  Mark Lam  <mark.lam@apple.com>
 
         Add some null checks in JSNodeCustom.h's root() and generated isReachableFromOpaqueRoots() functions.

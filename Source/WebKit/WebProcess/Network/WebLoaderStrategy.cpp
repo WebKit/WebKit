@@ -292,11 +292,6 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
 
-    if (resourceLoader.isSubresourceLoader()) {
-        if (auto* headers = static_cast<SubresourceLoader&>(resourceLoader).originalHeaders())
-            loadParameters.originalRequestHeaders = *headers;
-    }
-
 #if ENABLE(CONTENT_EXTENSIONS)
     if (document) {
         loadParameters.mainDocumentURL = document->topDocument().url();
@@ -311,8 +306,13 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
     // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
-    if (resourceLoader.isSubresourceLoader())
-        loadParameters.sourceOrigin = static_cast<SubresourceLoader&>(resourceLoader).origin();
+    if (is<SubresourceLoader>(resourceLoader)) {
+        auto& loader = downcast<SubresourceLoader>(resourceLoader);
+        loadParameters.sourceOrigin = loader.origin();
+
+        if (auto* headers = loader.originalHeaders())
+            loadParameters.originalRequestHeaders = *headers;
+    }
 
     if (!loadParameters.sourceOrigin && document)
         loadParameters.sourceOrigin = &document->securityOrigin();
