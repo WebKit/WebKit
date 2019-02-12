@@ -1585,7 +1585,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    UniqueRef<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
+    std::unique_ptr<ViewGestureGeometryCollector> m_viewGestureGeometryCollector;
 #endif
 
 #if PLATFORM(COCOA)

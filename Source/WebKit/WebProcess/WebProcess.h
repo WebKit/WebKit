@@ -165,7 +165,7 @@ public:
     PluginProcessConnectionManager& pluginProcessConnectionManager();
 #endif
 
-    EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
+    EventDispatcher& eventDispatcher() { return m_eventDispatcher.get(); }
 
     NetworkProcessConnection& ensureNetworkProcessConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
@@ -402,7 +402,7 @@ private:
     HashMap<uint64_t, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
-    RefPtr<EventDispatcher> m_eventDispatcher;
+    Ref<EventDispatcher> m_eventDispatcher;
 #if PLATFORM(IOS_FAMILY)
     RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
 #endif

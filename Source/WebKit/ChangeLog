@@ -1,3 +1,24 @@
+2019-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        WebPage::close needs to remove all message receivers associated with that WebPage, not WebPage::~WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=194522
+        <rdar://problem/47789393>
+
+        Reviewed by Chris Dumez.
+
+        The InjectedBundle SPI can retain the WebPage or wrapping objects (WKWebProcessPlugInBrowserContextController/WKBundlePageRef).
+        This can make it so WebPage::close is called before WebPage::~WebPage, and if the SuspendedPageProxy is reused for a subsequent
+        navigation to the same domain, the WebProcess is reused with a different WebPage instance with the same PageID, which causes problems
+        when another WebPage registers message handlers and then the previous WebPage is destroyed, which removes both message handlers.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::eventDispatcher):
+
 2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Unsafe g_unsetenv() use in WebProcessPool::platformInitialize
