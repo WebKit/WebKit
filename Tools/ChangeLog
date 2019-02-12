@@ -1,3 +1,15 @@
+2019-02-12  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add intrinsic width support for float boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=194528
+
+        Reviewed by Antti Koivisto.
+
+        Expand tests coverage (2 new tests -> 800).
+        (This is the correct test ordering --runs-singly --child-processes=1)
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2019-02-12  Rob Buis  <rbuis@igalia.com>
 
         Implement serializing in MIME type parser

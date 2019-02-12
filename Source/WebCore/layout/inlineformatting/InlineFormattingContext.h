@@ -88,9 +88,10 @@ private:
     };
 
     void layoutFormattingContextRoot(const Box&, UsedHorizontalValues) const;
-    void computeIntrinsicWidthForFormattingContextRoot(const Box&) const;
+    void computeIntrinsicWidthForFloatBox(const Box&) const;
+    void computeIntrinsicWidthForInlineBlock(const Box&) const;
     void computeWidthAndHeightForReplacedInlineBox(const Box&, UsedHorizontalValues) const;
-    void computeMargin(const InlineContainer&, UsedHorizontalValues) const;
+    void computeMargin(const Box&, UsedHorizontalValues) const;
     void computeBorderAndPadding(const Box&, UsedHorizontalValues) const;
     void computeHeightAndMargin(const Box&) const;
     void computeWidthAndMargin(const Box&, UsedHorizontalValues) const;
