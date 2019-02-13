@@ -1,3 +1,17 @@
+2019-02-13  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Switch to CVPixelBufferGetBytesPerRow() for calculating CVPixelBuffer base address size.
+        https://bugs.webkit.org/show_bug.cgi?id=194580
+        <rdar://problem/42727739>
+
+        Reviewed by Eric Carlson.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        (WebCore::CVPixelBufferGetBytePointerCallback):
+        (WebCore::PixelBufferConformerCV::createImageFromPixelBuffer):
+
 2019-02-13  Antoine Quint  <graouts@apple.com>
 
         Support simulated mouse events on iOS based on a PlatformTouchEvent
