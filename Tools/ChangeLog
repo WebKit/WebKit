@@ -1,3 +1,28 @@
+2019-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Further restricting webarchive loads
+        https://bugs.webkit.org/show_bug.cgi?id=194567
+        <rdar://problem/47610130>
+
+        Reviewed by Youenn Fablet.
+
+        Besides adding API tests, this patch also enhances DragAndDropSimulator to allow
+        navigations on drop.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/LoadWebArchive.mm: Added.
+        (-[TestLoadWebArchiveNavigationDelegate webView:didFinishNavigation:]):
+        (-[TestLoadWebArchiveNavigationDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[TestLoadWebArchiveNavigationDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/helloworld.webarchive: Added.
+        * TestWebKitAPI/Tests/mac/load-web-archive-1.html: Added.
+        * TestWebKitAPI/Tests/mac/load-web-archive-2.html: Added.
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/mac/DragAndDropSimulatorMac.mm:
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator _webView:dragDestinationActionMaskForDraggingInfo:]):
+
 2019-02-13  John Wilander  <wilander@apple.com>
 
         Store Ad Click Attribution requests in the network process

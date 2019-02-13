@@ -1,3 +1,45 @@
+2019-02-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Further restricting webarchive loads
+        https://bugs.webkit.org/show_bug.cgi?id=194567
+        <rdar://problem/47610130>
+
+        Reviewed by Youenn Fablet.
+
+        This patch futher restricts main frame webarchive loads to the followings:
+        1) loaded by clients;
+        2) loaded by drag;
+        3) reloaded from any of the previous two.
+
+        It moves setAlwaysAllowLocalWebarchive, which is used for testing only, from Document
+        to FrameLoader such that the option is remembered during redirections.
+
+        Covered by API tests.
+
+        * dom/Document.h:
+        (WebCore::Document::setAlwaysAllowLocalWebarchive): Deleted.
+        (WebCore::Document::alwaysAllowLocalWebarchive const): Deleted.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::disallowWebArchive const):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setAllowsWebArchiveForMainFrame):
+        (WebCore::DocumentLoader::allowsWebArchiveForMainFrame):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setIsRequestFromClientOrUserInput):
+        (WebCore::FrameLoadRequest::isRequestFromClientOrUserInput):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reload):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::setAlwaysAllowLocalWebarchive):
+        (WebCore::FrameLoader::alwaysAllowLocalWebarchive const):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setAlwaysAllowLocalWebarchive const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-02-13  Jer Noble  <jer.noble@apple.com>
 
         Null-deref crash at SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged()

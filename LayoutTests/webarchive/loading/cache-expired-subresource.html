@@ -5,7 +5,7 @@
         testRunner.waitUntilDone();
     }
     if (window.internals)
-        internals.setAlwaysAllowLocalWebarchive();
+        internals.setAlwaysAllowLocalWebarchive(true);
     
     function frameLoaded() {
         if (window.testRunner)

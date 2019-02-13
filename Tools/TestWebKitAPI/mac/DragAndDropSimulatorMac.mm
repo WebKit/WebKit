@@ -122,6 +122,7 @@ static NSImage *defaultExternalDragImage()
         _webView = adoptNS([[DragAndDropTestWKWebView alloc] initWithFrame:frame configuration:configuration ?: [[[WKWebViewConfiguration alloc] init] autorelease] simulator:self]);
         _filePromiseDestinationURLs = adoptNS([NSMutableArray new]);
         [_webView setUIDelegate:self];
+        self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
     }
     return self;
 }
@@ -468,6 +469,11 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 - (void)_webView:(WKWebView *)webView didPerformDragOperation:(BOOL)handled
 {
     _doneWaitingForDrop = true;
+}
+
+- (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo
+{
+    return self.dragDestinationAction;
 }
 
 @end
