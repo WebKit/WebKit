@@ -207,7 +207,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, resource, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, [this, trackingParameters, identifier, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
+    WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, [this, trackingParameters, identifier, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
         if (result != ServiceWorkerClientFetch::Result::Unhandled) {
             LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
             RELEASE_LOG_IF_ALLOWED(resourceLoader.get(), "scheduleLoad: URL will be scheduled through ServiceWorker handle fetch algorithm (frame = %p, pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", resourceLoader->frame(), trackingParameters.pageID, trackingParameters.frameID, identifier);
