@@ -1,3 +1,12 @@
+2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix -Wformat warning from r241401
+        https://bugs.webkit.org/show_bug.cgi?id=194584
+        <rdar://problem/47761293>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActivityState):
+
 2019-02-13  Youenn Fablet  <youenn@apple.com>
 
         Make WebRTCUnifiedPlanEnabled true by default
