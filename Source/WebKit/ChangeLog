@@ -1,3 +1,16 @@
+2019-02-12  Antoine Quint  <graouts@apple.com>
+
+        Move UIWebTouchEventsGestureRecognizer.activeTouchesByIdentifier to SPI
+        https://bugs.webkit.org/show_bug.cgi?id=194531
+        <rdar://problem/47714562>
+
+        Reviewed by Dean Jackson.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cancelPointersForGestureRecognizer:]): We update the referenced Radar since we need to keep the call
+        to respondsToSelector until the SPI has shipped for OpenSource builds to work.
+
 2019-02-13  Antoine Quint  <graouts@apple.com>
 
         Support simulated mouse events on iOS based on a PlatformTouchEvent
