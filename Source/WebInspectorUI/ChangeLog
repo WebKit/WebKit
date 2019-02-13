@@ -1,5 +1,26 @@
 2019-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Experimental setting for CPU Usage Timeline improvements
+        https://bugs.webkit.org/show_bug.cgi?id=194556
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/LegacyCPUTimelineView.css: Added.
+        * UserInterface/Views/LegacyCPUTimelineView.js: Added.
+        Copy of CPUTimelineView.js/css to be used when the setting is not set.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        ContentView to create based on the setting.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        Experimental switch.
+
+2019-02-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline.prototype.recordsInTimeRange uses a property most records do not have
         https://bugs.webkit.org/show_bug.cgi?id=194549
 
