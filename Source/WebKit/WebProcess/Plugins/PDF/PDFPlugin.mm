@@ -1124,6 +1124,9 @@ void PDFPlugin::runScriptsInPDFDocument()
 
 void PDFPlugin::createPasswordEntryForm()
 {
+    if (!supportsForms())
+        return;
+
     m_passwordField = PDFPluginPasswordField::create(m_pdfLayerController.get(), this);
     m_passwordField->attach(m_annotationContainer.get());
 }

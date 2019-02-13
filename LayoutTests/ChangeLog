@@ -1,3 +1,16 @@
+2019-02-13  Tim Horton  <timothy_horton@apple.com>
+
+        Encrypted PDFs inside <embed> or <object> crash the Web Content process
+        https://bugs.webkit.org/show_bug.cgi?id=194605
+        <rdar://problem/19894818>
+
+        Reviewed by Andy Estes.
+
+        * fast/replaced/encrypted-pdf-as-object-and-embed-expected.txt: Added.
+        * fast/replaced/encrypted-pdf-as-object-and-embed.html: Added.
+        * fast/replaced/resources/encrypted-image.pdf: Added.
+        Add a test ensuring that we don't crash with encrypted PDF in <object> or <embed>.
+
 2019-02-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Further restricting webarchive loads
