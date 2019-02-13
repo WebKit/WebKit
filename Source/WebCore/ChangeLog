@@ -1,3 +1,20 @@
+2019-02-12  Rob Buis  <rbuis@igalia.com>
+
+        Align with Fetch on data: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=182325
+
+        Reviewed by Alex Christensen.
+
+        The MIME type part of the data url should be serialized as
+        specified in step 3 under "data" [1].
+
+        Test: web-platform-tests/fetch/data-urls/processing.any.js
+
+        [1] https://fetch.spec.whatwg.org/#concept-scheme-fetch 
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::parseMediaType):
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Build fix after r241320
