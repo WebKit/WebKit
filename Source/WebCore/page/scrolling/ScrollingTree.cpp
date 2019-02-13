@@ -229,6 +229,9 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
             auto* parent = parentIt->value;
             node->setParent(parent);
             parent->appendChild(*node);
+        } else {
+            // FIXME: Use WeakPtr in m_nodeMap.
+            m_nodeMap.remove(nodeID);
         }
     }
 
