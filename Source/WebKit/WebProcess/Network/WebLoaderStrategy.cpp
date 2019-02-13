@@ -427,7 +427,6 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
 
 void WebLoaderStrategy::setDefersLoading(ResourceLoader&, bool)
 {
-    ASSERT_NOT_REACHED();
 }
 
 void WebLoaderStrategy::crossOriginRedirectReceived(ResourceLoader*, const URL&)

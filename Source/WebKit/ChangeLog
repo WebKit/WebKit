@@ -1,5 +1,16 @@
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
+        Remove firing assertion after r241317
+        https://bugs.webkit.org/show_bug.cgi?id=194506
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::setDefersLoading):
+        The creation of a PageGroupLoadDeferrer in Chrome.cpp tries to defer loading.
+        See comments in Chrome::runJavaScriptAlert et al.
+        This was necessary with WebKitLegacy, so keep it, but it doesn't need to do anything in modern WebKit.
+
+2019-02-12  Alex Christensen  <achristensen@webkit.org>
+
         Remove setDefersLoading infrastructure from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=194506
 
