@@ -1,3 +1,12 @@
+2019-02-13  Youenn Fablet  <youenn@apple.com>
+
+        Make WebRTCUnifiedPlanEnabled true by default
+        https://bugs.webkit.org/show_bug.cgi?id=194595
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebPreferences.yaml:
+
 2019-02-13  John Wilander  <wilander@apple.com>
 
         Store Ad Click Attribution requests in the network process
