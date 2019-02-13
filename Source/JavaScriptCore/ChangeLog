@@ -1,3 +1,17 @@
+2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        SourceCode should be copied when generating bytecode for functions
+        https://bugs.webkit.org/show_bug.cgi?id=194536
+
+        Reviewed by Saam Barati.
+
+        The FunctionExecutable might be collected while generating the bytecode
+        for nested functions, in which case the SourceCode reference would no
+        longer be valid.
+
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockForFunctions):
+
 2019-02-12  Saam barati  <sbarati@apple.com>
 
         JSScript needs to retain its cache path NSURL*
