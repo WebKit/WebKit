@@ -697,13 +697,17 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _recordSelected(event)
     {
-        let {record, timeline} = event.data;
-        let timelineView = this._timelineViewMap.get(timeline);
+        let {record} = event.data;
 
-        if (record && timelineView !== this.currentTimelineView)
-            this.showTimelineViewForTimeline(timeline);
+        for (let timelineView of this._timelineViewMap.values()) {
+            let recordMatchesTimeline = record && timelineView.representedObject.type === record.type;
 
-        timelineView.selectRecord(record);
+            if (recordMatchesTimeline && timelineView !== this.currentTimelineView)
+                this.showTimelineViewForTimeline(timelineView.representedObject);
+
+            if (!record || recordMatchesTimeline)
+                timelineView.selectRecord(record);
+        }
     }
 
     _timelineSelected()

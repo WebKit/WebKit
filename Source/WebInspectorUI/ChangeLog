@@ -1,3 +1,35 @@
+2019-02-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: clicking on an empty space in the overview should deselect any selected record bar
+        https://bugs.webkit.org/show_bug.cgi?id=194365
+        <rdar://problem/47868426>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WI.TimelineRecordBar.prototype._handleClick):
+        Mark the "click" event so that later listeners know it was handled by `WI.TimelineRecordBar`.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        (WI.TimelineOverview.prototype._instrumentAdded):
+        (WI.TimelineOverview.prototype._instrumentRemoved):
+        (WI.TimelineOverview.prototype._handleGraphsContainerClick): Added.
+        (WI.TimelineOverview.prototype._handleOverviewGraphRecordSelected): Added.
+        (WI.TimelineOverview.prototype._recordSelected):
+        Listen for "click" on the graph container and deselect all records when fired, unless the
+        click was marked by a `WI.TimelineRecordBar`.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._recordSelected):
+        Ensure that all `WI.TimelineView` update their selected record whenever it changes for any
+        other `WI.TimelineView` (or if there is no selected record).
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph.prototype.didLayoutSubtree): Added.
+        Drive-by: since `WI.TimelineRecordBar` are reused when combining, we need to re-determine
+        which one holds the currently selected record.
+
 2019-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused maxUsage in CPUTimelineView

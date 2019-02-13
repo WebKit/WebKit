@@ -388,6 +388,9 @@ WI.TimelineRecordBar = class TimelineRecordBar extends WI.Object
 
     _handleClick(event)
     {
+        // Ensure that the container "click" listener added by `WI.TimelineOverview` isn't called.
+        event.__timelineRecordBarClick = true;
+
         if (this._delegate.timelineRecordBarClicked)
             this._delegate.timelineRecordBarClicked(this);
     }
