@@ -64,7 +64,7 @@ private:
     struct JumpTable {
         ~JumpTable()
         {
-            ASSERT(min + destinations.size() == max + 1);
+            ASSERT(min + destinations.size() == static_cast<size_t>(max + 1));
             ASSERT(min == max || destinations.size() > 1);
         }
 
