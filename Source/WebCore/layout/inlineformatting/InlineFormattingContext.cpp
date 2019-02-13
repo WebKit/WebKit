@@ -104,11 +104,14 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
     auto usedValues = UsedHorizontalValues { };
     auto* layoutBox = root.firstInFlowOrFloatingChild();
     while (layoutBox) {
-        if (layoutBox->isFloatingPositioned())
-            ASSERT_NOT_IMPLEMENTED_YET();
-        else if (layoutBox->isInlineBlockBox()) {
-            computeIntrinsicWidthForFormattingContextRoot(*layoutBox);
+        if (layoutBox->establishesFormattingContext()) {
             formattingContextRootList.append(layoutBox);
+            if (layoutBox->isFloatingPositioned())
+                computeIntrinsicWidthForFloatBox(*layoutBox);
+            else if (layoutBox->isInlineBlockBox())
+                computeIntrinsicWidthForInlineBlock(*layoutBox);
+            else
+                ASSERT_NOT_REACHED();
         } else if (layoutBox->isReplaced() || is<Container>(*layoutBox)) {
             computeBorderAndPadding(*layoutBox, usedValues);
             // inline-block and replaced.
@@ -117,7 +120,7 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
                 computeWidthAndMargin(*layoutBox, usedValues);
             else {
                 // Simple inline container with no intrinsic width <span>.
-                computeMargin(downcast<InlineContainer>(*layoutBox), usedValues);
+                computeMargin(*layoutBox, usedValues);
             }
         }
         layoutBox = nextInPreOrder(*layoutBox, root);
@@ -151,23 +154,38 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
     layoutState.formattingStateForBox(root).setIntrinsicWidthConstraints(root, intrinsicWidthConstraints);
 }
 
-void InlineFormattingContext::computeIntrinsicWidthForFormattingContextRoot(const Box& layoutBox) const
+void InlineFormattingContext::computeIntrinsicWidthForFloatBox(const Box& layoutBox) const
 {
-    ASSERT(layoutBox.establishesFormattingContext());
+    ASSERT(layoutBox.isFloatingPositioned());
+    auto& layoutState = this->layoutState();
+
+    auto usedHorizontalValues = UsedHorizontalValues { };
+    computeBorderAndPadding(layoutBox, usedHorizontalValues);
+    computeMargin(layoutBox, usedHorizontalValues);
+    layoutState.createFormattingContext(layoutBox)->computeIntrinsicWidthConstraints();
+
+    auto usedVerticalValues = UsedVerticalValues { };
+    auto heightAndMargin = Geometry::floatingHeightAndMargin(layoutState, layoutBox, usedVerticalValues, usedHorizontalValues);
+
+    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
+    displayBox.setContentBoxHeight(heightAndMargin.height);
+    displayBox.setVerticalMargin({ heightAndMargin.nonCollapsedMargin, { } });
+}
+
+void InlineFormattingContext::computeIntrinsicWidthForInlineBlock(const Box& layoutBox) const
+{
+    ASSERT(layoutBox.isInlineBlockBox());
 
     auto usedValues = UsedHorizontalValues { };
     computeBorderAndPadding(layoutBox, usedValues);
-    computeMargin(downcast<InlineContainer>(layoutBox), usedValues);
+    computeMargin(layoutBox, usedValues);
     layoutState().createFormattingContext(layoutBox)->computeIntrinsicWidthConstraints();
 }
 
-void InlineFormattingContext::computeMargin(const InlineContainer& inlineContainer, UsedHorizontalValues usedValues) const
+void InlineFormattingContext::computeMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
-    // Non-replaced and formatting root containers (<span></span>) don't have width property -> non width computation.
-    ASSERT(!inlineContainer.replaced());
-
-    auto& displayBox = layoutState().displayBoxForLayoutBox(inlineContainer);
-    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(inlineContainer, usedValues);
+    auto computedHorizontalMargin = Geometry::computedHorizontalMargin(layoutBox, usedValues);
+    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
     displayBox.setHorizontalComputedMargin(computedHorizontalMargin);
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
