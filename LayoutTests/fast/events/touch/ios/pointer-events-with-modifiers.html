@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../resources/compute-subsets.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+class TouchTest {
+    constructor(elementToTouch, modifiers = [])
+    {
+        this.elementToTouch = elementToTouch;
+        this.modifiers = modifiers;
+    }
+
+    toString()
+    {
+        return `{ ${this.elementToTouch}, [${this.modifiers}] }`;
+    }
+
+    run()
+    {
+        let centerX = this.elementToTouch.offsetLeft + this.elementToTouch.offsetWidth / 2;
+        let centerY = this.elementToTouch.offsetTop + this.elementToTouch.offsetHeight / 2;
+        return UIHelper.tapAt(centerX, centerY, this.modifiers);
+    }
+}
+
+const modifierKeys = ["metaKey", "altKey", "ctrlKey", "shiftKey"];
+
+let currentTest;
+let tests = [];
+
+function handlePointerDown(event)
+{
+    logPointerEvent(event);
+}
+
+function handlePointerUp(event)
+{
+    logPointerEvent(event);
+    nextTouchPress();
+}
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function logPointerEvent(event)
+{
+    let pieces = [];
+    for (let propertyName of ["type", "pointerType", "isPrimary", "width", "height", "pressure", "tangentialPressure", "tiltX", "tiltY", "twist", "x", "y", "offsetX", "offsetY", "button", "buttons", "screenX", "screenY", "clientX", "clientY", "altKey", "ctrlKey", "metaKey", "shiftKey"])
+        pieces.push(`${propertyName}: ${event[propertyName]}`);
+    log(pieces.join(", "));
+}
+
+const modifierDisplayNameMap = {
+    "altKey": "Option",
+    "ctrlKey": "Control",
+    "metaKey": "Command",
+    "shiftKey": "Shift",
+    "capsLockKey": "Caps Lock",
+}
+
+function displayNameForTest(test)
+{
+    let displayNamesOfModifiers = [];
+    for (const modifier of test.modifiers)
+        displayNamesOfModifiers.push(modifierDisplayNameMap[modifier]);
+    let result = "";
+    if (displayNamesOfModifiers.length)
+        result += displayNamesOfModifiers.join(" + ") + " + ";
+    result += "Single Tap";
+    return result;
+}
+
+async function nextTouchPress()
+{
+    if (!tests.length) {
+        document.body.removeChild(document.getElementById("square"));
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    currentTest = tests.shift();
+    log(`\nTest ${displayNameForTest(currentTest)}:`);
+    if (window.testRunner)
+        await currentTest.run();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    nextTouchPress();
+}
+
+function setUp()
+{
+    let square = document.getElementById("square");
+    square.addEventListener("pointerdown", handlePointerDown, true);
+    square.addEventListener("pointerup", handlePointerUp, true);
+
+    for (const modifiers of computeSubsets(modifierKeys))
+        tests.push(new TouchTest(square, modifiers));
+
+    runTest();
+}
+
+window.addEventListener("load", setUp, true);
+</script>
+<style>
+#square {
+    background-color: blue;
+    color: white;
+    height: 128px;
+    width: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+}
+</style>
+</head>
+<body>
+<p>This logs DOM pointerdown and pointerup events that are dispatched when single tapping an element while holding modifier keys. Must be run in WebKitTestRunner.</p>
+<div id="square">Touch Me</div>
+<pre id="console"></pre>
+</body>
+</html>

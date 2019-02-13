@@ -35,6 +35,10 @@
 #import <WebCore/FloatPoint.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import "WebIOSEventFactory.h"
+#endif
+
 @implementation WKNavigationAction
 
 static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
@@ -166,6 +170,7 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 #endif
 
 #if PLATFORM(MAC)
+
 - (NSEventModifierFlags)modifierFlags
 {
     return toNSEventModifierFlags(_navigationAction->modifiers());
@@ -175,6 +180,14 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 {
     return toNSButtonNumber(_navigationAction->mouseButton());
 }
+
+#else
+
+- (UIKeyModifierFlags)modifierFlags
+{
+    return WebIOSEventFactory::toUIKeyModifierFlags(_navigationAction->modifiers());
+}
+
 #endif
 
 #pragma mark WKObject protocol implementation

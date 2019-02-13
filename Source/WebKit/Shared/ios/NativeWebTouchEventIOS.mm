@@ -26,15 +26,16 @@
 #import "config.h"
 #import "NativeWebTouchEvent.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
-#import "WebEvent.h"
 #import <UIKit/UITouch.h>
 #import <WebCore/IntPoint.h>
 #import <WebCore/WAKAppKitStubs.h>
 
 namespace WebKit {
+
+#if ENABLE(TOUCH_EVENTS)
 
 static inline WebEvent::Type webEventTypeForUIWebTouchEventType(UIWebTouchEventType type)
 {
@@ -117,10 +118,10 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
     return touchPointList;
 }
 
-NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
+NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event, UIKeyModifierFlags flags)
     : WebTouchEvent(
         webEventTypeForUIWebTouchEventType(event->type),
-        OptionSet<Modifier> { },
+        webEventModifierFlags(flags),
         WallTime::fromRawSeconds(event->timestamp),
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),
@@ -135,6 +136,24 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
 {
 }
 
+#endif // ENABLE(TOUCH_EVENTS)
+
+OptionSet<WebEvent::Modifier> webEventModifierFlags(UIKeyModifierFlags flags)
+{
+    OptionSet<WebEvent::Modifier> modifiers;
+    if (flags & UIKeyModifierShift)
+        modifiers.add(WebEvent::Modifier::ShiftKey);
+    if (flags & UIKeyModifierControl)
+        modifiers.add(WebEvent::Modifier::ControlKey);
+    if (flags & UIKeyModifierAlternate)
+        modifiers.add(WebEvent::Modifier::AltKey);
+    if (flags & UIKeyModifierCommand)
+        modifiers.add(WebEvent::Modifier::MetaKey);
+    if (flags & UIKeyModifierAlphaShift)
+        modifiers.add(WebEvent::Modifier::CapsLockKey);
+    return modifiers;
+}
+
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
+#endif // PLATFORM(IOS_FAMILY)

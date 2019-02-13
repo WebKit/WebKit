@@ -3211,3 +3211,8 @@ webkit.org/b/192398 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/191704 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 
 webkit.org/b/193955 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Skip ]
+
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/45970040>.
+fast/events/touch/ios/touch-events-with-modifiers.html [ Skip ]
+fast/events/touch/ios/mouse-events-with-modifiers.html [ Skip ]
+fast/events/touch/ios/pointer-events-with-modifiers.html [ Skip ]

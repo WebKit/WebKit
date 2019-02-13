@@ -1037,6 +1037,10 @@ typedef NSInteger UICompositingMode;
 @property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
 @end
 
+@interface UIGestureRecognizer (Staging_45970040)
+@property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;
+@end
+
 @interface UIPhysicalKeyboardEvent : UIPressesEvent
 @end
 

@@ -23,20 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIOSEventFactory_h
-#define WebIOSEventFactory_h
+#pragma once
 
 #if PLATFORM(IOS_FAMILY)
 
 #import "WebEvent.h"
+#import <UIKit/UIKit.h>
 #import <WebCore/WebEvent.h>
 
 class WebIOSEventFactory {
 public:
     static WebKit::WebKeyboardEvent createWebKeyboardEvent(::WebEvent *);
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
+
+    static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);
 };
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // WebIOSEventFactory_h

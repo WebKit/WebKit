@@ -31,6 +31,22 @@
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
 
+UIKeyModifierFlags WebIOSEventFactory::toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier> modifiers)
+{
+    UIKeyModifierFlags modifierFlags = 0;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
+        modifierFlags |= UIKeyModifierShift;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
+        modifierFlags |= UIKeyModifierControl;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::AltKey))
+        modifierFlags |= UIKeyModifierAlternate;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
+        modifierFlags |= UIKeyModifierCommand;
+    if (modifiers.contains(WebKit::WebEvent::Modifier::CapsLockKey))
+        modifierFlags |= UIKeyModifierAlphaShift;
+    return modifierFlags;
+}
+
 static OptionSet<WebKit::WebEvent::Modifier> modifiersForEvent(::WebEvent *event)
 {
     OptionSet<WebKit::WebEvent::Modifier> modifiers;

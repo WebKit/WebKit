@@ -1,5 +1,173 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241282. rdar://problem/45929460
+
+    [iOS] Mouse/Touch/Pointer events are missing modifier keys
+    https://bugs.webkit.org/show_bug.cgi?id=191446
+    <rdar://problem/45929460>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Extract the modifier flags from the WebEvent. This code is only used by Legacy WebKit
+    on iOS and we will need to fix <rdar://problem/47929759> in order for modifier flags
+    to be passed to WebKit.
+    
+    Tests: fast/events/touch/ios/mouse-events-with-modifiers.html
+           fast/events/touch/ios/pointer-events-with-modifiers.html
+           fast/events/touch/ios/touch-events-with-modifiers.html
+    
+    * platform/ios/PlatformEventFactoryIOS.mm:
+    (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+    * platform/ios/WebEvent.h:
+    * platform/ios/WebEvent.mm:
+    (-[WebEvent initWithMouseEventType:timeStamp:location:]):
+    (-[WebEvent initWithMouseEventType:timeStamp:location:modifiers:]):
+    
+    Source/WebKit:
+    
+    Make use of UIKit SPI to retreive the modifier flags when dispatching mouse and touch events.
+    Add new WebKit SPI for iOS, -[WKNavigationAction modifierFlags], to retrieve the the modifier
+    flags held when a navigation action was initiated.
+    
+    * Platform/spi/ios/UIKitSPI.h: Expose SPI.
+    * Shared/NativeWebTouchEvent.h: Re-arrange macro guards so that we can expose the helper function
+    WebKit::webEventModifierFlags(). This is a bit more involved that usual since this header is included
+    from both C++ and Objective-C source files. It only makes sense to expose this function when
+    compiling as part of an Objective-C source file.
+    * Shared/ios/NativeWebTouchEventIOS.mm:
+    (WebKit::NativeWebTouchEvent::NativeWebTouchEvent): Modified to take the modifier flags held down
+    when the platform touch event was received and pass them through to the base constructor.
+    (WebKit::webEventModifierFlags): Added. Converts from the platform-speciifc UIKeyModifierFlags to
+    OptionSet<WebKit::WebEvent::Modifier>.
+    * Shared/ios/WebIOSEventFactory.h:
+    * Shared/ios/WebIOSEventFactory.mm:
+    (WebIOSEventFactory::toUIKeyModifierFlags): Added. Converts from OptionSet<WebKit::WebEvent::Modifier>
+    to the platform-specific UIKeyModifierFlags.
+    * UIProcess/API/Cocoa/WKNavigationAction.mm:
+    (-[WKNavigationAction modifierFlags]): Added.
+    * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WKContentViewInteraction.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (gestureRecognizerModifierFlags): Added.
+    
+    (-[WKContentView _webTouchEventsRecognized:]):
+    (-[WKContentView _highlightLongPressRecognized:]):
+    (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+    (-[WKContentView _singleTapCommited:]):
+    Pass modifier flags through.
+    
+    (-[WKContentView _attemptClickAtLocation:modifierFlags:]): Added.
+    (-[WKContentView actionSheetAssistant:openElementAtLocation:]): This is invoked when a person opens a link
+    via the action sheet. We don't have access to the modifier flags to pass. It also seems like an implementation
+    detail that this action is implemented via mouse click and we should re-evaluate this decision in light of
+    the fact tht the action sheet is browser UI and we tend to be very reserved on what UI actions are visible
+    to the page. On Mac, opening a link via the context menu is not visible to the page, at least from a mouse
+    event perspective.
+    (webEventFlagsForUIKeyModifierFlags): Added.
+    (-[WKContentView _hoverGestureRecognizerChanged:]): Pass modifier flags through.
+    (-[WKContentView _attemptClickAtLocation:]): Deleted.
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::handleTwoFingerTapAtPoint):
+    (WebKit::WebPageProxy::commitPotentialTap):
+    (WebKit::WebPageProxy::handleTap):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::handleSyntheticClick):
+    (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+    (WebKit::WebPage::completeSyntheticClick):
+    (WebKit::WebPage::handleTap):
+    (WebKit::WebPage::handleTwoFingerTapAtPoint):
+    (WebKit::WebPage::commitPotentialTap):
+    Pass modifier flags through.
+    
+    Tools:
+    
+    Add support infrastructure for testing touch and stylus taps when holding modifier keys.
+    
+    * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+    (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+    (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+    * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+    * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+    (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+    (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+    * TestRunnerShared/UIScriptContext/UIScriptController.h:
+    * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+    (WTR::arrayLength):
+    (WTR::parseModifierArray):
+    (WTR::UIScriptController::singleTapAtPoint): Implemented in terms of singleTapAtPointWithModifiers().
+    (WTR::UIScriptController::singleTapAtPointWithModifiers): Added.
+    (WTR::UIScriptController::stylusTapAtPoint): Implemented in terms of stylusTapAtPointWithModifiers().
+    (WTR::UIScriptController::stylusTapAtPointWithModifiers): Added.
+    
+    LayoutTests:
+    
+    Refactor existing iOS key events tests to share code. Add new tests to ensure touch and mouse events
+    have accurate modifier key details.
+    
+    * fast/events/ios/key-events-meta-alt-combinations.html:
+    * fast/events/ios/resources/key-tester.js:
+    (computeSubsets.compareByModifierOrder): Deleted.
+    * fast/events/resources/compute-subsets.js: Added.
+    (computeSubsets.compareByOriginalArrayOrder):
+    (computeSubsets):
+    * fast/events/touch/ios/mouse-events-with-modifiers-expected.txt: Added.
+    * fast/events/touch/ios/mouse-events-with-modifiers.html: Added.
+    * fast/events/touch/ios/pointer-events-with-modifiers-expected.txt: Added.
+    * fast/events/touch/ios/pointer-events-with-modifiers.html: Added.
+    * fast/events/touch/ios/touch-events-with-modifiers-expected.txt: Added.
+    * fast/events/touch/ios/touch-events-with-modifiers.html: Added.
+    * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt: Update expected result
+    due to changes to ui-helper.js.
+    * http/tests/security/anchor-download-block-crossorigin-expected.txt: Ditto.
+    * platform/ios/TestExpectations:
+    * resources/ui-helper.js:
+    (window.UIHelper.tapAt.return.new.Promise):
+    (window.UIHelper.tapAt):
+    (window.UIHelper.stylusTapAt.return.new.Promise):
+    (window.UIHelper.stylusTapAt):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241282 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-11  Daniel Bates  <dabates@apple.com>
+
+            [iOS] Mouse/Touch/Pointer events are missing modifier keys
+            https://bugs.webkit.org/show_bug.cgi?id=191446
+            <rdar://problem/45929460>
+
+            Reviewed by Tim Horton.
+
+            Refactor existing iOS key events tests to share code. Add new tests to ensure touch and mouse events
+            have accurate modifier key details.
+
+            * fast/events/ios/key-events-meta-alt-combinations.html:
+            * fast/events/ios/resources/key-tester.js:
+            (computeSubsets.compareByModifierOrder): Deleted.
+            * fast/events/resources/compute-subsets.js: Added.
+            (computeSubsets.compareByOriginalArrayOrder):
+            (computeSubsets):
+            * fast/events/touch/ios/mouse-events-with-modifiers-expected.txt: Added.
+            * fast/events/touch/ios/mouse-events-with-modifiers.html: Added.
+            * fast/events/touch/ios/pointer-events-with-modifiers-expected.txt: Added.
+            * fast/events/touch/ios/pointer-events-with-modifiers.html: Added.
+            * fast/events/touch/ios/touch-events-with-modifiers-expected.txt: Added.
+            * fast/events/touch/ios/touch-events-with-modifiers.html: Added.
+            * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt: Update expected result
+            due to changes to ui-helper.js.
+            * http/tests/security/anchor-download-block-crossorigin-expected.txt: Ditto.
+            * platform/ios/TestExpectations:
+            * resources/ui-helper.js:
+            (window.UIHelper.tapAt.return.new.Promise):
+            (window.UIHelper.tapAt):
+            (window.UIHelper.stylusTapAt.return.new.Promise):
+            (window.UIHelper.stylusTapAt):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241319. rdar://problem/47857150
 
     Source/WebCore:
