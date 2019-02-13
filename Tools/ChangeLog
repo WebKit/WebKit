@@ -1,3 +1,16 @@
+2019-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) MESSAGE_CHECK() hit under WebPageProxy::didFailProvisionalLoadForFrameShared()
+        https://bugs.webkit.org/show_bug.cgi?id=194568
+        <rdar://problem/47944490>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:didStartProvisionalNavigation:]):
+
 2019-02-12  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Remove bug_dummy from parsed test expectations

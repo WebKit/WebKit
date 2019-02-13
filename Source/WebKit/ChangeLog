@@ -1,3 +1,24 @@
+2019-02-12  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) MESSAGE_CHECK() hit under WebPageProxy::didFailProvisionalLoadForFrameShared()
+        https://bugs.webkit.org/show_bug.cgi?id=194568
+        <rdar://problem/47944490>
+
+        Reviewed by Ryosuke Niwa.
+
+        When the provisional process crashes, it is unsafe to call ProvisionalPageProxy::cancel() because
+        the WebProcessProxy clears its frame map as soon as the process crashes. Calling cancel() after
+        that would call WebPageProxy::didFailProvisionalLoadForFrameShared(), which would try to look up
+        the frame by ID and MESSAGE_CHECK() that the frame is not null. We would fail this check since
+        the frame has been removed from the WebProcessProxy at this point.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _provisionalWebProcessIdentifier]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::provisionalProcessDidTerminate):
+
 2019-02-12  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Youtube fails to play.
