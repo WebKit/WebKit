@@ -80,7 +80,7 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
     return !!options.serviceWorkerRegistrationIdentifier;
 }
 
-void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
+void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
 {
     if (!SchemeRegistry::canServiceWorkersHandleURLScheme(loader.request().url().protocol().toStringWithoutCopying()) || !shouldHandleFetch(loader.options())) {
         callback(ServiceWorkerClientFetch::Result::Unhandled);
