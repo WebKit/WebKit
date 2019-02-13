@@ -53,6 +53,7 @@ bool doesGC(Graph& graph, Node* node)
     //        unless it is a known transition between previously allocated structures
     //        such as between Array types.
     //     5. Calls to a JS function, which can execute arbitrary code including allocating objects.
+    //     6. Calls operations that uses DeferGC, because it may GC in its destructor.
 
     switch (node->op()) {
     case JSConstant:
@@ -177,9 +178,6 @@ bool doesGC(Graph& graph, Node* node)
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case ClearCatchLocals:
-    case CheckTierUpInLoop:
-    case CheckTierUpAtReturn:
-    case CheckTierUpAndOSREnter:
     case LoopHint:
     case StoreBarrier:
     case FencedStoreBarrier:
@@ -196,16 +194,11 @@ bool doesGC(Graph& graph, Node* node)
     case Int52Rep:
     case GetGetter:
     case GetSetter:
-    case GetByVal:
     case GetArrayLength:
     case GetVectorLength:
-    case StringCharAt:
     case StringCharCodeAt:
     case GetTypedArrayByteOffset:
     case GetPrototypeOf:
-    case PutByValDirect:
-    case PutByVal:
-    case PutByValAlias:
     case PutStructure:
     case GetByOffset:
     case GetGetterSetterByOffset:
@@ -272,6 +265,9 @@ bool doesGC(Graph& graph, Node* node)
     case CallForwardVarargs:
     case CallObjectConstructor:
     case CallVarargs:
+    case CheckTierUpAndOSREnter:
+    case CheckTierUpAtReturn:
+    case CheckTierUpInLoop:
     case Construct:
     case ConstructForwardVarargs:
     case ConstructVarargs:
@@ -325,6 +321,7 @@ bool doesGC(Graph& graph, Node* node)
     case ResolveScope:
     case ResolveScopeForHoistingFuncDeclInEval:
     case Return:
+    case StringCharAt:
     case TailCall:
     case TailCallForwardVarargs:
     case TailCallForwardVarargsInlinedCaller:
@@ -412,8 +409,28 @@ bool doesGC(Graph& graph, Node* node)
         return true;
 
     case GetIndexedPropertyStorage:
+    case GetByVal:
         if (node->arrayMode().type() == Array::String)
             return true;
+        return false;
+
+    case PutByValDirect:
+    case PutByVal:
+    case PutByValAlias:
+        if (!graph.m_plan.isFTL()) {
+            switch (node->arrayMode().modeForPut().type()) {
+            case Array::Int8Array:
+            case Array::Int16Array:
+            case Array::Int32Array:
+            case Array::Uint8Array:
+            case Array::Uint8ClampedArray:
+            case Array::Uint16Array:
+            case Array::Uint32Array:
+                return true;
+            default:
+                break;
+            }
+        }
         return false;
 
     case MapHash:
