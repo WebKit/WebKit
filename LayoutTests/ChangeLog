@@ -1,5 +1,36 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r240989. rdar://problem/47827420
+
+    Web Inspector: Fix modify-css-property-race.html test failures
+    https://bugs.webkit.org/show_bug.cgi?id=194282
+    
+    Reviewed by Matt Baker.
+    
+    Fix test failures introduced by r240946 by providing a message for expectGreaterThan assert,
+    so it doesn't log the actual values.
+    
+    * inspector/css/modify-css-property-race-expected.txt:
+    * inspector/css/modify-css-property-race.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240989 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Fix modify-css-property-race.html test failures
+            https://bugs.webkit.org/show_bug.cgi?id=194282
+
+            Reviewed by Matt Baker.
+
+            Fix test failures introduced by r240946 by providing a message for expectGreaterThan assert,
+            so it doesn't log the actual values.
+
+            * inspector/css/modify-css-property-race-expected.txt:
+            * inspector/css/modify-css-property-race.html:
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r240983. rdar://problem/47756320
 
     Unreviewed, rolling out r240742.
