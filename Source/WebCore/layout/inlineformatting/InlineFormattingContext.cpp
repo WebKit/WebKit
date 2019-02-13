@@ -190,13 +190,6 @@ void InlineFormattingContext::computeMargin(const Box& layoutBox, UsedHorizontal
     displayBox.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
 }
 
-void InlineFormattingContext::computeBorderAndPadding(const Box& layoutBox, UsedHorizontalValues usedValues) const
-{
-    auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
-    displayBox.setBorder(Geometry::computedBorder(layoutBox));
-    displayBox.setPadding(Geometry::computedPadding(layoutBox, usedValues));
-}
-
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, UsedHorizontalValues usedValues) const
 {
     auto& layoutState = this->layoutState();

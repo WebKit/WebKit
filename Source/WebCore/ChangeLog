@@ -1,5 +1,21 @@
 2019-02-12  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove redundant InlineFormattingContext::computeBorderAndPadding
+        https://bugs.webkit.org/show_bug.cgi?id=194540
+
+        Reviewed by Antti Koivisto.
+
+        Use FormattingContext::computeBorderAndPadding instead.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeBorderAndPadding const):
+        * layout/FormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeBorderAndPadding const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+
+2019-02-12  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add intrinsic width support for float boxes.
         https://bugs.webkit.org/show_bug.cgi?id=194528
 
