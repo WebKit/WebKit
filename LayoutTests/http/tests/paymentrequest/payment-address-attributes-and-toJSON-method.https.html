@@ -38,7 +38,8 @@ function runTest(button, expected = {}) {
       },
       "Array must be frozen"
     );
-    for (let [attr, expectedValue] of Object.entries(expected)) {
+    const expectedEntries = Object.entries(expected);
+    for (let [attr, expectedValue] of expectedEntries) {
       assert_idl_attribute(addr, attr);
       const msg = `Expected paymentAddress.${attr} to equal ${expectedValue}.`;
       //.toString() flattens array addressLine,
@@ -48,12 +49,22 @@ function runTest(button, expected = {}) {
       assert_equals(actualValue, expectedValue, msg);
     }
     // Check toJSON result
-    for (let [prop, jsonValue] of Object.entries(addr.toJSON())) {
+    const jsonAddress = addr.toJSON();
+    const jsonAddressEntries = Object.entries(jsonAddress);
+    for (let [prop, jsonValue] of jsonAddressEntries) {
       const actualValue = jsonValue.toString().toLowerCase();
       const expectedValue = expected[prop].toString().toLowerCase();
       const msg = `Expected JSON ${prop} to be ${expectedValue}`;
       assert_equals(actualValue, expectedValue, msg);
     }
+    assert_equals(jsonAddressEntries.length, expectedEntries.length);
+    // Check that .toJSON() created a frozen array
+    assert_throws(
+      new TypeError(),
+      () => {
+        jsonAddress.addressLine.push("this must throw");
+      },
+    );
   }, button.textContent.trim());
   done();
 }
