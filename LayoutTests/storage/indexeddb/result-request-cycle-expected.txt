@@ -1,0 +1,40 @@
+Verify that IDBRequest is not leaked when there is a reference cycle for result attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+db = event.target.result
+store = db.createObjectStore('store')
+
+onOpen():
+db = event.target.result
+tx = db.transaction('store')
+store = tx.objectStore('store')
+getRequest = store.get('key1')
+getRequest2 = store.get('key2')
+
+():
+Verify that the request's result can be accessed lazily:
+gc()
+result = getRequest.result
+PASS result.value is "value1"
+result.source = getRequest
+PASS getRequest2.result.value is "value2"
+getRequest = null
+gc()
+PASS getRequestObervation.wasCollected is false
+PASS resultObservation.wasCollected is false
+result = null
+gc()
+PASS getRequestObervation.wasCollected is true
+PASS resultObservation.wasCollected is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

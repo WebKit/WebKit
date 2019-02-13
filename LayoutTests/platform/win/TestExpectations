@@ -4270,3 +4270,6 @@ webkit.org/b/193540 js/slow-stress/simple-custom-getter.html [ Skip ]
 webkit.org/b/193540 performance-api/performance-observer-no-document-leak.html [ Skip ]
 
 webkit.org/b/194451 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
+
+storage/indexeddb/result-request-cycle.html [ Skip ]
+storage/indexeddb/value-cursor-cycle.html [ Skip ]

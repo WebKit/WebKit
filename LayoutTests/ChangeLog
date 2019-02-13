@@ -1,3 +1,25 @@
+2019-02-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Add two regression tests for reference cycle in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=194527
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/reference-cycle-leaks.html:
+        * platform/win/TestExpectations:
+        The added tests are failing on win bots for unknown reasons, propably related to webkit.org/b/193540. Skip them 
+        on win.
+
+        * storage/indexeddb/resources/result-request-cycle.js: Added.
+        (prepareDatabase):
+        * storage/indexeddb/resources/value-cursor-cycle.js: Added.
+        (prepareDatabase):
+        (onOpen.cursorRequest.onsuccess):
+        * storage/indexeddb/result-request-cycle-expected.txt: Added.
+        * storage/indexeddb/result-request-cycle.html: Added.
+        * storage/indexeddb/value-cursor-cycle-expected.txt: Added.
+        * storage/indexeddb/value-cursor-cycle.html: Added.
+
 2019-02-13  Antoine Quint  <graouts@apple.com>
 
         Support simulated mouse events on iOS based on a PlatformTouchEvent
