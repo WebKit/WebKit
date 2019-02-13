@@ -796,15 +796,8 @@ webkit.org/b/142292 fast/images/animated-gif-window-resizing.html [ Timeout ]
 # 9. TESTS FAILING
 #////////////////////////////////////////////////////////////////////////////////////////
 
-Bug(WPE) http/tests/appcache [ Pass ]
 # Implement testRunner.setUseDeferredFrameLoading
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
-
-http/tests/appcache/deferred-events-delete-while-raising-timer.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/deferred-events-delete-while-raising.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/404-resource-with-slow-main-resource.php [ DumpJSConsoleLogInStdErr ]
 
 Bug(WPE) http/tests/cache/ [ Pass ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]

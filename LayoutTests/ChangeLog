@@ -1,3 +1,13 @@
+2019-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK][WPE] Don't use DumpJSConsoleLogInStdErr expectation in platform TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=194587
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Removed DumpJSConsoleLogInStdErr markers which are marked in top TestExpectations.
+        * platform/wpe/TestExpectations: Ditto.
+
 2019-02-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Remove WebGPUBufferDescriptor/Usage and use GPU versions
