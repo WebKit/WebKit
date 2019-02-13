@@ -376,7 +376,8 @@ enum CompositingPolicy {
 
     [MayThrowException] unsigned long long layerIDForElement(Element element);
 
-    [MayThrowException] DOMString scrollbarOverlayStyle();
+    [MayThrowException] DOMString scrollbarOverlayStyle(optional Node? node = null);
+    [MayThrowException] boolean scrollbarUsingDarkAppearance(optional Node? node = null);
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
