@@ -1,5 +1,23 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241007. rdar://problem/47836218
+
+    Fix a typo in r241006. Substitute Modifier for Modifiers.
+    
+    * Shared/mac/NativeWebGestureEventMac.mm:
+    (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-05  Daniel Bates  <dabates@apple.com>
+
+            Fix a typo in r241006. Substitute Modifier for Modifiers.
+
+            * Shared/mac/NativeWebGestureEventMac.mm:
+            (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241006. rdar://problem/47836218
 
     Attempt to fix the build following r241000
