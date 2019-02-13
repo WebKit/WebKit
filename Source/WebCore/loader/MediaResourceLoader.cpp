@@ -151,6 +151,12 @@ void MediaResource::stop()
     m_resource = nullptr;
 }
 
+void MediaResource::setDefersLoading(bool defersLoading)
+{
+    if (m_resource)
+        m_resource->setDefersLoading(defersLoading);
+}
+
 void MediaResource::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
@@ -172,12 +178,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
 
     m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
     if (m_client)
-        m_client->responseReceived(*this, response, [this, protectedThis = makeRef(*this), completionHandler = completionHandlerCaller.release()] (ShouldContinue shouldContinue) mutable {
-            if (completionHandler)
-                completionHandler();
-            if (shouldContinue == ShouldContinue::No)
-                stop();
-        });
+        m_client->responseReceived(*this, response);
 
     m_loader->addResponseForTesting(response);
 }
