@@ -50,7 +50,7 @@ private:
     void checkUpdateBlocksize(uint64_t bytesRead);
 
     // PlatformMediaResourceClient virtual methods.
-    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&&) override;
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
     void dataReceived(PlatformMediaResource&, const char*, int) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
@@ -683,7 +683,11 @@ static void webKitWebSrcNeedData(WebKitWebSrc* src)
     priv->paused = false;
 
     GRefPtr<WebKitWebSrc> protector = WTF::ensureGRef(src);
-    priv->notifier->notify(MainThreadSourceNotification::NeedData, [protector] { });
+    priv->notifier->notify(MainThreadSourceNotification::NeedData, [protector] {
+        WebKitWebSrcPrivate* priv = protector->priv;
+        if (priv->resource)
+            priv->resource->setDefersLoading(false);
+    });
 }
 
 static void webKitWebSrcEnoughData(WebKitWebSrc* src)
@@ -700,7 +704,7 @@ static void webKitWebSrcEnoughData(WebKitWebSrc* src)
     priv->notifier->notify(MainThreadSourceNotification::EnoughData, [protector] {
         WebKitWebSrcPrivate* priv = protector->priv;
         if (priv->resource)
-            priv->resource->stop();
+            priv->resource->setDefersLoading(true);
     });
 }
 
@@ -781,7 +785,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(uint64_t bytesRead)
     }
 }
 
-void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinue)>&& completionHandler)
+void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
     WebKitWebSrcPrivate* priv = src->priv;
@@ -800,12 +804,12 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
         gst_app_src_end_of_stream(priv->appsrc);
         webKitWebSrcStop(src);
-        return completionHandler(ShouldContinue::No);
+        return;
     }
 
     if (priv->isSeeking) {
         GST_DEBUG_OBJECT(src, "Seek in progress, ignoring response");
-        return completionHandler(ShouldContinue::Yes);
+        return;
     }
 
     if (priv->requestedOffset) {
@@ -818,7 +822,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
             GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received unexpected %d HTTP status code", response.httpStatusCode()), (nullptr));
             gst_app_src_end_of_stream(priv->appsrc);
             webKitWebSrcStop(src);
-            return completionHandler(ShouldContinue::No);
+            return;
         }
     }
 
@@ -882,8 +886,6 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
         gst_structure_copy(httpHeaders)));
     gst_pad_push_event(GST_BASE_SRC_PAD(priv->appsrc), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders));
-    
-    completionHandler(ShouldContinue::Yes);
 }
 
 void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const char* data, int length)
