@@ -544,10 +544,10 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
 {
     ASSERT(m_activeGestureType == ViewGestureType::Swipe);
 
-    bool swipingLeft = isPhysicallySwipingLeft(direction);
-
     if (!m_webPageProxy.drawingArea())
         return;
+
+    bool swipingLeft = isPhysicallySwipingLeft(direction);
 
     double width;
     if (!m_customSwipeViews.isEmpty())

@@ -1,3 +1,20 @@
+2019-02-12  Tim Horton  <timothy_horton@apple.com>
+
+        Null deref in userInterfaceLayoutDirection under ViewGestureController::handleSwipeGesture
+        https://bugs.webkit.org/show_bug.cgi?id=194569
+        <rdar://problem/46711049>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::handleSwipeGesture):
+        It is conceivable that we could get here if the client closes the page
+        e.g. in the callback from willEndSwipeGesture. We already guarded against
+        this ... one line too late! Rearrange the lines so we don't call into
+        WebPageProxy at all if we don't have a drawing area (which is a strict subset
+        of the time that isValid would return true). This is a speculative fix,
+        since I can no longer reproduce the crash on demand.
+
 2019-02-12  Youenn Fablet  <youenn@apple.com>
 
         WebServiceWorkerProvider::handleFetch no longer needs a CachedResource parameter
