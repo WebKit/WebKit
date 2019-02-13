@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden"
+        },
+        "trigger": {
+            "url-filter": ".*png"
+        }
+    }
+]
