@@ -1,3 +1,17 @@
+2019-02-13  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r241433.
+
+        Broke internal builds.
+
+        Reverted changeset:
+
+        "Move
+        UIWebTouchEventsGestureRecognizer.activeTouchesByIdentifier to
+        SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=194531
+        https://trac.webkit.org/changeset/241433
+
 2019-02-12  Antoine Quint  <graouts@apple.com>
 
         Move UIWebTouchEventsGestureRecognizer.activeTouchesByIdentifier to SPI

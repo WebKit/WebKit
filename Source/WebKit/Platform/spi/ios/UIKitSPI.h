@@ -768,7 +768,6 @@ struct _UIWebTouchEvent {
 @property (nonatomic, readonly) CGPoint locationInWindow;
 @property (nonatomic, readonly) UIWebTouchEventType type;
 @property (nonatomic, readonly) const struct _UIWebTouchEvent *lastTouchEvent;
-@property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
 @end
 
 typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
@@ -1034,6 +1033,11 @@ typedef NSInteger UICompositingMode;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+// FIXME: <rdar://problem/47714562>
+@interface UIWebTouchEventsGestureRecognizer (Staging_47634092)
+@property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
+@end
 
 @interface UIGestureRecognizer (Staging_45970040)
 @property (nonatomic, readonly, getter=_modifierFlags) UIKeyModifierFlags modifierFlags;

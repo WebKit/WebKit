@@ -1156,7 +1156,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(POINTER_EVENTS)
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
-    // FIXME: <rdar://problem/48035706>
+    // FIXME: <rdar://problem/47714562>
     if (![_touchEventGestureRecognizer respondsToSelector:@selector(activeTouchesByIdentifier)])
         return;
 
