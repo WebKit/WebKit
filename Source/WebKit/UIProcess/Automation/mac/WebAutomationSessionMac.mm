@@ -121,22 +121,22 @@ bool WebAutomationSession::wasEventSynthesizedForAutomation(NSEvent *event)
 #pragma mark Platform-dependent Implementations
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     IntRect windowRect;
     page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
     IntPoint locationInWindow = windowRect.location();
 
     NSEventModifierFlags modifiers = 0;
-    if (keyModifiers & WebEvent::MetaKey)
+    if (keyModifiers.contains(WebEvent::Modifier::MetaKey))
         modifiers |= NSEventModifierFlagCommand;
-    if (keyModifiers & WebEvent::AltKey)
+    if (keyModifiers.contains(WebEvent::Modifier::AltKey))
         modifiers |= NSEventModifierFlagOption;
-    if (keyModifiers & WebEvent::ControlKey)
+    if (keyModifiers.contains(WebEvent::Modifier::ControlKey))
         modifiers |= NSEventModifierFlagControl;
-    if (keyModifiers & WebEvent::ShiftKey)
+    if (keyModifiers.contains(WebEvent::Modifier::ShiftKey))
         modifiers |= NSEventModifierFlagShift;
-    if (keyModifiers & WebEvent::CapsLockKey)
+    if (keyModifiers.contains(WebEvent::CapsLockKey))
         modifiers |= NSEventModifierFlagCapsLock;
 
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];

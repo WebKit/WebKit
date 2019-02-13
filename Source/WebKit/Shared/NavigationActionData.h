@@ -43,7 +43,7 @@ struct NavigationActionData {
     static Optional<NavigationActionData> decode(IPC::Decoder&);
 
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
-    WebEvent::Modifiers modifiers { };
+    OptionSet<WebEvent::Modifier> modifiers;
     WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
     WebMouseEvent::SyntheticClickType syntheticClickType { WebMouseEvent::NoTap };
     uint64_t userGestureTokenIdentifier;

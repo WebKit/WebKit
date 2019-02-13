@@ -54,7 +54,7 @@ public:
     virtual void willRunJavaScriptAlert(WebKit::WebPage*, const WTF::String&, WebKit::WebFrame*) { }
     virtual void willRunJavaScriptConfirm(WebKit::WebPage*, const WTF::String&, WebKit::WebFrame*) { }
     virtual void willRunJavaScriptPrompt(WebKit::WebPage*, const WTF::String&, const WTF::String&, WebKit::WebFrame*) { }
-    virtual void mouseDidMoveOverElement(WebKit::WebPage*, const WebCore::HitTestResult&, WebKit::WebEvent::Modifiers, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
+    virtual void mouseDidMoveOverElement(WebKit::WebPage*, const WebCore::HitTestResult&, OptionSet<WebKit::WebEvent::Modifier>, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
     virtual void pageDidScroll(WebKit::WebPage*) { }
 
     virtual WTF::String shouldGenerateFileForUpload(WebKit::WebPage*, const WTF::String& originalFilePath) { UNUSED_PARAM(originalFilePath); return WTF::String(); }

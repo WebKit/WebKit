@@ -32,17 +32,15 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint32_t modifiersToEventState(WebEvent::Modifiers modifiers)
+static uint32_t modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
 {
     uint32_t state = 0;
-
-    if (modifiers & WebEvent::ControlKey)
+    if (modifiers.contains(WebEvent::Modifier::ControlKey))
         state |= wpe_input_keyboard_modifier_control;
-    if (modifiers & WebEvent::ShiftKey)
+    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
         state |= wpe_input_keyboard_modifier_shift;
-    if (modifiers & WebEvent::AltKey)
+    if (modifiers.contains(WebEvent::Modifier::AltKey))
         state |= wpe_input_keyboard_modifier_alt;
-
     return state;
 }
 
@@ -93,7 +91,7 @@ static void doMotionEvent(struct wpe_view_backend* viewBackend, const WebCore::I
     wpe_view_backend_dispatch_pointer_event(viewBackend, &event);
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     unsigned wpeButton = mouseButtonToWPEButton(button);
     auto modifier = stateModifierForWPEButton(wpeButton);

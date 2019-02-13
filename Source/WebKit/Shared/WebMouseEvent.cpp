@@ -46,9 +46,9 @@ WebMouseEvent::WebMouseEvent()
 }
 
 #if PLATFORM(MAC)
-WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, int eventNumber, int menuType)
+WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType, int eventNumber, int menuType)
 #else
-WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType)
+WebMouseEvent::WebMouseEvent(Type type, Button button, unsigned short buttons, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp, double force, SyntheticClickType syntheticClickType)
 #endif
     : WebEvent(type, modifiers, timestamp)
     , m_button(button)

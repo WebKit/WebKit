@@ -38,20 +38,18 @@ static inline bool isWPEKeyCodeFromKeyPad(unsigned keyCode)
     return keyCode >= WPE_KEY_KP_Space && keyCode <= WPE_KEY_KP_9;
 }
 
-static WebEvent::Modifiers modifiersForEventModifiers(unsigned eventModifiers)
+static OptionSet<WebEvent::Modifier> modifiersForEventModifiers(unsigned eventModifiers)
 {
-    unsigned modifiers = 0;
-
+    OptionSet<WebEvent::Modifier> modifiers;
     if (eventModifiers & wpe_input_keyboard_modifier_control)
-        modifiers |= WebEvent::ControlKey;
+        modifiers.add(WebEvent::Modifier::ControlKey);
     if (eventModifiers & wpe_input_keyboard_modifier_shift)
-        modifiers |= WebEvent::ShiftKey;
+        modifiers.add(WebEvent::Modifier::ShiftKey);
     if (eventModifiers & wpe_input_keyboard_modifier_alt)
-        modifiers |= WebEvent::AltKey;
+        modifiers.add(WebEvent::Modifier::AltKey);
     if (eventModifiers & wpe_input_keyboard_modifier_meta)
-        modifiers |= WebEvent::MetaKey;
-
-    return static_cast<WebEvent::Modifiers>(modifiers);
+        modifiers.add(WebEvent::Modifier::MetaKey);
+    return modifiers;
 }
 
 WallTime wallTimeForEventTime(uint64_t timestamp)
@@ -176,7 +174,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebWheelEvent(WebEvent::Wheel, position, position,
-        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, static_cast<WebEvent::Modifiers>(0), wallTimeForEventTime(event->time));
+        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -232,7 +230,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent(type, WTFMove(touchPoints), WebEvent::Modifiers(0), wallTimeForEventTime(event->time));
+    return WebTouchEvent(type, WTFMove(touchPoints), OptionSet<WebEvent::Modifier> { }, wallTimeForEventTime(event->time));
 }
 #endif // ENABLE(TOUCH_EVENTS)
 

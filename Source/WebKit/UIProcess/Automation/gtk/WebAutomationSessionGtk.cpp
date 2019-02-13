@@ -34,17 +34,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-static unsigned modifiersToEventState(WebEvent::Modifiers modifiers)
+static unsigned modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
 {
     unsigned state = 0;
-
-    if (modifiers & WebEvent::ControlKey)
+    if (modifiers.contains(WebEvent::Modifier::ControlKey))
         state |= GDK_CONTROL_MASK;
-    if (modifiers & WebEvent::ShiftKey)
+    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
         state |= GDK_SHIFT_MASK;
-    if (modifiers & WebEvent::AltKey)
+    if (modifiers.contains(WebEvent::Modifier::AltKey))
         state |= GDK_META_MASK;
-    if (modifiers & WebEvent::CapsLockKey)
+    if (modifiers.contains(WebEvent::CapsLockKey))
         state |= GDK_LOCK_MASK;
     return state;
 }
@@ -102,7 +101,7 @@ static void doMotionEvent(GtkWidget* widget, const WebCore::IntPoint& location, 
     gtk_main_do_event(event.get());
 }
 
-void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, WebEvent::Modifiers keyModifiers)
+void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, WebMouseEvent::Button button, const WebCore::IntPoint& locationInView, OptionSet<WebEvent::Modifier> keyModifiers)
 {
     unsigned gdkButton = mouseButtonToGdkButton(button);
     auto modifier = stateModifierForGdkButton(gdkButton);

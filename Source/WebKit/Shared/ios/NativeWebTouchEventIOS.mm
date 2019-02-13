@@ -120,7 +120,7 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
 NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
     : WebTouchEvent(
         webEventTypeForUIWebTouchEventType(event->type),
-        static_cast<Modifiers>(0),
+        OptionSet<Modifier> { },
         WallTime::fromRawSeconds(event->timestamp),
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),

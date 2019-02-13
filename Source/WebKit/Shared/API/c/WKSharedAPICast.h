@@ -281,18 +281,18 @@ inline WKTypeID toAPI(API::Object::Type type)
     return static_cast<WKTypeID>(type);
 }
 
-inline WKEventModifiers toAPI(WebEvent::Modifiers modifiers)
+inline WKEventModifiers toAPI(OptionSet<WebEvent::Modifier> modifiers)
 {
     WKEventModifiers wkModifiers = 0;
-    if (modifiers & WebEvent::ShiftKey)
+    if (modifiers.contains(WebEvent::Modifier::ShiftKey))
         wkModifiers |= kWKEventModifiersShiftKey;
-    if (modifiers & WebEvent::ControlKey)
+    if (modifiers.contains(WebEvent::Modifier::ControlKey))
         wkModifiers |= kWKEventModifiersControlKey;
-    if (modifiers & WebEvent::AltKey)
+    if (modifiers.contains(WebEvent::Modifier::AltKey))
         wkModifiers |= kWKEventModifiersAltKey;
-    if (modifiers & WebEvent::MetaKey)
+    if (modifiers.contains(WebEvent::Modifier::MetaKey))
         wkModifiers |= kWKEventModifiersMetaKey;
-    if (modifiers & WebEvent::CapsLockKey)
+    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
         wkModifiers |= kWKEventModifiersCapsLockKey;
     return wkModifiers;
 }

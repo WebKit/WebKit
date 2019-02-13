@@ -113,13 +113,13 @@ public:
 #endif
         m_modifierFlags = 0;
         if (webEvent.shiftKey())
-            m_modifierFlags |= WebEvent::ShiftKey;
+            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::ShiftKey);
         if (webEvent.controlKey())
-            m_modifierFlags |= WebEvent::ControlKey;
+            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::ControlKey);
         if (webEvent.altKey())
-            m_modifierFlags |= WebEvent::AltKey;
+            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::AltKey);
         if (webEvent.metaKey())
-            m_modifierFlags |= WebEvent::MetaKey;
+            m_modifierFlags |= static_cast<unsigned>(WebEvent::Modifier::MetaKey);
     }
 };
 

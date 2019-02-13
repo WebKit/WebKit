@@ -77,21 +77,19 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
 #if PLATFORM(MAC)
 
 // FIXME: This really belongs in WebEventFactory.
-static NSEventModifierFlags toNSEventModifierFlags(WebKit::WebEvent::Modifiers modifiers)
+static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebKit::WebEvent::Modifier> modifiers)
 {
     NSEventModifierFlags modifierFlags = 0;
-
-    if (modifiers & WebKit::WebEvent::CapsLockKey)
+    if (modifiers.contains(WebKit::WebEvent::CapsLockKey))
         modifierFlags |= NSEventModifierFlagCapsLock;
-    if (modifiers & WebKit::WebEvent::ShiftKey)
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ShiftKey))
         modifierFlags |= NSEventModifierFlagShift;
-    if (modifiers & WebKit::WebEvent::ControlKey)
+    if (modifiers.contains(WebKit::WebEvent::Modifier::ControlKey))
         modifierFlags |= NSEventModifierFlagControl;
-    if (modifiers & WebKit::WebEvent::AltKey)
+    if (modifiers.contains(WebKit::WebEvent::Modifier::AltKey))
         modifierFlags |= NSEventModifierFlagOption;
-    if (modifiers & WebKit::WebEvent::MetaKey)
+    if (modifiers.contains(WebKit::WebEvent::Modifier::MetaKey))
         modifierFlags |= NSEventModifierFlagCommand;
-
     return modifierFlags;
 }
 

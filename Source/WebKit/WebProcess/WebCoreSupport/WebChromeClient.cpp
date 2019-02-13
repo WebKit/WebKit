@@ -671,7 +671,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
-    m_page.injectedBundleUIClient().mouseDidMoveOverElement(&m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
+    m_page.injectedBundleUIClient().mouseDidMoveOverElement(&m_page, hitTestResult, OptionSet<WebEvent::Modifier>::fromRaw(modifierFlags), userData);
 
     // Notify the UIProcess.
     WebHitTestResultData webHitTestResultData(hitTestResult);

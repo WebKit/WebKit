@@ -34,11 +34,10 @@ namespace WebKit {
 
 WebEvent::WebEvent()
     : m_type(static_cast<uint32_t>(NoType))
-    , m_modifiers(0)
 {
 }
 
-WebEvent::WebEvent(Type type, Modifiers modifiers, WallTime timestamp)
+WebEvent::WebEvent(Type type, OptionSet<Modifier> modifiers, WallTime timestamp)
     : m_type(type)
     , m_modifiers(modifiers)
     , m_timestamp(timestamp)

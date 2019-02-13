@@ -73,7 +73,7 @@ void InjectedBundlePageUIClient::willRunJavaScriptPrompt(WebPage* page, const St
         m_client.willRunJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageUIClient::mouseDidMoveOverElement(WebPage* page, const HitTestResult& coreHitTestResult, WebEvent::Modifiers modifiers, RefPtr<API::Object>& userData)
+void InjectedBundlePageUIClient::mouseDidMoveOverElement(WebPage* page, const HitTestResult& coreHitTestResult, OptionSet<WebEvent::Modifier> modifiers, RefPtr<API::Object>& userData)
 {
     if (!m_client.mouseDidMoveOverElement)
         return;
