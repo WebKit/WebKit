@@ -1,3 +1,14 @@
+2019-02-13  Jer Noble  <jer.noble@apple.com>
+
+        Null-deref crash at SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=194613
+        <rdar://problem/48023912>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+
 2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix unused variable warnings after r241148/r241251

@@ -1031,7 +1031,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_mediaSource->cdmInstance()) {
+    if (m_mediaSource && m_mediaSource->cdmInstance()) {
         m_mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
         return;
     }
