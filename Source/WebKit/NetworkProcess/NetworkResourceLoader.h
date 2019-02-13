@@ -72,8 +72,6 @@ public:
     void start();
     void abort();
 
-    void setDefersLoading(bool);
-
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
@@ -191,7 +189,6 @@ private:
 
     bool m_wasStarted { false };
     bool m_didConsumeSandboxExtensions { false };
-    bool m_defersLoading { false };
     bool m_isAllowedToAskUserForCredentials { false };
     size_t m_numBytesReceived { 0 };
 

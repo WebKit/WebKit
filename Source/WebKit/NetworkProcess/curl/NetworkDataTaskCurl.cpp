@@ -96,18 +96,6 @@ void NetworkDataTaskCurl::resume()
         m_curlRequest->resume();
 }
 
-void NetworkDataTaskCurl::suspend()
-{
-    ASSERT(m_state != State::Suspended);
-    if (m_state == State::Canceling || m_state == State::Completed)
-        return;
-
-    m_state = State::Suspended;
-
-    if (m_curlRequest)
-        m_curlRequest->suspend();
-}
-
 void NetworkDataTaskCurl::cancel()
 {
     if (m_state == State::Canceling || m_state == State::Completed)

@@ -69,8 +69,7 @@ void NetworkLoad::initialize(NetworkSession& networkSession, WebCore::BlobRegist
     else
         m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
 
-    if (!m_parameters.defersLoading)
-        m_task->resume();
+    m_task->resume();
 }
 
 NetworkLoad::~NetworkLoad()
@@ -80,16 +79,6 @@ NetworkLoad::~NetworkLoad()
         m_redirectCompletionHandler({ });
     if (m_task)
         m_task->clearClient();
-}
-
-void NetworkLoad::setDefersLoading(bool defers)
-{
-    if (m_task) {
-        if (defers)
-            m_task->suspend();
-        else
-            m_task->resume();
-    }
 }
 
 void NetworkLoad::cancel()

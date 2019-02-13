@@ -48,7 +48,6 @@ public:
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
     WebCore::ClientCredentialPolicy clientCredentialPolicy { WebCore::ClientCredentialPolicy::CannotAskClientForCredentials };
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
-    bool defersLoading { false };
     bool needsCertificateInfo { false };
     bool isMainFrameNavigation { false };
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;

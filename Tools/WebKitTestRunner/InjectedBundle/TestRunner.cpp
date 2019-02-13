@@ -741,10 +741,6 @@ void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnP
     InjectedBundle::singleton().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
-void TestRunner::setDefersLoading(bool)
-{
-}
-
 bool TestRunner::didReceiveServerRedirectForProvisionalNavigation() const
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("DidReceiveServerRedirectForProvisionalNavigation"));

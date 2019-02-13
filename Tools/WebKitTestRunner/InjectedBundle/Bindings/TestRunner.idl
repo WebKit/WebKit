@@ -169,7 +169,6 @@ interface TestRunner {
     
     void setShouldStayOnPageAfterHandlingBeforeUnload(boolean flag);
 
-    void setDefersLoading(boolean flag);
     void setStopProvisionalFrameLoads();
 
     readonly attribute boolean didReceiveServerRedirectForProvisionalNavigation;

@@ -144,11 +144,6 @@ void NetworkDataTaskBlob::resume()
     });
 }
 
-void NetworkDataTaskBlob::suspend()
-{
-    // FIXME: can this happen?
-}
-
 void NetworkDataTaskBlob::cancel()
 {
     if (m_state == State::Canceling || m_state == State::Completed)
