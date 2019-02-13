@@ -1,3 +1,17 @@
+2019-02-12  Robin Morisset  <rmorisset@apple.com>
+
+        Make B3Value::returnsBool() more precise
+        https://bugs.webkit.org/show_bug.cgi?id=194457
+
+        Reviewed by Saam Barati.
+
+        It is currently used repeatedly in B3ReduceStrength, as well as once in B3LowerToAir.
+        It has a needlessly complex rule for BitAnd, and has no rule for other easy cases such as BitOr or Select.
+        No new tests added as this should be indirectly tested by the already existing tests.
+
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::returnsBool const):
+
 2019-02-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wimplicit-fallthrough warning after r241140
