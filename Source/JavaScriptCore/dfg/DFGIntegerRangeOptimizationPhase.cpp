@@ -1010,16 +1010,8 @@ public:
         ASSERT(m_graph.m_form == SSA);
         
         // Before we do anything, make sure that we have a zero constant at the top.
-        for (Node* node : *m_graph.block(0)) {
-            if (node->isInt32Constant() && !node->asInt32()) {
-                m_zero = node;
-                break;
-            }
-        }
-        if (!m_zero) {
-            m_zero = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(0));
-            m_insertionSet.execute(m_graph.block(0));
-        }
+        m_zero = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(0));
+        m_insertionSet.execute(m_graph.block(0));
         
         if (DFGIntegerRangeOptimizationPhaseInternal::verbose) {
             dataLog("Graph before integer range optimization:\n");
@@ -1329,7 +1321,7 @@ public:
                     
                     if (nonNegative && lessThanLength) {
                         executeNode(block->at(nodeIndex));
-                        node->remove(m_graph);
+                        node->convertToIdentityOn(m_zero);
                         changed = true;
                     }
                     break;
