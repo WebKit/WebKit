@@ -1,5 +1,17 @@
 2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Crash in Page::setActivityState because m_page is null
+        https://bugs.webkit.org/show_bug.cgi?id=194584
+
+        Reviewed by Antti Koivisto.
+
+        Add a null check to avoid the crash. Also add a debug assertion to help diagnose this in the future.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActivityState):
+
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
         https://bugs.webkit.org/show_bug.cgi?id=194582
 
