@@ -28,25 +28,11 @@
 #include "config.h"
 #include "WebProcessPool.h"
 
-#include "APIProcessPoolConfiguration.h"
-#include "Logging.h"
-#include "NetworkProcessMessages.h"
-#include "WebCookieManagerProxy.h"
+#include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
-#include "WebProcessMessages.h"
-#include <WebCore/NotImplemented.h>
-#include <WebCore/SchemeRegistry.h>
-#include <cstdlib>
-#include <wtf/FileSystem.h>
-
-#if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteInspectorServer.h>
-#include <wtf/glib/GUniquePtr.h>
-#endif
-
-#if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
-#endif
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
@@ -74,20 +60,41 @@ static void initializeRemoteInspectorServer(const char* address)
 }
 #endif
 
+static bool memoryPressureMonitorDisabled()
+{
+    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
+}
+
 void WebProcessPool::platformInitialize()
 {
 #if ENABLE(REMOTE_INSPECTOR)
     if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER"))
         initializeRemoteInspectorServer(address);
 #endif
+
+#if PLATFORM(GTK)
+    // To enable this for WPE, we need WebMemoryPressureHandler to lose the
+    // hard dependency on ViewSnapshotStore.
+    if (!memoryPressureMonitorDisabled())
+        installMemoryPressureHandler();
+#endif
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
+    parameters.proxySettings = m_networkProxySettings;
 
-    const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
-    if (disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1"))
+#if PLATFORM(GTK)
+    // This is misnamed. It can only be used to disable complex text.
+    parameters.shouldAlwaysUseComplexTextCodePath = true;
+    const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT");
+    if (forceComplexText && !strcmp(forceComplexText, "0"))
+        parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
+#endif
+
+    if (memoryPressureMonitorDisabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
 
 #if USE(GSTREAMER)
@@ -97,7 +104,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
 void WebProcessPool::platformInvalidateContext()
 {
-    notImplemented();
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
