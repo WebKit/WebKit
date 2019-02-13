@@ -104,11 +104,20 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 {
     UErrorCode error = U_ZERO_ERROR;
     Vector<UChar, 4> normalizedCharacters(length);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    int32_t normalizedLength = unorm_normalize(characters, length, UNORM_NFC, UNORM_UNICODE_3_2, normalizedCharacters.data(), length, &error);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    const auto* normalizer = unorm2_getNFCInstance(&error);
     if (U_FAILURE(error))
         return nullptr;
+    int32_t normalizedLength = unorm2_normalize(normalizer, characters, length, normalizedCharacters.data(), length, &error);
+    if (U_FAILURE(error)) {
+        if (error != U_BUFFER_OVERFLOW_ERROR)
+            return nullptr;
+
+        error = U_ZERO_ERROR;
+        normalizedCharacters.resize(normalizedLength);
+        normalizedLength = unorm2_normalize(normalizer, characters, length, normalizedCharacters.data(), normalizedLength, &error);
+        if (U_FAILURE(error))
+            return nullptr;
+    }
 
     UChar32 character;
     unsigned clusterLength = 0;
