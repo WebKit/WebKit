@@ -718,7 +718,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int error)
 {
-#if LOG_DISABLED
+#if RELEASE_LOG_DISABLED
     UNUSED_PARAM(error);
 #endif
 
@@ -956,7 +956,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     MediaTime currentTime = m_source->currentTime();
     MediaTime maximumRangeEnd = currentTime - thirtySeconds;
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     DEBUG_LOG(LOGIDENTIFIER, "currentTime = ", m_source->currentTime(), ", require ", extraMemoryCost() + newDataSize, " bytes, maximum buffer size is ", maximumBufferSize);
     size_t initialBufferedSize = extraMemoryCost();
 #endif
@@ -976,7 +976,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
         rangeEnd += thirtySeconds;
     }
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     if (!m_bufferFull) {
         DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost());
         return;
@@ -989,7 +989,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     auto buffered = m_buffered->ranges();
     size_t currentTimeRange = buffered.find(currentTime);
     if (currentTimeRange == notFound || currentTimeRange == buffered.length() - 1) {
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         ERROR_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost(), " bytes but FAILED to free enough");
 #endif
         return;
@@ -1023,7 +1023,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
         rangeEnd -= thirtySeconds;
     }
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     if (m_bufferFull)
         ERROR_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - extraMemoryCost(), " but FAILED to free enough");
     else
@@ -2002,7 +2002,7 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString
     if (m_source->isSeeking())
         return;
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     unsigned enqueuedSamples = 0;
 #endif
 
@@ -2037,12 +2037,12 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, const AtomicString
         trackBuffer.lastEnqueuedDecodeKey = {sample->decodeTime(), sample->presentationTime()};
         trackBuffer.lastEnqueuedDecodeDuration = sample->duration();
         m_private->enqueueSample(sample.releaseNonNull(), trackID);
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
         ++enqueuedSamples;
 #endif
     }
 
-#if !LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     DEBUG_LOG(LOGIDENTIFIER, "Enqueued ", enqueuedSamples, " samples, ", static_cast<size_t>(trackBuffer.decodeQueue.size()), " remaining");
 #endif
 
