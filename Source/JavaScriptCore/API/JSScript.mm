@@ -42,7 +42,7 @@
 @implementation JSScript {
     __weak JSVirtualMachine* m_virtualMachine;
     String m_source;
-    NSURL* m_cachePath;
+    RetainPtr<NSURL> m_cachePath;
     JSC::CachedBytecode m_cachedBytecode;
     JSC::Strong<JSC::JSSourceCode> m_jsSourceCode;
     UniquedStringImpl* m_moduleKey;
@@ -128,7 +128,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
     if (!m_cachePath)
         return;
 
-    int fd = open(m_cachePath.path.UTF8String, O_RDONLY);
+    int fd = open([m_cachePath path].UTF8String, O_RDONLY);
     if (fd == -1)
         return;
 
@@ -161,7 +161,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
     m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, m_jsSourceCode->sourceCode(), error);
     if (error.isValid())
         return;
-    int fd = open(m_cachePath.path.UTF8String, O_CREAT | O_WRONLY, 0666);
+    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_WRONLY, 0666);
     if (fd == -1)
         return;
     int rc = flock(fd, LOCK_EX | LOCK_NB);

@@ -1,3 +1,14 @@
+2019-02-12  Saam barati  <sbarati@apple.com>
+
+        JSScript needs to retain its cache path NSURL*
+        https://bugs.webkit.org/show_bug.cgi?id=194577
+
+        Reviewed by Tim Horton.
+
+        * API/JSScript.mm:
+        (+[JSScript scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        (-[JSScript dealloc]):
+
 2019-02-12  Robin Morisset  <rmorisset@apple.com>
 
         Make B3Value::returnsBool() more precise
