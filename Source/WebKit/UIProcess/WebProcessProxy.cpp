@@ -1133,6 +1133,19 @@ void WebProcessProxy::isResponsive(WTF::Function<void(bool isWebProcessResponsiv
     send(Messages::WebProcess::MainThreadPing(), 0);
 }
 
+void WebProcessProxy::isResponsiveWithLazyStop()
+{
+    if (m_isResponsive == NoOrMaybe::No)
+        return;
+
+    if (!responsivenessTimer().hasActiveTimer()) {
+        // We do not send a ping if we are already waiting for the WebProcess.
+        // Spamming pings on a slow web process is not helpful.
+        responsivenessTimer().startWithLazyStop();
+        send(Messages::WebProcess::MainThreadPing(), 0);
+    }
+}
+
 bool WebProcessProxy::isJITEnabled() const
 {
     return processPool().configuration().isJITEnabled();

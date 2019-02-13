@@ -2232,15 +2232,19 @@ void WebPageProxy::processNextQueuedMouseEvent()
     ASSERT(!m_mouseEventQueue.isEmpty());
 
     const NativeWebMouseEvent& event = m_mouseEventQueue.first();
-    
+
     if (pageClient().windowIsFrontWindowUnderMouse(event))
         setToolTip(String());
 
-    // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
-    if (event.type() != WebEvent::MouseMove)
+    WebEvent::Type eventType = event.type();
+    if (eventType == WebEvent::MouseDown || eventType == WebEvent::MouseForceChanged || eventType == WebEvent::MouseForceDown)
+        m_process->responsivenessTimer().startWithLazyStop();
+    else if (eventType != WebEvent::MouseMove) {
+        // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
         m_process->responsivenessTimer().start();
+    }
 
-    LOG(MouseHandling, "UIProcess: sent mouse event %s (queue size %zu)", webMouseEventTypeString(event.type()), m_mouseEventQueue.size());
+    LOG(MouseHandling, "UIProcess: sent mouse event %s (queue size %zu)", webMouseEventTypeString(eventType), m_mouseEventQueue.size());
     m_process->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
@@ -2360,7 +2364,7 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
-    m_process->isResponsive(nullptr);
+    m_process->isResponsiveWithLazyStop();
 }
 
 bool WebPageProxy::shouldProcessWheelEventNow(const WebWheelEvent& event) const
@@ -2393,7 +2397,12 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     m_keyEventQueue.append(event);
 
-    m_process->responsivenessTimer().start();
+    ResponsivenessTimer& responsivenessTimer = m_process->responsivenessTimer();
+    if (event.type() == WebEvent::KeyDown)
+        responsivenessTimer.startWithLazyStop();
+    else
+        responsivenessTimer.start();
+
     if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
@@ -2555,7 +2564,12 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
 
     m_gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
-    m_process->responsivenessTimer().start();
+
+    ResponsivenessTimer& responsivenessTimer = m_process->responsivenessTimer();
+    if (event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange)
+        responsivenessTimer.startWithLazyStop();
+    else
+        responsivenessTimer.start();
 
     m_process->send(Messages::EventDispatcher::GestureEvent(m_pageID, event), 0);
 }

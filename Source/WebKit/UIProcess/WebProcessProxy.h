@@ -202,6 +202,7 @@ public:
     ProcessThrottler& throttler() { return m_throttler; }
 
     void isResponsive(WTF::Function<void(bool isWebProcessResponsive)>&&);
+    void isResponsiveWithLazyStop();
     void didReceiveMainThreadPing();
     void didReceiveBackgroundResponsivenessPing();
 
