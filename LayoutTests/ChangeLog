@@ -1,5 +1,45 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241203. rdar://problem/47971610
+
+    [WebVTT] Inline WebVTT styles should start with '::cue'
+    https://bugs.webkit.org/show_bug.cgi?id=194227
+    <rdar://problem/47791087>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Check that the CSS string starts with '::cue' and is successfully parsed before adding it
+    to the CSS stylesheet list. Also, the caption preferences CSS string should start with
+    '::cue', since it is added inside the video shadow root element.
+    
+    Test: media/track/track-cue-css.html
+    
+    * html/track/WebVTTParser.cpp:
+    (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+    * page/CaptionUserPreferencesMediaAF.cpp:
+    (WebCore::CaptionUserPreferencesMediaAF::captionsStyleSheetOverride const):
+    
+    LayoutTests:
+    
+    * media/track/captions-webvtt/css-styling.vtt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241203 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-08  Per Arne Vollan  <pvollan@apple.com>
+
+            [WebVTT] Inline WebVTT styles should start with '::cue'
+            https://bugs.webkit.org/show_bug.cgi?id=194227
+            <rdar://problem/47791087>
+
+            Reviewed by Eric Carlson.
+
+            * media/track/captions-webvtt/css-styling.vtt:
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241200. rdar://problem/47971541
 
     Running RTCRtpSender.getCapabilities("video") before initial offer breaks VP8
