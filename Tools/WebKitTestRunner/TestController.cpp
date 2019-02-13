@@ -969,6 +969,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_openPanelFileURLs = nullptr;
     
     statisticsResetToConsistentState();
+    
+    clearAdClickAttribution();
 
     m_didReceiveServerRedirectForProvisionalNavigation = false;
     m_serverTrustEvaluationCallbackCallsCount = 0;
@@ -3399,6 +3401,57 @@ void TestController::sendDisplayConfigurationChangedMessageForTesting()
 void TestController::setWebAuthenticationMockConfiguration(WKDictionaryRef configuration)
 {
     WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKContextGetWebsiteDataStore(platformContext()), configuration);
+}
+
+struct AdClickAttributionStringResultCallbackContext {
+    explicit AdClickAttributionStringResultCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+    
+    TestController& testController;
+    bool done { false };
+    WKRetainPtr<WKStringRef> adClickAttributionRepresentation;
+};
+
+static void adClickAttributionStringResultCallback(WKStringRef adClickAttributionRepresentation, void* userData)
+{
+    auto* context = static_cast<AdClickAttributionStringResultCallbackContext*>(userData);
+    context->adClickAttributionRepresentation = adClickAttributionRepresentation;
+    context->done = true;
+    context->testController.notifyDone();
+}
+
+String TestController::dumpAdClickAttribution()
+{
+    AdClickAttributionStringResultCallbackContext callbackContext(*this);
+    WKPageDumpAdClickAttribution(m_mainWebView->page(), adClickAttributionStringResultCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+    return toWTFString(callbackContext.adClickAttributionRepresentation.get());
+}
+
+struct AdClickAttributionVoidCallbackContext {
+    explicit AdClickAttributionVoidCallbackContext(TestController& controller)
+        : testController(controller)
+    {
+    }
+    
+    TestController& testController;
+    bool done { false };
+};
+
+static void adClickAttributionVoidCallback(void* userData)
+{
+    auto* context = static_cast<AdClickAttributionVoidCallbackContext*>(userData);
+    context->done = true;
+    context->testController.notifyDone();
+}
+
+void TestController::clearAdClickAttribution()
+{
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageClearAdClickAttribution(m_mainWebView->page(), adClickAttributionVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
 }
 
 } // namespace WTR

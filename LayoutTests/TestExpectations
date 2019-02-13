@@ -2054,6 +2054,8 @@ webkit.org/b/177440 imported/w3c/web-platform-tests/html/browsers/origin/relaxin
 webkit.org/b/157068 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
 webkit.org/b/157068 [ Release ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Failure ]
 
+http/tests/adClickAttribution [ Skip ]
+
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]

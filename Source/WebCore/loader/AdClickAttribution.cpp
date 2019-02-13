@@ -90,4 +90,23 @@ URL AdClickAttribution::referrer() const
     return URL();
 }
 
+String AdClickAttribution::toString() const
+{
+    StringBuilder builder;
+    builder.appendLiteral("Source: ");
+    builder.append(m_source.registrableDomain);
+    builder.appendLiteral("\nDestination: ");
+    builder.append(m_destination.registrableDomain);
+    builder.appendLiteral("\nCampaign ID: ");
+    builder.appendNumber(m_campaign.id);
+    if (m_conversion) {
+        builder.appendLiteral("\nConversion data: ");
+        builder.appendNumber(m_conversion.value().data);
+    } else
+        builder.appendLiteral("\nNo conversion data.");
+    builder.append('\n');
+
+    return builder.toString();
+}
+
 }

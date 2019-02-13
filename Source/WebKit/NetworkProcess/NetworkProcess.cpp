@@ -2288,4 +2288,26 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 
 #endif
 
+void NetworkProcess::storeAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution&& adClickAttribution)
+{
+    if (auto session = networkSession(sessionID))
+        session->storeAdClickAttribution(WTFMove(adClickAttribution));
+}
+
+void NetworkProcess::dumpAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
+{
+    if (auto session = networkSession(sessionID))
+        return session->dumpAdClickAttribution(WTFMove(completionHandler));
+
+    completionHandler({ });
+}
+
+void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto session = networkSession(sessionID))
+        return session->clearAdClickAttribution(WTFMove(completionHandler));
+    
+    completionHandler();
+}
+
 } // namespace WebKit

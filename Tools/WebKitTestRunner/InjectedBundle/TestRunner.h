@@ -487,6 +487,10 @@ public:
     bool canDoServerTrustEvaluationInNetworkProcess();
     unsigned long serverTrustEvaluationCallbackCallsCount();
 
+    // Ad Click Attribution.
+    void dumpAdClickAttribution();
+    void clearAdClickAttribution();
+
 private:
     TestRunner();
 

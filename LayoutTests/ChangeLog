@@ -1,3 +1,18 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Store Ad Click Attribution requests in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+        <rdar://problem/47650118>
+
+        Reviewed by Alex Christensen and Daniel Bates.
+
+        * TestExpectations:
+            Marked "Skip" because the feature is not applicable to WK1.
+        * http/tests/adClickAttribution/store-ad-click-attribution-expected.txt: Added.
+        * http/tests/adClickAttribution/store-ad-click-attribution.html: Added.
+        * platform/wk2/TestExpectations:
+            Marked "Pass."
+
 2019-02-13  Sihui Liu  <sihui_liu@apple.com>
 
         Add two regression tests for reference cycle in IndexedDB

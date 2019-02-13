@@ -2726,4 +2726,16 @@ void TestRunner::setShouldDismissJavaScriptAlertsAsynchronously(bool shouldDismi
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::dumpAdClickAttribution()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("dumpAdClickAttribution"));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
+}
+
+void TestRunner::clearAdClickAttribution()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("clearAdClickAttribution"));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
+}
+
 } // namespace WTR

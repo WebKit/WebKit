@@ -882,6 +882,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();
     navigationActionData.lockHistory = navigationAction.lockHistory();
     navigationActionData.lockBackForwardList = navigationAction.lockBackForwardList();
+    navigationActionData.adClickAttribution = navigationAction.adClickAttribution();
 
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     if (!coreFrame)

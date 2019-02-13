@@ -259,6 +259,9 @@ void TestInvocation::dumpResults()
     if (m_shouldDumpResourceLoadStatistics)
         m_textOutput.append(m_savedResourceLoadStatistics.isNull() ? TestController::singleton().dumpResourceLoadStatistics() : m_savedResourceLoadStatistics);
 
+    if (m_shouldDumpAdClickAttribution)
+        m_textOutput.append(TestController::singleton().dumpAdClickAttribution());
+    
     if (m_textOutput.length() || !m_audioResult)
         dump(m_textOutput.toString().utf8().data());
     else
@@ -1550,6 +1553,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "dumpAdClickAttribution")) {
+        dumpAdClickAttribution();
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "clearAdClickAttribution")) {
+        TestController::singleton().clearAdClickAttribution();
+        return nullptr;
+    }
+    
     ASSERT_NOT_REACHED();
     return nullptr;
 }
@@ -1698,6 +1711,11 @@ void TestInvocation::didRemoveAllSessionCredentials()
 void TestInvocation::dumpResourceLoadStatistics()
 {
     m_shouldDumpResourceLoadStatistics = true;
+}
+
+void TestInvocation::dumpAdClickAttribution()
+{
+    m_shouldDumpAdClickAttribution = true;
 }
 
 } // namespace WTR

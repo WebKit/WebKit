@@ -2384,4 +2384,24 @@ void WebProcessPool::clearCurrentModifierStateForTesting()
     sendToAllProcesses(Messages::WebProcess::ClearCurrentModifierStateForTesting());
 }
 
+void WebProcessPool::dumpAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (!m_networkProcess) {
+        completionHandler(emptyString());
+        return;
+    }
+
+    m_networkProcess->dumpAdClickAttribution(sessionID, WTFMove(completionHandler));
+}
+
+void WebProcessPool::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!m_networkProcess) {
+        completionHandler();
+        return;
+    }
+    
+    m_networkProcess->clearAdClickAttribution(sessionID, WTFMove(completionHandler));
+}
+
 } // namespace WebKit

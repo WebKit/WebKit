@@ -182,6 +182,11 @@ typedef void (^WKPageGetApplicationManifestBlock)(void);
 WK_EXPORT void WKPageGetApplicationManifest_b(WKPageRef page, WKPageGetApplicationManifestBlock block);
 #endif
 
+typedef void (*WKPageDumpAdClickAttributionFunction)(WKStringRef adClickAttributionRepresentation, void* functionContext);
+WK_EXPORT void WKPageDumpAdClickAttribution(WKPageRef, WKPageDumpAdClickAttributionFunction, void* callbackContext);
+typedef void (*WKPageClearAdClickAttributionFunction)(void* functionContext);
+WK_EXPORT void WKPageClearAdClickAttribution(WKPageRef, WKPageClearAdClickAttributionFunction, void* callbackContext);
+
 #ifdef __cplusplus
 }
 #endif

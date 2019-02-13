@@ -479,6 +479,9 @@ public:
     void sendDisplayConfigurationChangedMessageForTesting();
     void clearCurrentModifierStateForTesting();
 
+    void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(const String&)>&&);
+    void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };
     void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };

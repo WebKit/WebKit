@@ -147,6 +147,9 @@ public:
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 #endif
 
+    void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(const String&)>&&);
+    void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
+
     void addSession(Ref<WebsiteDataStore>&&);
     void removeSession(PAL::SessionID);
 

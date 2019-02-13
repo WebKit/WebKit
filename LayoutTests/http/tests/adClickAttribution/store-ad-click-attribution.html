@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, internal:AdClickAttributionEnabled=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests storage of ad click attribution.</div>
+<a id="targetLink" href="http://localhost:8000/adClickAttribution/store-ad-click-attribution.html?stepTwo" adcampaignid="3" addestination="http://localhost:8000">Link</a><br>
+<div id="output"></div>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                testRunner.notifyDone();
+            }
+        );
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "?stepTwo") {
+                testRunner.dumpAdClickAttribution();
+                document.body.removeChild(document.getElementById("targetLink"));
+                testRunner.notifyDone();
+            } else {
+                activateElement("targetLink");
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

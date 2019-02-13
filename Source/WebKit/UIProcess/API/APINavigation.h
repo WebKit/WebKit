@@ -30,9 +30,11 @@
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
 #include "WebBackForwardListItem.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -141,6 +143,8 @@ public:
 #endif
 
     const std::unique_ptr<SubstituteData>& substituteData() const { return m_substituteData; }
+
+    const Optional<WebCore::AdClickAttribution>& adClickAttribution() const { return m_lastNavigationAction.adClickAttribution; }
 
 private:
     explicit Navigation(WebKit::WebNavigationState&);

@@ -163,4 +163,8 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
     SetIDBPerOriginQuota(uint64_t quota)
 #endif
+
+    StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)
+    DumpAdClickAttribution(PAL::SessionID sessionID) -> (String adClickAttributionState) Async
+    ClearAdClickAttribution(PAL::SessionID sessionID) -> () Async
 }

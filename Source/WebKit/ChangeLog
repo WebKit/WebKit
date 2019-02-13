@@ -1,3 +1,81 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Store Ad Click Attribution requests in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+        <rdar://problem/47650118>
+
+        Reviewed by Alex Christensen and Daniel Bates.
+
+        With this patch, WebPageProxy::didCommitLoadForFrame() now looks for
+        an AdClickAttribution object in its navigation state. If there is an
+        attribution, it sends it to the network process where the 
+        WebKit::NetworkSession stores it in an object of a new class,
+        WebKit::NetworkAdClickAttribution.
+
+        This patch also covers test infrastructure to support two new
+        TestRunner functions:
+        - dumpAdClickAttribution()
+        - clearAdClickAttribution()
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+            Added missing header include.
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+            Added missing header include.
+        * NetworkProcess/NetworkAdClickAttribution.cpp: Added.
+        (WebKit::NetworkAdClickAttribution::ensureDestinationMapForSource):
+        (WebKit::NetworkAdClickAttribution::store):
+        (WebKit::NetworkAdClickAttribution::clear):
+        (WebKit::NetworkAdClickAttribution::toString const):
+        * NetworkProcess/NetworkAdClickAttribution.h: Added.
+            Stores WebCore::AdClickAttribution objects in a map structure.
+        * NetworkProcess/NetworkLoad.cpp:
+            Added missing header includes.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::storeAdClickAttribution):
+        (WebKit::NetworkProcess::dumpAdClickAttribution):
+        (WebKit::NetworkProcess::clearAdClickAttribution):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::storeAdClickAttribution):
+        (WebKit::NetworkSession::dumpAdClickAttribution):
+        (WebKit::NetworkSession::clearAdClickAttribution):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+            Added missing header include.
+        * Sources.txt:
+            Added NetworkProcess/NetworkAdClickAttribution.cpp.
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::adClickAttribution const):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageDumpAdClickAttribution):
+        (WKPageClearAdClickAttribution):
+            Test infrastructure.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::dumpAdClickAttribution):
+        (WebKit::NetworkProcessProxy::clearAdClickAttribution):
+            Test infrastructure.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+            This is where pending Ad Click Attributions are forwarded to the
+            network process.
+        (WebKit::WebPageProxy::dumpAdClickAttribution):
+        (WebKit::WebPageProxy::clearAdClickAttribution):
+            Test infrastructure.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::dumpAdClickAttribution):
+        (WebKit::WebProcessPool::clearAdClickAttribution):
+            Test infrastructure.
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+            Added missing data copying from navigationAction to navigationActionData.
+
 2019-02-13  Antti Koivisto  <antti@apple.com>
 
         Crash in WebKit::CacheStorage::Engine::cachesRootPath

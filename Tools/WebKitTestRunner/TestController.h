@@ -294,6 +294,9 @@ public:
 
     bool isDoingMediaCapture() const;
 
+    String dumpAdClickAttribution();
+    void clearAdClickAttribution();
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;

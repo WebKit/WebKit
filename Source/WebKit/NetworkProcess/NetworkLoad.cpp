@@ -27,8 +27,11 @@
 #include "NetworkLoad.h"
 
 #include "AuthenticationChallengeDisposition.h"
+#include "AuthenticationManager.h"
+#include "NetworkDataTaskBlob.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include "WebErrors.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Seconds.h>

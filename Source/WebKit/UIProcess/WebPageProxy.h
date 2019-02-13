@@ -1455,6 +1455,9 @@ public:
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
 
+    void dumpAdClickAttribution(CompletionHandler<void(const String&)>&&);
+    void clearAdClickAttribution(CompletionHandler<void()>&&);
+
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

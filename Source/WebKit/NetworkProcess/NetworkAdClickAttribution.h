@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2013 University of Szeged. All rights reserved.
- * Copyright (C) 2013 Company 100 Inc.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteNetworkingContext.h"
+#pragma once
 
-#include "NetworkProcess.h"
-#include "NetworkSession.h"
-#include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/AdClickAttribution.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
-using namespace WebCore;
 
-void RemoteNetworkingContext::ensureWebsiteDataStoreSession(NetworkProcess& networkProcess, WebsiteDataStoreParameters&& parameters)
-{
-    auto sessionID = parameters.networkSessionParameters.sessionID;
-    if (networkProcess.storageSession(sessionID))
-        return;
+class NetworkAdClickAttribution {
+public:
 
-    networkProcess.ensureSession(sessionID, String::number(sessionID.sessionID()));
-    networkProcess.setSession(sessionID, NetworkSession::create(networkProcess, WTFMove(parameters.networkSessionParameters)));
-}
+    using AdClickAttribution = WebCore::AdClickAttribution;
+    using Source = WebCore::AdClickAttribution::Source;
+    using Destination = WebCore::AdClickAttribution::Destination;
+    using DestinationMap = HashMap<Destination, AdClickAttribution>;
 
-}
+    void store(AdClickAttribution&&);
+    void clear(CompletionHandler<void()>&&);
+    void toString(CompletionHandler<void(String)>&&) const;
+
+private:
+    DestinationMap& ensureDestinationMapForSource(const AdClickAttribution::Source&);
+
+    HashMap<Source, DestinationMap> m_adClickAttributionMap;
+};
+    
+} // namespace WebKit

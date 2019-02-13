@@ -30,16 +30,19 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class AdClickAttribution;
 class NetworkStorageSession;
 enum class ShouldSample : bool;
 }
 
 namespace WebKit {
 
+class NetworkAdClickAttribution;
 class NetworkDataTask;
 class NetworkProcess;
 class WebResourceLoadStatisticsStore;
@@ -73,6 +76,9 @@ public:
     void logDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned significantFigures, WebCore::ShouldSample);
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
 #endif
+    void storeAdClickAttribution(WebCore::AdClickAttribution&&);
+    void dumpAdClickAttribution(CompletionHandler<void(String)>&&);
+    void clearAdClickAttribution(CompletionHandler<void()>&&);
 
 protected:
     NetworkSession(NetworkProcess&, PAL::SessionID);
@@ -84,6 +90,7 @@ protected:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 #endif
+    UniqueRef<NetworkAdClickAttribution> m_adClickAttribution;
 };
 
 } // namespace WebKit

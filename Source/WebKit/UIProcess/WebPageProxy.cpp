@@ -129,6 +129,7 @@
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -4117,8 +4118,13 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
-    if (frame->isMainFrame() && navigationID)
+    if (frame->isMainFrame() && navigationID) {
         navigation = navigationState().navigation(navigationID);
+        if (auto& adClickAttribution = navigation->adClickAttribution()) {
+            if (adClickAttribution->destination().matches(frame->url()))
+                m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution));
+        }
+    }
 
     if (frame->isMainFrame())
         m_navigationClient->didFinishDocumentLoad(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
@@ -8659,6 +8665,16 @@ void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(const DataDete
 }
 
 #endif
+
+void WebPageProxy::dumpAdClickAttribution(CompletionHandler<void(const String&)>&& completionHandler)
+{
+    m_process->processPool().dumpAdClickAttribution(m_websiteDataStore->sessionID(), WTFMove(completionHandler));
+}
+
+void WebPageProxy::clearAdClickAttribution(CompletionHandler<void()>&& completionHandler)
+{
+    m_process->processPool().clearAdClickAttribution(m_websiteDataStore->sessionID(), WTFMove(completionHandler));
+}
 
 } // namespace WebKit
 

@@ -1,3 +1,38 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Store Ad Click Attribution requests in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+        <rdar://problem/47650118>
+
+        Reviewed by Alex Christensen and Daniel Bates.
+
+        This patch adds two TestRunner functions:
+        - dumpAdClickAttribution()
+        - clearAdClickAttribution()
+
+        They call into the network process to dump and clear Ad Click
+        Attribution state, respectively.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::dumpAdClickAttribution):
+        (WTR::TestRunner::clearAdClickAttribution):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::AdClickAttributionStringResultCallbackContext::AdClickAttributionStringResultCallbackContext):
+        (WTR::adClickAttributionStringResultCallback):
+        (WTR::TestController::dumpAdClickAttribution):
+        (WTR::AdClickAttributionVoidCallbackContext::AdClickAttributionVoidCallbackContext):
+        (WTR::adClickAttributionVoidCallback):
+        (WTR::TestController::clearAdClickAttribution):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::dumpAdClickAttribution):
+        * WebKitTestRunner/TestInvocation.h:
+
 2019-02-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Generate status-bubble

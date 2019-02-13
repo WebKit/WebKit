@@ -26,10 +26,12 @@
 #include "config.h"
 #include "NetworkSession.h"
 
+#include "NetworkAdClickAttribution.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/NetworkStorageSession.h>
 
 #if PLATFORM(COCOA)
@@ -68,6 +70,7 @@ NetworkStorageSession& NetworkSession::networkStorageSession() const
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, PAL::SessionID sessionID)
     : m_sessionID(sessionID)
     , m_networkProcess(networkProcess)
+    , m_adClickAttribution(makeUniqueRef<NetworkAdClickAttribution>())
 {
 }
 
@@ -124,5 +127,20 @@ void NetworkSession::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Webs
     m_networkProcess->topPrivatelyControlledDomainsWithWebsiteData(m_sessionID, dataTypes, shouldNotifyPage, WTFMove(completionHandler));
 }
 #endif
+
+void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)
+{
+    m_adClickAttribution->store(WTFMove(adClickAttribution));
+}
+
+void NetworkSession::dumpAdClickAttribution(CompletionHandler<void(String)>&& completionHandler)
+{
+    m_adClickAttribution->toString(WTFMove(completionHandler));
+}
+
+void NetworkSession::clearAdClickAttribution(CompletionHandler<void()>&& completionHandler)
+{
+    m_adClickAttribution->clear(WTFMove(completionHandler));
+}
 
 } // namespace WebKit

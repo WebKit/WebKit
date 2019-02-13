@@ -86,7 +86,9 @@ public:
     void dumpResourceLoadStatistics();
 
     bool canOpenWindows() const { return m_canOpenWindows; }
-    
+
+    void dumpAdClickAttribution();
+
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();
 
@@ -135,6 +137,7 @@ private:
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
     bool m_canOpenWindows { false };
+    bool m_shouldDumpAdClickAttribution { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 
     StringBuilder m_textOutput;

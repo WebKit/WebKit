@@ -32,6 +32,7 @@
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/IDBKeyData.h>
@@ -293,6 +294,10 @@ public:
     void requestCacheStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
     NetworkBlobRegistry& networkBlobRegistry() override { return m_networkBlobRegistry; }
+
+    void storeAdClickAttribution(PAL::SessionID, WebCore::AdClickAttribution&&);
+    void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(String)>&&);
+    void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);

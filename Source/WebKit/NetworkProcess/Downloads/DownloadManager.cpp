@@ -27,6 +27,7 @@
 #include "DownloadManager.h"
 
 #include "Download.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkLoad.h"
 #include "NetworkSession.h"

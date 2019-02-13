@@ -1,3 +1,51 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Store Ad Click Attribution requests in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+        <rdar://problem/47650118>
+
+        Reviewed by Alex Christensen and Daniel Bates.
+
+        Test: http/tests/adClickAttribution/store-ad-click-attribution.html
+
+        This patch adds support functions for validation and storage of
+        WebCore::AdClickAttribution objects. It also adds WTF::HashTraits so that
+        WebCore::AdClickAttribution::Source and WebCore::AdClickAttribution::Destination
+        can be used in a HashMap.
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::toString const):
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::Source::operator== const):
+        (WebCore::AdClickAttribution::Source::deletedValue):
+        (WebCore::AdClickAttribution::Source::constructDeletedValue):
+        (WebCore::AdClickAttribution::Source::deleteValue):
+        (WebCore::AdClickAttribution::Source::isDeletedValue const):
+        (WebCore::AdClickAttribution::SourceHash::hash):
+        (WebCore::AdClickAttribution::SourceHash::equal):
+        (WebCore::AdClickAttribution::Destination::operator== const):
+        (WebCore::AdClickAttribution::Destination::matches const):
+            This convenience function allows matching of a WTF::URL object.
+        (WebCore::AdClickAttribution::Destination::deletedValue):
+        (WebCore::AdClickAttribution::Destination::constructDeletedValue):
+        (WebCore::AdClickAttribution::Destination::deleteValue):
+        (WebCore::AdClickAttribution::Destination::isDeletedValue const):
+        (WebCore::AdClickAttribution::DestinationHash::hash):
+        (WebCore::AdClickAttribution::DestinationHash::equal):
+        (WebCore::AdClickAttribution::source const):
+        (WebCore::AdClickAttribution::destination const):
+            Getters added to support mapped storage based on source and destination.
+        (WTF::HashTraits<WebCore::AdClickAttribution::Source>::emptyValue):
+        (WTF::HashTraits<WebCore::AdClickAttribution::Source>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::AdClickAttribution::Source>::isDeletedValue):
+        (WTF::HashTraits<WebCore::AdClickAttribution::Destination>::emptyValue):
+        (WTF::HashTraits<WebCore::AdClickAttribution::Destination>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::AdClickAttribution::Destination>::isDeletedValue):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::adClickAttribution const):
+        (WebCore::NavigationAction::adClickAttribution): Deleted.
+            Corrected the constness of this function.
+
 2019-02-13  Eric Carlson  <eric.carlson@apple.com>
 
         Revert r240434

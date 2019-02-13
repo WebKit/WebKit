@@ -135,7 +135,7 @@ public:
     LockBackForwardList lockBackForwardList() const { return m_lockBackForwardList; }
     void setLockBackForwardList(LockBackForwardList lockBackForwardList) { m_lockBackForwardList = lockBackForwardList; }
 
-    const Optional<AdClickAttribution>& adClickAttribution() { return m_adClickAttribution; };
+    const Optional<AdClickAttribution>& adClickAttribution() const { return m_adClickAttribution; };
     void setAdClickAttribution(AdClickAttribution&& adClickAttribution) { m_adClickAttribution = adClickAttribution; };
 
 private:

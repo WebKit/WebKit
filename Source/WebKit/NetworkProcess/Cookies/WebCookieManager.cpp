@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCookieManager.h"
 
+#include "NetworkProcess.h"
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
 #include "WebCoreArgumentCoders.h"

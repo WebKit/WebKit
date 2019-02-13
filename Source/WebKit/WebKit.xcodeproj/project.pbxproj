@@ -1097,6 +1097,7 @@
 		63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6A5080BF1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6BD05865220CE8C2000BED5C /* NetworkAdClickAttribution.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BD05863220CE8C2000BED5C /* NetworkAdClickAttribution.h */; };
 		6BE969C11E54D452008B7483 /* corePrediction_model in Resources */ = {isa = PBXBuildFile; fileRef = 6BE969C01E54D452008B7483 /* corePrediction_model */; };
 		6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */; };
 		6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h */; };
@@ -3510,6 +3511,8 @@
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
 		6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesPrivate.h; sourceTree = "<group>"; };
+		6BD05863220CE8C2000BED5C /* NetworkAdClickAttribution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkAdClickAttribution.h; sourceTree = "<group>"; };
+		6BD05864220CE8C2000BED5C /* NetworkAdClickAttribution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkAdClickAttribution.cpp; sourceTree = "<group>"; };
 		6BE969C01E54D452008B7483 /* corePrediction_model */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corePrediction_model; sourceTree = "<group>"; };
 		6BE969C61E54D4B6008B7483 /* ResourceLoadStatisticsClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifier.cpp; sourceTree = "<group>"; };
 		6BE969C81E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsClassifierCocoa.cpp; sourceTree = "<group>"; };
@@ -6425,6 +6428,8 @@
 				413075971DE84ED70039EC69 /* webrtc */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
 				535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */,
+				6BD05864220CE8C2000BED5C /* NetworkAdClickAttribution.cpp */,
+				6BD05863220CE8C2000BED5C /* NetworkAdClickAttribution.h */,
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
 				513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */,
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
@@ -7096,9 +7101,9 @@
 		A1E6886E1F6E2B82007006A6 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				29D04E2821F7C73D0076741D /* AccessibilityPrivSPI.h */,
 				F48D2A8421583A0200C6752B /* AppKitSPI.h */,
 				A1E6886F1F6E2BAB007006A6 /* QuarantineSPI.h */,
-				29D04E2821F7C73D0076741D /* AccessibilityPrivSPI.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -9154,6 +9159,7 @@
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
 				535BCB922069C49C00CCCE02 /* NetworkActivityTracker.h in Headers */,
+				6BD05865220CE8C2000BED5C /* NetworkAdClickAttribution.h in Headers */,
 				A105D0D1212734B20034F6C7 /* NetworkBlobRegistry.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
@@ -10778,6 +10784,7 @@
 				2D913444212CF9F000128AFD /* NetscapePlugin.cpp in Sources */,
 				2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */,
 				2D913445212CF9F000128AFD /* NetscapePluginStream.cpp in Sources */,
+				6BD05866220CE8C2000BED5C /* NetworkAdClickAttribution.cpp in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */,

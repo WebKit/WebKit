@@ -1,0 +1,8 @@
+Tests storage of ad click attribution.
+
+
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+No conversion data.

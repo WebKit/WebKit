@@ -1067,7 +1067,27 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
     m_webUserContentControllerProxies.remove(&proxy);
 }
 #endif
+
+void NetworkProcessProxy::dumpAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler(emptyString());
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::DumpAdClickAttribution(sessionID), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
     
+    sendWithAsyncReply(Messages::NetworkProcess::ClearAdClickAttribution(sessionID), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::sendProcessDidTransitionToForeground()
 {
     send(Messages::NetworkProcess::ProcessDidTransitionToForeground(), 0);
