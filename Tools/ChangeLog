@@ -1,3 +1,13 @@
+2019-02-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add status bubble html template
+        https://bugs.webkit.org/show_bug.cgi?id=194571
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/templates: Added.
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html: Copied from QueueStatusServer/templates/statusbubble.html.
+
 2019-02-12  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) MESSAGE_CHECK() hit under WebPageProxy::didFailProvisionalLoadForFrameShared()
