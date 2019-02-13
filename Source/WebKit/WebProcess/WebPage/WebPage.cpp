@@ -3045,7 +3045,8 @@ void WebPage::setActivityState(OptionSet<ActivityState::Flag> activityState, Act
     if (changed)
         updateThrottleState();
 
-    {
+    ASSERT_WITH_MESSAGE(m_page, "setActivityState called on %lld but WebCore page was null", pageID());
+    if (m_page) {
         SetForScope<bool> currentlyChangingActivityState { m_changingActivityState, true };
         m_page->setActivityState(activityState);
     }
