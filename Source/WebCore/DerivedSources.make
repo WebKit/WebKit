@@ -373,6 +373,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
+    $(WebCore)/Modules/webgpu/GPUBufferDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
@@ -393,8 +395,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
 	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBufferDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
     $(WebCore)/Modules/webgpu/WebGPUIndexFormat.idl \

@@ -2767,6 +2767,8 @@ JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUColor.cpp
+JSGPUBufferDescriptor.cpp
+JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
 JSGPUExtent3D.cpp
@@ -3315,8 +3317,6 @@ JSWebGPUBindGroupLayoutBinding.cpp
 JSWebGPUBindGroupLayoutDescriptor.cpp
 JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
-JSWebGPUBufferDescriptor.cpp
-JSWebGPUBufferUsage.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUDevice.cpp
 JSWebGPUIndexFormat.cpp

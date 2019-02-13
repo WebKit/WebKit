@@ -1,3 +1,32 @@
+2019-02-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Remove WebGPUBufferDescriptor/Usage and use GPU versions
+        https://bugs.webkit.org/show_bug.cgi?id=194552
+
+        Reviewed by Dean Jackson.
+
+        WebGPUBufferDescriptor/Usage have been renamed to GPUBufferDescriptor/Usage in the Web GPU API.
+        Consolidate the two versions of these classes in our implementation.
+
+        Affected layout tests updated with new names. No change in behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUBufferDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUBufferDescriptor.idl.
+        * Modules/webgpu/GPUBufferUsage.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUBufferUsage.idl.
+        * Modules/webgpu/WebGPUBufferUsage.h: Removed.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/graphics/gpu/GPUBufferDescriptor.h: Moved out GPUBufferUsage.
+        * platform/graphics/gpu/GPUBufferUsage.h: Moved from GPUBufferDescriptor.h.
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the internal iOS build after r241321

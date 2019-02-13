@@ -462,6 +462,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdriver/NavigatorWebDriver.idl
 
     Modules/webgpu/DOMWindowWebGPU.idl
+    Modules/webgpu/GPUBufferDescriptor.idl
+    Modules/webgpu/GPUBufferUsage.idl
     Modules/webgpu/GPUColor.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
@@ -483,8 +485,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/WebGPUBuffer.idl
     Modules/webgpu/WebGPUBufferBinding.idl
-    Modules/webgpu/WebGPUBufferDescriptor.idl
-    Modules/webgpu/WebGPUBufferUsage.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUIndexFormat.idl

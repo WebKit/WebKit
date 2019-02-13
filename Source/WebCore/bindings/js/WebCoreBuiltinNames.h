@@ -81,6 +81,7 @@ namespace WebCore {
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
+    macro(GPUBufferUsage) \
     macro(GPUTextureUsage) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
@@ -196,7 +197,6 @@ namespace WebCore {
     macro(WebGPUBindGroup) \
     macro(WebGPUBindGroupLayout) \
     macro(WebGPUBuffer) \
-    macro(WebGPUBufferUsage) \
     macro(WebGPUCommandBuffer) \
     macro(WebGPUDevice) \
     macro(WebGPUIndexFormat) \

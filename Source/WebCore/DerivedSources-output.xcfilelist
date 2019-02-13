@@ -580,6 +580,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.cpp

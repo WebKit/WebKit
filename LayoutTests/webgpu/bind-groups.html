@@ -19,7 +19,7 @@ promise_test(async () => {
 
     const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });
 
-    const buffer = device.createBuffer({ size: 16, usage: WebGPUBufferUsage.STORAGE });
+    const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE });
     const bufferBinding = { buffer: buffer, offset: 0, size: 16 };
     const bindGroupBinding = { binding: 1, resource: bufferBinding };
 

@@ -1,3 +1,19 @@
+2019-02-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Remove WebGPUBufferDescriptor/Usage and use GPU versions
+        https://bugs.webkit.org/show_bug.cgi?id=194552
+
+        Reviewed by Dean Jackson.
+
+        WebGPUBufferDescriptor/Usage have been renamed to GPUBufferDescriptor/Usage in the Web GPU API.
+        Update affected tests to match.
+
+        * webgpu/bind-groups.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/buffers.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow pages to trigger programmatic paste from script on iOS

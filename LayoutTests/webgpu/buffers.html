@@ -8,7 +8,7 @@
 <script src="js/basic-webgpu-functions.js"></script>
 <script>
 function createBuffer() {
-    const buffer = defaultDevice.createBuffer({ size: 16, usage: WebGPUBufferUsage.MAP_WRITE });
+    const buffer = defaultDevice.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_WRITE });
     assert_true(buffer instanceof WebGPUBuffer, "createBuffer returned a WebGPUBuffer");
     
     let arrayBuffer = buffer.mapping;

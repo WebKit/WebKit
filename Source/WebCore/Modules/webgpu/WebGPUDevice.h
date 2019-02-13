@@ -30,7 +30,6 @@
 #include "GPUDevice.h"
 #include "WebGPUAdapter.h"
 #include "WebGPUBindGroupLayoutDescriptor.h"
-#include "WebGPUBufferDescriptor.h"
 #include "WebGPUQueue.h"
 
 #include <wtf/Ref.h>
@@ -49,6 +48,7 @@ class WebGPURenderPipeline;
 class WebGPUShaderModule;
 class WebGPUTexture;
 
+struct GPUBufferDescriptor;
 struct GPUTextureDescriptor;
 struct WebGPUBindGroupDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
@@ -62,7 +62,7 @@ public:
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     const GPUDevice& device() const { return m_device.get(); }
 
-    RefPtr<WebGPUBuffer> createBuffer(WebGPUBufferDescriptor&&) const;
+    RefPtr<WebGPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
     Ref<WebGPUTexture> createTexture(GPUTextureDescriptor&&) const;
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;

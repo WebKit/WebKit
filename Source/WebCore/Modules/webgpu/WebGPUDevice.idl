@@ -31,7 +31,7 @@
 ] interface WebGPUDevice {
     readonly attribute WebGPUAdapter adapter;
 
-    WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
+    WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
 
     WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);

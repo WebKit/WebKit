@@ -32,6 +32,7 @@
 #include "GPUBindGroupBinding.h"
 #include "GPUBindGroupDescriptor.h"
 #include "GPUBufferBinding.h"
+#include "GPUBufferDescriptor.h"
 #include "GPUCommandBuffer.h"
 #include "GPUPipelineStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
@@ -72,10 +73,9 @@ WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device
     UNUSED_PARAM(m_adapter);
 }
 
-RefPtr<WebGPUBuffer> WebGPUDevice::createBuffer(WebGPUBufferDescriptor&& descriptor) const
+RefPtr<WebGPUBuffer> WebGPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
 {
-    // FIXME: Validation on descriptor needed?
-    if (auto buffer = m_device->createBuffer(GPUBufferDescriptor { descriptor.size, descriptor.usage }))
+    if (auto buffer = m_device->createBuffer(WTFMove(descriptor)))
         return WebGPUBuffer::create(buffer.releaseNonNull());
     return nullptr;
 }

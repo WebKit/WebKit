@@ -46,7 +46,7 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 
 function createVertexBuffer(device) {
     const bufferSize = 4 * 4 * 4;
-    const buffer = device.createBuffer({ size: bufferSize, usage: WebGPUBufferUsage.MAP_WRITE });
+    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.MAP_WRITE });
     
     let floatArray = new Float32Array(buffer.mapping);
 

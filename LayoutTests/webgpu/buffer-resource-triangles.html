@@ -82,7 +82,7 @@ const verticesBufferSize = vertexSize * 3;
 
 // FIXME: Keep up to date with buffer upload decisions.
 function createVerticesBuffer(device) {
-    const buffer = device.createBuffer({ size:verticesBufferSize, usage: WebGPUBufferUsage.VERTEX });
+    const buffer = device.createBuffer({ size:verticesBufferSize, usage: GPUBufferUsage.VERTEX });
 
     const vertices = [
         0, 1, 0, 1,
@@ -97,7 +97,7 @@ function createVerticesBuffer(device) {
 }
 
 function createFloat4Buffer(device, a, b) {
-    const buffer = device.createBuffer({ size: vertexSize, usage: WebGPUBufferUsage.UNIFORM });
+    const buffer = device.createBuffer({ size: vertexSize, usage: GPUBufferUsage.UNIFORM });
     
     const arrayBuffer = buffer.mapping;
     const floatArray = new Float32Array(arrayBuffer);
