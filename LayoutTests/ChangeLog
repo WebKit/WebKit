@@ -1,5 +1,55 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241319. rdar://problem/48015672
+
+    Source/WebCore:
+    Remove setDefersLoading infrastructure from WebKit2
+    https://bugs.webkit.org/show_bug.cgi?id=194506
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2019-02-12
+    Reviewed by Brady Eidson.
+    
+    setDefersLoading is inherently racy from WebCore to the NetworkProcess,
+    it adds unwanted complexity to the initialization and use of network objects,
+    and it has led to many unrecoverable hang bugs over the years.
+    We needed to force it into WebKit2 to transition some existing clients who relied on it,
+    but we have recently finished transitioning those clients to other solutions, mostly
+    completion handlers.
+    
+    * inspector/PageScriptDebugServer.cpp:
+    (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+    
+    LayoutTests:
+    BitmapRenderer should handle existing ImageBuffers
+    https://bugs.webkit.org/show_bug.cgi?id=194555
+    <rdar://problem/47857150>
+    
+    Reviewed by Tim Horton.
+    
+    Test that creates a canvas, triggers an ImageBuffer to be created, then
+    creates the bitmaprenderer context.
+    
+    * fast/canvas/bitmaprenderer-created-after-toBlob-expected.txt: Added.
+    * fast/canvas/bitmaprenderer-created-after-toBlob.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241319 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  Dean Jackson  <dino@apple.com>
+
+            BitmapRenderer should handle existing ImageBuffers
+            https://bugs.webkit.org/show_bug.cgi?id=194555
+            <rdar://problem/47857150>
+
+            Reviewed by Tim Horton.
+
+            Test that creates a canvas, triggers an ImageBuffer to be created, then
+            creates the bitmaprenderer context.
+
+            * fast/canvas/bitmaprenderer-created-after-toBlob-expected.txt: Added.
+            * fast/canvas/bitmaprenderer-created-after-toBlob.html: Added.
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241289. rdar://problem/48015662
 
     AXObjectCache::childrenChanged shouldn't update layout or style during another style recalc
