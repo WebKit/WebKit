@@ -69,7 +69,10 @@
 #import "WAKView.h"
 #import "WAKWindow.h"
 #import "WebCoreFrameView.h"
+
+#if PLATFORM(MAC)
 #import <pal/spi/mac/HIServicesSPI.h>
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;

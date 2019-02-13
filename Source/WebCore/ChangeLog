@@ -1,5 +1,11 @@
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, try to fix the internal iOS build after r241321
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+
+2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Allow pages to trigger programmatic paste from script on iOS
         https://bugs.webkit.org/show_bug.cgi?id=194271
         <rdar://problem/47808810>
