@@ -1,5 +1,36 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241296. rdar://problem/48015654
+
+    Crash in WebCore::ScrollingTree::updateTreeFromStateNode
+    https://bugs.webkit.org/show_bug.cgi?id=194538
+    <rdar://problem/47841926>
+    
+    Reviewed by Zalan Bujtas.
+    
+    * page/scrolling/ScrollingTree.cpp:
+    (WebCore::ScrollingTree::updateTreeFromStateNode):
+    
+    Make sure we don't leave node entry behind in m_nodeMap in case we failed to add it to the parent.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241296 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  Antti Koivisto  <antti@apple.com>
+
+            Crash in WebCore::ScrollingTree::updateTreeFromStateNode
+            https://bugs.webkit.org/show_bug.cgi?id=194538
+            <rdar://problem/47841926>
+
+            Reviewed by Zalan Bujtas.
+
+            * page/scrolling/ScrollingTree.cpp:
+            (WebCore::ScrollingTree::updateTreeFromStateNode):
+
+            Make sure we don't leave node entry behind in m_nodeMap in case we failed to add it to the parent.
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241289. rdar://problem/48015662
 
     AXObjectCache::childrenChanged shouldn't update layout or style during another style recalc
