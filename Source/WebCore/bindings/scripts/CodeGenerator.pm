@@ -317,13 +317,13 @@ sub IDLFileForInterface
     return $idlFiles->{$interfaceName};
 }
 
-sub GetInterfaceForAttribute
+sub GetInterfaceForType
 {
-    my ($object, $currentInterface, $attribute) = @_;
+    my ($object, $currentInterface, $type) = @_;
 
-    return undef unless $object->IsInterfaceType($attribute->type);
+    return undef unless $object->IsInterfaceType($type);
 
-    return $object->ParseInterface($currentInterface, $attribute->type->name);
+    return $object->ParseInterface($currentInterface, $type->name);
 }
 
 sub GetAttributeFromInterface
@@ -935,32 +935,57 @@ sub InheritsSerializable
     return $anyParentIsSerializable;
 }
 
-sub IsSerializableAttribute
+sub IsSerializableType
 {
-    my ($object, $interface, $attribute) = @_;
+    my ($object, $interface, $type) = @_;
 
     # https://heycam.github.io/webidl/#dfn-serializable-type
 
-    my $type = $attribute->type;
     return 1 if $type->name eq "boolean";
     return 1 if $object->IsNumericType($type);
     return 1 if $object->IsEnumType($type);
     return 1 if $object->IsStringType($type);
     return 0 if $type->name eq "EventHandler";
 
-    if ($type->isUnion || $object->IsSequenceType($type) || $object->IsDictionaryType($type)) {
-        die "Serializer for non-primitive types is not currently supported\n";
+    if ($type->isUnion || $object->IsDictionaryType($type)) {
+        die "Serializers for union and dictionary types are not currently supported.\n";
+    }
+
+    if ($object->IsSequenceOrFrozenArrayType($type)) {
+        my $subtype = @{$type->subtypes}[0];
+
+        # FIXME: webkit.org/b/194439 [WebIDL] Support serializing sequences and FrozenArrays of interfaces
+        return 0 if $object->IsInterfaceType($subtype);
+
+        return $object->IsSerializableType($interface, $subtype);
     }
 
     return 0 if !$object->IsInterfaceType($type);
 
-    my $interfaceForAttribute = $object->GetInterfaceForAttribute($interface, $attribute);
-    if ($interfaceForAttribute) {
-        return 1 if $interfaceForAttribute->serializable;
-        return $object->InheritsSerializable($interfaceForAttribute);
+    my $interfaceForType = $object->GetInterfaceForType($interface, $type);
+    if ($interfaceForType) {
+        return 1 if $interfaceForType->serializable;
+        return $object->InheritsSerializable($interfaceForType);
     }
 
     return 0;
+}
+
+sub hasCachedAttributeOrCustomGetterExtendedAttribute
+{
+    my ($attribute) = @_;
+    return $attribute->extendedAttributes->{CachedAttribute} || $attribute->extendedAttributes->{CustomGetter};
+}
+
+sub IsSerializableAttribute
+{
+    my ($object, $interface, $attribute) = @_;
+
+    if ($object->IsSequenceType($attribute->type) && hasCachedAttributeOrCustomGetterExtendedAttribute($attribute)) {
+        die "Serializers for sequence types with CachedAttribute or CustomGetter extended attributes are not currently supported.\n";
+    }
+
+    return $object->IsSerializableType($interface, $attribute->type);
 }
 
 sub GetInterfaceExtendedAttributesFromName
