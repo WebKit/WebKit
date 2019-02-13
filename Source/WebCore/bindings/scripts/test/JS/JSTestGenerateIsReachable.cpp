@@ -204,7 +204,7 @@ bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC:
     TestGenerateIsReachable* root = &jsTestGenerateIsReachable->wrapped();
     if (UNLIKELY(reason))
         *reason = "Reachable from TestGenerateIsReachable";
-    return visitor.containsOpaqueRoot(root);
+    return root && visitor.containsOpaqueRoot(root);
 }
 
 void JSTestGenerateIsReachableOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
