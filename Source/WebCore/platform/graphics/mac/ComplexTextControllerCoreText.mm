@@ -162,6 +162,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         RetainPtr<CTTypesetterRef> typesetter = adoptCF(CTTypesetterCreateWithUniCharProviderAndOptions(&provideStringAndAttributes, 0, &info, m_run.ltr() ? ltrTypesetterOptions : rtlTypesetterOptions));
         IGNORE_NULL_CHECK_WARNINGS_END
 
+        if (!typesetter)
+            return;
+
         line = adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
         ProviderInfo info = { cp, length, stringAttributes.get() };
@@ -169,9 +172,15 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, nullptr, &info));
     }
 
+    if (!line)
+        return;
+
     m_coreTextLines.append(line.get());
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
+
+    if (!runArray)
+        return;
 
     CFIndex runCount = CFArrayGetCount(runArray);
 
