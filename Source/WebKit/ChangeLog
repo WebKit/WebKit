@@ -1,3 +1,16 @@
+2019-02-13  Antti Koivisto  <antti@apple.com>
+
+        Crash in WebKit::CacheStorage::Engine::cachesRootPath
+        https://bugs.webkit.org/show_bug.cgi?id=194588
+        <rdar://problem/46363997>
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::cachesRootPath):
+
+        Salt may have not been initialized yet when the Engine is destroyed.
+
 2019-02-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove legacy sync messaging in some IPC code
