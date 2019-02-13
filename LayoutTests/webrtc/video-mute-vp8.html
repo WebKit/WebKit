@@ -15,6 +15,20 @@
         <canvas id="canvas3" width="320" height="240"></canvas>
         <script src ="routines.js"></script>
         <script>
+promise_test(async (test) => {
+    if (window.internals)
+        window.internals.clearPeerConnectionFactory();
+
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    assert_true(codecs.some((codec) => { return codec.mimeType.indexOf("VP8") }), "VP8 is listed as a codec");
+
+    const pc = new RTCPeerConnection();
+    pc.addTransceiver("video");
+    const description = await pc.createOffer();
+    pc.close();
+    assert_true(description.sdp.indexOf("VP8") !== -1, "VP8 codec is in the SDP");
+}, "Verify VP8 activation")
+
 var track;
 var remoteTrack;
 var receivingConnection;

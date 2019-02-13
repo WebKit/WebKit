@@ -310,6 +310,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if PLATFORM(COCOA)
     platformInitialize();
 #endif
+
+#if USE(LIBWEBRTC)
+    m_libWebRTCProvider->supportsVP8(RuntimeEnabledFeatures::sharedFeatures().webRTCVP8CodecEnabled());
+#endif
 }
 
 Page::~Page()

@@ -2,6 +2,7 @@ Video should be running, go to black and running.
 Following, should be a snapshot of the video, a black frame and a snapshot of the video.
   
 
+PASS Verify VP8 activation 
 PASS Setting video exchange 
 PASS Ensuring connection state is connected 
 PASS Track is enabled, video should not be black 

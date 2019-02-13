@@ -583,6 +583,7 @@ enum CompositingPolicy {
     [Conditional=WEB_RTC] void setICECandidateFiltering(boolean enabled);
     [Conditional=WEB_RTC] void setEnumeratingAllNetworkInterfacesEnabled(boolean enabled);
     [Conditional=WEB_RTC] void stopPeerConnection(RTCPeerConnection connection);
+    [Conditional=WEB_RTC] void clearPeerConnectionFactory();
 
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();

@@ -518,6 +518,7 @@ public:
     void setICECandidateFiltering(bool);
     void setEnumeratingAllNetworkInterfacesEnabled(bool);
     void stopPeerConnection(RTCPeerConnection&);
+    void clearPeerConnectionFactory();
     void applyRotationForOutgoingVideoSources(RTCPeerConnection&);
 #endif
 
