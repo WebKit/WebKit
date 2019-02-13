@@ -1,3 +1,15 @@
+2019-02-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Youtube fails to play.
+        https://bugs.webkit.org/show_bug.cgi?id=194565
+        <rdar://problem/47974770>
+
+        Reviewed by Geoffrey Garen.
+
+        This is caused by sandbox violations and was introduced in r240500.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-02-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove firing assertion after r241317
