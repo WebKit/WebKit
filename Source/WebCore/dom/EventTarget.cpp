@@ -35,8 +35,10 @@
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include "HTMLBodyElement.h"
+#include "HTMLHtmlElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -298,6 +300,16 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         InspectorInstrumentation::willHandleEvent(context, event, *registeredListener);
         registeredListener->callback().handleEvent(context, event);
         InspectorInstrumentation::didHandleEvent(context);
+
+#if ENABLE(TOUCH_EVENTS)
+        if (RuntimeEnabledFeatures::sharedFeatures().mousemoveEventHandlingPreventsDefaultEnabled() && event.type() == eventNames().mousemoveEvent) {
+            if (is<Element>(event.currentTarget())) {
+                auto* element = downcast<Element>(event.currentTarget());
+                if (!is<HTMLBodyElement>(element) && !is<HTMLHtmlElement>(element))
+                    event.setHasEncounteredListener();
+            }
+        }
+#endif
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(false);

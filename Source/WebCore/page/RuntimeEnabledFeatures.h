@@ -344,6 +344,14 @@ public:
     bool adClickAttributionEnabled() const { return m_adClickAttributionEnabled; }
     void setAdClickAttributionEnabled(bool isEnabled) { m_adClickAttributionEnabled = isEnabled; }
 
+#if ENABLE(TOUCH_EVENTS)
+    bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
+    void setMouseEventsSimulationEnabled(bool isEnabled) { m_mouseEventsSimulationEnabled = isEnabled; }
+
+    bool mousemoveEventHandlingPreventsDefaultEnabled() const { return m_mousemoveEventHandlingPreventsDefaultEnabled; }
+    void setMousemoveEventHandlingPreventsDefaultEnabled(bool isEnabled) { m_mousemoveEventHandlingPreventsDefaultEnabled = isEnabled; }
+#endif
+    
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -520,6 +528,11 @@ private:
     bool m_CSSLogicalEnabled { false };
 
     bool m_adClickAttributionEnabled { false };
+
+#if ENABLE(TOUCH_EVENTS)
+    bool m_mouseEventsSimulationEnabled { false };
+    bool m_mousemoveEventHandlingPreventsDefaultEnabled { false };
+#endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

@@ -1541,6 +1541,24 @@ DOMPasteAccessRequestsEnabled:
   humanReadableDescription: "Enable DOM Paste Access Requests"
   category: internal
 
+MouseEventsSimulationEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Mouse events simulation"
+  humanReadableDescription: "Enable mouse events dispatch along with touch events on iOS"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+  condition: ENABLE(TOUCH_EVENTS)
+
+MousemoveEventHandlingPreventsDefaultEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Prevent default for mousemove events"
+  humanReadableDescription: "Allows handling of mousemove events to implicitly call preventDefault() on iOS"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+  condition: ENABLE(TOUCH_EVENTS)
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

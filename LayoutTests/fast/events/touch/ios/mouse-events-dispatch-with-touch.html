@@ -1,0 +1,54 @@
+<!DOCTYPE html><!-- webkit-test-runner [ internal:MouseEventsSimulationEnabled=true ] -->
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../../../resources/testharness.js"></script>
+<script src="../../../../resources/testharnessreport.js"></script>
+<script src="../../../../pointerevents/utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    const eventTracker = new EventTracker(target, ["mousedown", "mousemove", "mouseup"]);
+
+    const one = ui.finger();
+    const two = ui.finger();
+    const three = ui.finger();
+    ui.sequence([
+        // Touch "one" will yield mouse events since it's the first touch to begin.
+        one.begin({ x: 10, y: 10 }),
+        // Touch "two" will not yield mouse events since there was already a touch
+        // yielding mouse events when it began.
+        two.begin({ x: 50, y: 50 }),
+        two.move({ x: 70, y: 70 }),
+        one.move({ x: 30, y: 30 }),
+        one.end(),
+        two.move({ x: 50, y: 50 }),
+        // Touch "three" will yield mouse events since it's the first touch to begin
+        // since the last touch to yield mouse events ("one") ended.
+        three.begin({ x: 20, y: 20 }),
+        two.end(),
+        three.move({ x: 40, y: 40 }),
+        three.end()
+    ]).then(() => {
+        eventTracker.assertMatchesEvents([
+            // Events dispatched for touch "one".
+            { type: "mousedown", x: 10, y: 10 },
+            { type: "mousemove", x: 30, y: 30 },
+            { type: "mouseup", x: 30, y: 30 },
+            // Events dispatched for touch "three".
+            { type: "mousedown", x: 20, y: 20 },
+            { type: "mousemove", x: 40, y: 40 },
+            { type: "mouseup", x: 40, y: 40 }
+        ]);
+        test.done();
+    });
+}, "Mouse events are dispatched as touches start, move and end on the digitizer, with at most one touch at a time dispatching mouse events.");
+
+</script>
+</body>
+</html>

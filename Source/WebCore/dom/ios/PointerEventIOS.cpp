@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-static AtomicString eventType(PlatformTouchPoint::TouchPhaseType phase)
+static AtomicString pointerEventType(PlatformTouchPoint::TouchPhaseType phase)
 {
     switch (phase) {
     case PlatformTouchPoint::TouchPhaseBegan:
@@ -60,7 +60,7 @@ static PointerEvent::IsCancelable phaseIsCancelable(PlatformTouchPoint::TouchPha
 Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
     auto phase = event.touchPhaseAtIndex(index);
-    return adoptRef(*new PointerEvent(eventType(phase), event, phaseIsCancelable(phase), index, isPrimary, WTFMove(view)));
+    return adoptRef(*new PointerEvent(pointerEventType(phase), event, phaseIsCancelable(phase), index, isPrimary, WTFMove(view)));
 }
 
 PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)

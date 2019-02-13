@@ -1,3 +1,19 @@
+2019-02-13  Antoine Quint  <graouts@apple.com>
+
+        Support simulated mouse events on iOS based on a PlatformTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=194501
+        <rdar://problem/46910790>
+
+        Reviewed by Dean Jackson.
+
+        Add two new internal runtime flags to control whether simulated mouse events should be dipatched along with touch events and whether
+        simulated mousemove events dispatched should automatically trigger the behavior preventDefault() would also trigger. We also ensure
+        that we correctly create touch tracking regions for mouse events.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateTouchEventTracking):
+
 2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in Page::setActivityState because m_page is null

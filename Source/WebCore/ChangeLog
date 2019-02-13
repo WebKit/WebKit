@@ -1,3 +1,56 @@
+2019-02-13  Antoine Quint  <graouts@apple.com>
+
+        Support simulated mouse events on iOS based on a PlatformTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=194501
+        <rdar://problem/46910790>
+
+        Reviewed by Dean Jackson.
+
+        Add support for two new internal runtime flags to control whether simulated mouse events should be dipatched along with touch events and
+        whether simulated mousemove events dispatched should automatically trigger the behavior preventDefault() would also trigger. To facilitate
+        that, we allow for a MouseEvent to be created, much like a PointerEvent, based on a PlatformTouchEvent. Then, we set a flag on Event within
+        EventTarget::innerInvokeEventListeners() to see whether any page code has been evaluated as a result of a mousemove event being dispatched.
+        Finally, we also track mouse events when invalidating touch regions provided the required internal runtime flag is on.
+
+        Test: fast/events/touch/ios/mouse-events-dispatch-with-touch.html
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        (WebCore::Event::hasEncounteredListener const):
+        (WebCore::Event::setHasEncounteredListener):
+        * dom/EventNames.h:
+        (WebCore::EventNames::isTouchRelatedEventType const):
+        (WebCore::EventNames::touchRelatedEventNames const):
+        (WebCore::EventNames::extendedTouchRelatedEventNames const):
+        (WebCore::EventNames::isTouchEventType const): Deleted.
+        (WebCore::EventNames::touchAndPointerEventNames const): Deleted.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::innerInvokeEventListeners):
+        * dom/MouseEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::moveNodeToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::defaultEventHandler):
+        * dom/ios/MouseEventIOS.cpp: Added.
+        (WebCore::mouseEventType):
+        (WebCore::MouseEvent::create):
+        * dom/ios/PointerEventIOS.cpp:
+        (WebCore::pointerEventType):
+        (WebCore::PointerEvent::create):
+        (WebCore::eventType): Deleted.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/EventHandler.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::mouseEventsSimulationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setMouseEventsSimulationEnabled):
+        (WebCore::RuntimeEnabledFeatures::mousemoveEventHandlingPreventsDefaultEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setMousemoveEventHandlingPreventsDefaultEnabled):
+
 2019-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Unable to render some Hebrew characters

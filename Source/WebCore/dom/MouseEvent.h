@@ -26,6 +26,10 @@
 #include "MouseEventInit.h"
 #include "MouseRelatedEvent.h"
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#include "PlatformTouchEventIOS.h"
+#endif
+
 namespace WebCore {
 
 class DataTransfer;
@@ -47,6 +51,10 @@ public:
     static Ref<MouseEvent> createForBindings() { return adoptRef(*new MouseEvent); }
 
     static Ref<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&);
+
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+    static Ref<MouseEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&);
+#endif
 
     virtual ~MouseEvent();
 

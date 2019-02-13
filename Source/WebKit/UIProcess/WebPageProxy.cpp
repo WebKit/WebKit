@@ -2509,6 +2509,9 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
         updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, names.pointerdownEvent);
         updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, names.pointermoveEvent);
         updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, names.pointerupEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, names.mousedownEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, names.mousemoveEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, names.mouseupEvent);
     }
 #else
     UNUSED_PARAM(touchStartEvent);

@@ -1811,7 +1811,7 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
         document->addListenerTypeIfNeeded(eventType);
         if (eventNames().isWheelEventType(eventType))
             document->didAddWheelEventHandler(*document);
-        else if (eventNames().isTouchEventType(eventType))
+        else if (eventNames().isTouchRelatedEventType(eventType))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames().storageEvent)
             didAddStorageEventListener(*this);
@@ -1826,7 +1826,7 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (eventNames().isTouchEventType(eventType))
+    else if (eventNames().isTouchRelatedEventType(eventType))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -1920,7 +1920,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
     if (Document* document = this->document()) {
         if (eventNames().isWheelEventType(eventType))
             document->didRemoveWheelEventHandler(*document);
-        else if (eventNames().isTouchEventType(eventType))
+        else if (eventNames().isTouchRelatedEventType(eventType))
             document->didRemoveTouchEventHandler(*document);
     }
 
@@ -1949,7 +1949,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         decrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (eventNames().isTouchEventType(eventType)) {
+    else if (eventNames().isTouchRelatedEventType(eventType)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }

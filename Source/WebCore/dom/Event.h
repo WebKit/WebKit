@@ -128,6 +128,9 @@ public:
 
     void setInPassiveListener(bool value) { m_isExecutingPassiveEventListener = value; }
 
+    bool hasEncounteredListener() const { return m_hasEncounteredListener; }
+    void setHasEncounteredListener() { m_hasEncounteredListener = true; }
+
     bool cancelBubble() const { return propagationStopped(); }
     void setCancelBubble(bool);
 
@@ -166,6 +169,7 @@ private:
     unsigned m_isDefaultEventHandlerIgnored : 1;
     unsigned m_isTrusted : 1;
     unsigned m_isExecutingPassiveEventListener : 1;
+    unsigned m_hasEncounteredListener : 1;
 
     unsigned m_eventPhase : 2;
 

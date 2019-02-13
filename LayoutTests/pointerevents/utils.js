@@ -46,16 +46,32 @@ class EventTracker
 
     handleEvent(event)
     {
+        if (event instanceof PointerEvent)
+            this._handlePointerEvent(event);
+        else if (event instanceof MouseEvent)
+            this._handleMouseEvent(event);
+    }
+
+    _handlePointerEvent(event)
+    {
         if (!this.pointerIdToTouchIdMap[event.pointerId])
             this.pointerIdToTouchIdMap[event.pointerId] = Object.keys(this.pointerIdToTouchIdMap).length + 1;
 
-        const id = this.pointerIdToTouchIdMap[event.pointerId];
         this.events.push({
-            id,
+            id: this.pointerIdToTouchIdMap[event.pointerId],
             type: event.type,
             x: event.clientX,
             y: event.clientY,
             isPrimary: event.isPrimary
+        });
+    }
+
+    _handleMouseEvent(event)
+    {
+        this.events.push({
+            type: event.type,
+            x: event.clientX,
+            y: event.clientY,
         });
     }
 

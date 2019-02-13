@@ -1,3 +1,20 @@
+2019-02-13  Antoine Quint  <graouts@apple.com>
+
+        Support simulated mouse events on iOS based on a PlatformTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=194501
+        <rdar://problem/46910790>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test to check that we correctly dispatch mouse events as touches occur.
+
+        * fast/events/touch/ios/mouse-events-dispatch-with-touch-expected.txt: Added.
+        * fast/events/touch/ios/mouse-events-dispatch-with-touch.html: Added.
+        * pointerevents/utils.js:
+        (prototype.handleEvent):
+        (prototype._handlePointerEvent):
+        (prototype._handleMouseEvent):
+
 2019-02-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK][WPE] Don't use DumpJSConsoleLogInStdErr expectation in platform TestExpectations

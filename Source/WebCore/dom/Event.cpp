@@ -46,6 +46,7 @@ ALWAYS_INLINE Event::Event(MonotonicTime createTime, const AtomicString& type, I
     , m_isDefaultEventHandlerIgnored { false }
     , m_isTrusted { isTrusted == IsTrusted::Yes }
     , m_isExecutingPassiveEventListener { false }
+    , m_hasEncounteredListener { false }
     , m_eventPhase { NONE }
     , m_type { type }
     , m_createTime { createTime }

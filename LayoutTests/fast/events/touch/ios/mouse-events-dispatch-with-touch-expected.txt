@@ -1,0 +1,3 @@
+
+PASS Mouse events are dispatched as touches start, move and end on the digitizer, with at most one touch at a time dispatching mouse events. 
+
