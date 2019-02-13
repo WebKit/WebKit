@@ -534,8 +534,8 @@ messages -> WebPageProxy {
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Delayed
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID)
-    RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t contextID, bool prompt)
+    HasStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID) -> (bool hasAccess) Async
+    RequestStorageAccess(String subFrameHost, String topFrameHost, uint64_t frameID, bool prompt) -> (bool grantedAccess) Async
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

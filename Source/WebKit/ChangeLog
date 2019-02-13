@@ -1,5 +1,34 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/40966400
+
+    2019-02-13  Brent Fulgham  <bfulgham@apple.com>
+
+            Branch-Only: Use Async message infrastructure for storageAccess API
+            https://bugs.webkit.org/show_bug.cgi?id=194511
+            <rdar://problem/40966400>
+
+            Back-port the trunk async message handling implementation of the StorageAccess API methods.
+
+            The generated async message handling code does a better job of managing the bookkeeping and error handling
+            of cross-process message passing, and gives us fewer opportunities to make coding errors that might lead
+            to dropped messages or sending messages multiple times.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::hasStorageAccess):
+            (WebKit::WebPageProxy::requestStorageAccess):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::hasStorageAccess):
+            (WebKit::WebPage::requestStorageAccess):
+            (WebKit::nextRequestStorageAccessContextId): Deleted.
+            (WebKit::WebPage::storageAccessResponse): Deleted.
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241352. rdar://problem/48038900
 
     Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction

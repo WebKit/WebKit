@@ -1380,8 +1380,8 @@ public:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId);
-    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t webProcessContextId, bool prompt);
+    void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, bool prompt, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
