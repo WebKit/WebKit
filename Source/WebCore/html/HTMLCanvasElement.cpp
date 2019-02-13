@@ -1002,6 +1002,28 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
     setImageBuffer(ImageBuffer::create(size(), renderingMode, 1, ColorSpaceSRGB, hostWindow));
+}
+
+void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
+{
+    size_t previousMemoryCost = memoryCost();
+    removeFromActivePixelMemory(previousMemoryCost);
+
+    {
+        auto locker = holdLock(m_imageBufferAssignmentLock);
+        m_contextStateSaver = nullptr;
+        m_imageBuffer = WTFMove(buffer);
+    }
+
+    if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
+        m_size = m_imageBuffer->internalSize();
+
+    size_t currentMemoryCost = memoryCost();
+    activePixelMemory += currentMemoryCost;
+
+    if (m_context && m_imageBuffer && previousMemoryCost != currentMemoryCost)
+        InspectorInstrumentation::didChangeCanvasMemory(*m_context);
+
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context().setShadowsIgnoreTransforms(true);
@@ -1018,26 +1040,6 @@ void HTMLCanvasElement::createImageBuffer() const
         const_cast<HTMLCanvasElement*>(this)->invalidateStyleAndLayerComposition();
     }
 #endif
-}
-
-void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer>&& buffer) const
-{
-    size_t previousMemoryCost = memoryCost();
-    removeFromActivePixelMemory(previousMemoryCost);
-
-    {
-        auto locker = holdLock(m_imageBufferAssignmentLock);
-        m_imageBuffer = WTFMove(buffer);
-    }
-
-    if (m_imageBuffer && m_size != m_imageBuffer->internalSize())
-        m_size = m_imageBuffer->internalSize();
-
-    size_t currentMemoryCost = memoryCost();
-    activePixelMemory += currentMemoryCost;
-
-    if (m_context && m_imageBuffer && previousMemoryCost != currentMemoryCost)
-        InspectorInstrumentation::didChangeCanvasMemory(*m_context);
 }
 
 void HTMLCanvasElement::setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&& buffer)
