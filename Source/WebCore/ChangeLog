@@ -1,5 +1,40 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241231. rdar://problem/47971603
+
+    [Cocoa] CTLineGetGlyphRuns() might return nullptr
+    https://bugs.webkit.org/show_bug.cgi?id=194467
+    <rdar://problem/42423999>
+    
+    Reviewed by Simon Fraser.
+    
+    Be somewhat defensive to try to make sure this sort of thing doesn't happen in the future.
+    
+    Covered by find/text/find-backwards.html
+    
+    * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+    (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241231 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] CTLineGetGlyphRuns() might return nullptr
+            https://bugs.webkit.org/show_bug.cgi?id=194467
+            <rdar://problem/42423999>
+
+            Reviewed by Simon Fraser.
+
+            Be somewhat defensive to try to make sure this sort of thing doesn't happen in the future.
+
+            Covered by find/text/find-backwards.html
+
+            * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+            (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241203. rdar://problem/47971610
 
     [WebVTT] Inline WebVTT styles should start with '::cue'
