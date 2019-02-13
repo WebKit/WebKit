@@ -47,10 +47,10 @@ struct FetchRequestInit {
     Optional<FetchOptions::Redirect> redirect;
     String integrity;
     Optional<bool> keepalive;
-    Optional<AbortSignal*> signal;
+    JSC::JSValue signal;
     JSC::JSValue window;
 
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || signal; }
+    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || !signal.isUndefined(); }
 };
 
 }
