@@ -2404,11 +2404,18 @@ setInterval(() => {
 </body>
 )PSONRESOURCE";
 
-TEST(ProcessSwap, ReuseSuspendedProcessForRegularNavigation)
+enum class RetainPageInBundle { No, Yes };
+
+void testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle retainPageInBundle)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    if (retainPageInBundle == RetainPageInBundle::Yes)
+        [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    if (retainPageInBundle == RetainPageInBundle::Yes)
+        [processPool _setObject:@"BundleRetainPagePlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
@@ -2444,6 +2451,16 @@ TEST(ProcessSwap, ReuseSuspendedProcessForRegularNavigation)
     done = false;
 
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+}
+
+TEST(ProcessSwap, ReuseSuspendedProcessForRegularNavigationRetainBundlePage)
+{
+    testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle::Yes);
+}
+
+TEST(ProcessSwap, ReuseSuspendedProcessForRegularNavigation)
+{
+    testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle::No);
 }
 
 static const char* mainFramesOnlyMainFrame = R"PSONRESOURCE(
