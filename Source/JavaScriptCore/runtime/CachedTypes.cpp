@@ -306,10 +306,21 @@ static std::enable_if_t<!std::is_same<T, SourceType<T>>::value, SourceType<T>>&&
 template<typename Source>
 class CachedObject {
     WTF_MAKE_NONCOPYABLE(CachedObject<Source>);
-    WTF_FORBID_HEAP_ALLOCATION;
 
 public:
     using SourceType_ = Source;
+
+    CachedObject() = default;
+
+    inline void* operator new(size_t, void* where) { return where; }
+
+    // Copied from WTF_FORBID_HEAP_ALLOCATION, since we only want to allow placement new
+    void* operator new[](size_t, void*) = delete;
+    void* operator new(size_t) = delete;
+    void operator delete(void*) = delete;
+    void* operator new[](size_t size) = delete;
+    void operator delete[](void*) = delete;
+    void* operator new(size_t, NotNullTag, void* location) = delete;
 };
 
 template<typename Source>
@@ -332,9 +343,6 @@ protected:
 
     uint8_t* allocate(Encoder& encoder, size_t size)
     {
-        if (!size)
-            return nullptr;
-
         ptrdiff_t offsetOffset = encoder.offsetOf(&m_offset);
         auto result = encoder.malloc(size);
         m_offset = result.offset() - offsetOffset;
@@ -345,7 +353,7 @@ protected:
     T* allocate(Encoder& encoder, unsigned size = 1)
     {
         uint8_t* result = allocate(encoder, sizeof(T) * size);
-        return reinterpret_cast<T*>(result);
+        return new (result) T();
     }
 
 private:
@@ -463,6 +471,8 @@ public:
     void encode(Encoder& encoder, const Vector<SourceType<T>, InlineCapacity, OverflowHandler>& vector)
     {
         m_size = vector.size();
+        if (!m_size)
+            return;
         T* buffer = this->template allocate<T>(encoder, m_size);
         for (unsigned i = 0; i < m_size; ++i)
             ::JSC::encode(encoder, buffer[i], vector[i]);
@@ -471,6 +481,8 @@ public:
     template<typename... Args>
     void decode(Decoder& decoder, Vector<SourceType<T>, InlineCapacity, OverflowHandler>& vector, Args... args) const
     {
+        if (!m_size)
+            return;
         vector.resizeToFit(m_size);
         const T* buffer = this->template buffer<T>();
         for (unsigned i = 0; i < m_size; ++i)
@@ -570,15 +582,18 @@ public:
             if (!m_isSymbol)
                 return AtomicStringImpl::add(buffer, m_length).leakRef();
 
-            if (!m_length)
-                return &SymbolImpl::createNullSymbol().leakRef();
-
             Identifier ident = Identifier::fromString(&decoder.vm(), buffer, m_length);
             String str = decoder.vm().propertyNames->lookUpPrivateName(ident);
             StringImpl* impl = str.releaseImpl().get();
             ASSERT(impl->isSymbol());
             return static_cast<UniquedStringImpl*>(impl);
         };
+
+        if (!m_length) {
+            if (m_isSymbol)
+                return &SymbolImpl::createNullSymbol().leakRef();
+            return AtomicStringImpl::add("").leakRef();
+        }
 
         if (m_is8Bit)
             return create(this->buffer<LChar>());
@@ -740,12 +755,16 @@ public:
     void encode(Encoder& encoder, const BitVector& bitVector)
     {
         m_size = bitVector.size();
+        if (!m_size)
+            return;
         uint8_t* buffer = this->allocate(encoder, m_size);
         memcpy(buffer, bitVector.bits(), m_size);
     }
 
     void decode(Decoder&, BitVector& bitVector) const
     {
+        if (!m_size)
+            return;
         bitVector.ensureSize(m_size);
         memcpy(bitVector.bits(), this->buffer(), m_size);
     }
@@ -860,6 +879,8 @@ class CachedArray : public VariableLengthObject<Source*> {
 public:
     void encode(Encoder& encoder, const Source* array, unsigned size)
     {
+        if (!size)
+            return;
         T* dst = this->template allocate<T>(encoder, size);
         for (unsigned i = 0; i < size; ++i)
             ::JSC::encode(encoder, dst[i], array[i]);
@@ -868,6 +889,8 @@ public:
     template<typename... Args>
     void decode(Decoder& decoder, Source* array, unsigned size, Args... args) const
     {
+        if (!size)
+            return;
         const T* buffer = this->template buffer<T>();
         for (unsigned i = 0; i < size; ++i)
             ::JSC::decode(decoder, buffer[i], array[i], args...);
@@ -948,6 +971,11 @@ private:
 class CachedJSValue;
 class CachedImmutableButterfly : public CachedObject<JSImmutableButterfly> {
 public:
+    CachedImmutableButterfly()
+        : m_cachedDoubles()
+    {
+    }
+
     void encode(Encoder& encoder, JSImmutableButterfly& immutableButterfly)
     {
         m_length = immutableButterfly.length();
@@ -1037,7 +1065,8 @@ public:
     {
         JSBigInt* bigInt = JSBigInt::createWithLengthUnchecked(decoder.vm(), m_length);
         bigInt->setSign(m_sign);
-        memcpy(bigInt->dataStorage(), this->buffer(), sizeof(JSBigInt::Digit) * m_length);
+        if (m_length)
+            memcpy(bigInt->dataStorage(), this->buffer(), sizeof(JSBigInt::Digit) * m_length);
         return bigInt;
     }
 

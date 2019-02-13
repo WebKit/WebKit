@@ -1,5 +1,30 @@
 2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
 
+        VariableLengthObject::allocate<T> should initialize objects
+        https://bugs.webkit.org/show_bug.cgi?id=194534
+
+        Reviewed by Michael Saboff.
+
+        `buffer()` should not be called for empty VariableLengthObjects, but
+        these cases were not being caught due to the objects not being properly
+        initialized. Fix it so that allocate calls the constructor and fix the
+        assertion failues.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedObject::operator new):
+        (JSC::VariableLengthObject::allocate):
+        (JSC::CachedVector::encode):
+        (JSC::CachedVector::decode const):
+        (JSC::CachedUniquedStringImpl::decode const):
+        (JSC::CachedBitVector::encode):
+        (JSC::CachedBitVector::decode const):
+        (JSC::CachedArray::encode):
+        (JSC::CachedArray::decode const):
+        (JSC::CachedImmutableButterfly::CachedImmutableButterfly):
+        (JSC::CachedBigInt::decode const):
+
+2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
+
         CodeBlocks read from disk should not be re-written
         https://bugs.webkit.org/show_bug.cgi?id=194535
 
