@@ -26,20 +26,32 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "SandboxExtension.h"
+#include "WebFramePolicyListenerProxy.h"
+#include "WebsitePoliciesData.h"
 #include <wtf/WeakPtr.h>
+
+namespace IPC {
+class FormDataReference;
+}
 
 namespace WebCore {
 class ResourceRequest;
+struct BackForwardItemIdentifier;
 }
 
 namespace WebKit {
 
 class DrawingAreaProxy;
 class SuspendedPageProxy;
+class UserData;
 class WebFrameProxy;
-struct WebNavigationDataStore;
 class WebPageProxy;
 class WebProcessProxy;
+struct FrameInfoData;
+struct NavigationActionData;
+struct URLSchemeTaskParameters;
+struct WebNavigationDataStore;
 
 class ProvisionalPageProxy : public IPC::MessageReceiver, public CanMakeWeakPtr<ProvisionalPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
