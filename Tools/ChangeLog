@@ -1,3 +1,17 @@
+2019-02-12  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Remove bug_dummy from parsed test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=194562
+        <rdar://problem/47853999>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser):
+        (TestExpectationParser.expectation_for_skipped_test): Remove DUMMY_BUG_MODIFIER from
+        skipped tests.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+
 2019-02-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add method to fetch patch
