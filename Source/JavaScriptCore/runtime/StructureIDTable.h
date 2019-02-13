@@ -56,7 +56,7 @@ inline StructureID decontaminate(StructureID id)
 {
     return id & ~nukedStructureIDBit();
 }
-#else
+#else // not USE(JSVALUE64)
 typedef Structure* StructureID;
 
 inline StructureID nukedStructureIDBit()
@@ -78,7 +78,9 @@ inline StructureID decontaminate(StructureID id)
 {
     return bitwise_cast<StructureID>(bitwise_cast<uintptr_t>(id) & ~bitwise_cast<uintptr_t>(nukedStructureIDBit()));
 }
-#endif
+#endif // not USE(JSVALUE64)
+
+#if USE(JSVALUE64)
 
 class StructureIDTable {
     friend class LLIntOffsetsExtractor;
@@ -97,6 +99,7 @@ public:
 
 private:
     void resize(size_t newCapacity);
+    void makeFreeListFromRange(uint32_t first, uint32_t last);
 
     union StructureOrOffset {
         WTF_MAKE_FAST_ALLOCATED;
@@ -115,26 +118,40 @@ private:
     uint32_t m_lastFreeOffset { 0 };
     UniqueArray<StructureOrOffset> m_table;
 
-    size_t m_size;
+    size_t m_size { 0 };
     size_t m_capacity;
 
     WeakRandom m_weakRandom;
 
-#if USE(JSVALUE64)
     static const StructureID s_unusedID = unusedPointer;
-#endif
 };
 
 inline Structure* StructureIDTable::get(StructureID structureID)
 {
-#if USE(JSVALUE64)
     ASSERT_WITH_SECURITY_IMPLICATION(structureID);
     ASSERT_WITH_SECURITY_IMPLICATION(!isNuked(structureID));
     ASSERT_WITH_SECURITY_IMPLICATION(structureID < m_capacity);
     return table()[structureID].structure;
-#else
-    return structureID;
-#endif
 }
+
+#else // not USE(JSVALUE64)
+
+class StructureIDTable {
+    friend class LLIntOffsetsExtractor;
+public:
+    StructureIDTable() = default;
+
+    Structure* get(StructureID structureID) { return structureID; }
+    void deallocateID(Structure*, StructureID) { }
+    StructureID allocateID(Structure* structure)
+    {
+        ASSERT(!isNuked(structure));
+        return structure;
+    };
+
+    void flushOldTables() { }
+};
+
+#endif // not USE(JSVALUE64)
 
 } // namespace JSC

@@ -1,3 +1,28 @@
+2019-02-13  Mark Lam  <mark.lam@apple.com>
+
+        Create a randomized free list for new StructureIDs on StructureIDTable resize.
+        https://bugs.webkit.org/show_bug.cgi?id=194566
+        <rdar://problem/47975502>
+
+        Reviewed by Michael Saboff.
+
+        Also isolate 32-bit implementation of StructureIDTable out more so the 64-bit
+        implementation is a little easier to read.
+
+        This patch appears to be perf neutral on JetStream2 (as run from the command line).
+
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::StructureIDTable):
+        (JSC::StructureIDTable::makeFreeListFromRange):
+        (JSC::StructureIDTable::resize):
+        (JSC::StructureIDTable::allocateID):
+        (JSC::StructureIDTable::deallocateID):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::get):
+        (JSC::StructureIDTable::deallocateID):
+        (JSC::StructureIDTable::allocateID):
+        (JSC::StructureIDTable::flushOldTables):
+
 2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
 
         VariableLengthObject::allocate<T> should initialize objects

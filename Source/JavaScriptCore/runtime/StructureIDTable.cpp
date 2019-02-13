@@ -31,14 +31,71 @@
 
 namespace JSC {
 
+#if USE(JSVALUE64)
+
 StructureIDTable::StructureIDTable()
     : m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
-    , m_size(0)
     , m_capacity(s_initialSize)
 {
     // We pre-allocate the first offset so that the null Structure
     // can still be represented as the StructureID '0'.
-    allocateID(0);
+    table()[0].structure = nullptr;
+
+    makeFreeListFromRange(1, m_capacity - 1);
+    ASSERT(m_size == m_capacity);
+}
+
+void StructureIDTable::makeFreeListFromRange(uint32_t first, uint32_t last)
+{
+    ASSERT(!m_firstFreeOffset);
+    ASSERT(!m_lastFreeOffset);
+
+    // Put all the new IDs on the free list sequentially.
+    uint32_t head = first;
+    uint32_t tail = last;
+    for (uint32_t i = first; i < last; ++i)
+        table()[i].offset = i + 1;
+    table()[last].offset = 0;
+
+    // Randomize the free list.
+    uint32_t size = last - first + 1;
+    uint32_t maxIterations = (size * 2) / 3;
+    for (uint32_t count = 0; count < maxIterations; ++count) {
+        // Move a random pick either to the head or the tail of the free list.
+        uint32_t random = m_weakRandom.getUint32();
+        uint32_t nodeBefore = first + (random % size);
+        uint32_t pick = table()[nodeBefore].offset;
+        if (pick) {
+            uint32_t nodeAfter = table()[pick].offset;
+            table()[nodeBefore].offset = nodeAfter;
+            if ((random & 1) || !nodeAfter) {
+                // Move to the head.
+                table()[pick].offset = head;
+                head = pick;
+                if (!nodeAfter)
+                    tail = nodeBefore;
+            } else {
+                // Move to the tail.
+                table()[pick].offset = 0;
+                table()[tail].offset = pick;
+                tail = pick;
+            }
+        }
+    }
+
+    // Cut list in half and swap halves.
+    uint32_t cut = first + (m_weakRandom.getUint32() % size);
+    uint32_t afterCut = table()[cut].offset;
+    if (afterCut) {
+        table()[tail].offset = head;
+        tail = cut;
+        head = afterCut;
+        table()[cut].offset = 0;
+    }
+
+    m_firstFreeOffset = head;
+    m_lastFreeOffset = tail;
+    m_size = m_capacity;
 }
 
 void StructureIDTable::resize(size_t newCapacity)
@@ -60,6 +117,8 @@ void StructureIDTable::resize(size_t newCapacity)
 
     // Update the capacity.
     m_capacity = newCapacity;
+
+    makeFreeListFromRange(m_size, m_capacity - 1);
 }
 
 void StructureIDTable::flushOldTables()
@@ -69,26 +128,12 @@ void StructureIDTable::flushOldTables()
 
 StructureID StructureIDTable::allocateID(Structure* structure)
 {
-#if USE(JSVALUE64)
     if (!m_firstFreeOffset) {
         RELEASE_ASSERT(m_capacity <= UINT_MAX);
         if (m_size == m_capacity)
             resize(m_capacity * 2);
-        ASSERT(m_size < m_capacity);
-
-        StructureOrOffset newEntry;
-        newEntry.structure = structure;
-
-        if (m_size == s_unusedID) {
-            m_size++;
-            return allocateID(structure);
-        }
-
-        StructureID result = m_size;
-        table()[result] = newEntry;
-        m_size++;
-        ASSERT(!isNuked(result));
-        return result;
+        ASSERT(m_size == m_capacity);
+        ASSERT(m_firstFreeOffset);
     }
 
     ASSERT(m_firstFreeOffset != s_unusedID);
@@ -101,15 +146,10 @@ StructureID StructureIDTable::allocateID(Structure* structure)
     table()[result].structure = structure;
     ASSERT(!isNuked(result));
     return result;
-#else
-    ASSERT(!isNuked(structure));
-    return structure;
-#endif
 }
 
 void StructureIDTable::deallocateID(Structure* structure, StructureID structureID)
 {
-#if USE(JSVALUE64)
     ASSERT(structureID != s_unusedID);
     RELEASE_ASSERT(table()[structureID].structure == structure);
 
@@ -129,10 +169,8 @@ void StructureIDTable::deallocateID(Structure* structure, StructureID structureI
         table()[m_lastFreeOffset].offset = structureID;
         m_lastFreeOffset = structureID;
     }
-#else
-    UNUSED_PARAM(structure);
-    UNUSED_PARAM(structureID);
-#endif
 }
+
+#endif // USE(JSVALUE64)
 
 } // namespace JSC
