@@ -1544,8 +1544,11 @@ auto AirIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
     auto* patchpoint = addPatchpoint(B3::Void);
     patchpoint->effects = B3::Effects::none();
     patchpoint->effects.terminal = true;
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
 
     patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+
         Vector<int64_t> cases;
         cases.reserveInitialCapacity(numTargets);
         for (size_t i = 0; i < numTargets; ++i)
