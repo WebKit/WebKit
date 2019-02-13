@@ -53,27 +53,24 @@ NPObjectMessageReceiver::~NPObjectMessageReceiver()
     releaseNPObject(m_npObject);
 }
 
-void NPObjectMessageReceiver::deallocate()
+void NPObjectMessageReceiver::deallocate(CompletionHandler<void()>&& completionHandler)
 {
     delete this;
+    completionHandler();
 }
 
-void NPObjectMessageReceiver::hasMethod(const NPIdentifierData& methodNameData, bool& returnValue)
+void NPObjectMessageReceiver::hasMethod(const NPIdentifierData& methodNameData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasMethod) {
-        returnValue = false;
-        return;
-    }
-    
-    returnValue = m_npObject->_class->hasMethod(m_npObject, methodNameData.createNPIdentifier());
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasMethod)
+        return completionHandler(false);
+
+    completionHandler(m_npObject->_class->hasMethod(m_npObject, methodNameData.createNPIdentifier()));
 }
 
-void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
+void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invoke) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invoke)
+        return completionHandler(false, { });
 
     Vector<NPVariant> arguments;
     for (size_t i = 0; i < argumentsData.size(); ++i)
@@ -84,7 +81,8 @@ void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, con
 
     PluginController::PluginDestructionProtector protector(m_plugin->controller());
 
-    returnValue = m_npObject->_class->invoke(m_npObject, methodNameData.createNPIdentifier(), arguments.data(), arguments.size(), &result);
+    NPVariantData resultData;
+    bool returnValue = m_npObject->_class->invoke(m_npObject, methodNameData.createNPIdentifier(), arguments.data(), arguments.size(), &result);
     if (returnValue) {
         // Convert the NPVariant to an NPVariantData.
         resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result, m_plugin);
@@ -96,14 +94,13 @@ void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, con
     
     // And release the result.
     releaseNPVariantValue(&result);
+    completionHandler(returnValue, WTFMove(resultData));
 }
 
-void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
+void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invokeDefault) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invokeDefault)
+        return completionHandler(false, { });
 
     Vector<NPVariant> arguments;
     for (size_t i = 0; i < argumentsData.size(); ++i)
@@ -114,7 +111,8 @@ void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumen
 
     PluginController::PluginDestructionProtector protector(m_plugin->controller());
 
-    returnValue = m_npObject->_class->invokeDefault(m_npObject, arguments.data(), arguments.size(), &result);
+    NPVariantData resultData;
+    bool returnValue = m_npObject->_class->invokeDefault(m_npObject, arguments.data(), arguments.size(), &result);
     if (returnValue) {
         // Convert the NPVariant to an NPVariantData.
         resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result, m_plugin);
@@ -126,92 +124,85 @@ void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumen
     
     // And release the result.
     releaseNPVariantValue(&result);
+    completionHandler(returnValue, WTFMove(resultData));
 }
 
-void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
+void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasProperty) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasProperty)
+        return completionHandler(false);
 
-    returnValue = m_npObject->_class->hasProperty(m_npObject, propertyNameData.createNPIdentifier());
+    completionHandler(m_npObject->_class->hasProperty(m_npObject, propertyNameData.createNPIdentifier()));
 }
 
-void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& resultData)
+void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, CompletionHandler<void(bool, NPVariantData&&)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->getProperty) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->getProperty)
+        return completionHandler(false, { });
 
     NPVariant result;
     VOID_TO_NPVARIANT(result);
 
     PluginController::PluginDestructionProtector protector(m_plugin->controller());
 
-    returnValue = m_npObject->_class->getProperty(m_npObject, propertyNameData.createNPIdentifier(), &result);
+    bool returnValue = m_npObject->_class->getProperty(m_npObject, propertyNameData.createNPIdentifier(), &result);
     if (!returnValue)
-        return;
+        return completionHandler(false, { });
 
 
-    resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result, m_plugin);
+    NPVariantData resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result, m_plugin);
 
     releaseNPVariantValue(&result);
+    completionHandler(true, WTFMove(resultData));
 }
 
-void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameData, const NPVariantData& propertyValueData, bool& returnValue)
+void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameData, const NPVariantData& propertyValueData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->setProperty) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->setProperty)
+        return completionHandler(false);
 
     NPVariant propertyValue = m_npRemoteObjectMap->npVariantDataToNPVariant(propertyValueData, m_plugin);
 
     PluginController::PluginDestructionProtector protector(m_plugin->controller());
 
-    returnValue = m_npObject->_class->setProperty(m_npObject, propertyNameData.createNPIdentifier(), &propertyValue);
+    bool returnValue = m_npObject->_class->setProperty(m_npObject, propertyNameData.createNPIdentifier(), &propertyValue);
 
     releaseNPVariantValue(&propertyValue);
+    completionHandler(returnValue);
 }
 
-void NPObjectMessageReceiver::removeProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
+void NPObjectMessageReceiver::removeProperty(const NPIdentifierData& propertyNameData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->removeProperty) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->removeProperty)
+        return completionHandler(false);
 
-    returnValue = m_npObject->_class->removeProperty(m_npObject, propertyNameData.createNPIdentifier());
+    completionHandler(m_npObject->_class->removeProperty(m_npObject, propertyNameData.createNPIdentifier()));
 }
 
-void NPObjectMessageReceiver::enumerate(bool& returnValue, Vector<NPIdentifierData>& identifiersData)
+void NPObjectMessageReceiver::enumerate(CompletionHandler<void(bool, Vector<NPIdentifierData>&&)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate)
+        return completionHandler(false, { });
 
     NPIdentifier* identifiers = 0;
     uint32_t identifierCount = 0;
 
-    returnValue = m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount);
+    bool returnValue = m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount);
     if (!returnValue)
-        return;
+        return completionHandler(false, { });
 
+    Vector<WebKit::NPIdentifierData> identifiersData;
     for (uint32_t i = 0; i < identifierCount; ++i)
         identifiersData.append(NPIdentifierData::fromNPIdentifier(identifiers[i]));
 
     npnMemFree(identifiers);
+    completionHandler(true, WTFMove(identifiersData));
 }
 
-void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
+void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&& completionHandler)
 {
-    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_CTOR(m_npObject->_class) || !m_npObject->_class->construct) {
-        returnValue = false;
-        return;
-    }
+    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_CTOR(m_npObject->_class) || !m_npObject->_class->construct)
+        return completionHandler(false, { });
 
     Vector<NPVariant> arguments;
     for (size_t i = 0; i < argumentsData.size(); ++i)
@@ -222,7 +213,8 @@ void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsDa
 
     PluginController::PluginDestructionProtector protector(m_plugin->controller());
 
-    returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), arguments.size(), &result);
+    bool returnValue = m_npObject->_class->construct(m_npObject, arguments.data(), arguments.size(), &result);
+    NPVariantData resultData;
     if (returnValue)
         resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result, m_plugin);
 
@@ -230,6 +222,7 @@ void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsDa
         releaseNPVariantValue(&arguments[i]);
     
     releaseNPVariantValue(&result);
+    completionHandler(returnValue, WTFMove(resultData));
 }
 
 } // namespace WebKit

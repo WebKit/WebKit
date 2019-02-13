@@ -529,68 +529,71 @@ void PluginControllerProxy::handleMouseEvent(const WebMouseEvent& mouseEvent)
     m_plugin->handleMouseEvent(mouseEvent);
 }
 
-void PluginControllerProxy::handleWheelEvent(const WebWheelEvent& wheelEvent, bool& handled)
+void PluginControllerProxy::handleWheelEvent(const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    handled = m_plugin->handleWheelEvent(wheelEvent);
+    completionHandler(m_plugin->handleWheelEvent(wheelEvent));
 }
 
-void PluginControllerProxy::handleMouseEnterEvent(const WebMouseEvent& mouseEnterEvent, bool& handled)
+void PluginControllerProxy::handleMouseEnterEvent(const WebMouseEvent& mouseEnterEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    handled = m_plugin->handleMouseEnterEvent(mouseEnterEvent);
+    completionHandler(m_plugin->handleMouseEnterEvent(mouseEnterEvent));
 }
 
-void PluginControllerProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent, bool& handled)
+void PluginControllerProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    handled = m_plugin->handleMouseLeaveEvent(mouseLeaveEvent);
+    completionHandler(m_plugin->handleMouseLeaveEvent(mouseLeaveEvent));
 }
 
-void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent, bool& handled)
+void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    handled = m_plugin->handleKeyboardEvent(keyboardEvent);
+    completionHandler(m_plugin->handleKeyboardEvent(keyboardEvent));
 }
 
-void PluginControllerProxy::handleEditingCommand(const String& commandName, const String& argument, bool& handled)
+void PluginControllerProxy::handleEditingCommand(const String& commandName, const String& argument, CompletionHandler<void(bool)>&& completionHandler)
 {
-    handled = m_plugin->handleEditingCommand(commandName, argument);
+    completionHandler(m_plugin->handleEditingCommand(commandName, argument));
 }
     
-void PluginControllerProxy::isEditingCommandEnabled(const String& commandName, bool& enabled)
+void PluginControllerProxy::isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    enabled = m_plugin->isEditingCommandEnabled(commandName);
+    completionHandler(m_plugin->isEditingCommandEnabled(commandName));
 }
     
-void PluginControllerProxy::handlesPageScaleFactor(bool& isHandled)
+void PluginControllerProxy::handlesPageScaleFactor(CompletionHandler<void(bool)>&& completionHandler)
 {
-    isHandled = m_plugin->handlesPageScaleFactor();
+    completionHandler(m_plugin->handlesPageScaleFactor());
 }
 
-void PluginControllerProxy::requiresUnifiedScaleFactor(bool& required)
+void PluginControllerProxy::requiresUnifiedScaleFactor(CompletionHandler<void(bool)>&& completionHandler)
 {
-    required = m_plugin->requiresUnifiedScaleFactor();
+    completionHandler(m_plugin->requiresUnifiedScaleFactor());
 }
 
-void PluginControllerProxy::paintEntirePlugin()
+void PluginControllerProxy::paintEntirePlugin(CompletionHandler<void()>&& completionHandler)
 {
     if (m_pluginSize.isEmpty())
-        return;
+        return completionHandler();
 
     m_dirtyRect = IntRect(IntPoint(), m_pluginSize);
     paint();
+    completionHandler();
 }
 
-void PluginControllerProxy::supportsSnapshotting(bool& isSupported)
+void PluginControllerProxy::supportsSnapshotting(CompletionHandler<void(bool)>&& completionHandler)
 {
-    isSupported = m_plugin->supportsSnapshotting();
+    completionHandler(m_plugin->supportsSnapshotting());
 }
 
-void PluginControllerProxy::snapshot(ShareableBitmap::Handle& backingStoreHandle)
+void PluginControllerProxy::snapshot(CompletionHandler<void(ShareableBitmap::Handle&&)> completionHandler)
 {
     ASSERT(m_plugin);
     RefPtr<ShareableBitmap> bitmap = m_plugin->snapshot();
     if (!bitmap)
-        return;
+        return completionHandler({ });
 
+    ShareableBitmap::Handle backingStoreHandle;
     bitmap->createHandle(backingStoreHandle);
+    completionHandler(WTFMove(backingStoreHandle));
 }
 
 void PluginControllerProxy::setFocus(bool hasFocus)
@@ -604,16 +607,15 @@ void PluginControllerProxy::didUpdate()
     startPaintTimer();
 }
 
-void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID)
+void PluginControllerProxy::getPluginScriptableNPObject(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     NPObject* pluginScriptableNPObject = m_plugin->pluginScriptableNPObject();
-    if (!pluginScriptableNPObject) {
-        pluginScriptableNPObjectID = 0;
-        return;
-    }
+    if (!pluginScriptableNPObject)
+        return completionHandler(0);
     
-    pluginScriptableNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginScriptableNPObject, m_plugin.get());
+    uint64_t pluginScriptableNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginScriptableNPObject, m_plugin.get());
     releaseNPObject(pluginScriptableNPObject);
+    completionHandler(pluginScriptableNPObjectID);
 }
 
 void PluginControllerProxy::storageBlockingStateChanged(bool isStorageBlockingEnabled)
@@ -640,9 +642,11 @@ void PluginControllerProxy::mutedStateChanged(bool isMuted)
     m_plugin->mutedStateChanged(isMuted);
 }
 
-void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)
+void PluginControllerProxy::getFormValue(CompletionHandler<void(bool, String&&)>&& completionHandler)
 {
-    returnValue = m_plugin->getFormValue(formValue);
+    String formValue;
+    bool returnValue = m_plugin->getFormValue(formValue);
+    completionHandler(returnValue, WTFMove(formValue));
 }
 
 #if PLATFORM(X11)

@@ -1,3 +1,52 @@
+2019-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove legacy sync messaging in some IPC code
+        https://bugs.webkit.org/show_bug.cgi?id=194561
+
+        Reviewed by Geoffrey Garen.
+
+        Changing some LegacySync messages to Delayed messages.  We should probably rename Delayed to Sync.
+        There are too many ways to send messages.  Let's work to get rid of the old one.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setAllowsAnySSLCertificateForWebSocket):
+        (WebKit::NetworkProcess::processWillSuspendImminently):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::handleWheelEvent):
+        (WebKit::PluginControllerProxy::handleMouseEnterEvent):
+        (WebKit::PluginControllerProxy::handleMouseLeaveEvent):
+        (WebKit::PluginControllerProxy::handleKeyboardEvent):
+        (WebKit::PluginControllerProxy::handleEditingCommand):
+        (WebKit::PluginControllerProxy::isEditingCommandEnabled):
+        (WebKit::PluginControllerProxy::handlesPageScaleFactor):
+        (WebKit::PluginControllerProxy::requiresUnifiedScaleFactor):
+        (WebKit::PluginControllerProxy::paintEntirePlugin):
+        (WebKit::PluginControllerProxy::supportsSnapshotting):
+        (WebKit::PluginControllerProxy::snapshot):
+        (WebKit::PluginControllerProxy::getPluginScriptableNPObject):
+        (WebKit::PluginControllerProxy::getFormValue):
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::deallocate):
+        (WebKit::NPObjectMessageReceiver::hasMethod):
+        (WebKit::NPObjectMessageReceiver::invoke):
+        (WebKit::NPObjectMessageReceiver::invokeDefault):
+        (WebKit::NPObjectMessageReceiver::hasProperty):
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        (WebKit::NPObjectMessageReceiver::setProperty):
+        (WebKit::NPObjectMessageReceiver::removeProperty):
+        (WebKit::NPObjectMessageReceiver::enumerate):
+        (WebKit::NPObjectMessageReceiver::construct):
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest):
+        * UIProcess/mac/SecItemShimProxy.h:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+
 2019-02-13  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241433.
