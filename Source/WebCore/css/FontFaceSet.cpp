@@ -49,7 +49,7 @@ Ref<FontFaceSet> FontFaceSet::create(Document& document, CSSFontFaceSet& backing
 }
 
 FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_backing(CSSFontFaceSet::create())
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {
@@ -59,7 +59,7 @@ FontFaceSet::FontFaceSet(Document& document, const Vector<RefPtr<FontFace>>& ini
 }
 
 FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_backing(backing)
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {

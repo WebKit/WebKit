@@ -349,7 +349,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
 }
 
 PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption)
-    : ActiveDOMObject { &document }
+    : ActiveDOMObject { document }
     , m_options { WTFMove(options) }
     , m_details { WTFMove(details) }
     , m_serializedModifierData { WTFMove(serializedModifierData) }

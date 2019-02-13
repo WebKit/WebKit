@@ -57,7 +57,7 @@ Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRe
 }
 
 UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_promise(WTFMove(promise))
     , m_request(WTFMove(request))
 {

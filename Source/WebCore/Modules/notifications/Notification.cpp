@@ -53,7 +53,7 @@ Ref<Notification> Notification::create(Document& context, const String& title, c
 }
 
 Notification::Notification(Document& document, const String& title, const Options& options)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_title(title)
     , m_direction(options.dir)
     , m_lang(options.lang)

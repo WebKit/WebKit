@@ -426,7 +426,7 @@ static uint64_t nextLogIdentifier()
 
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
-    , ActiveDOMObject(&document)
+    , ActiveDOMObject(document)
     , m_progressEventTimer(*this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(*this, &HTMLMediaElement::playbackProgressTimerFired)
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)

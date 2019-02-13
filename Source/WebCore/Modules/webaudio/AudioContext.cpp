@@ -130,7 +130,7 @@ RefPtr<AudioContext> AudioContext::create(Document& document)
 
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document& document)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
 {
@@ -144,7 +144,7 @@ AudioContext::AudioContext(Document& document)
 
 // Constructor for offline (non-realtime) rendering.
 AudioContext::AudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
-    : ActiveDOMObject(&document)
+    : ActiveDOMObject(document)
     , m_isOfflineContext(true)
     , m_mediaSession(PlatformMediaSession::create(*this))
     , m_eventQueue(std::make_unique<GenericEventQueue>(*this))
