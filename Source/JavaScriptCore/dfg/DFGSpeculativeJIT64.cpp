@@ -2344,8 +2344,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetByVal: {
         switch (node->arrayMode().type()) {
-        case Array::SelectUsingPredictions:
+        case Array::AnyTypedArray:
         case Array::ForceExit:
+        case Array::SelectUsingArguments:
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
             DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
         case Array::Undecided: {
@@ -2566,7 +2569,15 @@ void SpeculativeJIT::compile(Node* node)
         case Array::ScopedArguments:
             compileGetByValOnScopedArguments(node);
             break;
-        default: {
+        case Array::Int8Array:
+        case Array::Int16Array:
+        case Array::Int32Array:
+        case Array::Uint8Array:
+        case Array::Uint8ClampedArray:
+        case Array::Uint16Array:
+        case Array::Uint32Array:
+        case Array::Float32Array:
+        case Array::Float64Array: {
             TypedArrayType type = node->arrayMode().typedArrayType();
             if (isInt(type))
                 compileGetByValOnIntTypedArray(node, type);
@@ -2800,14 +2811,35 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
             
-        default: {
+        case Array::Int8Array:
+        case Array::Int16Array:
+        case Array::Int32Array:
+        case Array::Uint8Array:
+        case Array::Uint8ClampedArray:
+        case Array::Uint16Array:
+        case Array::Uint32Array:
+        case Array::Float32Array:
+        case Array::Float64Array: {
             TypedArrayType type = arrayMode.typedArrayType();
             if (isInt(type))
                 compilePutByValForIntTypedArray(base.gpr(), property.gpr(), node, type);
             else
                 compilePutByValForFloatTypedArray(base.gpr(), property.gpr(), node, type);
-        } }
+            break;
+        }
 
+        case Array::AnyTypedArray:
+        case Array::String:
+        case Array::DirectArguments:
+        case Array::ForceExit:
+        case Array::Generic:
+        case Array::ScopedArguments:
+        case Array::SelectUsingArguments:
+        case Array::SelectUsingPredictions:
+        case Array::Undecided:
+        case Array::Unprofiled:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         break;
     }
         
