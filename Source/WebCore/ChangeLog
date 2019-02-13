@@ -1,3 +1,17 @@
+2019-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Unable to render some Hebrew characters
+        https://bugs.webkit.org/show_bug.cgi?id=194498
+
+        Reviewed by Michael Catanzaro.
+
+        We are failing to find a font for some of the combining character sequences because normalization is failing due
+        to overflow error. In case of overflow, normalize returns the required length for the normalized characters, so
+        we should handle that case to resize the output buffer and try again.
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+
 2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
