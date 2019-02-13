@@ -136,7 +136,7 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         modifiers |= NSEventModifierFlagControl;
     if (keyModifiers.contains(WebEvent::Modifier::ShiftKey))
         modifiers |= NSEventModifierFlagShift;
-    if (keyModifiers.contains(WebEvent::CapsLockKey))
+    if (keyModifiers.contains(WebEvent::Modifier::CapsLockKey))
         modifiers |= NSEventModifierFlagCapsLock;
 
     NSTimeInterval timestamp = [NSDate timeIntervalSinceReferenceDate];

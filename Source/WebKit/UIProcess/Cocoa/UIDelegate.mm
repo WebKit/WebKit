@@ -698,7 +698,7 @@ static NSEventModifierFlags toNSEventModifierFlags(OptionSet<WebEvent::Modifier>
         flags |= NSEventModifierFlagOption;
     if (modifiers.contains(WebEvent::Modifier::MetaKey))
         flags |= NSEventModifierFlagCommand;
-    if (modifiers.contains(WebEvent::CapsLockKey))
+    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
         flags |= NSEventModifierFlagCapsLock;
     return flags;
 }

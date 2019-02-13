@@ -313,7 +313,7 @@ static inline OptionSet<WebEvent::Modifier> modifiersForEvent(NSEvent *event)
 {
     OptionSet<WebEvent::Modifier> modifiers;
     if ([event modifierFlags] & NSEventModifierFlagCapsLock)
-        modifiers.add(WebEvent::CapsLockKey);
+        modifiers.add(WebEvent::Modifier::CapsLockKey);
     if ([event modifierFlags] & NSEventModifierFlagShift)
         modifiers.add(WebEvent::Modifier::ShiftKey);
     if ([event modifierFlags] & NSEventModifierFlagControl)

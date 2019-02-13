@@ -43,7 +43,7 @@ static unsigned modifiersToEventState(OptionSet<WebEvent::Modifier> modifiers)
         state |= GDK_SHIFT_MASK;
     if (modifiers.contains(WebEvent::Modifier::AltKey))
         state |= GDK_META_MASK;
-    if (modifiers.contains(WebEvent::CapsLockKey))
+    if (modifiers.contains(WebEvent::Modifier::CapsLockKey))
         state |= GDK_LOCK_MASK;
     return state;
 }

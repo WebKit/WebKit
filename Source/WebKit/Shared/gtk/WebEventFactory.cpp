@@ -63,7 +63,7 @@ static inline OptionSet<WebEvent::Modifier> modifiersForEvent(const GdkEvent* ev
     if (state & GDK_META_MASK)
         modifiers.add(WebEvent::Modifier::MetaKey);
     if (PlatformKeyboardEvent::modifiersContainCapsLock(state))
-        modifiers.add(WebEvent::CapsLockKey);
+        modifiers.add(WebEvent::Modifier::CapsLockKey);
 
     return modifiers;
 }

@@ -1602,7 +1602,7 @@ static WebEvent::Modifier protocolModifierToWebEventModifier(Inspector::Protocol
     case Inspector::Protocol::Automation::KeyModifier::Shift:
         return WebEvent::Modifier::ShiftKey;
     case Inspector::Protocol::Automation::KeyModifier::CapsLock:
-        return WebEvent::CapsLockKey;
+        return WebEvent::Modifier::CapsLockKey;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
