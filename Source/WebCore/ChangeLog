@@ -1,3 +1,16 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=194582
+
+        Reviewed by Antti Koivisto.
+
+        Check the zero-ness of m_policyCheck first so that we can differentiate process ID being wrong
+        from the non-generated identifier being sent to us as it was the case in this failure.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyCheckIdentifier::isValidFor):
+
 2019-02-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241273.
