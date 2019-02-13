@@ -1,3 +1,10 @@
+2019-02-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed WPE gardening. Unskip content extensions tests after r241283
+
+        * platform/wpe/TestExpectations: Unskip content extensions tests, and list
+        as failing those known to not pass due to missing expectaions or timeouts.
+
 2019-02-08  Chris Fleizach  <cfleizach@apple.com>
 
         AXObjectCache::childrenChanged shouldn't update layout or style during another style recalc
