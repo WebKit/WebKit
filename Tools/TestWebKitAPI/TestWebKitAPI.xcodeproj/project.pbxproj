@@ -307,6 +307,7 @@
 		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
 		5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */; };
 		5C7148952123A40A00FDE3C5 /* WKWebsiteDatastore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */; };
+		5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */; };
 		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
 		5C7C74CB1FB529BA002F9ABE /* WebViewScheduleInRunLoop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */; };
 		5C838F7F1DB04F900082858F /* LoadInvalidURLRequest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57901FAE1CAF137100ED64F9 /* LoadInvalidURLRequest.mm */; };
@@ -1690,6 +1691,7 @@
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
 		5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptDuringNavigation.mm; sourceTree = "<group>"; };
 		5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebsiteDatastore.mm; sourceTree = "<group>"; };
+		5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleRetainPagePlugIn.mm; sourceTree = "<group>"; };
 		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
 		5C7C74CA1FB528D4002F9ABE /* WebViewScheduleInRunLoop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewScheduleInRunLoop.mm; sourceTree = "<group>"; };
 		5C8BC798218CF3E900813886 /* NetworkProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcess.mm; sourceTree = "<group>"; };
@@ -2467,6 +2469,7 @@
 				37A709AD1E3EA8B000CA5969 /* BundleRangeHandle.mm */,
 				37A709AA1E3EA79000CA5969 /* BundleRangeHandlePlugIn.mm */,
 				37A709AC1E3EA7E800CA5969 /* BundleRangeHandleProtocol.h */,
+				5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */,
 				1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */,
 				1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */,
 				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
@@ -4389,6 +4392,7 @@
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
+				5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */,
 				1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */,
 				5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */,
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
