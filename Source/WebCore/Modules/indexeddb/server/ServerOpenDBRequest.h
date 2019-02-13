@@ -63,7 +63,7 @@ public:
 private:
     ServerOpenDBRequest(IDBConnectionToClient&, const IDBRequestData&);
 
-    IDBConnectionToClient& m_connection;
+    Ref<IDBConnectionToClient> m_connection;
     IDBRequestData m_requestData;
 
     bool m_notifiedBlocked { false };
