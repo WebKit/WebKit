@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,6 @@ WebPaymentCoordinatorClient::WebPaymentCoordinatorClient()
 
 WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient()
 {
-}
-
-bool WebPaymentCoordinatorClient::supportsVersion(unsigned)
-{
-    return false;
 }
 
 Optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)

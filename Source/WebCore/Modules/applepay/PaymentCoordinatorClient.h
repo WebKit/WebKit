@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,8 @@ struct ShippingMethodUpdate;
 
 class PaymentCoordinatorClient {
 public:
-    virtual bool supportsVersion(unsigned version) = 0;
+    bool supportsVersion(unsigned version);
+
     virtual Optional<String> validatedPaymentNetwork(const String&) = 0;
     virtual bool canMakePayments() = 0;
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) = 0;

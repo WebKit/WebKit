@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayRequestBase {
-    required sequence<ApplePayMerchantCapability> merchantCapabilities;
-    required sequence<DOMString> supportedNetworks; // FIXME: Should this be an sequence of enums?
-    required DOMString countryCode;
+#pragma once
 
-    sequence<ApplePayContactField> requiredBillingContactFields;
-    ApplePayPaymentContact billingContact;
+#if ENABLE(APPLE_PAY)
 
-    sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
+#include "ApplePaySessionPaymentRequest.h"
 
-    DOMString applicationData;
-    [Conditional=APPLE_PAY_SESSION_V3] sequence<DOMString> supportedCountries;
+namespace WebCore {
+
+struct MockPaymentContactFields : public ApplePaySessionPaymentRequest::ContactFields {
+    MockPaymentContactFields() = default;
+    MockPaymentContactFields(const ApplePaySessionPaymentRequest::ContactFields& contactFields)
+        : ApplePaySessionPaymentRequest::ContactFields { contactFields }
+    {
+    }
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY)

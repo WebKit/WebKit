@@ -83,6 +83,37 @@ function validPaymentOptions() {
 
 async function runTests() {
     await new Promise((resolve, reject) => {
+        debug("Test setting required contact fields in a version 3 request.");
+
+        var paymentMethod = validPaymentMethod(3, validShippingContact());
+        paymentMethod.data.requiredShippingContactFields = ["phoneticName"];
+
+        var paymentRequest = new PaymentRequest([paymentMethod], validPaymentDetails(), validPaymentOptions());
+
+        activateThen(() => {
+            paymentRequest.show().then((response) => {
+                shouldBe("internals.mockPaymentCoordinator.requiredBillingContactFields.name", "false");
+                shouldBe("internals.mockPaymentCoordinator.requiredBillingContactFields.phoneticName", "false");
+                shouldBe("internals.mockPaymentCoordinator.requiredBillingContactFields.email", "false");
+                shouldBe("internals.mockPaymentCoordinator.requiredBillingContactFields.phone", "false");
+                shouldBe("internals.mockPaymentCoordinator.requiredBillingContactFields.postalAddress", "false");
+
+                shouldBe("internals.mockPaymentCoordinator.requiredShippingContactFields.name", "true");
+                shouldBe("internals.mockPaymentCoordinator.requiredShippingContactFields.phoneticName", "true");
+                shouldBe("internals.mockPaymentCoordinator.requiredShippingContactFields.email", "true");
+                shouldBe("internals.mockPaymentCoordinator.requiredShippingContactFields.phone", "true");
+                shouldBe("internals.mockPaymentCoordinator.requiredShippingContactFields.postalAddress", "true");
+
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+    });
+    debug("");
+
+    await new Promise((resolve, reject) => {
         debug("Test setting a default shipping contact in a version 3 request.");
 
         var paymentRequest = new PaymentRequest([validPaymentMethod(3, validShippingContact())], validPaymentDetails(), validPaymentOptions());
