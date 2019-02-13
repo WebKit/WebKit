@@ -1,3 +1,13 @@
+2019-02-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add method to fetch patch
+        https://bugs.webkit.org/show_bug.cgi?id=194518
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        (Patch.get_patch):
+
 2019-02-12  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Expand tests coverage (60 new tests -> 860)

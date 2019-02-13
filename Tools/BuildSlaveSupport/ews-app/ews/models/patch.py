@@ -75,6 +75,13 @@ class Patch(models.Model):
         return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_buildbot
 
     @classmethod
+    def get_patch(cls, patch_id):
+        try:
+            return Patch.objects.get(patch_id=patch_id)
+        except:
+            return None
+
+    @classmethod
     def set_sent_to_buildbot(cls, patch_id):
         if not Patch.is_existing_patch_id(patch_id):
             return ERR_NON_EXISTING_PATCH
