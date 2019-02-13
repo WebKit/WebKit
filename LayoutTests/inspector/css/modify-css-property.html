@@ -44,7 +44,7 @@ function test() {
 
             InspectorTest.expectEqual(getProperty("font-size").rawValue, "10px", `"font-size" property value should update immediately.`);
 
-            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 12px; color: antiquewhite`, `Style declaration text should stay unchanged.`);
+            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 10px; color: antiquewhite`, `Style declaration text should update immediately.`);
 
             resolve();
         }
@@ -94,6 +94,46 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "ModifyCSSProperty.PropertiesChangedEvent",
+        test(resolve, reject) {
+            let getInlineStyleDeclaration = () => {
+                for (let styleDeclaration of nodeStyles.orderedStyles) {
+                    if (styleDeclaration.type === styleDeclaration.constructor.Type.Inline)
+                        return styleDeclaration;
+                }
+                InspectorTest.fail("No declaration found.");
+                resolve();
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getInlineStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                InspectorTest.fail("No property found.");
+                resolve();
+            };
+
+            let styleDeclaration = getInlineStyleDeclaration();
+
+            styleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                InspectorTest.expectThat(!styleDeclaration.locked, `Style declaration is unlocked.`);
+                InspectorTest.expectEqual(getProperty("width").rawValue, "200px", `"width" property value should update to "200px".`);
+                InspectorTest.expectEqual(styleDeclaration.text, `width: 200px;`, `Inline style declaration text should update when not locked.`);
+                resolve();
+            });
+
+            styleDeclaration.locked = true;
+            // WI.CSSStyleDeclaration.Event.PropertiesChanged event should not fire when the style declaration is locked.
+            InspectorTest.evaluateInPage(`makeNarrow()`);
+
+            styleDeclaration.locked = false;
+            InspectorTest.evaluateInPage(`makeWide()`);
+        }
+    });
+
+    suite.addTestCase({
         name: "Update inline style value when CSSStyleDeclaration locked and not locked",
         test(resolve, reject) {
             let getInlineStyleDeclaration = () => {
@@ -117,12 +157,12 @@ function test() {
 
             let styleDeclaration = getInlineStyleDeclaration();
 
-            styleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged)
-                .then((event) => {
-                    InspectorTest.expectEqual(getProperty("width").rawValue, "200px", `"width" property value should update to "200px".`);
-                    InspectorTest.expectEqual(styleDeclaration.text, `width: 200px;`, `Inline style declaration text should update when not locked.`);
-                })
-                .then(resolve, reject);
+            WI.CSSStyleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                InspectorTest.expectThat(!styleDeclaration.locked, `Style declaration is unlocked.`);
+                InspectorTest.expectEqual(getProperty("width").rawValue, "128px", `"width" property value should update to "128px".`);
+                InspectorTest.expectEqual(styleDeclaration.text, `width: 128px;`, `Inline style declaration text should update when not locked.`);
+                resolve();
+            });
 
             styleDeclaration.locked = true;
             getProperty("width").rawValue = "64px";
@@ -133,9 +173,43 @@ function test() {
 
             styleDeclaration.locked = false;
             getProperty("width").rawValue = "128px";
-            InspectorTest.expectEqual(styleDeclaration.text, `width: 64px;`, `Style declaration text should stay "width: 64px".`);
+            InspectorTest.expectEqual(styleDeclaration.text, `width: 128px;`, `Style declaration text should update immediately.`);
 
             InspectorTest.evaluateInPage(`makeWide()`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ModifyCSSProperty.ConsequentValueChanges",
+        test(resolve, reject) {
+            let getInlineStyleDeclaration = () => {
+                for (let styleDeclaration of nodeStyles.orderedStyles) {
+                    if (styleDeclaration.type === styleDeclaration.constructor.Type.Inline)
+                        return styleDeclaration;
+                }
+                InspectorTest.fail("No declaration found.");
+                resolve();
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getInlineStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                InspectorTest.fail("No property found.");
+                resolve();
+            };
+
+            let styleDeclaration = getInlineStyleDeclaration();
+            styleDeclaration.locked = false;
+
+            for (let i = 0; i <= 20; ++i)
+                getProperty("width").rawValue = i + "px";
+
+            InspectorTest.expectEqual(styleDeclaration.text, `width: 20px;`, `Style declaration text should contain most recent value.`);
+
+            resolve();
         }
     });
 

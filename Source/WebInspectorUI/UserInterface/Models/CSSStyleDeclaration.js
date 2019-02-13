@@ -41,6 +41,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._inherited = inherited || false;
 
         this._initialState = null;
+        this._updatesInProgressCount = 0;
         this._locked = false;
         this._pendingProperties = [];
         this._propertyNameMap = {};
@@ -106,9 +107,22 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     update(text, properties, styleSheetTextRange, options = {})
     {
         let dontFireEvents = options.dontFireEvents || false;
-        let suppressLock = options.suppressLock || false;
 
-        if (this._locked && !suppressLock && text !== this._text)
+        // When two consequent setText calls happen (A and B), only update when the last call (B) is finished.
+        //               Front-end:   A B
+        //                Back-end:       A B
+        // _updatesInProgressCount: 0 1 2 1 0
+        //                                  ^
+        //                                  update only happens here
+        if (this._updatesInProgressCount > 0 && !options.forceUpdate) {
+            if (WI.settings.enableStyleEditingDebugMode.value && text !== this._text)
+                console.warn("Style modified while editing:", text);
+
+            return;
+        }
+
+        // Allow updates from the backend when text matches because `properties` may contain warnings that need to be shown.
+        if (this._locked && !options.forceUpdate && text !== this._text)
             return;
 
         text = text || "";
@@ -199,11 +213,24 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         if (!trimmedText.length || this._type === WI.CSSStyleDeclaration.Type.Inline)
             text = trimmedText;
 
-        // Update text immediately when it was modified via the styles sidebar.
-        if (this._locked)
-            this._text = text;
+        this._text = text;
+        ++this._updatesInProgressCount;
 
-        this._nodeStyles.changeStyleText(this, text);
+        let timeoutId = setTimeout(() => {
+            console.error("Timed out when setting style text:", text);
+            styleTextDidChange();
+        }, 2000);
+
+        let styleTextDidChange = () => {
+            if (!timeoutId)
+                return;
+
+            clearTimeout(timeoutId);
+            timeoutId = null;
+            this._updatesInProgressCount = Math.max(0, this._updatesInProgressCount - 1);
+        };
+
+        this._nodeStyles.changeStyleText(this, text, styleTextDidChange);
     }
 
     get enabledProperties()
@@ -322,7 +349,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         for (let index = propertyIndex + 1; index < this._properties.length; index++)
             this._properties[index].index = index;
 
-        this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, suppressLock: true});
+        this.update(this._text, this._properties, this._styleSheetTextRange, {dontFireEvents: true, forceUpdate: true});
 
         return property;
     }

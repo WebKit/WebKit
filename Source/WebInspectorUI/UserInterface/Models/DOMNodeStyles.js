@@ -449,21 +449,25 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         return result.promise;
     }
 
-    changeStyleText(style, text)
+    changeStyleText(style, text, callback)
     {
-        if (!style.ownerStyleSheet || !style.styleSheetTextRange)
+        if (!style.ownerStyleSheet || !style.styleSheetTextRange) {
+            callback();
             return;
+        }
 
         text = text || "";
 
-        function styleChanged(error, stylePayload)
-        {
-            if (error)
+        let didSetStyleText = (error, stylePayload) => {
+            if (error) {
+                callback(error);
                 return;
-            this.refresh();
-        }
+            }
 
-        CSSAgent.setStyleText(style.id, text, styleChanged.bind(this));
+            this.refresh().then(callback);
+        };
+
+        CSSAgent.setStyleText(style.id, text, didSetStyleText);
     }
 
     // Private

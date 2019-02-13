@@ -380,6 +380,10 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             return;
         }
 
+        console.assert(this._ownerStyle);
+        if (!this._ownerStyle)
+            return;
+
         this._prependSemicolonIfNeeded();
 
         let styleText = this._ownerStyle.text || "";
