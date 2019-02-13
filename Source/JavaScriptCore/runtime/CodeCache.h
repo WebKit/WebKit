@@ -75,14 +75,16 @@ struct SourceCodeValue {
     {
     }
 
-    SourceCodeValue(VM& vm, JSCell* cell, int64_t age)
+    SourceCodeValue(VM& vm, JSCell* cell, int64_t age, bool written = false)
         : cell(vm, cell)
         , age(age)
+        , written(written)
     {
     }
 
     Strong<JSCell> cell;
     int64_t age;
+    bool written;
 };
 
 class CodeCacheMap {
@@ -154,7 +156,7 @@ public:
             return nullptr;
 
         VERBOSE_LOG("Found cached CodeBlock on disk");
-        addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_age));
+        addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_age, true));
         return unlinkedCodeBlock;
 #else
         UNUSED_PARAM(vm);

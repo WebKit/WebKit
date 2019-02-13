@@ -1,5 +1,21 @@
 2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
 
+        CodeBlocks read from disk should not be re-written
+        https://bugs.webkit.org/show_bug.cgi?id=194535
+
+        Reviewed by Michael Saboff.
+
+        Keep track of which CodeBlocks have been read from disk or have already
+        been serialized in CodeCache.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::write):
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeValue::SourceCodeValue):
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+
+2019-02-13  Tadeu Zagallo  <tzagallo@apple.com>
+
         SourceCode should be copied when generating bytecode for functions
         https://bugs.webkit.org/show_bug.cgi?id=194536
 
