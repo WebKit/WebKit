@@ -1,3 +1,27 @@
+2019-02-13  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION: [ Mac Debug WK2 ] Layout Test storage/indexeddb/key-type-infinity-private.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=194413
+        <rdar://problem/47897254>
+
+        Reviewed by Brady Eidson.
+
+        IDB clients expected transaction operations to be executed in order, but in 
+        UniqueIDBDatabase::immediateCloseForUserDelete, callbacks in callback map were errored out randomly.
+        This patch added a callback queue to UniqueIDBDatabase to make sure callbacks will be called in the same order
+        as IDB Server receives the request.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::performErrorCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performKeyDataCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetResultCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performGetAllResultsCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCountCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::forgetErrorCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2019-02-13  John Wilander  <wilander@apple.com>
 
         Store Ad Click Attribution requests in the network process

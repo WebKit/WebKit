@@ -423,6 +423,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(ErrorCallback&& callback)
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_errorCallbacks.contains(identifier));
     m_errorCallbacks.add(identifier, WTFMove(callback));
+    m_callbackQueue.append(identifier);
     return identifier;
 }
 
@@ -436,6 +437,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(KeyDataCallback&& callback)
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_keyDataCallbacks.contains(identifier));
     m_keyDataCallbacks.add(identifier, WTFMove(callback));
+    m_callbackQueue.append(identifier);
     return identifier;
 }
 
@@ -449,6 +451,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetResultCallback&& callbac
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_getResultCallbacks.contains(identifier));
     m_getResultCallbacks.add(identifier, WTFMove(callback));
+    m_callbackQueue.append(identifier);
     return identifier;
 }
 
@@ -462,6 +465,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(GetAllResultsCallback&& cal
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_getAllResultsCallbacks.contains(identifier));
     m_getAllResultsCallbacks.add(identifier, WTFMove(callback));
+    m_callbackQueue.append(identifier);
     return identifier;
 }
 
@@ -475,6 +479,7 @@ uint64_t UniqueIDBDatabase::storeCallbackOrFireError(CountCallback&& callback)
     uint64_t identifier = generateUniqueCallbackIdentifier();
     ASSERT(!m_countCallbacks.contains(identifier));
     m_countCallbacks.add(identifier, WTFMove(callback));
+    m_callbackQueue.append(identifier);
     return identifier;
 }
 
@@ -1828,18 +1833,23 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     IDBError error = IDBError::userDeleteError();
     IDBKeyData keyData;
     IDBGetResult getResult;
+    IDBGetAllResult getAllResult;
 
-    for (auto identifier : copyToVector(m_errorCallbacks.keys()))
-        performErrorCallback(identifier, error);
-
-    for (auto identifier : copyToVector(m_keyDataCallbacks.keys()))
-        performKeyDataCallback(identifier, error, keyData);
-
-    for (auto identifier : copyToVector(m_getResultCallbacks.keys()))
-        performGetResultCallback(identifier, error, getResult);
-
-    for (auto identifier : copyToVector(m_countCallbacks.keys()))
-        performCountCallback(identifier, error, 0);
+    while (!m_callbackQueue.isEmpty()) {
+        auto identifier = m_callbackQueue.first();
+        if (m_errorCallbacks.contains(identifier))
+            performErrorCallback(identifier, error);
+        else if (m_keyDataCallbacks.contains(identifier))
+            performKeyDataCallback(identifier, error, keyData);
+        else if (m_getResultCallbacks.contains(identifier))
+            performGetResultCallback(identifier, error, getResult);
+        else if (m_countCallbacks.contains(identifier))
+            performCountCallback(identifier, error, 0);
+        else if (m_getAllResultsCallbacks.contains(identifier))
+            performGetAllResultsCallback(identifier, error, getAllResult);
+        else
+            ASSERT_NOT_REACHED();
+    }
 
     // Error out all IDBOpenDBRequests
     if (m_currentOpenDBRequest) {
@@ -1880,45 +1890,62 @@ void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const 
 {
     auto callback = m_errorCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
-    if (callback)
+    if (callback) {
         callback(error);
+        ASSERT(m_callbackQueue.first() == callbackIdentifier);
+        m_callbackQueue.removeFirst();
+    }
 }
 
 void UniqueIDBDatabase::performKeyDataCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBKeyData& resultKey)
 {
     auto callback = m_keyDataCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
-    if (callback)
+    if (callback) {
         callback(error, resultKey);
+        ASSERT(m_callbackQueue.first() == callbackIdentifier);
+        m_callbackQueue.removeFirst();
+    }
 }
 
 void UniqueIDBDatabase::performGetResultCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& resultData)
 {
     auto callback = m_getResultCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
-    if (callback)
+    if (callback) {
         callback(error, resultData);
+        ASSERT(m_callbackQueue.first() == callbackIdentifier);
+        m_callbackQueue.removeFirst();
+    }
 }
 
 void UniqueIDBDatabase::performGetAllResultsCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBGetAllResult& resultData)
 {
     auto callback = m_getAllResultsCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
-    if (callback)
+    if (callback) {
         callback(error, resultData);
+        ASSERT(m_callbackQueue.first() == callbackIdentifier);
+        m_callbackQueue.removeFirst();
+    }
 }
 
 void UniqueIDBDatabase::performCountCallback(uint64_t callbackIdentifier, const IDBError& error, uint64_t count)
 {
     auto callback = m_countCallbacks.take(callbackIdentifier);
     ASSERT(callback || m_hardClosedForUserDelete);
-    if (callback)
+    if (callback) {
         callback(error, count);
+        ASSERT(m_callbackQueue.first() == callbackIdentifier);
+        m_callbackQueue.removeFirst();
+    }
 }
 
 void UniqueIDBDatabase::forgetErrorCallback(uint64_t callbackIdentifier)
 {
     ASSERT(m_errorCallbacks.contains(callbackIdentifier));
+    ASSERT(m_callbackQueue.last() == callbackIdentifier);
+    m_callbackQueue.removeLast();
     m_errorCallbacks.remove(callbackIdentifier);
 }
 
