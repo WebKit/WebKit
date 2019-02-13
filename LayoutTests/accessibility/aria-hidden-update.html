@@ -18,6 +18,7 @@
      
     <script>
         if (window.accessibilityController) {
+            jsTestIsAsync = true;
             description("This test makes sure that when aria-hidden changes, the AX hierarchy is updated.");
 
             // Get the parent element.
@@ -39,18 +40,24 @@
 
             // Make the 2nd button hidden. Only 1 and 3 should be present.
             document.getElementById("button2").setAttribute("aria-hidden", "true");
-            shouldBeTrue("parent.childAtIndex(0).isEqual(button1)");
-            shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
+            setTimeout(function() {
+                shouldBeTrue("parent.childAtIndex(0).isEqual(button1)");
+                shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
            
-            // Make the 1st button hidden. Only 3 should be present.
-            document.getElementById("button1").setAttribute("aria-hidden", "true");
-            shouldBeTrue("parent.childAtIndex(0).isEqual(button3)");
+                // Make the 1st button hidden. Only 3 should be present.
+                document.getElementById("button1").setAttribute("aria-hidden", "true");
+                setTimeout(function() {
+                    shouldBeTrue("parent.childAtIndex(0).isEqual(button3)");
 
-            // Make the 2nd button not hidden. 2 and 3 should be present.
-            document.getElementById("button2").setAttribute("aria-hidden", "false");
-            shouldBeTrue("parent.childAtIndex(0).isEqual(button2)");
-            shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
-
+                    // Make the 2nd button not hidden. 2 and 3 should be present.
+                    document.getElementById("button2").setAttribute("aria-hidden", "false");
+                    setTimeout(function() {
+                        shouldBeTrue("parent.childAtIndex(0).isEqual(button2)");
+                        shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
+                        finishJSTest();
+                    }, 0);
+                }, 0);
+            }, 0);
         }
     </script>
 
