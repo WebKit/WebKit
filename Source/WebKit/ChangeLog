@@ -1,3 +1,50 @@
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r241352. rdar://problem/48038900
+
+    Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
+    https://bugs.webkit.org/show_bug.cgi?id=194582
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Check the zero-ness of m_policyCheck first so that we can differentiate process ID being wrong
+    from the non-generated identifier being sent to us as it was the case in this failure.
+    
+    * loader/PolicyChecker.cpp:
+    (WebCore::PolicyCheckIdentifier::isValidFor):
+    
+    Source/WebKit:
+    
+    The bug was caused by WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction invoking the callback
+    with responseIdentifier even when we had failed to send the policy check IPC. Clearly, responseIdentifier
+    is invalid in that case, and we should be using requestIdentifier instead.
+    
+    Unfortunately no new tests since I'm not aware of a way to make sendSync fail in this case.
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241352 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
+            https://bugs.webkit.org/show_bug.cgi?id=194582
+
+            Reviewed by Antti Koivisto.
+
+            The bug was caused by WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction invoking the callback
+            with responseIdentifier even when we had failed to send the policy check IPC. Clearly, responseIdentifier
+            is invalid in that case, and we should be using requestIdentifier instead.
+
+            Unfortunately no new tests since I'm not aware of a way to make sendSync fail in this case.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2019-02-12  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/48009995
