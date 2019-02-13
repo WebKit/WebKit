@@ -1,5 +1,43 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241011. rdar://problem/47827420
+
+    Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
+    https://bugs.webkit.org/show_bug.cgi?id=194318
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebInspectorUI:
+    
+    Previously, WI.CSSStyleDeclaration.Event.PropertiesChanged fired when
+    old text and new text were empty strings.
+    
+    * UserInterface/Models/CSSStyleDeclaration.js:
+    
+    LayoutTests:
+    
+    Fix the flaky test on Debug.
+    
+    * inspector/css/modify-css-property-race-expected.txt:
+    * inspector/css/modify-css-property-race.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241011 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Styles: PropertiesChanged shouldn't fire when old and new text are both empty
+            https://bugs.webkit.org/show_bug.cgi?id=194318
+
+            Reviewed by Devin Rousso.
+
+            Previously, WI.CSSStyleDeclaration.Event.PropertiesChanged fired when
+            old text and new text were empty strings.
+
+            * UserInterface/Models/CSSStyleDeclaration.js:
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241003. rdar://problem/47829275
 
     Web Inspector: Elements tab: selection is broken after deleting the selected node

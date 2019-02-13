@@ -117,7 +117,7 @@ function test() {
 
             let styleDeclaration = getInlineStyleDeclaration();
 
-            styleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+            WI.CSSStyleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
                 InspectorTest.expectThat(!styleDeclaration.locked, `Style declaration is unlocked.`);
                 InspectorTest.expectEqual(getProperty("width").rawValue, "200px", `"width" property value should update to "200px".`);
                 InspectorTest.expectEqual(styleDeclaration.text, `width: 200px;`, `Inline style declaration text should update when not locked.`);

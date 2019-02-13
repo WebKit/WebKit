@@ -173,8 +173,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         if (dontFireEvents)
             return;
 
-        // Don't fire the event if there is text and it hasn't changed.
-        if (oldText && this._text && oldText === this._text)
+        // Don't fire the event if text hasn't changed. However, it should still fire for Computed style declarations
+        // because it never has text.
+        if (oldText === this._text && this._type !== WI.CSSStyleDeclaration.Type.Computed)
             return;
 
         function delayed()
