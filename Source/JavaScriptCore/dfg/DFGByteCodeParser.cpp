@@ -6830,7 +6830,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
             Node* property = get(bytecode.m_property);
-            Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)), base, property);
+            addVarArgChild(base);
+            addVarArgChild(property);
+            addVarArgChild(nullptr);
+            Node* hasIterableProperty = addToGraph(Node::VarArg, HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)));
             set(bytecode.m_dst, hasIterableProperty);
             NEXT_OPCODE(op_has_indexed_property);
         }

@@ -135,9 +135,14 @@ private:
         Node* length = m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32Only, op, m_node->origin,
             OpInfo(m_node->arrayMode().asWord()), Edge(base.node(), KnownCellUse), storage);
-        m_insertionSet.insertNode(
+        Node* checkInBounds = m_insertionSet.insertNode(
             m_nodeIndex, SpecInt32Only, CheckInBounds, m_node->origin,
             index, Edge(length, KnownInt32Use));
+
+        AdjacencyList adjacencyList = m_graph.copyVarargChildren(m_node);
+        m_graph.m_varArgChildren.append(Edge(checkInBounds, UntypedUse));
+        adjacencyList.setNumChildren(adjacencyList.numChildren() + 1);
+        m_node->children = adjacencyList;
         return true;
     }
     

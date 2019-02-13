@@ -1849,13 +1849,13 @@ private:
             node->setArrayMode(
                 node->arrayMode().refine(
                     m_graph, node,
-                    node->child1()->prediction(),
-                    node->child2()->prediction(),
+                    m_graph.varArgChild(node, 0)->prediction(),
+                    m_graph.varArgChild(node, 1)->prediction(),
                     SpecNone));
             
-            blessArrayOperation(node->child1(), node->child2(), node->child3());
-            fixEdge<CellUse>(node->child1());
-            fixEdge<KnownInt32Use>(node->child2());
+            blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
+            fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 1));
             break;
         }
         case GetDirectPname: {
@@ -3484,18 +3484,29 @@ private:
     {
         node->setOp(HasIndexedProperty);
         node->clearFlags(NodeMustGenerate);
+
+        {
+            unsigned firstChild = m_graph.m_varArgChildren.size();
+            unsigned numChildren = 3;
+            m_graph.m_varArgChildren.append(node->child1());
+            m_graph.m_varArgChildren.append(node->child2());
+            m_graph.m_varArgChildren.append(Edge());
+            node->mergeFlags(NodeHasVarArgs);
+            node->children = AdjacencyList(AdjacencyList::Variable, firstChild, numChildren);
+        }
+
         node->setArrayMode(
             node->arrayMode().refine(
                 m_graph, node,
-                node->child1()->prediction(),
-                node->child2()->prediction(),
+                m_graph.varArgChild(node, 0)->prediction(),
+                m_graph.varArgChild(node, 1)->prediction(),
                 SpecNone));
         node->setInternalMethodType(PropertySlot::InternalMethodType::HasProperty);
 
-        blessArrayOperation(node->child1(), node->child2(), node->child3());
+        blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
 
-        fixEdge<CellUse>(node->child1());
-        fixEdge<Int32Use>(node->child2());
+        fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+        fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
     }
 
     void fixupNormalizeMapKey(Node* node)
