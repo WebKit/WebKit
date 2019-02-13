@@ -122,6 +122,8 @@ private:
     OSStatus startInternal();
     void stopInternal();
 
+    void unduck();
+
     void verifyIsCapturing();
     void devicesChanged();
     void captureFailed();
@@ -339,7 +341,16 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     m_ioUnitInitialized = true;
     m_suspended = false;
 
+    unduck();
+
     return err;
+}
+
+void CoreAudioSharedUnit::unduck()
+{
+    uint32_t outputDevice;
+    if (!defaultOutputDevice(&outputDevice))
+        AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
 }
 
 OSStatus CoreAudioSharedUnit::configureMicrophoneProc()
@@ -612,9 +623,7 @@ OSStatus CoreAudioSharedUnit::startInternal()
         ASSERT(m_ioUnit);
     }
 
-    uint32_t outputDevice;
-    if (!defaultOutputDevice(&outputDevice))
-        AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
+    unduck();
 
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {
@@ -643,11 +652,10 @@ void CoreAudioSharedUnit::verifyIsCapturing()
     captureFailed();
 }
 
-
 void CoreAudioSharedUnit::captureFailed()
 {
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_ERROR(Media, "CoreAudioSharedUnit::captureFailed - capture failed\n");
+    RELEASE_LOG_ERROR(Media, "CoreAudioSharedUnit::captureFailed - capture failed");
 #endif
     for (CoreAudioCaptureSource& client : m_clients)
         client.captureFailed();
@@ -667,6 +675,7 @@ void CoreAudioSharedUnit::stopProducingData()
         return;
 
     stopInternal();
+    cleanupAudioUnit();
 }
 
 OSStatus CoreAudioSharedUnit::suspend()
