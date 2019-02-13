@@ -1,5 +1,87 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241309. rdar://problem/47924449
+
+    REGRESSION (r238955, r240494): Soft-linking optional Lookup.framework triggers release assertion when missing
+    <https://webkit.org/b/194529>
+    <rdar://problem/47924449>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    * SourcesCocoa.txt:
+    - Do not include DataDetectorsCoreSoftLink.mm in unified
+      sources.
+    * WebCore.xcodeproj/project.pbxproj:
+    - Add DataDetectorsCoreSoftLink.mm to the WebCore target now
+      that it isn't part of the unifed sources.
+    * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+    - Switch from using SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL() to
+      SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE() when linking
+      DataDetectorsCore.framework. None of the other macros assume
+      this framework is optional, and it was likely made optional
+      originally because the framework was new to iOS and thus
+      didn't exist on older versions.
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    - Change use of SOFT_LINK_CLASS_FOR_SOURCE() macros to
+      SOFT_LINK_CLASS() since the latter can only be used with
+      SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation).  This broke after
+      the fix for <wtf/SoftLinking.h> was applied.
+    
+    Source/WTF:
+    
+    * wtf/cocoa/SoftLinking.h:
+    (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL): Rename
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION() to this
+    and change `assertion` argument to `isOptional`.  Pass
+    `isOptional` to framework##Library() method to control assertion
+    behavior.  Only check RELEASE_ASSERT() if `!isOptional`, else
+    that code should be optimized out by the compiler.  This fixes
+    the crash.
+    (NO_ASSERT): Remove macro since it's no longer used.
+    (SOFT_LINK_IS_OPTIONAL): Add macro to use for soft-linking
+    optional classes.
+    (SOFT_LINK_IS_NOT_OPTIONAL): Add macro to use for soft-linking
+    non-optional classes.
+    (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT): Update to use new
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL() macro.
+    (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT): Ditto.
+    (SOFT_LINK_CLASS_FOR_SOURCE): Ditto.
+    (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL): Ditto.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241309 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r238955, r240494): Soft-linking optional Lookup.framework triggers release assertion when missing
+            <https://webkit.org/b/194529>
+            <rdar://problem/47924449>
+
+            Reviewed by Eric Carlson.
+
+            * wtf/cocoa/SoftLinking.h:
+            (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL): Rename
+            SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION() to this
+            and change `assertion` argument to `isOptional`.  Pass
+            `isOptional` to framework##Library() method to control assertion
+            behavior.  Only check RELEASE_ASSERT() if `!isOptional`, else
+            that code should be optimized out by the compiler.  This fixes
+            the crash.
+            (NO_ASSERT): Remove macro since it's no longer used.
+            (SOFT_LINK_IS_OPTIONAL): Add macro to use for soft-linking
+            optional classes.
+            (SOFT_LINK_IS_NOT_OPTIONAL): Add macro to use for soft-linking
+            non-optional classes.
+            (SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT): Update to use new
+            SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_IS_OPTIONAL() macro.
+            (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT): Ditto.
+            (SOFT_LINK_CLASS_FOR_SOURCE): Ditto.
+            (SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL): Ditto.
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241288. rdar://problem/41892438
 
     [Cocoa] Ask platform for generic font family mappings

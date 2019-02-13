@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
 
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(DataDetectorsCore)
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, DataDetectorsCore)
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerResult)
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
