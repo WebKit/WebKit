@@ -1,3 +1,19 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in PolicyCheckIdentifier::isValidFor via WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=194582
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction invoking the callback
+        with responseIdentifier even when we had failed to send the policy check IPC. Clearly, responseIdentifier
+        is invalid in that case, and we should be using requestIdentifier instead.
+
+        Unfortunately no new tests since I'm not aware of a way to make sendSync fail in this case.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2019-02-13  Benjamin Poulain  <benjamin@webkit.org>
 
         Responsiveness timers are too expensive for frequent events
