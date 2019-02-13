@@ -1,5 +1,31 @@
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241297. rdar://problem/47969451
+
+    Source/WebCore:
+    Unreviewed build fix; add a HAVE_CELESTIAL guard around Celestial framework usage.
+    
+    * platform/audio/ios/MediaSessionManagerIOS.h:
+    * platform/audio/ios/MediaSessionManagerIOS.mm:
+    (WebCore::MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary):
+    
+    Source/WebCore/PAL:
+    Unreviewed build fix; add a HAVE_CELESTIAL guard around the CelestialSPI.h contents.
+    
+    * pal/spi/ios/CelestialSPI.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241297 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-11  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix; add a HAVE_CELESTIAL guard around Celestial framework usage.
+
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary):
+
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241281. rdar://problem/47969451
 
     [Cocoa] Notify AVSystemController of our presenting PID before registering as a Now Playing app.

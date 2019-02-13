@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(CELESTIAL)
 
 #pragma once
 
@@ -46,4 +46,4 @@
 
 #endif
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // HAVE(CELESTIAL)
