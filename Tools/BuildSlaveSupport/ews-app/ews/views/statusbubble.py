@@ -25,8 +25,73 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
+from ews.models.patch import Patch
+import ews.config as config
 
 
 class StatusBubble(View):
+    def _build_bubble(self, build, patch):
+        builder_display_name = build.builder_id  # TODO: fetch display name from buildermapping table https://bugs.webkit.org/show_bug.cgi?id=194599
+        builder_full_name = build.builder_id  # TODO: fetch builder full name from buildermapping table https://bugs.webkit.org/show_bug.cgi?id=194599
+
+        bubble = {
+            "name": builder_display_name,
+            "url": 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number),
+        }
+
+        bubble["details_message"] = '{}\n{}'.format(builder_full_name, build.state_string)
+        if build.result is None:
+            bubble["state"] = "started"
+        elif build.result == 0:  # SUCCESS
+            bubble["state"] = "pass"
+        elif build.result == 1:  # WARNINGS
+            bubble["state"] = "pass"
+        elif build.result == 2:  # FAILURE
+            bubble["state"] = "fail"
+        elif build.result == 3:  # SKIPPED
+            bubble["state"] = "none"
+        elif build.result == 4:  # EXCEPTION
+            bubble["state"] = "error"
+        elif build.result == 5:  # RETRY
+            bubble["state"] = "provisional-fail"
+        else:
+            bubble["state"] = "fail"
+
+        return bubble
+
+    def _should_show_bubble_for(self, patch, build):
+        # TODO: https://bugs.webkit.org/show_bug.cgi?id=194597
+        return True
+
+    def _build_bubbles_for_patch(self, patch):
+        show_submit_to_ews = True
+        failed_to_apply = False  # TODO: https://bugs.webkit.org/show_bug.cgi?id=194598
+        bubbles = []
+
+        if not patch:
+            return (None, show_submit_to_ews, failed_to_apply)
+
+        for build in patch.build_set.all():
+            show_submit_to_ews = False
+            if not self._should_show_bubble_for(patch, build):
+                continue
+            bubble = self._build_bubble(build, patch)
+            if bubble:
+                bubbles.append(bubble)
+
+        return (bubbles, show_submit_to_ews, failed_to_apply)
+
+    @xframe_options_exempt
     def get(self, request, patch_id):
-        return HttpResponse("Placeholder for status bubble for {}.".format(patch_id))
+        patch_id = int(patch_id)
+        patch = Patch.get_patch(patch_id)
+        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_patch(patch)
+
+        template_values = {
+            "bubbles": bubbles,
+            "patch_id": patch_id,
+            "show_submit_to_ews": show_submit_to_ews,
+            "show_failure_to_apply": show_failure_to_apply,
+        }
+        return render(request, 'statusbubble.html', template_values)

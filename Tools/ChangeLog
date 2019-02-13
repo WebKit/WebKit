@@ -1,5 +1,17 @@
 2019-02-13  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Generate status-bubble
+        https://bugs.webkit.org/show_bug.cgi?id=194572
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+        (StatusBubble._should_show_bubble_for):
+        (StatusBubble._build_bubbles_for_patch):
+
+2019-02-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add status bubble html template
         https://bugs.webkit.org/show_bug.cgi?id=194571
 
