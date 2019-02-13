@@ -32,27 +32,44 @@ static const Seconds responsivenessTimeout { 3_s };
 
 ResponsivenessTimer::ResponsivenessTimer(ResponsivenessTimer::Client& client)
     : m_client(client)
-    , m_isResponsive(true)
     , m_timer(RunLoop::main(), this, &ResponsivenessTimer::timerFired)
 {
 }
 
-ResponsivenessTimer::~ResponsivenessTimer()
-{
-    m_timer.stop();
-}
+ResponsivenessTimer::~ResponsivenessTimer() = default;
 
 void ResponsivenessTimer::invalidate()
 {
     m_timer.stop();
+    m_restartFireTime = MonotonicTime();
+    m_waitingForTimer = false;
+    m_useLazyStop = false;
 }
 
 void ResponsivenessTimer::timerFired()
 {
+    if (!m_waitingForTimer)
+        return;
+
+    if (m_restartFireTime) {
+        MonotonicTime now = MonotonicTime::now();
+        MonotonicTime restartFireTime = m_restartFireTime;
+        m_restartFireTime = MonotonicTime();
+
+        if (restartFireTime > now) {
+            m_timer.startOneShot(now - restartFireTime);
+            return;
+        }
+    }
+
+    m_waitingForTimer = false;
+    m_useLazyStop = false;
+
     if (!m_isResponsive)
         return;
 
     if (!m_client.mayBecomeUnresponsive()) {
+        m_waitingForTimer = true;
         m_timer.startOneShot(responsivenessTimeout);
         return;
     }
@@ -66,10 +83,31 @@ void ResponsivenessTimer::timerFired()
     
 void ResponsivenessTimer::start()
 {
-    if (m_timer.isActive())
+    if (m_waitingForTimer)
         return;
 
-    m_timer.startOneShot(responsivenessTimeout);
+    m_waitingForTimer = true;
+    m_useLazyStop = false;
+
+    if (m_timer.isActive()) {
+        // The timer is still active from a lazy stop.
+        // Instead of restarting the timer, we schedule a new delay after this one finishes.
+        //
+        // In most cases, stop is called before we get to schedule the second timer, saving us
+        // the scheduling of the timer entirely.
+        m_restartFireTime = MonotonicTime::now() + responsivenessTimeout;
+    } else {
+        m_restartFireTime = MonotonicTime();
+        m_timer.startOneShot(responsivenessTimeout);
+    }
+}
+
+void ResponsivenessTimer::startWithLazyStop()
+{
+    if (!m_waitingForTimer) {
+        start();
+        m_useLazyStop = true;
+    }
 }
 
 void ResponsivenessTimer::stop()
@@ -83,13 +121,17 @@ void ResponsivenessTimer::stop()
         m_client.didBecomeResponsive();
     }
 
-    m_timer.stop();
+    m_waitingForTimer = false;
+
+    if (m_useLazyStop)
+        m_useLazyStop = false;
+    else
+        m_timer.stop();
 }
 
 void ResponsivenessTimer::processTerminated()
 {
-    // Since there is no web process, we must not be waiting for it anymore.
-    stop();
+    invalidate();
 }
 
 } // namespace WebKit

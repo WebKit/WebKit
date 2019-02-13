@@ -1,3 +1,59 @@
+2019-02-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        Responsiveness timers are too expensive for frequent events
+        https://bugs.webkit.org/show_bug.cgi?id=194003
+
+        Reviewed by Geoffrey Garen.
+
+        With each event, we set a responsivness timer to check if the WebProcess
+        is responsive, and reset the timer when the WebProcess sends an answer.
+
+        For frequent events (e.g. wheel events, mouse force events, etc),
+        we are spamming the kernel with hundreds of timers per second.
+        That is a bit inefficient.
+
+        Another source of inefficiency comes from the timer implementation
+        itself. Stopping a RunLoop::Timer removes the timer from every mode
+        and invalidate the timer. It becomes costly since we do it a lot.
+
+        With this patch, I tweak ResponsivenessTimer and its use to minimize
+        how often we schedule system timers.
+
+        The first change is to not stop the timer when we get the stop()
+        calls if we expect more events to come in. Instead, we keep track
+        if we care about the timeout or not in the attribute "m_waitingForTimer".
+        When the next event starts, we can reschedule the timer without ever
+        having told the kernel about the stop.
+        If there are no next events, the timeout fires but m_waitingForTimer
+        is false. To avoid idle wake up, the lazy stop is only used when having
+        following events is common.
+
+        The second improvements comes from not even rescheduling the timer
+        when restarted. Instead of changing the timer, we let the original timer
+        fire and re-shedule a new one with the missing time.
+
+        For more context, also see patches r240759 and r240944.
+
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::ResponsivenessTimer):
+        (WebKit::ResponsivenessTimer::invalidate):
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::start):
+        (WebKit::ResponsivenessTimer::startWithLazyStop):
+        (WebKit::ResponsivenessTimer::stop):
+        (WebKit::ResponsivenessTimer::processTerminated):
+        (WebKit::ResponsivenessTimer::~ResponsivenessTimer): Deleted.
+        * UIProcess/ResponsivenessTimer.h:
+        (WebKit::ResponsivenessTimer::hasActiveTimer const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::handleKeyboardEvent):
+        (WebKit::WebPageProxy::handleGestureEvent):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::isResponsiveWithLazyStop):
+        * UIProcess/WebProcessProxy.h:
+
 2019-02-12  Tim Horton  <timothy_horton@apple.com>
 
         Null deref in userInterfaceLayoutDirection under ViewGestureController::handleSwipeGesture

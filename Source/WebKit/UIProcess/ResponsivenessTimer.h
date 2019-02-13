@@ -46,13 +46,28 @@ public:
 
     explicit ResponsivenessTimer(ResponsivenessTimer::Client&);
     ~ResponsivenessTimer();
-    
+
     void start();
+
+    // A responsiveness timer with lazy stop does not stop the underlying system timer when stopped.
+    // Instead, it ignores the timeout if stop() was already called.
+    //
+    // This exists to reduce the rate at which we reset the timer.
+    //
+    // With a non lazy timer, we may set a timer and reset it soon after because the process is responsive.
+    // For events, this means reseting a timer 120 times/s for a 60 Hz event source.
+    // By not reseting the timer when responsive, we cut that in half to 60 timeout changes.
+    void startWithLazyStop();
+
     void stop();
 
     void invalidate();
-    
+
+    // Return true if stop() was not called betfore the responsiveness timeout.
     bool isResponsive() const { return m_isResponsive; }
+
+    // Return true if there is an active timer. The state could be responsive or not.
+    bool hasActiveTimer() const { return m_waitingForTimer; }
 
     void processTerminated();
 
@@ -60,9 +75,13 @@ private:
     void timerFired();
 
     ResponsivenessTimer::Client& m_client;
-    bool m_isResponsive;
 
     RunLoop::Timer<ResponsivenessTimer> m_timer;
+    MonotonicTime m_restartFireTime;
+
+    bool m_isResponsive { true };
+    bool m_waitingForTimer { false };
+    bool m_useLazyStop { false };
 };
 
 } // namespace WebKit
