@@ -686,6 +686,9 @@ bool Frame::requestDOMPasteAccess()
         return granted;
     }
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)

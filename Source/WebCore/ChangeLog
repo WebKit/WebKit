@@ -1,3 +1,11 @@
+2019-02-12  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r241320
+        https://bugs.webkit.org/show_bug.cgi?id=194271
+
+        * page/Frame.cpp:
+        (WebCore::Frame::requestDOMPasteAccess):
+
 2019-02-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Remove WebGPUBufferDescriptor/Usage and use GPU versions
