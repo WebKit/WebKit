@@ -121,9 +121,6 @@ bool doesGC(Graph& graph, Node* node)
     case CheckNotEmpty:
     case AssertNotEmpty:
     case CheckStringIdent:
-    case RegExpExecNonGlobalOrSticky:
-    case RegExpMatchFast:
-    case RegExpMatchFastGlobal:
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:
@@ -150,7 +147,6 @@ bool doesGC(Graph& graph, Node* node)
     case IsTypedArrayView:
     case TypeOf:
     case LogicalNot:
-    case NumberToStringWithValidRadixConstant:
     case Jump:
     case Branch:
     case Switch:
@@ -165,7 +161,6 @@ bool doesGC(Graph& graph, Node* node)
     case ForceOSRExit:
     case CPUIntrinsic:
     case CheckTraps:
-    case StringFromCharCode:
     case NormalizeMapKey:
     case GetMapBucket:
     case GetMapBucketHead:
@@ -301,6 +296,7 @@ bool doesGC(Graph& graph, Node* node)
     case InstanceOfCustom:
     case LoadVarargs:
     case NumberToStringWithRadix:
+    case NumberToStringWithValidRadixConstant:
     case PutById:
     case PutByIdDirect:
     case PutByIdFlush:
@@ -316,6 +312,9 @@ bool doesGC(Graph& graph, Node* node)
     case PutStack:
     case PutToArguments:
     case RegExpExec:
+    case RegExpExecNonGlobalOrSticky:
+    case RegExpMatchFast:
+    case RegExpMatchFastGlobal:
     case RegExpTest:
     case ResolveScope:
     case ResolveScopeForHoistingFuncDeclInEval:
@@ -414,6 +413,13 @@ bool doesGC(Graph& graph, Node* node)
 
     case SameValue:
         if (node->isBinaryUseKind(DoubleRepUse))
+            return false;
+        return true;
+
+    case StringFromCharCode:
+        // FIXME: Should we constant fold this case?
+        // https://bugs.webkit.org/show_bug.cgi?id=194308
+        if (node->child1()->isInt32Constant() && (node->child1()->asUInt32() <= maxSingleCharacterString))
             return false;
         return true;
 
