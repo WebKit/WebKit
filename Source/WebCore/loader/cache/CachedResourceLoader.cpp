@@ -161,8 +161,6 @@ CachedResourceLoader::~CachedResourceLoader()
     m_document = nullptr;
 
     clearPreloads(ClearPreloadsMode::ClearAllPreloads);
-    for (auto& resource : m_documentResources.values())
-        resource->setOwningCachedResourceLoader(nullptr);
 
     // Make sure no requests still point to this CachedResourceLoader
     ASSERT(m_requestCount == 0);
@@ -258,7 +256,6 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     if (userSheet->allowsCaching())
         memoryCache.add(*userSheet);
-    // FIXME: loadResource calls setOwningCachedResourceLoader() if the resource couldn't be added to cache. Does this function need to call it, too?
 
     userSheet->load(*this);
     return userSheet;
@@ -861,10 +858,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         updateHTTPRequestHeaders(type, request);
 
     auto& memoryCache = MemoryCache::singleton();
-    if (request.allowsCaching() && memoryCache.disabled()) {
-        if (auto handle = m_documentResources.take(url.string()))
-            handle->setOwningCachedResourceLoader(nullptr);
-    }
+    if (request.allowsCaching() && memoryCache.disabled())
+        m_documentResources.remove(url.string());
 
     // See if we can use an existing resource from the cache.
     CachedResourceHandle<CachedResource> resource;
@@ -1013,8 +1008,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), sessionID(), cookieJar);
 
-    if (resource->allowsCaching() && !memoryCache.add(*resource))
-        resource->setOwningCachedResourceLoader(this);
+    if (resource->allowsCaching())
+        memoryCache.add(*resource);
 
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorName(), frame());
@@ -1302,13 +1297,6 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
     }
 }
 
-void CachedResourceLoader::removeCachedResource(CachedResource& resource)
-{
-    if (m_documentResources.contains(resource.url()) && m_documentResources.get(resource.url()).get() != &resource)
-        return;
-    m_documentResources.remove(resource.url());
-}
-
 void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
@@ -1342,10 +1330,8 @@ void CachedResourceLoader::garbageCollectDocumentResources()
     for (auto& resource : m_documentResources) {
         LOG(ResourceLoading, "  cached resource %p - hasOneHandle %d", resource.value.get(), resource.value->hasOneHandle());
 
-        if (resource.value->hasOneHandle()) {
+        if (resource.value->hasOneHandle())
             resourcesToDelete.append(resource.key);
-            resource.value->setOwningCachedResourceLoader(nullptr);
-        }
     }
 
     for (auto& resource : resourcesToDelete)

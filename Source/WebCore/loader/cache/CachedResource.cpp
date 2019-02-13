@@ -174,9 +174,6 @@ CachedResource::~CachedResource()
     m_deleted = true;
     cachedResourceLeakCounter.decrement();
 #endif
-
-    if (m_owningCachedResourceLoader)
-        m_owningCachedResourceLoader->removeCachedResource(*this);
 }
 
 void CachedResource::failBeforeStarting()
