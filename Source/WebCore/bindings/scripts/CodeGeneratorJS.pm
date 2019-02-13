@@ -4679,7 +4679,7 @@ sub GenerateImplementation
             }
 
             push(@implContent, $rootString);
-            push(@implContent, "    return root && visitor.containsOpaqueRoot(root);\n");
+            push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
         } else {
             if (!$emittedJSCast) {
                 push(@implContent, "    UNUSED_PARAM(handle);\n");

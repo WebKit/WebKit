@@ -1,3 +1,20 @@
+2019-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Remove unnecessary null check in bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=194581
+
+        Reviewed by Yusuke Suzuki.
+
+        It is always safe to call visitor.containsOpaqueRoot(root) with a null root pointer.
+        It will just return false.  Since we don't expect the root pointer to be null in
+        the common case, having a null check here is also not optimal.  We'll remove this
+        unneeded null check.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots):
+
 2019-02-12  Rob Buis  <rbuis@igalia.com>
 
         Align with Fetch on data: URLs
