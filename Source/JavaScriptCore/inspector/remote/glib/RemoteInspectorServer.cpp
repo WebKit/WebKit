@@ -197,7 +197,7 @@ bool RemoteInspectorServer::start(const char* address, unsigned port)
     m_dbusServer = adoptGRef(g_dbus_server_new_sync(dbusAddress.get(), G_DBUS_SERVER_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS, uid.get(), nullptr, m_cancellable.get(), &error.outPtr()));
     if (!m_dbusServer) {
         if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-            WTFLogAlways("Failed to start remote inspector server on %s: %s\n", dbusAddress.get(), error->message);
+            g_warning("Failed to start remote inspector server on %s: %s\n", dbusAddress.get(), error->message);
         return false;
     }
 

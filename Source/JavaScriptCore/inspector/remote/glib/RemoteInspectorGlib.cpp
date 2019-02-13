@@ -79,7 +79,7 @@ void RemoteInspector::start()
             if (GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr())))
                 inspector->setupConnection(WTFMove(connection));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                WTFLogAlways("RemoteInspector failed to connect to inspector server at: %s: %s", g_getenv("WEBKIT_INSPECTOR_SERVER"), error->message);
+                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", g_getenv("WEBKIT_INSPECTOR_SERVER"), error->message);
     }, this);
 }
 
@@ -178,7 +178,7 @@ static void dbusConnectionCallAsyncReadyCallback(GObject* source, GAsyncResult* 
     GUniqueOutPtr<GError> error;
     GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
     if (!resultVariant && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-        WTFLogAlways("RemoteInspector failed to send DBus message: %s", error->message);
+        g_warning("RemoteInspector failed to send DBus message: %s", error->message);
 }
 
 TargetListing RemoteInspector::listingForInspectionTarget(const RemoteInspectionTarget& target) const
