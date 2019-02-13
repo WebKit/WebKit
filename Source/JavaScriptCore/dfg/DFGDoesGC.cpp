@@ -475,14 +475,13 @@ bool doesGC(Graph& graph, Node* node)
             ASSERT(node->child1().useKind() == StringUse || node->child1().useKind() == UntypedUse);
             return true;
         }
+        RELEASE_ASSERT_NOT_REACHED();
 
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
-        return true;
     }
     
     RELEASE_ASSERT_NOT_REACHED();
-    return true;
 }
 
 } } // namespace JSC::DFG
