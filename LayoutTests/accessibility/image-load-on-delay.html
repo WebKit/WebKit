@@ -25,8 +25,10 @@
 
           document.getElementById("image").onload = function() {
               document.body.offsetHeight;
-              debug("AFTER: Group count: " + content.childrenCount);
-              finishJSTest();
+              setTimeout(function() {
+                  debug("AFTER: Group count: " + content.childrenCount);
+                  finishJSTest();
+              }, 0);
           };
 
           setTimeout(function() { 

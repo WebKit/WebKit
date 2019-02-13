@@ -258,15 +258,15 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     NSMutableArray *array = [NSMutableArray arrayWithCapacity:vector.size()];
     for (const auto& child : vector) {
         auto wrapper = (WebAccessibilityObjectWrapperBase *)child->wrapper();
-        ASSERT(wrapper);
-        if (wrapper) {
-            // We want to return the attachment view instead of the object representing the attachment,
-            // otherwise, we get palindrome errors in the AX hierarchy.
-            if (child->isAttachment() && [wrapper attachmentView])
-                [array addObject:[wrapper attachmentView]];
-            else
-                [array addObject:wrapper];
-        }
+        if (!wrapper)
+            continue;
+
+        // We want to return the attachment view instead of the object representing the attachment,
+        // otherwise, we get palindrome errors in the AX hierarchy.
+        if (child->isAttachment() && [wrapper attachmentView])
+            [array addObject:[wrapper attachmentView]];
+        else
+            [array addObject:wrapper];
     }
     return [[array copy] autorelease];
 }
