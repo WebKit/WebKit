@@ -1,5 +1,42 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241323. rdar://problem/42087017
+
+    Find on Page shouldn't zoom in on matches
+    https://bugs.webkit.org/show_bug.cgi?id=194557
+    <rdar://problem/42087017>
+    
+    Reviewed by Wenson Hsieh.
+    
+    * UIProcess/ios/SmartMagnificationController.h:
+    * UIProcess/ios/SmartMagnificationController.messages.in:
+    * UIProcess/ios/SmartMagnificationController.mm:
+    (WebKit::SmartMagnificationController::scrollToRect):
+    * WebProcess/WebPage/ios/FindControllerIOS.mm:
+    (WebKit::FindController::updateFindIndicator):
+    Only scroll to reveal the find result, do not zoom in.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241323 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  Tim Horton  <timothy_horton@apple.com>
+
+            Find on Page shouldn't zoom in on matches
+            https://bugs.webkit.org/show_bug.cgi?id=194557
+            <rdar://problem/42087017>
+
+            Reviewed by Wenson Hsieh.
+
+            * UIProcess/ios/SmartMagnificationController.h:
+            * UIProcess/ios/SmartMagnificationController.messages.in:
+            * UIProcess/ios/SmartMagnificationController.mm:
+            (WebKit::SmartMagnificationController::scrollToRect):
+            * WebProcess/WebPage/ios/FindControllerIOS.mm:
+            (WebKit::FindController::updateFindIndicator):
+            Only scroll to reveal the find result, do not zoom in.
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241171. rdar://problem/47550281
 
     [iOS] Clicking links in Safari using Apple Pencil is much more difficult after r238475

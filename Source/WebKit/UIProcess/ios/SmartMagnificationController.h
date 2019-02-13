@@ -54,6 +54,7 @@ private:
 
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale);
     void magnify(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale);
+    void scrollToRect(WebCore::FloatPoint origin, WebCore::FloatRect targetRect);
     void adjustSmartMagnificationTargetRectAndZoomScales(bool addMagnificationPadding, WebCore::FloatRect& targetRect, double& minimumScale, double& maximumScale);
 
     WebPageProxy& m_webPageProxy;
