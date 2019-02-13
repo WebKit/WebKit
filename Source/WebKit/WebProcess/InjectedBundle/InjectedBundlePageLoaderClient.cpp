@@ -365,6 +365,11 @@ String InjectedBundlePageLoaderClient::userAgentForURL(WebFrame& frame, const UR
 
 OptionSet<WebCore::LayoutMilestone> InjectedBundlePageLoaderClient::layoutMilestones() const
 {
+    if (m_client.layoutMilestones) {
+        auto milestones = m_client.layoutMilestones(m_client.base.clientInfo);
+        return toLayoutMilestones(milestones);
+    }
+    
     OptionSet<WebCore::LayoutMilestone> milestones;
     if (m_client.didFirstLayoutForFrame)
         milestones.add(WebCore::DidFirstLayout);
