@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,10 +59,12 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
 
     if (BinarySwitchInternal::verbose)
         dataLog("Sorted cases: ", listDump(m_cases), "\n");
-    
+
+#if !ASSERT_DISABLED
     for (unsigned i = 1; i < m_cases.size(); ++i)
-        RELEASE_ASSERT(m_cases[i - 1] < m_cases[i]);
-    
+        ASSERT(m_cases[i - 1] < m_cases[i], i, m_cases.size(), m_cases[i].value, m_cases[i].index);
+#endif
+
     build(0, false, m_cases.size());
 }
 
