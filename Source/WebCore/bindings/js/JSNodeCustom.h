@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -80,7 +80,7 @@ inline void willCreatePossiblyOrphanedTreeByRemoval(Node* root)
 
 inline void* root(Node* node)
 {
-    return node->opaqueRoot();
+    return node ? node->opaqueRoot() : nullptr;
 }
 
 inline void* root(Node& node)

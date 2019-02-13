@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -4679,7 +4679,7 @@ sub GenerateImplementation
             }
 
             push(@implContent, $rootString);
-            push(@implContent, "    return visitor.containsOpaqueRoot(root);\n");
+            push(@implContent, "    return root && visitor.containsOpaqueRoot(root);\n");
         } else {
             if (!$emittedJSCast) {
                 push(@implContent, "    UNUSED_PARAM(handle);\n");
