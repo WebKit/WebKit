@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "PolicyChecker.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +44,7 @@ class PlatformMediaResourceClient {
 public:
     virtual ~PlatformMediaResourceClient() = default;
 
-    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&) { }
+    virtual void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&& completionHandler) { completionHandler(ShouldContinue::Yes); }
     virtual void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) { completionHandler(WTFMove(request)); }
     virtual bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) { return true; }
     virtual void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) { }
@@ -76,7 +77,6 @@ public:
     PlatformMediaResource() = default;
     virtual ~PlatformMediaResource() = default;
     virtual void stop() { }
-    virtual void setDefersLoading(bool) { }
     virtual bool didPassAccessControlCheck() const { return false; }
 
     void setClient(std::unique_ptr<PlatformMediaResourceClient>&& client) { m_client = WTFMove(client); }

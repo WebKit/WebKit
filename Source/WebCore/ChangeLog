@@ -1,3 +1,26 @@
+2019-02-13  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using setDefersLoading from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=194315
+
+        Reviewed by Jer Noble.
+
+        That is what CompletionHandlers are for.
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        (WebCore::MediaResource::setDefersLoading): Deleted.
+        * loader/MediaResourceLoader.h:
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResourceClient::responseReceived):
+        (WebCore::PlatformMediaResource::stop):
+        (WebCore::PlatformMediaResource::setDefersLoading): Deleted.
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:completionHandler:]):
+        (-[WebCoreNSURLSessionDataTask _setDefersLoading:]): Deleted.
+        (-[WebCoreNSURLSessionDataTask resource:receivedResponse:]): Deleted.
+
 2019-02-13  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Switch to CVPixelBufferGetBytesPerRow() for calculating CVPixelBuffer base address size.
