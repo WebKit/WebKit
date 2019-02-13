@@ -120,6 +120,11 @@ void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::Interrupt
     PlatformMediaSessionManager::beginInterruption(type);
 }
 
+void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
+{
+    providePresentingApplicationPIDIfNecessary();
+}
+
 void MediaSessionManagerCocoa::scheduleUpdateNowPlayingInfo()
 {
     if (!m_nowPlayingUpdateTaskQueue.hasPendingTasks())
@@ -216,6 +221,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     if (!m_registeredAsNowPlayingApplication) {
         m_registeredAsNowPlayingApplication = true;
+        providePresentingApplicationPIDIfNecessary();
         MRMediaRemoteSetCanBeNowPlayingApplication(true);
     }
 

@@ -42,6 +42,7 @@
 #include "JSOverconstrainedError.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "PlatformMediaSessionManager.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
@@ -209,6 +210,7 @@ void UserMediaRequest::start()
         return;
     }
 
+    PlatformMediaSessionManager::sharedManager().prepareToSendUserMediaPermissionRequest();
     controller->requestUserMediaAccess(*this);
 }
 

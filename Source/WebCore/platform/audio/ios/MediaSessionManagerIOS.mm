@@ -31,12 +31,14 @@
 #import "Logging.h"
 #import "MediaPlayer.h"
 #import "PlatformMediaSession.h"
+#import "RuntimeApplicationChecks.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <AVFoundation/AVRouteDetector.h>
 #import <objc/runtime.h>
 #import <pal/ios/UIKitSoftLink.h>
+#import <pal/spi/ios/CelestialSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
@@ -49,6 +51,10 @@ SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionNotification, NSStrin
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionTypeKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVAudioSessionInterruptionOptionKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *)
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Celestial)
+SOFT_LINK_CLASS_OPTIONAL(Celestial, AVSystemController)
+SOFT_LINK_CONSTANT_MAY_FAIL(Celestial, AVSystemController_PIDToInheritApplicationStateFrom, NSString *)
 
 #if HAVE(MEDIA_PLAYER) && !PLATFORM(WATCHOS)
 SOFT_LINK_CLASS(AVFoundation, AVRouteDetector)
@@ -167,6 +173,21 @@ void MediaSessionManageriOS::configureWireLessTargetMonitoring()
 
     END_BLOCK_OBJC_EXCEPTIONS
 #endif
+}
+
+void MediaSessionManageriOS::providePresentingApplicationPIDIfNecessary()
+{
+    if (m_havePresentedApplicationPID)
+        return;
+    m_havePresentedApplicationPID = true;
+
+    if (!canLoadAVSystemController_PIDToInheritApplicationStateFrom())
+        return;
+
+    NSError *error = nil;
+    [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@(presentingApplicationPID()) forKey:getAVSystemController_PIDToInheritApplicationStateFrom() error:&error];
+    if (error)
+        WTFLogAlways("Failed to set up PID proxying: %s", error.localizedDescription.UTF8String);
 }
 
 void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()

@@ -1,3 +1,63 @@
+2019-02-13  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r241281. rdar://problem/47969451
+
+    [Cocoa] Notify AVSystemController of our presenting PID before registering as a Now Playing app.
+    https://bugs.webkit.org/show_bug.cgi?id=194504
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    This allows the MediaRemote framework to associate the WebContent process with its host application.
+    
+    * Modules/mediastream/UserMediaRequest.cpp:
+    (WebCore::UserMediaRequest::start):
+    * platform/audio/PlatformMediaSessionManager.h:
+    (WebCore::PlatformMediaSessionManager::prepareToSendUserMediaPermissionRequest):
+    * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest):
+    (MediaSessionManagerCocoa::providePresentingApplicationPIDIfNecessary):
+    (MediaSessionManagerCocoa::updateNowPlayingInfo):
+    
+    Source/WebCore/PAL:
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/spi/ios/CelestialSPI.h: Renamed from Source/WebKit/Platform/spi/ios/CelestialSPI.h.
+    
+    Source/WebKit:
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+    (WebKit::WebUserMediaClient::requestUserMediaAccess):
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+    * WebProcess/WebPage/WebPage.h:
+    (WebKit::WebPage::userMediaPermissionRequestManager):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241281 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-11  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] Notify AVSystemController of our presenting PID before registering as a Now Playing app.
+            https://bugs.webkit.org/show_bug.cgi?id=194504
+
+            Reviewed by Eric Carlson.
+
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+            (WebKit::WebUserMediaClient::requestUserMediaAccess):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::userMediaPermissionRequestManager):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::prepareToSendUserMediaPermissionRequest): Deleted.
+
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r241352. rdar://problem/47941089
