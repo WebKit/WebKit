@@ -1,3 +1,17 @@
+2019-02-13  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] PiP window can get "stuck" if PiP is closed while Safari window is minimized.
+        https://bugs.webkit.org/show_bug.cgi?id=194621
+        <rdar://problem/48002560>
+
+        Reviewed by Eric Carlson.
+
+        When Safari is minimized, no rAF() requests are executed. Don't gate responding to presentation
+        change events in the media-controller.js on rAF().
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._returnMediaLayerToInlineIfNeeded):
+
 2019-02-13  John Wilander  <wilander@apple.com>
 
         Ignore Ad Click Attribution where source and destination are same-site
