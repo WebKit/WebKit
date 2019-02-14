@@ -1,5 +1,36 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241448. rdar://problem/48065637
+
+    Crash in WebKit::CacheStorage::Engine::cachesRootPath
+    https://bugs.webkit.org/show_bug.cgi?id=194588
+    <rdar://problem/46363997>
+    
+    Reviewed by Youenn Fablet.
+    
+    * NetworkProcess/cache/CacheStorageEngine.cpp:
+    (WebKit::CacheStorage::Engine::cachesRootPath):
+    
+    Salt may have not been initialized yet when the Engine is destroyed.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241448 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Antti Koivisto  <antti@apple.com>
+
+            Crash in WebKit::CacheStorage::Engine::cachesRootPath
+            https://bugs.webkit.org/show_bug.cgi?id=194588
+            <rdar://problem/46363997>
+
+            Reviewed by Youenn Fablet.
+
+            * NetworkProcess/cache/CacheStorageEngine.cpp:
+            (WebKit::CacheStorage::Engine::cachesRootPath):
+
+            Salt may have not been initialized yet when the Engine is destroyed.
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241401. rdar://problem/48065612
 
     Crash in Page::setActivityState because m_page is null
