@@ -1,3 +1,20 @@
+2019-02-14  Brian Burg  <bburg@apple.com>
+
+        [Mac] WebInspectorUI.framework does not need to be soft-linked anymore
+        https://bugs.webkit.org/show_bug.cgi?id=194411
+        <rdar://problem/47787614>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        Conditionalize weak linking to WebInspectorUI.framework for Mac only.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::localizedStringsURL):
+        (-[WebInspectorWindowController inspectorPagePath]):
+        (-[WebInspectorWindowController inspectorTestPagePath]):
+        Rewrite uses of the bundle to exit early if bundle couldn't be loaded.
+
 2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Add environment variable helpers
