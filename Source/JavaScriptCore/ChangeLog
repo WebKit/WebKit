@@ -1,3 +1,17 @@
+2019-02-13  Saam Barati  <sbarati@apple.com>
+
+        AirIRGenerator::addSwitch switch patchpoint needs to model clobbering the scratch register
+        https://bugs.webkit.org/show_bug.cgi?id=194610
+
+        Reviewed by Michael Saboff.
+
+        BinarySwitch might use the scratch register. We must model the
+        effects of that properly. This is already caught by our br-table
+        tests on arm64.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addSwitch):
+
 2019-02-13  Mark Lam  <mark.lam@apple.com>
 
         Create a randomized free list for new StructureIDs on StructureIDTable resize.
