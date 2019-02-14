@@ -310,6 +310,11 @@ void Engine::initialize(CompletionCallback&& callback)
 void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallback&& callback)
 {
     initialize([this, origin, callback = WTFMove(callback)](Optional<Error>&& error) mutable {
+        if (error) {
+            callback(makeUnexpected(error.value()));
+            return;
+        }
+
         auto& caches = m_caches.ensure(origin, [&origin, this] {
             auto path = cachesRootPath(origin);
             return Caches::create(*this, WebCore::ClientOrigin { origin }, WTFMove(path), m_quota);
@@ -317,11 +322,6 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
 
         if (caches->isInitialized()) {
             callback(std::reference_wrapper<Caches> { *caches });
-            return;
-        }
-
-        if (error) {
-            callback(makeUnexpected(error.value()));
             return;
         }
 

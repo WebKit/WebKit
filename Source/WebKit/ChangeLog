@@ -1,3 +1,16 @@
+2019-02-14  Youenn Fablet  <youenn@apple.com>
+
+        Do not add a caches to its engine if the salt cannot be initialized
+        https://bugs.webkit.org/show_bug.cgi?id=194604
+
+        Reviewed by Antti Koivisto.
+
+        This is a follow-up to https://bugs.webkit.org/show_bug.cgi?id=194588.
+        We should return early if initialize fails.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+
 2019-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a scrolled window for script alerts text
