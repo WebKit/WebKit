@@ -1,5 +1,45 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241500. rdar://problem/48065631
+
+    Crash in WKBundleFrameGetParentFrame when called inside didRemoveFrameFromHierarchy
+    https://bugs.webkit.org/show_bug.cgi?id=194641
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    Fixed the bug by adding a null check to WebFrame::parentFrame.
+    
+    * WebProcess/WebPage/WebFrame.cpp:
+    (WebKit::WebFrame::parentFrame const):
+    
+    Tools:
+    
+    Added a call to WKBundleFrameGetParentFrame to an existing test for didRemoveFrameFromHierarchy
+    so that the test would fail without this fix.
+    
+    * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp:
+    (TestWebKitAPI::didRemoveFrameFromHierarchyCallback):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241500 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in WKBundleFrameGetParentFrame when called inside didRemoveFrameFromHierarchy
+            https://bugs.webkit.org/show_bug.cgi?id=194641
+
+            Reviewed by Geoffrey Garen.
+
+            Added a call to WKBundleFrameGetParentFrame to an existing test for didRemoveFrameFromHierarchy
+            so that the test would fail without this fix.
+
+            * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp:
+            (TestWebKitAPI::didRemoveFrameFromHierarchyCallback):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241480. rdar://problem/48065618
 
     Further restricting webarchive loads
