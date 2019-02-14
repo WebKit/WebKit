@@ -1,5 +1,22 @@
 2019-02-14  Tadeu Zagallo  <tzagallo@apple.com>
 
+        generateUnlinkedCodeBlockForFunctions shouldn't need to create a FunctionExecutable just to get its source code
+        https://bugs.webkit.org/show_bug.cgi?id=194576
+
+        Reviewed by Saam Barati.
+
+        Extract a new function, `linkedSourceCode` from UnlinkedFunctionExecutable::link
+        and use it in `generateUnlinkedCodeBlockForFunctions` instead.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::linkedSourceCode const):
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockForFunctions):
+
+2019-02-14  Tadeu Zagallo  <tzagallo@apple.com>
+
         CachedBitVector's size must be converted from bits to bytes
         https://bugs.webkit.org/show_bug.cgi?id=194441
 
