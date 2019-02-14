@@ -1,4 +1,22 @@
 =================
+WebKitGTK 2.23.90
+=================
+
+What's new in WebKitGTK 2.23.90?
+
+  - Add a new setting to disable JavaScript elments from documents during parsing.
+  - Add new API to expose JavaScriptCore options.
+  - Add support for JPEG2000 images.
+  - Add support for back/forward touchpad gesture.
+  - Add support for pinch zoom on touchpad.
+  - Use a scrolled window in alert dialogs to handle long contents.
+  - Sleep disabler now inhibits idle when a "System" sleep disabler is requested.
+  - Remove experimental sandboxing support, it's not yet ready for stable release.
+  - Fix a web process deadlock when starting the remote inspector.
+  - Fix a crash when browsing inspector:// URI without port set.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.23.3
 =================
 
