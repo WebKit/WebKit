@@ -1,3 +1,18 @@
+2019-02-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r241486.
+        https://bugs.webkit.org/show_bug.cgi?id=194655
+
+        causing API failures in builds (Requested by ShawnRoberts on
+        #webkit).
+
+        Reverted changeset:
+
+        "[Cocoa] Media elements will restart network buffering just
+        before suspending"
+        https://bugs.webkit.org/show_bug.cgi?id=193691
+        https://trac.webkit.org/changeset/241486
+
 2019-02-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapse] Replaced boxes don't collapse through their margins

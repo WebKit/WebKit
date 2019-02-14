@@ -1764,36 +1764,6 @@ void Page::resumeAllMediaPlayback()
 #endif
 }
 
-void Page::suspendAllMediaBuffering()
-{
-#if ENABLE(VIDEO)
-    ASSERT(!m_mediaBufferingIsSuspended);
-    if (m_mediaBufferingIsSuspended)
-        return;
-    m_mediaBufferingIsSuspended = true;
-
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document())
-            document->suspendAllMediaBuffering();
-    }
-#endif
-}
-
-void Page::resumeAllMediaBuffering()
-{
-#if ENABLE(VIDEO)
-    ASSERT(m_mediaBufferingIsSuspended);
-    if (!m_mediaBufferingIsSuspended)
-        return;
-    m_mediaBufferingIsSuspended = false;
-
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document())
-            document->resumeAllMediaBuffering();
-    }
-#endif
-}
-
 #if ENABLE(MEDIA_SESSION)
 void Page::handleMediaEvent(MediaEventType eventType)
 {

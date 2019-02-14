@@ -1148,9 +1148,6 @@ public:
     bool requestDOMPasteAccess();
     WebCore::IntRect rectForElementAtInteractionLocation() const;
 
-    void suspendAllMediaBuffering();
-    void resumeAllMediaBuffering();
-
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 

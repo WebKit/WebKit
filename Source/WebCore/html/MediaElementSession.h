@@ -101,10 +101,6 @@ public:
 
     void resetPlaybackSessionState() override;
 
-    void suspendBuffering() override;
-    void resumeBuffering() override;
-    bool bufferingSuspended() const;
-
     // Restrictions to modify default behaviors.
     enum BehaviorRestrictionFlags : unsigned {
         NoRestrictions = 0,

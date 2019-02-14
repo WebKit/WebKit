@@ -379,9 +379,6 @@ bool MediaElementSession::dataBufferingPermitted() const
     if (isSuspended())
         return false;
 
-    if (bufferingSuspended())
-        return false;
-
     if (state() == PlatformMediaSession::Playing)
         return true;
 
@@ -786,23 +783,6 @@ void MediaElementSession::resetPlaybackSessionState()
 {
     m_mostRecentUserInteractionTime = MonotonicTime();
     addBehaviorRestriction(RequireUserGestureToControlControlsManager | RequirePlaybackToControlControlsManager);
-}
-
-void MediaElementSession::suspendBuffering()
-{
-    updateClientDataBuffering();
-}
-
-void MediaElementSession::resumeBuffering()
-{
-    updateClientDataBuffering();
-}
-
-bool MediaElementSession::bufferingSuspended() const
-{
-    if (auto* page = m_element.document().page())
-        return page->mediaBufferingIsSuspended();
-    return true;
 }
 
 bool MediaElementSession::allowsPictureInPicture() const

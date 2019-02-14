@@ -687,17 +687,6 @@ void WebPage::resumeAllMediaPlayback()
     m_page->resumeAllMediaPlayback();
 }
 
-void WebPage::suspendAllMediaBuffering()
-{
-    m_page->suspendAllMediaBuffering();
-}
-
-void WebPage::resumeAllMediaBuffering()
-{
-    m_page->resumeAllMediaBuffering();
-}
-
-
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
     ASSERT(m_drawingArea);

@@ -82,8 +82,6 @@ public:
 
     void suspendAllMediaPlaybackForDocument(const Document&);
     void resumeAllMediaPlaybackForDocument(const Document&);
-    void suspendAllMediaBufferingForDocument(const Document&);
-    void resumeAllMediaBufferingForDocument(const Document&);
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
