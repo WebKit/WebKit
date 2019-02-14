@@ -1,3 +1,24 @@
+2019-02-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] WebKitGTK+ -> WebKitGTK
+        https://bugs.webkit.org/show_bug.cgi?id=194658
+
+        Reviewed by Alex Christensen.
+
+        This renames WebKitGTK+ to WebKitGTK in a few user-visible places: the API documentation,
+        the pkg-config, and an error message.
+
+        In a couple places where it's exposed in WPE documentation, WPE is now mentioned, or the
+        reference to "WebKitGTK+" is changed to just "WebKit."
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMPrivateGtk.h:
+        * gtk/webkit2gtk-web-extension.pc.in:
+        * gtk/webkit2gtk.pc.in:
+
 2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Add environment variable helpers

@@ -3,8 +3,8 @@ exec_prefix=${prefix}
 libdir=@LIB_INSTALL_DIR@
 includedir=${prefix}/include
 
-Name: WebKitGTK+ Web process extensions
-Description: Web content engine for GTK+ - Web process extensions
+Name: WebKitGTK web process extensions
+Description: Web content engine for GTK - web process extensions
 URL: https://webkitgtk.org
 Version: @PROJECT_VERSION@
 Requires: glib-2.0 gtk+-3.0 libsoup-2.4 javascriptcoregtk-@WEBKITGTK_API_VERSION@

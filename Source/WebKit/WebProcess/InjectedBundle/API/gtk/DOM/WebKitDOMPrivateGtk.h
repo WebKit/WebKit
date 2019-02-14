@@ -25,7 +25,7 @@
 
 #include "webkitdomdefines.h"
 
-#define WEBKIT_WARN_FEATURE_NOT_PRESENT(Feature) g_warning("WebKitGTK+ was not compiled with support for " Feature);
+#define WEBKIT_WARN_FEATURE_NOT_PRESENT(Feature) g_warning("WebKitGTK was not compiled with support for " Feature);
 
 namespace WebCore {
 class Node;
