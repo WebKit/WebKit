@@ -1,3 +1,16 @@
+2019-02-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: ARIA Reflection was disabled in error
+        https://bugs.webkit.org/show_bug.cgi?id=194647
+        <rdar://problem/48068336>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove test override now that this feature should be enabled by default.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2019-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241486.
