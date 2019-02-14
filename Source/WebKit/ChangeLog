@@ -1,5 +1,23 @@
 2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [WPE][GTK] Merge WebProcessPoolWPE.cpp and WebProcessPoolGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=194551
+
+        Reviewed by Carlos Garcia Campos.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/glib/WebProcessPoolGLib.cpp: Renamed from Source/WebKit/UIProcess/gtk/WebProcessPoolGtk.cpp.
+        (WebKit::initializeRemoteInspectorServer):
+        (WebKit::memoryPressureMonitorDisabled):
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        * UIProcess/wpe/WebProcessPoolWPE.cpp: Removed.
+
+2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Fix -Wformat warning from r241401
         https://bugs.webkit.org/show_bug.cgi?id=194584
         <rdar://problem/47761293>
