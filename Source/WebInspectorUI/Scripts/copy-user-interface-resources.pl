@@ -112,7 +112,7 @@ sub readLicenseFile($)
 
 my $inspectorLicense = <<'EOF';
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek. All rights reserved.
  * Copyright (C) 2008-2009 Anthony Ricaud <rik@webkit.org>
  * Copyright (C) 2009-2010 Joseph Pecoraro. All rights reserved.
@@ -129,7 +129,8 @@ my $inspectorLicense = <<'EOF';
  * Copyright (C) 2014 Antoine Quint
  * Copyright (C) 2015 Tobias Reiss <tobi+webkit@basecode.de>
  * Copyright (C) 2015-2017 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2017 The Chromium Authors
+ * Copyright (C) 2017-2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
