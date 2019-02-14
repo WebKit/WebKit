@@ -855,8 +855,11 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     });
 }
 
-// Prevent web archives from loading if it is remote or it is not the main frame because they
-// can claim to be from any domain and thus avoid cross-domain security checks (4120255, 45524528).
+// Prevent web archives from loading if
+// 1) it is remote;
+// 2) it is not the main frame;
+// 3) it is not any of { loaded by clients; loaded by drag; reloaded from any of the previous two };
+// because they can claim to be from any domain and thus avoid cross-domain security checks (4120255, 45524528, 47610130).
 bool DocumentLoader::disallowWebArchive() const
 {
     using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
@@ -886,11 +889,11 @@ bool DocumentLoader::disallowWebArchive() const
     if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol().toStringWithoutCopying()))
         return true;
 
-    if (!frame() || frame()->isMainFrame())
+    if (!frame() || (frame()->isMainFrame() && m_allowsWebArchiveForMainFrame))
         return false;
 
     // On purpose of maintaining existing tests.
-    if (!frame()->document() || frame()->document()->topDocument().alwaysAllowLocalWebarchive())
+    if (frame()->mainFrame().loader().alwaysAllowLocalWebarchive())
         return false;
     return true;
 }

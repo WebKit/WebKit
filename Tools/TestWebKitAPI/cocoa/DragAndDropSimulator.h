@@ -84,6 +84,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *insertedAttachments;
 @property (nonatomic, readonly) NSArray<_WKAttachment *> *removedAttachments;
 @property (nonatomic, readonly) TestWKWebView *webView;
+@property (nonatomic) WKDragDestinationAction dragDestinationAction;
 
 #if PLATFORM(IOS_FAMILY)
 

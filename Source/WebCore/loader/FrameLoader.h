@@ -319,6 +319,10 @@ public:
     bool shouldSuppressTextInputFromEditing() const;
     bool isReloadingFromOrigin() const { return m_loadType == FrameLoadType::ReloadFromOrigin; }
 
+    // Used in webarchive loading tests.
+    void setAlwaysAllowLocalWebarchive(bool alwaysAllowLocalWebarchive) { m_alwaysAllowLocalWebarchive = alwaysAllowLocalWebarchive; }
+    bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,
@@ -486,6 +490,8 @@ private:
 
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
+
+    bool m_alwaysAllowLocalWebarchive { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

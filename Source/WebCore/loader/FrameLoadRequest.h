@@ -94,6 +94,9 @@ public:
     bool isSystemPreview() const { return m_systemPreviewInfo.isSystemPreview; }
     const IntRect& systemPreviewRect() const { return m_systemPreviewInfo.systemPreviewRect; }
 
+    void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
+    bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -114,6 +117,7 @@ private:
     AtomicString m_downloadAttribute;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     SystemPreviewInfo m_systemPreviewInfo;
+    bool m_isRequestFromClientOrUserInput { false };
 };
 
 } // namespace WebCore
