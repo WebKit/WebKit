@@ -96,6 +96,8 @@ private:
 
     void notifyCachesOfRequestSpaceEnd();
 
+    bool hasActiveCache() const;
+
     bool m_isInitialized { false };
     bool m_isRequestingSpace { false };
     Engine* m_engine { nullptr };
