@@ -1,5 +1,53 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241481. rdar://problem/48065616
+
+    Encrypted PDFs inside <embed> or <object> crash the Web Content process
+    https://bugs.webkit.org/show_bug.cgi?id=194605
+    <rdar://problem/19894818>
+    
+    Reviewed by Andy Estes.
+    
+    Source/WebKit:
+    
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (WebKit::PDFPlugin::createPasswordEntryForm):
+    Don't try to create a password form field if we can't make form fields.
+    
+    This means you will be left with a useless embedded PDF, but at least
+    the Web Content process won't crash.
+    
+    We'll need to find an alternative implementation of PDF embedded form
+    fields that is compatible with <embed> and <object> if we want to support
+    this. Currently we piggy-back off the fact that we can just insert
+    <input>s into the PluginDocument's DOM, but we can't do that if there
+    is no PluginDocument, just a main document, like in the <embed> case.
+    
+    LayoutTests:
+    
+    * fast/replaced/encrypted-pdf-as-object-and-embed-expected.txt: Added.
+    * fast/replaced/encrypted-pdf-as-object-and-embed.html: Added.
+    * fast/replaced/resources/encrypted-image.pdf: Added.
+    Add a test ensuring that we don't crash with encrypted PDF in <object> or <embed>.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241481 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Tim Horton  <timothy_horton@apple.com>
+
+            Encrypted PDFs inside <embed> or <object> crash the Web Content process
+            https://bugs.webkit.org/show_bug.cgi?id=194605
+            <rdar://problem/19894818>
+
+            Reviewed by Andy Estes.
+
+            * fast/replaced/encrypted-pdf-as-object-and-embed-expected.txt: Added.
+            * fast/replaced/encrypted-pdf-as-object-and-embed.html: Added.
+            * fast/replaced/resources/encrypted-image.pdf: Added.
+            Add a test ensuring that we don't crash with encrypted PDF in <object> or <embed>.
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241480. rdar://problem/48065618
 
     Further restricting webarchive loads
