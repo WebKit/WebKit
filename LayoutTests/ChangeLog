@@ -1,3 +1,17 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Ignore Ad Click Attribution where source and destination are same-site
+        https://bugs.webkit.org/show_bug.cgi?id=194620
+        <rdar://problem/47890018>
+
+        Reviewed by Jiewen Tan.
+
+        Same-site test added and test results updated.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation.html:
+        * platform/ios-wk2/http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+
 2019-02-13  Youenn Fablet  <youenn@apple.com>
 
         getUserMedia with an ideal deviceId constraint doesn't always select the correct device

@@ -51,6 +51,7 @@
 
     const validAdCampaignID = "03";
     const validAdDestination = "http://webkit.org";
+    const sameSite = document.location.origin;
     const testCases = [
         [ validAdCampaignID, validAdDestination ],
         [ "100", validAdDestination ],           // Too many characters.
@@ -65,14 +66,17 @@
         [ validAdCampaignID, "://webkit.org" ],  // Partially missing protocol.
         [ validAdCampaignID, "" ],           // Non-ASCII characters as destination.
         [ "", validAdDestination ],              // Empty campaign ID.
-        [ validAdCampaignID, "" ]                // Empty destination.
+        [ validAdCampaignID, "" ],               // Empty destination.
+        [ validAdCampaignID, sameSite ]          // Same-site destination.
     ];
 
     function runAllTests() {
         if (currentTest < testCases.length)
             runOneTest(testCases[currentTest][0], testCases[currentTest][1], runAllTests);
-        else
+        else {
+            document.body.removeChild(output);
             finishJSTest();
+        }
     }
 </script>
 </body>

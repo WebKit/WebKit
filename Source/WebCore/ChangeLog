@@ -1,3 +1,28 @@
+2019-02-13  John Wilander  <wilander@apple.com>
+
+        Ignore Ad Click Attribution where source and destination are same-site
+        https://bugs.webkit.org/show_bug.cgi?id=194620
+        <rdar://problem/47890018>
+
+        Reviewed by Jiewen Tan.
+
+        Updated the existing test.
+
+        We should not accept Ad Click Attribution requests where the site of the
+        anchor tag and its addestination attribute are same-site. Such attributions
+        don’t make sense (the site can track intra-site clicks through better means)
+        and would just lead to increased memory use where are the pending
+        attributions are stored.
+
+        For ports that don't have access to the Public Suffix List, this patch
+        only checks that the hosts don't match, i.e. not just eTLD+1.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAdClickAttribution const):
+            Now returns WTF::nullopt if the current document and the
+            addestination are same site. Also fixed a console message
+            typo.
+
 2019-02-13  Eric Carlson  <eric.carlson@apple.com> and Youenn Fablet  <youenn@apple.com>
 
         getUserMedia with an ideal deviceId constraint doesn't always select the correct device
