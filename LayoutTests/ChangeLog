@@ -1,3 +1,12 @@
+2019-02-13  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=194631
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/gtk/editing/pasteboard/smart-paste-008-expected.txt:
+
 2019-02-13  John Wilander  <wilander@apple.com>
 
         Ignore Ad Click Attribution where source and destination are same-site

@@ -1357,6 +1357,9 @@ webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failur
 
 webkit.org/b/194385 imported/w3c/web-platform-tests/service-workers/service-worker/clients-get.https.html [ Crash ]
 
+webkit.org/b/194630 accessibility/removed-anonymous-block-child-causes-crash.html [ Crash ]
+webkit.org/b/194630 accessibility/removed-continuation-element-causes-crash.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2432,6 +2435,7 @@ webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blo
 webkit.org/b/158921 http/tests/security/video-cross-origin-caching.html [ Timeout ]
 
 webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
+webkit.org/b/158923 media/airplay-allows-buffering.html [ Timeout ]
 
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cookie.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Timeout ]
@@ -2515,6 +2519,10 @@ webkit.org/b/191009 webrtc/video-mute-vp8.html [ Timeout ]
 webkit.org/b/193635 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
 webkit.org/b/193636 imported/w3c/web-platform-tests/service-workers/service-worker/websocket-in-service-worker.https.html [ Failure ]
+
+webkit.org/b/194629 http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html [ Timeout ]
+
+webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3740,6 +3748,12 @@ webkit.org/b/193639 webgl/webgl-texture-image-buffer-reuse.html [ ImageOnlyFailu
 webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
 webkit.org/b/194384 compositing/clipping/border-radius-async-overflow-clipping-layer.html [ Failure ]
+
+webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
+
+webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Failure ]
+
+webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

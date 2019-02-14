@@ -20,30 +20,13 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,27) size 460x26
-            text run at (0,27) width 460: "Smart paste when pasting between two periods."
-        RenderBlock {DIV} at (14,84) size 756x108
-          RenderText {#text} at (0,0) size 189x26
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (188,21) size 1x0
-          RenderText {#text} at (0,27) size 743x53
-            text run at (0,27) width 743: "A space should be added before, but not after the pasted word. It should look"
-            text run at (0,54) width 91: "like this: "
-          RenderBR {BR} at (91,75) size 0x0
-          RenderText {#text} at (0,81) size 52x26
-            text run at (0,81) width 52: ". test."
-      RenderBlock {DIV} at (0,230) size 784x31
-        RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 52x26
-            text run at (2,2) width 52: ". test."
-caret: position 6 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
+Tests: 
+Smart paste when pasting between two periods.
+Expected Results: 
+A space should be added before, but not after the pasted word. It should look like this: 
+. test.
+. test.
+execCutCommand: <div id="test" class="editing"><br></div>
+execTypeCharacterCommand: <div id="test" class="editing">.</div>
+execTypeCharacterCommand: <div id="test" class="editing">..</div>
+execPasteCommand: <div id="test" class="editing">. test.</div>
