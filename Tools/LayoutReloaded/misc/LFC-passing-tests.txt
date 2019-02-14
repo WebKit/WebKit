@@ -43,6 +43,7 @@ fast/block/block-only/absolute-width-shrink-to-fit.html
 fast/block/block-only/absolute-width-stretch.html
 fast/block/block-only/absolute-with-static-block-position-nested.html
 fast/block/block-only/almost-intruding-left-float-simple.html
+fast/block/block-only/block-replaced-with-vertical-margins.html
 fast/block/block-only/body-height-with-auto-html-height-quirk2.html
 fast/block/block-only/body-height-with-auto-html-height-quirk.html
 fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html
