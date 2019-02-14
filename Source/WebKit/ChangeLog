@@ -1,3 +1,14 @@
+2019-02-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Handle _WKNavigationActionPolicyAllowWithoutTryingAppLink for LoadOptimizer
+        https://bugs.webkit.org/show_bug.cgi?id=194640
+        <rdar://problem/48064140>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2019-02-14  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Introduce a WebContent Process cache

@@ -589,7 +589,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             localListener->download();
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-            localListener->use(apiWebsitePolicies.get());
+            tryOptimizingLoad(navigationAction->request(), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
+                if (optimizedLoad) {
+                    localListener->ignore();
+                    return;
+                }
+
+                localListener->use(websitePolicies.get());
+            });
             break;
         }
     };
