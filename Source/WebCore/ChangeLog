@@ -1,5 +1,32 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241479. rdar://problem/48065642
+
+    Null-deref crash at SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged()
+    https://bugs.webkit.org/show_bug.cgi?id=194613
+    <rdar://problem/48023912>
+    
+    Reviewed by Eric Carlson.
+    
+    * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+    (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241479 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Jer Noble  <jer.noble@apple.com>
+
+            Null-deref crash at SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged()
+            https://bugs.webkit.org/show_bug.cgi?id=194613
+            <rdar://problem/48023912>
+
+            Reviewed by Eric Carlson.
+
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241437. rdar://problem/48065626
 
     [Cocoa] Switch to CVPixelBufferGetBytesPerRow() for calculating CVPixelBuffer base address size.
