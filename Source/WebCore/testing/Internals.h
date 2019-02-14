@@ -793,7 +793,7 @@ public:
     };
     Vector<CookieData> getCookies() const;
 
-    void setAlwaysAllowLocalWebarchive() const;
+    void setAlwaysAllowLocalWebarchive(bool);
 
 private:
     explicit Internals(Document&);

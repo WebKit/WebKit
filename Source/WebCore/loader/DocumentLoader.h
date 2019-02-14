@@ -339,7 +339,10 @@ public:
 
     WEBCORE_EXPORT void setCustomHeaderFields(Vector<HTTPHeaderField>&& fields);
     const Vector<HTTPHeaderField>& customHeaderFields() { return m_customHeaderFields; }
-    
+
+    void setAllowsWebArchiveForMainFrame(bool allowsWebArchiveForMainFrame) { m_allowsWebArchiveForMainFrame = allowsWebArchiveForMainFrame; }
+    bool allowsWebArchiveForMainFrame() const { return m_allowsWebArchiveForMainFrame; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -561,6 +564,8 @@ private:
 #ifndef NDEBUG
     bool m_hasEverBeenAttached { false };
 #endif
+
+    bool m_allowsWebArchiveForMainFrame { false };
 };
 
 inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)

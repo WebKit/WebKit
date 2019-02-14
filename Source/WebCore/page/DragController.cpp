@@ -284,7 +284,9 @@ bool DragController::performDragOperation(const DragData& dragData)
         return false;
 
     m_client.willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page.mainFrame().loader().load(FrameLoadRequest(m_page.mainFrame(), { urlString }, shouldOpenExternalURLsPolicy));
+    FrameLoadRequest frameLoadRequest { m_page.mainFrame(), { urlString }, shouldOpenExternalURLsPolicy };
+    frameLoadRequest.setIsRequestFromClientOrUserInput();
+    m_page.mainFrame().loader().load(WTFMove(frameLoadRequest));
     return true;
 }
 

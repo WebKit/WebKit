@@ -4,6 +4,8 @@
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(true);
     window.location="resources/top.webarchive";
 </script>
 </html>

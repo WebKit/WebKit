@@ -4,7 +4,7 @@
         testRunner.dumpAsText();
     }
     if (window.internals)
-        internals.setAlwaysAllowLocalWebarchive();
+        internals.setAlwaysAllowLocalWebarchive(true);
     onload = function() {
         frame = document.createElement("iframe");
         frame.src = "resources/missing-data.webarchive";

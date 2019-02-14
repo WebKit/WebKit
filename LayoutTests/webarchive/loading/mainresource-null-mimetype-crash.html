@@ -5,7 +5,7 @@
         testRunner.waitUntilDone();
     }
     if (window.internals)
-        internals.setAlwaysAllowLocalWebarchive();
+        internals.setAlwaysAllowLocalWebarchive(true);
     onload = function() {
         frame = document.createElement("iframe");
         frame.src = "resources/mainresource-null-mimetype.webarchive";
