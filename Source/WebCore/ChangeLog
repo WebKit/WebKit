@@ -1,3 +1,19 @@
+2019-02-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash when inspecting an element that constantly changes visibility
+        https://bugs.webkit.org/show_bug.cgi?id=194632
+        <rdar://problem/48060258>
+
+        Reviewed by Matt Baker and Devin Rousso.
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::processAccessibilityChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        Don't use rvalue-references as that was taking ownership and deleting
+        the object we want to keep around. Instead simplify this to just use
+        references so no ref counting changes happen.
+
 2019-02-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash in handleMenuOpen
