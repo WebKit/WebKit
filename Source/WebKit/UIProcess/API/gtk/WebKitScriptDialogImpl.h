@@ -47,7 +47,7 @@ struct _WebKitScriptDialogImplClass {
 };
 
 GType webkit_script_dialog_impl_get_type();
-GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog*, const char* title);
+GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog*, const char* title, GtkRequisition* maxSize);
 void webkitScriptDialogImplCancel(WebKitScriptDialogImpl*);
 void webkitScriptDialogImplConfirm(WebKitScriptDialogImpl*);
 void webkitScriptDialogImplSetEntryText(WebKitScriptDialogImpl*, const String&);

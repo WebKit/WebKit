@@ -1,3 +1,21 @@
+2019-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a scrolled window for script alerts text
+        https://bugs.webkit.org/show_bug.cgi?id=184875
+
+        Reviewed by Michael Catanzaro.
+
+        To ensure long text doesn't make the dialog bigger.
+
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:
+        (webkitScriptDialogImplConstructed): Use PANGO_ELLIPSIZE_END for the title and add a scrolled window for the body.
+        (webkitScriptDialogImplSetText): Helper function to set the dialog body, ensuring the scrolled window fills the
+        dialog available size.
+        (webkitScriptDialogImplNew): It now receives the maximum size and uses webkitScriptDialogImplSetText().
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewScriptDialog): Pass the 80% of the web view size as the maximum size of script dialogs.
+
 2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in WKBundleFrameGetParentFrame when called inside didRemoveFrameFromHierarchy

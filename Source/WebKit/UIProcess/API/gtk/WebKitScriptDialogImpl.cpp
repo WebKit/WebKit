@@ -28,6 +28,7 @@
 struct _WebKitScriptDialogImplPrivate {
     WebKitScriptDialog* dialog;
     GtkWidget* vbox;
+    GtkWidget* swindow;
     GtkWidget* title;
     GtkWidget* label;
     GtkWidget* entry;
@@ -88,6 +89,7 @@ static void webkitScriptDialogImplConstructed(GObject* object)
     gtk_style_context_add_class(gtk_widget_get_style_context(box), GTK_STYLE_CLASS_TITLEBAR);
     gtk_widget_set_size_request(box, -1, 16);
     priv->title = gtk_label_new(nullptr);
+    gtk_label_set_ellipsize(GTK_LABEL(priv->title), PANGO_ELLIPSIZE_END);
     gtk_widget_set_margin_top(priv->title, 6);
     gtk_widget_set_margin_bottom(priv->title, 6);
     gtk_style_context_add_class(gtk_widget_get_style_context(priv->title), GTK_STYLE_CLASS_TITLE);
@@ -106,12 +108,17 @@ static void webkitScriptDialogImplConstructed(GObject* object)
     gtk_box_pack_start(GTK_BOX(box), messageArea, TRUE, TRUE, 0);
     gtk_widget_show(messageArea);
 
+    priv->swindow = gtk_scrolled_window_new(nullptr, nullptr);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(priv->swindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_box_pack_start(GTK_BOX(messageArea), priv->swindow, TRUE, TRUE, 0);
+    gtk_widget_show(priv->swindow);
+
     priv->label = gtk_label_new(nullptr);
     gtk_widget_set_halign(priv->label, GTK_ALIGN_CENTER);
     gtk_widget_set_valign(priv->label, GTK_ALIGN_START);
     gtk_label_set_line_wrap(GTK_LABEL(priv->label), TRUE);
     gtk_label_set_max_width_chars(GTK_LABEL(priv->label), 60);
-    gtk_box_pack_start(GTK_BOX(messageArea), priv->label, TRUE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(priv->swindow), priv->label);
     gtk_widget_show(priv->label);
 
     GtkWidget* actionBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -151,6 +158,15 @@ static void webkit_script_dialog_impl_class_init(WebKitScriptDialogImplClass* kl
     gtk_widget_class_set_accessible_role(widgetClass, ATK_ROLE_ALERT);
 }
 
+static void webkitScriptDialogImplSetText(WebKitScriptDialogImpl* dialog, const char* text, GtkRequisition* maxSize)
+{
+    WebKitScriptDialogImplPrivate* priv = dialog->priv;
+    gtk_label_set_text(GTK_LABEL(priv->label), text);
+    GtkRequisition naturalRequisition;
+    gtk_widget_get_preferred_size(priv->label, nullptr, &naturalRequisition);
+    gtk_widget_set_size_request(priv->swindow, std::min(naturalRequisition.width, maxSize->width), std::min(maxSize->height, naturalRequisition.height));
+}
+
 static GtkWidget* webkitScriptDialogImplAddButton(WebKitScriptDialogImpl* dialog, const char* text)
 {
     WebKitScriptDialogImplPrivate* priv = dialog->priv;
@@ -166,7 +182,7 @@ static GtkWidget* webkitScriptDialogImplAddButton(WebKitScriptDialogImpl* dialog
     return button;
 }
 
-GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const char* title)
+GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const char* title, GtkRequisition* maxSize)
 {
     auto* dialog = WEBKIT_SCRIPT_DIALOG_IMPL(g_object_new(WEBKIT_TYPE_SCRIPT_DIALOG_IMPL, nullptr));
     dialog->priv->dialog = webkit_script_dialog_ref(scriptDialog);
@@ -179,7 +195,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         GtkWidget* button = webkitScriptDialogImplAddButton(dialog, _("_Close"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplCancel), dialog);
-        gtk_label_set_text(GTK_LABEL(dialog->priv->label), scriptDialog->message.data());
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
@@ -198,7 +214,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("_OK"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        gtk_label_set_text(GTK_LABEL(dialog->priv->label), scriptDialog->message.data());
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM: {
@@ -209,7 +225,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("Leave Page"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        gtk_label_set_text(GTK_LABEL(dialog->priv->label), scriptDialog->message.data());
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
         break;
     }
     }
