@@ -1,3 +1,13 @@
+2019-02-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Set Foreign Key in Django build model
+        https://bugs.webkit.org/show_bug.cgi?id=194667
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        (Build):
+
 2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Add environment variable helpers
