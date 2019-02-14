@@ -628,8 +628,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 
         UIProcess/Launcher/ProcessLauncher.cpp
 
-        UIProcess/Launcher/glib/BubblewrapLauncher.cpp
-        UIProcess/Launcher/glib/FlatpakLauncher.cpp
         UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
         UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp

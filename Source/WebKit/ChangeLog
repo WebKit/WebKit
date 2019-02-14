@@ -1,3 +1,32 @@
+2019-02-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK][STABLE] Remove sandbox APIs from 2.24 branch
+        https://bugs.webkit.org/show_bug.cgi?id=194553
+
+        Reviewed by Carlos Garcia Campos.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_sandbox_enabled): Deleted.
+        (webkit_web_context_add_path_to_sandbox): Deleted.
+        (webkit_web_context_get_sandbox_enabled): Deleted.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp: Removed.
+        * UIProcess/Launcher/glib/BubblewrapLauncher.h: Removed.
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp: Removed.
+        * UIProcess/Launcher/glib/FlatpakLauncher.h: Removed.
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::isInsideFlatpak): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+
 2019-02-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a scrolled window for script alerts text

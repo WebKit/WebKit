@@ -482,13 +482,6 @@ public:
     void sendDisplayConfigurationChangedMessageForTesting();
     void clearCurrentModifierStateForTesting();
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };
-    void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
-    const HashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
-    bool sandboxEnabled() const { return m_sandboxEnabled; };
-#endif
-
 private:
     void platformInitialize();
 
@@ -743,11 +736,6 @@ private:
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     Vector<std::unique_ptr<DisplayLink>> m_displayLinks;
-#endif
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    bool m_sandboxEnabled { false };
-    HashMap<CString, SandboxPermission> m_extraSandboxPaths;
 #endif
 };
 
