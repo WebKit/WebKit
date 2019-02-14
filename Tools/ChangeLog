@@ -1,3 +1,11 @@
+2019-02-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, build fix after r241480
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator initWithWebViewFrame:configuration:]):
+        (-[DragAndDropSimulator initWithWebView:]):
+
 2019-02-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA Reflection was disabled in error
