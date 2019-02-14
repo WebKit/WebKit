@@ -225,7 +225,7 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
     struct {
         bool operator()(const DeviceInfo& a, const DeviceInfo& b)
         {
-            return a.fitnessScore < b.fitnessScore;
+            return a.fitnessScore > b.fitnessScore;
         }
     } sortBasedOnFitnessScore;
 

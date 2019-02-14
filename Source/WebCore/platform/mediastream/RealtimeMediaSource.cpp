@@ -413,7 +413,8 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
     }
 
     case MediaConstraintType::DeviceId:
-        ASSERT_NOT_REACHED();
+        ASSERT(!m_hashedID.isEmpty());
+        return downcast<StringConstraint>(constraint).fitnessDistance(m_hashedID);
         break;
 
     case MediaConstraintType::GroupId: {
@@ -569,9 +570,9 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     }
 }
 
-bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint, SelectType type)
+bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, FlattenedConstraint& candidates, String& failedConstraint)
 {
-    m_fitnessScore = std::numeric_limits<double>::infinity();
+    double minimumDistance = std::numeric_limits<double>::infinity();
 
     // https://w3c.github.io/mediacapture-main/#dfn-selectsettings
     //
@@ -596,7 +597,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
     // Check width, height and frame rate jointly, because while they may be supported individually the combination may not be supported.
     double distance = std::numeric_limits<double>::infinity();
-    if (!supportsSizeAndFrameRate(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), failedConstraint, m_fitnessScore))
+    if (!supportsSizeAndFrameRate(constraints.mandatoryConstraints.width(), constraints.mandatoryConstraints.height(), constraints.mandatoryConstraints.frameRate(), failedConstraint, minimumDistance))
         return false;
 
     constraints.mandatoryConstraints.filter([&](const MediaConstraint& constraint) {
@@ -605,25 +606,6 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
 
         if (constraint.constraintType() == MediaConstraintType::Width || constraint.constraintType() == MediaConstraintType::Height || constraint.constraintType() == MediaConstraintType::FrameRate) {
             candidates.set(constraint);
-            return false;
-        }
-
-        // The deviceId can't be changed, and the constraint value is the hashed device ID, so verify that the
-        // device's unique ID hashes to the constraint value but don't include the constraint in the flattened
-        // constraint set.
-        if (constraint.constraintType() == MediaConstraintType::DeviceId) {
-            if (type == SelectType::ForApplyConstraints)
-                return false;
-
-            ASSERT(constraint.isString());
-            ASSERT(!m_hashedID.isEmpty());
-
-            double constraintDistance = downcast<StringConstraint>(constraint).fitnessDistance(m_hashedID);
-            if (std::isinf(constraintDistance)) {
-                failedConstraint = constraint.name();
-                return true;
-            }
-
             return false;
         }
 
@@ -641,7 +623,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     if (!failedConstraint.isEmpty())
         return false;
 
-    m_fitnessScore = distance;
+    minimumDistance = distance;
 
     // 4. If candidates is empty, return undefined as the result of the SelectSettings() algorithm.
     if (candidates.isEmpty())
@@ -677,7 +659,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
                 supported = true;
         });
 
-        m_fitnessScore = std::min(m_fitnessScore, constraintDistance);
+        minimumDistance = std::min(minimumDistance, constraintDistance);
 
         // 5.2 If the fitness distance is finite for one or more settings dictionaries in candidates, keep those
         //     settings dictionaries in candidates, discarding others.
@@ -690,7 +672,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     //    The UA should use the one with the smallest fitness distance, as calculated in step 3.
     if (!supportedConstraints.isEmpty()) {
         supportedConstraints.removeAllMatching([&](const std::pair<double, MediaTrackConstraintSetMap>& pair) -> bool {
-            return std::isinf(pair.first) || pair.first > m_fitnessScore;
+            return std::isinf(pair.first) || pair.first > minimumDistance;
         });
 
         if (!supportedConstraints.isEmpty()) {
@@ -699,7 +681,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
                 candidates.merge(constraint);
             });
 
-            m_fitnessScore = std::min(m_fitnessScore, supportedConstraints[0].first);
+            minimumDistance = std::min(minimumDistance, supportedConstraints[0].first);
         }
     }
 
@@ -788,9 +770,35 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
     ASSERT(constraints.isValid);
 
     FlattenedConstraint candidates;
-    if (!selectSettings(constraints, candidates, invalidConstraint, SelectType::ForSupportsConstraints))
+    if (!selectSettings(constraints, candidates, invalidConstraint))
         return false;
-    
+
+    m_fitnessScore = 0;
+    for (auto& variant : candidates) {
+        double distance = fitnessDistance(variant);
+        switch (variant.constraintType()) {
+        case MediaConstraintType::DeviceId:
+        case MediaConstraintType::FacingMode:
+            m_fitnessScore += distance ? 1 : 32;
+            break;
+
+        case MediaConstraintType::Width:
+        case MediaConstraintType::Height:
+        case MediaConstraintType::FrameRate:
+        case MediaConstraintType::AspectRatio:
+        case MediaConstraintType::Volume:
+        case MediaConstraintType::SampleRate:
+        case MediaConstraintType::SampleSize:
+        case MediaConstraintType::EchoCancellation:
+        case MediaConstraintType::GroupId:
+        case MediaConstraintType::DisplaySurface:
+        case MediaConstraintType::LogicalSurface:
+        case MediaConstraintType::Unknown:
+            m_fitnessScore += distance ? 1 : 2;
+            break;
+        }
+    }
+
     return true;
 }
 
@@ -849,7 +857,7 @@ Optional<RealtimeMediaSource::ApplyConstraintsError> RealtimeMediaSource::applyC
 
     FlattenedConstraint candidates;
     String failedConstraint;
-    if (!selectSettings(constraints, candidates, failedConstraint, SelectType::ForApplyConstraints))
+    if (!selectSettings(constraints, candidates, failedConstraint))
         return ApplyConstraintsError { failedConstraint, "Constraint not supported"_s };
 
     applyConstraints(candidates);

@@ -4,4 +4,5 @@ PASS Collect device IDs
 PASS Pass device IDs as exact constraints 
 PASS Pass device IDs as optional constraints 
 PASS Exact device IDs with special values: empty string, null, undefined 
+PASS Ideal deviceId constraints 
 

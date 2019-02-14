@@ -1,0 +1,4 @@
+
+
+FAIL Ideal deviceId constraints promise_test: Unhandled rejection with value: object "Error: Invalid constraint"
+

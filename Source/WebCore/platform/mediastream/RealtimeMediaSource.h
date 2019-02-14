@@ -188,8 +188,7 @@ protected:
     virtual void beginConfiguration() { }
     virtual void commitConfiguration() { }
 
-    enum class SelectType { ForApplyConstraints, ForSupportsConstraints };
-    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&, SelectType);
+    bool selectSettings(const MediaConstraints&, FlattenedConstraint&, String&);
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const FlattenedConstraint&);
@@ -234,7 +233,7 @@ private:
     double m_volume { 1 };
     double m_sampleRate { 0 };
     double m_sampleSize { 0 };
-    double m_fitnessScore { std::numeric_limits<double>::infinity() };
+    double m_fitnessScore { 0 };
     RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
 
     bool m_pendingSettingsDidChangeNotification { false };

@@ -1,3 +1,36 @@
+2019-02-13  Eric Carlson  <eric.carlson@apple.com> and Youenn Fablet  <youenn@apple.com>
+
+        getUserMedia with an ideal deviceId constraint doesn't always select the correct device
+        https://bugs.webkit.org/show_bug.cgi?id=193614
+
+        Reviewed by Eric Carlson.
+
+        Compute a fitness score based on constraints.
+        For each constraint, a fitness score is computed from the distance.
+        The smaller the distance, the higher the score.
+        Fitness scores are then summed to give a device fitness score.
+        Matching devices are then sorted according the fitness score.
+
+        For important constraints, deviceId and facingMode, add a more important weight.
+        This ensures that should any of these ideal constraints are set, they will be respected.
+
+        Restrict our automatic setting of default constraints to not add a default ideal facingMode in case of existing deviceId constraint.
+        Do not set a default ideal frameRate if width and height are already set.
+
+        Covered by updated test.
+
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::FlattenedConstraint::set):
+        (WebCore::MediaConstraints::setDefaultVideoConstraints):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::fitnessDistance):
+        (WebCore::RealtimeMediaSource::selectSettings):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraints):
+
 2019-02-13  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Add a hack to work around buggy video control library

@@ -123,10 +123,8 @@ void StringConstraint::merge(const MediaConstraint& other)
 
 void FlattenedConstraint::set(const MediaConstraint& constraint)
 {
-    for (auto& variant : m_variants) {
-        if (variant.constraintType() == constraint.constraintType())
-            return;
-    }
+    if (find(constraint.constraintType()))
+        return;
 
     append(constraint);
 }
@@ -391,23 +389,20 @@ bool MediaConstraints::isConstraintSet(const WTF::Function<bool(const MediaTrack
 
 void MediaConstraints::setDefaultVideoConstraints()
 {
-    // 640x480, 30fps, font-facing camera
-    bool hasFrameRateConstraints = isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
-        return !!constraint.frameRate();
+    // 640x480, 30fps, front-facing camera
+    bool needsFrameRateConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+        return !!constraint.frameRate() || !!constraint.width() || !!constraint.height();
     });
     
-    bool hasSizeConstraints = isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+    bool needsSizeConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
         return !!constraint.width() || !!constraint.height();
     });
     
-    bool hasFacingModeConstraints = isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
-        return !!constraint.facingMode();
+    bool needsFacingModeConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+        return !!constraint.facingMode() || !!constraint.deviceId();
     });
     
-    if (hasFrameRateConstraints && hasSizeConstraints && hasFacingModeConstraints)
-        return;
-    
-    addDefaultVideoConstraints(mandatoryConstraints, !hasFrameRateConstraints, !hasSizeConstraints, !hasFacingModeConstraints);
+    addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraints, needsSizeConstraints, needsFacingModeConstraints);
 }
     
 }
