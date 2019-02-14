@@ -1,5 +1,15 @@
 2019-02-14  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] status bubble should fetch builder name info from BuilderMapping table
+        https://bugs.webkit.org/show_bug.cgi?id=194599
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+
+2019-02-14  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Set Foreign Key in Django build model
         https://bugs.webkit.org/show_bug.cgi?id=194667
 

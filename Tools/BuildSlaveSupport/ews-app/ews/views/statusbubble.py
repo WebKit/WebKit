@@ -26,14 +26,19 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
+from ews.models.buildermapping import BuilderMapping
 from ews.models.patch import Patch
 import ews.config as config
 
 
 class StatusBubble(View):
     def _build_bubble(self, build, patch):
-        builder_display_name = build.builder_id  # TODO: fetch display name from buildermapping table https://bugs.webkit.org/show_bug.cgi?id=194599
-        builder_full_name = build.builder_id  # TODO: fetch builder full name from buildermapping table https://bugs.webkit.org/show_bug.cgi?id=194599
+        try:
+            builder_display_name = build.builder.display_name
+            builder_full_name = build.builder.builder_name
+        except BuilderMapping.DoesNotExist:
+            builder_display_name = build.builder_id
+            builder_full_name = ''
 
         bubble = {
             "name": builder_display_name,
