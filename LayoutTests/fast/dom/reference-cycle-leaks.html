@@ -117,13 +117,8 @@ function createPopStateEventStateCycle()
     leakDetectionNode.event = new PopStateEvent("x", { state: leakDetectionNode });
 }
 
-function createIDBRequestResultCycle()
-{
-    // FIXME: Need to write this test and reorganize so it can be asynchronous.
-    // Get an IDBRequest with a result that is a structured clone (see IDBTransaction::didGetRecordOnServer).
-    // Add a property to the result object that references the request.
-    // Add another property to the result object that references a leak detection node.
-}
+// Reference cycle of IDBRequest and IDBCursor is tested in
+// storage/indexeddb/value-cursor-cycle.html and LayoutTests/storage/indexeddb/result-request-cycle.html.
 
 // PaymentResponse details reference cycle is tested in
 // http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html.
