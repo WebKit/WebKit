@@ -1,3 +1,16 @@
+2019-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Allow some deprecations in WKDrawingView.
+        https://bugs.webkit.org/show_bug.cgi?id=194636
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView PNGRepresentation]):
+        (-[WKDrawingView loadDrawingFromPNGRepresentation:]):
+        (-[WKDrawingView _canvasViewWillBeginDrawing:]):
+        (-[WKDrawingView didChangeInk:]):
+
 2019-02-13  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Media elements will restart network buffering just before suspending
