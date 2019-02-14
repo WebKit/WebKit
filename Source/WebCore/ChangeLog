@@ -1,3 +1,31 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in DOMTimer::fired
+        https://bugs.webkit.org/show_bug.cgi?id=194638
+
+        Reviewed by Brent Fulgham.
+
+        This patch continues the saga of hunting down timer related crashes after r239814, r225985, r227934.
+
+        The crash was caused by the bug that we don't remove a DOMTimer from NestedTimersMap if a DOMTimer
+        is created & installed inside another DOMTimer's callback (via execute call in DOMTimer::fired).
+
+        Fixed the crash by using a Ref in NestedTimersMap. This will keep the timer alive until we exit
+        from DOMTimer::fired. Because DOMTimer::fired always calls stopTracking() which clears the map
+        we would not leak these DOM timers.
+
+        We could, alternatively, use WeakPtr in NestedTimersMap but that would unnecessarily increase the
+        size of DOMTimer for a very marginal benefit of DOMTimer objcets being deleted slightly earlier.
+        Deleting itself in DOMTimer's destructor involves more logic & house keeping in the timer code,
+        and is no longer the preferred approach when dealing with these classes of bugs in WebKit.
+
+        Test: fast/dom/timer-destruction-during-firing.html
+
+        * page/DOMTimer.cpp:
+        (WebCore::NestedTimersMap::add):
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+
 2019-02-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash when inspecting an element that constantly changes visibility

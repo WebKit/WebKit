@@ -1,3 +1,15 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in DOMTimer::fired
+        https://bugs.webkit.org/show_bug.cgi?id=194638
+
+        Reviewed by Brent Fulgham.
+
+        Added a regression test. It needs debug assertions without the fix.
+
+        * fast/dom/timer-destruction-during-firing-expected.txt: Added.
+        * fast/dom/timer-destruction-during-firing.html: Added.
+
 2019-02-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: valid values in style attributes are reported as unsupported property values
