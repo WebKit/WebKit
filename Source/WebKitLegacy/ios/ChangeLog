@@ -1,3 +1,14 @@
+2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitPlatformSystemRootDirectory):
+        Utilize WTF::Environment where possible.
+
 2019-01-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Clean up USE(WEB_THREAD)

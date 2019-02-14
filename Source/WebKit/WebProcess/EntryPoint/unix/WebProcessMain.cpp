@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebProcessMainUnix.h"
 
-#include <cstdlib>
+#include <wtf/Environment.h>
 
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
@@ -42,8 +43,8 @@ int main(int argc, char** argv)
     // GnuTLS or simply stops parsing this variable. We intentionally do not
     // overwrite this priority string if it's already set by the user.
     // https://bugzilla.gnome.org/show_bug.cgi?id=738633
-    // WARNING: This needs to be KEPT IN SYNC with WebProcessMain.cpp.
-    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128", 0);
+    // WARNING: This needs to be KEPT IN SYNC with NetworkProcessMain.cpp.
+    Environment::setIfNotDefined("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128");
 
 #if USE(GCRYPT)
     PAL::GCrypt::initialize();

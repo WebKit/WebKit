@@ -1,3 +1,53 @@
+2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (libraryPathForDumpRenderTree):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (libraryPathForDumpRenderTree):
+        * TestRunnerShared/IOSLayoutTestCommunication.cpp:
+        (setUpIOSLayoutTestCommunication):
+        * TestWebKitAPI/Tests/WebKit/EnvironmentUtilitiesTest.cpp:
+        (TestWebKitAPI::strip):
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (main):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp:
+        (WebKitTestBus::run):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::getOutputDir):
+        (WTR::initializeFontConfigSetting):
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleUtilities.cpp:
+        (WTR::topLevelPath):
+        * WebKitTestRunner/InjectedBundle/wpe/ActivateFontsWPE.cpp:
+        (WTR::topLevelPath):
+        (WTR::getOutputDir):
+        (WTR::activateFonts):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::libraryPathForTesting):
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::decideDestinationWithSuggestedFilename):
+        (WTR::TestController::platformAdjustContext):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaPlatformInitialize):
+        (WTR::TestController::platformAdjustContext):
+        * WebKitTestRunner/gtk/main.cpp:
+        (main):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::configureContentExtensionForTest):
+        * WebKitTestRunner/wpe/main.cpp:
+        (main):
+        Utilize WTF::Environment where possible.
+
 2019-02-14  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Introduce a WebContent Process cache

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PluginSearchPath.h"
 
+#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 
 namespace WebKit {
@@ -36,15 +37,15 @@ Vector<String> pluginsDirectories()
     Vector<String> result;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    String mozillaPaths(getenv("MOZ_PLUGIN_PATH"));
-    if (!mozillaPaths.isEmpty()) {
-        Vector<String> paths = mozillaPaths.split(':');
+    auto mozillaPaths = Environment::get("MOZ_PLUGIN_PATH");
+    if (mozillaPaths && !mozillaPaths->isEmpty()) {
+        Vector<String> paths = mozillaPaths->split(':');
         result.appendVector(paths);
     }
 
-    String mozillaHome(getenv("MOZILLA_HOME"));
-    if (!mozillaHome.isEmpty())
-        result.append(mozillaHome + "/plugins");
+    auto mozillaHome = Environment::get("MOZILLA_HOME");
+    if (mozillaHome && !mozillaHome->isEmpty())
+        result.append(*mozillaHome + "/plugins");
 
     result.append(FileSystem::homeDirectoryPath() + "/.mozilla/plugins");
     result.append(FileSystem::homeDirectoryPath() + "/.netscape/plugins");

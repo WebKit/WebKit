@@ -1,3 +1,16 @@
+2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * pal/unix/LoggingUnix.cpp:
+        (PAL::logLevelString):
+        * pal/win/LoggingWin.cpp:
+        (PAL::logLevelString):
+        Utilize WTF::Environment where possible.
+
 2019-02-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: IsolatedTree: Implement more attributes

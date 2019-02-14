@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include <libintl.h>
 #include <libsoup/soup.h>
+#include <wtf/Environment.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
@@ -46,7 +47,7 @@ public:
     bool platformInitialize() override
     {
 #ifndef NDEBUG
-        if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
+        if (Environment::get("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             g_usleep(30 * G_USEC_PER_SEC);
 #endif
 

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CurlSSLHandle.h"
 
+#include <wtf/Environment.h>
+
 #if USE(CF)
 #if OS(WINDOWS)
 #include "WebCoreBundleWin.h"
@@ -38,9 +40,8 @@ namespace WebCore {
 
 static String getCACertPathEnv()
 {
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-        return String(envPath);
+    if (auto envPath = Environment::get("CURL_CA_BUNDLE_PATH"))
+        return *envPath;
 
 #if USE(CF)
     CFBundleRef webKitBundleRef = webKitBundle();

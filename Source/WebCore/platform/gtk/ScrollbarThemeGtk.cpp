@@ -35,6 +35,7 @@
 #include "Scrollbar.h"
 #include <cstdlib>
 #include <gtk/gtk.h>
+#include <wtf/Environment.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ static void themeChangedCallback()
 ScrollbarThemeGtk::ScrollbarThemeGtk()
 {
 #if GTK_CHECK_VERSION(3, 20, 0)
-    m_usesOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
+    m_usesOverlayScrollbars = !Environment::hasValue("GTK_OVERLAY_SCROLLING", "0");
 #endif
     static bool themeMonitorInitialized = false;
     if (!themeMonitorInitialized) {

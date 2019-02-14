@@ -28,6 +28,7 @@
 #include "ProcessExecutablePath.h"
 
 #include <glib.h>
+#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GLibUtilities.h>
 
@@ -46,9 +47,9 @@ static String getExecutablePath()
 static String findWebKitProcess(const char* processName)
 {
 #if ENABLE(DEVELOPER_MODE)
-    static const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
+    static auto execDirectory = Environment::get("WEBKIT_EXEC_PATH");
     if (execDirectory) {
-        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory), processName);
+        String processPath = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(execDirectory->utf8().data()), processName);
         if (FileSystem::fileExists(processPath))
             return processPath;
     }

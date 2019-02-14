@@ -32,6 +32,7 @@
 #include "RemoteConnectionToTarget.h"
 #include "RemoteInspectionTarget.h"
 #include <gio/gio.h>
+#include <wtf/Environment.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -51,7 +52,7 @@ RemoteInspector& RemoteInspector::singleton()
 
 RemoteInspector::RemoteInspector()
 {
-    if (g_getenv("WEBKIT_INSPECTOR_SERVER"))
+    if (Environment::get("WEBKIT_INSPECTOR_SERVER"))
         start();
 }
 
@@ -65,7 +66,7 @@ void RemoteInspector::start()
     m_enabled = true;
     m_cancellable = adoptGRef(g_cancellable_new());
 
-    GUniquePtr<char> inspectorAddress(g_strdup(g_getenv("WEBKIT_INSPECTOR_SERVER")));
+    GUniquePtr<char> inspectorAddress(g_strdup(Environment::getRaw("WEBKIT_INSPECTOR_SERVER")));
     char* portPtr = g_strrstr(inspectorAddress.get(), ":");
     ASSERT(portPtr);
     *portPtr = '\0';
@@ -79,7 +80,7 @@ void RemoteInspector::start()
             if (GRefPtr<GDBusConnection> connection = adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr())))
                 inspector->setupConnection(WTFMove(connection));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", g_getenv("WEBKIT_INSPECTOR_SERVER"), error->message);
+                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", Environment::getRaw("WEBKIT_INSPECTOR_SERVER"), error->message);
     }, this);
 }
 

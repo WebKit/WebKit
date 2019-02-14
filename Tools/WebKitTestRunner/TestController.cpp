@@ -72,6 +72,7 @@
 #include <string>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/Environment.h>
 #include <wtf/MainThread.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RefCounted.h>
@@ -386,15 +387,15 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
     return newPage;
 }
 
-const char* TestController::libraryPathForTesting()
+String TestController::libraryPathForTesting()
 {
     // FIXME: This may not be sufficient to prevent interactions/crashes
     // when running more than one copy of DumpRenderTree.
     // See https://bugs.webkit.org/show_bug.cgi?id=10906
-    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
-    if (dumpRenderTreeTemp)
-        return dumpRenderTreeTemp;
-    return platformLibraryPathForTesting();
+    if (auto dumpRenderTreeTemp = Environment::get("DUMPRENDERTREE_TEMP"))
+        return *dumpRenderTreeTemp;
+
+    return String::fromUTF8(platformLibraryPathForTesting());
 }
 
 void TestController::initialize(int argc, const char* argv[])
@@ -461,9 +462,8 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
     WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts);
 
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-
+    auto temporaryFolder = libraryPathForTesting();
+    if (!!temporaryFolder) {
         WKContextConfigurationSetApplicationCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "ApplicationCache").get());
         WKContextConfigurationSetDiskCacheDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Cache").get());
         WKContextConfigurationSetIndexedDBDatabaseDirectory(configuration.get(), toWK(temporaryFolder + pathSeparator + "Databases" + pathSeparator + "IndexedDB").get());
@@ -481,9 +481,8 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
 
     m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-
+    auto temporaryFolder = libraryPathForTesting();
+    if (!!temporaryFolder) {
         // FIXME: This should be migrated to WKContextConfigurationRef.
         // Disable icon database to avoid fetching <http://127.0.0.1:8000/favicon.ico> and making tests flaky.
         // Invividual tests can enable it using testRunner.setIconDatabaseEnabled, although it's not currently supported in WebKitTestRunner.
@@ -1381,7 +1380,7 @@ static std::string contentExtensionJSONPath(WKURLRef url)
 #if ENABLE(CONTENT_EXTENSIONS)
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
-    const char* contentExtensionsPath = libraryPathForTesting();
+    auto contentExtensionsPath = libraryPathForTesting();
     if (!contentExtensionsPath)
         contentExtensionsPath = "/tmp/wktr-contentextensions";
 
@@ -1400,7 +1399,7 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     std::string jsonFileContents {std::istreambuf_iterator<char>(jsonFile), std::istreambuf_iterator<char>()};
     auto jsonSource = adoptWK(WKStringCreateWithUTF8CString(jsonFileContents.c_str()));
 
-    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath.utf8().data()));
     auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
     ASSERT(extensionStore);
 
@@ -1423,13 +1422,13 @@ void TestController::resetContentExtensions()
 
     WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), false);
 
-    const char* contentExtensionsPath = libraryPathForTesting();
+    auto contentExtensionsPath = libraryPathForTesting();
     if (!contentExtensionsPath)
         return;
 
     WKUserContentControllerRemoveAllUserContentFilters(userContentController());
 
-    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath));
+    auto storePath = adoptWK(WKStringCreateWithUTF8CString(contentExtensionsPath.utf8().data()));
     auto extensionStore = adoptWK(WKUserContentExtensionStoreCreate(storePath.get()));
     ASSERT(extensionStore);
 
@@ -2279,12 +2278,11 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKContextRef,
         m_currentInvocation->outputText(builder.toString());
     }
 
-    const char* dumpRenderTreeTemp = libraryPathForTesting();
-    if (!dumpRenderTreeTemp)
+    auto temporaryFolder = libraryPathForTesting();
+    if (!temporaryFolder)
         return nullptr;
 
     *allowOverwrite = true;
-    String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
     if (suggestedFilename.isEmpty())
         suggestedFilename = "Unknown";
 
@@ -2828,11 +2826,9 @@ WKContextRef TestController::platformAdjustContext(WKContextRef context, WKConte
     auto* dataStore = WKContextGetWebsiteDataStore(context);
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(dataStore, true);
 
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
-
+    auto temporaryFolder = libraryPathForTesting();
+    if (!!temporaryFolder)
         WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(dataStore, toWK(temporaryFolder + pathSeparator + "ServiceWorkers").get());
-    }
 
     return context;
 }

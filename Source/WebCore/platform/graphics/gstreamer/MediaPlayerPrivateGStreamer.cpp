@@ -41,6 +41,7 @@
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
 #include <limits>
+#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MediaTime.h>
@@ -2555,7 +2556,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
     ASSERT(!m_pipeline);
 
 #if GST_CHECK_VERSION(1, 10, 0)
-    if (g_getenv("USE_PLAYBIN3"))
+    if (Environment::get("USE_PLAYBIN3"))
         playbinName = "playbin3";
 #else
     playbinName = "playbin";

@@ -26,15 +26,13 @@
 #include "config.h"
 #include "CurlSSLHandle.h"
 
+#include <wtf/Environment.h>
+
 namespace WebCore {
 
 static String getCACertPathEnv()
 {
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-        return { envPath };
-
-    return emptyString();
+    return Environment::get("CURL_CA_BUNDLE_PATH").valueOr(emptyString());
 }
 
 void CurlSSLHandle::platformInitialize()

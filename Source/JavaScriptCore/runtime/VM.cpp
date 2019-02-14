@@ -149,6 +149,7 @@
 #include "WeakGCMapInlines.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
+#include <wtf/Environment.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>
@@ -197,8 +198,7 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
         return false;
     }
 
-    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
-    return !canUseJITString || atoi(canUseJITString);
+    return !Environment::hasValue("JavaScriptCoreUseJIT", "0");
 }
 #endif // ENABLE(!ASSEMBLER)
 
@@ -428,8 +428,7 @@ VM::VM(VMType vmType, HeapType heapType)
         m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*this);
 
         StringPrintStream pathOut;
-        const char* profilerPath = getenv("JSC_PROFILER_PATH");
-        if (profilerPath)
+        if (const char* profilerPath = Environment::getRaw("JSC_PROFILER_PATH"))
             pathOut.print(profilerPath, "/");
         pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
         m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());

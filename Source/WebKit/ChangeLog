@@ -1,3 +1,63 @@
+2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * Platform/unix/EnvironmentUtilities.cpp:
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString):
+        * Platform/unix/LoggingUnix.cpp:
+        (WebKit::logLevelString):
+        * Platform/win/LoggingWin.cpp:
+        (WebKit::logLevelString):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::shouldCallRealDebugger):
+        * Shared/Plugins/unix/PluginSearchPath.cpp:
+        (WebKit::pluginsDirectories):
+        * Shared/glib/ProcessExecutablePathGLib.cpp:
+        (WebKit::findWebKitProcess):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsConstructed):
+        (webKitSettingsSetProperty):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (injectedBundleDirectory):
+        (webkitWebContextConstructed):
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkitWebViewMaximizeWindow):
+        (webkitWebViewRestoreWindow):
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::XDGDBusProxyLauncher::launch):
+        (WebKit::bindDBusSession):
+        (WebKit::bindX11):
+        (WebKit::bindWayland):
+        (WebKit::bindPulse):
+        (WebKit::bindPathVar):
+        (WebKit::bindGStreamerData):
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::systemDirectoryPath):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::memoryPressureMonitorDisabled):
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/gtk/HardwareAccelerationManager.cpp:
+        (WebKit::HardwareAccelerationManager::HardwareAccelerationManager):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        Utilize WTF::Environment where possible.
+
 2019-02-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Handle _WKNavigationActionPolicyAllowWithoutTryingAppLink for LoadOptimizer

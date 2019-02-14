@@ -29,6 +29,7 @@
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
+#include <wtf/Environment.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -237,8 +238,7 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
         g_strfreev(argv);
 
         if (isFastMallocEnabled()) {
-            const char* disableFastMalloc = getenv("WEBKIT_GST_DISABLE_FAST_MALLOC");
-            if (!disableFastMalloc || !strcmp(disableFastMalloc, "0"))
+            if (!Environment::hasValue("WEBKIT_GST_DISABLE_FAST_MALLOC", "0"))
                 gst_allocator_set_default(GST_ALLOCATOR(g_object_new(gst_allocator_fast_malloc_get_type(), nullptr)));
         }
 

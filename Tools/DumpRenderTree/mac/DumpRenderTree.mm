@@ -91,6 +91,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
 #import <wtf/Assertions.h>
+#import <wtf/Environment.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/LoggingAccumulator.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -843,11 +844,10 @@ static void destroyWebViewAndOffscreenWindow(WebView *webView)
 
 static NSString *libraryPathForDumpRenderTree()
 {
-    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
-    if (dumpRenderTreeTemp)
+    if (const char* dumpRenderTreeTemp = Environment::getRaw("DUMPRENDERTREE_TEMP"))
         return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dumpRenderTreeTemp length:strlen(dumpRenderTreeTemp)];
-    else
-        return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
+
+    return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
 static void enableExperimentalFeatures(WebPreferences* preferences)

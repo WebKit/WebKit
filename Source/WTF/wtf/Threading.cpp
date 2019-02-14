@@ -285,10 +285,18 @@ void Thread::dump(PrintStream& out) const
 ThreadSpecificKey Thread::s_key = InvalidThreadSpecificKey;
 #endif
 
+static bool initialized = false;
+
+bool threadingIsInitialized()
+{
+    return initialized;
+}
+
 void initializeThreading()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
+        initialized = true;
         initializeRandomNumberGenerator();
 #if !HAVE(FAST_TLS)
         Thread::initializeTLSKey();

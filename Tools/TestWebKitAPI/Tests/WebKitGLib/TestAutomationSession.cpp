@@ -21,6 +21,7 @@
 
 #include "TestMain.h"
 #include <gio/gio.h>
+#include <wtf/Environment.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -343,7 +344,7 @@ static void testAutomationSessionApplicationInfo(Test* test, gconstpointer)
 
 void beforeAll()
 {
-    g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229", TRUE);
+    Environment::set("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229");
 
     AutomationTest::add("WebKitAutomationSession", "request-session", testAutomationSessionRequestSession);
     Test::add("WebKitAutomationSession", "application-info", testAutomationSessionApplicationInfo);

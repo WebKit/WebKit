@@ -28,6 +28,7 @@
 
 #include <WebKit/EnvironmentUtilities.h>
 #include <stdlib.h>
+#include <wtf/Environment.h>
 
 namespace TestWebKitAPI {
 
@@ -39,7 +40,7 @@ static const char* strip(const char* input)
 {
     setenv(environmentVariable, input, 1);
     WebKit::EnvironmentUtilities::stripValuesEndingWithString(environmentVariable, stripValue);
-    return getenv(environmentVariable);
+    return Environment::getRaw(environmentVariable);
 }
 
 TEST(WebKit, StripValuesEndingWithString)
