@@ -65,7 +65,6 @@
                 { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." },
                 { "name": "templateContent", "$ref": "Node", "optional": true, "description": "Content document fragment for template elements" },
                 { "name": "pseudoElements", "type": "array", "items": { "$ref": "Node" }, "optional": true, "description": "Pseudo elements associated with this node." },
-                { "name": "role", "type": "string", "optional": true, "description": "Computed value for first recognized role token, default role per element, or overridden role." },
                 { "name": "contentSecurityPolicyHash", "type": "string", "optional": true, "description": "Computed SHA-256 Content Security Policy hash source for given element." }
             ]
         },
