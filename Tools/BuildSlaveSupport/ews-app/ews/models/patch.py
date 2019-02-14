@@ -48,7 +48,7 @@ class Patch(models.Model):
             return ERR_INVALID_PATCH_ID
 
         if Patch.is_existing_patch_id(patch_id):
-            _log.info("Patch id {} already exists in database. Skipped saving.".format(patch_id))
+            _log.debug("Patch id {} already exists in database. Skipped saving.".format(patch_id))
             return ERR_EXISTING_PATCH
         Patch(patch_id, bug_id, obsolete, sent_to_buildbot).save()
         _log.info('Saved patch in database, id: {}'.format(patch_id))
