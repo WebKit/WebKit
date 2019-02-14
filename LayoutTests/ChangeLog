@@ -1,3 +1,14 @@
+2019-02-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: valid values in style attributes are reported as unsupported property values
+        https://bugs.webkit.org/show_bug.cgi?id=194619
+        <rdar://problem/47917373>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/modify-inline-style-expected.txt: Added.
+        * inspector/css/modify-inline-style.html: Added.
+
 2019-02-13  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK test gardening

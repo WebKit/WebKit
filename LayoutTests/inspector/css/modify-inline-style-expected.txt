@@ -1,0 +1,18 @@
+Testing that adding and editing CSS properties of inline styles works.
+
+
+== Running test suite: ModifyInlineStyle
+-- Running test case: ModifyInlineStyle.AddPropertyAndEdit
+CSSProperty changed to "font: 12px normal sans-serif!important;".
+font: 12px normal sans-serif!important;
+
+CSSProperty changed to "color: red;".
+font: 12px normal sans-serif!important;color: red;
+
+CSSProperty changed to "font: 12px sans-serif;".
+font: 12px sans-serif;color: red;
+
+CSSProperty changed to "color: invalid_c010r;".
+font: 12px sans-serif;color: invalid_c010r;
+
+
