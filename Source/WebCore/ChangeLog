@@ -1,3 +1,14 @@
+2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused variable warnings after r241148/r241251
+        https://bugs.webkit.org/show_bug.cgi?id=194348
+        <rdar://problem/47566449>
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError):
+        (WebCore::SourceBuffer::evictCodedFrames):
+        (WebCore::SourceBuffer::provideMediaData):
+
 2019-02-13  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION: [ Mac Debug WK2 ] Layout Test storage/indexeddb/key-type-infinity-private.html is a flaky crash
