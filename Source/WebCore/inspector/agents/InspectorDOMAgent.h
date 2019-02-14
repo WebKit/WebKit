@@ -248,7 +248,7 @@ private:
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, const AtomicString& eventType, Node*, const String* objectGroupId, bool disabled, bool hasBreakpoint);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-    void processAccessibilityChildren(RefPtr<AccessibilityObject>&&, RefPtr<JSON::ArrayOf<int>>&&);
+    void processAccessibilityChildren(AccessibilityObject&, JSON::ArrayOf<int>&);
     
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);
