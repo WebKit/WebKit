@@ -1,3 +1,21 @@
+2019-02-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Occasional crash under WebCore::CSSStyleSheet::item called from Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=194671
+        <rdar://problem/47628191>
+
+        Reviewed by Devin Rousso.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::item):
+        A crash may happen if the m_childRuleCSSOMWrappers Vector gets out of
+        sync with the m_contents list of rules. In particular if the wrappers
+        vector is shorter than the rule list. We tried exercising code paths
+        that modify these lists but were not able to reproduce the crash.
+        To avoid a crash we can make this access safer and avoid the original
+        overflow. At the same time we will keep and promote the assertion that
+        would catch the lists getting out of sync in debug builds.
+
 2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed build fix for WinCairo Debug after r241559.
