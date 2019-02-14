@@ -1379,6 +1379,10 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 {
     SetForScope<bool> suspensionScope(m_isSuspending, true);
 
+#if ENABLE(VIDEO)
+    suspendAllMediaBuffering();
+#endif
+
     if (!m_suppressMemoryPressureHandler)
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
 
@@ -1435,7 +1439,11 @@ void WebProcess::cancelPrepareToSuspend()
 #if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);
 #endif
-    
+
+#if ENABLE(VIDEO)
+    resumeAllMediaBuffering();
+#endif
+
     // If we've already finished cleaning up and sent ProcessReadyToSuspend, we
     // shouldn't send DidCancelProcessSuspension; the UI process strictly expects one or the other.
     if (!m_pageMarkingLayersAsVolatileCounter)
@@ -1499,6 +1507,10 @@ void WebProcess::processDidResume()
     
 #if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);
+#endif
+
+#if ENABLE(VIDEO)
+    resumeAllMediaBuffering();
 #endif
 }
 
@@ -1749,6 +1761,20 @@ void WebProcess::removeMockMediaDevice(const String& persistentId)
 void WebProcess::resetMockMediaDevices()
 {
     MockRealtimeMediaSourceCenter::resetDevices();
+}
+#endif
+
+#if ENABLE(VIDEO)
+void WebProcess::suspendAllMediaBuffering()
+{
+    for (auto& page : m_pageMap.values())
+        page->suspendAllMediaBuffering();
+}
+
+void WebProcess::resumeAllMediaBuffering()
+{
+    for (auto& page : m_pageMap.values())
+        page->resumeAllMediaBuffering();
 }
 #endif
 

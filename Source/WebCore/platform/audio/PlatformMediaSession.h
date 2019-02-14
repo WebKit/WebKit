@@ -113,6 +113,9 @@ public:
 
     void pauseSession();
     void stopSession();
+
+    virtual void suspendBuffering() { }
+    virtual void resumeBuffering() { }
     
 #if ENABLE(VIDEO)
     uint64_t uniqueIdentifier() const;

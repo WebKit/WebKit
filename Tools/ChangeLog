@@ -1,3 +1,14 @@
+2019-02-13  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Media elements will restart network buffering just before suspending
+        https://bugs.webkit.org/show_bug.cgi?id=193691
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm: Added.
+        (TEST):
+
 2019-02-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Fetch builder id to name mapping
