@@ -200,9 +200,6 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     // immediately so that the UIProcess can update UI, including the position of the caret.
     bool needsLayout = !frame.view() || frame.view()->needsLayout();
     bool requiresPostLayoutData = frame.editor().hasComposition();
-#if !PLATFORM(IOSMAC)
-    requiresPostLayoutData |= [UIKeyboard isInHardwareKeyboardMode];
-#endif
     if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && needsLayout && !requiresPostLayoutData) {
         result.isMissingPostLayoutData = true;
         return;

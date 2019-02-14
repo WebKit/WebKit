@@ -4552,7 +4552,6 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
             || (_isChangingFocus && ![_focusedFormControlView isHidden])
 #else
             || _isChangingFocus
-            || [UIKeyboard isInHardwareKeyboardMode]
 #endif
 #if ENABLE(DRAG_SUPPORT)
             || _dragDropInteractionState.isPerformingDrop()
