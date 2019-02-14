@@ -1,5 +1,34 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241401. rdar://problem/48065612
+
+    Crash in Page::setActivityState because m_page is null
+    https://bugs.webkit.org/show_bug.cgi?id=194584
+    
+    Reviewed by Antti Koivisto.
+    
+    Add a null check to avoid the crash. Also add a debug assertion to help diagnose this in the future.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::setActivityState):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241401 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash in Page::setActivityState because m_page is null
+            https://bugs.webkit.org/show_bug.cgi?id=194584
+
+            Reviewed by Antti Koivisto.
+
+            Add a null check to avoid the crash. Also add a debug assertion to help diagnose this in the future.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::setActivityState):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241349. rdar://problem/48065639
 
     Null deref in userInterfaceLayoutDirection under ViewGestureController::handleSwipeGesture
