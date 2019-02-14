@@ -22,8 +22,10 @@
 
 import logging
 import os
+import re
 import subprocess
 
+import ews.common.util as util
 import ews.config as config
 
 _log = logging.getLogger(__name__)
@@ -49,3 +51,26 @@ class Buildbot():
             _log.warn('Error executing: {}, return code={}'.format(command, return_code))
 
         return return_code
+
+    @classmethod
+    def get_builder_id_to_name_mapping(cls):
+        builder_id_to_name_mapping = {}
+        builder_url = 'http://{}/api/v2/builders'.format(config.BUILDBOT_SERVER_HOST)
+        builders_data = util.fetch_data_from_url(builder_url)
+        if not builders_data:
+            return {}
+        for builder in builders_data.json().get('builders', []):
+            builder_id = builder['builderid']
+            builder_name = builder.get('name')
+            display_name = builder.get('description')
+            if not display_name:
+                display_name = Buildbot._get_display_name_from_builder_name(builder_name)
+            builder_id_to_name_mapping[builder_id] = {'builder_name': builder_name, 'display_name': display_name}
+        return builder_id_to_name_mapping
+
+    @classmethod
+    def _get_display_name_from_builder_name(cls, builder_name):
+        words = re.split('[, \-_:()]+', builder_name)
+        if not words:
+            return builder_name
+        return words[0].lower()

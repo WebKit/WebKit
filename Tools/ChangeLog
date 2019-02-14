@@ -1,3 +1,14 @@
+2019-02-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Fetch builder id to name mapping
+        https://bugs.webkit.org/show_bug.cgi?id=194355
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.get_builder_id_to_name_mapping):
+        (Buildbot._get_display_name_from_builder_name):
+
 2019-02-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Further restricting webarchive loads
