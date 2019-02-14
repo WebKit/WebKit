@@ -463,9 +463,13 @@ String WebFrame::innerText() const
 WebFrame* WebFrame::parentFrame() const
 {
     if (!m_coreFrame || !m_coreFrame->ownerElement())
-        return 0;
+        return nullptr;
 
-    return WebFrame::fromCoreFrame(*m_coreFrame->ownerElement()->document().frame());
+    auto* frame = m_coreFrame->ownerElement()->document().frame();
+    if (!frame)
+        return nullptr;
+
+    return WebFrame::fromCoreFrame(*frame);
 }
 
 Ref<API::Array> WebFrame::childFrames()
