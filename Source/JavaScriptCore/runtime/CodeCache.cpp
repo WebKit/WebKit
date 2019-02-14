@@ -170,7 +170,9 @@ void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCo
             return;
 
         FunctionExecutable* executable = unlinkedExecutable->link(vm, parentSource);
-        const SourceCode& source = executable->source();
+        // FIXME: We shouldn't need to create a FunctionExecutable just to get its source code
+        // https://bugs.webkit.org/show_bug.cgi?id=194576
+        SourceCode source = executable->source();
         UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, constructorKind, debuggerMode, error, unlinkedExecutable->parseMode());
         if (unlinkedFunctionCodeBlock)
             generateUnlinkedCodeBlockForFunctions(vm, unlinkedFunctionCodeBlock, source, debuggerMode, error);
