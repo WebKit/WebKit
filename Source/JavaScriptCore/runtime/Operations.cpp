@@ -52,13 +52,23 @@ NEVER_INLINE JSValue jsAddSlowCase(CallFrame* callFrame, JSValue v1, JSValue v2)
     RETURN_IF_EXCEPTION(scope, { });
 
     if (p1.isString()) {
-        JSString* p2String = p2.toString(callFrame);
+        if (p2.isCell()) {
+            JSString* p2String = p2.toString(callFrame);
+            RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, jsString(callFrame, asString(p1), p2String));
+        }
+        String p2String = p2.toWTFString(callFrame);
         RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, jsString(callFrame, asString(p1), p2String));
     }
 
     if (p2.isString()) {
-        JSString* p1String = p1.toString(callFrame);
+        if (p1.isCell()) {
+            JSString* p1String = p1.toString(callFrame);
+            RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, jsString(callFrame, p1String, asString(p2)));
+        }
+        String p1String = p1.toWTFString(callFrame);
         RETURN_IF_EXCEPTION(scope, { });
         RELEASE_AND_RETURN(scope, jsString(callFrame, p1String, asString(p2)));
     }

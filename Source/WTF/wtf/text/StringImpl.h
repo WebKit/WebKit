@@ -485,6 +485,8 @@ public:
 #endif
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+
+    template<typename T> static size_t headerSize() { return tailOffset<T>(); }
     
 protected:
     ~StringImpl();

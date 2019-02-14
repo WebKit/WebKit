@@ -503,12 +503,7 @@ EncodedJSValue JIT_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
     
-    ASSERT(!op1.isNumber() || !op2.isNumber());
-    
-    if (op1.isString() && !op2.isObject())
-        return JSValue::encode(jsString(exec, asString(op1), op2.toString(exec)));
-
-    return JSValue::encode(jsAddSlowCase(exec, op1, op2));
+    return JSValue::encode(jsAddNonNumber(exec, op1, op2));
 }
 
 EncodedJSValue JIT_OPERATION operationValueDiv(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

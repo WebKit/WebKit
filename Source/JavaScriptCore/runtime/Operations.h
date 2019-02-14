@@ -37,6 +37,75 @@ JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
 bool jsIsObjectTypeOrNull(CallFrame*, JSValue);
 size_t normalizePrototypeChain(CallFrame*, JSCell*, bool& sawPolyProto);
 
+ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, JSString* s2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length1 = u1.length();
+    if (!length1)
+        return s2;
+    unsigned length2 = s2->length();
+    if (!length2)
+        return jsString(&vm, u1);
+    static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
+    if (sumOverflows<int32_t>(length1, length2)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+
+    // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2
+    // (2) Cost of making JSRopeString: sizeof(JSString) (for u1) + sizeof(JSRopeString)
+    // We do not account u1 cost in (2) since u1 may be shared StringImpl, and it may not introduce additional cost.
+    // We conservatively consider the cost of u1. Currently, we are not considering about is8Bit() case because 16-bit
+    // strings are relatively rare. But we can do that if we need to consider it.
+    if (s2->isRope() || (StringImpl::headerSize<LChar>() + length1 + length2) >= sizeof(JSRopeString))
+        return JSRopeString::create(vm, jsString(&vm, u1), s2);
+
+    ASSERT(!s2->isRope());
+    const String& u2 = s2->value(exec);
+    scope.assertNoException();
+    String newString = tryMakeString(u1, u2);
+    if (!newString) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+}
+
+ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, const String& u2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length1 = s1->length();
+    if (!length1)
+        return jsString(&vm, u2);
+    unsigned length2 = u2.length();
+    if (!length2)
+        return s1;
+    static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
+    if (sumOverflows<int32_t>(length1, length2)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+
+    // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2
+    // (2) Cost of making JSRopeString: sizeof(JSString) (for u2) + sizeof(JSRopeString)
+    if (s1->isRope() || (StringImpl::headerSize<LChar>() + length1 + length2) >= sizeof(JSRopeString))
+        return JSRopeString::create(vm, s1, jsString(&vm, u2));
+
+    ASSERT(!s1->isRope());
+    const String& u1 = s1->value(exec);
+    scope.assertNoException();
+    String newString = tryMakeString(u1, u2);
+    if (!newString) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
+}
+
 ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2)
 {
     VM& vm = exec->vm();
@@ -79,7 +148,38 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, JSString* s1, JSString* s2, JS
         throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
+
     return JSRopeString::create(vm, s1, s2, s3);
+}
+
+ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length1 = u1.length();
+    if (!length1)
+        return jsString(&vm, u2);
+    unsigned length2 = u2.length();
+    if (!length2)
+        return jsString(&vm, u1);
+    static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
+    if (sumOverflows<int32_t>(length1, length2)) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+
+    // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2
+    // (2) Cost of making JSRopeString: sizeof(JSString) (for u1) + sizeof(JSString) (for u2) + sizeof(JSRopeString)
+    if ((StringImpl::headerSize<LChar>() + length1 + length2) >= (sizeof(JSRopeString) + sizeof(JSString)))
+        return JSRopeString::create(vm, jsString(&vm, u1), jsString(&vm, u2));
+
+    String newString = tryMakeString(u1, u2);
+    if (!newString) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+    return JSString::create(vm, newString.releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String& u2, const String& u3)
@@ -95,13 +195,13 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
     ASSERT(length3 <= JSString::MaxLength);
 
     if (!length1)
-        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u2), jsString(vm, u3)));
+        RELEASE_AND_RETURN(scope, jsString(exec, u2, u3));
 
     if (!length2)
-        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u1), jsString(vm, u3)));
+        RELEASE_AND_RETURN(scope, jsString(exec, u1, u3));
 
     if (!length3)
-        RELEASE_AND_RETURN(scope, jsString(exec, jsString(vm, u1), jsString(vm, u2)));
+        RELEASE_AND_RETURN(scope, jsString(exec, u1, u2));
 
     static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
     if (sumOverflows<int32_t>(length1, length2, length3)) {
@@ -109,7 +209,17 @@ ALWAYS_INLINE JSString* jsString(ExecState* exec, const String& u1, const String
         return nullptr;
     }
 
-    return JSRopeString::create(*vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
+    // (1) Cost of making JSString    : sizeof(JSString) (for new string) + sizeof(StringImpl header) + length1 + length2 + length3
+    // (2) Cost of making JSRopeString: sizeof(JSString) (for u1) + sizeof(JSString) (for u2) + sizeof(JSString) (for u3) + sizeof(JSRopeString)
+    if ((StringImpl::headerSize<LChar>() + length1 + length2 + length3) >= (sizeof(JSRopeString) + sizeof(JSString) * 2))
+        return JSRopeString::create(*vm, jsString(vm, u1), jsString(vm, u2), jsString(vm, u3));
+
+    String newString = tryMakeString(u1, u2, u3);
+    if (!newString) {
+        throwOutOfMemoryError(exec, scope);
+        return nullptr;
+    }
+    return JSString::create(*vm, newString.releaseImpl().releaseNonNull());
 }
 
 ALWAYS_INLINE JSValue jsStringFromRegisterArray(ExecState* exec, Register* strings, unsigned count)
@@ -325,16 +435,31 @@ ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
 //    13962   Add case: 5 3
 //    4000    Add case: 3 5
 
+
+ALWAYS_INLINE JSValue jsAddNonNumber(CallFrame* callFrame, JSValue v1, JSValue v2)
+{
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(!v1.isNumber() || !v2.isNumber());
+
+    if (LIKELY(v1.isString() && !v2.isObject())) {
+        if (v2.isString())
+            RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), asString(v2)));
+        String s2 = v2.toWTFString(callFrame);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, jsString(callFrame, asString(v1), s2));
+    }
+
+    // All other cases are pretty uncommon
+    RELEASE_AND_RETURN(scope, jsAddSlowCase(callFrame, v1, v2));
+}
+
 ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 {
     if (v1.isNumber() && v2.isNumber())
         return jsNumber(v1.asNumber() + v2.asNumber());
         
-    if (v1.isString() && !v2.isObject())
-        return jsString(callFrame, asString(v1), v2.toString(callFrame));
-
-    // All other cases are pretty uncommon
-    return jsAddSlowCase(callFrame, v1, v2);
+    return jsAddNonNumber(callFrame, v1, v2);
 }
 
 ALWAYS_INLINE JSValue jsSub(ExecState* exec, JSValue v1, JSValue v2)
