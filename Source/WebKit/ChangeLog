@@ -1,3 +1,14 @@
+2019-02-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Open sandbox for certain calls.
+        https://bugs.webkit.org/show_bug.cgi?id=194626
+
+        Reviewed by Brent Fulgham.
+
+        Reporting shows that certain calls needs to be allowed in the sandbox.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-02-14  Chris Fleizach  <cfleizach@apple.com>
 
         AX: ARIA Reflection was disabled in error
