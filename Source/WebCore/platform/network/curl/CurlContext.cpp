@@ -87,7 +87,7 @@ CurlContext::CurlContext()
     m_scheduler = std::make_unique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
 #ifndef NDEBUG
-    m_verbose = Environment::get("DEBUG_CURL");
+    m_verbose = !!Environment::get("DEBUG_CURL");
 
     if (const char* logFile = Environment::getRaw("CURL_LOG_FILE"))
         m_logFile = fopen(logFile, "a");
