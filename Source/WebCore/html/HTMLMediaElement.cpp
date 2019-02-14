@@ -3722,10 +3722,10 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (!(volume >= 0 && volume <= 1))
         return Exception { IndexSizeError };
 
-#if !PLATFORM(IOS_FAMILY)
     if (m_volume == volume)
         return { };
 
+#if !PLATFORM(IOS_FAMILY)
     if (volume && processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 
@@ -3738,7 +3738,19 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
+#else
+    auto oldVolume = m_volume;
+    m_volume = volume;
+
+    if (m_volumeRevertTaskQueue.hasPendingTask())
+        return { };
+
+    m_volumeRevertTaskQueue.scheduleTask([this, oldVolume] {
+        m_volume = oldVolume;
+    });
+
 #endif
+    
     return { };
 }
 
@@ -5527,6 +5539,9 @@ void HTMLMediaElement::cancelPendingTasks()
     m_updateMediaStateTask.cancelTask();
     m_mediaEngineUpdatedTask.cancelTask();
     m_updatePlayStateTask.cancelTask();
+#if PLATFORM(IOS_FAMILY)
+    m_volumeRevertTaskQueue.cancelTask();
+#endif
 }
 
 void HTMLMediaElement::userCancelledLoad()
@@ -5705,6 +5720,9 @@ void HTMLMediaElement::closeTaskQueues()
     m_encryptedMediaQueue.close();
 #endif
     m_asyncEventQueue.close();
+#if PLATFORM(IOS_FAMILY)
+    m_volumeRevertTaskQueue.close();
+#endif
 }
 
 void HTMLMediaElement::contextDestroyed()

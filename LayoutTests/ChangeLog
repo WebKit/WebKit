@@ -1,3 +1,14 @@
+2019-02-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Add a hack to work around buggy video control library
+        https://bugs.webkit.org/show_bug.cgi?id=194615
+        <rdar://problem/46146946>
+
+        Reviewed by Jer Noble.
+
+        * media/ios/video-volume-ios-quirk-expected.txt: Added.
+        * media/ios/video-volume-ios-quirk.html: Added.
+
 2019-02-13  Jer Noble  <jer.noble@apple.com>
 
         Entering fullscreen inside a shadow root will not set fullscreen pseudoclasses outside of root
