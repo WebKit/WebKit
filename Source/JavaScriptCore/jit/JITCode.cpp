@@ -172,7 +172,7 @@ DirectJITCode::~DirectJITCode()
 {
 }
 
-void DirectJITCode::initializeCodeRef(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck)
+void DirectJITCode::initializeCodeRefForDFG(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck)
 {
     RELEASE_ASSERT(!m_ref);
     m_ref = ref;
@@ -208,12 +208,6 @@ NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType, Intrin
 
 NativeJITCode::~NativeJITCode()
 {
-}
-
-void NativeJITCode::initializeCodeRef(CodeRef<JSEntryPtrTag> ref)
-{
-    ASSERT(!m_ref);
-    m_ref = ref;
 }
 
 JITCode::CodePtr<JSEntryPtrTag> NativeJITCode::addressForCall(ArityCheckMode arity)

@@ -127,6 +127,8 @@ public:
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
 
     Optional<CodeOrigin> findPC(CodeBlock*, void* pc) override;
+
+    using DirectJITCode::initializeCodeRefForDFG;
     
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().

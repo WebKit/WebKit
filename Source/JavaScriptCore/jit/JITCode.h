@@ -236,9 +236,10 @@ public:
     DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, Intrinsic); // For generated thunk.
     virtual ~DirectJITCode();
     
-    void initializeCodeRef(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
-
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
+
+protected:
+    void initializeCodeRefForDFG(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
 
 private:
     CodePtr<JSEntryPtrTag> m_withArityCheck;
@@ -249,8 +250,6 @@ public:
     NativeJITCode(JITType);
     NativeJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic);
     virtual ~NativeJITCode();
-    
-    void initializeCodeRef(CodeRef<JSEntryPtrTag>);
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
 };

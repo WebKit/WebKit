@@ -1,3 +1,29 @@
+2019-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Non-JIT entrypoints should share NativeJITCode per entrypoint type
+        https://bugs.webkit.org/show_bug.cgi?id=194659
+
+        Reviewed by Mark Lam.
+
+        Non-JIT entrypoints create NativeJITCode every time it is called. But it is meaningless since these entry point code are identical.
+        We should create one per entrypoint type (for function, we should have CodeForCall and CodeForConstruct) and continue to use them.
+        And we use NativeJITCode instead of DirectJITCode if it does not have difference between usual entrypoint and arity check entrypoint.
+
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * jit/JITCode.cpp:
+        (JSC::DirectJITCode::initializeCodeRefForDFG):
+        (JSC::DirectJITCode::initializeCodeRef): Deleted.
+        (JSC::NativeJITCode::initializeCodeRef): Deleted.
+        * jit/JITCode.h:
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint): Retagged is removed since the tag is the same.
+
 2019-02-14  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Add environment variable helpers
