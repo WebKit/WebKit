@@ -159,8 +159,12 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
 
 void CodeCache::write(VM& vm)
 {
-    for (const auto& it : m_sourceCode)
+    for (auto& it : m_sourceCode) {
+        if (it.value.written)
+            continue;
+        it.value.written = true;
         writeCodeBlock(vm, it.key, it.value);
+    }
 }
 
 void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, DebuggerMode debuggerMode, ParserError& error)
