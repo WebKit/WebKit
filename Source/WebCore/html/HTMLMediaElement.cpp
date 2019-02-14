@@ -3722,11 +3722,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (!(volume >= 0 && volume <= 1))
         return Exception { IndexSizeError };
 
-#if PLATFORM(IOS_FAMILY)
-    if (!processingUserGestureForMedia())
-        return { };
-#endif
-
+#if !PLATFORM(IOS_FAMILY)
     if (m_volume == volume)
         return { };
 
@@ -3742,7 +3738,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
     }
-
+#endif
     return { };
 }
 
@@ -4933,9 +4929,9 @@ void HTMLMediaElement::mediaPlayerVolumeChanged(MediaPlayer*)
 
     beginProcessingMediaPlayerCallback();
     if (m_player) {
-        double volume = m_player->volume();
-        if (volume != m_volume) {
-            m_volume = volume;
+        double vol = m_player->volume();
+        if (vol != m_volume) {
+            m_volume = vol;
             updateVolume();
             scheduleEvent(eventNames().volumechangeEvent);
         }
@@ -5348,7 +5344,14 @@ void HTMLMediaElement::updateVolume()
 {
     if (!m_player)
         return;
-
+#if PLATFORM(IOS_FAMILY)
+    // Only the user can change audio volume so update the cached volume and post the changed event.
+    float volume = m_player->volume();
+    if (m_volume != volume) {
+        m_volume = volume;
+        scheduleEvent(eventNames().volumechangeEvent);
+    }
+#else
     // Avoid recursion when the player reports volume changes.
     if (!processingMediaPlayerCallback()) {
         Page* page = document().page();
@@ -5377,6 +5380,7 @@ void HTMLMediaElement::updateVolume()
 
     if (hasMediaControls())
         mediaControls()->changedVolume();
+#endif
 }
 
 void HTMLMediaElement::scheduleUpdatePlayState()

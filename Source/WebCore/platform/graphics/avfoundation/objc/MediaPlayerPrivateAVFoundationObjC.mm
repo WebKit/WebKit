@@ -1380,14 +1380,15 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
 void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
 {
 #if PLATFORM(IOS_FAMILY)
-    if ([[PAL::getUIDeviceClass() currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad)
-        return;
-#endif
+    UNUSED_PARAM(volume);
+    return;
+#else
 
     if (!m_avPlayer)
         return;
 
     [m_avPlayer.get() setVolume:volume];
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setMuted(bool muted)
