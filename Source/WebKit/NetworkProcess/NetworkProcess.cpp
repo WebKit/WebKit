@@ -1774,9 +1774,10 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
     parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }
 
-void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows)
+void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows, CompletionHandler<void()>&& completionHandler)
 {
     DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allows);
+    completionHandler();
 }
 
 void NetworkProcess::logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, ShouldSample shouldSample)
@@ -1849,10 +1850,10 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
         connection->cleanupForSuspension([delayedTaskCounter] { });
 }
 
-void NetworkProcess::processWillSuspendImminently(bool& handled)
+void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
 {
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    handled = true;
+    completionHandler(true);
 }
 
 void NetworkProcess::prepareToSuspend()

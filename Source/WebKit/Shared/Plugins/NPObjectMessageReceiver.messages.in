@@ -23,16 +23,16 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 messages -> NPObjectMessageReceiver LegacyReceiver {
-    Deallocate() -> () LegacySync
-    HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue) LegacySync
-    Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
-    InvokeDefault(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
-    HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) LegacySync
-    GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
-    SetProperty(WebKit::NPIdentifierData propertyName, WebKit::NPVariantData propertyValueData) -> (bool returnValue) LegacySync
-    RemoveProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) LegacySync
-    Enumerate() -> (bool returnValue, Vector<WebKit::NPIdentifierData> identifiersData) LegacySync
-    Construct(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) LegacySync
+    Deallocate() -> () Delayed
+    HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue) Delayed
+    Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) Delayed
+    InvokeDefault(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) Delayed
+    HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) Delayed
+    GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData) Delayed
+    SetProperty(WebKit::NPIdentifierData propertyName, WebKit::NPVariantData propertyValueData) -> (bool returnValue) Delayed
+    RemoveProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue) Delayed
+    Enumerate() -> (bool returnValue, Vector<WebKit::NPIdentifierData> identifiersData) Delayed
+    Construct(Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData) Delayed
 }
 
 #endif

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPObjectMessageReceiver_h
-#define NPObjectMessageReceiver_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -53,16 +52,16 @@ public:
     
 private:
     // Message handlers.
-    void deallocate();
-    void hasMethod(const NPIdentifierData&, bool& returnValue);
-    void invoke(const NPIdentifierData&, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
-    void invokeDefault(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
-    void hasProperty(const NPIdentifierData&, bool& returnValue);
-    void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& resultData);
-    void setProperty(const NPIdentifierData&, const NPVariantData& propertyValueData, bool& returnValue);
-    void removeProperty(const NPIdentifierData&, bool& returnValue);
-    void enumerate(bool& returnValue, Vector<NPIdentifierData>& identifiersData);
-    void construct(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
+    void deallocate(CompletionHandler<void()>&&);
+    void hasMethod(const NPIdentifierData&, CompletionHandler<void(bool)>&&);
+    void invoke(const NPIdentifierData&, const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&&);
+    void invokeDefault(const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&&);
+    void hasProperty(const NPIdentifierData&, CompletionHandler<void(bool)>&&);
+    void getProperty(const NPIdentifierData&, CompletionHandler<void(bool, NPVariantData&&)>&&);
+    void setProperty(const NPIdentifierData&, const NPVariantData& propertyValueData, CompletionHandler<void(bool)>&&);
+    void removeProperty(const NPIdentifierData&, CompletionHandler<void(bool)>&&);
+    void enumerate(CompletionHandler<void(bool, Vector<NPIdentifierData>&&)>&&);
+    void construct(const Vector<NPVariantData>& argumentsData, CompletionHandler<void(bool, NPVariantData&&)>&&);
 
     NPRemoteObjectMap* m_npRemoteObjectMap;
     Plugin* m_plugin;
@@ -73,6 +72,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-
-#endif // NPObjectMessageReceiver_h

@@ -60,7 +60,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetQOS(int latencyQOS, int throughputQOS)
     SetStorageAccessAPIEnabled(bool enabled)
 #endif
-    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () LegacySync
+    SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Delayed
 
     SyncAllCookies()
 
@@ -75,7 +75,7 @@ messages -> NetworkProcess LegacyReceiver {
     ProcessDidTransitionToBackground()
     ProcessDidTransitionToForeground()
 
-    ProcessWillSuspendImminently() -> (bool handled) LegacySync
+    ProcessWillSuspendImminently() -> (bool handled) Delayed
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()

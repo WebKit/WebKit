@@ -69,28 +69,28 @@ messages -> PluginControllerProxy LegacyReceiver {
     HandleMouseEvent(WebKit::WebMouseEvent mouseEvent)
     
     # Sent when a mouse wheel event should be processed.
-    HandleWheelEvent(WebKit::WebWheelEvent wheelEvent) -> (bool handled) LegacySync
+    HandleWheelEvent(WebKit::WebWheelEvent wheelEvent) -> (bool handled) Delayed
 
     # Sent when a mouse enter event should be processed.
-    HandleMouseEnterEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled) LegacySync
+    HandleMouseEnterEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled) Delayed
     
     # Sent when a mouse leave event should be processed.
-    HandleMouseLeaveEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled) LegacySync
+    HandleMouseLeaveEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled) Delayed
 
     # Sent when a keyboard should be processed.
-    HandleKeyboardEvent(WebKit::WebKeyboardEvent keyboardEvent) -> (bool handled) LegacySync
+    HandleKeyboardEvent(WebKit::WebKeyboardEvent keyboardEvent) -> (bool handled) Delayed
     
     # Sent when an editing command should be processed.
-    HandleEditingCommand(String commandName, String argument) -> (bool handled) LegacySync
+    HandleEditingCommand(String commandName, String argument) -> (bool handled) Delayed
     
     # Return whether or not a plugin wants to enable the given editing command.
-    IsEditingCommandEnabled(String commandName) -> (bool enabled) LegacySync
+    IsEditingCommandEnabled(String commandName) -> (bool enabled) Delayed
     
     # Return whether or not a plugin wants to handle page scale factor itself.
-    HandlesPageScaleFactor() -> (bool enabled) LegacySync
+    HandlesPageScaleFactor() -> (bool enabled) Delayed
 
     # Return whether or not a plugin wants page scale, page zoom, and text zoom all to affect page scale.
-    RequiresUnifiedScaleFactor() -> (bool required) LegacySync
+    RequiresUnifiedScaleFactor() -> (bool required) Delayed
 
     # Sent when the plug-in focus changes.
     SetFocus(bool isFocused)
@@ -99,10 +99,10 @@ messages -> PluginControllerProxy LegacyReceiver {
     DidUpdate()
 
     # Paint the entire plug-in.
-    PaintEntirePlugin() -> () LegacySync
+    PaintEntirePlugin() -> () Delayed
 
     # Get a reference to the plug-in's scriptable NPObject.
-    GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID) LegacySync
+    GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID) Delayed
 
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)
@@ -122,10 +122,10 @@ messages -> PluginControllerProxy LegacyReceiver {
 #endif
 
     # Does the plugin support snapshotting?
-    SupportsSnapshotting() -> (bool isSupported) LegacySync
+    SupportsSnapshotting() -> (bool isSupported) Delayed
 
     # Return a snapshot of the plugin.
-    Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle) LegacySync
+    Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle) Delayed
 
     # Sent when storage blocking policy changes
     StorageBlockingStateChanged(bool storageBlockingEnabled)
@@ -134,7 +134,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 
     # Gets the string representating the form value of the plug-in
-    GetFormValue() -> (bool returnValue, String formValue) LegacySync
+    GetFormValue() -> (bool returnValue, String formValue) Delayed
 
     # Sent when the browser wants to mute or unmute the plugin.
     MutedStateChanged(bool muted)

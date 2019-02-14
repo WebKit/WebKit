@@ -154,7 +154,7 @@ public:
 
     bool canHandleHTTPSServerTrustEvaluation() const { return m_canHandleHTTPSServerTrustEvaluation; }
 
-    void processWillSuspendImminently(bool& handled);
+    void processWillSuspendImminently(CompletionHandler<void(bool)>&&);
     void prepareToSuspend();
     void cancelPrepareToSuspend();
     void processDidResume();
@@ -363,7 +363,7 @@ private:
     void setCanHandleHTTPSServerTrustEvaluation(bool);
     void getNetworkProcessStatistics(uint64_t callbackID);
     void clearCacheForAllOrigins(uint32_t cachesToClear);
-    void setAllowsAnySSLCertificateForWebSocket(bool);
+    void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
     
     void syncAllCookies();
     void didSyncAllCookies();

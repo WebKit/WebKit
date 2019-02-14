@@ -23,7 +23,7 @@
 messages -> SecItemShimProxy {
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemRequest(WebKit::SecItemRequestData request) -> (WebKit::SecItemResponseData response) LegacySync
+    SecItemRequest(WebKit::SecItemRequestData request) -> (WebKit::SecItemResponseData response) Delayed
 #endif
 
 }
