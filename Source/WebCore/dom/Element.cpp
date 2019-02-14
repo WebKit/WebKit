@@ -3408,7 +3408,9 @@ bool Element::childShouldCreateRenderer(const Node& child) const
 static Element* parentCrossingFrameBoundaries(const Element* element)
 {
     ASSERT(element);
-    return element->parentElement() ? element->parentElement() : element->document().ownerElement();
+    if (auto* parent = element->parentElementInComposedTree())
+        return parent;
+    return element->document().ownerElement();
 }
 #endif
 
