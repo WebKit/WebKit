@@ -113,7 +113,7 @@ private:
 DOMTimerFireState* DOMTimerFireState::current = nullptr;
 
 struct NestedTimersMap {
-    typedef HashMap<int, DOMTimer*>::const_iterator const_iterator;
+    typedef HashMap<int, Ref<DOMTimer>>::const_iterator const_iterator;
 
     static NestedTimersMap* instanceForContext(ScriptExecutionContext& context)
     {
@@ -139,10 +139,10 @@ struct NestedTimersMap {
         nestedTimers.clear();
     }
 
-    void add(int timeoutId, DOMTimer* timer)
+    void add(int timeoutId, Ref<DOMTimer>&& timer)
     {
         if (isTrackingNestedTimers)
-            nestedTimers.add(timeoutId, timer);
+            nestedTimers.add(timeoutId, WTFMove(timer));
     }
 
     void remove(int timeoutId)
@@ -162,7 +162,7 @@ private:
     }
 
     static bool isTrackingNestedTimers;
-    HashMap<int /* timeoutId */, DOMTimer*> nestedTimers;
+    HashMap<int /* timeoutId */, Ref<DOMTimer>> nestedTimers;
 };
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
@@ -235,7 +235,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
 
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
-        nestedTimers->add(timer->m_timeoutId, timer);
+        nestedTimers->add(timer->m_timeoutId, *timer);
 
     return timer->m_timeoutId;
 }
@@ -390,8 +390,8 @@ void DOMTimer::fired()
 
     // Check if we should throttle nested single-shot timers.
     if (nestedTimers) {
-        for (auto& keyValue : *nestedTimers) {
-            auto* timer = keyValue.value;
+        for (auto& idAndTimer : *nestedTimers) {
+            auto& timer = idAndTimer.value;
             if (timer->isActive() && !timer->repeatInterval())
                 timer->updateThrottlingStateIfNecessary(fireState);
         }
