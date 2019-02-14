@@ -67,6 +67,9 @@ public:
     bool wasAutomaticProcessWarmingSetByClient() const { return !!m_isAutomaticProcessWarmingEnabledByClient; }
     void setIsAutomaticProcessWarmingEnabled(bool value) { m_isAutomaticProcessWarmingEnabledByClient = value; }
 
+    void setUsesWebProcessCache(bool value) { m_usesWebProcessCache = value; }
+    bool usesWebProcessCache() const { return m_usesWebProcessCache; }
+
     bool clientWouldBenefitFromAutomaticProcessPrewarming() const { return m_clientWouldBenefitFromAutomaticProcessPrewarming; }
     void setClientWouldBenefitFromAutomaticProcessPrewarming(bool value) { m_clientWouldBenefitFromAutomaticProcessPrewarming = value; }
 
@@ -223,6 +226,7 @@ private:
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
     Optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
+    bool m_usesWebProcessCache { false };
     bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_isJITEnabled { true };

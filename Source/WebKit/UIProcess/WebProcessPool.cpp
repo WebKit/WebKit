@@ -69,6 +69,7 @@
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 #include "WebPreferencesKeys.h"
+#include "WebProcessCache.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
@@ -255,6 +256,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
 #endif
+    , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -313,6 +315,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
 WebProcessPool::~WebProcessPool()
 {
+    m_webProcessCache->clear();
+
     bool removed = processPools().removeFirst(this);
     ASSERT_UNUSED(removed, removed);
 
@@ -453,6 +457,11 @@ void WebProcessPool::sendMemoryPressureEvent(bool isCritical)
 void WebProcessPool::textCheckerStateChanged()
 {
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
+}
+
+void WebProcessPool::setApplicationIsActive(bool isActive)
+{
+    m_webProcessCache->setApplicationIsActive(isActive);
 }
 
 void WebProcessPool::screenPropertiesStateChanged()
@@ -1154,7 +1163,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         enableProcessSwapOnCrossSiteNavigation = false;
 #endif
 
+    bool wasProcessSwappingOnNavigationEnabled = m_configuration->processSwapsOnNavigation();
     m_configuration->setProcessSwapsOnNavigationFromExperimentalFeatures(enableProcessSwapOnCrossSiteNavigation);
+    if (wasProcessSwappingOnNavigationEnabled != m_configuration->processSwapsOnNavigation())
+        m_webProcessCache->updateCapacity(*this);
+
     m_configuration->setShouldCaptureAudioInUIProcess(page->preferences().captureAudioInUIProcessEnabled());
     m_configuration->setShouldCaptureVideoInUIProcess(page->preferences().captureVideoInUIProcessEnabled());
 
@@ -1319,6 +1332,10 @@ WebProcessPool::Statistics& WebProcessPool::statistics()
 
 void WebProcessPool::handleMemoryPressureWarning(Critical)
 {
+    RELEASE_LOG(PerformanceLogging, "%p - WebProcessPool::handleMemoryPressureWarning", this);
+
+    m_webProcessCache->clear();
+
     if (m_prewarmedProcess)
         m_prewarmedProcess->shutDown();
     ASSERT(!m_prewarmedProcess);
@@ -2153,14 +2170,26 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
     auto& targetURL = navigation.currentRequest().url();
+    auto registrableDomain = toRegistrableDomain(targetURL);
 
-    auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
-        if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
+    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetURL, registrableDomain] () -> Ref<WebProcessProxy> {
+        if (auto process = webProcessCache().takeProcess(registrableDomain, page->websiteDataStore()))
+            return process.releaseNonNull();
+
+        // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
+        if (auto process = findReusableSuspendedPageProcess(registrableDomain, page)) {
+            RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
+            return process.releaseNonNull();
+        }
+
+        if (auto process = tryTakePrewarmedProcess(page->websiteDataStore())) {
+            RELEASE_LOG(ProcessSwapping, "Using prewarmed process %i", process->processIdentifier());
             tryPrewarmWithDomainInformation(*process, targetURL);
             return process.releaseNonNull();
         }
 
-        return createNewWebProcess(page.websiteDataStore());
+        RELEASE_LOG(ProcessSwapping, "Launching a new process");
+        return createNewWebProcess(page->websiteDataStore());
     };
 
     if (usesSingleWebProcess())
@@ -2199,11 +2228,17 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
             });
         }
 
-        if (RefPtr<WebProcessProxy> process = WebProcessProxy::processForIdentifier(targetItem->itemID().processIdentifier)) {
+        if (RefPtr<WebProcessProxy> process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
             // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
             // In the case where this WebProcess has a SuspendedPageProxy for this WebPage, we can throw it away to support
             // WebProcess re-use.
             removeAllSuspendedPagesForPage(page, process.get());
+
+            // Make sure we remove the process from the cache if it is in there since we're about to use it.
+            if (process->isInProcessCache()) {
+                auto removedProcess = webProcessCache().takeProcess(process->registrableDomain(), process->websiteDataStore());
+                ASSERT_UNUSED(removedProcess, removedProcess.get() == process.get());
+            }
 
             return completionHandler(process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s);
         }
@@ -2228,7 +2263,6 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
     String reason = "Navigation is cross-site"_s;
     
-    auto registrableDomain = toRegistrableDomain(targetURL);
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
         LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.utf8().data());
 
@@ -2247,22 +2281,26 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         }
     }
 
-    // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-    auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
-        return suspendedPage->registrableDomain() == registrableDomain;
-    });
-    if (it != m_suspendedPages.end()) {
-        Ref<WebProcessProxy> process = (*it)->process();
-
-        // FIXME: If the SuspendedPage is for this page, then we need to destroy the suspended page as we do not support having
-        // multiple WebPages with the same ID in a given WebProcess currently (https://bugs.webkit.org/show_bug.cgi?id=191166).
-        if (&(*it)->page() == &page)
-            m_suspendedPages.remove(it);
-
-        return completionHandler(WTFMove(process), nullptr, reason);
-    }
-
     return completionHandler(createNewProcess(), nullptr, reason);
+}
+
+RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const String& registrableDomain, WebPageProxy& page)
+{
+    auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
+        return suspendedPage->registrableDomain() == registrableDomain && &suspendedPage->process().websiteDataStore() == &page.websiteDataStore();
+    });
+    if (it == m_suspendedPages.end())
+        return nullptr;
+
+    Ref<WebProcessProxy> process = (*it)->process();
+
+    // FIXME: If the SuspendedPage is for this page, then we need to destroy the suspended page as we do not support having
+    // multiple WebPages with the same ID in a given WebProcess currently (https://bugs.webkit.org/show_bug.cgi?id=191166).
+    if (&(*it)->page() == &page)
+        m_suspendedPages.remove(it);
+
+
+    return WTFMove(process);
 }
 
 void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)

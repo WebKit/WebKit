@@ -277,6 +277,7 @@ UIProcess/WebPageInspectorTargetAgent.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPreferences.cpp
+UIProcess/WebProcessCache.cpp
 UIProcess/WebProcessLifetimeObserver.cpp
 UIProcess/WebProcessLifetimeTracker.cpp
 UIProcess/WebProcessPool.cpp

@@ -108,6 +108,10 @@ public:
 
     WebProcessPool& processPool() const { ASSERT(m_processPool); return *m_processPool.get(); }
 
+    String registrableDomain() const { return m_registrableDomain.valueOr(String()); }
+    void setIsInProcessCache(bool);
+    bool isInProcessCache() const { return m_isInProcessCache; }
+
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2
     WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
 
@@ -126,6 +130,7 @@ public:
 
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
+    unsigned provisionalPageCount() const { return m_provisionalPages.size(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
@@ -249,6 +254,8 @@ public:
     void shutDown();
     void maybeShutDown();
 
+    void didStartProvisionalLoadForMainFrame(const URL&);
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
@@ -274,6 +281,7 @@ private:
     void didDestroyFrame(uint64_t);
     void didDestroyUserGestureToken(uint64_t);
 
+    bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(bool& shouldTerminate);
 
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
@@ -285,6 +293,9 @@ private:
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier, uint64_t callbackIdentifier);
     void didDeliverMessagePortMessages(uint64_t messageBatchIdentifier);
     void didCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable);
+
+    bool hasProvisionalPageWithID(uint64_t pageID) const;
+    bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -371,7 +382,7 @@ private:
     BackgroundProcessResponsivenessTimer m_backgroundResponsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
-    WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed processes do not hold a strong reference to their pool.
+    WeakOrStrongPtr<WebProcessPool> m_processPool; // Pre-warmed and cached processes do not hold a strong reference to their pool.
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
@@ -393,6 +404,9 @@ private:
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
+
+    Optional<String> m_registrableDomain;
+    bool m_isInProcessCache { false };
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
     Vector<WTF::Function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;

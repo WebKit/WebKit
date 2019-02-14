@@ -418,6 +418,14 @@ void WebProcessPool::registerNotificationObservers()
     }];
 #endif
 
+    m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidBecomeActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        setApplicationIsActive(true);
+    }];
+
+    m_deactivationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidResignActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        setApplicationIsActive(false);
+    }];
+
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
@@ -433,6 +441,8 @@ void WebProcessPool::unregisterNotificationObservers()
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
 #endif
+    [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
 #endif // !PLATFORM(IOS_FAMILY)
 }
 

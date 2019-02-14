@@ -154,6 +154,12 @@ void ProvisionalPageProxy::loadRequest(API::Navigation& navigation, WebCore::Res
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "loadRequest: pageID = %" PRIu64, m_page.pageID());
 
+    // If this is a client-side redirect continuing in a new process, then the new process will overwrite the fromItem's URL. In this case,
+    // we need to make sure we update fromItem's processIdentifier as we want future navigations to this BackForward item to happen in the
+    // new process.
+    if (navigation.fromItem() && navigation.lockBackForwardList() == WebCore::LockBackForwardList::Yes)
+        navigation.fromItem()->setLastProcessIdentifier(m_process->coreProcessIdentifier());
+
     m_page.loadRequestWithNavigationShared(m_process.copyRef(), navigation, WTFMove(request), shouldOpenExternalURLsPolicy, userData, WebCore::ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
 }
 

@@ -285,6 +285,20 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
         memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
+#if PLATFORM(MAC)
+            // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
+            if (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended()) {
+                if (m_processType == ProcessType::CachedWebContent)
+                    RELEASE_LOG(Process, "Cached WebProcess %i is exiting due to memory pressure", getpid());
+                else if (m_processType == ProcessType::PrewarmedWebContent)
+                    RELEASE_LOG(Process, "Prewarmed WebProcess %i is exiting due to memory pressure", getpid());
+                else
+                    RELEASE_LOG(Process, "Suspended WebProcess %i is exiting due to memory pressure", getpid());
+                stopRunLoop();
+                return;
+            }
+#endif
+
             auto maintainPageCache = m_isSuspending && hasPageRequiringPageCacheWhileSuspended() ? WebCore::MaintainPageCache::Yes : WebCore::MaintainPageCache::No;
             WebCore::releaseMemory(critical, synchronous, maintainPageCache);
         });
@@ -455,6 +469,32 @@ bool WebProcess::hasPageRequiringPageCacheWhileSuspended() const
             return true;
     }
     return false;
+}
+
+bool WebProcess::areAllPagesSuspended() const
+{
+    for (auto& page : m_pageMap.values()) {
+        if (!page->isSuspended())
+            return false;
+    }
+    return true;
+}
+
+void WebProcess::setIsInProcessCache(bool isInProcessCache)
+{
+#if PLATFORM(MAC)
+    if (isInProcessCache) {
+        ASSERT(m_processType == ProcessType::WebContent);
+        m_processType = ProcessType::CachedWebContent;
+    } else {
+        ASSERT(m_processType == ProcessType::CachedWebContent);
+        m_processType = ProcessType::WebContent;
+    }
+
+    updateProcessName();
+#else
+    UNUSED_PARAM(isInProcessCache);
+#endif
 }
 
 void WebProcess::markIsNoLongerPrewarmed()

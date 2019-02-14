@@ -1,3 +1,186 @@
+2019-02-14  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Introduce a WebContent Process cache
+        https://bugs.webkit.org/show_bug.cgi?id=194594
+        <rdar://problem/46793397>
+
+        Reviewed by Geoff Garen.
+
+        Introduce a WebContent Process cache to reduce the number of process launches when
+        process swap on navigation is enabled, and to reduce the power cost of the feature.
+
+        If a WebProcess loaded pages from a single registrable domain then it is eligible
+        for the cache. When process-swapping on navigation to a new registrable domain, we
+        now attempt to retrieve a process from the cache for the domain in question instead
+        of always launching a new one.
+
+        The WebProcess cache currently has the following attributes:
+        - It may contains 4 processes per GB of RAM the machine has, up to 30 processes.
+        - WebProcesses automatically get evicted from the cache after 30 minutes.
+        - If the application is no longer the active app, then the cache will get cleared
+          after 5 minutes.
+        - WebProcesses that are in the cache are reported as "(Cached)" in Activity Monitor.
+
+        The WebProcess cache is currently disabled by default and can by enabled by the
+        client via SPI.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * Shared/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::lastProcessIdentifier const):
+        (WebKit::WebBackForwardListItem::setLastProcessIdentifier):
+        Add new lastProcessIdentifier data member that reflects which process this item
+        was last loaded in. It is normally identical to the identifier of the process
+        that created the item but it gets overriden in case of cross-site client-side
+        redirect, since a new process takes over the item in this case.
+
+        * Sources.txt:
+        Add new source file.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationUsesWebProcessCache):
+        (WKContextConfigurationSetUsesWebProcessCache):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setUsesWebProcessCache:]):
+        (-[_WKProcessPoolConfiguration usesWebProcessCache]):
+        Add new SPI to enable the WebProcess cache.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _webProcessCountIgnoringPrewarmedAndCached]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        Add new SPI for testing which returns the number of WebProcesses ignoring
+        both prewarmed and cached ones.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        Add application active state observers as the WebProcess cache gets cleared
+        when the application resigns active state for more than 5 minutes.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::loadRequest):
+        When doing a load in a new process with the BackForwardList locked (i.e. client-side
+        redirect), make sure we update the last process identifier for the BackForwardListItem.
+        This is important because the logic in WebProcessPool::processForNavigation() relies on
+        this identifier to select which process to do the history navigation into, and we want
+        to do the load in the post-redirect process, not the pre-redirect one.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        Tell the WebProcess whenever a main frame provisional load is started, providing the URL.
+
+        * UIProcess/WebProcessCache.cpp: Added.
+        (WebKit::WebProcessCache::WebProcessCache):
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::takeProcess):
+        (WebKit::WebProcessCache::updateMaximumSize):
+        (WebKit::WebProcessCache::clear):
+        (WebKit::WebProcessCache::setApplicationIsActive):
+        (WebKit::WebProcessCache::evictProcess):
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::~CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::takeProcess):
+        (WebKit::WebProcessCache::CachedProcess::evictionTimerFired):
+        * UIProcess/WebProcessCache.h: Added.
+        (WebKit::WebProcessCache::maximumSize):
+        (WebKit::WebProcessCache::size const):
+        (WebKit::WebProcessCache::CachedProcess::process):
+        Add process cache implementation.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_webProcessCache):
+        WebProcessCache is stored on the WebProcessPool via m_webProcessCache data member.
+
+        (WebKit::WebProcessPool::~WebProcessPool):
+        Clear the WebProcess cache in the destructor.
+
+        (WebKit::WebProcessPool::setApplicationIsActive):
+        Notify the WebProcessCache whenever the application's active state changes.
+
+        (WebKit::WebProcessPool::createWebPage):
+        If the state of PSON changes via the experimental features menu, dynamically
+        update the WebProcessCache's size. This is needed because the cache is disabled
+        when PSON is disabled.
+
+        (WebKit::WebProcessPool::handleMemoryPressureWarning):
+        Clear the WebProcess cache on memory pressure.
+
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        Query the WebProcessCache before attempting to create a new WebProcess for a cross-site
+        navigation.
+
+        (WebKit::WebProcessPool::findReusableSuspendedPageProcess):
+        This logic was split out of processForNavigationInternal() to reduce the size
+        of the method.
+
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setIsInProcessCache):
+        Update the isInProcessCache flag on the WebProcessProxy and send an IPC to the WebContent
+        process so that it can update its name in Activity Monitor.
+        We also need to stop holding a strong reference to the WebProcessPool whenever the process
+        is in the cache, similarly to what we do for pre-warmed processes, given that such processes
+        should not keep the process pool alive.
+
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        Assert that we never try to add a page to a cached process, it should be taken out of the
+        cache before use.
+
+        (WebKit::WebProcessProxy::hasProvisionalPageWithID const):
+        (WebKit::WebProcessProxy::isAllowedToUpdateBackForwardItem const):
+        (WebKit::WebProcessProxy::updateBackForwardItem):
+        In case of client-side redirects, the previous process would sometimes send an IPC causing
+        the UIProcess' backforward list item to get updated with the pre-redirect URL after we've
+        already redirected. This previously would be unlikely to occur because we do not suspend
+        client-redirect pages and their process would normally exit before getting a chance to send
+        the IPC. However, with the process cache, the bug became obvious as the process would stay
+        alive and send up the "bad" IPC. To address the issue, we now only let the IPC update the
+        item if the item's page is (still) associated with the process. In the future, we may want
+        to update the IPC so that it gets sent to the WebPageProxy instead of the WebProcessProxy.
+
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        If a cached WebProcess crashes, remove it from the cache so that we do not attempt to use
+        it for a load later.
+
+        (WebKit::WebProcessProxy::canBeAddedToWebProcessCache const):
+        Only cache WebProcesses that have loaded a single registrable domain. Also prevent caching
+        for service worker and inspector processes.
+
+        (WebKit::WebProcessProxy::maybeShutDown):
+        If the process is cacheable, add it to the cache instead of shutting it down right away.
+
+        (WebKit::WebProcessProxy::canTerminateAuxiliaryProcess):
+        Make sure we do not attempt to terminate a processes that is in the cache.
+
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+        Whenever a main frame provisional load starts, make sure we update the process's associated
+        registrable domain. nullopt indicates that there is no associated domain yet. Null string
+        indicates that the process is associated with several registrable domain and is therefore
+        not eligible for caching.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::registrableDomain const):
+        (WebKit::WebProcessProxy::isInProcessCache const):
+        (WebKit::WebProcessProxy::provisionalPageCount const):
+        Add convenience getters.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files to project.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setIsInProcessCache):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateProcessName):
+        Update the WebProcess' name in Activity Monitor whenever it goes into or out of the WebProcess
+        cache.
+
 2019-02-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Open sandbox for certain calls.

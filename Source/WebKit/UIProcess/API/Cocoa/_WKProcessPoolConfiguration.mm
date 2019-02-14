@@ -258,6 +258,16 @@
     return _processPoolConfiguration->isAutomaticProcessWarmingEnabled();
 }
 
+- (void)setUsesWebProcessCache:(BOOL)value
+{
+    _processPoolConfiguration->setUsesWebProcessCache(value);
+}
+
+- (BOOL)usesWebProcessCache
+{
+    return _processPoolConfiguration->usesWebProcessCache();
+}
+
 - (void)setAlwaysKeepAndReuseSwappedProcesses:(BOOL)swaps
 {
     _processPoolConfiguration->setAlwaysKeepAndReuseSwappedProcesses(swaps);
