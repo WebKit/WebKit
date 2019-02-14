@@ -30,6 +30,7 @@
 #include "InjectedBundleTest.h"
 
 #include "PlatformUtilities.h"
+#include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 
 namespace TestWebKitAPI {
@@ -45,9 +46,11 @@ static InjectedBundleTest::Register<DidRemoveFrameFromHiearchyInPageCacheTest> r
 
 static unsigned didRemoveFrameFromHierarchyCount;
 
-void didRemoveFrameFromHierarchyCallback(WKBundlePageRef page, WKBundleFrameRef, WKTypeRef*, const void*)
+void didRemoveFrameFromHierarchyCallback(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void*)
 {
     didRemoveFrameFromHierarchyCount++;
+
+    RELEASE_ASSERT(!WKBundleFrameGetParentFrame(frame));
 
     WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithUTF8CString("DidRemoveFrameFromHierarchy"));
     WKBundlePagePostMessage(page, message.get(), message.get());

@@ -1,3 +1,15 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WKBundleFrameGetParentFrame when called inside didRemoveFrameFromHierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=194641
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the bug by adding a null check to WebFrame::parentFrame.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::parentFrame const):
+
 2019-02-13  Timothy Hatcher  <timothy@apple.com>
 
         Allow some deprecations in WKDrawingView.

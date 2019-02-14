@@ -1,3 +1,16 @@
+2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WKBundleFrameGetParentFrame when called inside didRemoveFrameFromHierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=194641
+
+        Reviewed by Geoffrey Garen.
+
+        Added a call to WKBundleFrameGetParentFrame to an existing test for didRemoveFrameFromHierarchy
+        so that the test would fail without this fix.
+
+        * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp:
+        (TestWebKitAPI::didRemoveFrameFromHierarchyCallback):
+
 2019-02-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Change log level for a log statement
