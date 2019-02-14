@@ -813,7 +813,11 @@ css2.1/20110323/float-non-replaced-width-003.htm
 css2.1/20110323/float-non-replaced-width-004.htm
 css2.1/20110323/float-non-replaced-width-005.htm
 css2.1/20110323/float-non-replaced-width-006.htm
+css2.1/20110323/float-non-replaced-width-007.htm
+css2.1/20110323/float-non-replaced-width-008.htm
+css2.1/20110323/float-non-replaced-width-009.htm
 css2.1/20110323/float-non-replaced-width-010.htm
+css2.1/20110323/float-non-replaced-width-011.htm
 css2.1/20110323/float-non-replaced-width-012.htm
 css2.1/20110323/float-replaced-height-001.htm
 css2.1/20110323/float-replaced-height-004.htm

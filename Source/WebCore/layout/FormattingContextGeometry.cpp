@@ -1072,6 +1072,28 @@ ComputedVerticalMargin FormattingContext::Geometry::computedVerticalMargin(const
     return { computedValueIfNotAuto(style.marginBefore(), containingBlockWidth), computedValueIfNotAuto(style.marginAfter(), containingBlockWidth) };
 }
 
+FormattingContext::IntrinsicWidthConstraints FormattingContext::Geometry::constrainByMinMaxWidth(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidth)
+{
+    auto& style = layoutBox.style();
+    auto minWidth = fixedValue(style.logicalMinWidth());
+    auto maxWidth = fixedValue(style.logicalMaxWidth());
+    if (!minWidth && !maxWidth)
+        return intrinsicWidth;
+
+    if (maxWidth) {
+        intrinsicWidth.minimum = std::min(*maxWidth, intrinsicWidth.minimum);
+        intrinsicWidth.maximum = std::min(*maxWidth, intrinsicWidth.maximum);
+    }
+
+    if (minWidth) {
+        intrinsicWidth.minimum = std::max(*minWidth, intrinsicWidth.minimum);
+        intrinsicWidth.maximum = std::max(*minWidth, intrinsicWidth.maximum);
+    }
+
+    ASSERT(intrinsicWidth.minimum <= intrinsicWidth.maximum);
+    return intrinsicWidth;
+}
+
 }
 }
 #endif

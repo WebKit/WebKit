@@ -1,3 +1,20 @@
+2019-02-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Shrink-to-fit-width should be constrained by min/max width
+        https://bugs.webkit.org/show_bug.cgi?id=194653
+
+        Reviewed by Antti Koivisto.
+
+        Use the fixed value of min-width/max-width to constrain the computed preferred width.
+
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::constrainByMinMaxWidth):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthConstraints const):
+
 2019-02-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in DOMTimer::fired
