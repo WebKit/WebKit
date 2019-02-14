@@ -3938,7 +3938,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     PageClientProtector protector(pageClient());
 
     WebFrameProxy* frame = process->webFrame(frameID);
-    MESSAGE_CHECK(m_process, frame);
+    MESSAGE_CHECK(process, frame);
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process->processPool().automationSession())
@@ -6452,7 +6452,6 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
 void WebPageProxy::provisionalProcessDidTerminate()
 {
     ASSERT(m_provisionalPage);
-    m_provisionalPage->cancel();
     m_provisionalPage = nullptr;
 }
 

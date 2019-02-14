@@ -1,3 +1,51 @@
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r241336. rdar://problem/48065621
+
+    Regression(PSON) MESSAGE_CHECK() hit under WebPageProxy::didFailProvisionalLoadForFrameShared()
+    https://bugs.webkit.org/show_bug.cgi?id=194568
+    <rdar://problem/47944490>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebKit:
+    
+    When the provisional process crashes, it is unsafe to call ProvisionalPageProxy::cancel() because
+    the WebProcessProxy clears its frame map as soon as the process crashes. Calling cancel() after
+    that would call WebPageProxy::didFailProvisionalLoadForFrameShared(), which would try to look up
+    the frame by ID and MESSAGE_CHECK() that the frame is not null. We would fail this check since
+    the frame has been removed from the WebProcessProxy at this point.
+    
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _provisionalWebProcessIdentifier]):
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+    (WebKit::WebPageProxy::provisionalProcessDidTerminate):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    (-[PSONNavigationDelegate webView:didStartProvisionalNavigation:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241336 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  Chris Dumez  <cdumez@apple.com>
+
+            Regression(PSON) MESSAGE_CHECK() hit under WebPageProxy::didFailProvisionalLoadForFrameShared()
+            https://bugs.webkit.org/show_bug.cgi?id=194568
+            <rdar://problem/47944490>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+            (-[PSONNavigationDelegate webView:didStartProvisionalNavigation:]):
+
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241288. rdar://problem/47992210
