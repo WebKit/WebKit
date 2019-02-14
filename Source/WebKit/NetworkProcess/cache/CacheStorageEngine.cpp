@@ -48,7 +48,7 @@ using namespace NetworkCache;
 
 String Engine::cachesRootPath(const WebCore::ClientOrigin& origin)
 {
-    if (!shouldPersist())
+    if (!shouldPersist() || !m_salt)
         return { };
 
     Key key(origin.topOrigin.toString(), origin.clientOrigin.toString(), { }, { }, salt());
