@@ -3418,7 +3418,9 @@ void Element::setContainsFullScreenElement(bool flag)
 static Element* parentCrossingFrameBoundaries(Element* element)
 {
     ASSERT(element);
-    return element->parentElement() ? element->parentElement() : element->document().ownerElement();
+    if (auto* parent = element->parentElementInComposedTree())
+        return parent;
+    return element->document().ownerElement();
 }
 
 void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool flag)
