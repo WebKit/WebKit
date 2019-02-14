@@ -1,5 +1,27 @@
 2019-02-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241453. rdar://problem/48065612
+
+    Fix -Wformat warning from r241401
+    https://bugs.webkit.org/show_bug.cgi?id=194584
+    <rdar://problem/47761293>
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::setActivityState):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241453 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+            Fix -Wformat warning from r241401
+            https://bugs.webkit.org/show_bug.cgi?id=194584
+            <rdar://problem/47761293>
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::setActivityState):
+
+2019-02-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241448. rdar://problem/48065637
 
     Crash in WebKit::CacheStorage::Engine::cachesRootPath
