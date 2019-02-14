@@ -196,11 +196,12 @@ public:
         Is8Bit = 1u
     };
 
+    bool isRope() const { return m_value.isNull(); }
+
 protected:
     friend class JSValue;
 
     JS_EXPORT_PRIVATE bool equalSlowCase(ExecState*, JSString* other) const;
-    bool isRope() const { return m_value.isNull(); }
     bool isSubstring() const;
     bool is8Bit() const { return m_flags & Is8Bit; }
     void setIs8Bit(bool flag) const
@@ -486,7 +487,10 @@ private:
 
 
     friend JSString* jsString(ExecState*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, const String&, JSString*);
+    friend JSString* jsString(ExecState*, JSString*, const String&);
     friend JSString* jsString(ExecState*, JSString*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, const String&, const String&);
     friend JSString* jsString(ExecState*, const String&, const String&, const String&);
 };
 
