@@ -1,3 +1,15 @@
+2019-02-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix sandbox violation during media playback
+        https://bugs.webkit.org/show_bug.cgi?id=194616
+        <rdar://problem/48049264>
+
+        Reviewed by Brent Fulgham.
+
+        Mach lookup to "com.apple.coremedia.figcontentkeysession.xpc" should be allowed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-02-13  Tim Horton  <timothy_horton@apple.com>
 
         Encrypted PDFs inside <embed> or <object> crash the Web Content process
