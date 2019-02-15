@@ -1,3 +1,21 @@
+2019-02-14  Saam barati  <sbarati@apple.com>
+
+        lowerStackArgs should lower Lea32/64 on ARM64 to Add
+        https://bugs.webkit.org/show_bug.cgi?id=194656
+
+        Reviewed by Yusuke Suzuki.
+
+        On arm64, Lea is just implemented as an add. However, Air treats it as an
+        address with a given width. Because of this width, we were incorrectly
+        computing whether or not this immediate could fit into the instruction itself
+        or it needed to be explicitly put into a register. This patch makes
+        AirLowerStackArgs lower Lea to Add on arm64.
+
+        * b3/air/AirLowerStackArgs.cpp:
+        (JSC::B3::Air::lowerStackArgs):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/testair.cpp:
+
 2019-02-14  Saam Barati  <sbarati@apple.com>
 
         Cache the results of BytecodeGenerator::getVariablesUnderTDZ

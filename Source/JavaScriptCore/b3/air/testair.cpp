@@ -2028,6 +2028,40 @@ void testArgumentRegPinned3()
     CHECK(r == 10 + 42 + 42);
 }
 
+void testLea64()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+
+    int64_t a = 0x11223344;
+    int64_t b = 1 << 13;
+
+    root->append(Lea64, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), b), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int64_t r = compileAndRun<int64_t>(proc, a);
+    CHECK(r == a + b);
+}
+
+void testLea32()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+
+    int32_t a = 0x11223344;
+    int32_t b = 1 << 13;
+
+    root->append(Lea32, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), b), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret32, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    int32_t r = compileAndRun<int32_t>(proc, a);
+    CHECK(r == a + b);
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -2112,6 +2146,9 @@ void run(const char* filter)
     RUN(testArgumentRegPinned());
     RUN(testArgumentRegPinned2());
     RUN(testArgumentRegPinned3());
+
+    RUN(testLea32());
+    RUN(testLea64());
 
     if (tasks.isEmpty())
         usage();

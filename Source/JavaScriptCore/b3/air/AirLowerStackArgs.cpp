@@ -71,6 +71,46 @@ void lowerStackArgs(Code& code)
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
 
+            if (isARM64() && (inst.kind.opcode == Lea32 || inst.kind.opcode == Lea64)) {
+                // On ARM64, Lea is just an add. We can't handle this below because
+                // taking into account the Width to see if we can compute the immediate
+                // is wrong.
+                auto lowerArmLea = [&] (Value::OffsetType offset, Tmp base) {
+                    ASSERT(inst.args[1].isTmp());
+
+                    if (Arg::isValidImmForm(offset))
+                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, Arg::imm(offset), base, inst.args[1]);
+                    else {
+                        ASSERT(pinnedExtendedOffsetAddrRegister());
+                        Air::Tmp tmp = Air::Tmp(*pinnedExtendedOffsetAddrRegister());
+                        Arg offsetArg = Arg::bigImm(offset);
+                        insertionSet.insert(instIndex, Move, inst.origin, offsetArg, tmp);
+                        inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, tmp, base, inst.args[1]);
+                    }
+                };
+
+                switch (inst.args[0].kind()) {
+                case Arg::Stack: {
+                    StackSlot* slot = inst.args[0].stackSlot();
+                    lowerArmLea(inst.args[0].offset() + slot->offsetFromFP(), Tmp(GPRInfo::callFrameRegister));
+                    break;
+                }
+                case Arg::CallArg:
+                    lowerArmLea(inst.args[0].offset() - code.frameSize(), Tmp(GPRInfo::callFrameRegister));
+                    break;
+                case Arg::Addr:
+                    lowerArmLea(inst.args[0].offset(), inst.args[0].base());
+                    break;
+                case Arg::ExtendedOffsetAddr:
+                    ASSERT_NOT_REACHED();
+                    break;
+                default:
+                    break;
+                }
+
+                continue;
+            }
+
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
                     auto stackAddr = [&] (Value::OffsetType offsetFromFP) -> Arg {
