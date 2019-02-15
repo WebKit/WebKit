@@ -116,6 +116,7 @@ namespace JSC {
         virtual unsigned hash() const = 0;
         virtual StringView source() const = 0;
         virtual const CachedBytecode* cachedBytecode() const { return nullptr; }
+        virtual bool cacheBytecode(const CachedBytecode&) const { return false; }
 
         StringView getRange(int start, int end) const
         {

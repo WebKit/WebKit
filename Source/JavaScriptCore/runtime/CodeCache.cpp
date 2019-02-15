@@ -189,30 +189,13 @@ void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCo
 
 void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& value)
 {
-#if OS(DARWIN)
-    const char* cachePath = Options::diskCachePath();
-    if (LIKELY(!cachePath))
-        return;
-
     UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(vm, value.cell.get());
     if (!codeBlock)
         return;
 
     std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
-
-    String filename = makeString(cachePath, '/', key.hash(), ".cache");
-    int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY, 0666);
-    if (fd == -1)
-        return;
-    int rc = flock(fd, LOCK_EX | LOCK_NB);
-    if (!rc)
-        ::write(fd, result.first.get(), result.second);
-    close(fd);
-#else
-    UNUSED_PARAM(vm);
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(value);
-#endif
+    CachedBytecode cachedBytecode { WTFMove(result.first), result.second };
+    key.source().provider().cacheBytecode(cachedBytecode);
 }
 
 CachedBytecode serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
