@@ -102,6 +102,7 @@ fast/block/block-only/negative-margin-simple.html
 fast/block/block-only/non-auto-top-bottom-height-with-auto-margins.html
 fast/block/block-only/non-auto-top-bottom-height-with-margins.html
 fast/block/block-only/non-auto-top-bottom-left-right-widht-height-out-of-flow.html
+fast/block/block-only/out-of-flow-is-never-float-box.html
 fast/block/block-only/out-of-flow-with-containing-block-border-padding.html
 fast/block/block-only/padding-nested.html
 fast/block/block-only/padding-simple.html

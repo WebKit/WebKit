@@ -109,16 +109,23 @@ bool Box::isFixedPositioned() const
 
 bool Box::isFloatingPositioned() const
 {
+    // FIXME: Rendering code caches values like this. (style="position: absolute; float: left")
+    if (isOutOfFlowPositioned())
+        return false;
     return m_style.floating() != Float::No;
 }
 
 bool Box::isLeftFloatingPositioned() const
 {
+    if (!isFloatingPositioned())
+        return false;
     return m_style.floating() == Float::Left;
 }
 
 bool Box::isRightFloatingPositioned() const
 {
+    if (!isFloatingPositioned())
+        return false;
     return m_style.floating() == Float::Right;
 }
 
