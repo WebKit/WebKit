@@ -1660,13 +1660,13 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
         else
             UTI = UTIFromMIMEType(attachmentType);
 
-#if !PLATFORM(WATCHOS)
+#if PLATFORM(IOS)
         [documentInteractionController setUTI:static_cast<NSString *>(UTI)];
 #endif
     }
 
     RetainPtr<UIImage> result;
-#if !PLATFORM(WATCHOS)
+#if PLATFORM(IOS)
     NSArray *icons = [documentInteractionController icons];
     if (!icons.count)
         return nil;

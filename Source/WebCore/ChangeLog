@@ -1,3 +1,10 @@
+2019-02-15  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::iconForAttachment):
+
 2019-02-15  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClientFetch closer to WebResourceLoader
