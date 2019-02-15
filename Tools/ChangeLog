@@ -1,3 +1,28 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)
+        https://bugs.webkit.org/show_bug.cgi?id=194487
+
+        Reviewed by Daniel Bates.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (applicationId): Use makeString instead of String::format.
+        (main): Ditto.
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::createURLForResource): Ditto.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp:
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::attributeSetToString): Use StringBuilder functions directly instead of g_strconcat.
+        (WTR::attributesOfElement): Use StringBuilder functions directly instead of String::format.
+        (WTR::createStringWithAttributes): Use appendLiteral.
+        (WTR::AccessibilityUIElement::helpText const): Ditto.
+        (WTR::AccessibilityUIElement::attributedStringForRange): Use StringBuilder functions
+        directly instead of using String::format.
+        (WTR::AccessibilityUIElement::url): Use makeString instead of String::format.
+        (WTR::stringAtOffset): Use StringBuilder::appendNumber instead of String::format.
+
 2019-02-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241564.

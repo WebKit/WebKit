@@ -2874,7 +2874,7 @@ static String webKitVersionString()
     if (::LoadStringW(gInstance, BUILD_NUMBER, reinterpret_cast<LPWSTR>(&buildNumberStringPtr), 0) && buildNumberStringPtr)
         return buildNumberStringPtr;
 #endif
-    return String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+    return makeString(WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION);
 }
 
 const String& WebView::userAgentForKURL(const URL&)

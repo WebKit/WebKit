@@ -1251,8 +1251,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         // Construct a filename for the graphviz dot file output.
         GstState newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
-        CString dotFileName = String::format("%s.%s_%s", GST_OBJECT_NAME(m_pipeline.get()),
-            gst_element_state_get_name(currentState), gst_element_state_get_name(newState)).utf8();
+        CString dotFileName = makeString(GST_OBJECT_NAME(m_pipeline.get()), '.',
+            gst_element_state_get_name(currentState), '_', gst_element_state_get_name(newState)).utf8();
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
 
         break;

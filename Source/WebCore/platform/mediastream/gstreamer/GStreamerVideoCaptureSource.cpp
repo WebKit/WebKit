@@ -102,7 +102,7 @@ CaptureSourceOrError GStreamerVideoCaptureSource::create(String&& deviceID, Stri
 {
     auto device = GStreamerVideoCaptureDeviceManager::singleton().gstreamerDeviceWithUID(deviceID);
     if (!device) {
-        auto errorMessage = String::format("GStreamerVideoCaptureSource::create(): GStreamer did not find the device: %s.", deviceID.utf8().data());
+        auto errorMessage = makeString("GStreamerVideoCaptureSource::create(): GStreamer did not find the device: ", deviceID, '.');
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 

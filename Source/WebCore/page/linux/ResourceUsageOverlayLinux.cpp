@@ -56,7 +56,7 @@ static String formatByteNumber(size_t number)
         return String::format("%.2f MB", static_cast<double>(number) / 1048576);
     if (number >= 1024)
         return String::format("%.1f kB", static_cast<double>(number) / 1024);
-    return String::format("%lu", number);
+    return String::number(number);
 }
 
 static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)

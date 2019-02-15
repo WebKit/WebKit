@@ -1,3 +1,13 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)
+        https://bugs.webkit.org/show_bug.cgi?id=194487
+
+        Reviewed by Daniel Bates.
+
+        * WebView.cpp:
+        (webKitVersionString): Use makeString instead of String::format.
+
 2019-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow pages to trigger programmatic paste from script on iOS

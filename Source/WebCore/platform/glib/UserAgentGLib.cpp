@@ -58,7 +58,7 @@ static const String platformVersionForUAString()
 #if OS(UNIX)
     struct utsname name;
     uname(&name);
-    static NeverDestroyed<const String> uaOSVersion(String::format("%s %s", name.sysname, name.machine));
+    static NeverDestroyed<const String> uaOSVersion(makeString(name.sysname, ' ', name.machine));
     return uaOSVersion;
 #else
     // We will always claim to be Safari in Intel Mac OS X, since Safari without

@@ -1,3 +1,20 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)
+        https://bugs.webkit.org/show_bug.cgi?id=194487
+
+        Reviewed by Daniel Bates.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::switchToNewTestingSession): Use makeString instead of String::format.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::buildAcceptLanguages): Ditto.
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::performURLImport): Ditto.
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::logConfirmCompositionForTesting): Ditto.
+        (WebKit::InputMethodFilter::logSetPreeditForTesting): Ditto.
+
 2019-02-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241564.

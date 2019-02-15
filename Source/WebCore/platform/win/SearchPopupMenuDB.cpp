@@ -28,6 +28,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteTransaction.h"
 #include <wtf/FileSystem.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -250,7 +251,7 @@ void SearchPopupMenuDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSimpleSql(String::format("PRAGMA user_version=%d", schemaVersion));
+    executeSimpleSql(makeString("PRAGMA user_version=", schemaVersion));
 }
 
 void SearchPopupMenuDB::checkSQLiteReturnCode(int actual)

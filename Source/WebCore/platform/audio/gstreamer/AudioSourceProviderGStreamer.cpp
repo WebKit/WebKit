@@ -109,7 +109,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
 {
     m_frontLeftAdapter = gst_adapter_new();
     m_frontRightAdapter = gst_adapter_new();
-    auto pipelineName = String::format("WebAudioProvider_MediaStreamTrack_%s", source.id().utf8().data());
+    auto pipelineName = makeString("WebAudioProvider_MediaStreamTrack_", source.id());
     m_pipeline = adoptGRef(GST_ELEMENT(g_object_ref_sink(gst_element_factory_make("pipeline", pipelineName.utf8().data()))));
     auto src = webkitMediaStreamSrcNew();
     webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(src), &source, true);

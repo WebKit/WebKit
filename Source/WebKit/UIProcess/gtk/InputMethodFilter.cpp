@@ -467,13 +467,14 @@ void InputMethodFilter::logConfirmCompositionForTesting()
     if (m_confirmedComposition.isEmpty())
         m_events.append(String("confirmCurrentcomposition"));
     else
-        m_events.append(String::format("confirmComposition '%s'", m_confirmedComposition.utf8().data()));
+        m_events.append(makeString("confirmComposition '", m_confirmedComposition, '\''));
 }
 
 void InputMethodFilter::logSetPreeditForTesting()
 {
-    m_events.append(String::format("setPreedit text='%s' cursorOffset=%i", m_preedit.utf8().data(), m_cursorOffset));
+    m_events.append(makeString("setPreedit text='", m_preedit, "' cursorOffset=", m_cursorOffset));
 }
+
 #endif // ENABLE(API_TESTS)
 
 } // namespace WebKit

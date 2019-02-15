@@ -108,7 +108,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     gboolean isDefault = FALSE;
     gst_structure_get_boolean(properties.get(), "is-default", &isDefault);
 
-    String identifier = String::format("%s%s", isDefault ? "default: " : "", deviceName.get());
+    String identifier = makeString(isDefault ? "default: " : "", deviceName.get());
 
     auto gstCaptureDevice = GStreamerCaptureDevice(WTFMove(device), identifier, type, identifier);
     gstCaptureDevice.setEnabled(true);
