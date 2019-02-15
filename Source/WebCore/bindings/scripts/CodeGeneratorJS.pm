@@ -3690,6 +3690,9 @@ sub GenerateRuntimeEnableConditionalString
         if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
             push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
                 . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->hasServiceWorkerScheme())");
+        } elsif ($context->extendedAttributes->{ContextAllowsMediaDevices}) {
+            push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isSecureContext()"
+                . "|| jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->allowsMediaDevices())");
         } else {
             push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
         }

@@ -85,6 +85,9 @@
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
         },
+        "ContextAllowsMediaDevices": {
+            "contextsAllowed": ["attribute"]
+        },
         "ContextHasServiceWorkerScheme": {
             "contextsAllowed": ["attribute"]
         },
