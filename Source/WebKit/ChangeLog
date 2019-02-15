@@ -1,3 +1,48 @@
+2019-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Navigating quickly back and forth can lead to getting 'about:blank' in the backforward list
+        https://bugs.webkit.org/show_bug.cgi?id=194717
+        <rdar://problem/47884404>
+
+        Reviewed by Brady Eidson.
+
+        When the client does a history navigation, the UIProcess sends a WebPage::GoToBackForwardItem IPC to the
+        WebProcess and the WebProcess sends a WebPageProxy::BackForwardGoToItem IPC back to the UIProcess to
+        update the current item in the BackForwardList. This means that there is a slight delay between the
+        point a client requests a history navigation and the point where the BackForwardList's current item gets
+        update. This delay is pre-existing behavior and not new to PSON.
+
+        However, with PSON enabled, if we decide to process-swap for the history navigation, we'll tell the
+        previous (committed) process to ignore the load and we ask a new (provisional) process to do the history
+        navigation. When the previous process receives the request to ignore the history navigation, it restores
+        the History's current item to the one previous the navigation, which sends a WebPageProxy::GoToBackForwardItem
+        IPC to the UIProcess to update the BackForwardList as well. In parallel, the new process starts the
+        history navigation and also sends a WebPageProxy::GoToBackForwardItem to update the BackForwardList's
+        current item as well. We end up with a race between the 2 GoToBackForwardItem IPC messages coming from
+        the old and new process. If the old process's message loses the race, we end up with the wrong current
+        history item getting set in the UIProcess. Later, when we commit the provisional load and try to suspend
+        the previous page, we would save the SuspendedPage on the *wrong* BackForwardList item. If one tries to
+        load this BackForwardList item later, we'll use its SuspendedPage and try to unsuspend it. However,
+        because the PageCache entry is saved on another HistoryItem than the one getting loaded in the WebProcess
+        side, we attempt to do a regular load instead of a PageCache restore. We end up failing the load because
+        pages cannot trigger new loads while in page cache. Because the load fails, we end up loading the
+        initial empty document and this is how we end up with 'about:blank' in the back forward list.
+
+        To address the issue, update WebPageProxy::backForwardGoToItem() to ignore messages from the old/committed
+        WebProcess when there is a pending provisional load. If the committed processes starts a legit new
+        load, it would clear any existing pending provisional load before attempting the call backForwardGoToItem().
+        As a result, ignoring such messages from the old processes when there is a pending provisional load is
+        safe.
+
+        In the future, we should probably move more of the history / backForwardList management to the UIProcess
+        to avoid this sort of issues. This would be a much larger refactoring though so I am going with this
+        simpler fix that is easily cherry-pickable for now.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+
 2019-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Update IPC code generator unit test expectations after r241595

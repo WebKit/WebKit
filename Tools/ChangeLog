@@ -1,3 +1,15 @@
+2019-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Navigating quickly back and forth can lead to getting 'about:blank' in the backforward list
+        https://bugs.webkit.org/show_bug.cgi?id=194717
+        <rdar://problem/47884404>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-15  Youenn Fablet  <youenn@apple.com>
 
         Make navigator.mediaDevices SecureContext
