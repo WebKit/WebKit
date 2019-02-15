@@ -1,3 +1,16 @@
+2019-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI version of WKPreferences.safeBrowsingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=194718
+        <rdar://problem/48122993>
+
+        Rubber-stamped by Brady Eidson.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _isSafeBrowsingEnabled]):
+        (-[WKPreferences _setSafeBrowsingEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2019-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView callout bar is missing Change Writing Direction item
