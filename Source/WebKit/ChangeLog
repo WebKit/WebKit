@@ -1,3 +1,17 @@
+2019-02-15  Andy Estes  <aestes@apple.com>
+
+        [iOS] Stop setting a background color on the PDF host view
+        https://bugs.webkit.org/show_bug.cgi?id=194722
+        <rdar://48124152>
+
+        Reviewed by Wenson Hsieh.
+
+        PDFKit already sets a background color on this view, so there’s no need (and some harm) in
+        us doing it too.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]):
+
 2019-02-15  Alex Christensen  <achristensen@webkit.org>
 
         Update IPC code generator unit test expectations after r241611

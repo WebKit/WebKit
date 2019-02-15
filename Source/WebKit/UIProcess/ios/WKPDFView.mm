@@ -143,7 +143,6 @@
 
         UIView *hostView = hostViewController.view;
         hostView.frame = webView.bounds;
-        hostView.backgroundColor = UIColor.grayColor;
 
         UIScrollView *scrollView = webView.scrollView;
         [self removeFromSuperview];
