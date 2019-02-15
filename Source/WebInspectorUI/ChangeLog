@@ -1,3 +1,13 @@
+2019-02-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: taking a second recording doesn't select the Initial State by default
+        https://bugs.webkit.org/show_bug.cgi?id=194685
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+
 2019-02-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241497.

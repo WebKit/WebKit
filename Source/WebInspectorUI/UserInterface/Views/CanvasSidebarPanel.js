@@ -374,6 +374,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     {
         this._recordingTreeOutline.removeChildren();
 
+        this._selectedRecordingActionIndex = NaN;
+
         if (this._recordingProcessingOptionsContainer) {
             this._recordingProcessingOptionsContainer.remove();
             this._recordingProcessingOptionsContainer = null;
