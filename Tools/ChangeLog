@@ -1,3 +1,19 @@
+2019-02-15  Brian Burg  <bburg@apple.com>
+
+        [Mac] WebInspectorUI.framework does not need to be soft-linked anymore
+        https://bugs.webkit.org/show_bug.cgi?id=194411
+        <rdar://problem/47787614>
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove unnecessary soft linking macro usage.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::inspectorTestStubURL):
+        (SOFT_LINK_STAGED_FRAMEWORK): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::inspectorTestStubURL):
+
 2019-02-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241559 and r241566.

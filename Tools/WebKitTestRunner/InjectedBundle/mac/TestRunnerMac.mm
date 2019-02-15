@@ -30,12 +30,6 @@
 #import "InjectedBundle.h"
 #import <JavaScriptCore/JSStringRefCF.h>
 
-#if !PLATFORM(IOS_FAMILY)
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
-#endif
-
 namespace WTR {
 
 void TestRunner::platformInitialize()
@@ -76,9 +70,6 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 #if PLATFORM(IOS_FAMILY)
     return nullptr;
 #else
-    // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
-    WebInspectorUILibrary();
-
     CFBundleRef inspectorBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebInspectorUI"));
     if (!inspectorBundle)
         return nullptr;
