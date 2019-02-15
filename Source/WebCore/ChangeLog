@@ -1,3 +1,17 @@
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Stop the endpoint synchronously in RTCPeerConnection::close
+        https://bugs.webkit.org/show_bug.cgi?id=194688
+
+        Reviewed by Eric Carlson.
+
+        In the case where the peer connection is being closed, it was asynchronously stopping the endpoint.
+        But the endpoint, before being stopped, could try to fire an event.
+        If the context is gone in between, we end up with a null pointer dereference.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::close):
+
 2019-02-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Out-of-flow box is never a float box

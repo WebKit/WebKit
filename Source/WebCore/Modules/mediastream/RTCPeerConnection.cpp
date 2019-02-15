@@ -437,9 +437,7 @@ void RTCPeerConnection::close()
 
     updateConnectionState();
     ASSERT(isClosed());
-    scriptExecutionContext()->postTask([protectedThis = makeRef(*this)](ScriptExecutionContext&) {
-        protectedThis->doStop();
-    });
+    doStop();
 }
 
 void RTCPeerConnection::emulatePlatformEvent(const String& action)
