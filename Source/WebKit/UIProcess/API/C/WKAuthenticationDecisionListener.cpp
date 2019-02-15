@@ -31,6 +31,8 @@
 #include "WKAPICast.h"
 #include "WebCredential.h"
 
+using namespace WebKit;
+
 WKTypeID WKAuthenticationDecisionListenerGetTypeID()
 {
     return WebKit::toAPI(AuthenticationDecisionListener::APIType);

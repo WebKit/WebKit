@@ -65,8 +65,6 @@
 #include "WKPageRenderingProgressEventsInternal.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
-#include "WebContextMenu.h"
-#include "WebContextMenuItem.h"
 #include "WebFormClient.h"
 #include "WebImage.h"
 #include "WebInspectorProxy.h"
@@ -135,6 +133,8 @@ template<> struct ClientTraits<WKPageFindMatchesClientBase> {
 };
     
 } // namespace API
+
+using namespace WebKit;
 
 WKTypeID WKPageGetTypeID()
 {
