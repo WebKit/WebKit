@@ -785,15 +785,15 @@ void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t sto
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
-void StorageManager::getValues(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
+void StorageManager::getValues(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&& completionHandler)
 {
     StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
         // This is a session storage area for a page that has already been closed. Ignore it.
-        return;
+        return completionHandler({ });
     }
 
-    values = storageArea->items();
+    completionHandler(storageArea->items());
     connection.send(Messages::StorageAreaMap::DidGetValues(storageMapSeed), storageMapID);
 }
 

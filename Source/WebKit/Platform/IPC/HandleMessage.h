@@ -75,6 +75,20 @@ void callMemberFunction(ArgsTuple&& args, CompletionHandler<CH>&& completionHand
     callMemberFunctionImpl(object, function, WTFMove(completionHandler), std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
+// Dispatch functions with connection parameter with delayed reply arguments.
+
+template <typename C, typename MF, typename CH, typename ArgsTuple, size_t... ArgsIndex>
+void callMemberFunctionImpl(Connection& connection, C* object, MF function, CompletionHandler<CH>&& completionHandler, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
+{
+    (object->*function)(connection, std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., WTFMove(completionHandler));
+}
+
+template<typename C, typename MF, typename CH, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
+void callMemberFunction(Connection& connection, ArgsTuple&& args, CompletionHandler<CH>&& completionHandler, C* object, MF function)
+{
+    callMemberFunctionImpl(connection, object, function, WTFMove(completionHandler), std::forward<ArgsTuple>(args), ArgsIndicies());
+}
+
 // Dispatch functions with connection parameter with no reply arguments.
 
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
@@ -185,6 +199,21 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
     callMemberFunction(WTFMove(arguments), WTFMove(completionHandler), object, function);
+}
+
+template<typename T, typename C, typename MF>
+void handleMessageDelayedWantsConnection(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
+{
+    typename CodingType<typename T::Arguments>::Type arguments;
+    if (!decoder.decode(arguments)) {
+        ASSERT(decoder.isInvalid());
+        return;
+    }
+    
+    typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = makeRef(connection)] (auto&&... args) mutable {
+        T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
+    };
+    callMemberFunction(connection, WTFMove(arguments), WTFMove(completionHandler), object, function);
 }
 
 template<typename T, typename C, typename MF>
