@@ -8,6 +8,7 @@ if (WIN32)
 
         win/CPUTimeWin.cpp
         win/DbgHelperWin.cpp
+        win/EnvironmentWin.cpp
         win/FileSystemWin.cpp
         win/LanguageWin.cpp
         win/MainThreadWin.cpp
@@ -33,6 +34,7 @@ else ()
 
         generic/MainThreadGeneric.cpp
 
+        posix/EnvironmentPOSIX.cpp
         posix/FileSystemPOSIX.cpp
         posix/OSAllocatorPOSIX.cpp
         posix/ThreadingPOSIX.cpp

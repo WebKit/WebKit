@@ -1,3 +1,14 @@
+2019-02-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * WebView/WebView.mm:
+        (-[WebView _initWithFrame:frameName:groupName:]):
+        Utilize WTF::Environment where possible.
+
 2019-02-15  Brian Burg  <bburg@apple.com>
 
         [Mac] WebInspectorUI.framework does not need to be soft-linked anymore

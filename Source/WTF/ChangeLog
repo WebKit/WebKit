@@ -1,3 +1,41 @@
+2019-02-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        Create a new Environment API as a platform-independent, thread-safe(r)
+        way to get and set environment variables.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Environment.h: Added.
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformPlayStation.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/posix/EnvironmentPOSIX.cpp: Added.
+        * wtf/win/EnvironmentWin.cpp: Added.
+        Introduce WTF::Environment.
+
+        * wtf/Threading.cpp:
+        (WTF::threadingIsInitialized):
+        (WTF::initializeThreading):
+        * wtf/Threading.h:
+        Introduce WTF::threadingIsInitialized() so that we can ASSERT that it's
+        false before setting an environment variable through the new API.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        * wtf/NumberOfCores.cpp:
+        (WTF::numberOfProcessorCores):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        Utilize WTF::Environment where possible.
+
 2019-02-15  Brian Burg  <bburg@apple.com>
 
         [Mac] WebInspectorUI.framework does not need to be soft-linked anymore

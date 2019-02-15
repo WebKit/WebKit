@@ -25,6 +25,8 @@
 #include "config.h"
 #include "SystemVersion.h"
 
+#include <wtf/Environment.h>
+
 namespace WebCore {
 
 static NSString *createSystemMarketingVersion()
@@ -32,7 +34,7 @@ static NSString *createSystemMarketingVersion()
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
     NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (char *simulatorRoot = getenv("SIMULATOR_ROOT"))
+    if (const char* simulatorRoot = Environment::getRaw("SIMULATOR_ROOT"))
         systemLibraryPath = [NSString stringWithFormat:@"%s/%@", simulatorRoot, systemLibraryPath];
 #endif
     NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];

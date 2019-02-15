@@ -27,6 +27,7 @@
 #include <wtf/NumberOfCores.h>
 
 #include <cstdio>
+#include <wtf/Environment.h>
 
 #if OS(DARWIN)
 #include <sys/param.h>
@@ -49,14 +50,16 @@ int numberOfProcessorCores()
 
     if (s_numberOfCores > 0)
         return s_numberOfCores;
-    
-    if (const char* coresEnv = getenv("WTF_numberOfProcessorCores")) {
-        unsigned numberOfCores;
-        if (sscanf(coresEnv, "%u", &numberOfCores) == 1) {
+
+    if (auto coresEnv = Environment::get("WTF_numberOfProcessorCores")) {
+        bool ok;
+        auto numberOfCores = coresEnv->toUIntStrict(&ok);
+        if (ok) {
             s_numberOfCores = numberOfCores;
             return s_numberOfCores;
-        } else
-            fprintf(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv);
+        }
+
+        fprintf(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv->utf8().data());
     }
 
 #if OS(DARWIN)

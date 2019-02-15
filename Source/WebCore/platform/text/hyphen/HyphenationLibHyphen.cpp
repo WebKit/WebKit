@@ -32,6 +32,7 @@
 #include <hyphen.h>
 #include <limits>
 #include <stdlib.h>
+#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -87,8 +88,8 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
 #if ENABLE(DEVELOPER_MODE)
 static CString topLevelPath()
 {
-    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
-        return topLevelDirectory;
+    if (auto topLevelDirectory = Environment::get("WEBKIT_TOP_LEVEL"))
+        return topLevelDirectory->utf8();
 
     // If the environment variable wasn't provided then assume we were built into
     // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
@@ -101,9 +102,8 @@ static CString topLevelPath()
 
 static CString webkitBuildDirectory()
 {
-    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
-    if (webkitOutputDir)
-        return webkitOutputDir;
+    if (auto webkitOutputDir = Environment::get("WEBKIT_OUTPUTDIR"))
+        return webkitOutputDir->utf8();
 
     GUniquePtr<char> outputDir(g_build_filename(topLevelPath().data(), "WebKitBuild", nullptr));
     return outputDir.get();

@@ -28,6 +28,7 @@
 
 #include "CodeProfile.h"
 #include "MachineContext.h"
+#include <wtf/Environment.h>
 #include <wtf/MetaAllocator.h>
 
 #if HAVE(SIGNAL_H)
@@ -85,21 +86,19 @@ void CodeProfiling::sample(void* pc, void** framePointer)
 void CodeProfiling::notifyAllocator(WTF::MetaAllocator* allocator)
 {
     // Check for JSC_CODE_PROFILING.
-    const char* codeProfilingMode = getenv("JSC_CODE_PROFILING");
+    auto codeProfilingMode = Environment::getUInt("JSC_CODE_PROFILING");
     if (!codeProfilingMode)
         return;
 
-    // Check for a valid mode, currently "1", "2", or "3".
-    if (!codeProfilingMode[0] || codeProfilingMode[1])
-        return;
+    // Check for a valid mode, currently 1, 2, or 3.
     switch (*codeProfilingMode) {
-    case '1':
+    case 1:
         s_mode = Enabled;
         break;
-    case '2':
+    case 2:
         s_mode = Verbose;
         break;
-    case '3':
+    case 3:
         s_mode = VeryVerbose;
         break;
     default:

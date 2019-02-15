@@ -31,15 +31,17 @@
 
 #include "NicosiaPaintingEngineBasic.h"
 #include "NicosiaPaintingEngineThreaded.h"
+#include <wtf/Environment.h>
 
 namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
 #if ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)
-    if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
-        unsigned numThreads = 0;
-        if (sscanf(numThreadsEnv, "%u", &numThreads) == 1) {
+    if (auto numThreadsEnv = Environment::get("WEBKIT_NICOSIA_PAINTING_THREADS")) {
+        bool ok;
+        auto numThreads = numThreadsEnv->toIntStrict(&ok);
+        if (ok) {
             if (numThreads < 1 || numThreads > 8) {
                 WTFLogAlways("The number of Nicosia painting threads is not between 1 and 8. Using the default value 4\n");
                 numThreads = 4;

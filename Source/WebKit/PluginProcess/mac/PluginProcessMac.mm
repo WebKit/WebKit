@@ -53,6 +53,7 @@
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sysexits.h>
+#import <wtf/Environment.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -168,10 +169,8 @@ static bool shouldCallRealDebugger()
     static bool isUserbreakSet = false;
     static dispatch_once_t flag;
     dispatch_once(&flag, ^{
-        char* var = getenv("USERBREAK");
-
-        if (var)
-            isUserbreakSet = atoi(var);
+        if (auto var = Environment::getInt("USERBREAK"))
+            isUserbreakSet = *var;
     });
     
     return isUserbreakSet;

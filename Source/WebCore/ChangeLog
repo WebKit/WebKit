@@ -1,3 +1,50 @@
+2019-02-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/NotImplemented.h:
+        * platform/cocoa/SystemVersion.mm:
+        (WebCore::createSystemMarketingVersion):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/nicosia/NicosiaPaintingEngine.cpp:
+        (Nicosia::PaintingEngine::create):
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        (WebCore::TextureMapperFPSCounter::TextureMapperFPSCounter):
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::create):
+        * platform/gtk/RenderThemeWidget.cpp:
+        (WebCore::RenderThemeScrollbar::RenderThemeScrollbar):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlContext::CurlContext):
+        (WebCore::EnvironmentVariableReader::read): Deleted.
+        (WebCore::EnvironmentVariableReader::defined): Deleted.
+        (WebCore::EnvironmentVariableReader::readAs): Deleted.
+        (WebCore::EnvironmentVariableReader::sscanTemplate): Deleted.
+        (WebCore::EnvironmentVariableReader::sscanTemplate<signed>): Deleted.
+        (WebCore::EnvironmentVariableReader::sscanTemplate<unsigned>): Deleted.
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::defaultCookieJarPath):
+        * platform/network/playstation/CurlSSLHandlePlayStation.cpp:
+        (WebCore::getCACertPathEnv):
+        * platform/network/win/CurlSSLHandleWin.cpp:
+        (WebCore::getCACertPathEnv):
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::topLevelPath):
+        (WebCore::webkitBuildDirectory):
+        * platform/unix/LoggingUnix.cpp:
+        (WebCore::logLevelString):
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString):
+        Utilize WTF::Environment where possible.
+
 2019-02-15  Antoine Quint  <graouts@apple.com>
 
         Add a method to dispatch a PointerEvent based on a PlatformTouchEvent

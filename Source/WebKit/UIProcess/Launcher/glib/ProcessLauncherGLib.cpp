@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <glib.h>
+#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UniStdExtras.h>
@@ -165,11 +166,10 @@ void ProcessLauncher::launchProcess()
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process;
 #if OS(LINUX)
-    const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX");
     bool sandboxEnabled = m_launchOptions.extraInitializationData.get("enable-sandbox") == "true";
 
-    if (sandboxEnv)
-        sandboxEnabled = !strcmp(sandboxEnv, "1");
+    if (auto sandboxEnv = Environment::get("WEBKIT_FORCE_SANDBOX"))
+        sandboxEnabled = *sandboxEnv == "1";
 
     if (sandboxEnabled && isInsideFlatpak())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());

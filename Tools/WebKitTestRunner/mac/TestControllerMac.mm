@@ -135,10 +135,10 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     __block bool doneCompiling = false;
 
     NSURL *tempDir;
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+    auto temporaryFolder = libraryPathForTesting();
+    if (!!temporaryFolder)
         tempDir = [NSURL fileURLWithPath:[(NSString*)temporaryFolder stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES];
-    } else
+    else
         tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentExtensions"] isDirectory:YES];
 
     [[_WKUserContentExtensionStore storeWithURL:tempDir] compileContentExtensionForIdentifier:@"TestContentExtensions" encodedContentExtension:contentExtensionString completionHandler:^(_WKUserContentFilter *filter, NSError *error)

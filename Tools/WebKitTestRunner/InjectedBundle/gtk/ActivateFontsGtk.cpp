@@ -34,6 +34,7 @@
 #include "InjectedBundleUtilities.h"
 #include <fontconfig/fontconfig.h>
 #include <gtk/gtk.h>
+#include <wtf/Environment.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -54,9 +55,8 @@ void initializeGtkSettings()
 
 CString getOutputDir()
 {
-    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
-    if (webkitOutputDir)
-        return webkitOutputDir;
+    if (auto webkitOutputDir = Environment::get("WEBKIT_OUTPUTDIR"))
+        return webkitOutputDir->utf8();
 
     CString topLevelPath = WTR::topLevelPath();
     GUniquePtr<char> outputDir(g_build_filename(topLevelPath.data(), "WebKitBuild", nullptr));
@@ -80,7 +80,7 @@ static CString getFontsPath()
 
 void initializeFontConfigSetting()
 {
-    if (g_getenv("WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION"))
+    if (Environment::get("WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION"))
         return;
 
     FcInit();

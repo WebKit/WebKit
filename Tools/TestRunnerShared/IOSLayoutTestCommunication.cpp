@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/Assertions.h>
+#include <wtf/Environment.h>
 
 static int stdinSocket;
 static int stdoutSocket;
@@ -48,11 +49,10 @@ static int connectToServer(sockaddr_in& serverAddress)
 
 void setUpIOSLayoutTestCommunication()
 {
-    char* portFromEnvironment = getenv("PORT");
-    if (!portFromEnvironment)
+    auto port = Environment::getInt("PORT");
+    if (!port)
         return;
-    int port = atoi(portFromEnvironment);
-    RELEASE_ASSERT(port > 0);
+    RELEASE_ASSERT(*port > 0);
     isUsingTCP = true;
 
     struct hostent* host = gethostbyname("127.0.0.1");
@@ -63,7 +63,7 @@ void setUpIOSLayoutTestCommunication()
         (char*)&serverAddress.sin_addr.s_addr,
         (char*)host->h_addr,
         host->h_length);
-    serverAddress.sin_port = htons(port);
+    serverAddress.sin_port = htons(*port);
     
     // This order matches the server side listener in Tools/Scripts/webkitpy/port/simulator_process.py SimulatorProcess._start()
     stdinSocket = connectToServer(serverAddress);

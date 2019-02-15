@@ -38,6 +38,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
+#import <wtf/Environment.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 using namespace WebCore;
@@ -106,7 +107,7 @@ const char *WebKitPlatformSystemRootDirectory(void)
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
     static const char *platformSystemRootDirectory = nil;
     if (!platformSystemRootDirectory) {
-        char *simulatorRoot = getenv("IPHONE_SIMULATOR_ROOT");
+        const char* simulatorRoot = Environment::getRaw("IPHONE_SIMULATOR_ROOT");
         platformSystemRootDirectory = simulatorRoot ? simulatorRoot : "/";
     }
     return platformSystemRootDirectory;

@@ -27,10 +27,11 @@
 
 #include "TestController.h"
 #include <glib.h>
+#include <wtf/Environment.h>
 
 int main(int argc, char** argv)
 {
-    g_setenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1", FALSE);
+    Environment::setIfNotDefined("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1");
 
     WTR::TestController controller(argc, const_cast<const char**>(argv));
     return 0;

@@ -1,3 +1,26 @@
+2019-02-15  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WTF] Add environment variable helpers
+        https://bugs.webkit.org/show_bug.cgi?id=192405
+
+        Reviewed by Michael Catanzaro.
+
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::RemoteInspector):
+        (Inspector::RemoteInspector::start):
+        * jsc.cpp:
+        (startTimeoutThreadIfNeeded):
+        * runtime/Options.cpp:
+        (JSC::overrideOptionWithHeuristic):
+        (JSC::Options::overrideAliasedOptionWithHeuristic):
+        (JSC::Options::initialize):
+        * runtime/VM.cpp:
+        (JSC::enableAssembler):
+        (JSC::VM::VM):
+        * tools/CodeProfiling.cpp:
+        (JSC::CodeProfiling::notifyAllocator):
+        Utilize WTF::Environment where possible.
+
 2019-02-15  Mark Lam  <mark.lam@apple.com>
 
         SamplingProfiler::stackTracesAsJSON() should escape strings.
