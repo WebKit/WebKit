@@ -1,3 +1,15 @@
+2019-02-15  Antoine Quint  <graouts@apple.com>
+
+        Add a method to dispatch a PointerEvent based on a PlatformTouchEvent
+        https://bugs.webkit.org/show_bug.cgi?id=194702
+        <rdar://problem/48109355>
+
+        Reviewed by Dean Jackson.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchPointerEventForTouchAtIndex):
+        * page/EventHandler.h:
+
 2019-02-15  Per Arne Vollan  <pvollan@apple.com>
 
         [WebVTT] Inline WebVTT styles should start with '::cue'
