@@ -2471,7 +2471,19 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)makeTextWritingDirectionNaturalForWebView:(id)sender
 {
-    _page->executeEditCommand("makeTextWritingDirectionNatural"_s);
+    // Match platform behavior on iOS as well as legacy WebKit behavior by modifying the
+    // base (paragraph) writing direction rather than the inline direction.
+    _page->setBaseWritingDirection(WebCore::WritingDirection::Natural);
+}
+
+- (void)makeTextWritingDirectionLeftToRightForWebView:(id)sender
+{
+    _page->setBaseWritingDirection(WebCore::WritingDirection::LeftToRight);
+}
+
+- (void)makeTextWritingDirectionRightToLeftForWebView:(id)sender
+{
+    _page->setBaseWritingDirection(WebCore::WritingDirection::RightToLeft);
 }
 
 - (BOOL)isReplaceAllowed
@@ -2797,6 +2809,24 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
     if (action == @selector(replace:))
         return editorState.isContentEditable && !editorState.isInPasswordField;
+
+    if (action == @selector(makeTextWritingDirectionLeftToRight:) || action == @selector(makeTextWritingDirectionRightToLeft:)) {
+        if (!editorState.isContentEditable)
+            return NO;
+
+        auto baseWritingDirection = editorState.postLayoutData().baseWritingDirection;
+        if (baseWritingDirection == WebCore::WritingDirection::LeftToRight && !UIKeyboardIsRightToLeftInputModeActive()) {
+            // A keyboard is considered "active" if it is available for the user to switch to. As such, this check prevents
+            // text direction actions from showing up in the case where a user has only added left-to-right keyboards, and
+            // is also not editing right-to-left content.
+            return NO;
+        }
+
+        if (action == @selector(makeTextWritingDirectionLeftToRight:))
+            return baseWritingDirection != WebCore::WritingDirection::LeftToRight;
+
+        return baseWritingDirection != WebCore::WritingDirection::RightToLeft;
+    }
 
     return [super canPerformAction:action withSender:sender];
 }

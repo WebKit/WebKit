@@ -1,3 +1,17 @@
+2019-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView callout bar is missing Change Writing Direction item
+        https://bugs.webkit.org/show_bug.cgi?id=190015
+        <rdar://problem/44810366>
+
+        Reviewed by Tim Horton.
+
+        Make an existing API test that exercises platform SPI to change the inline text writing direction run only on
+        macOS, and add a new API test that uses similarly named SPI on iOS to change the base writing direction.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (TestWebKitAPI::TEST):
+
 2019-02-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Navigating quickly back and forth can lead to getting 'about:blank' in the backforward list

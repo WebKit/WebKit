@@ -258,15 +258,31 @@ TEST(WKWebViewEditActions, PasteAndMatchStyle)
     EXPECT_WK_STREQ("WebKit", [destination stringByEvaluatingJavaScript:@"getSelection().toString()"]);
 }
 
-TEST(WKWebViewEditActions, ModifyTextWritingDirection)
-{
-    auto webView = webViewForEditActionTesting(@"<div id='text' style='direction: rtl; unicode-bidi: bidi-override;'>WebKit</div>");
-    [webView selectAll:nil];
-    [webView makeTextWritingDirectionNatural:nil];
-    EXPECT_WK_STREQ("normal", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
-}
-
 #if PLATFORM(IOS_FAMILY)
+
+TEST(WKWebViewEditActions, ModifyBaseWritingDirection)
+{
+    auto webView = webViewForEditActionTesting(@"<meta charset='utf8'><p id='english'>Hello world</p><p id='hebrew'>מקור השם עברית</p>");
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(english)" completionHandler:nil];
+    [webView makeTextWritingDirectionRightToLeft:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("rtl", [webView stringByEvaluatingJavaScript:@"getComputedStyle(english).direction"]);
+    EXPECT_FALSE([webView canPerformAction:@selector(makeTextWritingDirectionRightToLeft:) withSender:nil]);
+    EXPECT_TRUE([webView canPerformAction:@selector(makeTextWritingDirectionLeftToRight:) withSender:nil]);
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(hebrew)" completionHandler:nil];
+    [webView makeTextWritingDirectionLeftToRight:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("ltr", [webView stringByEvaluatingJavaScript:@"getComputedStyle(hebrew).direction"]);
+    EXPECT_FALSE([webView canPerformAction:@selector(makeTextWritingDirectionLeftToRight:) withSender:nil]);
+
+    [webView evaluateJavaScript:@"getSelection().setPosition(english)" completionHandler:nil];
+    [webView makeTextWritingDirectionNatural:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("ltr", [webView stringByEvaluatingJavaScript:@"getComputedStyle(english).direction"]);
+    EXPECT_FALSE([webView canPerformAction:@selector(makeTextWritingDirectionLeftToRight:) withSender:nil]);
+}
 
 TEST(WKWebViewEditActions, ChangeFontSize)
 {
@@ -328,7 +344,17 @@ TEST(WKWebViewEditActions, SetFontFamily)
     EXPECT_WK_STREQ("italic", [webView stylePropertyAtSelectionStart:@"font-style"]);
 }
 
-#endif // PLATFORM(IOS_FAMILY)
+#else
+
+TEST(WKWebViewEditActions, ModifyTextWritingDirection)
+{
+    auto webView = webViewForEditActionTesting(@"<div id='text' style='direction: rtl; unicode-bidi: bidi-override;'>WebKit</div>");
+    [webView selectAll:nil];
+    [webView makeTextWritingDirectionNatural:nil];
+    EXPECT_WK_STREQ("normal", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
+}
+
+#endif
 
 } // namespace TestWebKitAPI
 

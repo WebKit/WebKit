@@ -29,6 +29,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FontAttributes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/WritingDirection.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -88,12 +89,13 @@ struct EditorState {
 #if PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
         WebCore::IntRect caretRectAtStart;
 #endif
-#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
+#if PLATFORM(COCOA)
         WebCore::IntRect focusedElementRect;
         uint64_t selectedTextLength { 0 };
         uint32_t textAlignment { NoAlignment };
         WebCore::Color textColor { WebCore::Color::black };
         uint32_t enclosingListType { NoList };
+        WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
 #endif
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect caretRectAtEnd;
