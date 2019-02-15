@@ -1,3 +1,61 @@
+2019-02-14  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r240446): Storage Access API does not handle domains consistently
+        https://bugs.webkit.org/show_bug.cgi?id=194664
+
+        Reviewed by Alex Christensen.
+        
+        During my refactoring of the ResourceLoadStatistics code, I introduced two bugs:
+        (1) I neglected to be consistent in my use of 'primaryDomain', causing some Storage
+        Access API code paths to store approves under one domain (e.g., 'www.example.com'),
+        while checking status under the eTLD+1 (e.g., 'example.com'). The exact string matching
+        requirement caused these to get missed.
+
+        (2) I used a move operator before a final set of copies of domain names, leading to
+        some empty strings being passed to Storage Access API calls.
+
+        Both issues are corrected in this patch.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode): Always make the
+        domain comply with our 'primaryDomain' logic.
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessGranted): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logWebSocketLoading): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceLoading): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceRedirect): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom): Ditto.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasStorageAccess): Always make the
+        domain comply with our 'primaryDomain' logic.
+        (WebKit::WebsiteDataStore::requestStorageAccess): Ditto. Also make copy of domain
+        names before moving them to the completion handler.
+        (WebKit::WebsiteDataStore::grantStorageAccess): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::hasStorageAccess):  Always make the domain comply with our
+        'primaryDomain' logic.
+        (WebKit::WebPage::requestStorageAccess): Ditto.
+
 2019-02-14  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.
