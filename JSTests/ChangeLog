@@ -1,3 +1,13 @@
+2019-02-14  Saam Barati  <sbarati@apple.com>
+
+        Cache the results of BytecodeGenerator::getVariablesUnderTDZ
+        https://bugs.webkit.org/show_bug.cgi?id=194583
+        <rdar://problem/48028140>
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/cache-get-variables-under-tdz-in-bytecode-generator.js: Added.
+
 2019-02-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] String.fromCharCode's slow path always generates 16bit string

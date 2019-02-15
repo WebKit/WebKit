@@ -258,7 +258,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     }
 
     VariableEnvironment dummyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, dummyTDZVariables, DerivedContextType::None, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, vm.m_compactVariableMap->get(dummyTDZVariables), DerivedContextType::None, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 

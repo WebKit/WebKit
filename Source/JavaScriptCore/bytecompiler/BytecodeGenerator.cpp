@@ -2195,6 +2195,7 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     }
 
     m_TDZStack.removeLast();
+    m_cachedVariablesUnderTDZ = { };
 }
 
 void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode* node, RegisterID* loopSymbolTable)
@@ -2814,8 +2815,10 @@ void BytecodeGenerator::liftTDZCheckIfPossible(const Variable& variable)
     for (unsigned i = m_TDZStack.size(); i--;) {
         auto iter = m_TDZStack[i].find(identifier);
         if (iter != m_TDZStack[i].end()) {
-            if (iter->value == TDZNecessityLevel::Optimize)
+            if (iter->value == TDZNecessityLevel::Optimize) {
+                m_cachedVariablesUnderTDZ = { };
                 iter->value = TDZNecessityLevel::NotNeeded;
+            }
             break;
         }
     }
@@ -2840,10 +2843,14 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
         map.add(entry.key, entry.value.isFunction() ? TDZNecessityLevel::NotNeeded : level);
 
     m_TDZStack.append(WTFMove(map));
+    m_cachedVariablesUnderTDZ = { };
 }
 
-void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
+CompactVariableMap::Handle BytecodeGenerator::getVariablesUnderTDZ()
 {
+    if (m_cachedVariablesUnderTDZ)
+        return m_cachedVariablesUnderTDZ;
+
     // We keep track of variablesThatDontNeedTDZ in this algorithm to prevent
     // reporting that "x" is under TDZ if this function is called at "...".
     //
@@ -2854,18 +2861,21 @@ void BytecodeGenerator::getVariablesUnderTDZ(VariableEnvironment& result)
     //         }
     //         let x;
     //     }
-    //
     SmallPtrSet<UniquedStringImpl*, 16> variablesThatDontNeedTDZ;
+    VariableEnvironment environment;
     for (unsigned i = m_TDZStack.size(); i--; ) {
         auto& map = m_TDZStack[i];
         for (auto& entry : map)  {
             if (entry.value != TDZNecessityLevel::NotNeeded) {
                 if (!variablesThatDontNeedTDZ.contains(entry.key.get()))
-                    result.add(entry.key.get());
+                    environment.add(entry.key.get());
             } else
                 variablesThatDontNeedTDZ.add(entry.key.get());
         }
     }
+
+    m_cachedVariablesUnderTDZ = m_vm->m_compactVariableMap->get(environment);
+    return m_cachedVariablesUnderTDZ;
 }
 
 void BytecodeGenerator::preserveTDZStack(BytecodeGenerator::PreservedTDZStack& preservedStack)
@@ -2876,6 +2886,7 @@ void BytecodeGenerator::preserveTDZStack(BytecodeGenerator::PreservedTDZStack& p
 void BytecodeGenerator::restoreTDZStack(const BytecodeGenerator::PreservedTDZStack& preservedStack)
 {
     m_TDZStack = preservedStack.m_preservedTDZStack;
+    m_cachedVariablesUnderTDZ = { };
 }
 
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
