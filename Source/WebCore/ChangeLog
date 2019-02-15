@@ -1,5 +1,23 @@
 2019-02-15  Youenn Fablet  <youenn@apple.com>
 
+        WebSocket should not fire events after being stopped
+        https://bugs.webkit.org/show_bug.cgi?id=194690
+
+        Reviewed by Geoffrey Garen.
+
+        dispatchOrQueueErrorEvent is scheduled using RunLoop::main().dispatch or dispatch_async.
+        This makes it possible to dispatch an event while WebSocket is already stopped.
+        Instead, use Document::postTask so that the task is only executed if WebSocket is not stopped.
+
+        As a refactoring, make use of PendingActivity to keep track of setPendingActivity/unsetPendingActivity more easily.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::stop):
+        (WebCore::WebSocket::connect):
+        * Modules/websockets/WebSocket.h:
+
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
         Performance should not fire events when its context is stopped
         https://bugs.webkit.org/show_bug.cgi?id=194689
 

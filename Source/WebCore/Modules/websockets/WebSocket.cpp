@@ -288,28 +288,18 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         Document& document = downcast<Document>(context);
         RefPtr<Frame> frame = document.frame();
         if (!frame || !frame->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
-            // Balanced by the call to unsetPendingActivity() in WebSocket::stop().
-            setPendingActivity(*this);
+            m_pendingActivity = makePendingActivity(*this);
 
             // We must block this connection. Instead of throwing an exception, we indicate this
             // using the error event. But since this code executes as part of the WebSocket's
             // constructor, we have to wait until the constructor has completed before firing the
             // event; otherwise, users can't connect to the event.
-#if USE(WEB_THREAD)
-            ref();
-            dispatch_async(dispatch_get_main_queue(), ^{
-                WebThreadRun(^{
-                    dispatchOrQueueErrorEvent();
-                    stop();
-                    deref();
-                });
+
+            document.postTask([this, protectedThis = makeRef(*this)](auto&) {
+                this->dispatchOrQueueErrorEvent();
+                this->stop();
             });
-#else
-            RunLoop::main().dispatch([this, protectedThis = makeRef(*this)]() {
-                dispatchOrQueueErrorEvent();
-                stop();
-            });
-#endif
+
             return { };
         }
     }
@@ -319,7 +309,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         protocolString = joinStrings(protocols, subprotocolSeparator());
 
     m_channel->connect(m_url, protocolString);
-    setPendingActivity(*this);
+    m_pendingActivity = makePendingActivity(*this);
 
     return { };
 }
@@ -540,15 +530,13 @@ void WebSocket::resumeTimerFired()
 
 void WebSocket::stop()
 {
-    bool pending = hasPendingActivity();
     if (m_channel)
         m_channel->disconnect();
     m_channel = nullptr;
     m_state = CLOSED;
     m_pendingEvents.clear();
     ActiveDOMObject::stop();
-    if (pending)
-        unsetPendingActivity(*this);
+    m_pendingActivity = nullptr;
 }
 
 const char* WebSocket::activeDOMObjectName() const
@@ -631,8 +619,7 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
         m_channel->disconnect();
         m_channel = nullptr;
     }
-    if (hasPendingActivity())
-        unsetPendingActivity(*this);
+    m_pendingActivity = nullptr;
 }
 
 void WebSocket::didUpgradeURL()
