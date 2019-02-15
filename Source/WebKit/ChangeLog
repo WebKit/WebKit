@@ -1,3 +1,12 @@
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Make ServiceWorkerClientFetch closer to WebResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=194651
+
+        Unreviewed, build fix for WPE.
+
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2019-02-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Navigating quickly back and forth can lead to getting 'about:blank' in the backforward list

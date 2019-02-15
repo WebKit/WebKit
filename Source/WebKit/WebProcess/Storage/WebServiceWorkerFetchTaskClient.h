@@ -34,6 +34,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
 
