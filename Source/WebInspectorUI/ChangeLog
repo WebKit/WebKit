@@ -1,5 +1,15 @@
 2019-02-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: all actions after an offscreen path modification are marked as offscreen path errors
+        https://bugs.webkit.org/show_bug.cgi?id=194684
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.process):
+
+2019-02-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: taking a second recording doesn't select the Initial State by default
         https://bugs.webkit.org/show_bug.cgi?id=194685
 

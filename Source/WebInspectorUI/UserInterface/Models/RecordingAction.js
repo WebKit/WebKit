@@ -251,9 +251,9 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
             let lastState = null;
             if (lastAction) {
-                let previousState = lastAction.states.lastValue;
+                lastState = lastAction.states.lastValue;
                 for (let [name, value] of currentState) {
-                    let previousValue = previousState.get(name);
+                    let previousValue = lastState.get(name);
                     if (value !== previousValue && !Object.shallowEqual(value, previousValue))
                         this._stateModifiers.add(name);
                 }
