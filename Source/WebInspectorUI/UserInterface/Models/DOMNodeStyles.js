@@ -506,7 +506,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         return new WI.TextRange(payload.startLine, payload.startColumn, payload.endLine, payload.endColumn);
     }
 
-    _parseStylePropertyPayload(payload, index, styleDeclaration, styleText)
+    _parseStylePropertyPayload(payload, index, styleDeclaration)
     {
         var text = payload.text || "";
         var name = payload.name;
@@ -639,8 +639,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             shorthands[shorthand.name] = shorthand.value;
         }
 
-        var text = payload.cssText;
-
         var inheritedPropertyCount = 0;
 
         var properties = [];
@@ -650,10 +648,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             if (inherited && WI.CSSProperty.isInheritedPropertyName(propertyPayload.name))
                 ++inheritedPropertyCount;
 
-            var property = this._parseStylePropertyPayload(propertyPayload, i, styleDeclaration, text);
+            let property = this._parseStylePropertyPayload(propertyPayload, i, styleDeclaration);
             properties.push(property);
         }
 
+        let text = payload.cssText;
         var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
 
         if (styleDeclaration) {

@@ -1,3 +1,14 @@
+2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: remove unused parameter in _parseStylePropertyPayload
+        https://bugs.webkit.org/show_bug.cgi?id=194642
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        The `styleText` parameter was never used
+
 2019-02-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: all actions after an offscreen path modification are marked as offscreen path errors
