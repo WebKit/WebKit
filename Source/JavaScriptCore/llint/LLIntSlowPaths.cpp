@@ -369,6 +369,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec, un
 {
     VM& vm = exec->vm();
     DeferGCForAWhile deferGC(vm.heap); // My callers don't set top callframe, so we don't want to GC here at all.
+    ASSERT(VM::canUseJIT());
     
     codeBlock->updateAllValueProfilePredictions();
 
@@ -379,7 +380,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec, un
         return false;
     }
     
-    JITWorklist::instance()->poll(vm);
+    JITWorklist::ensureGlobalWorklist().poll(vm);
     
     switch (codeBlock->jitType()) {
     case JITCode::BaselineJIT: {
@@ -389,7 +390,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec, un
         return true;
     }
     case JITCode::InterpreterThunk: {
-        JITWorklist::instance()->compileLater(codeBlock, loopOSREntryBytecodeOffset);
+        JITWorklist::ensureGlobalWorklist().compileLater(codeBlock, loopOSREntryBytecodeOffset);
         return codeBlock->jitType() == JITCode::BaselineJIT;
     }
     default:

@@ -497,8 +497,8 @@ VM::~VM()
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     promiseDeferredTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)
-    if (Wasm::existingWorklistOrNull())
-        Wasm::ensureWorklist().stopAllPlansForContext(wasmContext);
+    if (Wasm::Worklist* worklist = Wasm::existingWorklistOrNull())
+        worklist->stopAllPlansForContext(wasmContext);
 #endif
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);
@@ -516,7 +516,8 @@ VM::~VM()
 #endif // ENABLE(SAMPLING_PROFILER)
     
 #if ENABLE(JIT)
-    JITWorklist::instance()->completeAllForVM(*this);
+    if (JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull())
+        worklist->completeAllForVM(*this);
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
@@ -921,7 +922,7 @@ inline void VM::updateStackLimits()
 }
 
 #if ENABLE(DFG_JIT)
-void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
+void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 {
     auto lock = holdLock(m_scratchBufferLock);
     for (auto* scratchBuffer : m_scratchBuffers) {

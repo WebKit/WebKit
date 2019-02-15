@@ -43,7 +43,7 @@ void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
     
     for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->directCaller) {
         CodeBlock* codeBlock = codeOrigin.inlineCallFrame->baselineCodeBlock.get();
-        JITWorklist::instance()->compileNow(codeBlock);
+        JITWorklist::ensureGlobalWorklist().compileNow(codeBlock);
     }
 }
 

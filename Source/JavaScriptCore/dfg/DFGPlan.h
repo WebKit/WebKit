@@ -70,7 +70,6 @@ public:
     
     CompilationKey key();
     
-    void markCodeBlocks(SlotVisitor&);
     template<typename Func>
     void iterateCodeBlocksForGC(const Func&);
     void checkLivenessAndVisitChildren(SlotVisitor&);

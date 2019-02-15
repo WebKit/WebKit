@@ -599,8 +599,10 @@ void Heap::didFinishIterating()
 
 void Heap::completeAllJITPlans()
 {
+    if (!VM::canUseJIT())
+        return;
 #if ENABLE(JIT)
-    JITWorklist::instance()->completeAllForVM(*m_vm);
+    JITWorklist::ensureGlobalWorklist().completeAllForVM(*m_vm);
 #endif // ENABLE(JIT)
     DFG::completeAllPlansForVM(*m_vm);
 }
@@ -609,7 +611,8 @@ template<typename Func>
 void Heap::iterateExecutingAndCompilingCodeBlocks(const Func& func)
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
-    DFG::iterateCodeBlocksForGC(*m_vm, func);
+    if (VM::canUseJIT())
+        DFG::iterateCodeBlocksForGC(*m_vm, func);
 }
 
 template<typename Func>
@@ -667,7 +670,9 @@ void Heap::gatherJSStackRoots(ConservativeRoots& roots)
 void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 {
 #if ENABLE(DFG_JIT)
-    m_vm->gatherConservativeRoots(roots);
+    if (!VM::canUseJIT())
+        return;
+    m_vm->gatherScratchBufferRoots(roots);
 #else
     UNUSED_PARAM(roots);
 #endif
@@ -684,6 +689,8 @@ void Heap::beginMarking()
 void Heap::removeDeadCompilerWorklistEntries()
 {
 #if ENABLE(DFG_JIT)
+    if (!VM::canUseJIT())
+        return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::existingWorklistForIndex(i).removeDeadPlans(*m_vm);
 #endif
@@ -1586,9 +1593,9 @@ void Heap::stopThePeriphery(GCConductor conn)
         });
 
 #if ENABLE(JIT)
-    {
+    if (VM::canUseJIT()) {
         DeferGCForAWhile awhile(*this);
-        if (JITWorklist::instance()->completeAllForVM(*m_vm)
+        if (JITWorklist::ensureGlobalWorklist().completeAllForVM(*m_vm)
             && conn == GCConductor::Collector)
             setGCDidJIT();
     }
@@ -2093,6 +2100,8 @@ void Heap::suspendCompilerThreads()
     // We ensure the worklists so that it's not possible for the mutator to start a new worklist
     // after we have suspended the ones that he had started before. That's not very expensive since
     // the worklists use AutomaticThreads anyway.
+    if (!VM::canUseJIT())
+        return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::ensureWorklistForIndex(i).suspendAllThreads();
 #endif
@@ -2310,6 +2319,8 @@ void Heap::didFinishCollection()
 void Heap::resumeCompilerThreads()
 {
 #if ENABLE(DFG_JIT)
+    if (!VM::canUseJIT())
+        return;
     for (unsigned i = DFG::numberOfWorklists(); i--;)
         DFG::existingWorklistForIndex(i).resumeAllThreads();
 #endif
@@ -2640,7 +2651,7 @@ void Heap::addCoreConstraints()
                 SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::ConservativeScan);
                 slotVisitor.append(conservativeRoots);
             }
-            {
+            if (VM::canUseJIT()) {
                 // JITStubRoutines must be visited after scanning ConservativeRoots since JITStubRoutines depend on the hook executed during gathering ConservativeRoots.
                 SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::JITStubRoutines);
                 m_jitStubRoutines->traceMarkedStubRoutines(slotVisitor);
@@ -2744,26 +2755,28 @@ void Heap::addCoreConstraints()
         ConstraintParallelism::Parallel);
     
 #if ENABLE(DFG_JIT)
-    m_constraintSet->add(
-        "Dw", "DFG Worklists",
-        [this] (SlotVisitor& slotVisitor) {
-            SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::DFGWorkLists);
+    if (VM::canUseJIT()) {
+        m_constraintSet->add(
+            "Dw", "DFG Worklists",
+            [this] (SlotVisitor& slotVisitor) {
+                SetRootMarkReasonScope rootScope(slotVisitor, SlotVisitor::RootMarkReason::DFGWorkLists);
 
-            for (unsigned i = DFG::numberOfWorklists(); i--;)
-                DFG::existingWorklistForIndex(i).visitWeakReferences(slotVisitor);
-            
-            // FIXME: This is almost certainly unnecessary.
-            // https://bugs.webkit.org/show_bug.cgi?id=166829
-            DFG::iterateCodeBlocksForGC(
-                *m_vm,
-                [&] (CodeBlock* codeBlock) {
-                    slotVisitor.appendUnbarriered(codeBlock);
-                });
-            
-            if (Options::logGC() == GCLogging::Verbose)
-                dataLog("DFG Worklists:\n", slotVisitor);
-        },
-        ConstraintVolatility::GreyedByMarking);
+                for (unsigned i = DFG::numberOfWorklists(); i--;)
+                    DFG::existingWorklistForIndex(i).visitWeakReferences(slotVisitor);
+                
+                // FIXME: This is almost certainly unnecessary.
+                // https://bugs.webkit.org/show_bug.cgi?id=166829
+                DFG::iterateCodeBlocksForGC(
+                    *m_vm,
+                    [&] (CodeBlock* codeBlock) {
+                        slotVisitor.appendUnbarriered(codeBlock);
+                    });
+                
+                if (Options::logGC() == GCLogging::Verbose)
+                    dataLog("DFG Worklists:\n", slotVisitor);
+            },
+            ConstraintVolatility::GreyedByMarking);
+    }
 #endif
     
     m_constraintSet->add(
