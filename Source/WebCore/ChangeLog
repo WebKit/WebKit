@@ -1,3 +1,24 @@
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Add binding tests for ContextAllowsMediaDevices and ContextHasServiceWorkerScheme
+        https://bugs.webkit.org/show_bug.cgi?id=194713
+
+        Reviewed by Eric Carlson.
+
+        Binding tests covering mediaDevices and serviceWorker attributes.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::jsTestObjMediaDevices1Getter):
+        (WebCore::jsTestObjMediaDevices1):
+        (WebCore::jsTestObjMediaDevices2Getter):
+        (WebCore::jsTestObjMediaDevices2):
+        (WebCore::jsTestObjServiceWorkers1Getter):
+        (WebCore::jsTestObjServiceWorkers1):
+        (WebCore::jsTestObjServiceWorkers2Getter):
+        (WebCore::jsTestObjServiceWorkers2):
+        * bindings/scripts/test/TestObj.idl:
+
 2019-02-15  Beth Dakin  <bdakin@apple.com>
 
         Build fix.

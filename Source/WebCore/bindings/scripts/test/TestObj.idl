@@ -90,6 +90,9 @@ enum TestConfidence { "high", "kinda-low" };
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
 
+    [SecureContext, ContextAllowsMediaDevices] readonly attribute MediaDevices mediaDevices;
+    [SecureContext, ContextHasServiceWorkerScheme] readonly attribute ServiceWorker serviceWorkers;
+
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;
     attribute boolean                  create;
