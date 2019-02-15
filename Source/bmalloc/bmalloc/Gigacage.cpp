@@ -267,11 +267,11 @@ bool shouldBeEnabled()
     std::call_once(
         onceFlag,
         [] {
-            if (!gigacageEnabledForProcess())
+            bool debugHeapEnabled = PerProcess<Environment>::get()->isDebugHeapEnabled();
+            if (debugHeapEnabled)
                 return;
 
-            bool result = !PerProcess<Environment>::get()->isDebugHeapEnabled();
-            if (!result)
+            if (!gigacageEnabledForProcess())
                 return;
             
             if (char* gigacageEnabled = getenv("GIGACAGE_ENABLED")) {
