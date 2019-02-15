@@ -61,30 +61,22 @@ private:
 
     Optional<WebCore::ResourceError> validateResponse(const WebCore::ResourceResponse&);
 
-    void didReceiveResponse(WebCore::ResourceResponse&&);
+    void didReceiveResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage);
+    void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
     void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didReceiveFormData(const IPC::FormDataReference&);
     void didFinish();
     void didFail(WebCore::ResourceError&&);
     void didNotHandle();
 
-    void continueLoadingAfterCheckingResponse();
-
     WebServiceWorkerProvider& m_serviceWorkerProvider;
     RefPtr<WebCore::ResourceLoader> m_loader;
     WebCore::FetchIdentifier m_identifier;
     Ref<WebSWClientConnection> m_connection;
     Callback m_callback;
-    enum class RedirectionStatus { None, Receiving, Following, Received };
-    RedirectionStatus m_redirectionStatus { RedirectionStatus::None };
     bool m_shouldClearReferrerOnHTTPSToHTTPRedirect { true };
-    RefPtr<WebCore::SharedBuffer> m_buffer;
     int64_t m_encodedDataLength { 0 };
-    bool m_isCheckingResponse { false };
-    bool m_didFinish { false };
     bool m_didFail { false };
-    WebCore::ResourceError m_error;
-
     WebCore::ServiceWorkerRegistrationIdentifier m_serviceWorkerRegistrationIdentifier;
 };
 

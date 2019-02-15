@@ -1,3 +1,61 @@
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Make ServiceWorkerClientFetch closer to WebResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=194651
+
+        Reviewed by Alex Christensen.
+
+        The goal of this refactoring is to, at some point use the regular network process load path for service worker loads.
+        This should simplify things and allow less IPC exchanges, for instance in the case of fetch not handled by service worker.
+
+        Introduce two IPC messages for supporting redirect responses and allow the didReceiveResponse/continueDidReceiveResponse
+        handshake for navigation loads.
+
+        This makes ServiceWorker having to buffer load information for this particular case.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveFetchRedirectResponse):
+        (WebKit::NetworkProcess::didReceiveFetchResponse):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWServerConnection::didReceiveFetchRedirectResponse):
+        (WebKit::WebSWServerConnection::didReceiveFetchResponse):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::start):
+        (WebKit::ServiceWorkerClientFetch::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveData):
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::didNotHandle):
+        (WebKit::ServiceWorkerClientFetch::cancel):
+        * WebProcess/Storage/ServiceWorkerClientFetch.h:
+        * WebProcess/Storage/ServiceWorkerClientFetch.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        (WebKit::WebSWClientConnection::cancelFetch):
+        (WebKit::WebSWClientConnection::continueDidReceiveFetchResponse):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::WebServiceWorkerFetchTaskClient):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveRedirection):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveResponse):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFail):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::continueDidReceiveResponse):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.h:
+
 2019-02-15  Brian Burg  <bburg@apple.com>
 
         [Mac] WebInspectorUI.framework does not need to be soft-linked anymore
