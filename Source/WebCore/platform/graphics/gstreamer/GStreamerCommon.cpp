@@ -302,16 +302,6 @@ uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
     return time.timeValue();
 }
 
-bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString)
-{
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string(capsString));
-    GList* candidates = gst_element_factory_list_filter(elementFactories, caps.get(), GST_PAD_SINK, false);
-    bool result = candidates;
-
-    gst_plugin_feature_list_free(candidates);
-    return result;
-}
-
 static void simpleBusMessageCallback(GstBus*, GstMessage* message, GstBin* pipeline)
 {
     switch (GST_MESSAGE_TYPE(message)) {

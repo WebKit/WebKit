@@ -39,6 +39,10 @@
 #include "MediaEngineConfigurationFactoryCocoa.h"
 #endif
 
+#if USE(GSTREAMER)
+#include "MediaEngineConfigurationFactoryGStreamer.h"
+#endif
+
 namespace WebCore {
 
 static bool& mockEnabled()
@@ -58,6 +62,9 @@ static const FactoryVector& factories()
     static NeverDestroyed<FactoryVector> factories = makeNeverDestroyed(FactoryVector({
 #if PLATFORM(COCOA)
         { &createMediaPlayerDecodingConfigurationCocoa, nullptr },
+#endif
+#if USE(GSTREAMER)
+        { &createMediaPlayerDecodingConfigurationGStreamer, nullptr },
 #endif
     }));
     return factories;

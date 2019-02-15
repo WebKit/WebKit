@@ -27,6 +27,7 @@
 #include "GStreamerCommon.h"
 #include "GStreamerEMEUtilities.h"
 #include "GStreamerMediaDescription.h"
+#include "GStreamerRegistryScannerMSE.h"
 #include "MediaSampleGStreamer.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "MediaDescription.h"
@@ -141,7 +142,8 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
     }, this, nullptr);
 
     const String& type = m_sourceBufferPrivate->type().containerType();
-    if (type.endsWith("mp4"))
+    GST_DEBUG("SourceBuffer containerType: %s", type.utf8().data());
+    if (type.endsWith("mp4") || type.endsWith("aac"))
         m_demux = gst_element_factory_make("qtdemux", nullptr);
     else if (type.endsWith("webm"))
         m_demux = gst_element_factory_make("matroskademux", nullptr);
@@ -379,7 +381,8 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
     m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Unknown;
 
     const char* originalMediaType = capsMediaType(m_demuxerSrcPadCaps.get());
-    if (!MediaPlayerPrivateGStreamerMSE::supportsCodec(originalMediaType)) {
+    auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();
+    if (!gstRegistryScanner.isCodecSupported(originalMediaType)) {
             m_presentationSize = WebCore::FloatSize();
             m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
     } else if (doCapsHaveType(m_demuxerSrcPadCaps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {
