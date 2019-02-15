@@ -1,5 +1,20 @@
 2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: valid values in style attributes are reported as unsupported property values
+        https://bugs.webkit.org/show_bug.cgi?id=194619
+        <rdar://problem/47917373>
+
+        Reviewed by Devin Rousso.
+
+        Payload of inline styles may contain `range` that doesn't match
+        the actual text of the payload - it has an extra empty line at the end.
+        Mismatching ranges caused data corruption.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseStylePropertyPayload):
+
+2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: remove unused parameter in _parseStylePropertyPayload
         https://bugs.webkit.org/show_bug.cgi?id=194642
 
