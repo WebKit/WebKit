@@ -4273,3 +4273,5 @@ webkit.org/b/194451 accessibility/set-value-not-work-for-disabled-sliders.html [
 
 storage/indexeddb/result-request-cycle.html [ Skip ]
 storage/indexeddb/value-cursor-cycle.html [ Skip ]
+
+webkit.org/b/194711 fast/replaced/encrypted-pdf-as-object-and-embed.html [ Failure ]
