@@ -1007,7 +1007,7 @@ void UIScriptController::drawSquareInEditableImage()
     PKCanvasView *canvasView = findEditableImageCanvas();
     RetainPtr<PKDrawing> drawing = canvasView.drawing ?: adoptNS([[pkDrawingClass alloc] init]);
     RetainPtr<CGPathRef> path = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, 50, 50), NULL));
-    RetainPtr<PKInk> ink = [pkInkClass inkWithType:0 color:UIColor.greenColor weight:100.0];
+    RetainPtr<PKInk> ink = [pkInkClass inkWithType:@"com.apple.ink.pen" color:UIColor.greenColor weight:100.0];
     RetainPtr<PKStroke> stroke = adoptNS([[pkStrokeClass alloc] _initWithPath:path.get() ink:ink.get() inputScale:1]);
     [drawing _addStroke:stroke.get()];
 

@@ -116,9 +116,11 @@ static UIImage *emptyImage()
 
     __block RetainPtr<UIImage> resultImage;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_renderer renderDrawing:[_pencilView drawing] completion:^(UIImage *image) {
         resultImage = image;
     }];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // FIXME: Ideally we would not synchronously wait for this rendering,
     // but NSFileWrapper requires data synchronously, and our clients expect

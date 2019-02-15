@@ -1,3 +1,12 @@
+2019-02-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::drawSquareInEditableImage):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::drawSquareInEditableImage):
+
 2019-02-14  Brian Burg  <bburg@apple.com>
 
         [Mac] WebInspectorUI.framework does not need to be soft-linked anymore

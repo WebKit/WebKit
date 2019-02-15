@@ -1,3 +1,10 @@
+2019-02-14  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView renderedDrawing]):
+
 2019-02-14  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: m_caches.isEmpty() || !m_pendingInitializationCallbacks.isEmpty() in WebKit::CacheStorage::Caches::clearMemoryRepresentation()
