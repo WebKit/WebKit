@@ -1,3 +1,28 @@
+2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG, FTL, and Wasm worklist creation should be fenced
+        https://bugs.webkit.org/show_bug.cgi?id=194714
+
+        Reviewed by Mark Lam.
+
+        Let's consider about the following extreme case.
+
+        1. VM (A) is created.
+        2. Another VM (B) is created on a different thread.
+        3. (A) is being destroyed. It calls DFG::existingWorklistForIndexOrNull in a destructor.
+        4. At the same time, (B) starts using DFG Worklist and it is instantiated in call_once.
+        5. But (A) reads the pointer directly through DFG::existingWorklistForIndexOrNull.
+        6. (A) sees the half-baked worklist, which may be in the middle of creation.
+
+        This patch puts store-store fence just before putting a pointer to a global variable.
+        This fence is executed only three times at most, for DFG, FTL, and Wasm worklist initializations.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::ensureGlobalDFGWorklist):
+        (JSC::DFG::ensureGlobalFTLWorklist):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::ensureWorklist):
+
 2019-02-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241559 and r241566.

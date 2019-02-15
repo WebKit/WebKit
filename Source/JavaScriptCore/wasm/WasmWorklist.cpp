@@ -232,7 +232,9 @@ Worklist& ensureWorklist()
 {
     static std::once_flag initializeWorklist;
     std::call_once(initializeWorklist, [] {
-        globalWorklist = new Worklist();
+        Worklist* worklist = new Worklist();
+        WTF::storeStoreFence();
+        globalWorklist = worklist;
     });
     return *globalWorklist;
 }

@@ -570,7 +570,9 @@ Worklist& ensureGlobalDFGWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalDFGWorklist = &Worklist::create("DFG", getNumberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
+        Worklist* worklist = &Worklist::create("DFG", getNumberOfDFGCompilerThreads(), Options::priorityDeltaOfDFGCompilerThreads()).leakRef();
+        WTF::storeStoreFence();
+        theGlobalDFGWorklist = worklist;
     });
     return *theGlobalDFGWorklist;
 }
@@ -586,7 +588,9 @@ Worklist& ensureGlobalFTLWorklist()
 {
     static std::once_flag initializeGlobalWorklistOnceFlag;
     std::call_once(initializeGlobalWorklistOnceFlag, [] {
-        theGlobalFTLWorklist = &Worklist::create("FTL", getNumberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
+        Worklist* worklist = &Worklist::create("FTL", getNumberOfFTLCompilerThreads(), Options::priorityDeltaOfFTLCompilerThreads()).leakRef();
+        WTF::storeStoreFence();
+        theGlobalFTLWorklist = worklist;
     });
     return *theGlobalFTLWorklist;
 }
