@@ -1,3 +1,21 @@
+2019-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in the hit testing code via HTMLPlugInElement::isReplacementObscured()
+        https://bugs.webkit.org/show_bug.cgi?id=194691
+
+        Reviewed by Simon Fraser.
+
+        The crash was caused by HTMLPlugInElement::isReplacementObscured updating the document
+        without updating the layout of ancestor documents (i.e. documents in which frame owner
+        elements appear) even though it hit-tests against the top-level document's RenderView.
+
+        Fixed the bug by updating the layout of the top-level document as needed.
+
+        Test: plugins/unsupported-plugin-with-replacement-in-iframe-crash.html
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isReplacementObscured):
+
 2019-02-15  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WTF] Add environment variable helpers

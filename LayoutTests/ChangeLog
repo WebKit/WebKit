@@ -1,3 +1,17 @@
+2019-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in the hit testing code via HTMLPlugInElement::isReplacementObscured()
+        https://bugs.webkit.org/show_bug.cgi?id=194691
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test. It hits the newly added debug assertion without the fix.
+
+        * platform/mac-wk1/TestExpectations: Skip the test since DumpRenderTree doesn't support
+        testRunner.setPluginSupportedMode.
+        * plugins/unsupported-plugin-with-replacement-in-iframe-crash-expected.txt: Added.
+        * plugins/unsupported-plugin-with-replacement-in-iframe-crash.html: Added.
+
 2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: valid values in style attributes are reported as unsupported property values
