@@ -1,3 +1,19 @@
+2019-02-15  Mark Lam  <mark.lam@apple.com>
+
+        SamplingProfiler::stackTracesAsJSON() should escape strings.
+        https://bugs.webkit.org/show_bug.cgi?id=194649
+        <rdar://problem/48072386>
+
+        Reviewed by Saam Barati.
+
+        Ditto for TypeSet::toJSONString() and TypeSet::toJSONString().
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::toJSONString const):
+        (JSC::StructureShape::toJSONString const):
+
 2019-02-15  Robin Morisset  <rmorisset@apple.com>
 
         CodeBlock::jettison should clear related watchpoints

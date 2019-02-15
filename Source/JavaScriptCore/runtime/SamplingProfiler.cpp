@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -904,9 +904,7 @@ String SamplingProfiler::stackTracesAsJSON()
         loopedOnce = false;
         for (StackFrame& stackFrame : stackTrace.frames) {
             comma();
-            json.append('"');
-            json.append(stackFrame.displayNameForJSONTests(m_vm));
-            json.append('"');
+            json.appendQuotedJSONString(stackFrame.displayNameForJSONTests(m_vm));
             loopedOnce = true;
         }
         json.append(']');
