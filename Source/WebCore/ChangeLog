@@ -1,3 +1,16 @@
+2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+        Performance should not fire events when its context is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=194689
+
+        Reviewed by Alex Christensen.
+
+        Stop the timer when its context is destroyed.
+        Add an assertion to ensure the timer does not fire after context is destroyed.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::stop):
+
 2019-02-15  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: ( r240978-r240985 ) [ iOS Release ] Layout Test imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm is crashing
