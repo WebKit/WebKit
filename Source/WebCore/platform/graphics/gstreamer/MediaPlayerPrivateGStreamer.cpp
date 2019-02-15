@@ -1753,7 +1753,7 @@ void MediaPlayerPrivateGStreamer::sourceSetupCallback(MediaPlayerPrivateGStreame
 
 void MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback(GstBin* bin, GstElement* element, MediaPlayerPrivateGStreamer* player)
 {
-    if (g_strcmp0(G_OBJECT_CLASS_NAME(G_OBJECT_GET_CLASS(G_OBJECT(element))), "GstDownloadBuffer"))
+    if (g_strcmp0(G_OBJECT_TYPE_NAME(element), "GstDownloadBuffer"))
         return;
 
     player->m_downloadBuffer = element;
