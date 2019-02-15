@@ -92,10 +92,7 @@ WK_MOBILE_GESTALT_LDFLAGS_cocoatouch = -lMobileGestalt;
 WK_SECURITY_INTERFACE_LDFLAGS = $(WK_SECURITY_INTERFACE_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SECURITY_INTERFACE_LDFLAGS_macosx = -framework SecurityInterface;
 
-WK_WEBINSPECTORUI_LDFLAGS = $(WK_WEBINSPECTORUI_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_WEBINSPECTORUI_LDFLAGS_macosx = -weak_framework WebInspectorUI;
-
-OTHER_LDFLAGS = -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit $(WK_APPKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS);
+OTHER_LDFLAGS = -lobjc -lsqlite3 -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit $(WK_APPKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS);
 
 SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKitLegacy.order;

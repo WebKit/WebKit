@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,10 @@
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/Base64.h>
+
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
 
@@ -721,42 +724,38 @@ void WebInspectorProxy::platformStartWindowDrag()
 
 String WebInspectorProxy::inspectorPageURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
-    NSString *path = [bundle pathForResource:@"Main" ofType:@"html"];
-    ASSERT(path && path.length);
-    if (!path)
-        return String();
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
+    ASSERT([path length]);
 
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
+
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
 
     // We might not have a Test.html in Production builds.
-    NSString *path = [bundle pathForResource:@"Main" ofType:@"html"];
     if (!path)
         return String();
 
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
 }
 
 String WebInspectorProxy::inspectorBaseURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
-    NSString *path = bundle.resourcePath;
-    ASSERT(path && path.length);
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] resourcePath];
+    ASSERT([path length]);
 
-    return [NSURL fileURLWithPath:path isDirectory:YES].absoluteString;
+    return [[NSURL fileURLWithPath:path isDirectory:YES] absoluteString];
 }
 
 } // namespace WebKit

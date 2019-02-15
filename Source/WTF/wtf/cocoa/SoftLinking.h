@@ -84,6 +84,19 @@
         return frameworkLibrary; \
     }
 
+#define SOFT_LINK_STAGED_FRAMEWORK(framework, unstagedLocation, version) \
+    static void* framework##Library() \
+    { \
+        static void* frameworkLibrary = ^{ \
+            void* result = dlopen("/System/Library/" #unstagedLocation "/" #framework ".framework/Versions/" #version "/" #framework, RTLD_LAZY); \
+            if (!result) \
+                result = dlopen("/System/Library/StagedFrameworks/Safari/" #framework ".framework/Versions/" #version "/" #framework, RTLD_LAZY); \
+            RELEASE_ASSERT_WITH_MESSAGE(result, "%s", dlerror()); \
+            return result; \
+        }(); \
+        return frameworkLibrary; \
+    }
+
 #define SOFT_LINK_FRAMEWORK_IN_UMBRELLA(umbrella, framework) \
     static void* framework##Library() \
     { \

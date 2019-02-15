@@ -53,7 +53,10 @@
 #import <WebCore/ScriptController.h>
 #import <WebKitLegacy/DOMExtensions.h>
 #import <algorithm>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/Base64.h>
+
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
 using namespace Inspector;
@@ -221,15 +224,13 @@ void WebInspectorFrontendClient::startWindowDrag()
 
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
-    NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
-    if (!path.length)
-        return String();
-    
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
+    if ([path length])
+        return [[NSURL fileURLWithPath:path] absoluteString];
+    return String();
 }
 
 void WebInspectorFrontendClient::bringToFront()
@@ -462,21 +463,26 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (NSString *)inspectorPagePath
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return nil;
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
-    return [bundle pathForResource:@"Main" ofType:@"html"];
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Main" ofType:@"html"];
+    ASSERT([path length]);
+    return path;
 }
 
 - (NSString *)inspectorTestPagePath
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return nil;
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
+
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"Test" ofType:@"html"];
 
     // We might not have a Test.html in Production builds.
-    return [bundle pathForResource:@"Test" ofType:@"html"];
+    if (!path)
+        return nil;
+
+    return path;
 }
 
 // MARK: -

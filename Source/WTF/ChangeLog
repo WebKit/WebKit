@@ -1,3 +1,16 @@
+2019-02-15  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r241564.
+
+        Caused 50+ Timeouts on Mac WK2, mostly in the http/ directory
+
+        Reverted changeset:
+
+        "[Mac] WebInspectorUI.framework does not need to be soft-
+        linked anymore"
+        https://bugs.webkit.org/show_bug.cgi?id=194411
+        https://trac.webkit.org/changeset/241564
+
 2019-02-15  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Fix deadlock on Linux/x64 between SamplingProfiler and VMTraps

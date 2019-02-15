@@ -77,6 +77,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WallTime.h>
 
+#if !PLATFORM(IOS_FAMILY)
+#import <wtf/SoftLinking.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import <WebKit/WebCoreThread.h>
@@ -85,6 +89,7 @@
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
 {
@@ -829,6 +834,9 @@ JSRetainPtr<JSStringRef> TestRunner::inspectorTestStubURL()
 #if PLATFORM(IOS_FAMILY)
     return nullptr;
 #else
+    // Call the soft link framework function to dlopen it, then CFBundleGetBundleWithIdentifier will work.
+    WebInspectorUILibrary();
+
     CFBundleRef inspectorBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebInspectorUI"));
     if (!inspectorBundle)
         return nullptr;

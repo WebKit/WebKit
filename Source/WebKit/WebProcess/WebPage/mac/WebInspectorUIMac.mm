@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,10 @@
 #import "WebInspectorUI.h"
 #import "RemoteWebInspectorUI.h"
 
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
+
 namespace WebKit {
 
 bool WebInspectorUI::canSave()
@@ -36,15 +40,14 @@ bool WebInspectorUI::canSave()
 
 static String webInspectorUILocalizedStringsURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorUILibrary();
 
-    NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
-    if (!path)
-        return String();
-    
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"] pathForResource:@"localizedStrings" ofType:@"js"];
+    if (path.length)
+        return [[NSURL fileURLWithPath:path isDirectory:NO] absoluteString];
+
+    return String();
 }
 
 String WebInspectorUI::localizedStringsURL()
