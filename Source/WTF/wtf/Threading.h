@@ -66,6 +66,13 @@ WTF_EXPORT_PRIVATE bool threadingIsInitialized();
 // This function can be called from any threads.
 WTF_EXPORT_PRIVATE void initializeThreading();
 
+#if USE(PTHREADS)
+
+// We use SIGUSR1 to suspend and resume machine threads in JavaScriptCore.
+constexpr const int SigThreadSuspendResume = SIGUSR1;
+
+#endif
+
 // FIXME: The following functions remain because they are used from WebKit Windows support library,
 // WebKitQuartzCoreAdditions.dll. When updating the support library, we should use new API instead
 // and the following workaound should be removed. And new code should not use the following APIs.

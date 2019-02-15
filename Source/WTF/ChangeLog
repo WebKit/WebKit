@@ -1,3 +1,38 @@
+2019-02-15  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Fix deadlock on Linux/x64 between SamplingProfiler and VMTraps
+        https://bugs.webkit.org/show_bug.cgi?id=194014
+
+        Reviewed by Michael Catanzaro.
+
+        Do not block SIGUSR1 when installing signal handlers, since this signal
+        is used to suspend/resume machine threads on Linux.
+
+        ftl-ai-filter-phantoms-should-clear-clear-value.js deadlocked with
+        enabled watchdog and sampling.
+
+        Deadlock happened in the following situation:
+
+        Thread 1 (Sampling): SamplingProfiler.cpp:takeSample takes all needed locks
+        and then tries to suspend the main thread.
+
+        Thread 2 (Watchdog/VMTraps): Before the Sampling-Thread suspends the main thread
+        a signal is caught and the signal handler is invoked (VMTraps.cpp:SignalSender).
+        SignalSender tries to lock codeBlockSet, but this is already locked by the
+        SamplingProfiler.
+
+        The SamplingProfiler can only give up the lock when it suspends
+        the thread. However since the VMTraps signal handler is active, all other signals blocked,
+        therefore the SamplingProfiler also waits until its signal handler is invoked.
+
+        This patch fixes this by not blocking SIGUSR1 in installSignalHandler, since
+        it is used to suspend/resume threads on Linux.
+
+        * wtf/Threading.h:
+        * wtf/posix/ThreadingPOSIX.cpp:
+        * wtf/threads/Signals.cpp:
+        (WTF::installSignalHandler):
+
 2019-02-15  Saam barati  <sbarati@apple.com>
 
         [WebAssembly] Write a new register allocator for Air O0 and make BBQ use it
