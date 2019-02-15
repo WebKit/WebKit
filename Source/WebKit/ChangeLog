@@ -1,3 +1,13 @@
+2019-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Update IPC code generator unit test expectations after r241595
+        https://bugs.webkit.org/show_bug.cgi?id=194679
+
+        * Scripts/webkit/LegacyMessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveSyncWebPageMessage):
+        * Scripts/webkit/MessageReceiver-expected.cpp:
+        (WebKit::WebPage::didReceiveSyncMessage):
+
 2019-02-15  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClientFetch closer to WebResourceLoader
