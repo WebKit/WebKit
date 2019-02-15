@@ -1489,8 +1489,7 @@ webkit.org/b/140832 [ Debug ] accessibility/textarea-selected-text-range.html [ 
 # TODO Need to implement global addNotificationListener in Windows DRT
 accessibility/content-editable-as-textarea.html [ Skip ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
-[ Release ] accessibility/loading-iframe-sends-notification.html [ Failure ]
-[ Debug ] accessibility/loading-iframe-sends-notification.html [ Skip ] # Debug assertion
+webkit.org/b/194712 accessibility/loading-iframe-sends-notification.html [ Skip ] # Debug assertion
 accessibility/win/single-select-children-changed.html [ Skip ]
 webkit.org/b/142016 accessibility/aria-switch-sends-notification.html [ Skip ]
 

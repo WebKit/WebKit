@@ -1,5 +1,14 @@
 2019-02-15  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test accessibility/loading-iframe-sends-notification.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=194712
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2019-02-15  Per Arne Vollan  <pvollan@apple.com>
+
         Layout Test fast/replaced/encrypted-pdf-as-object-and-embed.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=194711
 
