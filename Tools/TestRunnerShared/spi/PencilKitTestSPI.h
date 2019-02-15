@@ -41,7 +41,7 @@
 typedef NSInteger PKInkType;
 
 @interface PKInk : NSObject
-+ (PKInk *)inkWithType:(PKInkType)type color:(UIColor *)color weight:(CGFloat)weight;
++ (PKInk *)inkWithIdentifier:(NSString *)type color:(UIColor *)color weight:(CGFloat)weight;
 @end
 
 @interface PKStroke : NSObject
