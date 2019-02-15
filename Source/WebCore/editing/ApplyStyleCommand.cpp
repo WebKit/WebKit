@@ -485,17 +485,15 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
 
     HTMLElement* unsplitAncestor = nullptr;
 
-    WritingDirection highestAncestorDirection;
-    if (allowedDirection != WritingDirection::Natural
-        && highestAncestorUnicodeBidi != CSSValueBidiOverride
-        && is<HTMLElement>(*highestAncestorWithUnicodeBidi)
-        && EditingStyle::create(highestAncestorWithUnicodeBidi, EditingStyle::AllProperties)->textDirection(highestAncestorDirection)
-        && highestAncestorDirection == allowedDirection) {
-        if (!nextHighestAncestorWithUnicodeBidi)
-            return downcast<HTMLElement>(highestAncestorWithUnicodeBidi);
+    if (allowedDirection != WritingDirection::Natural && highestAncestorUnicodeBidi != CSSValueBidiOverride && is<HTMLElement>(*highestAncestorWithUnicodeBidi)) {
+        auto highestAncestorDirection = EditingStyle::create(highestAncestorWithUnicodeBidi, EditingStyle::AllProperties)->textDirection();
+        if (highestAncestorDirection && *highestAncestorDirection == allowedDirection) {
+            if (!nextHighestAncestorWithUnicodeBidi)
+                return downcast<HTMLElement>(highestAncestorWithUnicodeBidi);
 
-        unsplitAncestor = downcast<HTMLElement>(highestAncestorWithUnicodeBidi);
-        highestAncestorWithUnicodeBidi = nextHighestAncestorWithUnicodeBidi;
+            unsplitAncestor = downcast<HTMLElement>(highestAncestorWithUnicodeBidi);
+            highestAncestorWithUnicodeBidi = nextHighestAncestorWithUnicodeBidi;
+        }
     }
 
     // Split every ancestor through highest ancestor with embedding.
@@ -616,14 +614,13 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     Position removeStart = start.upstream();
-    WritingDirection textDirection = WritingDirection::Natural;
-    bool hasTextDirection = style.textDirection(textDirection);
+    auto textDirection = style.textDirection();
     RefPtr<EditingStyle> styleWithoutEmbedding;
     RefPtr<EditingStyle> embeddingStyle;
-    if (hasTextDirection) {
+    if (textDirection.hasValue()) {
         // Leave alone an ancestor that provides the desired single level embedding, if there is one.
-        HTMLElement* startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.deprecatedNode(), true, textDirection);
-        HTMLElement* endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.deprecatedNode(), false, textDirection);
+        auto* startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.deprecatedNode(), true, *textDirection);
+        auto* endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.deprecatedNode(), false, *textDirection);
         removeEmbeddingUpToEnclosingBlock(start.deprecatedNode(), startUnsplitAncestor);
         removeEmbeddingUpToEnclosingBlock(end.deprecatedNode(), endUnsplitAncestor);
 
@@ -671,7 +668,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     document().updateLayoutIgnorePendingStylesheets();
 
     RefPtr<EditingStyle> styleToApply = &style;
-    if (hasTextDirection) {
+    if (textDirection.hasValue()) {
         // Avoid applying the unicode-bidi and direction properties beneath ancestors that already have them.
         Node* embeddingStartNode = highestEmbeddingAncestor(start.deprecatedNode(), enclosingBlock(start.deprecatedNode()));
         Node* embeddingEndNode = highestEmbeddingAncestor(end.deprecatedNode(), enclosingBlock(end.deprecatedNode()));
