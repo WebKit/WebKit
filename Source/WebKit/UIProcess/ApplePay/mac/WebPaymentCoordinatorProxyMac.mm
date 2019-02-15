@@ -35,16 +35,16 @@
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, WTF::Function<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = makeWeakPtr(*this);
-    [PAL::getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) {
+    [PAL::getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:makeBlockPtr([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) mutable {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
-            return;
+            return completionHandler(false);
 
         if (error) {
             LOG_ERROR("+[PKPaymentAuthorizationViewController requestViewControllerWithPaymentRequest:completion:] error %@", error);
@@ -55,7 +55,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
 
         if (showPaymentUIRequestSeed != paymentCoordinatorProxy->m_showPaymentUIRequestSeed) {
             // We've already been asked to hide the payment UI. Don't attempt to show it.
-            return;
+            return completionHandler(false);
         }
 
         ASSERT(viewController);

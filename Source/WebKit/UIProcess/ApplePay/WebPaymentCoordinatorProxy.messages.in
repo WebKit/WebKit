@@ -26,12 +26,12 @@
 
 messages -> WebPaymentCoordinatorProxy {
 
-    AvailablePaymentNetworks() -> (Vector<String> availablePaymentNetworks) LegacySync
-    CanMakePayments() -> (bool result) LegacySync
+    AvailablePaymentNetworks() -> (Vector<String> availablePaymentNetworks) Delayed
+    CanMakePayments() -> (bool result) Delayed
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, uint64_t requestID)
     OpenPaymentSetup(String merchantIdentifier, String domainName, uint64_t requestID)
 
-    ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) LegacySync
+    ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Delayed
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
     CompleteShippingMethodSelection(Optional<WebCore::ShippingMethodUpdate> update)
     CompleteShippingContactSelection(Optional<WebCore::ShippingContactUpdate> update)

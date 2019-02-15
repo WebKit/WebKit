@@ -1,3 +1,29 @@
+2019-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        Make WebPaymentCoordinatorProxy more robust and modern
+        https://bugs.webkit.org/show_bug.cgi?id=194678
+
+        Reviewed by Andy Estes.
+
+        Use WeakPtr instead of storing raw pointers in lambdas or the global activePaymentCoordinatorProxy to avoid UAF problems.
+        Call CompletionHandlers in all code paths to avoid hangs.
+        Use Delayed instead of LegacySync for synchronous messaging to progress towards removing LegacySync messages.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::activePaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::availablePaymentNetworks):
+        (WebKit::WebPaymentCoordinatorProxy::canMakePayments):
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::didReachFinalState):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+
 2019-02-15  Youenn Fablet  <youenn@apple.com>
 
         Make ServiceWorkerClientFetch closer to WebResourceLoader

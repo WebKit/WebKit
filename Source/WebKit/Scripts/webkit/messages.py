@@ -189,10 +189,8 @@ def forward_declarations_and_headers(receiver):
         'String',
     ])
 
-    for message in receiver.messages:
-        if message.reply_parameters != None:
-            headers.add('<wtf/ThreadSafeRefCounted.h>')
-            types_by_namespace['IPC'].update([('class', 'Connection')])
+    headers.add('"Connection.h"')
+    headers.add('<wtf/ThreadSafeRefCounted.h>')
 
     no_forward_declaration_types = frozenset([
         'MachSendRight',

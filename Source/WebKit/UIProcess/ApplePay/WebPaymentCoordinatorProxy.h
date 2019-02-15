@@ -78,11 +78,11 @@ private:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
-    void availablePaymentNetworks(Vector<String>&);
-    void canMakePayments(bool& reply);
+    void availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&&);
+    void canMakePayments(CompletionHandler<void(bool)>&&);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
-    void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, bool& result);
+    void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
     void completeShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
@@ -102,7 +102,7 @@ private:
     bool platformCanMakePayments();
     void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
-    void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, WTF::Function<void(bool)>&& completionHandler);
+    void platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession&);
     void platformCompleteShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);
     void platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
