@@ -59,7 +59,6 @@
 #include <shlwapi.h>
 #include <tchar.h>
 #include <windows.h>
-#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
@@ -215,14 +214,16 @@ static string toUTF8(const wchar_t* wideString, size_t length)
 #if USE(CF)
 static String libraryPathForDumpRenderTree()
 {
-    auto path = Environment::get(dumpRenderTreeTemp);
-    if (!path || path->isEmpty())
-        return FileSystem::localUserSpecificStorageDirectory();
+    DWORD size = ::GetEnvironmentVariable(dumpRenderTreeTemp, 0, 0);
+    Vector<TCHAR> buffer(size);
+    if (::GetEnvironmentVariable(dumpRenderTreeTemp, buffer.data(), buffer.size())) {
+        wstring path = buffer.data();
+        if (!path.empty() && (path[path.length() - 1] != L'\\'))
+            path.append(L"\\");
+        return String (path.data(), path.length());
+    }
 
-    if (!path->endsWith('\\'))
-        path->append('\\');
-
-    return *path;
+    return FileSystem::localUserSpecificStorageDirectory();
 }
 #endif
 

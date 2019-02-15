@@ -32,7 +32,6 @@
 #include "WebProcessCreationParameters.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/GStreamerCommon.h>
-#include <wtf/Environment.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -63,13 +62,14 @@ static void initializeRemoteInspectorServer(const char* address)
 
 static bool memoryPressureMonitorDisabled()
 {
-    return Environment::hasValue("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1");
+    static const char* disableMemoryPressureMonitor = getenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR");
+    return disableMemoryPressureMonitor && !strcmp(disableMemoryPressureMonitor, "1");
 }
 
 void WebProcessPool::platformInitialize()
 {
 #if ENABLE(REMOTE_INSPECTOR)
-    if (const char* address = Environment::getRaw("WEBKIT_INSPECTOR_SERVER"))
+    if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER"))
         initializeRemoteInspectorServer(address);
 #endif
 
@@ -89,7 +89,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if PLATFORM(GTK)
     // This is misnamed. It can only be used to disable complex text.
     parameters.shouldAlwaysUseComplexTextCodePath = true;
-    if (Environment::hasValue("WEBKIT_FORCE_COMPLEX_TEXT", "0"))
+    const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT");
+    if (forceComplexText && !strcmp(forceComplexText, "0"))
         parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
 #endif
 

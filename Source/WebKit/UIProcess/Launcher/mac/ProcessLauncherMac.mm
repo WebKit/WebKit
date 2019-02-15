@@ -34,7 +34,6 @@
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>
-#import <wtf/Environment.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
@@ -85,7 +84,7 @@ static NSString *systemDirectoryPath()
 {
     static NSString *path = [^{
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-        const char* simulatorRoot = Environment::getRaw("SIMULATOR_ROOT");
+        char *simulatorRoot = getenv("SIMULATOR_ROOT");
         return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
 #else
         return @"/System/";
@@ -119,11 +118,11 @@ void ProcessLauncher::launchProcess()
 #if PLATFORM(IOS_FAMILY)
     // Clients that set these environment variables explicitly do not have the values automatically forwarded by libxpc.
     auto containerEnvironmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    if (const char* environmentHOME = Environment::getRaw("HOME"))
+    if (const char* environmentHOME = getenv("HOME"))
         xpc_dictionary_set_string(containerEnvironmentVariables.get(), "HOME", environmentHOME);
-    if (const char* environmentCFFIXED_USER_HOME = Environment::getRaw("CFFIXED_USER_HOME"))
+    if (const char* environmentCFFIXED_USER_HOME = getenv("CFFIXED_USER_HOME"))
         xpc_dictionary_set_string(containerEnvironmentVariables.get(), "CFFIXED_USER_HOME", environmentCFFIXED_USER_HOME);
-    if (const char* environmentTMPDIR = Environment::getRaw("TMPDIR"))
+    if (const char* environmentTMPDIR = getenv("TMPDIR"))
         xpc_dictionary_set_string(containerEnvironmentVariables.get(), "TMPDIR", environmentTMPDIR);
     xpc_dictionary_set_value(initializationMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
 #endif

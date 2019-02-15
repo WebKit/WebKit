@@ -232,7 +232,6 @@
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/Assertions.h>
-#import <wtf/Environment.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashTraits.h>
 #import <wtf/MainThread.h>
@@ -1607,7 +1606,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     // need for Safari to unset it to prevent it from being passed to applications it launches.
     // Unsetting it when a WebView is first created is as good a place as any.
     // See <http://bugs.webkit.org/show_bug.cgi?id=4286> for more details.
-    if (Environment::get("WEBKIT_UNSET_DYLD_FRAMEWORK_PATH")) {
+    if (getenv("WEBKIT_UNSET_DYLD_FRAMEWORK_PATH")) {
         unsetenv("DYLD_FRAMEWORK_PATH");
         unsetenv("WEBKIT_UNSET_DYLD_FRAMEWORK_PATH");
     }

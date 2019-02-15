@@ -27,16 +27,15 @@
 #define NotImplemented_h
 
 #include <wtf/Assertions.h>
-#include <wtf/Environment.h>
 
 #if PLATFORM(GTK)
-#define suppressNotImplementedWarning() Environment::get("DISABLE_NI_WARNING")
+    #define suppressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
 #else
-#define suppressNotImplementedWarning() false
+    #define suppressNotImplementedWarning() false
 #endif
 
 #if LOG_DISABLED
-#define notImplemented() ((void)0)
+    #define notImplemented() ((void)0)
 #else
 
 namespace WebCore {

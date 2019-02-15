@@ -37,7 +37,6 @@
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include "ClassMethodSwizzler.h"
@@ -445,7 +444,7 @@ private:
     static void runModal(WKPageRef, const void* clientInfo);
     static void runModal(PlatformWebView*);
 
-    static String libraryPathForTesting();
+    static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
     std::unique_ptr<TestInvocation> m_currentInvocation;

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "WebKitTestBus.h"
 
-#include <wtf/Environment.h>
-
 WebKitTestBus::WebKitTestBus()
     : m_bus(adoptGRef(g_test_dbus_new(G_TEST_DBUS_NONE)))
 {
@@ -34,14 +32,14 @@ WebKitTestBus::~WebKitTestBus()
 
 bool WebKitTestBus::run()
 {
-    auto display = Environment::get("DISPLAY");
-    auto runtimeDir = Environment::get("XDG_RUNTIME_DIR");
+    CString display = g_getenv("DISPLAY");
+    CString runtimeDir = g_getenv("XDG_RUNTIME_DIR");
     g_test_dbus_up(m_bus.get());
     m_address = g_test_dbus_get_bus_address(m_bus.get());
-    if (display)
-        Environment::setIfNotDefined("DISPLAY", *display);
-    if (runtimeDir)
-        Environment::setIfNotDefined("XDG_RUNTIME_DIR", *runtimeDir);
+    if (!display.isNull())
+        g_setenv("DISPLAY", display.data(), FALSE);
+    if (!runtimeDir.isNull())
+        g_setenv("XDG_RUNTIME_DIR", runtimeDir.data(), FALSE);
     return !m_address.isNull();
 }
 

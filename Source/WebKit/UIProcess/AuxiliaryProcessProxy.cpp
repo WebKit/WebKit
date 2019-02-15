@@ -27,7 +27,6 @@
 #include "AuxiliaryProcessProxy.h"
 
 #include "AuxiliaryProcessMessages.h"
-#include <wtf/Environment.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -52,8 +51,8 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
 {
     launchOptions.processIdentifier = m_processIdentifier;
 
-    if (auto userDirectorySuffix = Environment::get("DIRHELPER_USER_DIR_SUFFIX"))
-        launchOptions.extraInitializationData.add("user-directory-suffix"_s, *userDirectorySuffix);
+    if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
+        launchOptions.extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
 
     if (m_alwaysRunsAtBackgroundPriority)
         launchOptions.extraInitializationData.add("always-runs-at-background-priority"_s, "true");
@@ -77,9 +76,9 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
         ASSERT_NOT_REACHED();
         break;
     }
-    auto processCmdPrefix = Environment::get(varname);
-    if (processCmdPrefix && !processCmdPrefix->isEmpty())
-        launchOptions.processCmdPrefix = *processCmdPrefix;
+    const char* processCmdPrefix = getenv(varname);
+    if (processCmdPrefix && *processCmdPrefix)
+        launchOptions.processCmdPrefix = String::fromUTF8(processCmdPrefix);
 #endif // ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
 
     platformGetLaunchOptions(launchOptions);

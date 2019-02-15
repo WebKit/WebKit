@@ -28,7 +28,6 @@
 
 #if GTK_CHECK_VERSION(3, 20, 0)
 
-#include <wtf/Environment.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -110,7 +109,7 @@ RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode
         info.classList.append("horizontal");
         info.classList.append("bottom");
     }
-    static bool usesOverlayScrollbars = !Environment::hasValue("GTK_OVERLAY_SCROLLING", "0");
+    static bool usesOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
     if (usesOverlayScrollbars)
         info.classList.append("overlay-indicator");
     if (mode == Mode::Full)

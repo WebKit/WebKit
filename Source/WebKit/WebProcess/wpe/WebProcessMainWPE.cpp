@@ -34,7 +34,6 @@
 #include <iostream>
 #include <libsoup/soup.h>
 #include <wpe/wpe.h>
-#include <wtf/Environment.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -44,7 +43,7 @@ public:
     bool platformInitialize() override
     {
 #if ENABLE(DEVELOPER_MODE)
-        if (Environment::get("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
+        if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             WTF::sleep(30_s);
 #endif
 

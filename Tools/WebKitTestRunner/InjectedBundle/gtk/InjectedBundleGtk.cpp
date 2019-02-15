@@ -45,7 +45,8 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     // messages sent to the logger.
     g_log_set_default_handler(logHandler, 0);
 
-    g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
+    if (!g_getenv("WEBKIT_TOP_LEVEL"))
+        g_setenv("WEBKIT_TOP_LEVEL", TOP_LEVEL_DIR, FALSE);
 }
 
 } // namespace WTR

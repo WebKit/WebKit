@@ -57,7 +57,6 @@
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
-#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/Language.h>
@@ -262,7 +261,7 @@ WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 static const char* injectedBundleDirectory()
 {
 #if ENABLE(DEVELOPER_MODE)
-    const char* bundleDirectory = Environment::getRaw("WEBKIT_INJECTED_BUNDLE_PATH");
+    const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
         return bundleDirectory;
 #endif
@@ -360,7 +359,7 @@ static void webkitWebContextConstructed(GObject* object)
     priv->processPool->setIgnoreTLSErrors(false);
 
 #if ENABLE(MEMORY_SAMPLER)
-    if (Environment::get("WEBKIT_SAMPLE_MEMORY"))
+    if (getenv("WEBKIT_SAMPLE_MEMORY"))
         priv->processPool->startMemorySampler(0);
 #endif
 

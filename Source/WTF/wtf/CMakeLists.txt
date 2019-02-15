@@ -55,7 +55,6 @@ set(WTF_PUBLIC_HEADERS
     DumbPtrTraits.h
     DumbValueTraits.h
     EnumTraits.h
-    Environment.h
     Expected.h
     ExportMacros.h
     FastBitVector.h

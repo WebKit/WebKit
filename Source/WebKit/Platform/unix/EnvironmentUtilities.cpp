@@ -26,7 +26,6 @@
 #include "config.h"
 #include "EnvironmentUtilities.h"
 
-#include <wtf/Environment.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -39,7 +38,8 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
     ASSERT(searchValue);
     
     // Grab the current value of the environment variable.
-    auto environmentValue = const_cast<char*>(Environment::getRaw(environmentVariable));
+    char* environmentValue = getenv(environmentVariable);
+
     if (!environmentValue || environmentValue[0] == '\0')
         return;
 

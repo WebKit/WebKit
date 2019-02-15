@@ -40,7 +40,6 @@
 #include <WebCore/UserAgent.h>
 #include <cmath>
 #include <glib/gi18n-lib.h>
-#include <wtf/Environment.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -184,7 +183,7 @@ static void webKitSettingsConstructed(GObject* object)
     WebPreferences* prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
 
-    if (Environment::get("WEBKIT_WEBRTC_DISABLE_UNIFIED_PLAN"))
+    if (g_getenv("WEBKIT_WEBRTC_DISABLE_UNIFIED_PLAN"))
         prefs->setWebRTCUnifiedPlanEnabled(FALSE);
 
     bool mediaStreamEnabled = prefs->mediaStreamEnabled();
@@ -336,7 +335,8 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         if (g_value_get_boolean(value))
             webkit_settings_set_draw_compositing_indicators(settings, g_value_get_boolean(value));
         else {
-            auto showDebugVisuals = Environment::hasValue("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS", "1");
+            char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
+            bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
             webkit_settings_set_draw_compositing_indicators(settings, showDebugVisuals);
         }
         break;

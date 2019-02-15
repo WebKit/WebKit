@@ -28,12 +28,11 @@
 #include "TestController.h"
 #include <WebKit/WKTextCheckerGtk.h>
 #include <gtk/gtk.h>
-#include <wtf/Environment.h>
 #include <wtf/glib/GRefPtr.h>
 
 int main(int argc, char** argv)
 {
-    Environment::setIfNotDefined("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1");
+    g_setenv("WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR", "1", FALSE);
 
     gtk_init(&argc, &argv);
 

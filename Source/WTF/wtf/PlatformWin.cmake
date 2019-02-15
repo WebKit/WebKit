@@ -12,7 +12,6 @@ list(APPEND WTF_SOURCES
 
     win/CPUTimeWin.cpp
     win/DbgHelperWin.cpp
-    win/EnvironmentWin.cpp
     win/FileSystemWin.cpp
     win/LanguageWin.cpp
     win/MainThreadWin.cpp

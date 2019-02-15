@@ -29,7 +29,6 @@
 #include "WaylandCompositor.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
-#include <wtf/Environment.h>
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 #include <WebCore/PlatformDisplayX11.h>
@@ -53,7 +52,8 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     return;
 #endif
 
-    if (Environment::hasValueOtherThan("WEBKIT_DISABLE_COMPOSITING_MODE", "0")) {
+    const char* disableCompositing = getenv("WEBKIT_DISABLE_COMPOSITING_MODE");
+    if (disableCompositing && strcmp(disableCompositing, "0")) {
         m_canUseHardwareAcceleration = false;
         return;
     }
@@ -78,7 +78,8 @@ HardwareAccelerationManager::HardwareAccelerationManager()
     }
 #endif
 
-    if (Environment::hasValueOtherThan("WEBKIT_FORCE_COMPOSITING_MODE", "0"))
+    const char* forceCompositing = getenv("WEBKIT_FORCE_COMPOSITING_MODE");
+    if (forceCompositing && strcmp(forceCompositing, "0"))
         m_forceHardwareAcceleration = true;
 }
 

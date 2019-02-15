@@ -89,7 +89,6 @@
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
 		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
-		A307FD29220CB4350021B62C /* EnvironmentPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A307FD28220CB4350021B62C /* EnvironmentPOSIX.cpp */; };
 		A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */; };
 		A331D95B21F24992009F02AA /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95A21F24992009F02AA /* FileSystem.cpp */; };
 		A331D95D21F249E4009F02AA /* FileSystemCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A331D95C21F249E4009F02AA /* FileSystemCF.cpp */; };
@@ -438,8 +437,6 @@
 		9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomicStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicStringTable.h; sourceTree = "<group>"; };
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
-		A307FD28220CB4350021B62C /* EnvironmentPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentPOSIX.cpp; sourceTree = "<group>"; };
-		A307FD2A220CB4490021B62C /* Environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Environment.h; sourceTree = "<group>"; };
 		A30D412C1F0DE0BA00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A30D412D1F0DE13F00B71954 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadingPOSIX.cpp; sourceTree = "<group>"; };
@@ -803,7 +800,6 @@
 		A331D96321F24A2E009F02AA /* posix */ = {
 			isa = PBXGroup;
 			children = (
-				A307FD28220CB4350021B62C /* EnvironmentPOSIX.cpp */,
 				A331D96621F24ABD009F02AA /* FileSystemPOSIX.cpp */,
 				A3EE5C3921FFAC5E00FABD61 /* OSAllocatorPOSIX.cpp */,
 				A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */,
@@ -933,7 +929,6 @@
 				FE05FAE61FDB214300093230 /* DumbPtrTraits.h */,
 				AD653DA82006B6C200D820D7 /* DumbValueTraits.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
-				A307FD2A220CB4490021B62C /* Environment.h */,
 				AD7C434A1DD2A4A70026888B /* Expected.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */,
@@ -1031,6 +1026,8 @@
 				A8A472CE151A825B004123FF /* MetaAllocator.h */,
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				FE7497ED209163060003565B /* MetaAllocatorPtr.h */,
+				5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */,
+				5FAD3AE021B9636600BEE178 /* URLHelpers.h */,
 				0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */,
 				0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */,
 				FE8225301B2A1E5B00BA68FD /* NakedPtr.h */,
@@ -1178,8 +1175,6 @@
 				5CC0EE7121629F1800A1A842 /* URL.h */,
 				5C1F0597216439940039302C /* URLHash.h */,
 				5CC0EE772162A01000A1A842 /* URLHash.h */,
-				5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */,
-				5FAD3AE021B9636600BEE178 /* URLHelpers.h */,
 				5CC0EE7321629F1900A1A842 /* URLParser.cpp */,
 				5CC0EE7221629F1900A1A842 /* URLParser.h */,
 				7AFEC6B01EB22B5900DADE36 /* UUID.cpp */,
@@ -1525,7 +1520,6 @@
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
 				143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */,
-				A307FD29220CB4350021B62C /* EnvironmentPOSIX.cpp in Sources */,
 				50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */,
@@ -1563,6 +1557,7 @@
 				5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
 				8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */,
+				5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */,
 				A3EE5C3A21FFAC5F00FABD61 /* OSAllocatorPOSIX.cpp in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,
 				A8A47402151A825B004123FF /* PageBlock.cpp in Sources */,
@@ -1619,7 +1614,6 @@
 				5CC0EE7621629F1900A1A842 /* URL.cpp in Sources */,
 				5C1F0595216437B30039302C /* URLCF.cpp in Sources */,
 				5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */,
-				5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */,
 				5CC0EE7521629F1900A1A842 /* URLParser.cpp in Sources */,
 				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
