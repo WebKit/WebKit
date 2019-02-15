@@ -41,7 +41,6 @@
 
 namespace IPC {
 class MachPort;
-class Connection;
 class DummyType;
 }
 

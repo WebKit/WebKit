@@ -25,15 +25,12 @@
 #pragma once
 
 #include "ArgumentCoders.h"
+#include "Connection.h"
 #include "TestClassName.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
-
-namespace IPC {
-class Connection;
-}
 
 namespace WebKit {
 enum class TestTwoStateEnum : bool;
