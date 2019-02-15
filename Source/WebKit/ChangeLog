@@ -1,3 +1,15 @@
+2019-02-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Defer sandboxing APIs to 2.26
+        https://bugs.webkit.org/show_bug.cgi?id=194274
+
+        Reviewed by Carlos Garcia Campos.
+
+        The web process sandbox has not been widely-tested yet, so we should defer the new APIs to
+        2.26.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+
 2019-02-10  Darin Adler  <darin@apple.com>
 
         Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)

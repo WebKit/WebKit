@@ -1160,7 +1160,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
  *
  * This is only implemented on Linux and is a no-op otherwise.
  *
- * Since: 2.24
+ * Since: 2.26
  */
 void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean enabled)
 {
@@ -1184,7 +1184,7 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
  *
  * See also webkit_web_context_set_sandbox_enabled()
  *
- * Since: 2.24
+ * Since: 2.26
  */
 void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const char* path, gboolean readOnly)
 {
@@ -1206,7 +1206,7 @@ void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const cha
  *
  * Returns: %TRUE if sandboxing is enabled, or %FALSE otherwise.
  *
- * Since: 2.24
+ * Since: 2.26
  */
 gboolean webkit_web_context_get_sandbox_enabled(WebKitWebContext* context)
 {
