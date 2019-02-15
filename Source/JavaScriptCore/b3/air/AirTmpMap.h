@@ -39,9 +39,9 @@ namespace JSC { namespace B3 { namespace Air {
 template<typename Value>
 class TmpMap {
 public:
-    TmpMap()
-    {
-    }
+    TmpMap() = default;
+    TmpMap(TmpMap&&) = default;
+    TmpMap& operator=(TmpMap&&) = default;
     
     template<typename... Args>
     TmpMap(Code& code, const Args&... args)

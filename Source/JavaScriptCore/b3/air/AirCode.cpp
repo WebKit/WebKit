@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirAllocateRegistersAndStackAndGenerateCode.h"
 #include "AirCCallSpecial.h"
 #include "AirCFG.h"
 #include "AllowMacroScratchRegisterUsageIf.h"

@@ -1,3 +1,14 @@
+2019-02-15  Saam barati  <sbarati@apple.com>
+
+        [WebAssembly] Write a new register allocator for Air O0 and make BBQ use it
+        https://bugs.webkit.org/show_bug.cgi?id=194036
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/tail-call-many-arguments.js: Added.
+        (foo):
+        (bar):
+
 2019-02-14  Saam Barati  <sbarati@apple.com>
 
         Cache the results of BytecodeGenerator::getVariablesUnderTDZ

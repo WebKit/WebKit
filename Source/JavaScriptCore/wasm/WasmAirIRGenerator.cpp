@@ -222,7 +222,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, CompilationMode, unsigned functionIndex, TierUpCount*, ThrowWasmException, const Signature&);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, ThrowWasmException, const Signature&);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -285,6 +285,17 @@ public:
         return result;
     }
 
+    ALWAYS_INLINE void didKill(const ExpressionType& typedTmp)
+    {
+        Tmp tmp = typedTmp.tmp();
+        if (!tmp)
+            return;
+        if (tmp.isGP())
+            m_freeGPs.append(tmp);
+        else
+            m_freeFPs.append(tmp);
+    }
+
 private:
     ALWAYS_INLINE void validateInst(Inst& inst)
     {
@@ -324,6 +335,16 @@ private:
 
     Tmp newTmp(B3::Bank bank)
     {
+        switch (bank) {
+        case B3::GP:
+            if (m_freeGPs.size())
+                return m_freeGPs.takeLast();
+            break;
+        case B3::FP:
+            if (m_freeFPs.size())
+                return m_freeFPs.takeLast();
+            break;
+        }
         return m_code.newTmp(bank);
     }
 
@@ -559,7 +580,6 @@ private:
     FunctionParser<AirIRGenerator>* m_parser { nullptr };
     const ModuleInformation& m_info;
     const MemoryMode m_mode { MemoryMode::BoundsChecking };
-    const CompilationMode m_compilationMode { CompilationMode::BBQMode };
     const unsigned m_functionIndex { UINT_MAX };
     const TierUpCount* m_tierUp { nullptr };
 
@@ -573,6 +593,9 @@ private:
     GPRReg m_memorySizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     bool m_makesCalls { false };
+
+    Vector<Tmp, 8> m_freeGPs;
+    Vector<Tmp, 8> m_freeFPs;
 
     TypedTmp m_instanceValue; // Always use the accessor below to ensure the instance value is materialized when used.
     bool m_usesInstanceValue { false };
@@ -630,10 +653,9 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException, const Signature& signature)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException, const Signature& signature)
     : m_info(info)
     , m_mode(mode)
-    , m_compilationMode(compilationMode)
     , m_functionIndex(functionIndex)
     , m_tierUp(tierUp)
     , m_proc(procedure)
@@ -719,7 +741,6 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
             if (needsOverflowCheck) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg scratch = wasmCallingConventionAir().prologueScratch(0);
 
                 if (Context::useFastTLS())
@@ -735,7 +756,6 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
                 });
             } else if (m_usesInstanceValue && Context::useFastTLS()) {
                 // No overflow check is needed, but the instance values still needs to be correct.
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::loadWasmContextInstanceNeedsMacroScratchRegister());
                 jit.loadWasmContextInstance(contextInstance);
             }
         }
@@ -1912,7 +1932,7 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp, ThrowWasmException throwWasmException)
 {
     auto result = std::make_unique<InternalFunction>();
 
@@ -1933,11 +1953,9 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     // optLevel=1.
     procedure.setNeedsUsedRegisters(false);
     
-    procedure.setOptLevel(compilationMode == CompilationMode::BBQMode
-        ? Options::webAssemblyBBQOptimizationLevel()
-        : Options::webAssemblyOMGOptimizationLevel());
+    procedure.setOptLevel(Options::webAssemblyBBQOptimizationLevel());
 
-    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, compilationMode, functionIndex, tierUp, throwWasmException, signature);
+    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, throwWasmException, signature);
     FunctionParser<AirIRGenerator> parser(irGenerator, functionStart, functionLength, signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -2504,6 +2522,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionT
     Vector<ConstrainedTmp> args;
     auto* patchpoint = addPatchpoint(B3::Int64);
     patchpoint->effects = B3::Effects::none();
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     args.append(arg);
     if (isX86()) {
         args.append(signBitConstant);
@@ -2577,6 +2596,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionT
 
     auto* patchpoint = addPatchpoint(B3::Int64);
     patchpoint->effects = B3::Effects::none();
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     Vector<ConstrainedTmp> args;
     args.append(arg);
     if (isX86()) {

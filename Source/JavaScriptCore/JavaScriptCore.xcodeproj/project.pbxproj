@@ -872,6 +872,7 @@
 		4BAA07CEB81F49A296E02203 /* WasmSignatureInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		521131F71F82BF14007CCEEE /* PolyProtoAccessChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 521131F61F82BF11007CCEEE /* PolyProtoAccessChain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		521322461ECBCE8200F65615 /* WebAssemblyFunctionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */; };
+		524E9D7322092B5200A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 524E9D7222092B4600A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h */; };
 		5250D2D21E8DA05A0029A932 /* WasmThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 5250D2D01E8DA05A0029A932 /* WasmThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		525C0DDA1E935847002184CD /* WasmCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 525C0DD81E935847002184CD /* WasmCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52847AD921FFB8630061A9DB /* WasmAirIRGenerator.cpp */; };
@@ -3353,6 +3354,8 @@
 		521131F61F82BF11007CCEEE /* PolyProtoAccessChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PolyProtoAccessChain.h; sourceTree = "<group>"; };
 		521322431ECBCE8200F65615 /* WebAssemblyFunctionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyFunctionBase.cpp; path = js/WebAssemblyFunctionBase.cpp; sourceTree = "<group>"; };
 		521322441ECBCE8200F65615 /* WebAssemblyFunctionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyFunctionBase.h; path = js/WebAssemblyFunctionBase.h; sourceTree = "<group>"; };
+		524E9D7122092B4500A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AirAllocateRegistersAndStackAndGenerateCode.cpp; path = b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp; sourceTree = "<group>"; };
+		524E9D7222092B4600A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirAllocateRegistersAndStackAndGenerateCode.h; path = b3/air/AirAllocateRegistersAndStackAndGenerateCode.h; sourceTree = "<group>"; };
 		5250D2CF1E8DA05A0029A932 /* WasmThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmThunks.cpp; sourceTree = "<group>"; };
 		5250D2D01E8DA05A0029A932 /* WasmThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmThunks.h; sourceTree = "<group>"; };
 		525C0DD71E935847002184CD /* WasmCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCallee.cpp; sourceTree = "<group>"; };
@@ -5435,6 +5438,8 @@
 		0FEC84B31BDACD880080FF74 /* air */ = {
 			isa = PBXGroup;
 			children = (
+				524E9D7122092B4500A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.cpp */,
+				524E9D7222092B4600A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h */,
 				0F2AC5681E8A0BD10001EE3F /* AirAllocateRegistersAndStackByLinearScan.cpp */,
 				0F2AC5691E8A0BD10001EE3F /* AirAllocateRegistersAndStackByLinearScan.h */,
 				7965C2141E5D799600B7591D /* AirAllocateRegistersByGraphColoring.cpp */,
@@ -8852,6 +8857,7 @@
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
+				524E9D7322092B5200A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,

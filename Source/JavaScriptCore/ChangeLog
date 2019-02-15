@@ -1,3 +1,70 @@
+2019-02-15  Saam barati  <sbarati@apple.com>
+
+        [WebAssembly] Write a new register allocator for Air O0 and make BBQ use it
+        https://bugs.webkit.org/show_bug.cgi?id=194036
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds a new Air-O0 backend. Air-O0 runs fewer passes and doesn't
+        use linear scan for register allocation. Instead of linear scan, Air-O0 does
+        mostly block-local register allocation, and it does this as it's emitting
+        code directly. The register allocator uses liveness analysis to reduce
+        the number of spills. Doing register allocation as we're emitting code
+        allows us to skip editing the IR to insert spills, which saves a non trivial
+        amount of compile time. For stack allocation, we give each Tmp its own slot.
+        This is less than ideal. We probably want to do some trivial live range analysis
+        in the future. The reason this isn't a deal breaker for Wasm is that this patch
+        makes it so that we reuse Tmps as we're generating Air IR in the AirIRGenerator.
+        Because Wasm is a stack machine, we trivially know when we kill a stack value (its last use).
+        
+        This patch is another 25% Wasm startup time speedup. It seems to be worth
+        another 1% on JetStream2.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp: Added.
+        (JSC::B3::Air::GenerateAndAllocateRegisters::GenerateAndAllocateRegisters):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::buildLiveRanges):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::insertBlocksForFlushAfterTerminalPatchpoints):
+        (JSC::B3::Air::callFrameAddr):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::flush):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::spill):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::alloc):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::freeDeadTmpsIfNeeded):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::assignTmp):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::isDisallowedRegister):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::prepareForGeneration):
+        (JSC::B3::Air::GenerateAndAllocateRegisters::generate):
+        * b3/air/AirAllocateRegistersAndStackAndGenerateCode.h: Added.
+        * b3/air/AirCode.cpp:
+        * b3/air/AirCode.h:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::prepareForGeneration):
+        (JSC::B3::Air::generateWithAlreadyAllocatedRegisters):
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirHandleCalleeSaves.h:
+        * b3/air/AirTmpMap.h:
+        * runtime/Options.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::didKill):
+        (JSC::Wasm::AirIRGenerator::newTmp):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::parseAndCompileAir):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I64TruncUF32>):
+        * wasm/WasmAirIRGenerator.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::didKill):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseBody):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::didKill):
+
 2019-02-14  Saam barati  <sbarati@apple.com>
 
         lowerStackArgs should lower Lea32/64 on ARM64 to Add

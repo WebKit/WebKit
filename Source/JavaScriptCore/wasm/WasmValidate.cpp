@@ -141,6 +141,8 @@ public:
     Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
     Result WARN_UNUSED_RETURN addCallIndirect(const Signature&, const Vector<ExpressionType>& args, ExpressionType& result);
 
+    ALWAYS_INLINE void didKill(ExpressionType) { }
+
     bool hasMemory() const { return !!m_module.memory; }
 
     Validate(const ModuleInformation& module)

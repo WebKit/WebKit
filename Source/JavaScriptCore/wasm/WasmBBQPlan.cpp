@@ -274,7 +274,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
         TierUpCount* tierUp = Options::useBBQTierUpChecks() ? &m_tierUpCounts[functionIndex] : nullptr;
         Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
         if (Options::wasmBBQUsesAir())
-            parseAndCompileResult = parseAndCompileAir(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
+            parseAndCompileResult = parseAndCompileAir(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex, tierUp, m_throwWasmException);
         else
             parseAndCompileResult = parseAndCompile(m_compilationContexts[functionIndex], function.data.data(), function.data.size(), signature, m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, tierUp, m_throwWasmException);
 
