@@ -328,6 +328,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
   Date                  JSGlobalObject::m_dateStructure              DontEnum|ClassStructure
   Boolean               JSGlobalObject::m_booleanObjectStructure     DontEnum|ClassStructure
   Number                JSGlobalObject::m_numberObjectStructure      DontEnum|ClassStructure
+  Symbol                JSGlobalObject::m_symbolObjectStructure      DontEnum|ClassStructure
   WeakMap               JSGlobalObject::m_weakMapStructure           DontEnum|ClassStructure
   WeakSet               JSGlobalObject::m_weakSetStructure           DontEnum|ClassStructure
 @end
@@ -763,7 +764,6 @@ m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->c
     m_asyncGeneratorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_asyncGeneratorFunctionPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     m_asyncGeneratorFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->prototype, m_asyncGeneratorPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     
-    
     m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -906,7 +906,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().instanceOfPrivateName(), privateFuncInstanceOf, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().BuiltinLogPrivateName(), builtinLog, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().BuiltinDescribePrivateName(), builtinDescribe, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().NumberPrivateName(), numberConstructor, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().RegExpPrivateName(), regExpConstructor, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().StringPrivateName(), stringConstructor, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().absPrivateName(), privateFuncAbs, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
@@ -1024,91 +1023,93 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     }
 #endif // ENABLE(WEBASSEMBLY)
 
-    {
+    auto setupAdaptiveWatchpoint = [&] (JSObject* base, const Identifier& ident) -> ObjectPropertyCondition {
+        // Performing these gets should not throw.
         ExecState* exec = globalExec();
+        PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
+        bool result = base->getOwnPropertySlot(base, exec, ident, slot);
+        ASSERT_UNUSED(result, result);
+        catchScope.assertNoException();
+        RELEASE_ASSERT(slot.isCacheableValue());
+        JSValue functionValue = slot.getValue(exec, ident);
+        catchScope.assertNoException();
+        ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
 
-        auto setupAdaptiveWatchpoint = [&] (JSObject* base, const Identifier& ident) -> ObjectPropertyCondition {
-            // Performing these gets should not throw.
-            PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
-            bool result = base->getOwnPropertySlot(base, exec, ident, slot);
-            ASSERT_UNUSED(result, result);
-            catchScope.assertNoException();
-            RELEASE_ASSERT(slot.isCacheableValue());
-            JSValue functionValue = slot.getValue(exec, ident);
-            catchScope.assertNoException();
-            ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
+        ObjectPropertyCondition condition = generateConditionForSelfEquivalence(m_vm, nullptr, base, ident.impl());
+        RELEASE_ASSERT(condition.requiredValue() == functionValue);
 
-            ObjectPropertyCondition condition = generateConditionForSelfEquivalence(m_vm, nullptr, base, ident.impl());
-            RELEASE_ASSERT(condition.requiredValue() == functionValue);
+        bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
+        RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
 
-            bool isWatchable = condition.isWatchable(PropertyCondition::EnsureWatchability);
-            RELEASE_ASSERT(isWatchable); // We allow this to install the necessary watchpoints.
+        return condition;
+    };
 
-            return condition;
-        };
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
+        m_arrayIteratorPrototypeNext = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
+        m_arrayIteratorPrototypeNext->install(vm);
+    }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->iteratorSymbol);
+        m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
+        m_arrayPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(arrayIteratorPrototype, m_vm.propertyNames->next);
-            m_arrayIteratorPrototypeNext = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
-            m_arrayIteratorPrototypeNext->install(vm);
-        }
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this->arrayPrototype(), m_vm.propertyNames->iteratorSymbol);
-            m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_arrayIteratorProtocolWatchpoint);
-            m_arrayPrototypeSymbolIteratorWatchpoint->install(vm);
-        }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, m_vm.propertyNames->next);
+        m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
+        m_mapIteratorPrototypeNextWatchpoint->install(vm);
+    }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        m_mapPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
+        m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(mapIteratorPrototype, m_vm.propertyNames->next);
-            m_mapIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
-            m_mapIteratorPrototypeNextWatchpoint->install(vm);
-        }
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_mapPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapIteratorProtocolWatchpoint);
-            m_mapPrototypeSymbolIteratorWatchpoint->install(vm);
-        }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, m_vm.propertyNames->next);
+        m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
+        m_setIteratorPrototypeNextWatchpoint->install(vm);
+    }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        m_setPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
+        m_setPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(setIteratorPrototype, m_vm.propertyNames->next);
-            m_setIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
-            m_setIteratorPrototypeNextWatchpoint->install(vm);
-        }
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_setPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setIteratorProtocolWatchpoint);
-            m_setPrototypeSymbolIteratorWatchpoint->install(vm);
-        }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), m_vm.propertyNames->next);
+        m_stringIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
+        m_stringIteratorPrototypeNextWatchpoint->install(vm);
+    }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), m_vm.propertyNames->iteratorSymbol);
+        m_stringPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
+        m_stringPrototypeSymbolIteratorWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringIteratorPrototype.get(), m_vm.propertyNames->next);
-            m_stringIteratorPrototypeNextWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
-            m_stringIteratorPrototypeNextWatchpoint->install(vm);
-        }
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_stringPrototype.get(), m_vm.propertyNames->iteratorSymbol);
-            m_stringPrototypeSymbolIteratorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_stringIteratorProtocolWatchpoint);
-            m_stringPrototypeSymbolIteratorWatchpoint->install(vm);
-        }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->set);
+        m_mapPrototypeSetWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapSetWatchpoint);
+        m_mapPrototypeSetWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_mapPrototype.get(), m_vm.propertyNames->set);
-            m_mapPrototypeSetWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_mapSetWatchpoint);
-            m_mapPrototypeSetWatchpoint->install(vm);
-        }
+    {
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->add);
+        m_setPrototypeAddWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setAddWatchpoint);
+        m_setPrototypeAddWatchpoint->install(vm);
+    }
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(m_setPrototype.get(), m_vm.propertyNames->add);
-            m_setPrototypeAddWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_setAddWatchpoint);
-            m_setPrototypeAddWatchpoint->install(vm);
-        }
+    // Unfortunately, the prototype objects of the builtin objects can be touched from concurrent compilers. So eagerly initialize them only if we use JIT.
+    if (VM::canUseJIT()) {
+        this->booleanPrototype();
+        auto* numberPrototype = this->numberPrototype();
+        this->symbolPrototype();
 
-        {
-            ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype(), m_vm.propertyNames->toString);
-            m_numberPrototypeToStringWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_numberToStringWatchpoint);
-            m_numberPrototypeToStringWatchpoint->install(vm);
-            m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype()->getDirect(vm, vm.propertyNames->toString)));
-        }
+        ObjectPropertyCondition condition = setupAdaptiveWatchpoint(numberPrototype, m_vm.propertyNames->toString);
+        m_numberPrototypeToStringWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(condition, m_numberToStringWatchpoint);
+        m_numberPrototypeToStringWatchpoint->install(vm);
+        m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype->getDirect(vm, vm.propertyNames->toString)));
     }
 
     resetPrototype(vm, getPrototypeDirect(vm));
@@ -1651,7 +1652,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_getterSetterStructure);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_bigIntObjectStructure);
-    visitor.append(thisObject->m_symbolObjectStructure);
     visitor.append(thisObject->m_regExpStructure);
     visitor.append(thisObject->m_generatorFunctionStructure);
     visitor.append(thisObject->m_asyncFunctionStructure);
