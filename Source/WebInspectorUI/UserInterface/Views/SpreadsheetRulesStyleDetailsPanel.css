@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- .sidebar > .panel.details.css-style .rules {
-     text-align: left;
- }
+.sidebar > .panel.details.css-style .rules {
+    text-align: left;
+}
 
- .sidebar > .panel.details.css-style > .content > .rules .section-header {
+.sidebar > .panel.details.css-style > .content > .rules .section-header {
     margin: 0;
     padding: 4px 6px;
     font-size: inherit;

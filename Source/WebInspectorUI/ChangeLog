@@ -1,3 +1,11 @@
+2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Unreviewed, fix intentation.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules):
+        (.sidebar > .panel.details.css-style > .content > .rules .section-header):
+
 2019-02-15  Dean Jackson  <dino@apple.com>
 
         Allow emulation of user gestures from Web Inspector console
