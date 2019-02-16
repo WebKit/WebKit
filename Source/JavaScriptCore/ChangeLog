@@ -1,5 +1,30 @@
 2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Lazily create empty RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=194735
+
+        Reviewed by Keith Miller.
+
+        Some scripts do not have any RegExp. In that case, allocating MarkedBlock for RegExp is costly.
+        Previously, there was always one RegExp, "empty RegExp". This patch lazily creates it and drop
+        one MarkedBlock.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::ensureEmptyRegExpSlow):
+        (JSC::RegExpCache::initialize): Deleted.
+        * runtime/RegExpCache.h:
+        (JSC::RegExpCache::ensureEmptyRegExp):
+        (JSC::RegExpCache::emptyRegExp const): Deleted.
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::lastResult):
+        * runtime/RegExpCachedResult.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
+2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make builtin objects more lazily initialized under non-JIT mode
         https://bugs.webkit.org/show_bug.cgi?id=194727
 

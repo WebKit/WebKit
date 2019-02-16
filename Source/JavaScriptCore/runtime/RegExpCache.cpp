@@ -56,9 +56,11 @@ RegExpCache::RegExpCache(VM* vm)
 {
 }
 
-void RegExpCache::initialize(VM& vm)
+RegExp* RegExpCache::ensureEmptyRegExpSlow(VM& vm)
 {
-    m_emptyRegExp.set(vm, RegExp::create(vm, "", NoFlags));
+    RegExp* regExp = RegExp::create(vm, "", NoFlags);
+    m_emptyRegExp.set(vm, regExp);
+    return regExp;
 }
 
 void RegExpCache::finalize(Handle<Unknown> handle, void*)

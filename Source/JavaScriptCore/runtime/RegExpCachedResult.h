@@ -65,6 +65,8 @@ public:
 
     void visitAggregate(SlotVisitor&);
 
+    // m_lastRegExp would be nullptr when RegExpCachedResult is not reified.
+    // If we find m_lastRegExp is nullptr, it means this should hold the empty RegExp.
     static ptrdiff_t offsetOfLastRegExp() { return OBJECT_OFFSETOF(RegExpCachedResult, m_lastRegExp); }
     static ptrdiff_t offsetOfLastInput() { return OBJECT_OFFSETOF(RegExpCachedResult, m_lastInput); }
     static ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(RegExpCachedResult, m_result); }
