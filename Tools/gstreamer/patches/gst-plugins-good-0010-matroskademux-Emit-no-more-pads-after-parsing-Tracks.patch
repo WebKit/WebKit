@@ -35,9 +35,9 @@ index 77176fb62..683380bbf 100644
    return ret;
  }
 @@ -5196,8 +5198,6 @@ gst_matroska_demux_parse_id (GstMatroskaDemux * demux, guint32 id,
-               demux->common.offset = demux->first_cluster_offset;
+                     GST_TIME_ARGS (demux->common.segment.duration));
+               }
              }
- 
 -            GST_DEBUG_OBJECT (demux, "signaling no more pads");
 -            gst_element_no_more_pads (GST_ELEMENT (demux));
              /* send initial segment - we wait till we know the first

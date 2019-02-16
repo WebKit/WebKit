@@ -1,3 +1,14 @@
+2019-02-16  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK] Update-webkitgtk-libs for Webkit GTK 2.22 can not be generated anymore
+        https://bugs.webkit.org/show_bug.cgi?id=194744
+
+        Reviewed by Philippe Normand.
+
+        * gstreamer/patches/gst-plugins-good-0007-matroskademux-Allow-Matroska-headers-to-be-read-more.patch: Added.
+        * gstreamer/patches/gst-plugins-good-0008-matroskademux-Refactor-track-parsing-out-from-adding.patch: Added.
+        * gstreamer/patches/gst-plugins-good-0009-matroskademux-Parse-successive-Tracks-elements.patch: Added.
+
 2018-10-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Add the WebKitVersion.h header
