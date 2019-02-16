@@ -1,5 +1,21 @@
 2019-02-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Logging a native function to the console, such as `alert`, produces unhandled rejection
+        https://bugs.webkit.org/show_bug.cgi?id=194740
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.findFunctionSourceCodeLocation):
+        In case of a protocol error (common when attempting to get a location
+        for a native function) produce the NoSourceFound result.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._appendLocationLink):
+        Simplify with an arrow function.
+
+2019-02-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Some timelines views work, show Legacy CPU timeline
         https://bugs.webkit.org/show_bug.cgi?id=194738
 

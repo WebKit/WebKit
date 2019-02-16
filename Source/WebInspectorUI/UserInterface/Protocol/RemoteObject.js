@@ -610,7 +610,7 @@ WI.RemoteObject = class RemoteObject
 
         this._target.DebuggerAgent.getFunctionDetails(this._objectId, (error, response) => {
             if (error) {
-                result.reject(error);
+                result.resolve(WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound);
                 return;
             }
 
