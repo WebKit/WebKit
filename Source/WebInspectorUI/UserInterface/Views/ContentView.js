@@ -83,10 +83,11 @@ WI.ContentView = class ContentView extends WI.View
             if (timelineType === WI.TimelineRecord.Type.RenderingFrame)
                 return new WI.RenderingFrameTimelineView(representedObject, extraArguments);
 
-            if (timelineType === WI.TimelineRecord.Type.CPU)
+            if (timelineType === WI.TimelineRecord.Type.CPU) {
                 if (WI.settings.experimentalEnableCPUUsageEnhancements.value)
                     return new WI.CPUTimelineView(representedObject, extraArguments);
                 return new WI.LegacyCPUTimelineView(representedObject, extraArguments);
+            }
 
             if (timelineType === WI.TimelineRecord.Type.Memory)
                 return new WI.MemoryTimelineView(representedObject, extraArguments);

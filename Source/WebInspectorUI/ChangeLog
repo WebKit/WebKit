@@ -1,3 +1,13 @@
+2019-02-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some timelines views work, show Legacy CPU timeline
+        https://bugs.webkit.org/show_bug.cgi?id=194738
+
+        Reviewed by Yusuke Suzuki.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+
 2019-02-15  Aaron Chu  <aaron_chu@apple.com>
 
         AX: Audit tab should have built-in accessibility tests.
