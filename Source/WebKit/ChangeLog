@@ -1,5 +1,29 @@
 2019-02-15  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] Allow tweaking WebProcess cache parameters via user defaults
+        https://bugs.webkit.org/show_bug.cgi?id=194731
+        <rdar://problem/48125377>
+
+        Reviewed by Geoffrey Garen.
+
+        Allow tweaking WebProcess cache parameters via user defaults like so:
+        $ defaults write com.apple.Safari WebProcessCacheCachedProcessLifetimeInSeconds 120
+        -> Cached processes will be evicted after 2 minutes (instead of 30)
+
+        $ defaults write com.apple.Safari WebProcessCacheClearingDelayAfterApplicationResignsActiveInSeconds 60
+        -> Web process cache will be cleared if Safari is no longer active for 1 minutes (instead of 5).
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessCacheCocoa.mm: Copied from Source/WebKit/UIProcess/WebProcessCache.h.
+        (WebKit::WebProcessCache::platformInitialize):
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::WebProcessCache):
+        (WebKit::WebProcessCache::platformInitialize):
+        * UIProcess/WebProcessCache.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-02-15  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Disable WebContent process cache on devices with less than 3GB of RAM
         https://bugs.webkit.org/show_bug.cgi?id=194726
         <rdar://problem/48126255>

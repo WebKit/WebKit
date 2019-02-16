@@ -53,7 +53,11 @@ public:
     void setApplicationIsActive(bool);
 
 private:
+    static Seconds cachedProcessLifetime;
+    static Seconds clearingDelayAfterApplicationResignsActive;
+
     void evictProcess(WebProcessProxy&);
+    void platformInitialize();
 
     unsigned m_capacity { 0 };
 

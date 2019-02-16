@@ -342,6 +342,7 @@ UIProcess/Cocoa/VersionChecks.mm
 UIProcess/Cocoa/VideoFullscreenManagerProxy.mm
 UIProcess/Cocoa/WebPageProxyCocoa.mm
 UIProcess/Cocoa/WebPasteboardProxyCocoa.mm
+UIProcess/Cocoa/WebProcessCacheCocoa.mm
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Cocoa/WebProcessProxyCocoa.mm
 UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm
