@@ -1,0 +1,9 @@
+Tests for Runtime emulateUserGesture option.
+
+
+== Running test suite: Runtime.evaluateUserGestureEmulation
+-- Running test case: EvaluateWithoutEmulatingUserGesture
+Not in User Gesture
+-- Running test case: EvaluateWithEmulatingUserGesture
+In User Gesture
+

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Runtime.evaluateUserGestureEmulation");
+
+    suite.addTestCase({
+        name: "EvaluateWithoutEmulatingUserGesture",
+        description: "Evalute with the emulateUserGesture option set to false.",
+        async test() {
+            RuntimeAgent.evaluate.invoke({expression: `document.getElementById("foo").click()`, objectGroup: "test", emulateUserGesture: false}, (error) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "EvaluateWithEmulatingUserGesture",
+        description: "Evalute with the emulateUserGesture option set to true.",
+        async test() {
+            RuntimeAgent.evaluate.invoke({expression: `document.getElementById("foo").click()`, objectGroup: "test", emulateUserGesture: true}, (error) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+function handleClick(event) {
+    if (window.internals)
+        TestPage.addResult(window.internals.isProcessingUserGesture() ? "In User Gesture" : "Not in User Gesture");
+}
+
+window.addEventListener("load", function () {
+    document.getElementById("foo").addEventListener("click", handleClick);
+    runTest();
+}, false);
+</script>
+</head>
+<body>
+<a id="foo"></a>
+<p>Tests for Runtime emulateUserGesture option.</p>
+</body>
+</html>

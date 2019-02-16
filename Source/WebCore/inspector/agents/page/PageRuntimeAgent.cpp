@@ -42,6 +42,7 @@
 #include "ScriptController.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
+#include "UserGestureIndicator.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
 
@@ -168,6 +169,13 @@ void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecStat
         .setName(name)
         .setFrameId(frameId)
         .release());
+}
+
+void PageRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex)
+{
+    Optional<ProcessingUserGestureState> userGestureState = (emulateUserGesture && *emulateUserGesture) ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt;
+    UserGestureIndicator gestureIndicator(userGestureState);
+    InspectorRuntimeAgent::evaluate(errorString, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, executionContextId, returnByValue, generatePreview, saveResult, emulateUserGesture, result, wasThrown, savedResultIndex);
 }
 
 } // namespace WebCore

@@ -1,3 +1,31 @@
+2019-02-15  Dean Jackson  <dino@apple.com>
+
+        Allow emulation of user gestures from Web Inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=194725
+        <rdar://problem/48126604>
+
+        Reviewed by Joseph Pecoraro and Devin Rousso.
+
+        Add some UI for emulating a User Gesture when evaluating in the console. This
+        allows the developer to do things that would otherwise require actual interaction
+        with the page, such as start playback of media on iOS.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js: Add a new setting for this option.
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WI.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        * UserInterface/Controllers/RuntimeManager.js: Call evaluate with this new option.
+        (WI.RuntimeManager.prototype.evaluateInInspectedWindow):
+        * UserInterface/Views/LogContentView.js: Add a new checkbox in the upper bar
+        that allows the user to toggle the setting.
+        (WI.LogContentView):
+        (WI.LogContentView.prototype.get navigationItems):
+        (WI.LogContentView.prototype._handleEmulateInUserGestureSettingChanged):
+
+        * UserInterface/Views/NetworkTableContentView.js: Two drive-by typo fixes :)
+        (WI.NetworkTableContentView): perserve -> preserve
+        (WI.NetworkTableContentView.prototype.get navigationItems): checkboxs -> checkboxes
+
 2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: valid values in style attributes are reported as unsupported property values

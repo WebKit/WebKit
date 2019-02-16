@@ -103,7 +103,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._emptyFilterResultsMessageElement = null;
 
-        this._clearOnLoadNavigationItem = new WI.CheckboxNavigationItem("perserve-log", WI.UIString("Preserve Log"), !WI.settings.clearNetworkOnNavigate.value);
+        this._clearOnLoadNavigationItem = new WI.CheckboxNavigationItem("preserve-log", WI.UIString("Preserve Log"), !WI.settings.clearNetworkOnNavigate.value);
         this._clearOnLoadNavigationItem.tooltip = WI.UIString("Do not clear network items on new page loads");
         this._clearOnLoadNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => { WI.settings.clearNetworkOnNavigate.value = !WI.settings.clearNetworkOnNavigate.value; });
         WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._clearNetworkOnNavigateSettingChanged, this);
@@ -113,8 +113,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._harExportNavigationItem.tooltip = WI.UIString("HAR Export (%s)").format(WI.saveKeyboardShortcut.displayName);
         this._harExportNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { this._exportHAR(); });
 
-        this._checkboxsNavigationItemGroup = new WI.GroupNavigationItem([this._clearOnLoadNavigationItem, new WI.DividerNavigationItem]);
-        this._checkboxsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem([this._clearOnLoadNavigationItem, new WI.DividerNavigationItem]);
+        this._checkboxesNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harExportNavigationItem, new WI.DividerNavigationItem]);
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
@@ -207,7 +207,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     get navigationItems()
     {
-        let items = [this._checkboxsNavigationItemGroup, this._buttonsNavigationItemGroup];
+        let items = [this._checkboxesNavigationItemGroup, this._buttonsNavigationItemGroup];
         if (this._disableResourceCacheNavigationItem)
             items.push(this._disableResourceCacheNavigationItem);
         items.push(this._clearNetworkItemsNavigationItem);

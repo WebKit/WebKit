@@ -1,3 +1,14 @@
+2019-02-15  Dean Jackson  <dino@apple.com>
+
+        Allow emulation of user gestures from Web Inspector console
+        https://bugs.webkit.org/show_bug.cgi?id=194725
+        <rdar://problem/48126604>
+
+        Reviewed by Joseph Pecoraro and Devin Rousso.
+
+        * inspector/runtime/evaluate-userGestureEmulation-expected.txt: Added.
+        * inspector/runtime/evaluate-userGestureEmulation.html: Added.
+
 2019-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in the hit testing code via HTMLPlugInElement::isReplacementObscured()

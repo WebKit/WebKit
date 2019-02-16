@@ -242,6 +242,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             returnByValue: false,
             generatePreview: true,
             saveResult: true,
+            emulateUserGesture: WI.settings.emulateInUserGesture.value,
             sourceURLAppender: appendWebInspectorConsoleEvaluationSourceURL,
         };
 

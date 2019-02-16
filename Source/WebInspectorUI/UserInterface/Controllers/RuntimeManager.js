@@ -81,13 +81,14 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
             return;
         }
 
-        let {objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, sourceURLAppender} = options;
+        let {objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, saveResult, emulateUserGesture, sourceURLAppender} = options;
 
         includeCommandLineAPI = includeCommandLineAPI || false;
         doNotPauseOnExceptionsAndMuteConsole = doNotPauseOnExceptionsAndMuteConsole || false;
         returnByValue = returnByValue || false;
         generatePreview = generatePreview || false;
         saveResult = saveResult || false;
+        emulateUserGesture = emulateUserGesture || false;
         sourceURLAppender = sourceURLAppender || appendWebInspectorSourceURL;
 
         console.assert(objectGroup, "RuntimeManager.evaluateInInspectedWindow should always be called with an objectGroup");
@@ -137,7 +138,8 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         }
 
         // COMPATIBILITY (iOS 8): "saveResult" did not exist.
-        target.RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId: executionContextId, returnByValue, generatePreview, saveResult}, evalCallback.bind(this), target.RuntimeAgent);
+        // COMPATIBILITY (iOS 12.2): "emulateUserGesture" did not exist.
+        target.RuntimeAgent.evaluate.invoke({expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, contextId: executionContextId, returnByValue, generatePreview, saveResult, emulateUserGesture}, evalCallback.bind(this), target.RuntimeAgent);
     }
 
     saveResult(remoteObject, callback)

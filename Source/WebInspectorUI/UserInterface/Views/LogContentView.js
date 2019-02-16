@@ -66,12 +66,21 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._selectedSearchMatch = null;
         this._selectedSearchMatchIsValid = false;
 
-        this._preserveLogNavigationItem = new WI.CheckboxNavigationItem("perserve-log", WI.UIString("Preserve Log"), !WI.settings.clearLogOnNavigate.value);
+        this._preserveLogNavigationItem = new WI.CheckboxNavigationItem("preserve-log", WI.UIString("Preserve Log"), !WI.settings.clearLogOnNavigate.value);
         this._preserveLogNavigationItem.tooltip = WI.UIString("Do not clear the console on new page loads");
-        this._preserveLogNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => { WI.settings.clearLogOnNavigate.value = !WI.settings.clearLogOnNavigate.value; });
-        WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._clearLogOnNavigateSettingChanged, this);
+        this._preserveLogNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => {
+            WI.settings.clearLogOnNavigate.value = !WI.settings.clearLogOnNavigate.value;
+        });
+        WI.settings.clearLogOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearLogOnNavigateSettingChanged, this);
 
-        this._checkboxsNavigationItemGroup = new WI.GroupNavigationItem([this._preserveLogNavigationItem, new WI.DividerNavigationItem]);
+        this._emulateInUserGestureNavigationItem = new WI.CheckboxNavigationItem("emulate-in-user-gesture", WI.UIString("Emulate User Gesture"), WI.settings.emulateInUserGesture.value);
+        this._emulateInUserGestureNavigationItem.tooltip = WI.UIString("Run console commands as if inside a user gesture");
+        this._emulateInUserGestureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => {
+            WI.settings.emulateInUserGesture.value = !WI.settings.emulateInUserGesture.value;
+        });
+        WI.settings.emulateInUserGesture.addEventListener(WI.Setting.Event.Changed, this._handleEmulateInUserGestureSettingChanged, this);
+
+        this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem([this._preserveLogNavigationItem, this._emulateInUserGestureNavigationItem, new WI.DividerNavigationItem]);
 
         let scopeBarItems = [
             new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), {exclusive: true}),
@@ -136,7 +145,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         if (WI.isShowingSplitConsole())
             navigationItems.push(new WI.DividerNavigationItem, this._showConsoleTabNavigationItem);
         else if (WI.isShowingConsoleTab())
-            navigationItems.unshift(this._findBanner, this._checkboxsNavigationItemGroup);
+            navigationItems.unshift(this._findBanner, this._checkboxesNavigationItemGroup);
 
         return navigationItems;
     }
@@ -844,9 +853,14 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this.performSearch(this._currentSearchQuery);
     }
 
-    _clearLogOnNavigateSettingChanged()
+    _handleClearLogOnNavigateSettingChanged()
     {
         this._preserveLogNavigationItem.checked = !WI.settings.clearLogOnNavigate.value;
+    }
+
+    _handleEmulateInUserGestureSettingChanged()
+    {
+        this._emulateInUserGestureNavigationItem.checked = WI.settings.emulateInUserGesture.value;
     }
 
     _keyDown(event)
