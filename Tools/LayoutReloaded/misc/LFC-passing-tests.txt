@@ -706,6 +706,12 @@ css2.1/20110323/absolute-non-replaced-width-013.htm
 css2.1/20110323/absolute-non-replaced-width-014.htm
 css2.1/20110323/absolute-non-replaced-width-015.htm
 css2.1/20110323/absolute-non-replaced-width-016.htm
+css2.1/20110323/absolute-non-replaced-width-017.htm
+css2.1/20110323/absolute-non-replaced-width-018.htm
+css2.1/20110323/absolute-non-replaced-width-019.htm
+css2.1/20110323/absolute-non-replaced-width-020.htm
+css2.1/20110323/absolute-non-replaced-width-021.htm
+css2.1/20110323/absolute-non-replaced-width-022.htm
 css2.1/20110323/absolute-replaced-height-001.htm
 css2.1/20110323/absolute-replaced-height-002.htm
 css2.1/20110323/absolute-replaced-height-003.htm
@@ -793,6 +799,7 @@ css2.1/20110323/block-non-replaced-width-006.htm
 css2.1/20110323/block-non-replaced-width-007.htm
 css2.1/20110323/block-non-replaced-width-008.htm
 css2.1/20110323/block-replaced-height-001.htm
+css2.1/20110323/block-replaced-height-002.htm
 css2.1/20110323/block-replaced-height-003.htm
 css2.1/20110323/block-replaced-height-004.htm
 css2.1/20110323/block-replaced-height-005.htm
@@ -824,6 +831,8 @@ css2.1/20110323/float-non-replaced-width-010.htm
 css2.1/20110323/float-non-replaced-width-011.htm
 css2.1/20110323/float-non-replaced-width-012.htm
 css2.1/20110323/float-replaced-height-001.htm
+css2.1/20110323/float-replaced-height-002.htm
+css2.1/20110323/float-replaced-height-003.htm
 css2.1/20110323/float-replaced-height-004.htm
 css2.1/20110323/float-replaced-height-005.htm
 css2.1/20110323/float-replaced-height-007.htm
@@ -838,6 +847,7 @@ css2.1/20110323/floats-001.html
 css2.1/20110323/floats-102.html
 css2.1/20110323/inline-block-non-replaced-width-001.htm
 css2.1/20110323/inline-block-non-replaced-width-002.htm
+css2.1/20110323/inline-block-non-replaced-width-003.htm
 css2.1/20110323/inline-block-replaced-height-001.htm
 css2.1/20110323/inline-block-replaced-height-002.htm
 css2.1/20110323/inline-block-replaced-height-003.htm
