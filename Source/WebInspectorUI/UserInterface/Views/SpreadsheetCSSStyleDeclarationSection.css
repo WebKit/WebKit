@@ -28,9 +28,9 @@
     padding: 0 0 var(--css-declaration-vertical-padding);
     font-family: Menlo, monospace;
     font-size: 11px;
-    color: hsl(0, 0%, 70%);
-    background: white;
-    border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
+    color: var(--text-color-tertiary);
+    background: var(--background-color-code);
+    border-bottom: 0.5px solid var(--text-color-quaternary);
     -webkit-user-select: text;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .spreadsheet-css-declaration .selector > span {
-    color: hsl(0, 0%, 50%);
+    color: var(--text-color-secondary);
 }
 
 .spreadsheet-css-declaration .selector:focus,
@@ -134,13 +134,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .spreadsheet-css-declaration {
-        background: var(--background-color-code);
-        color: var(--text-color-tertiary);
-        color: hsl(0, 0%, 30%);
-        border-bottom-color: var(--text-color-quaternary);
-    }
-
     .spreadsheet-css-declaration.locked {
         background: var(--background-color);
     }

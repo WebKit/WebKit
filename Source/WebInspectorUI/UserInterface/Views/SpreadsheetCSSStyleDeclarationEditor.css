@@ -28,7 +28,7 @@
     clear: both;
     font-family: Menlo, monospace;
     font-size: 11px;
-    color: hsl(0, 0%, 70%);
+    color: var(--text-color-tertiary);
     -webkit-user-select: text;
 
     --background-color-selected: hsl(210, 98%, 93%);

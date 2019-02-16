@@ -39,6 +39,9 @@
 
     --text-color-secondary: hsl(0, 0%, 50%);
 
+    /* Disabled text/glyphs */
+    --text-color-tertiary: hsl(0, 0%, 70%);
+
     /* Dividers, separators, background fills */
     --text-color-quaternary: hsl(0, 0%, 85%);
 
