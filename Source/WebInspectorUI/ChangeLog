@@ -1,3 +1,19 @@
+2019-02-15  Aaron Chu  <aaron_chu@apple.com>
+
+        AX: Audit tab should have built-in accessibility tests.
+        https://bugs.webkit.org/show_bug.cgi?id=194005
+        <rdar://problem/47657503>
+
+        Updated built-in accessibility audits test suite.
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded):
+        (WI.AuditManager):
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded.): Deleted.
+
 2019-02-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: commas in CSS selectors are too dim
