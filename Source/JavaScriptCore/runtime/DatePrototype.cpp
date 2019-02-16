@@ -648,7 +648,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTime(ExecState* exec)
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(exec, scope);
 
-    return JSValue::encode(thisDateObj->internalValue());
+    return JSValue::encode(jsNumber(thisDateObj->internalNumber()));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(ExecState* exec)
@@ -923,9 +923,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(ExecState* exec)
 
     double milli = timeClip(exec->argument(0).toNumber(exec));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    JSValue result = jsNumber(milli);
-    thisDateObj->setInternalValue(vm, result);
-    return JSValue::encode(result);
+    thisDateObj->setInternalNumber(milli);
+    return JSValue::encode(jsNumber(milli));
 }
 
 static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse, WTF::TimeType inputTimeType)
@@ -940,9 +939,8 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     double milli = thisDateObj->internalNumber();
 
     if (!exec->argumentCount() || std::isnan(milli)) {
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     }
      
     double secs = floor(milli / msPerSecond);
@@ -959,15 +957,14 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     bool success = fillStructuresUsingTimeArgs(exec, numArgsToUse, &ms, &gregorianDateTime);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!success) {
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     } 
 
     double newUTCDate = gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType);
-    JSValue result = jsNumber(timeClip(newUTCDate));
-    thisDateObj->setInternalValue(vm, result);
-    return JSValue::encode(result);
+    double result = timeClip(newUTCDate);
+    thisDateObj->setInternalNumber(result);
+    return JSValue::encode(jsNumber(result));
 }
 
 static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse, WTF::TimeType inputTimeType)
@@ -980,9 +977,8 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
         return throwVMTypeError(exec, scope);
 
     if (!exec->argumentCount()) {
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     }
 
     double milli = thisDateObj->internalNumber();
@@ -1004,15 +1000,14 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
     bool success = fillStructuresUsingDateArgs(exec, numArgsToUse, &ms, &gregorianDateTime);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!success) {
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     } 
 
     double newUTCDate = gregorianDateTimeToMS(vm, gregorianDateTime, ms, inputTimeType);
-    JSValue result = jsNumber(timeClip(newUTCDate));
-    thisDateObj->setInternalValue(vm, result);
-    return JSValue::encode(result);
+    double result = timeClip(newUTCDate);
+    thisDateObj->setInternalNumber(result);
+    return JSValue::encode(jsNumber(result));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetMilliSeconds(ExecState* exec)
@@ -1095,9 +1090,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
         return throwVMTypeError(exec, scope);
 
     if (!exec->argumentCount()) { 
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     }
 
     double milli = thisDateObj->internalNumber();
@@ -1118,16 +1112,15 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     double year = exec->argument(0).toIntegerPreserveNaN(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!std::isfinite(year)) {
-        JSValue result = jsNaN();
-        thisDateObj->setInternalValue(vm, result);
-        return JSValue::encode(result);
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
     }
 
     gregorianDateTime.setYear(toInt32((year >= 0 && year <= 99) ? (year + 1900) : year));
     double timeInMilliseconds = gregorianDateTimeToMS(vm, gregorianDateTime, ms, WTF::LocalTime);
-    JSValue result = jsNumber(timeClip(timeInMilliseconds));
-    thisDateObj->setInternalValue(vm, result);
-    return JSValue::encode(result);
+    double result = timeClip(timeInMilliseconds);
+    thisDateObj->setInternalNumber(result);
+    return JSValue::encode(jsNumber(result));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec)

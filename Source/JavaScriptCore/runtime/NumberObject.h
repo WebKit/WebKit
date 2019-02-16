@@ -30,7 +30,7 @@ protected:
     void finishCreation(VM&);
 
 public:
-    typedef JSWrapperObject Base;
+    using Base = JSWrapperObject;
 
     static NumberObject* create(VM& vm, Structure* structure)
     {
