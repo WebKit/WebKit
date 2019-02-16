@@ -1,3 +1,14 @@
+2019-02-15  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Disable WebContent process cache on devices with less than 3GB of RAM
+        https://bugs.webkit.org/show_bug.cgi?id=194726
+        <rdar://problem/48126255>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::updateCapacity):
+
 2019-02-15  Andy Estes  <aestes@apple.com>
 
         [iOS] Stop setting a background color on the PDF host view
