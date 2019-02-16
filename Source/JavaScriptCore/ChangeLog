@@ -1,3 +1,71 @@
+2019-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink UnlinkedFunctionExecutable
+        https://bugs.webkit.org/show_bug.cgi?id=194733
+
+        Reviewed by Mark Lam.
+
+        UnlinkedFunctionExecutable has sourceURLDirective and sourceMappingURLDirective. These
+        directives can be found in the comment of non typical function's source code (Program,
+        Eval code, and Global function from function constructor etc.), and tricky thing is that
+        SourceProvider's directives are updated by Parser. The reason why we have these fields in
+        UnlinkedFunctionExecutable is that we need to update the SourceProvider's directives even
+        if we skip parsing by using CodeCache. These fields are effective only if (1)
+        UnlinkedFunctionExecutable is for non typical function things, and (2) it has sourceURLDirective
+        or sourceMappingURLDirective. This is rare enough to purge them to a separated
+        UnlinkedFunctionExecutable::RareData to make UnlinkedFunctionExecutable small.
+        sizeof(UnlinkedFunctionExecutable) is very important since it is super frequently allocated
+        cell. Furthermore, the current JSC allocates two MarkedBlocks for UnlinkedFunctionExecutable
+        in JSGlobalObject initialization, but the usage of the second MarkedBlock is quite low (8%).
+        If we can reduce the size of UnlinkedFunctionExecutable, we can make them one MarkedBlock.
+        Since UnlinkedFunctionExecutable is allocated from IsoSubspace, we do not need to fit it to
+        one of size class.
+
+        This patch adds RareData to UnlinkedFunctionExecutable and move some rare datas into RareData.
+        And kill one MarkedBlock allocation in JSC initialization phase.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::ensureRareDataSlow):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * debugger/DebuggerLocation.cpp:
+        (JSC::DebuggerLocation::DebuggerLocation):
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchDidParseSource):
+        * parser/Lexer.h:
+        (JSC::Lexer::sourceURLDirective const):
+        (JSC::Lexer::sourceMappingURLDirective const):
+        (JSC::Lexer::sourceURL const): Deleted.
+        (JSC::Lexer::sourceMappingURL const): Deleted.
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::sourceURLDirective const):
+        (JSC::SourceProvider::sourceMappingURLDirective const):
+        (JSC::SourceProvider::setSourceURLDirective):
+        (JSC::SourceProvider::setSourceMappingURLDirective):
+        (JSC::SourceProvider::sourceURL const): Deleted. We rename it from sourceURL to sourceURLDirective
+        since it is the correct name.
+        (JSC::SourceProvider::sourceMappingURL const): Deleted. We rename it from sourceMappingURL to
+        sourceMappingURLDirective since it is the correct name.
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSourceProviderShape::encode):
+        (JSC::CachedFunctionExecutableRareData::encode):
+        (JSC::CachedFunctionExecutableRareData::decode const): CachedFunctionExecutable did not have
+        sourceMappingURL to sourceMappingURLDirective. So this patch keeps the same logic.
+        (JSC::CachedFunctionExecutable::rareData const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        * runtime/FunctionExecutable.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::url):
+
 2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove unused global private variables

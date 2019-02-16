@@ -125,8 +125,8 @@ namespace JSC {
 
         const SourceOrigin& sourceOrigin() const { return m_sourceOrigin; }
         const URL& url() const { return m_url; }
-        const String& sourceURL() const { return m_sourceURLDirective; }
-        const String& sourceMappingURL() const { return m_sourceMappingURLDirective; }
+        const String& sourceURLDirective() const { return m_sourceURLDirective; }
+        const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
 
         TextPosition startPosition() const { return m_startPosition; }
         SourceProviderSourceType sourceType() const { return m_sourceType; }
@@ -138,8 +138,8 @@ namespace JSC {
             return m_id;
         }
 
-        void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
-        void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
+        void setSourceURLDirective(const String& sourceURLDirective) { m_sourceURLDirective = sourceURLDirective; }
+        void setSourceMappingURLDirective(const String& sourceMappingURLDirective) { m_sourceMappingURLDirective = sourceMappingURLDirective; }
 
     private:
         JS_EXPORT_PRIVATE void getID();

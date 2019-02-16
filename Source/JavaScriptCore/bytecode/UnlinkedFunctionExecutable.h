@@ -56,7 +56,7 @@ class UnlinkedFunctionExecutable final : public JSCell {
 public:
     friend class CodeCache;
     friend class VM;
-    friend CachedFunctionExecutable;
+    friend class CachedFunctionExecutable;
 
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
@@ -82,8 +82,16 @@ public:
     unsigned parameterCount() const { return m_parameterCount; }; // Excluding 'this'!
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 
-    const SourceCode& classSource() const { return m_classSource; };
-    void setClassSource(const SourceCode& source) { m_classSource = source; };
+    SourceCode classSource() const
+    {
+        if (m_rareData)
+            return m_rareData->m_classSource;
+        return SourceCode();
+    }
+    void setClassSource(const SourceCode& source)
+    {
+        ensureRareData().m_classSource = source;
+    }
 
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
@@ -140,16 +148,46 @@ public:
     ConstructAbility constructAbility() const { return static_cast<ConstructAbility>(m_constructAbility); }
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
+    bool isClass() const
+    {
+        if (!m_rareData)
+            return false;
+        return !m_rareData->m_classSource.isNull();
+    }
     VariableEnvironment parentScopeTDZVariables() const { return m_parentScopeTDZVariables.environment().toVariableEnvironment(); }
     
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
 
     JSC::DerivedContextType derivedContextType() const {return static_cast<JSC::DerivedContextType>(m_derivedContextType); }
 
-    const String& sourceURLDirective() const { return m_sourceURLDirective; }
-    const String& sourceMappingURLDirective() const { return m_sourceMappingURLDirective; }
-    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL; }
-    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL; }
+    String sourceURLDirective() const
+    {
+        if (m_rareData)
+            return m_rareData->m_sourceURLDirective;
+        return String();
+    }
+    String sourceMappingURLDirective() const
+    {
+        if (m_rareData)
+            return m_rareData->m_sourceMappingURLDirective;
+        return String();
+    }
+    void setSourceURLDirective(const String& sourceURL)
+    {
+        ensureRareData().m_sourceURLDirective = sourceURL;
+    }
+    void setSourceMappingURLDirective(const String& sourceMappingURL)
+    {
+        ensureRareData().m_sourceMappingURLDirective = sourceMappingURL;
+    }
+
+    struct RareData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        SourceCode m_classSource;
+        String m_sourceURLDirective;
+        String m_sourceMappingURLDirective;
+    };
 
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, CompactVariableMap::Handle,  JSC::DerivedContextType, bool isBuiltinDefaultClassConstructor);
@@ -185,12 +223,17 @@ private:
     Identifier m_name;
     Identifier m_ecmaName;
     Identifier m_inferredName;
-    SourceCode m_classSource;
 
-    String m_sourceURLDirective;
-    String m_sourceMappingURLDirective;
+    RareData& ensureRareData()
+    {
+        if (LIKELY(m_rareData))
+            return *m_rareData;
+        return ensureRareDataSlow();
+    }
+    RareData& ensureRareDataSlow();
 
     CompactVariableMap::Handle m_parentScopeTDZVariables;
+    std::unique_ptr<RareData> m_rareData;
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
