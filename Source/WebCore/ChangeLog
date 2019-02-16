@@ -1,5 +1,19 @@
 2019-02-16  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Add support for block replaced intrinsic width.
+        https://bugs.webkit.org/show_bug.cgi?id=194705
+
+        Reviewed by Simon Fraser.
+
+        Replaced boxes should report their intrinsic width as preferred widths.
+
+        Test: fast/block/block-only/replaced-intrinsic-width-simple.html
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+
+2019-02-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Apply min/max width constraints to preferred width computation
         https://bugs.webkit.org/show_bug.cgi?id=194739
 
