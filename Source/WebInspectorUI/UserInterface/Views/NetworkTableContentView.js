@@ -327,6 +327,17 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     // Table dataSource
 
+    tableIndexForRepresentedObject(table, object)
+    {
+        return this._filteredEntries.indexOf(object);
+    }
+
+    tableRepresentedObjectForIndex(table, index)
+    {
+        console.assert(index >=0 && index < this._filteredEntries.length);
+        return this._filteredEntries[index];
+    }
+
     tableNumberOfRows(table)
     {
         return this._filteredEntries.length;

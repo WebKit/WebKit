@@ -1,3 +1,24 @@
+2019-02-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Frontend performance is very slow reloading theverge.com - 50% of time in TreeOutline _indexOfTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=193605
+        <rdar://problem/47403986>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/table/resources/table-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.TableDataSource.prototype.tableIndexForRepresentedObject):
+        (TestPage.registerInitializer.InspectorTest.TableDataSource.prototype.tableRepresentedObjectForIndex):
+        (TestPage.registerInitializer.InspectorTest.TableDataSource):
+        New Table data source methods.
+
+        * inspector/unit-tests/index-set-expected.txt: Removed.
+        * inspector/unit-tests/index-set.html: Removed.
+        * inspector/unit-tests/set-utilities-expected.txt:
+        * inspector/unit-tests/set-utilities.html:
+        Remove IndexSet tests and update tests for Set utilities to include new
+        helper methods `equals` and `difference`, and `firstValue`.
+
 2019-02-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Add support for block replaced intrinsic width.

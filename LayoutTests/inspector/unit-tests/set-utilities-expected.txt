@@ -16,3 +16,28 @@ PASS: a set should not be a subset of another set with different values.
 PASS: a set should be a subset of another set with same and additional values.
 PASS: a set should not be a subset of another set with same and different values.
 
+-- Running test case: Set.prototype.equals
+PASS: an empty set should be equal to another empty set.
+PASS: a set should be equal to another set with the same values.
+PASS: a set should be equal to another set with the same values in a different order.
+PASS: a set should not be a equal to another set with different values.
+PASS: a set should not be equal to another set with same and different values.
+
+-- Running test case: Set.prototype.difference
+Given a Set with values [], and another Set with values []:
+PASS: Set difference should be [].
+
+Given a Set with values [1,2,3], and another Set with values []:
+PASS: Set difference should be [1,2,3].
+
+Given a Set with values [], and another Set with values [1,2,3]:
+PASS: Set difference should be [].
+
+Given a Set with values [1,2,3], and another Set with values [2,3,4]:
+PASS: Set difference should be [1].
+
+
+-- Running test case: Set.prototype.firstValue
+PASS: Set with values [] should have firstValue equal to undefined.
+PASS: Set with values [1,2,3] should have firstValue equal to 1.
+

@@ -1,3 +1,119 @@
+2019-02-17  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Frontend performance is very slow reloading theverge.com - 50% of time in TreeOutline _indexOfTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=193605
+        <rdar://problem/47403986>
+
+        Reviewed by Devin Rousso.
+
+        SelectionController should track an unordered Set of represented objects
+        instead of an ordered set of indexes. This eliminates the costly and
+        error-prone updates needed to keep the selected indexes in sync as items
+        are added and removed from TreeOutline (and Table, to a far lesser extent).
+
+        The SelectionController interface is largely the same. Class and delegate
+        methods have been renamed to reflect the change from indexes to objects.
+        SelectionController tracks selected items in selection order. For the
+        operations that rely on objects being in insertion order, the controller
+        uses a comparator function provided at construction time.
+
+        * UserInterface/Base/IndexSet.js: Removed.
+        No longer used. SelectionController now uses a plain Set.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        (get return):
+        Add utilities previously supplied by IndexSet and used by SelectionController.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController):
+        (WI.SelectionController.prototype.get lastSelectedItem):
+        (WI.SelectionController.prototype.get selectedItems):
+        (WI.SelectionController.prototype.set allowsMultipleSelection):
+        (WI.SelectionController.prototype.hasSelectedItem):
+        (WI.SelectionController.prototype.selectItem):
+        (WI.SelectionController.prototype.deselectItem):
+        (WI.SelectionController.prototype.selectAll):
+        (WI.SelectionController.prototype.deselectAll):
+        (WI.SelectionController.prototype.removeSelectedItems):
+        (WI.SelectionController.prototype.reset):
+        (WI.SelectionController.prototype.didRemoveItems):
+        (WI.SelectionController.prototype.handleKeyDown):
+        (WI.SelectionController.prototype.handleItemMouseDown):
+        (WI.SelectionController.prototype._deselectAllAndSelect):
+        (WI.SelectionController.prototype._selectItemsFromArrowKey):
+        (WI.SelectionController.prototype._firstSelectableItem):
+        (WI.SelectionController.prototype._lastSelectableItem):
+        (WI.SelectionController.prototype._previousSelectableItem):
+        (WI.SelectionController.prototype._nextSelectableItem):
+        (WI.SelectionController.prototype._updateSelectedItems):
+        (WI.SelectionController.prototype._addRange):
+        (WI.SelectionController.prototype._deleteRange):
+        (WI.SelectionController.prototype.get numberOfItems): Deleted.
+        (WI.SelectionController.prototype.didInsertItem): Deleted.
+        (WI.SelectionController.prototype.handleItemMouseDown.normalizeRange): Deleted.
+        (WI.SelectionController.prototype._nextSelectableIndex): Deleted.
+        (WI.SelectionController.prototype._previousSelectableIndex): Deleted.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        Remove IndexSet.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype.tableIndexForRepresentedObject):
+        (WI.CookieStorageContentView.prototype.tableRepresentedObjectForIndex):
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.objectForSelection):
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableIndexForRepresentedObject):
+        (WI.NetworkTableContentView.prototype.tableRepresentedObjectForIndex):
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.get selectedRow):
+        (WI.Table.prototype.get selectedRows):
+        (WI.Table.prototype.isRowSelected):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.deselectRow):
+        (WI.Table.prototype.removeRow):
+        (WI.Table.prototype.removeSelectedRows):
+        (WI.Table.prototype.selectionControllerSelectionDidChange):
+        (WI.Table.prototype.selectionControllerFirstSelectableItem):
+        (WI.Table.prototype.selectionControllerLastSelectableItem):
+        (WI.Table.prototype.selectionControllerPreviousSelectableItem):
+        (WI.Table.prototype.selectionControllerNextSelectableItem):
+        (WI.Table.prototype._handleMouseDown):
+        (WI.Table.prototype._removeRows):
+        (WI.Table.prototype._indexForRepresentedObject):
+        (WI.Table.prototype._representedObjectForIndex):
+        (WI.Table.prototype.selectionControllerNumberOfItems): Deleted.
+        (WI.Table.prototype.selectionControllerNextSelectableIndex): Deleted.
+        (WI.Table.prototype.selectionControllerPreviousSelectableIndex): Deleted.
+        (WI.Table.prototype._toggleSelectedRowStyle): Deleted.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.compareSiblings):
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.get selectedTreeElement):
+        (WI.TreeOutline.prototype.set selectedTreeElement):
+        (WI.TreeOutline.prototype.get selectedTreeElements):
+        (WI.TreeOutline.prototype.removeChildAtIndex):
+        (WI.TreeOutline.prototype.removeChildren):
+        (WI.TreeOutline.prototype._rememberTreeElement):
+        (WI.TreeOutline.prototype.getCachedTreeElement):
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+        (WI.TreeOutline.prototype.selectionControllerFirstSelectableItem):
+        (WI.TreeOutline.prototype.selectionControllerLastSelectableItem):
+        (WI.TreeOutline.prototype.selectionControllerPreviousSelectableItem):
+        (WI.TreeOutline.prototype.selectionControllerNextSelectableItem):
+        (WI.TreeOutline.prototype.objectForSelection):
+        (WI.TreeOutline._generateStyleRulesIfNeeded):
+        (WI.TreeOutline.prototype.selectionControllerNextSelectableIndex): Deleted.
+        (WI.TreeOutline.prototype.selectionControllerPreviousSelectableIndex): Deleted.
+        (WI.TreeOutline._generateStyleRulesIfNeeded._indexesForSubtree.numberOfElementsInSubtree): Deleted.
+
 2019-02-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Logging a native function to the console, such as `alert`, produces unhandled rejection

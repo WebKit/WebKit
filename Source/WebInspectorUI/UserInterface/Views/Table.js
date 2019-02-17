@@ -87,7 +87,7 @@ WI.Table = class Table extends WI.View
         this._columnWidths = null; // Calculated in _resizeColumnsAndFiller.
         this._fillerHeight = 0; // Calculated in _resizeColumnsAndFiller.
 
-        this._selectionController = new WI.SelectionController(this);
+        this._selectionController = new WI.SelectionController(this, (a, b) => this._indexForRepresentedObject(a) - this._indexForRepresentedObject(b));
 
         this._resizers = [];
         this._currentResizer = null;
@@ -113,6 +113,9 @@ WI.Table = class Table extends WI.View
         this._visibleRowIndexStart = NaN;
         this._visibleRowIndexEnd = NaN;
 
+        console.assert(this._dataSource.tableIndexForRepresentedObject, "Table data source must implement tableIndexForRepresentedObject.");
+        console.assert(this._dataSource.tableRepresentedObjectForIndex, "Table data source must implement tableRepresentedObjectForIndex.");
+
         console.assert(this._delegate.tablePopulateCell, "Table delegate must implement tablePopulateCell.");
     }
 
@@ -125,12 +128,17 @@ WI.Table = class Table extends WI.View
 
     get selectedRow()
     {
-        return this._selectionController.lastSelectedItem;
+        let item = this._selectionController.lastSelectedItem;
+        let index = this._indexForRepresentedObject(item);
+        return index >= 0 ? index : NaN;
     }
 
     get selectedRows()
     {
-        return Array.from(this._selectionController.selectedItems);
+        let rowIndexes = [];
+        for (let item of this._selectionController.selectedItems)
+            rowIndexes.push(this._indexForRepresentedObject(item));
+        return rowIndexes;
     }
 
     get scrollContainer() { return this._scrollContainerElement; }
@@ -236,7 +244,7 @@ WI.Table = class Table extends WI.View
 
     isRowSelected(rowIndex)
     {
-        return this._selectionController.hasSelectedItem(rowIndex);
+        return this._selectionController.hasSelectedItem(this._representedObjectForIndex(rowIndex));
     }
 
     reloadData()
@@ -313,12 +321,12 @@ WI.Table = class Table extends WI.View
 
     selectRow(rowIndex, extendSelection = false)
     {
-        this._selectionController.selectItem(rowIndex, extendSelection);
+        this._selectionController.selectItem(this._representedObjectForIndex(rowIndex), extendSelection);
     }
 
     deselectRow(rowIndex)
     {
-        this._selectionController.deselectItem(rowIndex);
+        this._selectionController.deselectItem(this._representedObjectForIndex(rowIndex));
     }
 
     selectAll()
@@ -338,20 +346,20 @@ WI.Table = class Table extends WI.View
         if (this.isRowSelected(rowIndex))
             this.deselectRow(rowIndex);
 
-        let rowIndexes = new WI.IndexSet([rowIndex]);
-        this._removeRows(rowIndexes);
+        this._removeRows(new Set([this._representedObjectForIndex(rowIndex)]));
     }
 
     removeSelectedRows()
     {
+        let selectedItems = this._selectionController.selectedItems;
+        if (!selectedItems.size)
+            return;
+
         // Change the selection before removing rows. This matches the behavior
         // of macOS Finder (in list and column modes) when removing selected items.
-        let oldSelectedItems = this._selectionController.selectedItems.copy();
-
         this._selectionController.removeSelectedItems();
 
-        if (!oldSelectedItems.equals(this._selectionController.selectedItems))
-            this._removeRows(oldSelectedItems);
+        this._removeRows(selectedItems);
     }
 
     revealRow(rowIndex)
@@ -597,13 +605,22 @@ WI.Table = class Table extends WI.View
 
     selectionControllerSelectionDidChange(controller, deselectedItems, selectedItems)
     {
-        if (deselectedItems.size)
-            this._toggleSelectedRowStyle(deselectedItems, false);
-        if (selectedItems.size)
-            this._toggleSelectedRowStyle(selectedItems, true);
+        for (let item of deselectedItems) {
+            let rowIndex = this._indexForRepresentedObject(item);
+            let row = this._cachedRows.get(rowIndex);
+            if (row)
+                row.classList.toggle("selected", false);
+        }
+
+        for (let item of selectedItems) {
+            let rowIndex = this._indexForRepresentedObject(item);
+            let row = this._cachedRows.get(rowIndex);
+            if (row)
+                row.classList.toggle("selected", true);
+        }
 
         if (selectedItems.size === 1) {
-            let rowIndex = selectedItems.firstIndex;
+            let rowIndex = this._indexForRepresentedObject(selectedItems.firstValue);
             if (!this._isRowVisible(rowIndex))
                 this.revealRow(rowIndex);
         }
@@ -612,23 +629,30 @@ WI.Table = class Table extends WI.View
             this._delegate.tableSelectionDidChange(this);
     }
 
-    selectionControllerNumberOfItems(controller)
+    selectionControllerFirstSelectableItem(controller)
     {
-        return this.numberOfRows;
+        return this._representedObjectForIndex(0);
     }
 
-    selectionControllerNextSelectableIndex(controller, index)
+    selectionControllerLastSelectableItem(controller)
     {
-        if (index >= this.numberOfRows - 1)
-            return NaN;
-        return index + 1;
+        return this._representedObjectForIndex(this.numberOfRows - 1);
     }
 
-    selectionControllerPreviousSelectableIndex(controller, index)
+    selectionControllerPreviousSelectableItem(controller, item)
     {
-        if (index <= 0)
-            return NaN;
-        return index - 1;
+        let index = this._indexForRepresentedObject(item);
+        console.assert(index >= 0 && index < this.numberOfRows);
+
+        return index > 0 ? this._representedObjectForIndex(index - 1) : null;
+    }
+
+    selectionControllerNextSelectableItem(controller, item)
+    {
+        let index = this._indexForRepresentedObject(item);
+        console.assert(index >= 0 && index < this.numberOfRows);
+
+        return index < this.numberOfRows - 1 ? this._representedObjectForIndex(index + 1) : null;
     }
 
     // Resizer delegate
@@ -1295,7 +1319,7 @@ WI.Table = class Table extends WI.View
                 return;
         }
 
-        this._selectionController.handleItemMouseDown(rowIndex, event);
+        this._selectionController.handleItemMouseDown(this._representedObjectForIndex(rowIndex), event);
     }
 
     _handleContextMenu(event)
@@ -1374,7 +1398,7 @@ WI.Table = class Table extends WI.View
         }
     }
 
-    _removeRows(rowIndexes)
+    _removeRows(representedObjects)
     {
         let removed = 0;
 
@@ -1387,8 +1411,15 @@ WI.Table = class Table extends WI.View
             }
         };
 
-        for (let index = rowIndexes.firstIndex; index <= rowIndexes.lastIndex; ++index) {
-            if (rowIndexes.has(index)) {
+        let rowIndexes = [];
+        for (let object of representedObjects)
+            rowIndexes.push(this._indexForRepresentedObject(object));
+
+        rowIndexes.sort((a, b) => a - b);
+
+        let lastIndex = rowIndexes.lastValue;
+        for (let index = rowIndexes[0]; index <= lastIndex; ++index) {
+            if (rowIndexes.binaryIndexOf(index) >= 0) {
                 let row = this._cachedRows.get(index);
                 if (row) {
                     this._cachedRows.delete(index);
@@ -1405,27 +1436,28 @@ WI.Table = class Table extends WI.View
         if (!removed)
             return;
 
-        for (let index = rowIndexes.lastIndex + 1; index < this._cachedNumberOfRows; ++index)
+        for (let index = lastIndex + 1; index < this._cachedNumberOfRows; ++index)
             adjustRowAtIndex(index);
 
         this._cachedNumberOfRows -= removed;
         console.assert(this._cachedNumberOfRows >= 0);
 
-        this._selectionController.didRemoveItems(rowIndexes);
+        this._selectionController.didRemoveItems(representedObjects);
 
         if (this._delegate.tableDidRemoveRows) {
-            this._delegate.tableDidRemoveRows(this, Array.from(rowIndexes));
+            this._delegate.tableDidRemoveRows(this, rowIndexes);
             console.assert(this._cachedNumberOfRows === this._dataSource.tableNumberOfRows(this), "Table data source should update after removing rows.");
         }
     }
 
-    _toggleSelectedRowStyle(rowIndexes, flag)
+    _indexForRepresentedObject(object)
     {
-        for (let index of rowIndexes) {
-            let row = this._cachedRows.get(index);
-            if (row)
-                row.classList.toggle("selected", flag);
-        }
+        return this.dataSource.tableIndexForRepresentedObject(this, object);
+    }
+
+    _representedObjectForIndex(index)
+    {
+        return this.dataSource.tableRepresentedObjectForIndex(this, index);
     }
 };
 
