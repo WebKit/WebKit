@@ -325,6 +325,9 @@ x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
 x86_64: X86UDiv64 UZD:G:64, UZD:G:64, U:G:64
     Tmp*, Tmp*, Tmp
 
+# If we add other things like Lea that are UA, we may need to lower
+# them on arm64 similarly to how we do for Lea. In lowerStackArgs,
+# we lower Lea to add on arm64.
 Lea32 UA:G:32, D:G:32
     Addr, Tmp
     x86: Index, Tmp as x86Lea32
