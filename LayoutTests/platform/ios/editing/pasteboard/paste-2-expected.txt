@@ -5,12 +5,11 @@ EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > BODY > HTML > #document to 11 of #text > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document toDOMRange:range from 8 of #text > BODY > HTML > #document to 8 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document toDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 8 of #text > BODY > HTML > #document to 8 of #text > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > BODY > HTML > #document to 8 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 11 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > BODY > HTML > #document to 7 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 11 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600

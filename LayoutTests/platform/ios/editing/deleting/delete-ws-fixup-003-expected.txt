@@ -10,7 +10,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -19,13 +19,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 75x28
-          RenderText {#text} at (14,15) size 37x28
-            text run at (14,15) width 37: "bar "
+        RenderInline {SPAN} at (0,0) size 69x28
+          RenderText {#text} at (14,15) size 31x28
+            text run at (14,15) width 31: "bar"
           RenderInline {SPAN} at (0,0) size 7x28
-            RenderText {#text} at (50,15) size 7x28
-              text run at (50,15) width 7: " "
-          RenderText {#text} at (56,15) size 33x28
-            text run at (56,15) width 33: "foo"
+            RenderText {#text} at (44,15) size 7x28
+              text run at (44,15) width 7: " "
+          RenderText {#text} at (50,15) size 33x28
+            text run at (50,15) width 33: "foo"
         RenderText {#text} at (0,0) size 0x0
-caret: position 4 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
+caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

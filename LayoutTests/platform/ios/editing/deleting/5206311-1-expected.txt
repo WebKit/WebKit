@@ -63,9 +63,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 311: "This empties the first row, it should be removed."
       RenderBlock {DIV} at (0,298) size 784x76
         RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 40x19
+          RenderText {#text} at (0,0) size 36x19
             text run at (0,0) width 36: "Hello"
-            text run at (35,0) width 5: " "
         RenderTable {TABLE} at (0,20) size 46x56 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x54
             RenderTableRow {TR} at (0,2) size 44x24
@@ -84,4 +83,4 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (30,28) size 12x24 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 8x19
                   text run at (2,2) width 8: "9"
-caret: position 6 of child 0 {#text} of child 1 {DIV} of child 14 {DIV} of body
+caret: position 5 of child 0 {#text} of child 1 {DIV} of child 14 {DIV} of body

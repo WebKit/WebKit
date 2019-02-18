@@ -3,11 +3,15 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="resources/js-test-selection-shared.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
 description("Test that setSelectedRange resets the selection granularity to CharacterGranularity.");
 
 var textarea = document.createElement('textarea');

@@ -512,6 +512,13 @@ bool Editor::canDeleteRange(Range* range) const
     return true;
 }
 
+bool Editor::shouldSmartDelete()
+{
+    if (behavior().shouldAlwaysSmartDelete())
+        return true;
+    return m_frame.selection().granularity() == WordGranularity;
+}
+
 bool Editor::smartInsertDeleteEnabled()
 {   
     return client() && client()->smartInsertDeleteEnabled();
@@ -519,7 +526,7 @@ bool Editor::smartInsertDeleteEnabled()
     
 bool Editor::canSmartCopyOrDelete()
 {
-    return client() && client()->smartInsertDeleteEnabled() && m_frame.selection().granularity() == WordGranularity;
+    return client() && client()->smartInsertDeleteEnabled() && shouldSmartDelete();
 }
 
 bool Editor::isSelectTrailingWhitespaceEnabled() const

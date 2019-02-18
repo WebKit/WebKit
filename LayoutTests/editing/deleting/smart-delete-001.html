@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html> 
 <head>
 
@@ -16,12 +17,13 @@
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 
 <script>
 
-function editingTest() {
-    doubleClickAtSelectionStart();
+async function editingTest() {
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
     deleteCommand();
 }
 
@@ -53,7 +55,7 @@ foo bar baz
 </div>
 
 <script>
-runEditingTest();
+runDumpAsTextEditingTest(true);
 </script>
 
 </body>

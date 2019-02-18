@@ -124,13 +124,36 @@ window.UIHelper = class UIHelper {
         return UIHelper.activateAt(x, y);
     }
 
+    static async doubleActivateAt(x, y)
+    {
+        if (this.isIOS())
+            await UIHelper.doubleTapAt(x, y);
+        else
+            await UIHelper.doubleClickAt(x, y);
+    }
+
+    static async doubleActivateAtSelectionStart()
+    {
+        const rects = window.getSelection().getRangeAt(0).getClientRects();
+        const x = rects[0].left;
+        const y = rects[0].top;
+        if (this.isIOS()) {
+            await UIHelper.activateAndWaitForInputSessionAt(x, y);
+            await UIHelper.doubleTapAt(x, y);
+            // This is only here to deal with async/sync copy/paste calls, so
+            // once <rdar://problem/16207002> is resolved, should be able to remove for faster tests.
+            await new Promise(resolve => testRunner.runUIScript("uiController.uiScriptComplete()", resolve));
+        } else
+            await UIHelper.doubleClickAt(x, y);
+    }
+
     static async selectWordByDoubleTapOrClick(element, relativeX = 5, relativeY = 5)
     {
         const boundingRect = element.getBoundingClientRect();
         const x = boundingRect.x + relativeX;
         const y = boundingRect.y + relativeY;
         if (this.isIOS()) {
-            await UIHelper.tapAt(x, y);
+            await UIHelper.activateAndWaitForInputSessionAt(x, y);
             await UIHelper.doubleTapAt(x, y);
             // This is only here to deal with async/sync copy/paste calls, so
             // once <rdar://problem/16207002> is resolved, should be able to remove for faster tests.

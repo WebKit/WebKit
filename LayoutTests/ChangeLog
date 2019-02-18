@@ -1,3 +1,61 @@
+2019-02-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn On Smart Delete
+        https://bugs.webkit.org/show_bug.cgi?id=194320
+
+        Reviewed by Ryosuke Niwa.
+
+        Update smart-delete-* tests, and rebase many other tests to work with the new smart delete setting.
+
+        * editing/deleting/smart-delete-001-expected.txt: Added.
+        * editing/deleting/smart-delete-001.html:
+        * editing/deleting/smart-delete-002-expected.txt:
+        * editing/deleting/smart-delete-002.html:
+        * editing/deleting/smart-delete-003-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-003-expected.txt.
+        * editing/deleting/smart-delete-003.html:
+        * editing/deleting/smart-delete-004-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/smart-delete-004-expected.txt.
+        * editing/deleting/smart-delete-004.html:
+        * editing/deleting/smart-delete-across-editable-boundaries-2-expected.txt:
+        * editing/deleting/smart-delete-across-editable-boundaries-2.html:
+        * editing/selection/delete-word-granularity-text-control.html:
+        * platform/ios-wk1/editing/deleting/smart-delete-003-expected.txt: Removed.
+        * platform/ios-wk1/editing/deleting/smart-delete-004-expected.txt: Removed.
+        * platform/ios-wk2/editing/deleting/smart-delete-003-expected.txt: Removed.
+        * platform/ios-wk2/editing/pasteboard/cut-text-001-expected.png: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/deleting/5206311-1-expected.txt:
+        * platform/ios/editing/deleting/delete-across-editable-content-boundaries-2-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-across-editable-content-boundaries-3-expected.txt: Added.
+        * platform/ios/editing/deleting/delete-and-undo-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * platform/ios/editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * platform/ios/editing/deleting/delete-contiguous-ws-001-expected.txt:
+        * platform/ios/editing/deleting/delete-image-003-expected.txt:
+        * platform/ios/editing/deleting/delete-leading-ws-001-expected.txt:
+        * platform/ios/editing/deleting/delete-selection-001-expected.txt:
+        * platform/ios/editing/deleting/delete-trailing-ws-001-expected.txt:
+        * platform/ios/editing/deleting/delete-ws-fixup-002-expected.txt:
+        * platform/ios/editing/deleting/delete-ws-fixup-003-expected.txt:
+        * platform/ios/editing/deleting/delete-ws-fixup-004-expected.txt:
+        * platform/ios/editing/deleting/smart-delete-001-expected.txt:
+        * platform/ios/editing/deleting/smart-delete-002-expected.txt: Added.
+        * platform/ios/editing/deleting/smart-delete-003-expected.txt: Copied from LayoutTests/platform/mac/editing/deleting/smart-delete-003-expected.txt.
+        * platform/ios/editing/deleting/smart-delete-004-expected.txt: Renamed from LayoutTests/platform/mac/editing/deleting/smart-delete-003-expected.txt.
+        * platform/ios/editing/deleting/smart-delete-across-editable-boundaries-2-expected.txt: Added.
+        * platform/ios/editing/deleting/table-cells-expected.txt:
+        * platform/ios/editing/execCommand/delete-line-and-insert-text-in-font-inside-blockquote-expected.txt: Added.
+        * platform/ios/editing/pasteboard/cut-text-001-expected.txt: Renamed from LayoutTests/platform/ios-wk2/editing/pasteboard/cut-text-001-expected.txt.
+        * platform/ios/editing/pasteboard/paste-2-expected.txt:
+        * platform/mac/editing/deleting/smart-delete-001-expected.png: Removed.
+        * platform/mac/editing/deleting/smart-delete-001-expected.txt: Removed.
+        * platform/mac/editing/deleting/smart-delete-002-expected.png: Removed.
+        * platform/mac/editing/deleting/smart-delete-003-expected.png: Removed.
+        * platform/mac/editing/deleting/smart-delete-004-expected.png: Removed.
+        * resources/ui-helper.js:
+        (window.UIHelper.async.doubleActivateAt):
+        (window.UIHelper.async.doubleActivateAtSelectionStart):
+        (window.UIHelper.async.selectWordByDoubleTapOrClick):
+
 2019-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use dumpJSConsoleLogInStdErr=true webkit-test-runner option for non-imported tests instead of using DumpJSConsoleLogInStdErr expectation in TestExpectations

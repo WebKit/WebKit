@@ -9,30 +9,10 @@ EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > DIV > DIV > BODY 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 522x28
-            text run at (0,28) width 522: "Smart delete when deleting the second word of a line."
-        RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 738x56
-            text run at (0,28) width 738: "The second word and the space before the second word should be deleted. It"
-            text run at (0,56) width 202: "should like this this: "
-          RenderBR {BR} at (202,78) size 0x0
-          RenderText {#text} at (0,84) size 72x28
-            text run at (0,84) width 72: "foo baz"
-      RenderBlock {DIV} at (0,236) size 784x32
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 72x28
-            text run at (2,2) width 72: "foo baz"
-caret: position 4 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
+Tests: 
+Smart delete when deleting the second word of a line.
+Expected Results: 
+The second word and the space before the second word should be deleted. It should like this this: 
+foo baz
+foo baz
+execDeleteCommand: <div id="test" class="editing"> foo baz </div>

@@ -1,30 +1,17 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x224 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x60
-          RenderText {#text} at (0,1) size 66x28
-            text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 492x28
-            text run at (0,31) width 492: "Smart delete when deleting the first word on a line."
-        RenderBlock {DIV} at (14,90) size 756x120
-          RenderText {#text} at (0,1) size 190x28
-            text run at (0,1) width 190: "Expected Results: "
-          RenderBR {BR} at (189,23) size 1x0
-          RenderText {#text} at (0,31) size 708x58
-            text run at (0,31) width 708: "The first word and the space following the first word should be deleted. It"
-            text run at (0,61) width 201: "should like this this: "
-          RenderBR {BR} at (200,83) size 1x0
-          RenderText {#text} at (0,91) size 70x28
-            text run at (0,91) width 70: "bar baz"
-      RenderBlock {DIV} at (0,248) size 784x34
-        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,3) size 108x28
-            text run at (2,3) width 108: "foo bar baz"
-caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Tests: 
+Smart delete when deleting the first word on a line.
+Expected Results: 
+The first word and the space following the first word should be deleted. It should like this this: 
+bar baz
+bar baz
+execDeleteCommand: <div id="test" class="editing">bar baz </div>

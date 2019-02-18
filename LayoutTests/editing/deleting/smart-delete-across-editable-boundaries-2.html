@@ -2,22 +2,19 @@
 <html>
 <body>
 <p id="description">This tests for a bug where expansion for smart delete would not consider editable boundaries. Only 'foo' should be deleted. You should see ' bar'. &lt;radr://problem/5390681&gt;</p>
-<div contenteditable="true" id="div">foo
+<div contenteditable="true" id="test">foo
 <span contenteditable="false"> bar</span></div>
 
-<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script>
-var div = document.getElementById("div");
-var x = div.offsetLeft;
-var y = div.offsetTop;
-eventSender.mouseMoveTo(x, y);
-eventSender.mouseDown();
-eventSender.mouseUp();
-eventSender.mouseDown();
-eventSender.mouseUp();
-document.execCommand("Delete");
-Markup.description(description.textContent);
-Markup.dump(div);
+
+async function editingTest() {
+	await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
+	document.execCommand("Delete");
+}
+
+runDumpAsTextEditingTest(true);
 </script>
 </body>
 </html>

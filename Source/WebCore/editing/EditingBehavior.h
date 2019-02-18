@@ -95,6 +95,9 @@ public:
 
     // On iOS, we don't want to select all the text when focusing a field. Instead, match platform behavior by going to the end of the line.
     bool shouldMoveSelectionToEndWhenFocusingTextInput() const { return m_type == EditingIOSBehavior; }
+    
+    // On iOS, when smart delete is on, it is always on, and should do not additional checks (i.e. WordGranularity).
+    bool shouldAlwaysSmartDelete() const { return m_type == EditingIOSBehavior; }
 
 private:
     EditingBehaviorType m_type;
