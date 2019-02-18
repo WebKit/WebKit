@@ -5,7 +5,7 @@
         {
             "id": "ChannelSource",
             "type": "string",
-            "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "content-blocker", "media", "webrtc", "other"],
+            "enum": ["xml", "javascript", "network", "console-api", "storage", "appcache", "rendering", "css", "security", "content-blocker", "media", "mediasource", "webrtc", "other"],
             "description": "Channels for different types of log messages."
         },
         {

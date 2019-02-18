@@ -1,3 +1,13 @@
+2019-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Add MSE logging configuration
+        https://bugs.webkit.org/show_bug.cgi?id=194719
+        <rdar://problem/48122151>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/console/webcore-logging-expected.txt:
+
 2019-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Disable safe browsing in WKWebView and remove its WKPreferences API

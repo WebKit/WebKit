@@ -122,6 +122,7 @@ NSString *WebConsoleMessageContentBlockerMessageSource = @"ContentBlockerMessage
 NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 NSString *WebConsoleMessageMediaMessageSource = @"MediaMessageSource";
 NSString *WebConsoleMessageWebRTCMessageSource = @"WebRTCMessageSource";
+NSString *WebConsoleMessageMediaSourceMessageSource = @"MediaSourceMessageSource";
 
 NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
@@ -397,6 +398,8 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageMediaMessageSource;
     case MessageSource::WebRTC:
         return WebConsoleMessageWebRTCMessageSource;
+    case MessageSource::MediaSource:
+        return WebConsoleMessageMediaSourceMessageSource;
     }
     ASSERT_NOT_REACHED();
     return @"";

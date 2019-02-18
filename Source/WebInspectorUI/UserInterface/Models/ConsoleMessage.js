@@ -110,6 +110,7 @@ WI.ConsoleMessage.MessageSource = {
     Security: "security",
     Other: "other",
     Media: "media",
+    MediaSource: "mediasource",
     WebRTC: "webrtc",
 };
 

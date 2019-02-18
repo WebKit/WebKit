@@ -56,6 +56,7 @@ void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Insp
     } channelTable[] = {
         { MAKE_STATIC_STRING_IMPL("WebRTC"), Inspector::Protocol::Console::ChannelSource::WebRTC },
         { MAKE_STATIC_STRING_IMPL("Media"), Inspector::Protocol::Console::ChannelSource::Media },
+        { MAKE_STATIC_STRING_IMPL("MediaSource"), Inspector::Protocol::Console::ChannelSource::MediaSource },
     };
 
     channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();

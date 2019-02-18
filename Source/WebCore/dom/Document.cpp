@@ -8562,12 +8562,16 @@ static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
 {
     static const NeverDestroyed<String> mediaChannel = MAKE_STATIC_STRING_IMPL("media");
     static const NeverDestroyed<String> webrtcChannel = MAKE_STATIC_STRING_IMPL("webrtc");
+    static const NeverDestroyed<String> mediaSourceChannel = MAKE_STATIC_STRING_IMPL("mediasource");
 
     if (equalIgnoringASCIICase(mediaChannel, channel.name))
         return MessageSource::Media;
 
     if (equalIgnoringASCIICase(webrtcChannel, channel.name))
         return MessageSource::WebRTC;
+
+    if (equalIgnoringASCIICase(mediaSourceChannel, channel.name))
+        return MessageSource::MediaSource;
 
     return MessageSource::Other;
 }

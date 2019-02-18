@@ -53,6 +53,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'webmetal': 'WebMetal',  # Canvas.ContextType.webmetal
     'bitmaprenderer': 'BitmapRenderer',  # Canvas.ContextType.bitmaprenderer
     'webrtc': 'WebRTC',  # Console.ChannelSource.webrtc
+    'mediasource': 'MediaSource',  # Console.ChannelSource.mediasource
 }
 
 # These objects are built manually by creating and setting JSON::Value instances.

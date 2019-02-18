@@ -1,3 +1,19 @@
+2019-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Add MSE logging configuration
+        https://bugs.webkit.org/show_bug.cgi?id=194719
+        <rdar://problem/48122151>
+
+        Reviewed by Joseph Pecoraro.
+
+        No new tests, updated inspector/console/webcore-logging.html.
+
+        * dom/Document.cpp:
+        (WebCore::messageSourceForWTFLogChannel): Recognize the MSE logging channel.
+
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::getLoggingChannels): Ditto.
+
 2019-02-18  Antoine Quint  <graouts@apple.com>
 
         [iOS] Dispatch additional events along with pointerdown and pointerup

@@ -160,7 +160,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (this._loggingChannelSources.length)
             return;
 
-        this._loggingChannelSources = [WI.ConsoleMessage.MessageSource.Media, WI.ConsoleMessage.MessageSource.WebRTC];
+        this._loggingChannelSources = [WI.ConsoleMessage.MessageSource.Media, WI.ConsoleMessage.MessageSource.WebRTC, , WI.ConsoleMessage.MessageSource.MessageSource];
 
         target.ConsoleAgent.getLoggingChannels((error, channels) => {
             if (error)

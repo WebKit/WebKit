@@ -227,6 +227,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             ];
             const editorLabels = {
                 media: WI.UIString("Media Logging:"),
+                mediasource: WI.UIString("MSE Logging:"),
                 webrtc: WI.UIString("WebRTC Logging:"),
             };
 

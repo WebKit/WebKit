@@ -13,6 +13,8 @@ PASS: Log channel has known source.
 PASS: Log channel disabled by default.
 PASS: Log channel has known source.
 PASS: Log channel disabled by default.
+PASS: Log channel has known source.
+PASS: Log channel disabled by default.
 
 -- Running test case: Console.Logging.InvalidChannel
 PASS: Logging channel not found

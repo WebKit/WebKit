@@ -170,6 +170,7 @@ static Protocol::Console::ChannelSource messageSourceValue(MessageSource source)
     case MessageSource::Other: return Protocol::Console::ChannelSource::Other;
     case MessageSource::Media: return Protocol::Console::ChannelSource::Media;
     case MessageSource::WebRTC: return Protocol::Console::ChannelSource::WebRTC;
+    case MessageSource::MediaSource: return Protocol::Console::ChannelSource::MediaSource;
     }
     return Protocol::Console::ChannelSource::Other;
 }

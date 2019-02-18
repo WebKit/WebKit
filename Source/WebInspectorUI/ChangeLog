@@ -1,3 +1,20 @@
+2019-02-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Add MSE logging configuration
+        https://bugs.webkit.org/show_bug.cgi?id=194719
+        <rdar://problem/48122151>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Models/IssueMessage.js:
+        (WI.IssueMessage):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+
 2019-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Move CSS completion logic from SpreadsheetTextField to SpreadsheetStyleProperty

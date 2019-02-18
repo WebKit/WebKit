@@ -28,7 +28,7 @@ WI.LoggingChannel = class LoggingChannel
     constructor(source, level)
     {
         console.assert(typeof source === "string");
-        console.assert(source === WI.ConsoleMessage.MessageSource.Media || source === WI.ConsoleMessage.MessageSource.WebRTC);
+        console.assert(source === WI.ConsoleMessage.MessageSource.Media || source === WI.ConsoleMessage.MessageSource.WebRTC || source === WI.ConsoleMessage.MessageSource.MediaSource);
 
         console.assert(typeof level === "string");
         console.assert(Object.values(WI.LoggingChannel.Level).includes(level));
