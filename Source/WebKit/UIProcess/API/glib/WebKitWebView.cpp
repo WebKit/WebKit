@@ -100,17 +100,17 @@ using namespace WebCore;
 
 /**
  * SECTION: WebKitWebView
- * @Short_description: The central class of the WebKit2GTK+ API
+ * @Short_description: The central class of the WPE WebKit and WebKitGTK APIs
  * @Title: WebKitWebView
  *
- * #WebKitWebView is the central class of the WebKit2GTK+ API. It is
- * responsible for managing the drawing of the content and forwarding
- * of events. You can load any URI into the #WebKitWebView or a data
- * string. With #WebKitSettings you can control various aspects of the
- * rendering and loading of the content.
+ * #WebKitWebView is the central class of the WPE WebKit and WebKitGTK
+ * APIs. It is responsible for managing the drawing of the content and
+ * forwarding of events. You can load any URI into the #WebKitWebView or
+ * a data string. With #WebKitSettings you can control various aspects
+ * of the rendering and loading of the content.
  *
- * Note that #WebKitWebView is scrollable by itself, so you don't need
- * to embed it in a #GtkScrolledWindow.
+ * Note that in WebKitGTK, #WebKitWebView is scrollable by itself, so
+ * you don't need to embed it in a #GtkScrolledWindow.
  */
 
 enum {

@@ -1247,7 +1247,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:enable-accelerated-2d-canvas:
      *
      * Enable or disable accelerated 2D canvas. Accelerated 2D canvas is only available
-     * if WebKitGTK+ was compiled with a version of Cairo including the unstable CairoGL API.
+     * if WebKit was compiled with a version of Cairo including the unstable CairoGL API.
      * When accelerated 2D canvas is enabled, WebKit may render some 2D canvas content
      * using hardware accelerated drawing operations.
      *
