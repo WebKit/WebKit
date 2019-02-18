@@ -1,3 +1,19 @@
+2019-02-18  Jeremy Jones  <jeremyj@apple.com>
+
+        exitFullscreen should not instantiate a new model/interface mapping.
+        https://bugs.webkit.org/show_bug.cgi?id=191988
+        rdar://problem/42327939
+
+        Reviewed by Jer Noble.
+
+        This change is a speculative fix for a crash that cannot be reproduced.
+
+        Somehow, exitFullscreen is being requested after didCleanupFullscreen has completed.
+        This change should allow us to prevent the crash in release, and assert in debug.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+
 2019-02-18  John Wilander  <wilander@apple.com>
 
         Check the existence of the frame in Document::hasFrameSpecificStorageAccess() and Document::setHasFrameSpecificStorageAccess()

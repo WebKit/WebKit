@@ -531,6 +531,10 @@ void VideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)
 
 void VideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
 {
+    ASSERT(m_contextMap.contains(contextId));
+    if (!m_contextMap.contains(contextId))
+        return;
+
 #if PLATFORM(IOS_FAMILY)
     ensureInterface(contextId).exitFullscreen(finalRect);
 #else
