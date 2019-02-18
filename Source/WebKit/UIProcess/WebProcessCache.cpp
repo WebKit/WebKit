@@ -34,13 +34,14 @@
 
 namespace WebKit {
 
-static Seconds cachedProcessLifetime { 30_min };
-static Seconds clearingDelayAfterApplicationResignsActive { 5_min };
+Seconds WebProcessCache::cachedProcessLifetime { 30_min };
+Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };
 
 WebProcessCache::WebProcessCache(WebProcessPool& processPool)
     : m_evictionTimer(RunLoop::main(), this, &WebProcessCache::clear)
 {
     updateCapacity(processPool);
+    platformInitialize();
 }
 
 bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcessProxy>&& process)
@@ -181,5 +182,11 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
     ASSERT(m_process);
     m_process->processPool().webProcessCache().evictProcess(*m_process);
 }
+
+#if !PLATFORM(COCOA)
+void WebProcessCache::platformInitialize()
+{
+}
+#endif
 
 } // namespace WebKit
