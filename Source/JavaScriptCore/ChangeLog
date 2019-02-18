@@ -1,3 +1,20 @@
+2019-02-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Should have default NativeJITCode
+        https://bugs.webkit.org/show_bug.cgi?id=194634
+
+        Reviewed by Mark Lam.
+
+        In JSC_useJIT=false mode, we always create identical NativeJITCode for call and construct when we create NativeExecutable.
+        This is meaningless since we do not modify NativeJITCode after the creation. This patch adds singleton used as a default one.
+        Since NativeJITCode (& JITCode) is ThreadSafeRefCounted, we can just share it in a whole process level. This removes 446 NativeJITCode
+        allocations, which takes 14KB.
+
+        * runtime/VM.cpp:
+        (JSC::jitCodeForCallTrampoline):
+        (JSC::jitCodeForConstructTrampoline):
+        (JSC::VM::getHostFunction):
+
 2019-02-14  Tadeu Zagallo  <tzagallo@apple.com>
 
         generateUnlinkedCodeBlockForFunctions shouldn't need to create a FunctionExecutable just to get its source code
