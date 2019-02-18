@@ -510,6 +510,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     checkOffset(transition->m_offset, transition->inlineCapacity());
     {
         ConcurrentJSLocker locker(structure->m_lock);
+        DeferGC deferGC(vm.heap);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();

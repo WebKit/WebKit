@@ -1,3 +1,25 @@
+2019-02-17  Saam Barati  <sbarati@apple.com>
+
+        Deadlock when adding a Structure property transition and then doing incremental marking
+        https://bugs.webkit.org/show_bug.cgi?id=194767
+
+        Reviewed by Mark Lam.
+
+        This can happen in the following scenario:
+        
+        You have a Structure S. S is on the mark stack. Then:
+        1. S grabs its lock
+        2. S adds a new property transition
+        3. We find out we need to do some incremental marking
+        4. We mark S
+        5. visitChildren on S will try to grab its lock
+        6. We are now in a deadlock
+
+        * heap/Heap.cpp:
+        (JSC::Heap::performIncrement):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addNewPropertyTransition):
+
 2019-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed, rolling out r241620.
