@@ -343,6 +343,13 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
     });
 }
 
+bool Caches::hasActiveCache() const
+{
+    if (m_removedCaches.size())
+        return true;
+    return m_caches.findMatching([](const auto& item) { return item.isActive(); }) != notFound;
+}
+
 void Caches::dispose(Cache& cache)
 {
     auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); });
@@ -356,7 +363,7 @@ void Caches::dispose(Cache& cache)
     ASSERT(m_caches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
     cache.clearMemoryRepresentation();
 
-    if (m_caches.findMatching([](const auto& item) { return item.isActive(); }) == notFound)
+    if (!hasActiveCache())
         clearMemoryRepresentation();
 }
 
@@ -594,7 +601,7 @@ void Caches::removeCacheEntry(const NetworkCache::Key& key)
 void Caches::clearMemoryRepresentation()
 {
     if (!m_isInitialized) {
-        ASSERT(m_caches.isEmpty() || !m_pendingInitializationCallbacks.isEmpty());
+        ASSERT(!m_storage || !hasActiveCache() || !m_pendingInitializationCallbacks.isEmpty());
         // m_storage might not be null in case Caches is being initialized. This is fine as nullify it below is a memory optimization.
         m_caches.clear();
         return;
