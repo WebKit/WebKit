@@ -205,6 +205,13 @@ void CommonData::finalizeCatchEntrypoints()
 #endif
 }
 
+void CommonData::clearWatchpoints()
+{
+    watchpoints.clear();
+    adaptiveStructureWatchpoints.clear();
+    adaptiveInferredPropertyValueWatchpoints.clear();
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
