@@ -1,3 +1,14 @@
+2019-02-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [WebVTT] Inline WebVTT styles should start with '::cue'
+        https://bugs.webkit.org/show_bug.cgi?id=194227
+
+        Reviewed by Eric Carlson.
+
+        Add invalid 'STYLE' blocks which the WebVTT parser should reject.
+
+        * media/track/captions-webvtt/css-styling.vtt:
+
 2019-02-15  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Out-of-flow box is never a float box
