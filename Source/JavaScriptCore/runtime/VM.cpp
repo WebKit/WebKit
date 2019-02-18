@@ -401,7 +401,6 @@ VM::VM(VMType vmType, HeapType heapType)
     sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
     sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));
 
-    m_regExpCache->initialize(*this);
     smallStrings.initializeCommonStrings(*this);
 
     Thread::current().setCurrentAtomicStringTable(existingEntryAtomicStringTable);

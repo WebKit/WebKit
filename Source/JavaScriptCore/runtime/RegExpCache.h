@@ -46,9 +46,12 @@ public:
     RegExpCache(VM* vm);
     void deleteAllCode();
 
-    void initialize(VM&);
-
-    RegExp* emptyRegExp() const { return m_emptyRegExp.get(); }
+    RegExp* ensureEmptyRegExp(VM& vm)
+    {
+        if (LIKELY(m_emptyRegExp))
+            return m_emptyRegExp.get();
+        return ensureEmptyRegExpSlow(vm);
+    }
 
 private:
     
@@ -57,6 +60,8 @@ private:
     static const int maxStrongCacheableEntries = 32;
 
     void finalize(Handle<Unknown>, void* context) override;
+
+    RegExp* ensureEmptyRegExpSlow(VM&);
 
     RegExp* lookupOrCreate(const WTF::String& patternString, RegExpFlags);
     void addToStrongCache(RegExp*);
