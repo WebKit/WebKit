@@ -134,6 +134,47 @@ bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID p
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
 }
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+std::pair<bool, bool> PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view)
+{
+    bool defaultPrevented = false;
+    bool defaultHandled = false;
+
+    auto dispatchEvent = [&](const String& type) {
+        auto event = PointerEvent::create(type, platformTouchEvent, index, isPrimary, view);
+        target.dispatchEvent(event);
+        defaultPrevented |= event->defaultPrevented();
+        defaultHandled |= event->defaultHandled();
+    };
+
+    auto pointerEvent = PointerEvent::create(platformTouchEvent, index, isPrimary, view);
+
+    if (pointerEvent->type() == eventNames().pointerdownEvent) {
+        // https://w3c.github.io/pointerevents/#the-pointerdown-event
+        // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerover followed by a pointer event named
+        // pointerenter prior to dispatching the pointerdown event.
+        dispatchEvent(eventNames().pointeroverEvent);
+        dispatchEvent(eventNames().pointerenterEvent);
+    }
+
+    pointerEventWillBeDispatched(pointerEvent, &target);
+    target.dispatchEvent(pointerEvent);
+    defaultPrevented |= pointerEvent->defaultPrevented();
+    defaultHandled |= pointerEvent->defaultHandled();
+    pointerEventWasDispatched(pointerEvent);
+
+    if (pointerEvent->type() == eventNames().pointerupEvent) {
+        // https://w3c.github.io/pointerevents/#the-pointerup-event
+        // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerout followed by a
+        // pointer event named pointerleave after dispatching the pointerup event.
+        dispatchEvent(eventNames().pointeroutEvent);
+        dispatchEvent(eventNames().pointerleaveEvent);
+    }
+
+    return { defaultPrevented, defaultHandled };
+}
+#endif
+
 void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& event, EventTarget* target)
 {
     // https://w3c.github.io/pointerevents/#implicit-pointer-capture
@@ -170,7 +211,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         // Pointer Capture steps to fire lostpointercapture if necessary.
         if (event.type() == eventNames().pointerupEvent)
             capturingData.pendingTargetOverride = nullptr;
-        
+
         // When the pointer capture target override is no longer connected, the pending pointer capture target override and pointer
         // capture target override nodes SHOULD be cleared and also a PointerEvent named lostpointercapture corresponding to the captured
         // pointer SHOULD be fired at the document.

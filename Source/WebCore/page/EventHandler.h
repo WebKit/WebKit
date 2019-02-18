@@ -81,7 +81,6 @@ class PlatformGestureEvent;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
-class PointerEvent;
 class RenderBox;
 class RenderElement;
 class RenderLayer;
@@ -318,10 +317,6 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     WEBCORE_EXPORT bool handleTouchEvent(const PlatformTouchEvent&);
-#endif
-
-#if ENABLE(TOUCH_EVENTS) && ENABLE(POINTER_EVENTS)
-    Ref<PointerEvent> dispatchPointerEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary);
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);

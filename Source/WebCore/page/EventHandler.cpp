@@ -114,11 +114,6 @@
 #include "TouchList.h"
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && ENABLE(POINTER_EVENTS)
-#include "PointerCaptureController.h"
-#include "PointerEvent.h"
-#endif
-
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
 #include "PlatformTouchEvent.h"
 #endif
@@ -4270,18 +4265,6 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
 #endif
 }
 #endif // ENABLE(TOUCH_EVENTS)
-
-#if ENABLE(TOUCH_EVENTS) && ENABLE(POINTER_EVENTS)
-Ref<PointerEvent> EventHandler::dispatchPointerEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary)
-{
-    auto& pointerCaptureController = m_frame.page()->pointerCaptureController();
-    auto pointerEvent = PointerEvent::create(platformTouchEvent, index, isPrimary, m_frame.windowProxy());
-    pointerCaptureController.pointerEventWillBeDispatched(pointerEvent, &target);
-    target.dispatchEvent(pointerEvent);
-    pointerCaptureController.pointerEventWasDispatched(pointerEvent);
-    return pointerEvent;
-}
-#endif // ENABLE(TOUCH_EVENTS) && ENABLE(POINTER_EVENTS)
 
 void EventHandler::setLastKnownMousePosition(const PlatformMouseEvent& event)
 {

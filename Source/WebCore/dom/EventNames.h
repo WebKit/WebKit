@@ -206,7 +206,11 @@ namespace WebCore {
     macro(pointerlockerror) \
     macro(pointercancel) \
     macro(pointerdown) \
+    macro(pointerenter) \
+    macro(pointerleave) \
     macro(pointermove) \
+    macro(pointerout) \
+    macro(pointerover) \
     macro(pointerup) \
     macro(popstate) \
     macro(previoustrack) \

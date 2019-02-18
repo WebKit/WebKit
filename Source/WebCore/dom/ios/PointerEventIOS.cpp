@@ -63,6 +63,11 @@ Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned
     return adoptRef(*new PointerEvent(pointerEventType(phase), event, phaseIsCancelable(phase), index, isPrimary, WTFMove(view)));
 }
 
+Ref<PointerEvent> PointerEvent::create(const String& type, const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
+{
+    return adoptRef(*new PointerEvent(type, event, phaseIsCancelable(event.touchPhaseAtIndex(index)), index, isPrimary, WTFMove(view)));
+}
+
 PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
     : MouseEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchIdentifierAtIndex(index))

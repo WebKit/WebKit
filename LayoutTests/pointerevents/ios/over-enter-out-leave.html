@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ width: "200px", height: "200px" }, (target, test) => {
+    document.body.style.width = "2000px";
+    document.body.style.height = "2000px";
+
+    const eventTracker = new EventTracker(target, ["pointerover", "pointerenter", "pointerdown", "pointerup", "pointerout", "pointerleave"]);
+
+    const touch = ui.finger();
+    ui.sequence([
+        touch.begin({ x: 100, y: 100 }),
+        touch.end()
+    ]).then(() => {
+        eventTracker.assertMatchesEvents([
+            { type: "pointerover", x: 100, y: 100, isPrimary: true },
+            { type: "pointerenter", x: 100, y: 100, isPrimary: true },
+            { type: "pointerdown", x: 100, y: 100, isPrimary: true },
+            { type: "pointerup", x: 100, y: 100, isPrimary: false },
+            { type: "pointerout", x: 100, y: 100, isPrimary: false },
+            { type: "pointerleave", x: 100, y: 100, isPrimary: false },
+        ]);
+        test.done();
+    });
+}, `Testing that "pointerover" and "pointerenter" precede "pointerdown" and that "pointerout" and "pointerleave" follow "pointerup".`);
+
+</script>
+</body>
+</html>

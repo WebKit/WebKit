@@ -47,10 +47,13 @@ public:
 
     void pointerLockWasApplied();
 
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+    std::pair<bool, bool> dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
+#endif
+
     void touchEndedOrWasCancelledForIdentifier(PointerID);
     bool hasCancelledPointerEventForIdentifier(PointerID);
-    void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
-    void pointerEventWasDispatched(const PointerEvent&);
+    void dispatchEvent(PointerEvent&, EventTarget*);
     WEBCORE_EXPORT void cancelPointer(PointerID, const IntPoint&);
 
 private:
@@ -61,6 +64,8 @@ private:
         bool cancelled { false };
     };
 
+    void pointerEventWillBeDispatched(const PointerEvent&, EventTarget*);
+    void pointerEventWasDispatched(const PointerEvent&);
     void processPendingPointerCapture(const PointerEvent&);
 
     Page& m_page;
