@@ -267,7 +267,7 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
     for (const char** signalName = signalNames; *signalName; signalName++) {
         unsigned id = atk_add_global_event_listener(axObjectEventListener, *signalName);
         if (!id) {
-            String message = String::format("atk_add_global_event_listener failed for signal %s\n", *signalName);
+            String message = makeString("atk_add_global_event_listener failed for signal ", *signalName, '\n');
             InjectedBundle::singleton().outputText(message);
             continue;
         }

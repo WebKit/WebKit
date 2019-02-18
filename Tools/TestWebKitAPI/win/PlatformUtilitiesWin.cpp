@@ -51,7 +51,7 @@ WKStringRef createInjectedBundlePath()
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    String filename = String::format("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\%s.%s", resource, extension);
+    String filename = makeString("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\", resource, '.', extension);
     auto url = URL::fileURLWithFileSystemPath(FileSystem::pathByAppendingComponent(moduleDirectory(), filename));
     return WKURLCreateWithUTF8CString(url.string().utf8().data());
 }

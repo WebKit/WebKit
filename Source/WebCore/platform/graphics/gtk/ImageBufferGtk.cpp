@@ -67,7 +67,7 @@ static bool encodeImage(cairo_surface_t* surface, const String& mimeType, Option
 
     GUniqueOutPtr<GError> error;
     if (type == "jpeg" && quality && *quality >= 0.0 && *quality <= 1.0) {
-        String qualityString = String::format("%d", static_cast<int>(*quality * 100.0 + 0.5));
+        String qualityString = String::number(static_cast<int>(*quality * 100.0 + 0.5));
         gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error.outPtr(), "quality", qualityString.utf8().data(), NULL);
     } else
         gdk_pixbuf_save_to_buffer(pixbuf.get(), &buffer.outPtr(), &bufferSize, type.utf8().data(), &error.outPtr(), NULL);

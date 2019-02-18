@@ -463,7 +463,7 @@ void NetworkProcess::switchToNewTestingSession()
 {
 #if PLATFORM(COCOA)
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
+    String sessionName = makeString("WebKit Test-", getCurrentProcessID());
 
     auto session = adoptCF(WebCore::createPrivateStorageSession(sessionName.createCFString().get()));
 

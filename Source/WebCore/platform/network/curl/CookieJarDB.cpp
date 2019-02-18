@@ -31,6 +31,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/URL.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
@@ -202,7 +203,7 @@ void CookieJarDB::verifySchemaVersion()
     }
 
     // Update version
-    executeSql(String::format("PRAGMA user_version=%d", schemaVersion));
+    executeSql(makeString("PRAGMA user_version=", schemaVersion));
 }
 
 void CookieJarDB::deleteAllTables()

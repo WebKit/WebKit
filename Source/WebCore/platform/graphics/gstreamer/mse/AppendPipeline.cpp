@@ -42,6 +42,7 @@
 #include <wtf/Condition.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
@@ -114,8 +115,8 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
     // FIXME: give a name to the pipeline, maybe related with the track it's managing.
     // The track name is still unknown at this time, though.
     static size_t appendPipelineCount = 0;
-    String pipelineName = String::format("append-pipeline-%s-%zu",
-        m_sourceBufferPrivate->type().containerType().replace("/", "-").utf8().data(), appendPipelineCount++);
+    String pipelineName = makeString("append-pipeline-",
+        m_sourceBufferPrivate->type().containerType().replace("/", "-"), '-', appendPipelineCount++);
     m_pipeline = gst_pipeline_new(pipelineName.utf8().data());
 
     m_bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -332,9 +333,9 @@ void AppendPipeline::handleStateChangeMessage(GstMessage* message)
         CString sourceBufferType = String(m_sourceBufferPrivate->type().raw())
             .replace("/", "_").replace(" ", "_")
             .replace("\"", "").replace("\'", "").utf8();
-        CString dotFileName = String::format("webkit-append-%s-%s_%s",
-            sourceBufferType.data(),
-            gst_element_state_get_name(currentState),
+        CString dotFileName = makeString("webkit-append-",
+            sourceBufferType.data(), '-',
+            gst_element_state_get_name(currentState), '_',
             gst_element_state_get_name(newState)).utf8();
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
     }
@@ -550,7 +551,7 @@ void AppendPipeline::resetParserState()
     {
         static unsigned i = 0;
         // This is here for debugging purposes. It does not make sense to have it as class member.
-        WTF::String dotFileName = String::format("reset-pipeline-%d", ++i);
+        WTF::String dotFileName = makeString("reset-pipeline-", ++i);
         gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
     }
 #endif

@@ -1,3 +1,51 @@
+2019-02-10  Darin Adler  <darin@apple.com>
+
+        Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)
+        https://bugs.webkit.org/show_bug.cgi?id=194487
+
+        Reviewed by Daniel Bates.
+
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        (WebCore::AccessibilityObjectWrapper::accessibilityAttributeValue): Use makeString
+        instead of String::format.
+
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::formatByteNumber): Use String::number instead of String::format.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        Use makeString instead of String::format.
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::platformVersionForUAString): Ditto.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::simpleBusMessageCallback): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Ditto.
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline): Ditto.
+        (WebCore::AppendPipeline::handleStateChangeMessage): Ditto.
+        (WebCore::AppendPipeline::resetParserState): Ditto.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek): Ditto.
+
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage): Use String::number instead of String::format.
+
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSource::create): Use makeString instead of
+        String::format.
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        (WebCore::GStreamerCaptureDeviceManager::addDevice): Ditto.
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcAddPad): Ditto.
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::create): Ditto.
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::verifySchemaVersion): Ditto.
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::verifySchemaVersion): Ditto.
+
 2019-02-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Decoding media-capabilities configuration initial support
