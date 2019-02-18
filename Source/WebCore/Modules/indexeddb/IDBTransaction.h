@@ -152,6 +152,8 @@ public:
 
     void visitReferencedObjectStores(JSC::SlotVisitor&) const;
 
+    WEBCORE_EXPORT static HashSet<IDBTransaction*>& allIDBTransactions();
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 

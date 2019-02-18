@@ -79,6 +79,9 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     , m_currentlyCompletingRequest(request)
 
 {
+    auto addResult = allIDBTransactions().add(this);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+
     LOG(IndexedDB, "IDBTransaction::IDBTransaction - %s", m_info.loggingString().utf8().data());
     ASSERT(&m_database->originThread() == &Thread::current());
 
@@ -106,6 +109,14 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
 IDBTransaction::~IDBTransaction()
 {
     ASSERT(&m_database->originThread() == &Thread::current());
+    ASSERT(allIDBTransactions().contains(this));
+    allIDBTransactions().remove(this);
+}
+
+HashSet<IDBTransaction*>& IDBTransaction::allIDBTransactions()
+{
+    static NeverDestroyed<HashSet<IDBTransaction*>> transactions;
+    return transactions;
 }
 
 IDBClient::IDBConnectionProxy& IDBTransaction::connectionProxy()
@@ -1434,7 +1445,8 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::connectionClosedFromServer - %s", error.message().utf8().data());
 
-    m_state = IndexedDB::TransactionState::Aborting;
+    m_database->willAbortTransaction(*this);
+    transitionedToFinishing(IndexedDB::TransactionState::Aborting);
 
     abortInProgressOperations(error);
 
@@ -1445,6 +1457,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
         ASSERT(m_transactionOperationsInProgressQueue.first() == operation.get());
         operation->doComplete(IDBResultData::error(operation->identifier(), error));
     }
+    m_currentlyCompletingRequest = nullptr;
 
     connectionProxy().forgetActiveOperations(operations);
 
@@ -1454,6 +1467,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
 
     m_idbError = error;
     m_domError = error.toDOMException();
+    m_database->didAbortTransaction(*this);
     fireOnAbort();
 }
 
