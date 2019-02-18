@@ -1,5 +1,21 @@
 2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove unused global private variables
+        https://bugs.webkit.org/show_bug.cgi?id=194741
+
+        Reviewed by Joseph Pecoraro.
+
+        There are some private functions and constants that are no longer referenced from builtin JS code.
+        This patch cleans up them.
+
+        * builtins/BuiltinNames.h:
+        * builtins/ObjectConstructor.js:
+        (entries):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Lazily create empty RegExp
         https://bugs.webkit.org/show_bug.cgi?id=194735
 
