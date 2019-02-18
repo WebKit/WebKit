@@ -1,3 +1,20 @@
+2019-02-15  Alex Christensen  <achristensen@webkit.org>
+
+        IPC code should support messages with both Delayed and WantsConnection attributes
+        https://bugs.webkit.org/show_bug.cgi?id=194679
+
+        Reviewed by Geoffrey Garen.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunctionImpl):
+        (IPC::callMemberFunction):
+        (IPC::handleMessageDelayedWantsConnection):
+        * Scripts/webkit/messages.py:
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::getValues):
+        * UIProcess/WebStorage/StorageManager.h:
+        * UIProcess/WebStorage/StorageManager.messages.in:
+
 2019-02-10  Darin Adler  <darin@apple.com>
 
         Replace more uses of String::format with StringConcatenate (mostly non-Apple platform-specific cases)

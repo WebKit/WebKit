@@ -307,6 +307,8 @@ def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
+        if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
+            dispatch_function += 'WantsConnection'
     if message.has_attribute(ASYNC_ATTRIBUTE):
         dispatch_function += 'Async'
     if message.has_attribute(LEGACY_SYNC_ATTRIBUTE):
