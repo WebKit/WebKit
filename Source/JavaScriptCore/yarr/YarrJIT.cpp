@@ -1428,6 +1428,9 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
                 ignoreCaseMask |= 32ULL << shiftAmount;
         }
 
+        if (m_decodeSurrogatePairs)
+            op.m_jumps.append(jumpIfNoAvailableInput());
+
         if (m_charSize == Char8) {
             auto check1 = [&] (Checked<unsigned> offset, UChar32 characters) {
                 op.m_jumps.append(jumpIfCharNotEquals(characters, offset, character));
@@ -1559,6 +1562,9 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
+
+        if (m_decodeSurrogatePairs)
+            op.m_jumps.append(jumpIfNoAvailableInput());
 
         move(index, countRegister);
         Checked<unsigned> scaledMaxCount = term->quantityMaxCount;
@@ -1713,8 +1719,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         const RegisterID character = regT0;
 
-        if (m_decodeSurrogatePairs)
+        if (m_decodeSurrogatePairs) {
+            op.m_jumps.append(jumpIfNoAvailableInput());
             storeToFrame(index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
+        }
 
         JumpList matchDest;
         readCharacter(m_checkedOffset - term->inputPosition, character);
@@ -1760,6 +1768,9 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
+
+        if (m_decodeSurrogatePairs)
+            op.m_jumps.append(jumpIfNoAvailableInput());
 
         move(index, countRegister);
         sub32(Imm32(term->quantityMaxCount.unsafeGet()), countRegister);
