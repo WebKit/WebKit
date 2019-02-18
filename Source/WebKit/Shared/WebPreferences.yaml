@@ -1435,7 +1435,7 @@ FullScreenEnabled:
 
 AriaReflectionEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "ARIA Reflection"
   humanReadableDescription: "ARIA Reflection support"
   category: internal
