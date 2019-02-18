@@ -1,3 +1,12 @@
+2019-02-17  Saam Barati  <sbarati@apple.com>
+
+        Deadlock when adding a Structure property transition and then doing incremental marking
+        https://bugs.webkit.org/show_bug.cgi?id=194767
+
+        Reviewed by Mark Lam.
+
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js: Added.
+
 2019-02-15  Michael Saboff  <msaboff@apple.com>
 
         RELEASE_ASSERT at com.apple.JavaScriptCore: JSC::jsSubstringOfResolved

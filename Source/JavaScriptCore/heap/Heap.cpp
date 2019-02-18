@@ -2887,6 +2887,9 @@ void Heap::performIncrement(size_t bytes)
     if (!m_objectSpace.isMarking())
         return;
 
+    if (isDeferred())
+        return;
+
     m_incrementBalance += bytes * Options::gcIncrementScale();
 
     // Save ourselves from crazy. Since this is an optimization, it's OK to go back to any consistent
