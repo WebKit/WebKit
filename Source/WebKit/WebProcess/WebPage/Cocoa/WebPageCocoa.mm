@@ -183,6 +183,12 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& ra
     return dictionaryPopupInfo;
 }
 
+void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
+{
+    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

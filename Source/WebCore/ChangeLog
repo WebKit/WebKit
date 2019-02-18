@@ -1,3 +1,22 @@
+2019-02-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: PSON: Going back from apple.com to search results, cannot interact with HTML content. Disabling Swap Processes on Cross-Site Navigation resolves the issue.
+        https://bugs.webkit.org/show_bug.cgi?id=194742
+
+        Reviewed by Chris Dumez.
+
+        With the new process model, WebProcess hits a case where it tries to send the "page loaded" notification before VoiceOver
+        had a chance to register for any notifications. This leads to those notifications being dropped (and thus this bug).
+
+        This change instead asks the UIProcess to send the notification, which we know VoiceOver has registered for, and can reliably
+        receive notifications.
+
+        It also sends the notification for "load failures," which to the VO users' perspective amounts to the same thing as a successful
+        page load.
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+
 2019-02-18  Megan Gardner  <megan_gardner@apple.com>
 
         Turn On Smart Delete

@@ -1,3 +1,39 @@
+2019-02-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: PSON: Going back from apple.com to search results, cannot interact with HTML content. Disabling Swap Processes on Cross-Site Navigation resolves the issue.
+        https://bugs.webkit.org/show_bug.cgi?id=194742
+
+        Reviewed by Chris Dumez.
+
+        Re-initialize the accessibility web process tokens when swapping processes.
+        Send page load notifications from the UIProcess instead of the WebProcess to improve reliability.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformReinitialize):
+        (WebKit::WebPage::platformDetach): Deleted.
+        (WebKit::WebPage::platformEditorState const): Deleted.
+        (WebKit::WebPage::updateAccessibilityTree): Deleted.
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): Deleted.
+        (WebKit::WebPage::platformCanHandleRequest): Deleted.
+        (WebKit::WebPage::platformUserAgent const): Deleted.
+        (WebKit::WebPage::getCenterForZoomGesture): Deleted.
+        (WebKit::WebPage::setInputMethodState): Deleted.
+        (WebKit::WebPage::collapseSelectionInFrame): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformReinitialize):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformReinitialize):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformReinitialize):
+        * WebProcess/WebPage/wpe/WebPageWPE.cpp:
+        (WebKit::WebPage::platformReinitialize):
+
 2019-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crash while filling selection data during drag and drop

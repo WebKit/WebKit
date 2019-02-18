@@ -89,6 +89,8 @@
 #include <WebCore/WebMediaSessionManager.h>
 #endif
 
+static NSString * const kAXLoadCompleteNotification = @"AXLoadComplete";
+
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
 @end
@@ -840,12 +842,16 @@ void PageClientImpl::didFinishLoadForMainFrame()
 {
     if (auto gestureController = m_impl->gestureController())
         gestureController->didFinishLoadForMainFrame();
+
+    NSAccessibilityPostNotification(NSAccessibilityUnignoredAncestor(m_view), kAXLoadCompleteNotification);
 }
 
 void PageClientImpl::didFailLoadForMainFrame()
 {
     if (auto gestureController = m_impl->gestureController())
         gestureController->didFailLoadForMainFrame();
+
+    NSAccessibilityPostNotification(NSAccessibilityUnignoredAncestor(m_view), kAXLoadCompleteNotification);
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
