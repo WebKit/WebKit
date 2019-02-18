@@ -228,9 +228,19 @@ add_custom_command(
     COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm --bytecode_structs_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h --bytecode_indices_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb
     VERBATIM)
 
+
+if (WTF_OS_MAC_OS_X)
+    execute_process(COMMAND bash -c "date +'%s'" OUTPUT_VARIABLE BUILD_TIME OUTPUT_STRIP_TRAILING_WHITESPACE)
+else ()
+    set(BUILD_TIME 0)
+endif ()
+
+file(WRITE ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeCacheVersion.h "#define JSC_BYTECODE_CACHE_VERSION ${BUILD_TIME}\n")
+
 list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeCacheVersion.h
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
 )
 
 if (WIN32)

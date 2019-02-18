@@ -356,3 +356,10 @@ WasmB3IRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInli
 all : \
     $(OBJECT_LUT_HEADERS) \
 #
+
+.PHONY : BytecodeCacheVersion.h
+
+BytecodeCacheVersion.h:
+	echo "#define JSC_BYTECODE_CACHE_VERSION $(shell date '+%s')" > BytecodeCacheVersion.h
+
+all : BytecodeCacheVersion.h
