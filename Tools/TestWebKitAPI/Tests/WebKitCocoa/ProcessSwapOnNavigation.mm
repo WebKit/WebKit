@@ -432,11 +432,18 @@ window.addEventListener('pageshow', function(event) {
 
 #endif // PLATFORM(MAC)
 
-TEST(ProcessSwap, Basic)
+static RetainPtr<_WKProcessPoolConfiguration> psonProcessPoolConfiguration()
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().usesWebProcessCache = YES;
     processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    return processPoolConfiguration;
+}
+
+TEST(ProcessSwap, Basic)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -481,9 +488,7 @@ TEST(ProcessSwap, Basic)
 
 TEST(ProcessSwap, LoadAfterPolicyDecision)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -519,9 +524,7 @@ TEST(ProcessSwap, LoadAfterPolicyDecision)
 
 TEST(ProcessSwap, KillWebContentProcessAfterServerRedirectPolicyDecision)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -570,9 +573,7 @@ TEST(ProcessSwap, KillWebContentProcessAfterServerRedirectPolicyDecision)
 
 TEST(ProcessSwap, NoSwappingForeTLDPlus2)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -607,8 +608,7 @@ TEST(ProcessSwap, NoSwappingForeTLDPlus2)
 
 TEST(ProcessSwap, Back)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -715,8 +715,7 @@ static const char* pageWithFragmentTestBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, HistoryNavigationToFragmentURL)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -768,8 +767,7 @@ TEST(ProcessSwap, HistoryNavigationToFragmentURL)
 
 TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -801,7 +799,7 @@ TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
     EXPECT_NE(webkitPID, applePID);
 
     // webkit.org + apple.com processes.
-    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
 
     [webView goBack]; // Back to webkit.org.
     TestWebKitAPI::Util::run(&done);
@@ -810,7 +808,7 @@ TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
 
     // webkit.org + apple.com processes.
-    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
@@ -821,15 +819,14 @@ TEST(ProcessSwap, SuspendedPageDiesAfterBackForwardListItemIsGone)
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
 
     // apple.com is not longer present in the back/forward list and there should therefore be no-suspended page for it.
-    while ([processPool _webProcessCountIgnoringPrewarmed] > 1u)
+    while ([processPool _webProcessCountIgnoringPrewarmedAndCached] > 1u)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
 #if PLATFORM(MAC)
 TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -917,8 +914,7 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
 
 TEST(ProcessSwap, BackWithoutSuspendedPage)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -975,8 +971,7 @@ TEST(ProcessSwap, BackWithoutSuspendedPage)
 
 TEST(ProcessSwap, BackNavigationAfterSessionRestore)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1032,8 +1027,7 @@ TEST(ProcessSwap, BackNavigationAfterSessionRestore)
 
 TEST(ProcessSwap, CrossSiteWindowOpenNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1072,8 +1066,7 @@ TEST(ProcessSwap, CrossSiteWindowOpenNoOpener)
 
 TEST(ProcessSwap, CrossOriginButSameSiteWindowOpenNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1112,8 +1105,7 @@ TEST(ProcessSwap, CrossOriginButSameSiteWindowOpenNoOpener)
 
 TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().processSwapsOnWindowOpenWithOpener = YES;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -1153,8 +1145,7 @@ TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
 
 TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1192,8 +1183,7 @@ TEST(ProcessSwap, SameSiteWindowOpenNoOpener)
 
 TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1232,8 +1222,7 @@ TEST(ProcessSwap, CrossSiteBlankTargetWithOpener)
 
 TEST(ProcessSwap, CrossSiteBlankTargetImplicitNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1272,8 +1261,7 @@ TEST(ProcessSwap, CrossSiteBlankTargetImplicitNoOpener)
 
 TEST(ProcessSwap, CrossSiteBlankTargetNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1312,8 +1300,7 @@ TEST(ProcessSwap, CrossSiteBlankTargetNoOpener)
 
 TEST(ProcessSwap, SameSiteBlankTargetNoOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1354,8 +1341,7 @@ TEST(ProcessSwap, SameSiteBlankTargetNoOpener)
 
 TEST(ProcessSwap, ServerRedirectFromNewWebView)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1388,8 +1374,7 @@ TEST(ProcessSwap, ServerRedirectFromNewWebView)
 
 TEST(ProcessSwap, ServerRedirect)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1435,8 +1420,7 @@ TEST(ProcessSwap, ServerRedirect)
 TEST(ProcessSwap, ServerRedirect2)
 {
     // This tests a load that *starts out* to the same origin as the previous load, but then redirects to a new origin.
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1493,8 +1477,7 @@ TEST(ProcessSwap, ServerRedirect2)
 
 TEST(ProcessSwap, TerminateProcessRightAfterSwap)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1533,8 +1516,7 @@ static const char* linkToWebKitBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, PolicyCancelAfterServerRedirect)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1587,8 +1569,7 @@ TEST(ProcessSwap, PolicyCancelAfterServerRedirect)
 
 TEST(ProcessSwap, CrossSiteDownload)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1648,8 +1629,7 @@ static const char* systemPreviewCrossOriginTestBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, SameOriginSystemPreview)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1685,8 +1665,7 @@ TEST(ProcessSwap, SameOriginSystemPreview)
 
 TEST(ProcessSwap, CrossOriginSystemPreview)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1725,7 +1704,7 @@ TEST(ProcessSwap, CrossOriginSystemPreview)
 enum class ShouldEnablePSON { No, Yes };
 static void runClientSideRedirectTest(ShouldEnablePSON shouldEnablePSON)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().processSwapsOnNavigation = shouldEnablePSON == ShouldEnablePSON::Yes ? YES : NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -1860,9 +1839,7 @@ TEST(ProcessSwap, CrossSiteClientSideRedirectWithPSON)
 
 TEST(ProcessSwap, CrossSiteClientSideRedirectFromFileURL)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1891,15 +1868,14 @@ TEST(ProcessSwap, CrossSiteClientSideRedirectFromFileURL)
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, pid2);
 
-    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE(willPerformClientRedirect);
     EXPECT_TRUE(didPerformClientRedirect);
 }
 
 TEST(ProcessSwap, NavigateBackAfterClientSideRedirect)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1973,7 +1949,7 @@ TEST(ProcessSwap, NavigateBackAfterClientSideRedirect)
 
 static void runNavigationWithLockedHistoryTest(ShouldEnablePSON shouldEnablePSON)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().processSwapsOnNavigation = shouldEnablePSON == ShouldEnablePSON::Yes ? YES : NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -2072,8 +2048,7 @@ window.onload = function(evt) {
 
 TEST(ProcessSwap, SessionStorage)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2129,8 +2104,7 @@ TEST(ProcessSwap, SessionStorage)
 
 TEST(ProcessSwap, ReuseSuspendedProcess)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2190,8 +2164,7 @@ var myWorker = new Worker('worker.js');
 
 TEST(ProcessSwap, ReuseSuspendedProcessEvenIfPageCacheFails)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2243,8 +2216,7 @@ TEST(ProcessSwap, ReuseSuspendedProcessEvenIfPageCacheFails)
 
 TEST(ProcessSwap, ReuseSuspendedProcessOnBackEvenIfPageCacheFails)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2292,8 +2264,7 @@ static const char* withSubframesTestBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, HistoryItemIDConfusion)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2358,8 +2329,7 @@ TEST(ProcessSwap, HistoryItemIDConfusion)
 
 TEST(ProcessSwap, GoToSecondItemInBackHistory)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2444,11 +2414,9 @@ setInterval(() => {
 enum class RetainPageInBundle { No, Yes };
 void testReuseSuspendedProcessForRegularNavigation(RetainPageInBundle retainPageInBundle)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     if (retainPageInBundle == RetainPageInBundle::Yes)
         [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
-
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     if (retainPageInBundle == RetainPageInBundle::Yes)
         [processPool _setObject:@"BundleRetainPagePlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
@@ -2524,8 +2492,7 @@ static const char* mainFramesOnlySubframe2 = R"PSONRESOURCE(
 
 TEST(ProcessSwap, MainFramesOnly)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2570,8 +2537,7 @@ onload = () => {
 
 TEST(ProcessSwap, PageZoomLevelAfterSwap)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2647,9 +2613,7 @@ static const char* navigateBeforePageLoadEndBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, NavigateCrossSiteBeforePageLoadEnd)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setPrewarmsProcessesAutomatically:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2678,8 +2642,7 @@ TEST(ProcessSwap, NavigateCrossSiteBeforePageLoadEnd)
 
 TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2720,8 +2683,7 @@ TEST(ProcessSwap, DoSameSiteNavigationAfterCrossSiteProvisionalLoadStarted)
 
 TEST(ProcessSwap, SuspendedPageLimit)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2770,13 +2732,12 @@ TEST(ProcessSwap, SuspendedPageLimit)
     EXPECT_EQ(5u, seenPIDs.size());
 
     // But not all of those processes should still be alive (1 visible, maximumSuspendedPageCount suspended).
-    EXPECT_EQ([processPool _webProcessCountIgnoringPrewarmed], (1U + maximumSuspendedPageCount));
+    EXPECT_EQ([processPool _webProcessCountIgnoringPrewarmedAndCached], (1U + maximumSuspendedPageCount));
 }
 
 TEST(ProcessSwap, PageCache1)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2801,7 +2762,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad1 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
 
@@ -2811,7 +2772,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad2 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_NE(pidAfterLoad1, pidAfterLoad2);
 
     [webView goBack];
@@ -2822,7 +2783,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad3 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_EQ(pidAfterLoad1, pidAfterLoad3);
     EXPECT_EQ(1u, [receivedMessages count]);
     EXPECT_TRUE([receivedMessages.get()[0] isEqualToString:@"Was persisted" ]);
@@ -2836,7 +2797,7 @@ TEST(ProcessSwap, PageCache1)
 
     auto pidAfterLoad4 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_EQ(pidAfterLoad2, pidAfterLoad4);
     EXPECT_EQ(2u, [receivedMessages count]);
     EXPECT_TRUE([receivedMessages.get()[1] isEqualToString:@"Was persisted" ]);
@@ -2845,9 +2806,7 @@ TEST(ProcessSwap, PageCache1)
 
 TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setPrewarmsProcessesAutomatically:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2865,7 +2824,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     done = false;
 
     EXPECT_EQ(2u, [processPool _webProcessCount]);
-    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
@@ -2874,7 +2833,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     done = false;
 
     EXPECT_EQ(3u, [processPool _webProcessCount]);
-    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmed]);
+    EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 }
 
@@ -2896,8 +2855,7 @@ window.addEventListener('pagehide', function(event) {
 
 TEST(ProcessSwap, PageShowHide)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -2988,8 +2946,7 @@ window.addEventListener('load', function(event) {
 
 TEST(ProcessSwap, LoadUnload)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3065,8 +3022,7 @@ TEST(ProcessSwap, LoadUnload)
 
 TEST(ProcessSwap, WebInspector)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3128,8 +3084,7 @@ link.href = URL.createObjectURL(blob);
 
 TEST(ProcessSwap, SameOriginBlobNavigation)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3163,8 +3118,7 @@ TEST(ProcessSwap, SameOriginBlobNavigation)
 
 TEST(ProcessSwap, CrossOriginBlobNavigation)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3222,8 +3176,7 @@ TEST(ProcessSwap, CrossOriginBlobNavigation)
 
 TEST(ProcessSwap, NavigateToAboutBlank)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3256,8 +3209,7 @@ TEST(ProcessSwap, NavigateToAboutBlank)
 
 TEST(ProcessSwap, NavigateToDataURL)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3290,9 +3242,7 @@ TEST(ProcessSwap, NavigateToDataURL)
 
 TEST(ProcessSwap, ProcessReuse)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setAlwaysKeepAndReuseSwappedProcesses:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3337,9 +3287,7 @@ TEST(ProcessSwap, ProcessReuse)
 
 TEST(ProcessSwap, ProcessReuseeTLDPlus2)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
-    [processPoolConfiguration setAlwaysKeepAndReuseSwappedProcesses:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3384,8 +3332,7 @@ TEST(ProcessSwap, ProcessReuseeTLDPlus2)
 
 TEST(ProcessSwap, ConcurrentHistoryNavigations)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3454,8 +3401,7 @@ TEST(ProcessSwap, ConcurrentHistoryNavigations)
 
 TEST(ProcessSwap, NavigateToInvalidURL)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3506,8 +3452,7 @@ onpageshow = function(event) {
 
 TEST(ProcessSwap, NavigateToDataURLThenBack)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().pageCacheEnabled = NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -3542,8 +3487,7 @@ TEST(ProcessSwap, NavigateToDataURLThenBack)
 
 TEST(ProcessSwap, NavigateCrossSiteWithPageCacheDisabled)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().pageCacheEnabled = NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -3633,8 +3577,7 @@ static const char* navigateBackFromJSBytes = R"PSONRESOURCE(
 
 TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().pageCacheEnabled = NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -3674,8 +3617,7 @@ TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
 
 TEST(ProcessSwap, ClosePageAfterCrossSiteProvisionalLoad)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3733,8 +3675,7 @@ static unsigned urlChangeCount;
 
 TEST(ProcessSwap, LoadingStateAfterPolicyDecision)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3939,9 +3880,7 @@ TEST(ProcessSwap, OpenerLinkAfterAPIControlledProcessSwappingOfOpenee)
 enum class ExpectSwap { No, Yes };
 static void runProcessSwapDueToRelatedWebViewTest(NSURL* relatedViewURL, NSURL* targetURL, ExpectSwap expectSwap)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webView1Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -3997,9 +3936,7 @@ TEST(ProcessSwap, NoProcessSwapDueToRelatedView)
 
 TEST(ProcessSwap, TerminatedSuspendedPageProcess)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4062,8 +3999,7 @@ TEST(ProcessSwap, TerminatedSuspendedPageProcess)
 
 TEST(ProcessSwap, NavigateBackAndForth)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4114,8 +4050,7 @@ TEST(ProcessSwap, NavigateBackAndForth)
 
 TEST(ProcessSwap, SwapOnLoadHTMLString)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4158,9 +4093,7 @@ TEST(ProcessSwap, SwapOnLoadHTMLString)
 
 TEST(ProcessSwap, UsePrewarmedProcessAfterTerminatingNetworkProcess)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
@@ -4194,8 +4127,7 @@ TEST(ProcessSwap, UsePrewarmedProcessAfterTerminatingNetworkProcess)
 
 TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
     RetainPtr<WKWebsiteDataStore> ephemeralStore = [WKWebsiteDataStore nonPersistentDataStore];
 
@@ -4254,8 +4186,7 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
 
 TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4308,8 +4239,7 @@ TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
 
 TEST(ProcessSwap, NavigateCrossOriginWithOpenee)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4386,8 +4316,7 @@ function saveOpenee()
 
 TEST(ProcessSwap, NavigateCrossOriginWithOpener)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4515,8 +4444,7 @@ TEST(ProcessSwap, NavigateCrossOriginWithOpener)
 
 TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4606,8 +4534,7 @@ body {
 
 TEST(ProcessSwap, ScrollPositionRestoration)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4686,8 +4613,7 @@ TEST(ProcessSwap, ContentBlockingAfterProcessSwap)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -4809,10 +4735,7 @@ navigator.mediaDevices.getUserMedia({video: true});
 
 TEST(ProcessSwap, GetUserMediaCaptureState)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
-
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);

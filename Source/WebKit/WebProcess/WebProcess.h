@@ -270,6 +270,7 @@ private:
 
     void platformTerminate();
 
+    void setIsInProcessCache(bool);
     void markIsNoLongerPrewarmed();
 
     void registerURLSchemeAsEmptyDocument(const String&);
@@ -349,6 +350,7 @@ private:
     void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
 
     bool hasPageRequiringPageCacheWhileSuspended() const;
+    bool areAllPagesSuspended() const;
 
     void ensureAutomationSessionProxy(const String& sessionIdentifier);
     void destroyAutomationSessionProxy();
@@ -469,7 +471,7 @@ private:
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     Optional<double> m_cpuLimit;
 
-    enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, WebContent };
+    enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, CachedWebContent, WebContent };
     ProcessType m_processType { ProcessType::WebContent };
     String m_uiProcessName;
     String m_securityOrigin;
