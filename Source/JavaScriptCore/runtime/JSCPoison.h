@@ -33,6 +33,7 @@ namespace JSC {
 #define FOR_EACH_JSC_POISON(v) \
     v(ArrayPrototype) \
     v(CodeBlock) \
+    v(DateInstance) \
     v(GlobalData) \
     v(JITCode) \
     v(JSAPIWrapperObject) \

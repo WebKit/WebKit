@@ -30,7 +30,7 @@ protected:
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 
 public:
-    using Base = JSWrapperObject;
+    typedef JSWrapperObject Base;
 
     static BooleanObject* create(VM& vm, Structure* structure)
     {

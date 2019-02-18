@@ -20,11 +20,12 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
+#include "JSCPoison.h"
+#include "JSWrapperObject.h"
 
 namespace JSC {
 
-class DateInstance final : public JSDestructibleObject {
+class DateInstance final : public JSWrapperObject {
 protected:
     JS_EXPORT_PRIVATE DateInstance(VM&, Structure*);
     void finishCreation(VM&);
@@ -33,7 +34,7 @@ protected:
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
 public:
-    using Base = JSDestructibleObject;
+    typedef JSWrapperObject Base;
 
     static DateInstance* create(VM& vm, Structure* structure, double date)
     {
@@ -49,8 +50,7 @@ public:
         return instance;
     }
 
-    double internalNumber() const { return m_internalNumber; }
-    void setInternalNumber(double value) { m_internalNumber = value; }
+    double internalNumber() const { return internalValue().asNumber(); }
 
     DECLARE_EXPORT_INFO;
 
@@ -77,8 +77,7 @@ private:
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
 
-    double m_internalNumber { PNaN };
-    mutable RefPtr<DateInstanceData> m_data;
+    mutable PoisonedRefPtr<DateInstancePoison, DateInstanceData> m_data;
 };
 
 } // namespace JSC

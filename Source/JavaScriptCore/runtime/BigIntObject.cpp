@@ -45,7 +45,7 @@ BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSBigIn
 }
 
 BigIntObject::BigIntObject(VM& vm, Structure* structure)
-    : Base(vm, structure)
+    : JSWrapperObject(vm, structure)
 {
 }
 
