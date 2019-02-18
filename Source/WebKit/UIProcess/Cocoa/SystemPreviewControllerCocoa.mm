@@ -41,6 +41,7 @@
 @interface _WKPreviewControllerDataSource : NSObject <QLPreviewControllerDataSource> {
     RetainPtr<NSItemProvider> _itemProvider;
     RetainPtr<QLItem> _item;
+    URL _downloadedURL;
 };
 
 @property (strong) NSItemProviderCompletionHandler completionHandler;
@@ -89,8 +90,14 @@
 
     WeakObjCPtr<_WKPreviewControllerDataSource> weakSelf { self };
     [_itemProvider registerItemForTypeIdentifier:contentType loadHandler:[weakSelf = WTFMove(weakSelf)] (NSItemProviderCompletionHandler completionHandler, Class expectedValueClass, NSDictionary * options) {
-        if (auto strongSelf = weakSelf.get())
-            [strongSelf setCompletionHandler:completionHandler];
+        if (auto strongSelf = weakSelf.get()) {
+            // If the download happened instantly, the call to finish might have come before this
+            // loadHandler. In that case, call the completionHandler here.
+            if (!strongSelf->_downloadedURL.isEmpty())
+                completionHandler((NSURL*)strongSelf->_downloadedURL, nil);
+            else
+                [strongSelf setCompletionHandler:completionHandler];
+        }
     }];
     return _item.get();
 }
@@ -103,6 +110,8 @@
 
 - (void)finish:(URL)url
 {
+    _downloadedURL = url;
+
     if (self.completionHandler)
         self.completionHandler((NSURL*)url, nil);
 }

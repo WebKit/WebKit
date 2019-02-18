@@ -1,3 +1,22 @@
+2019-02-18  Dean Jackson  <dino@apple.com>
+
+        iOS Safari will not load USDZ in QLPreview when opening as BLOB
+        https://bugs.webkit.org/show_bug.cgi?id=194766
+        <rdar://problem/42769186>
+
+        Reviewed by Wenson Hsieh.
+
+        A download from a Blob URL can happen effectively instantly, which means
+        that the loadHandler on the registerItemForTypeIdentifier method might not have
+        been called yet, and we haven't been told what the completionHandler is.
+        In this case, keep a record of the URL we finished with, and call the completionHandler
+        right away.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm: Add a new private member variable: _downloadedURL.
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]): Call the completionHandler
+        right away if we've finished.
+        (-[_WKPreviewControllerDataSource finish:]): Remember that we've finished by recording the URL.
+
 2019-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Disable safe browsing in WKWebView and remove its WKPreferences API
