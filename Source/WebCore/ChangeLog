@@ -1,3 +1,15 @@
+2019-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Simplify GObject class name check
+        https://bugs.webkit.org/show_bug.cgi?id=194537
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::uriDecodeBinElementAddedCallback):
+        Use G_OBJECT_TYPE_NAME() to filter out uridecodebin child
+        elements.
+
 2019-02-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor EditingStyle::textDirection to return an Optional<WritingDirection> instead of a bool
