@@ -58,13 +58,20 @@ static void setFunctionEntrypoint(VM& vm, CodeBlock* codeBlock)
 
     UNUSED_PARAM(vm);
     if (kind == CodeForCall) {
-        codeBlock->setJITCode(
-            adoptRef(*new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_call_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_call_arity_check), JITCode::InterpreterThunk)));
-        return;
+        static DirectJITCode* jitCode;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_call_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_call_arity_check), JITCode::InterpreterThunk);
+        });
+        codeBlock->setJITCode(makeRef(*jitCode));
+    } else {
+        static DirectJITCode* jitCode;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_construct_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_construct_arity_check), JITCode::InterpreterThunk);
+        });
+        codeBlock->setJITCode(makeRef(*jitCode));
     }
-    ASSERT(kind == CodeForConstruct);
-    codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_construct_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_construct_arity_check), JITCode::InterpreterThunk)));
 }
 
 static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
@@ -79,9 +86,12 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
-    MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = getCodeRef<JSEntryPtrTag>(llint_eval_prologue);
-    codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
+    static NativeJITCode* jitCode;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_eval_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+    });
+    codeBlock->setJITCode(makeRef(*jitCode));
 }
 
 static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
@@ -96,9 +106,12 @@ static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
-    MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = getCodeRef<JSEntryPtrTag>(llint_program_prologue);
-    codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
+    static NativeJITCode* jitCode;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_program_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+    });
+    codeBlock->setJITCode(makeRef(*jitCode));
 }
 
 static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
@@ -113,9 +126,12 @@ static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 #endif // ENABLE(JIT)
 
     UNUSED_PARAM(vm);
-    MacroAssemblerCodeRef<JSEntryPtrTag> codeRef = getCodeRef<JSEntryPtrTag>(llint_module_program_prologue).retagged<JSEntryPtrTag>();
-    codeBlock->setJITCode(
-        adoptRef(*new DirectJITCode(codeRef, codeRef.code(), JITCode::InterpreterThunk)));
+    static NativeJITCode* jitCode;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_module_program_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+    });
+    codeBlock->setJITCode(makeRef(*jitCode));
 }
 
 void setEntrypoint(VM& vm, CodeBlock* codeBlock)
