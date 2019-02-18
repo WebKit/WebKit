@@ -114,7 +114,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
 
 bool NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics() const
 {
-    return m_client->shouldCaptureExtraNetworkLoadMetrics();
+    return m_client ? m_client->shouldCaptureExtraNetworkLoadMetrics() : false;
 }
 
 void NetworkDataTask::failureTimerFired()
