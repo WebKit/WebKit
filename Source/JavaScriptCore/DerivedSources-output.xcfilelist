@@ -9,6 +9,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AsyncGeneratorPrototype.lut.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BigIntConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BigIntPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BooleanPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BytecodeCacheVersion.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BytecodeIndices.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BytecodeStructs.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Bytecodes.h

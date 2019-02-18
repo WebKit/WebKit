@@ -41,6 +41,7 @@
 #include "UnlinkedProgramCodeBlock.h"
 #include <sys/stat.h>
 #include <wtf/Forward.h>
+#include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -134,19 +135,19 @@ public:
         if (fd == -1)
             return nullptr;
 
-        int rc = flock(fd, LOCK_SH | LOCK_NB);
-        if (rc) {
+        auto closeFD = makeScopeExit([&] {
             close(fd);
+        });
+
+        int rc = flock(fd, LOCK_SH | LOCK_NB);
+        if (rc)
             return nullptr;
-        }
 
         struct stat sb;
         int res = fstat(fd, &sb);
         size_t size = static_cast<size_t>(sb.st_size);
-        if (res || !size) {
-            close(fd);
+        if (res || !size)
             return nullptr;
-        }
 
         void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
         UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, buffer, size);

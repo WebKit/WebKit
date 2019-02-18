@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedTypes.h"
 
+#include "BytecodeCacheVersion.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "JSCast.h"
 #include "JSImmutableButterfly.h"
@@ -104,7 +105,7 @@ public:
     template<typename T>
     T* malloc()
     {
-        return reinterpret_cast<T*>(malloc(sizeof(T)).buffer());
+        return new (malloc(sizeof(T)).buffer()) T();
     }
 
     ptrdiff_t offsetOf(const void* address)
@@ -1986,18 +1987,28 @@ private:
 
 class GenericCacheEntry {
 public:
-    std::pair<SourceCodeKey, UnlinkedCodeBlock*> decode(Decoder&) const;
+    bool decode(Decoder&, std::pair<SourceCodeKey, UnlinkedCodeBlock*>&) const;
 
 protected:
+    GenericCacheEntry(CachedCodeBlockTag tag)
+        : m_tag(tag)
+    {
+    }
+
+    uint32_t m_cacheVersion { JSC_BYTECODE_CACHE_VERSION };
     CachedCodeBlockTag m_tag;
 };
 
 template<typename UnlinkedCodeBlockType>
 class CacheEntry : public GenericCacheEntry {
 public:
+    CacheEntry()
+        : GenericCacheEntry(CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag)
+    {
+    }
+
     void encode(Encoder& encoder, std::pair<SourceCodeKey, const UnlinkedCodeBlockType*> pair)
     {
-        m_tag = CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag;
         m_key.encode(encoder, pair.first);
         m_codeBlock.encode(encoder, pair.second);
     }
@@ -2005,25 +2016,30 @@ public:
 private:
     friend GenericCacheEntry;
 
-    std::pair<SourceCodeKey, UnlinkedCodeBlockType*> decode(Decoder& decoder) const
+    bool decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlockType*>& result) const
     {
+        if (m_cacheVersion != JSC_BYTECODE_CACHE_VERSION)
+            return false;
         ASSERT(m_tag == CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag);
+        if (m_tag != CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag)
+            return false;
         SourceCodeKey decodedKey;
         m_key.decode(decoder, decodedKey);
-        return { WTFMove(decodedKey), m_codeBlock.decode(decoder) };
+        result = { WTFMove(decodedKey), m_codeBlock.decode(decoder) };
+        return true;
     }
 
     CachedSourceCodeKey m_key;
     CachedPtr<CachedCodeBlockType<UnlinkedCodeBlockType>> m_codeBlock;
 };
 
-std::pair<SourceCodeKey, UnlinkedCodeBlock*> GenericCacheEntry::decode(Decoder& decoder) const
+bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlock*>& result) const
 {
     switch (m_tag) {
     case CachedProgramCodeBlockTag:
-        return reinterpret_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder);
+        return reinterpret_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
     case CachedModuleCodeBlockTag:
-        return reinterpret_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder);
+        return reinterpret_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedModuleProgramCodeBlock*>&>(result));
     case CachedEvalCodeBlockTag:
         // We do not cache eval code blocks
         RELEASE_ASSERT_NOT_REACHED();
@@ -2031,7 +2047,7 @@ std::pair<SourceCodeKey, UnlinkedCodeBlock*> GenericCacheEntry::decode(Decoder& 
     RELEASE_ASSERT_NOT_REACHED();
 #if COMPILER(MSVC)
     // Without this, MSVC will complain that this path does not return a value.
-    return reinterpret_cast<const CacheEntry<UnlinkedEvalCodeBlock>*>(this)->decode(decoder);
+    return false;
 #endif
 }
 
@@ -2064,7 +2080,8 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, const v
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
         DeferGC deferGC(vm.heap);
-        entry = cachedEntry->decode(decoder);
+        if (!cachedEntry->decode(decoder, entry))
+            return nullptr;
     }
 
     if (entry.first != key)
