@@ -1,5 +1,25 @@
 2019-02-17  Saam Barati  <sbarati@apple.com>
 
+        WasmB3IRGenerator models some effects incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=194038
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWasmContextInstance):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        These two functions were using global state instead of the
+        arguments passed into the function.
+
+        (JSC::Wasm::B3IRGenerator::addOp<F64ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF32>):
+        Any patchpoint that allows scratch register usage must
+        also say that it clobbers the scratch registers.
+
+2019-02-17  Saam Barati  <sbarati@apple.com>
+
         Deadlock when adding a Structure property transition and then doing incremental marking
         https://bugs.webkit.org/show_bug.cgi?id=194767
 
