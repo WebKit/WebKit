@@ -1,3 +1,23 @@
+2019-02-18  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Bytecode cache should a have a boot-specific validation
+        https://bugs.webkit.org/show_bug.cgi?id=194769
+        <rdar://problem/48149509>
+
+        Reviewed by Keith Miller.
+
+        Add the boot UUID to the cached bytecode to enforce that it is not reused
+        across reboots.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::Encoder::malloc):
+        (JSC::GenericCacheEntry::GenericCacheEntry):
+        (JSC::GenericCacheEntry::tag const):
+        (JSC::CacheEntry::CacheEntry):
+        (JSC::CacheEntry::decode const):
+        (JSC::GenericCacheEntry::decode const):
+        (JSC::encodeCodeBlock):
+
 2019-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         Add MSE logging configuration

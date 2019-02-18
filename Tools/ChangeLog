@@ -1,3 +1,17 @@
+2019-02-18  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Bytecode cache should a have a boot-specific validation
+        https://bugs.webkit.org/show_bug.cgi?id=194769
+        <rdar://problem/48149509>
+
+        Reviewed by Keith Miller.
+
+        Add test for WTF::bootSessionUUIDString()
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/UUID.cpp: Added.
+        (TEST):
+
 2019-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Disable safe browsing in WKWebView and remove its WKPreferences API

@@ -1352,6 +1352,7 @@
 		11B7FD22219F46DD0069B27F /* FirstMeaningfulPaintMilestone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FirstMeaningfulPaintMilestone.cpp; sourceTree = "<group>"; };
 		11C2598C21FA618D004C9E23 /* async-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "async-script-load.html"; sourceTree = "<group>"; };
 		14464012167A8305000BD218 /* LayoutUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnit.cpp; sourceTree = "<group>"; };
+		144D40EC221B46A7004B474F /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaturatedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
@@ -3292,6 +3293,7 @@
 				5C5E633D1D0B67940085A025 /* UniqueRef.cpp */,
 				E3A1E78021B25B79008C6007 /* URL.cpp */,
 				E3A1E78421B25B91008C6007 /* URLParser.cpp */,
+				144D40EC221B46A7004B474F /* UUID.cpp */,
 				7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */,
 				BC55F5F814AD78EE00484BE1 /* Vector.cpp */,
 				1CB9BC371A67482300FE5678 /* WeakPtr.cpp */,

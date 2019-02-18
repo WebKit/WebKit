@@ -41,6 +41,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
+#include <wtf/UUID.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace JSC {
@@ -102,10 +103,10 @@ public:
         return malloc(size);
     }
 
-    template<typename T>
-    T* malloc()
+    template<typename T, typename... Args>
+    T* malloc(Args&&... args)
     {
-        return new (malloc(sizeof(T)).buffer()) T();
+        return new (malloc(sizeof(T)).buffer()) T(std::forward<Args>(args)...);
     }
 
     ptrdiff_t offsetOf(const void* address)
@@ -1990,20 +1991,25 @@ public:
     bool decode(Decoder&, std::pair<SourceCodeKey, UnlinkedCodeBlock*>&) const;
 
 protected:
-    GenericCacheEntry(CachedCodeBlockTag tag)
+    GenericCacheEntry(Encoder& encoder, CachedCodeBlockTag tag)
         : m_tag(tag)
     {
+        m_bootSessionUUID.encode(encoder, bootSessionUUIDString());
     }
 
+    CachedCodeBlockTag tag() const { return m_tag; }
+
+private:
     uint32_t m_cacheVersion { JSC_BYTECODE_CACHE_VERSION };
+    CachedString m_bootSessionUUID;
     CachedCodeBlockTag m_tag;
 };
 
 template<typename UnlinkedCodeBlockType>
 class CacheEntry : public GenericCacheEntry {
 public:
-    CacheEntry()
-        : GenericCacheEntry(CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag)
+    CacheEntry(Encoder& encoder)
+        : GenericCacheEntry(encoder, CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag)
     {
     }
 
@@ -2018,11 +2024,7 @@ private:
 
     bool decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlockType*>& result) const
     {
-        if (m_cacheVersion != JSC_BYTECODE_CACHE_VERSION)
-            return false;
-        ASSERT(m_tag == CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag);
-        if (m_tag != CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag)
-            return false;
+        ASSERT(tag() == CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag);
         SourceCodeKey decodedKey;
         m_key.decode(decoder, decodedKey);
         result = { WTFMove(decodedKey), m_codeBlock.decode(decoder) };
@@ -2035,6 +2037,11 @@ private:
 
 bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlock*>& result) const
 {
+    if (m_cacheVersion != JSC_BYTECODE_CACHE_VERSION)
+        return false;
+    if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
+        return false;
+
     switch (m_tag) {
     case CachedProgramCodeBlockTag:
         return reinterpret_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
@@ -2054,7 +2061,7 @@ bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, Unlink
 template<typename UnlinkedCodeBlockType>
 void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
 {
-    auto* entry = encoder.template malloc<CacheEntry<UnlinkedCodeBlockType>>();
+    auto* entry = encoder.template malloc<CacheEntry<UnlinkedCodeBlockType>>(encoder);
     entry->encode(encoder,  { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
 }
 
