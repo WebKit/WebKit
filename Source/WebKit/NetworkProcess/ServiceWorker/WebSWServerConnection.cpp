@@ -139,6 +139,19 @@ void WebSWServerConnection::cancelFetch(ServiceWorkerRegistrationIdentifier serv
     });
 }
 
+void WebSWServerConnection::continueDidReceiveFetchResponse(ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, FetchIdentifier fetchIdentifier)
+{
+    auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
+    if (!worker || !worker->isRunning())
+        return;
+
+    auto serviceWorkerIdentifier = worker->identifier();
+    server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = makeWeakPtr(this), this, serviceWorkerIdentifier, fetchIdentifier](auto* contextConnection) mutable {
+        if (weakThis && contextConnection)
+            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { this->identifier(), serviceWorkerIdentifier, fetchIdentifier });
+    });
+}
+
 void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, FetchIdentifier fetchIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer)
 {
     auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
@@ -230,9 +243,14 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
     server().scheduleJob(WTFMove(jobData));
 }
 
-void WebSWServerConnection::didReceiveFetchResponse(FetchIdentifier fetchIdentifier, const ResourceResponse& response)
+void WebSWServerConnection::didReceiveFetchRedirectResponse(FetchIdentifier fetchIdentifier, const ResourceResponse& response)
 {
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response }, fetchIdentifier.toUInt64());
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveRedirectResponse { response }, fetchIdentifier.toUInt64());
+}
+
+void WebSWServerConnection::didReceiveFetchResponse(FetchIdentifier fetchIdentifier, const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
+{
+    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage }, fetchIdentifier.toUInt64());
 }
 
 void WebSWServerConnection::didReceiveFetchData(FetchIdentifier fetchIdentifier, const IPC::DataReference& data, int64_t encodedDataLength)

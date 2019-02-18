@@ -31,6 +31,7 @@ messages -> WebSWServerConnection {
 
     StartFetch(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer)
     CancelFetch(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::FetchIdentifier fetchIdentifier)
+    ContinueDidReceiveFetchResponse(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::FetchIdentifier fetchIdentifier)
 
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source)
 

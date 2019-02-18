@@ -200,8 +200,24 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
 void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
-    if (auto client = m_ongoingFetchTasks.take(std::make_pair(connectionIdentifier, fetchIdentifier)))
-        client.value()->cancel();
+    auto client = m_ongoingFetchTasks.take(std::make_pair(connectionIdentifier, fetchIdentifier));
+    if (!client)
+        return;
+
+    postTaskForModeToWorkerGlobalScope([client = WTFMove(client.value())] (ScriptExecutionContext&) {
+        client->cancel();
+    }, WorkerRunLoop::defaultMode());
+}
+
+void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
+{
+    auto client = m_ongoingFetchTasks.get(std::make_pair(connectionIdentifier, fetchIdentifier));
+    if (!client)
+        return;
+
+    postTaskForModeToWorkerGlobalScope([client = makeRef(*client)] (ScriptExecutionContext&) {
+        client->continueDidReceiveResponse();
+    }, WorkerRunLoop::defaultMode());
 }
 
 void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)

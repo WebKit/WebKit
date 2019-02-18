@@ -210,7 +210,7 @@ public:
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
     // How much of that is intentional? We need better names that explain the difference.
     Ref<FormData> copy() const;
-    Ref<FormData> isolatedCopy() const;
+    WEBCORE_EXPORT Ref<FormData> isolatedCopy() const;
 
     template<typename Encoder>
     void encode(Encoder&) const;

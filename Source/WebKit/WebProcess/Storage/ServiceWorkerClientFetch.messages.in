@@ -23,7 +23,8 @@
 #if ENABLE(SERVICE_WORKER)
 
 messages -> ServiceWorkerClientFetch {
-    DidReceiveResponse(WebCore::ResourceResponse response)
+    DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
+    DidReceiveRedirectResponse(WebCore::ResourceResponse response)
     DidReceiveData(IPC::DataReference data, int64_t encodedDataLength)
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish()
