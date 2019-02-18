@@ -133,26 +133,28 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
 }
 
-FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
+SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passedParentSource) const
 {
     const SourceCode& parentSource = !m_isBuiltinDefaultClassConstructor ? passedParentSource : BuiltinExecutables::defaultConstructorSourceCode(constructorKind());
-    unsigned firstLine = parentSource.firstLine().oneBasedInt() + m_firstLineOffset;
-    unsigned startOffset = parentSource.startOffset() + m_startOffset;
-    unsigned lineCount = m_lineCount;
-
     unsigned startColumn = linkedStartColumn(parentSource.startColumn().oneBasedInt());
-    unsigned endColumn = linkedEndColumn(startColumn);
+    unsigned startOffset = parentSource.startOffset() + m_startOffset;
+    unsigned firstLine = parentSource.firstLine().oneBasedInt() + m_firstLineOffset;
+    return SourceCode(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
+}
 
-    SourceCode source(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
+FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
+{
+    SourceCode source = linkedSourceCode(passedParentSource);
+    unsigned firstLine = source.firstLine().oneBasedInt();
+    unsigned lineCount = m_lineCount;
+    unsigned endColumn = linkedEndColumn(source.startColumn().oneBasedInt());
     FunctionOverrides::OverrideInfo overrideInfo;
     bool hasFunctionOverride = false;
-
     if (UNLIKELY(Options::functionOverrides())) {
         hasFunctionOverride = FunctionOverrides::initializeOverrideFor(source, overrideInfo);
         if (UNLIKELY(hasFunctionOverride)) {
             firstLine = overrideInfo.firstLine;
             lineCount = overrideInfo.lineCount;
-            startColumn = overrideInfo.startColumn;
             endColumn = overrideInfo.endColumn;
             source = overrideInfo.sourceCode;
         }
