@@ -290,39 +290,41 @@ bool BlockFormattingContext::Geometry::intrinsicWidthConstraintsNeedChildrenWidt
 
 FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::intrinsicWidthConstraints(const LayoutState& layoutState, const Box& layoutBox)
 {
-    auto& style = layoutBox.style();
-    if (auto width = fixedValue(style.logicalWidth()))
-        return { *width, *width };
+    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
+        auto& style = layoutBox.style();
+        if (auto width = fixedValue(style.logicalWidth()))
+            return { *width, *width };
 
-    // Minimum/maximum width can't be depending on the containing block's width.
-    if (!style.logicalWidth().isAuto())
-        return { };
+        // Minimum/maximum width can't be depending on the containing block's width.
+        if (!style.logicalWidth().isAuto())
+            return { };
 
-    if (!is<Container>(layoutBox))
-        return { };
+        if (!is<Container>(layoutBox))
+            return { };
 
-    auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-    for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
-        if (child.isOutOfFlowPositioned())
-            continue;
-        auto& formattingState = layoutState.formattingStateForBox(child);
-        ASSERT(formattingState.isBlockFormattingState());
-        auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraints(child);
-        ASSERT(childIntrinsicWidthConstraints);
-        
-        auto& style = child.style();
-        auto horizontalMarginBorderAndPadding = fixedValue(style.marginStart()).valueOr(0)
-            + LayoutUnit { style.borderLeftWidth() }
-            + fixedValue(style.paddingLeft()).valueOr(0)
-            + fixedValue(style.paddingRight()).valueOr(0)
-            + LayoutUnit { style.borderRightWidth() }
-            + fixedValue(style.marginEnd()).valueOr(0);
+        auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
+        for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
+            if (child.isOutOfFlowPositioned())
+                continue;
+            const auto& formattingState = layoutState.formattingStateForBox(child);
+            ASSERT(formattingState.isBlockFormattingState());
+            auto childIntrinsicWidthConstraints = formattingState.intrinsicWidthConstraints(child);
+            ASSERT(childIntrinsicWidthConstraints);
 
-        intrinsicWidthConstraints.minimum = std::max(intrinsicWidthConstraints.minimum, childIntrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding);
-        intrinsicWidthConstraints.maximum = std::max(intrinsicWidthConstraints.maximum, childIntrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding);
-    }
+            auto& childStyle = child.style();
+            auto marginBorderAndPadding = fixedValue(childStyle.marginStart()).valueOr(0)
+                + LayoutUnit { childStyle.borderLeftWidth() }
+                + fixedValue(childStyle.paddingLeft()).valueOr(0)
+                + fixedValue(childStyle.paddingRight()).valueOr(0)
+                + LayoutUnit { childStyle.borderRightWidth() }
+                + fixedValue(childStyle.marginEnd()).valueOr(0);
+            intrinsicWidthConstraints.minimum = std::max(intrinsicWidthConstraints.minimum, childIntrinsicWidthConstraints->minimum + marginBorderAndPadding);
+            intrinsicWidthConstraints.maximum = std::max(intrinsicWidthConstraints.maximum, childIntrinsicWidthConstraints->maximum + marginBorderAndPadding);
+        }
+        return intrinsicWidthConstraints;
+    };
 
-    return constrainByMinMaxWidth(layoutBox, intrinsicWidthConstraints);
+    return constrainByMinMaxWidth(layoutBox, computedIntrinsicWidthConstraints());
 }
 
 }
