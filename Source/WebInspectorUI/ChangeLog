@@ -1,3 +1,25 @@
+2019-02-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Move CSS completion logic from SpreadsheetTextField to SpreadsheetStyleProperty
+        https://bugs.webkit.org/show_bug.cgi?id=194724
+
+        Reviewed by Devin Rousso.
+
+        Move CSS value completion logic from SpreadsheetTextField, a generic text field,
+        to SpreadsheetStyleProperty.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._nameCompletionDataProvider):
+        (WI.SpreadsheetStyleProperty.prototype._valueCompletionDataProvider):
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._showSuggestionsView):
+        (WI.SpreadsheetTextField.prototype._getCompletionPrefix): Deleted.
+
 2019-02-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Frontend performance is very slow reloading theverge.com - 50% of time in TreeOutline _indexOfTreeElement
