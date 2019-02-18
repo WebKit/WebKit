@@ -1,3 +1,17 @@
+2019-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash while filling selection data during drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=194698
+
+        Reviewed by Michael Catanzaro.
+
+        I can't reproduce this, but it seems that m_draggingSelectionData is nullptr in fillDragData(). That can happen
+        when startDrag cancels a previous DND operation, because the new m_draggingSelectionData is set before the
+        current DND operation is cancelled, which sets it to nullptr.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag): Finish the previous operation before setting m_draggingSelectionData.
+
 2019-02-17  Youenn Fablet  <youenn@apple.com>
 
         https://device.login.microsoftonline.com is hanging on STP75
