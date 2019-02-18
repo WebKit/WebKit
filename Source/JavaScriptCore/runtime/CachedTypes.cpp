@@ -754,23 +754,25 @@ class CachedBitVector : public VariableLengthObject<BitVector> {
 public:
     void encode(Encoder& encoder, const BitVector& bitVector)
     {
-        m_size = bitVector.size();
-        if (!m_size)
+        m_numBits = bitVector.size();
+        if (!m_numBits)
             return;
-        uint8_t* buffer = this->allocate(encoder, m_size);
-        memcpy(buffer, bitVector.bits(), m_size);
+        size_t sizeInBytes = BitVector::byteCount(m_numBits);
+        uint8_t* buffer = this->allocate(encoder, sizeInBytes);
+        memcpy(buffer, bitVector.bits(), sizeInBytes);
     }
 
     void decode(Decoder&, BitVector& bitVector) const
     {
-        if (!m_size)
+        if (!m_numBits)
             return;
-        bitVector.ensureSize(m_size);
-        memcpy(bitVector.bits(), this->buffer(), m_size);
+        bitVector.ensureSize(m_numBits);
+        size_t sizeInBytes = BitVector::byteCount(m_numBits);
+        memcpy(bitVector.bits(), this->buffer(), sizeInBytes);
     }
 
 private:
-    unsigned m_size;
+    size_t m_numBits;
 };
 
 template<typename T, typename HashArg = typename DefaultHash<T>::Hash>
