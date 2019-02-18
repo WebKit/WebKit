@@ -202,7 +202,12 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(PlatformLayer* layer)
 {
-    if ([layer isKindOfClass:getAVPlayerLayerClass()] || [layer isKindOfClass:objc_getClass("WebVideoContainerLayer")])
+    if ([layer isKindOfClass:getAVPlayerLayerClass()])
+        return LayerTypeAVPlayerLayer;
+
+    if ([layer isKindOfClass:objc_getClass("WebVideoContainerLayer")]
+        && layer.sublayers.count == 1
+        && [layer.sublayers[0] isKindOfClass:getAVPlayerLayerClass()])
         return LayerTypeAVPlayerLayer;
 
     if ([layer isKindOfClass:[WebGLLayer class]])

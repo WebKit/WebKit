@@ -1,3 +1,17 @@
+2019-02-18  Jer Noble  <jer.noble@apple.com>
+
+        -[AVSampleBufferDisplayLayer player]: Unrecognized selector crash
+        https://bugs.webkit.org/show_bug.cgi?id=194790
+        <rdar://problem/33866742>
+
+        Reviewed by Jon Lee.
+
+        Ensure that a WebVideoContainerLayer's sole sublayer is actually an AVPlayerLayer (and not
+        an AVSampleBufferDisplayLayer) before reporting that the layer type is LayerTypeAVPlayerLayer.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+
 2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better categorize CPU usage per-thread / worker
