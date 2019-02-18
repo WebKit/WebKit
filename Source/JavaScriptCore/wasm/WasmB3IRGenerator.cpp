@@ -317,7 +317,7 @@ void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* bloc
     effects.reads = B3::HeapRange::top();
     patchpoint->effects = effects;
     patchpoint->clobberLate(RegisterSet(m_wasmContextInstanceGPR));
-    patchpoint->append(instanceValue(), ValueRep::SomeRegister);
+    patchpoint->append(arg, ValueRep::SomeRegister);
     GPRReg wasmContextInstanceGPR = m_wasmContextInstanceGPR;
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& param) {
         jit.move(param[0].gpr(), wasmContextInstanceGPR);
@@ -461,9 +461,9 @@ void B3IRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit restor
 
     if (restoreCachedStackLimit == RestoreCachedStackLimit::Yes) {
         // The Instance caches the stack limit, but also knows where its canonical location is.
-        Value* pointerToActualStackLimit = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfPointerToActualStackLimit()));
-        Value* actualStackLimit = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointerToActualStackLimit);
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), actualStackLimit, instanceValue(), safeCast<int32_t>(Instance::offsetOfCachedStackLimit()));
+        Value* pointerToActualStackLimit = block->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfPointerToActualStackLimit()));
+        Value* actualStackLimit = block->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointerToActualStackLimit);
+        block->appendNew<MemoryValue>(m_proc, Store, origin(), actualStackLimit, instanceValue(), safeCast<int32_t>(Instance::offsetOfCachedStackLimit()));
     }
 
     if (!!memory) {
@@ -1610,6 +1610,7 @@ auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& re
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1630,6 +1631,7 @@ auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1839,6 +1841,7 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionTy
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         FPRReg scratch = InvalidFPRReg;
@@ -1904,6 +1907,7 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionTy
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         FPRReg scratch = InvalidFPRReg;
