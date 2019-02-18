@@ -1,3 +1,16 @@
+2019-02-15  Mark Lam  <mark.lam@apple.com>
+
+        SamplingProfiler::stackTracesAsJSON() should escape strings.
+        https://bugs.webkit.org/show_bug.cgi?id=194649
+        <rdar://problem/48072386>
+
+        Reviewed by Saam Barati.
+
+        * stress/sampling-profiler-stack-trace-with-double-quote-in-function-name.js: Added.
+        * stress/type-profiler-with-double-quote-in-constructor-name.js: Added.
+        * stress/type-profiler-with-double-quote-in-field-name.js: Added.
+        * stress/type-profiler-with-double-quote-in-optional-field-name.js: Added.
+
 2019-02-15  Robin Morisset  <rmorisset@apple.com>
         CodeBlock::jettison should clear related watchpoints
         https://bugs.webkit.org/show_bug.cgi?id=194544
