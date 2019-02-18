@@ -36,6 +36,7 @@
 #import "WebProcessCreationParameters.h"
 #import <CoreFoundation/CFURL.h>
 #import <Foundation/NSBundle.h>
+#import <WebCore/PlatformKeyboardEvent.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
@@ -50,6 +51,27 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
+{
+    auto currentModifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+    NSEventModifierFlags modifiers = 0;
+    
+    if (currentModifiers.contains(PlatformEvent::Modifier::ShiftKey))
+        modifiers |= NSEventModifierFlagShift;
+    if (currentModifiers.contains(PlatformEvent::Modifier::ControlKey))
+        modifiers |= NSEventModifierFlagControl;
+    if (currentModifiers.contains(PlatformEvent::Modifier::AltKey))
+        modifiers |= NSEventModifierFlagOption;
+    if (currentModifiers.contains(PlatformEvent::Modifier::MetaKey))
+        modifiers |= NSEventModifierFlagCommand;
+    if (currentModifiers.contains(PlatformEvent::Modifier::CapsLockKey))
+        modifiers |= NSEventModifierFlagCapsLock;
+    
+    return modifiers;
+}
+#endif
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
@@ -115,6 +137,12 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         ASSERT(!m_bundleParameters);
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
     }
+#endif
+    
+#if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+    // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
+    Method method = class_getClassMethod([NSEvent class], @selector(modifierFlags));
+    method_setImplementation(method, reinterpret_cast<IMP>(currentModifierFlags));
 #endif
     
     if (!initializeFunction)

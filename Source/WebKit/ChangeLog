@@ -1,3 +1,19 @@
+2019-02-18  Per Arne Vollan  <pvollan@apple.com>
+
+        It should be possible to get the mouse event modifiers for a page overlay client.
+        https://bugs.webkit.org/show_bug.cgi?id=189621
+        <rdar://problem/44437279>
+
+        Reviewed by Daniel Bates.
+
+        When access to the WindowServer is blocked, [NSEvent modifierFlags] always returns 0.
+        This can be fixed by swizzling the class method, and getting the cached modifiers from
+        PlatformKeyboardEvent.
+ 
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::currentModifierFlags):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2019-02-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         WebPageProxy::didFinishDocumentLoadForFrame() crashing in WPE and GTK+ ports
