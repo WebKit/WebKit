@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html manifest="resources/404-resource.manifest">
 <div>This tests that a manifest that contains a missing file will not crash the browser even if the main resource keeps loading after the error occurs.</div>
 <div id="result">FAILURE</div>

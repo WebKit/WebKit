@@ -1,3 +1,15 @@
+2019-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use dumpJSConsoleLogInStdErr=true webkit-test-runner option for non-imported tests instead of using DumpJSConsoleLogInStdErr expectation in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=194586
+
+        Reviewed by Ross Kirsling.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Pass true to setDumpJSConsoleLogInStdErr if options.dumpJSConsoleLogInStdErr is true.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input): Convert Cygwin absolute path of tests to Windows path.
+
 2019-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed, rolling out r241620.

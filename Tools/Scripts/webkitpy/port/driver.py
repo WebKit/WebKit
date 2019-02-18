@@ -545,7 +545,10 @@ class Driver(object):
         elif self.is_web_platform_test(driver_input.test_name) or self.is_webkit_specific_web_platform_test(driver_input.test_name) or self.is_http_test(driver_input.test_name):
             command = self.test_to_uri(driver_input.test_name)
             command += "'--absolutePath'"
-            command += self._port.abspath_for_test(driver_input.test_name, self._target_host)
+            absPath = self._port.abspath_for_test(driver_input.test_name, self._target_host)
+            if sys.platform == 'cygwin':
+                absPath = path.cygpath(absPath)
+            command += absPath
         else:
             command = self._port.abspath_for_test(driver_input.test_name, self._target_host)
             if sys.platform == 'cygwin':

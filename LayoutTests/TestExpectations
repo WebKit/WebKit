@@ -256,10 +256,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/loc
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_assign.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/per-global.window.html [ Skip ]
 
-# Line number in the console logging may change so we silence it to avoid flakiness.
-http/tests/security/frame-loading-via-document-write.html [ DumpJSConsoleLogInStdErr ]
-http/tests/security/frame-loading-via-document-write-async-delegates.html [ DumpJSConsoleLogInStdErr ]
-
 imported/w3c/web-platform-tests/fetch/api/basic/mode-same-origin.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ DumpJSConsoleLogInStdErr ]
@@ -318,7 +314,6 @@ imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-e
 imported/w3c/web-platform-tests/xhr/send-authentication-competing-names-passwords.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/setrequestheader-case-insensitive.htm [ Failure ]
-http/tests/security/cross-origin-cached-images-parallel.html [ DumpJSConsoleLogInStdErr ]
 
 # textarea.animate is not supported
 imported/w3c/web-platform-tests/css/css-ui/caret-color-018.html [ Skip ]
@@ -339,7 +334,6 @@ http/tests/paymentrequest [ Skip ]
 http/tests/inspector/paymentrequest [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
-http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/xhr/send-redirect-bogus-sync.htm [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/xhr/xmlhttprequest-sync-default-feature-policy.sub.html [ Skip ]
@@ -413,9 +407,6 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 
 # Tests in this directory take > 30 minutes to run on debug bots.
 [ Debug ] imported/w3c/web-platform-tests/encoding
-
-# redirect-chain.php is generating some random number that appear in console error logging.
-http/tests/cache/disk-cache/redirect-chain-limits.html [ DumpJSConsoleLogInStdErr ]
 
 # Content encoding sniffing is only supported by CFNetwork.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Skip ]
@@ -1178,12 +1169,6 @@ webkit.org/b/140043 js/dom/Promise.html [ Pass Failure ]
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 webkit.org/b/141267 http/tests/misc/detached-frame-console.html [ Pass Failure ]
 
-http/tests/appcache/deferred-events-delete-while-raising-timer.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/deferred-events-delete-while-raising.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
-http/tests/appcache/404-resource-with-slow-main-resource.php [ DumpJSConsoleLogInStdErr ]
-
 webkit.org/b/141370 http/tests/security/appcache-in-private-browsing.html [ Pass Failure ]
 
 # The current expectations for this test only make sense for WebKit on iOS; other platforms can have very different behaviors.
@@ -1196,8 +1181,6 @@ webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirem
 http/tests/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/wpt/beacon/contentextensions [ Skip ]
-
-http/wpt/beacon/cors/cors-redirect-failure.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/149072 svg/animations/svgboolean-animation-1.html [ Pass Failure ]
 
@@ -2066,12 +2049,7 @@ webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
 # There is a bug in the test
 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
 
-webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ DumpJSConsoleLogInStdErr Pass Failure ]
-
-# We sometimes get 2 console log messages about CSP instead of 1 due to preloading.
-http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html [ DumpJSConsoleLogInStdErr ]
-
-media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
+webkit.org/b/183390 http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html [ Pass Failure ]
 
 webkit.org/b/172243 imported/w3c/web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order.htm [ Pass Failure ]
 

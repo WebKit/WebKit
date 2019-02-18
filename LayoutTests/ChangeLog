@@ -1,3 +1,31 @@
+2019-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use dumpJSConsoleLogInStdErr=true webkit-test-runner option for non-imported tests instead of using DumpJSConsoleLogInStdErr expectation in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=194586
+
+        Reviewed by Ross Kirsling.
+
+        DumpJSConsoleLogInStdErr expectation is considered a bad idea.
+        And, we have dumpJSConsoleLogInStdErr test option now (Bug 177027).
+
+        Added dumpJSConsoleLogInStdErr=true webkit-test-runner option to all non-imported tests.
+
+        * TestExpectations: Removed DumpJSConsoleLogInStdErr expectations of non-imported tests.
+        * http/tests/appcache/404-resource-with-slow-main-resource.php: Added dumpJSConsoleLogInStdErr=true webkit-test-runner option.
+        * http/tests/appcache/deferred-events-delete-while-raising-timer.html: Ditto.
+        * http/tests/appcache/deferred-events-delete-while-raising.html: Ditto.
+        * http/tests/appcache/fail-on-update-2.html: Ditto.
+        * http/tests/appcache/fail-on-update.html: Ditto.
+        * http/tests/cache/disk-cache/redirect-chain-limits.html: Ditto.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html: Ditto.
+        * http/tests/security/cross-origin-cached-images-parallel.html: Ditto.
+        * http/tests/security/frame-loading-via-document-write-async-delegates.html: Ditto.
+        * http/tests/security/frame-loading-via-document-write.html: Ditto.
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html: Ditto.
+        * http/wpt/beacon/cors/cors-redirect-failure.html: Ditto.
+        * http/wpt/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-async-delegate.html: Ditto.
+        * media/event-queue-crash.html: Ditto.
+
 2019-02-17  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Frontend performance is very slow reloading theverge.com - 50% of time in TreeOutline _indexOfTreeElement
