@@ -1,5 +1,21 @@
 2019-02-14  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapse] Replaced boxes don't collapse through their margins
+        https://bugs.webkit.org/show_bug.cgi?id=194622
+
+        Reviewed by Antti Koivisto.
+
+        Ensure that block replaced boxes don't collapse through their vertical margins. 
+
+        Test: fast/block/block-only/block-replaced-with-vertical-margins.html
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::MarginCollapse::marginsCollapseThrough):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
+2019-02-14  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Shrink-to-fit-width should be constrained by min/max width
         https://bugs.webkit.org/show_bug.cgi?id=194653
 
