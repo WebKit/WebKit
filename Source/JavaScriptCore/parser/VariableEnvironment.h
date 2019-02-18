@@ -204,8 +204,9 @@ namespace JSC {
 class CompactVariableMap : public RefCounted<CompactVariableMap> {
 public:
     class Handle {
-        WTF_MAKE_NONCOPYABLE(Handle); // If we wanted to make this copyable, we'd need to do a hashtable lookup and bump the reference count of the map entry.
     public:
+        Handle() = default;
+
         Handle(CompactVariableEnvironment& environment, CompactVariableMap& map)
             : m_environment(&environment)
             , m_map(&map)
@@ -218,7 +219,13 @@ public:
             ASSERT(!other.m_map);
             other.m_environment = nullptr;
         }
+
+        Handle(const Handle&);
+        Handle& operator=(const Handle&);
+
         ~Handle();
+
+        explicit operator bool() const { return !!m_map; }
 
         const CompactVariableEnvironment& environment() const
         {
@@ -226,7 +233,7 @@ public:
         }
 
     private:
-        CompactVariableEnvironment* m_environment;
+        CompactVariableEnvironment* m_environment { nullptr };
         RefPtr<CompactVariableMap> m_map;
     };
 

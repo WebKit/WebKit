@@ -183,4 +183,27 @@ CompactVariableMap::Handle::~Handle()
     }
 }
 
+CompactVariableMap::Handle::Handle(const CompactVariableMap::Handle& other)
+{
+    *this = other;
+}
+
+CompactVariableMap::Handle& CompactVariableMap::Handle::operator=(const Handle& other)
+{
+    m_map = other.m_map;
+    m_environment = other.m_environment;
+
+    if (!m_map) {
+        ASSERT(!m_environment);
+        // This happens if `other` were moved into a different handle.
+        return *this;
+    }
+
+    auto iter = m_map->m_map.find(CompactVariableMapKey { *m_environment });
+    RELEASE_ASSERT(iter != m_map->m_map.end());
+    ++iter->value;
+
+    return *this;
+}
+
 } // namespace JSC

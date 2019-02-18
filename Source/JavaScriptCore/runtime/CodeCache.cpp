@@ -147,7 +147,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     // in the global lexical environment, which we always TDZ check accesses from.
     VariableEnvironment emptyTDZVariables;
     ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, emptyTDZVariables, DerivedContextType::None);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, vm.m_compactVariableMap->get(emptyTDZVariables), DerivedContextType::None);
 
     functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
     functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
