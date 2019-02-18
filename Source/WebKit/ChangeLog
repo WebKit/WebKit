@@ -1,3 +1,21 @@
+2019-02-17  Youenn Fablet  <youenn@apple.com>
+
+        https://device.login.microsoftonline.com is hanging on STP75
+        https://bugs.webkit.org/show_bug.cgi?id=194734
+        <rdar://problem/47573830>
+
+        Reviewed by Jiewen Tan.
+
+        Make sure to only go the XPC route if SecKeyProxyStore has credentials.
+        Tested manually by going to the above website with and without the patch.
+        Load hangs without the patch and completes with the patch.
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        * UIProcess/Authentication/cocoa/SecKeyProxyStore.h:
+        * UIProcess/Authentication/cocoa/SecKeyProxyStore.mm:
+        (WebKit::SecKeyProxyStore::initialize):
+
 2019-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed, rolling out r241620.

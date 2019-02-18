@@ -43,7 +43,7 @@ class SecKeyProxyStore : public RefCounted<SecKeyProxyStore> {
 public:
     static Ref<SecKeyProxyStore> create() { return adoptRef(* new SecKeyProxyStore()); }
 
-    void initialize(const WebCore::Credential&);
+    bool initialize(const WebCore::Credential&);
     bool isInitialized() const { return !!m_secKeyProxy; }
 
     auto* get() const { return m_secKeyProxy.get(); }

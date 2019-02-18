@@ -47,8 +47,7 @@ AuthenticationChallengeProxy::AuthenticationChallengeProxy(WebCore::Authenticati
     : m_coreAuthenticationChallenge(WTFMove(authenticationChallenge))
     , m_listener(AuthenticationDecisionListener::create([challengeID, connection = WTFMove(connection), secKeyProxyStore = WTFMove(secKeyProxyStore)](AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential) {
 #if HAVE(SEC_KEY_PROXY)
-        if (secKeyProxyStore) {
-            secKeyProxyStore->initialize(credential);
+        if (secKeyProxyStore && secKeyProxyStore->initialize(credential)) {
             sendClientCertificateCredentialOverXpc(connection, *secKeyProxyStore, challengeID, credential);
             return;
         }
