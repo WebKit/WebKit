@@ -1,3 +1,22 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        <rdar://problem/47100332>
+
+        Reviewed by Wenson Hsieh.
+
+        When building with USE(UIKIT_KEYBOARD_ADDITIONS) enabled, normalize input strings for some more key codes
+        now that hardware key events to non-editable elements use the same code path as for editable elements. 
+
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::windowsKeyCodeForCharCode): Demarcate mappings that are only needed when building with
+        !USE(UIKIT_KEYBOARD_ADDITIONS) in the hope that one day we can remove this code.
+        (WebCore::isFunctionKey): Ditto.
+        * platform/ios/WebEvent.mm:
+        (normalizedStringWithAppKitCompatibilityMapping): Normalize some more input strings when building with
+        USE(UIKIT_KEYBOARD_ADDITIONS) enabled.
+
 2019-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         Add MSE logging configuration

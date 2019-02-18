@@ -1,3 +1,16 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        <rdar://problem/47100332>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix a bug where the wrong usage code was used for F13 thru F24.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (keyCodeForDOMFunctionKey):
+
 2019-02-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Bytecode cache should a have a boot-specific validation

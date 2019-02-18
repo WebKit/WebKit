@@ -1,3 +1,59 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        <rdar://problem/47100332>
+
+        Reviewed by Wenson Hsieh.
+
+        Use the same code path for key events to editable elements and non-editable elements.
+
+        Currently we have different code paths for hardware key events depending on whether the active element
+        is editable or non-editable. Historically to support dispatching DOM keyboard events for hardware key
+        presses this differentiation was a necessary workaround for UIKit's event processing precedence of
+        interpreting key events for system text editing commands and app commands before dispatching unhandled
+        key events to WebKit. This workaround intercepted raw key UIEvents and manually reconstructed a
+        WebEvent from it. However there is not enough information in an UIEvent to reconstruct a WebEvent that
+        is identical to the WebEvent that UIKit would have dispatched. In particular, keyup UIEvents always have
+        empty modified and unmodified input strings. The UIKit keyboard machinery maintains additional state
+        that is necessary to manufacture the correct WebEvent corresponding to a UIEvent.
+
+        As a side benefit of this change, with the exception of modifier flag changes, both hardware and software
+        key events use the same code path.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldShowAutomaticKeyboardUI]): Extracted code from _requiresKeyboardWhenFirstResponder
+        (-[WKContentView _disableAutomaticKeyboardUI]): Implement UIKit SPI to prevent showing the keyboard UI
+        when there is no focused element now that we are no longer intercepting key UIEvents. Formerly the
+        keyboard UI was disabled as a side effect of not becoming first responder when there was no focused
+        element (by returning NO in -_requiresKeyboardWhenFirstResponder).
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]): Always return YES when building with USE(UIKIT_KEYBOARD_ADDITIONS)
+        so that we always accept key events. Instead of selectively replying to create a keyboard as a means of
+        hiding the automatic keyboard UI we now implement _disableAutomaticKeyboardUI to selectively hide the
+        automatic keyboard UI.
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]): If we are not in an editable
+        element then we cannot perform the replacement. This logic was necessary now that we always require a
+        keyboard.
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]): If we are not in an editable
+        element then return an autocorrection object that indicates that we could not compute this data. This
+        logic was necessary now that we always require a keyboard.
+        (-[WKContentView textInputTraits]): Do not update traits when the keyboard is going to be dismissed
+        now that we require a keyboard when first responder even if the focused element is non-editable.
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]): Skip logic for re-sending UIEvents to UIKit
+        as UIKit now processes the event first. This logic was necessary in order to finally allow UIKit
+        its chance to interpret the UIEvent, we intercepted, for app key commands.
+        (-[WKContentView _elementDidBlur]): Call [self _endEditing] so that we dismiss any open form controls
+        (e.g. a <select> popover menu). Currently this happens either by -_requiresKeyboardWhenFirstResponder
+        responding NO when switching to another field or pressing Tab or Shift + Tab key command, which we will
+        no longer use when building with USE(UIKIT_KEYBOARD_ADDITIONS) once I land <https://bugs.webkit.org/show_bug.cgi?id=193048>.
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover initWithView:hasGroups:]): Do not assign ourself as the keyboard delegate. Otherwise,
+        type ahead and tab cycling will not work. Currently type ahead and tab cycling work by using the non-
+        editable code path via -_handleKeyUIEvent. Now that we no longer differentiate between key events for
+        editable and non-editable elements we need to ensure that the WKContentView is the keyboard delegate
+        when the popover is presented.
+
 2019-02-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         Tell Networking Process to not optimize load

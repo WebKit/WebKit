@@ -1,3 +1,15 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        <rdar://problem/47100332>
+
+        Reviewed by Wenson Hsieh.
+
+        Expose more enumerators.
+
+        * pal/spi/cocoa/IOKitSPI.h:
+
 2019-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed, rolling out r241620.

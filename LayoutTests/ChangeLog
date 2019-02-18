@@ -1,3 +1,25 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192824
+        <rdar://problem/47100332>
+
+        Reviewed by Wenson Hsieh.
+
+        Update tests and expected results. As it turns out fixing the bug in WebKitTestRunner/ios/HIDEventGenerator.mm
+        so that we now dispatch key events for F17 thru F24 exposed a bug in UIKit. See <rdar://problem/47128940>.
+        This same bug is also responsible for a lack of key events when the Insert key is pressed.
+
+        Added sub-test for Tab key to keypress-keys-in-non-editable-element.html. Changed expected result in test
+        keypress-keys-in-non-editable-element.html for the forward delete key to expect failure. We expect that pressing
+        the forward delete key will not dispatch a keypress to match the behavior on Mac. This will be addressed by a
+        UIKit fix.
+
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element-expected.txt:
+        * fast/events/ios/keydown-keyup-special-keys-in-non-editable-element.html:
+        * fast/events/ios/keypress-keys-in-non-editable-element-expected.txt:
+        * fast/events/ios/keypress-keys-in-non-editable-element.html:
+
 2019-02-18  Eric Carlson  <eric.carlson@apple.com>
 
         Add MSE logging configuration

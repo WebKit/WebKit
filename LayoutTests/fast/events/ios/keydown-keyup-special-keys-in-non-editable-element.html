@@ -12,11 +12,12 @@ if (window.testRunner) {
 </script>
 </head>
 <body onkeydown="handleKeyDown(event)" onkeyup="handleKeyUp(event)">
-<p>This tests that DOM keydown and keyup events are dispatched to a non-editable &lt;body&gt; on iOS when pressing special keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>, <kbd>Delete</kbd>, <kbd>End</kbd>, <kbd>Enter</kbd>, <kbd>Escape</kbd>, <kbd>Home</kbd>, <kbd>Insert</kbd>, left <kbd>Alt</kbd>, left <kbd>⌘ Command</kbd>, left <kbd>Ctrl</kbd>, left <kbd>⇧ Shift</kbd>, <kbd>Page Down</kbd>, <kbd>Page Up</kbd>, <kbd>Return</kbd>, right <kbd>Alt</kbd>, right <kbd>⌘ Command</kbd>, right <kbd>Ctrl</kbd>, right <kbd>⇧ Shift</kbd>, <kbd>F1</kbd>, <kbd>F2</kbd>, <kbd>F3</kbd>, <kbd>F4</kbd>, <kbd>F5</kbd>, <kbd>F6</kbd>, <kbd>F7</kbd>, <kbd>F8</kbd>, <kbd>F9</kbd>, <kbd>F10</kbd>, <kbd>F11</kbd>, <kbd>F12</kbd>, <kbd>F13</kbd>, <kbd>F14</kbd>, <kbd>F15</kbd>, <kbd>F16</kbd>, <kbd>F17</kbd>, <kbd>F18</kbd>, <kbd>F19</kbd>, <kbd>F20</kbd>, <kbd>F21</kbd>, <kbd>F22</kbd>, <kbd>F23</kbd>, <kbd>F24</kbd>.
+<p>This tests that DOM keydown and keyup events are dispatched to a non-editable &lt;body&gt; on iOS when pressing special keys on a hardware keyboard. To run this test manually, verify that two messages are emitted when you press the following keys: <kbd>Tab</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>←</kbd>, <kbd>→</kbd>, <kbd>Delete</kbd>, <kbd>End</kbd>, <kbd>Enter</kbd>, <kbd>Escape</kbd>, <kbd>Home</kbd><!-- FIXME: Add <kbd>Insert</kbd> once <rdar://problem/47128940> is fixed. -->, left <kbd>Alt</kbd>, left <kbd>⌘ Command</kbd>, left <kbd>Ctrl</kbd>, left <kbd>⇧ Shift</kbd>, <kbd>Page Down</kbd>, <kbd>Page Up</kbd>, <kbd>Return</kbd>, right <kbd>Alt</kbd>, right <kbd>⌘ Command</kbd>, right <kbd>Ctrl</kbd>, right <kbd>⇧ Shift</kbd>, <kbd>F1</kbd>, <kbd>F2</kbd>, <kbd>F3</kbd>, <kbd>F4</kbd>, <kbd>F5</kbd>, <kbd>F6</kbd>, <kbd>F7</kbd>, <kbd>F8</kbd>, <kbd>F9</kbd>, <kbd>F10</kbd>, <kbd>F11</kbd>, <kbd>F12</kbd>, <kbd>F13</kbd>, <kbd>F14</kbd>, <kbd>F15</kbd>, <kbd>F16</kbd><!-- FIXME: Add <kbd>F17</kbd>, <kbd>F18</kbd>, <kbd>F19</kbd>, <kbd>F20</kbd>, <kbd>F21</kbd>, <kbd>F22</kbd>, <kbd>F23</kbd>, <kbd>F24</kbd> once <rdar://problem/47128940> is fixed.-->.
 </p>
 <pre id="console"></pre>
 <script>
 var remainingKeysToPress = [
+    "\t",
     "upArrow",
     "downArrow",
     "leftArrow",
@@ -26,7 +27,7 @@ var remainingKeysToPress = [
     "enter",
     "escape",
     "home",
-    "insert",
+    // FIXME: Add "insert" once <rdar://problem/47128940> is fixed.
     "leftAlt",
     "leftCommand",
     "leftControl",
@@ -40,7 +41,8 @@ var remainingKeysToPress = [
     "rightShift",
 ];
 
-for (let i = 1; i <= 24; ++i)
+// FIXME: Check function keys up to F24 once <rdar://problem/47128940> is fixed.
+for (let i = 1; i <= 16; ++i)
     remainingKeysToPress.push("F" + i);
 
 async function nextKeyPress()

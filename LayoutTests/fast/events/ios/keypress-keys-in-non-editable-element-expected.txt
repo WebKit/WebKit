@@ -54,7 +54,7 @@ PASS delete did dispatch a keypress event.
 PASS enter did dispatch a keypress event.
 PASS escape did dispatch a keypress event.
 PASS return did dispatch a keypress event.
-PASS forwardDelete did dispatch a keypress event.
+FAIL forwardDelete should not have dispatched a keypress event. It did dispatch one.
 PASS upArrow did not dispatch a keypress event.
 PASS downArrow did not dispatch a keypress event.
 PASS leftArrow did not dispatch a keypress event.
@@ -89,14 +89,6 @@ PASS F13 did not dispatch a keypress event.
 PASS F14 did not dispatch a keypress event.
 PASS F15 did not dispatch a keypress event.
 PASS F16 did not dispatch a keypress event.
-PASS F17 did not dispatch a keypress event.
-PASS F18 did not dispatch a keypress event.
-PASS F19 did not dispatch a keypress event.
-PASS F20 did not dispatch a keypress event.
-PASS F21 did not dispatch a keypress event.
-PASS F22 did not dispatch a keypress event.
-PASS F23 did not dispatch a keypress event.
-PASS F24 did not dispatch a keypress event.
 PASS successfullyParsed is true
 
 TEST COMPLETE
