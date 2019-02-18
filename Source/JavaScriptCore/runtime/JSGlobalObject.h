@@ -622,12 +622,12 @@ public:
     ObjectPrototype* objectPrototype() const { return m_objectPrototype.get(); }
     FunctionPrototype* functionPrototype() const { return m_functionPrototype.get(); }
     ArrayPrototype* arrayPrototype() const { return m_arrayPrototype.get(); }
-    JSObject* booleanPrototype() const { return m_booleanObjectStructure.prototype(this); }
+    JSObject* booleanPrototype() const { return m_booleanObjectStructure.prototypeInitializedOnMainThread(this); }
     StringPrototype* stringPrototype() const { return m_stringPrototype.get(); }
-    JSObject* numberPrototype() const { return m_numberObjectStructure.prototype(this); }
+    JSObject* numberPrototype() const { return m_numberObjectStructure.prototypeInitializedOnMainThread(this); }
     BigIntPrototype* bigIntPrototype() const { return m_bigIntPrototype.get(); }
     JSObject* datePrototype() const { return m_dateStructure.prototype(this); }
-    JSObject* symbolPrototype() const { return m_symbolObjectStructure.prototype(this); }
+    JSObject* symbolPrototype() const { return m_symbolObjectStructure.prototypeInitializedOnMainThread(this); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
     IteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }

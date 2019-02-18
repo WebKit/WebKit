@@ -1,3 +1,37 @@
+2019-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add LazyClassStructure::getInitializedOnMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=194784
+        <rdar://problem/48154820>
+
+        Reviewed by Mark Lam.
+
+        LazyClassStructure::get and LazyProperty::get functions do not allow compiler threads to call them. But for booleanPrototype, numberPrototype and symbolPrototype cases,
+        we would like to call them from compiler threads. We eagerly initialize them if VM::canUseJIT() is true, so that compiler threads can safely call LazyClassStructure::get
+        and LazyProperty::get for booleanPrototype, numberPrototype and symbolPrototype. But still assertion hits because the assertion requires that these functions need to be
+        called in non compiler threads. Calling `getConcurrently()` is not possible since symbolPrototype() function is called from both the main thread and compiler threads,
+        and we would like to lazily initialize SymbolPrototype object if it is called from the main thread, which can happen with non-JIT configuration.
+
+        This patch adds `getInitializedOnMainThread()`. Compiler threads can call it only when we know that the value is already initialized on the main thread. The main thread
+        can call it at anytime and this function lazily initializes the value. This is useful to make some of prototypes lazy with non-JIT configuration: With non-JIT configuration,
+        this function is always called from the main thread and it initializes the value lazily. Non-JIT configuration does not care about compiler threads since they do not exist.
+        With JIT configuration, we eagerly initialize them in JSGlobalObject::init so that `getInitializedOnMainThread()` always succeeds.
+
+        Basically, `getInitializedOnMainThread()` is `get` with different assertion location: While `get` always crashes if it is called from compiler threads, `getInitializedOnMainThread()`
+        crashes only when actual initialization happens on compiler threads. We do not merge them since `get` is still useful to find accidental initialization from compiler threads.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::booleanPrototype const):
+        (JSC::JSGlobalObject::numberPrototype const):
+        (JSC::JSGlobalObject::symbolPrototype const):
+        * runtime/LazyClassStructure.h:
+        (JSC::LazyClassStructure::getInitializedOnMainThread const):
+        (JSC::LazyClassStructure::prototypeInitializedOnMainThread const):
+        (JSC::LazyClassStructure::constructorInitializedOnMainThread const):
+        * runtime/LazyProperty.h:
+        (JSC::LazyProperty::get const):
+        (JSC::LazyProperty::getInitializedOnMainThread const):
+
 2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better categorize CPU usage per-thread / worker
