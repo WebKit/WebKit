@@ -12,6 +12,16 @@ TestPage.registerInitializer(() => {
         {
             return this._items.length;
         }
+
+        tableIndexForRepresentedObject(table, object)
+        {
+            return this._items.indexOf(object);
+        }
+
+        tableRepresentedObjectForIndex(table, index)
+        {
+            return this._items[index];
+        }
     };
 
     InspectorTest.TableDelegate = class TableDelegate

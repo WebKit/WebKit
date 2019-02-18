@@ -75,6 +75,19 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
     // Table dataSource
 
+    tableIndexForRepresentedObject(table, object)
+    {
+        let index = this._cookies.indexOf(object);
+        console.assert(index >= 0);
+        return index;
+    }
+
+    tableRepresentedObjectForIndex(table, index)
+    {
+        console.assert(index >= 0 && index < this._cookies.length);
+        return this._cookies[index];
+    }
+
     tableNumberOfRows(table)
     {
         return this._cookies.length;

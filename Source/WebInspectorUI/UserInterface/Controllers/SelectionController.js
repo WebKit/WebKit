@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2018, 2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,34 @@
 
 WI.SelectionController = class SelectionController extends WI.Object
 {
-    constructor(delegate)
+    constructor(delegate, comparator)
     {
         super();
 
         console.assert(delegate);
+        console.assert(typeof comparator === "function");
+
         this._delegate = delegate;
+        this._comparator = comparator;
 
         this._allowsEmptySelection = true;
         this._allowsMultipleSelection = false;
-        this._lastSelectedIndex = NaN;
-        this._shiftAnchorIndex = NaN;
-        this._selectedIndexes = new WI.IndexSet;
+        this._lastSelectedItem = null;
+        this._shiftAnchorItem = null;
+        this._selectedItems = new Set;
         this._suppressSelectionDidChange = false;
 
-        console.assert(this._delegate.selectionControllerNumberOfItems, "SelectionController delegate must implement selectionControllerNumberOfItems.");
-        console.assert(this._delegate.selectionControllerNextSelectableIndex, "SelectionController delegate must implement selectionControllerNextSelectableIndex.");
-        console.assert(this._delegate.selectionControllerPreviousSelectableIndex, "SelectionController delegate must implement selectionControllerPreviousSelectableIndex.");
+        console.assert(this._delegate.selectionControllerFirstSelectableItem, "SelectionController delegate must implement selectionControllerFirstSelectableItem.");
+        console.assert(this._delegate.selectionControllerLastSelectableItem, "SelectionController delegate must implement selectionControllerLastSelectableItem.");
+        console.assert(this._delegate.selectionControllerNextSelectableItem, "SelectionController delegate must implement selectionControllerNextSelectableItem.");
+        console.assert(this._delegate.selectionControllerPreviousSelectableItem, "SelectionController delegate must implement selectionControllerPreviousSelectableItem.");
     }
 
     // Public
 
     get delegate() { return this._delegate; }
-    get lastSelectedItem() { return this._lastSelectedIndex; }
-    get selectedItems() { return this._selectedIndexes; }
+    get lastSelectedItem() { return this._lastSelectedItem; }
+    get selectedItems() { return this._selectedItems; }
 
     get allowsEmptySelection() { return this._allowsEmptySelection; }
     set allowsEmptySelection(flag) { this._allowsEmptySelection = flag; }
@@ -67,225 +71,147 @@ WI.SelectionController = class SelectionController extends WI.Object
         if (this._allowsMultipleSelection)
             return;
 
-        if (this._selectedIndexes.size > 1) {
-            console.assert(this._lastSelectedIndex >= 0);
-            this._updateSelectedItems(new WI.IndexSet([this._lastSelectedIndex]));
-        }
+        if (this._selectedItems.size > 1)
+            this._updateSelectedItems(new Set([this._lastSelectedItem]));
     }
 
-    get numberOfItems()
+    hasSelectedItem(item)
     {
-        return this._delegate.selectionControllerNumberOfItems(this);
+        return this._selectedItems.has(item);
     }
 
-    hasSelectedItem(index)
+    selectItem(item, extendSelection = false)
     {
-        return this._selectedIndexes.has(index);
-    }
-
-    selectItem(index, extendSelection = false)
-    {
+        console.assert(item, "Invalid item for selection.");
         console.assert(!extendSelection || this._allowsMultipleSelection, "Cannot extend selection with multiple selection disabled.");
-        console.assert(index >= 0 && index < this.numberOfItems);
 
         if (!this._allowsMultipleSelection)
             extendSelection = false;
 
-        if (this.hasSelectedItem(index)) {
+        if (this.hasSelectedItem(item)) {
             if (!extendSelection)
-                this._deselectAllAndSelect(index);
+                this._deselectAllAndSelect(item);
             return;
         }
 
-        let newSelectedItems = extendSelection ? this._selectedIndexes.copy() : new WI.IndexSet;
-        newSelectedItems.add(index);
+        this._lastSelectedItem = item;
+        this._shiftAnchorItem = null;
 
-        this._shiftAnchorIndex = NaN;
-        this._lastSelectedIndex = index;
+        let newItems = new Set(extendSelection ? this._selectedItems : null);
+        newItems.add(item);
 
-        this._updateSelectedItems(newSelectedItems);
+        this._updateSelectedItems(newItems);
     }
 
-    deselectItem(index)
+    deselectItem(item)
     {
-        console.assert(index >= 0 && index < this.numberOfItems);
+        console.assert(item, "Invalid item for selection.");
 
-        if (!this.hasSelectedItem(index))
+        if (!this.hasSelectedItem(item))
             return;
 
-        if (!this._allowsEmptySelection && this._selectedIndexes.size === 1)
+        if (!this._allowsEmptySelection && this._selectedItems.size === 1)
             return;
 
-        let newSelectedItems = this._selectedIndexes.copy();
-        newSelectedItems.delete(index);
+        let newItems = new Set(this._selectedItems);
+        newItems.delete(item);
 
-        if (this._shiftAnchorIndex === index)
-            this._shiftAnchorIndex = NaN;
+        if (this._lastSelectedItem === item) {
+            this._lastSelectedItem = null;
 
-        if (this._lastSelectedIndex === index) {
-            this._lastSelectedIndex = NaN;
-            if (newSelectedItems.size) {
+            if (newItems.size) {
                 // Find selected item closest to deselected item.
-                let preceding = newSelectedItems.indexLessThan(index);
-                let following = newSelectedItems.indexGreaterThan(index);
+                let previous = item;
+                let next = item;
+                while (!this._lastSelectedItem && previous && next) {
+                    previous = this._previousSelectableItem(previous);
+                    if (this.hasSelectedItem(previous)) {
+                        this._lastSelectedItem = previous;
+                        break;
+                    }
 
-                if (isNaN(preceding))
-                    this._lastSelectedIndex = following;
-                else if (isNaN(following))
-                    this._lastSelectedIndex = preceding;
-                else {
-                    if ((following - index) < (index - preceding))
-                        this._lastSelectedIndex = following;
-                    else
-                        this._lastSelectedIndex = preceding;
+                    next = this._nextSelectableItem(next);
+                    if (this.hasSelectedItem(next)) {
+                        this._lastSelectedItem = next;
+                        break;
+                    }
                 }
             }
         }
 
-        this._updateSelectedItems(newSelectedItems);
+        if (this._shiftAnchorItem === item)
+            this._shiftAnchorItem = null;
+
+        this._updateSelectedItems(newItems);
     }
 
     selectAll()
     {
-        if (!this.numberOfItems || !this._allowsMultipleSelection)
+        if (!this._allowsMultipleSelection)
             return;
 
-        if (this._selectedIndexes.size === this.numberOfItems)
-            return;
+        this._lastSelectedItem = this._lastSelectableItem();
 
-        let newSelectedItems = new WI.IndexSet;
-        newSelectedItems.addRange(0, this.numberOfItems);
+        let newItems = new Set;
+        this._addRange(newItems, this._firstSelectableItem(), this._lastSelectedItem);
 
-        this._lastSelectedIndex = newSelectedItems.lastIndex;
-        if (isNaN(this._shiftAnchorIndex))
-            this._shiftAnchorIndex = this._lastSelectedIndex;
+        if (!this._shiftAnchorItem)
+            this._shiftAnchorItem = this._lastSelectedItem;
 
-        this._updateSelectedItems(newSelectedItems);
+        this._updateSelectedItems(newItems);
     }
 
     deselectAll()
     {
-        const index = NaN;
-        this._deselectAllAndSelect(index);
+        this._deselectAllAndSelect(null);
     }
 
     removeSelectedItems()
     {
-        let numberOfSelectedItems = this._selectedIndexes.size;
-        if (!numberOfSelectedItems)
+        if (!this._selectedItems.size)
             return;
 
+        let orderedSelection = Array.from(this._selectedItems).sort(this._comparator);
+
         // Try selecting the item following the selection.
-        let lastSelectedIndex = this._selectedIndexes.lastIndex;
-        let indexToSelect = this._nextSelectableIndex(lastSelectedIndex);
-        if (isNaN(indexToSelect)) {
+        let lastSelectedItem = orderedSelection.lastValue;
+        let itemToSelect = this._nextSelectableItem(lastSelectedItem);
+        if (!itemToSelect) {
             // If no item exists after the last item in the selection, try selecting
             // a deselected item (hole) within the selection.
-            let firstSelectedIndex = this._selectedIndexes.firstIndex;
-            if (lastSelectedIndex - firstSelectedIndex > numberOfSelectedItems) {
-                indexToSelect = this._nextSelectableIndex(firstSelectedIndex);
-                while (this._selectedIndexes.has(indexToSelect))
-                    indexToSelect = this._nextSelectableIndex(firstSelectedIndex);
-            } else {
+            itemToSelect = orderedSelection[0];
+            while (itemToSelect && this.hasSelectedItem(itemToSelect))
+                itemToSelect = this._nextSelectableItem(itemToSelect);
+
+            if (!itemToSelect || this.hasSelectedItem(itemToSelect)) {
                 // If the selection contains no holes, try selecting the item
                 // preceding the selection.
-                indexToSelect = firstSelectedIndex > 0 ? this._previousSelectableIndex(firstSelectedIndex) : NaN;
+                itemToSelect = this._previousSelectableItem(orderedSelection[0]);
             }
         }
 
-        this._deselectAllAndSelect(indexToSelect);
+        this._deselectAllAndSelect(itemToSelect);
     }
 
     reset()
     {
-        this._shiftAnchorIndex = NaN;
-        this._lastSelectedIndex = NaN;
-        this._selectedIndexes.clear();
+        this._lastSelectedItem = null;
+        this._shiftAnchorItem = null;
+        this._selectedItems.clear();
     }
 
-    didInsertItem(index)
+    didRemoveItems(items)
     {
-        let current = this._selectedIndexes.lastIndex;
-        while (current >= index) {
-            this._selectedIndexes.delete(current);
-            this._selectedIndexes.add(current + 1);
+        console.assert(items instanceof Set);
 
-            current = this._selectedIndexes.indexLessThan(current);
-        }
+        if (!items.size || !this._selectedItems.size)
+           return;
 
-        if (this._lastSelectedIndex >= index)
-            this._lastSelectedIndex += 1;
-        if (this._shiftAnchorIndex >= index)
-            this._shiftAnchorIndex += 1;
-    }
-
-    didRemoveItems(indexes)
-    {
-        if (!indexes)
-            return;
-
-        console.assert(indexes instanceof WI.IndexSet);
-
-        if (!indexes.size || !this._selectedIndexes.size)
-            return;
-
-        let firstRemovedIndex = indexes.firstIndex;
-        if (this._selectedIndexes.lastIndex < firstRemovedIndex)
-            return;
-
-        let newSelectedIndexes = new WI.IndexSet;
-
-        let lastRemovedIndex = indexes.lastIndex;
-        if (this._selectedIndexes.firstIndex < lastRemovedIndex) {
-            let removedCount = 0;
-            let removedIndex = firstRemovedIndex;
-
-            this._suppressSelectionDidChange = true;
-
-            // Adjust the selected indexes that are in the range between the
-            // first and last removed index (inclusive).
-            for (let current = this._selectedIndexes.firstIndex; current < lastRemovedIndex; current = this._selectedIndexes.indexGreaterThan(current)) {
-                if (this.hasSelectedItem(current)) {
-                    this.deselectItem(current);
-                    removedCount++;
-                    continue;
-                }
-
-                while (removedIndex < current) {
-                    removedCount++;
-                    removedIndex = indexes.indexGreaterThan(removedIndex);
-                }
-
-                let newIndex = current - removedCount;
-                newSelectedIndexes.add(newIndex);
-
-                if (this._lastSelectedIndex === current)
-                    this._lastSelectedIndex = newIndex;
-                if (this._shiftAnchorIndex === current)
-                    this._shiftAnchorIndex = newIndex;
-            }
-
-            this._suppressSelectionDidChange = false;
-        }
-
-        let removedCount = indexes.size;
-        let current = lastRemovedIndex;
-        while (current = this._selectedIndexes.indexGreaterThan(current))
-            newSelectedIndexes.add(current - removedCount);
-
-        if (this._lastSelectedIndex > lastRemovedIndex)
-            this._lastSelectedIndex -= removedCount;
-        if (this._shiftAnchorIndex > lastRemovedIndex)
-            this._shiftAnchorIndex -= removedCount;
-
-        this._selectedIndexes = newSelectedIndexes;
+        this._updateSelectedItems(this._selectedItems.difference(items));
     }
 
     handleKeyDown(event)
     {
-        if (!this.numberOfItems)
-            return false;
-
         if (event.key === "a" && event.commandOrControlKey) {
             this.selectAll();
             return true;
@@ -305,41 +231,44 @@ WI.SelectionController = class SelectionController extends WI.Object
         return false;
     }
 
-    handleItemMouseDown(index, event)
+    handleItemMouseDown(item, event)
     {
+        console.assert(item, "Invalid item for selection.");
+
         if (event.button !== 0 || event.ctrlKey)
             return;
 
         // Command (macOS) or Control (Windows) key takes precedence over shift
         // whether or not multiple selection is enabled, so handle it first.
         if (event.commandOrControlKey) {
-            if (this.hasSelectedItem(index))
-                this.deselectItem(index);
+            if (this.hasSelectedItem(item))
+                this.deselectItem(item);
             else
-                this.selectItem(index, this._allowsMultipleSelection);
+                this.selectItem(item, this._allowsMultipleSelection);
             return;
         }
 
         let shiftExtendSelection = this._allowsMultipleSelection && event.shiftKey;
         if (!shiftExtendSelection) {
-            this.selectItem(index);
+            this.selectItem(item);
             return;
         }
 
-        let newSelectedItems = this._selectedIndexes.copy();
+        let newItems = new Set(this._selectedItems);
 
         // Shift-clicking when nothing is selected should cause the first item
         // through the clicked item to be selected.
-        if (!newSelectedItems.size) {
-            this._shiftAnchorIndex = 0;
-            this._lastSelectedIndex = index;
-            newSelectedItems.addRange(0, index + 1);
-            this._updateSelectedItems(newSelectedItems);
+        if (!newItems.size) {
+            this._lastSelectedItem = item;
+            this._shiftAnchorItem = this._firstSelectableItem();
+
+            this._addRange(newItems, this._shiftAnchorItem, this._lastSelectedItem);
+            this._updateSelectedItems(newItems);
             return;
         }
 
-        if (isNaN(this._shiftAnchorIndex))
-            this._shiftAnchorIndex = this._lastSelectedIndex;
+        if (!this._shiftAnchorItem)
+            this._shiftAnchorItem = this._lastSelectedItem;
 
         // Shift-clicking will add to or delete from the current selection, or
         // pivot the selection around the anchor (a delete followed by an add).
@@ -347,107 +276,140 @@ WI.SelectionController = class SelectionController extends WI.Object
         // that are necessary, but it is simpler to throw out the previous shift-
         // selected range and add the new range between the anchor and clicked item.
 
-        function normalizeRange(startIndex, endIndex) {
-            return startIndex > endIndex ? [endIndex, startIndex] : [startIndex, endIndex];
+        let sortItemPair = (a, b) => {
+            return [a, b].sort(this._comparator);
+        };
+
+        if (this._shiftAnchorItem !== this._lastSelectedItem) {
+            let [startItem, endItem] = sortItemPair(this._shiftAnchorItem, this._lastSelectedItem);
+            this._deleteRange(newItems, startItem, endItem);
         }
 
-        if (this._shiftAnchorIndex !== this._lastSelectedIndex) {
-            let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, this._lastSelectedIndex);
-            newSelectedItems.deleteRange(startIndex, endIndex - startIndex + 1);
-        }
+        let [startItem, endItem] = sortItemPair(this._shiftAnchorItem, item);
+        this._addRange(newItems, startItem, endItem);
 
-        let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, index);
-        newSelectedItems.addRange(startIndex, endIndex - startIndex + 1);
+        this._lastSelectedItem = item;
 
-        this._lastSelectedIndex = index;
-
-        this._updateSelectedItems(newSelectedItems);
+        this._updateSelectedItems(newItems);
     }
 
     // Private
 
-    _deselectAllAndSelect(index)
+    _deselectAllAndSelect(item)
     {
-        if (!this._selectedIndexes.size)
+        if (!this._selectedItems.size)
             return;
 
-        if (this._selectedIndexes.size === 1 && this._selectedIndexes.firstIndex === index)
+        if (this._selectedItems.size === 1 && this.hasSelectedItem(item))
             return;
 
-        this._shiftAnchorIndex = NaN;
-        this._lastSelectedIndex = index;
+        this._lastSelectedItem = item;
+        this._shiftAnchorItem = null;
 
-        let newSelectedItems = new WI.IndexSet;
-        if (!isNaN(index))
-            newSelectedItems.add(index);
+        let newItems = new Set;
+        if (item)
+            newItems.add(item);
 
-        this._updateSelectedItems(newSelectedItems);
+        this._updateSelectedItems(newItems);
     }
 
     _selectItemsFromArrowKey(goingUp, shiftKey)
     {
-        if (!this._selectedIndexes.size) {
-            let index = goingUp ? this.numberOfItems - 1 : 0;
-            this.selectItem(index);
+        if (!this._selectedItems.size) {
+            this.selectItem(goingUp ? this._lastSelectableItem() : this._firstSelectableItem());
             return;
         }
 
-        let index = goingUp ? this._previousSelectableIndex(this._lastSelectedIndex) : this._nextSelectableIndex(this._lastSelectedIndex);
-        if (isNaN(index))
+        let item = goingUp ? this._previousSelectableItem(this._lastSelectedItem) : this._nextSelectableItem(this._lastSelectedItem);
+        if (!item)
             return;
 
         let extendSelection = shiftKey && this._allowsMultipleSelection;
-        if (!extendSelection || !this.hasSelectedItem(index)) {
-            this.selectItem(index, extendSelection);
+        if (!extendSelection || !this.hasSelectedItem(item)) {
+            this.selectItem(item, extendSelection);
             return;
         }
 
         // Since the item in the direction of movement is selected, we are either
         // extending the selection into the item, or deselecting. Determine which
         // by checking whether the item opposite the anchor item is selected.
-        let priorIndex = goingUp ? this._nextSelectableIndex(this._lastSelectedIndex) : this._previousSelectableIndex(this._lastSelectedIndex);
-        if (!this.hasSelectedItem(priorIndex)) {
-            this.deselectItem(this._lastSelectedIndex);
+        let priorItem = goingUp ? this._nextSelectableItem(this._lastSelectedItem) : this._previousSelectableItem(this._lastSelectedItem);
+        if (!priorItem || !this.hasSelectedItem(priorItem)) {
+            this.deselectItem(this._lastSelectedItem);
             return;
         }
 
         // The selection is being extended into the item; make it the new
         // anchor item then continue searching in the direction of movement
         // for an unselected item to select.
-        while (!isNaN(index)) {
-            if (!this.hasSelectedItem(index)) {
-                this.selectItem(index, extendSelection);
+        while (item) {
+            if (!this.hasSelectedItem(item)) {
+                this.selectItem(item, extendSelection);
                 break;
             }
 
-            this._lastSelectedIndex = index;
-            index = goingUp ? this._previousSelectableIndex(index) : this._nextSelectableIndex(index);
+            this._lastSelectedItem = item;
+            item = goingUp ? this._previousSelectableItem(item) : this._nextSelectableItem(item);
         }
     }
 
-    _nextSelectableIndex(index)
+    _firstSelectableItem()
     {
-        return this._delegate.selectionControllerNextSelectableIndex(this, index);
+        return this._delegate.selectionControllerFirstSelectableItem(this);
     }
 
-    _previousSelectableIndex(index)
+    _lastSelectableItem()
     {
-        return this._delegate.selectionControllerPreviousSelectableIndex(this, index);
+        return this._delegate.selectionControllerLastSelectableItem(this);
     }
 
-    _updateSelectedItems(indexes)
+    _previousSelectableItem(item)
     {
-        if (this._selectedIndexes.equals(indexes))
-            return;
+        return this._delegate.selectionControllerPreviousSelectableItem(this, item);
+    }
 
-        let oldSelectedIndexes = this._selectedIndexes.copy();
-        this._selectedIndexes = indexes;
+    _nextSelectableItem(item)
+    {
+        return this._delegate.selectionControllerNextSelectableItem(this, item);
+    }
+
+    _updateSelectedItems(items)
+    {
+        let oldSelectedItems = this._selectedItems;
+        this._selectedItems = items;
 
         if (this._suppressSelectionDidChange || !this._delegate.selectionControllerSelectionDidChange)
             return;
 
-        let deselectedItems = oldSelectedIndexes.difference(indexes);
-        let selectedItems = indexes.difference(oldSelectedIndexes);
-        this._delegate.selectionControllerSelectionDidChange(this, deselectedItems, selectedItems);
+        let deselectedItems = oldSelectedItems.difference(items);
+        let selectedItems = items.difference(oldSelectedItems);
+        if (deselectedItems.size || selectedItems.size)
+            this._delegate.selectionControllerSelectionDidChange(this, deselectedItems, selectedItems);
+    }
+
+    _addRange(items, firstItem, lastItem)
+    {
+        let current = firstItem;
+        while (current) {
+            items.add(current);
+            if (current === lastItem)
+                break;
+            current = this._nextSelectableItem(current);
+        }
+
+        console.assert(!lastItem || items.has(lastItem), "End of range could not be reached.");
+    }
+
+    _deleteRange(items, firstItem, lastItem)
+    {
+        let current = firstItem;
+        while (current) {
+            items.delete(current);
+            if (current === lastItem)
+                break;
+            current = this._nextSelectableItem(current);
+        }
+
+        console.assert(!lastItem || !items.has(lastItem), "End of range could not be reached.");
     }
 };
