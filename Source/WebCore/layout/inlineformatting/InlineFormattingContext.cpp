@@ -150,7 +150,7 @@ void InlineFormattingContext::computeIntrinsicWidthConstraints() const
         return maxContentLogicalRight;
     };
 
-    auto intrinsicWidthConstraints = FormattingContext::IntrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
+    auto intrinsicWidthConstraints = Geometry::constrainByMinMaxWidth(root, { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) });
     layoutState.formattingStateForBox(root).setIntrinsicWidthConstraints(root, intrinsicWidthConstraints);
 }
 

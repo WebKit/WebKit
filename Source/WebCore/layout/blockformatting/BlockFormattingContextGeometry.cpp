@@ -301,9 +301,7 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
     if (!is<Container>(layoutBox))
         return { };
 
-    LayoutUnit minimumIntrinsicWidth;
-    LayoutUnit maximumIntrinsicWidth;
-
+    auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
     for (auto& child : childrenOfType<Box>(downcast<Container>(layoutBox))) {
         if (child.isOutOfFlowPositioned())
             continue;
@@ -320,11 +318,11 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
             + LayoutUnit { style.borderRightWidth() }
             + fixedValue(style.marginEnd()).valueOr(0);
 
-        minimumIntrinsicWidth = std::max(minimumIntrinsicWidth, childIntrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding); 
-        maximumIntrinsicWidth = std::max(maximumIntrinsicWidth, childIntrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding); 
+        intrinsicWidthConstraints.minimum = std::max(intrinsicWidthConstraints.minimum, childIntrinsicWidthConstraints->minimum + horizontalMarginBorderAndPadding);
+        intrinsicWidthConstraints.maximum = std::max(intrinsicWidthConstraints.maximum, childIntrinsicWidthConstraints->maximum + horizontalMarginBorderAndPadding);
     }
 
-    return { minimumIntrinsicWidth, maximumIntrinsicWidth };
+    return constrainByMinMaxWidth(layoutBox, intrinsicWidthConstraints);
 }
 
 }
