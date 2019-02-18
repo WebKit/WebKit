@@ -1618,6 +1618,20 @@ String convertEnumerationToString(MediaPlayerEnums::Preload enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+String convertEnumerationToString(MediaPlayerEnums::SupportsType enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("IsNotSupported"),
+        MAKE_STATIC_STRING_IMPL("IsSupported"),
+        MAKE_STATIC_STRING_IMPL("MayBeSupported"),
+    };
+    static_assert(!static_cast<size_t>(MediaPlayerEnums::IsNotSupported), "MediaPlayerEnums::IsNotSupported is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerEnums::IsSupported) == 1, "MediaPlayerEnums::IsSupported is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerEnums::MayBeSupported) == 2, "MediaPlayerEnums::MayBeSupported is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
 }
 
 #endif

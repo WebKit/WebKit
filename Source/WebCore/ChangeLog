@@ -1,3 +1,82 @@
+2019-02-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Decoding media-capabilities configuration initial support
+        https://bugs.webkit.org/show_bug.cgi?id=191191
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch enables basic platform probing for GStreamer decoders,
+        optionally using Hardware decoding capabilities. The previous code
+        for decoders/demuxers probing partially duplicated between the MSE
+        player and its parent class was moved to a new module called
+        GStreamerRegistryScanner. There is one instance of it for the MSE player
+        and one for the parent class.
+
+        The scanner can check for the presence of the GstElement Hardware
+        metadata classifier in decoders and thus advise the
+        MediaEngineConfigurationFactoryGStreamer that hardware decoding is
+        supported or not. This is only a first step though. The scanner
+        should also probably attempt a NULL->READY transition on decoders
+        to validate specific input caps are supported. As this might
+        require changes in GStreamer, this part of the patch wasn't
+        included.
+
+        This patch is covered by the existing media tests.
+
+        * platform/GStreamer.cmake: New files.
+        * platform/graphics/MediaPlayer.cpp: Add support for converting
+        SupportsType enum to string.
+        (WebCore::convertEnumerationToString):
+        * platform/graphics/MediaPlayer.h: Ditto.
+        * platform/graphics/MediaPlayerEnums.h: Ditto.
+        * platform/graphics/gstreamer/GStreamerCommon.cpp: Move
+        gstRegistryHasElementForMediaType to GStreamerRegistryScanner.
+        * platform/graphics/gstreamer/GStreamerCommon.h: Ditto.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp: Added.
+        (WebCore::GStreamerRegistryScanner::singleton):
+        (WebCore::GStreamerRegistryScanner::GStreamerRegistryScanner): Initialize
+        supported mime-types and codecs from the GStreamer registry.
+        (WebCore::GStreamerRegistryScanner::~GStreamerRegistryScanner): Free the element factories.
+        (WebCore::GStreamerRegistryScanner::gstRegistryHasElementForMediaType):
+        Check the input caps are supported, optionally using hardware
+        device.
+        (WebCore::GStreamerRegistryScanner::fillMimeTypeSetFromCapsMapping):
+        Moved from MediaPlayerPrivateGStreamer{,MSE}.
+        (WebCore::GStreamerRegistryScanner::initialize): Ditto.
+        (WebCore::GStreamerRegistryScanner::supportsCodec const): Ditto.
+        (WebCore::GStreamerRegistryScanner::supportsAllCodecs const): Ditto.
+        (WebCore::GStreamerRegistryScanner::isDecodingSupported const): Check
+        the given configuration is supported. For now hardware support is
+        checked for video configurations only as it is quite uncommon
+        anyway to have hardware-enabled audio decoders.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.h: Added.
+        (WebCore::GStreamerRegistryScanner::mimeTypeSet):
+        (WebCore::GStreamerRegistryScanner::supportsContainerType const):
+        (WebCore::GStreamerRegistryScanner::RegistryLookupResult::operator bool const):
+        * platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp: Added.
+        (WebCore::createMediaPlayerDecodingConfigurationGStreamer):
+        * platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.h: Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        Rely on new GStreamerRegistryScanner and add some debugging macros.
+        (WebCore::MediaPlayerPrivateGStreamer::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp: Ditto. Also
+        plug qtdemux for AAC containers, this is an explicit consequence
+        of finer-grained codecs probing.
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        * platform/graphics/gstreamer/mse/GStreamerRegistryScannerMSE.cpp: Added.
+        (WebCore::GStreamerRegistryScannerMSE::singleton):
+        (WebCore::GStreamerRegistryScannerMSE::GStreamerRegistryScannerMSE):
+        * platform/graphics/gstreamer/mse/GStreamerRegistryScannerMSE.h: Added.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        Rely on new GStreamerRegistryScanner and add some debugging macros.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp:
+        (WebCore::factories): GStreamer support.
+
 2019-02-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Occasional crash under WebCore::CSSStyleSheet::item called from Inspector

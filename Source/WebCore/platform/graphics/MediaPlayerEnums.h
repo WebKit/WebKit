@@ -36,6 +36,7 @@ public:
     enum MovieLoadType { Unknown, Download, StoredStream, LiveStream };
     enum Preload { None, MetaData, Auto };
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
+    enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
     enum {
         VideoFullscreenModeNone = 0,
         VideoFullscreenModeStandard = 1 << 0,
@@ -47,6 +48,7 @@ public:
 WTF::String convertEnumerationToString(MediaPlayerEnums::ReadyState);
 WTF::String convertEnumerationToString(MediaPlayerEnums::NetworkState);
 WTF::String convertEnumerationToString(MediaPlayerEnums::Preload);
+WTF::String convertEnumerationToString(MediaPlayerEnums::SupportsType);
 
 } // namespace WebCore
 

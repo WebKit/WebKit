@@ -253,8 +253,8 @@ public:
     void invalidate();
 
     // Media engine support.
-    enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    using MediaPlayerEnums::SupportsType;
+    static SupportsType supportsType(const MediaEngineSupportParameters&);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static bool isAvailable();
     static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path);
