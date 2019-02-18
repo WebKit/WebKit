@@ -1,3 +1,16 @@
+2019-02-18  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Handle indefinite percentages in fit-content()
+        https://bugs.webkit.org/show_bug.cgi?id=194509
+
+        Reviewed by Javier Fernandez.
+
+        Import WPT test.
+
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-fit-content-percentage-expected.txt: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-fit-content-percentage.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+
 2019-02-12  Rob Buis  <rbuis@igalia.com>
 
         Align with Fetch on data: URLs
