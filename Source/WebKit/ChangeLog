@@ -1,3 +1,15 @@
+2019-02-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        WebPageProxy::didFinishDocumentLoadForFrame() crashing in WPE and GTK+ ports
+        https://bugs.webkit.org/show_bug.cgi?id=194774
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        Null check navigation before using it.
+        This is a regression from r241451.
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

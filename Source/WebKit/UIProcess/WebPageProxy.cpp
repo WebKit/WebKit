@@ -4136,9 +4136,11 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID) {
         navigation = navigationState().navigation(navigationID);
-        if (auto& adClickAttribution = navigation->adClickAttribution()) {
-            if (adClickAttribution->destination().matches(frame->url()))
-                m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution));
+        if (navigation) {
+            if (auto& adClickAttribution = navigation->adClickAttribution()) {
+                if (adClickAttribution->destination().matches(frame->url()))
+                    m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution));
+            }
         }
     }
 
