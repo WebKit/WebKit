@@ -211,7 +211,7 @@ void WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode(const Stri
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(primaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setPrevalentResourceForDebugMode(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -261,7 +261,7 @@ void WebResourceLoadStatisticsStore::hasStorageAccess(const String& subFrameHost
     ASSERT(subFrameHost != topFrameHost);
     ASSERT(RunLoop::isMain());
 
-    postTask([this, subFramePrimaryDomain = subFrameHost.isolatedCopy(), topFramePrimaryDomain = topFrameHost.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, subFramePrimaryDomain = isolatedPrimaryDomain(subFrameHost), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHost), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_memoryStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(false);
@@ -295,7 +295,7 @@ void WebResourceLoadStatisticsStore::callHasStorageAccessForFrameHandler(const S
 
 void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto statusHandler = [this, protectedThis = makeRef(*this), subFrameHost = subFrameHost.isolatedCopy(), topFrameHost = topFrameHost.isolatedCopy(), promptEnabled, frameID, pageID, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
+    auto statusHandler = [this, protectedThis = makeRef(*this), subFrameHost = isolatedPrimaryDomain(subFrameHost), topFrameHost = isolatedPrimaryDomain(topFrameHost), promptEnabled, frameID, pageID, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
         switch (status) {
         case StorageAccessStatus::CannotRequestAccess:
             completionHandler(false);
@@ -303,13 +303,15 @@ void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const String& s
         case StorageAccessStatus::RequiresUserPrompt:
             {
             ASSERT_UNUSED(promptEnabled, promptEnabled);
+            auto subFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(subFrameHost);
+            auto topFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(topFrameHost);
             CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = makeRef(*this), subFrameHost = WTFMove(subFrameHost), topFrameHost = WTFMove(topFrameHost), frameID, pageID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
                 if (userDidGrantAccess)
                     grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userDidGrantAccess, WTFMove(completionHandler));
                 else
                     completionHandler(false);
             };
-            m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, ResourceLoadStatistics::primaryDomain(subFrameHost), ResourceLoadStatistics::primaryDomain(topFrameHost)), WTFMove(requestConfirmationCompletionHandler));
+            m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, subFramePrimaryDomain, topFramePrimaryDomain), WTFMove(requestConfirmationCompletionHandler));
             }
             return;
         case StorageAccessStatus::HasAccess:
@@ -481,7 +483,7 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const WebFrameProxy& fra
 
 void WebResourceLoadStatisticsStore::logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame)
 {
-    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetHost = targetHost.isolatedCopy(), mainFrameHost = mainFrameHost.isolatedCopy(), isRedirect, isMainFrame] {
+    postTask([this, targetPrimaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), mainFramePrimaryDomain = isolatedPrimaryDomain(mainFramePrimaryDomain), sourcePrimaryDomain = isolatedPrimaryDomain(sourcePrimaryDomain), targetHost = isolatedPrimaryDomain(targetHost), mainFrameHost = isolatedPrimaryDomain(mainFrameHost), isRedirect, isMainFrame] {
         
         if (m_memoryStore)
             m_memoryStore->logFrameNavigation(targetPrimaryDomain, mainFramePrimaryDomain, sourcePrimaryDomain, targetHost, mainFrameHost, isRedirect, isMainFrame);
@@ -490,7 +492,7 @@ void WebResourceLoadStatisticsStore::logFrameNavigation(const String& targetPrim
 
 void WebResourceLoadStatisticsStore::logWebSocketLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, targetPrimaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), mainFramePrimaryDomain = isolatedPrimaryDomain(mainFramePrimaryDomain), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
 
@@ -500,7 +502,7 @@ void WebResourceLoadStatisticsStore::logWebSocketLoading(const String& targetPri
 
 void WebResourceLoadStatisticsStore::logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen, CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, targetPrimaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), mainFramePrimaryDomain = isolatedPrimaryDomain(mainFramePrimaryDomain), lastSeen, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logSubresourceLoading(targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
         
@@ -510,7 +512,7 @@ void WebResourceLoadStatisticsStore::logSubresourceLoading(const String& targetP
 
 void WebResourceLoadStatisticsStore::logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain, CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, sourcePrimaryDomain = isolatedPrimaryDomain(sourcePrimaryDomain), targetPrimaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logSubresourceRedirect(sourcePrimaryDomain, targetPrimaryDomain);
         
@@ -522,7 +524,7 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const String& targetPrim
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, primaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->logUserInteraction(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -533,7 +535,7 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const String& targetPr
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, primaryDomain = targetPrimaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(targetPrimaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->clearUserInteraction(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -542,7 +544,7 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const String& targetPr
 
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(const String& primaryDomain, CompletionHandler<void(bool)>&& completionHandler)
 {
-    postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(primaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         bool hadUserInteraction = m_memoryStore ? m_memoryStore->hasHadUserInteraction(primaryDomain) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(hadUserInteraction);
@@ -554,7 +556,7 @@ void WebResourceLoadStatisticsStore::setLastSeen(const String& resourceDomain, S
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, resourceDomain = resourceDomain.isolatedCopy(), seconds, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, resourceDomain = isolatedPrimaryDomain(resourceDomain), seconds, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setLastSeen(resourceDomain, seconds);
         postTaskReply(WTFMove(completionHandler));
@@ -565,7 +567,7 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const String& resource
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, resourceDomain = resourceDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, resourceDomain = isolatedPrimaryDomain(resourceDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setPrevalentResource(resourceDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -576,7 +578,7 @@ void WebResourceLoadStatisticsStore::setVeryPrevalentResource(const String& prim
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(primaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setVeryPrevalentResource(primaryDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -599,7 +601,7 @@ void WebResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDo
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(primaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         bool isPrevalentResource = m_memoryStore ? m_memoryStore->isPrevalentResource(primaryDomain) : false;
         postTaskReply([isPrevalentResource, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isPrevalentResource);
@@ -611,7 +613,7 @@ void WebResourceLoadStatisticsStore::isVeryPrevalentResource(const String& prima
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, primaryDomain = primaryDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(primaryDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         bool isVeryPrevalentResource = m_memoryStore ? m_memoryStore->isVeryPrevalentResource(primaryDomain) : false;
         postTaskReply([isVeryPrevalentResource, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isVeryPrevalentResource);
@@ -623,7 +625,7 @@ void WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder(const String
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, subresourcePrimaryDomain = subresource.isolatedCopy(), topFramePrimaryDomain = topFrame.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, subresourcePrimaryDomain = isolatedPrimaryDomain(subresource), topFramePrimaryDomain = isolatedPrimaryDomain(topFrame), completionHandler = WTFMove(completionHandler)]() mutable {
         bool isRegisteredAsSubresourceUnder = m_memoryStore ? m_memoryStore->isRegisteredAsSubresourceUnder(subresourcePrimaryDomain, topFramePrimaryDomain) : false;
         postTaskReply([isRegisteredAsSubresourceUnder, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isRegisteredAsSubresourceUnder);
@@ -635,7 +637,7 @@ void WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder(const String& s
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, subFramePrimaryDomain = subFrame.isolatedCopy(), topFramePrimaryDomain = topFrame.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, subFramePrimaryDomain = isolatedPrimaryDomain(subFrame), topFramePrimaryDomain = isolatedPrimaryDomain(topFrame), completionHandler = WTFMove(completionHandler)]() mutable {
         bool isRegisteredAsSubFrameUnder = m_memoryStore ? m_memoryStore->isRegisteredAsSubFrameUnder(subFramePrimaryDomain, topFramePrimaryDomain) : false;
         postTaskReply([isRegisteredAsSubFrameUnder, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isRegisteredAsSubFrameUnder);
@@ -647,7 +649,7 @@ void WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo(const String& h
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, hostRedirectedFromPrimaryDomain = hostRedirectedFrom.isolatedCopy(), hostRedirectedToPrimaryDomain = hostRedirectedTo.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, hostRedirectedFromPrimaryDomain = isolatedPrimaryDomain(hostRedirectedFrom), hostRedirectedToPrimaryDomain = isolatedPrimaryDomain(hostRedirectedTo), completionHandler = WTFMove(completionHandler)]() mutable {
         bool isRegisteredAsRedirectingTo = m_memoryStore ? m_memoryStore->isRegisteredAsRedirectingTo(hostRedirectedFromPrimaryDomain, hostRedirectedToPrimaryDomain) : false;
         postTaskReply([isRegisteredAsRedirectingTo, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isRegisteredAsRedirectingTo);
@@ -659,7 +661,7 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const String& resour
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, resourceDomain = resourceDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, resourceDomain = isolatedPrimaryDomain(resourceDomain), completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->clearPrevalentResource(resourceDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -670,7 +672,7 @@ void WebResourceLoadStatisticsStore::setGrandfathered(const String& domain, bool
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, primaryDomain = domain.isolatedCopy(), value, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, primaryDomain = isolatedPrimaryDomain(domain), value, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setGrandfathered(primaryDomain, value);
         postTaskReply(WTFMove(completionHandler));
@@ -681,7 +683,7 @@ void WebResourceLoadStatisticsStore::isGrandfathered(const String& primaryDomain
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, completionHandler = WTFMove(completionHandler), primaryDomain = primaryDomain.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), primaryDomain = isolatedPrimaryDomain(primaryDomain)]() mutable {
         bool isGrandFathered = m_memoryStore ? m_memoryStore->isGrandfathered(primaryDomain) : false;
         postTaskReply([isGrandFathered, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(isGrandFathered);
@@ -693,7 +695,7 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const String
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), primaryTopFrameDomain = topFrame.isolatedCopy(), primarySubFrameDomain = subframe.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubFrameDomain = isolatedPrimaryDomain(subframe)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setSubframeUnderTopFrameOrigin(primarySubFrameDomain, primaryTopFrameDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -704,7 +706,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const Str
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), primaryTopFrameDomain = topFrame.isolatedCopy(), primarySubresourceDomain = subresource.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubresourceDomain = isolatedPrimaryDomain(subresource)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setSubresourceUnderTopFrameOrigin(primarySubresourceDomain, primaryTopFrameDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -715,7 +717,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const String
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), primaryRedirectDomain = hostNameRedirectedTo.isolatedCopy(), primarySubresourceDomain = subresource.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), primarySubresourceDomain = isolatedPrimaryDomain(subresource)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setSubresourceUniqueRedirectTo(primarySubresourceDomain, primaryRedirectDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -726,7 +728,7 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom(const Stri
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), primaryRedirectDomain = hostNameRedirectedFrom.isolatedCopy(), primarySubresourceDomain = subresource.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom), primarySubresourceDomain = isolatedPrimaryDomain(subresource)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setSubresourceUniqueRedirectFrom(primarySubresourceDomain, primaryRedirectDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -737,7 +739,7 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo(const String& t
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), topFramePrimaryDomain = topFrameHostName.isolatedCopy(), primaryRedirectDomain = hostNameRedirectedTo.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setTopFrameUniqueRedirectTo(topFramePrimaryDomain, primaryRedirectDomain);
         postTaskReply(WTFMove(completionHandler));
@@ -748,7 +750,7 @@ void WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom(const String&
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, completionHandler = WTFMove(completionHandler), topFramePrimaryDomain = topFrameHostName.isolatedCopy(), primaryRedirectDomain = hostNameRedirectedFrom.isolatedCopy()]() mutable {
+    postTask([this, completionHandler = WTFMove(completionHandler), topFramePrimaryDomain = isolatedPrimaryDomain(topFrameHostName), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedFrom)]() mutable {
         if (m_memoryStore)
             m_memoryStore->setTopFrameUniqueRedirectFrom(topFramePrimaryDomain, primaryRedirectDomain);
         postTaskReply(WTFMove(completionHandler));

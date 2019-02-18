@@ -1658,7 +1658,7 @@ void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrame
     }
 
     if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->hasStorageAccess(m_sessionID, WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(completionHandler));
+        networkProcess->hasStorageAccess(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(subFrameHost), WebCore::ResourceLoadStatistics::primaryDomain(topFrameHost), frameID, pageID, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
@@ -1675,7 +1675,7 @@ void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topF
     }
 
     if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->requestStorageAccess(m_sessionID, WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, promptEnabled, WTFMove(completionHandler));
+        networkProcess->requestStorageAccess(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(subFrameHost), WebCore::ResourceLoadStatistics::primaryDomain(topFrameHost), frameID, pageID, promptEnabled, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&& completionHandler)
@@ -1692,7 +1692,7 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
     }
 
     if (auto networkProcess = webPage->process().processPool().networkProcess())
-        networkProcess->grantStorageAccess(m_sessionID, WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
+        networkProcess->grantStorageAccess(m_sessionID, WebCore::ResourceLoadStatistics::primaryDomain(subFrameHost), WebCore::ResourceLoadStatistics::primaryDomain(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionHandler<void()>&& completionHandler)
