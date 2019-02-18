@@ -553,32 +553,28 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
     return style;
 }
 
-bool EditingStyle::textDirection(WritingDirection& writingDirection) const
+Optional<WritingDirection> EditingStyle::textDirection() const
 {
     if (!m_mutableStyle)
-        return false;
+        return WTF::nullopt;
 
     RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
     if (!is<CSSPrimitiveValue>(unicodeBidi))
-        return false;
+        return WTF::nullopt;
 
     CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
         if (!is<CSSPrimitiveValue>(direction))
-            return false;
+            return WTF::nullopt;
 
-        writingDirection = downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;
-
-        return true;
+        return downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;
     }
 
-    if (unicodeBidiValue == CSSValueNormal) {
-        writingDirection = WritingDirection::Natural;
-        return true;
-    }
+    if (unicodeBidiValue == CSSValueNormal)
+        return WritingDirection::Natural;
 
-    return false;
+    return WTF::nullopt;
 }
 
 void EditingStyle::setStyle(RefPtr<MutableStyleProperties>&& style)
@@ -1497,10 +1493,11 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
     }
 
     if (selection.isCaret()) {
-        WritingDirection direction;
-        if (typingStyle && typingStyle->textDirection(direction)) {
-            hasNestedOrMultipleEmbeddings = false;
-            return direction;
+        if (typingStyle) {
+            if (auto direction = typingStyle->textDirection()) {
+                hasNestedOrMultipleEmbeddings = false;
+                return *direction;
+            }
         }
         node = selection.visibleStart().deepEquivalent().deprecatedNode();
     }

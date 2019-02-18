@@ -36,6 +36,7 @@
 #include "StyleProperties.h"
 #include "WritingDirection.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TriState.h>
@@ -110,7 +111,7 @@ public:
 
     MutableStyleProperties* style() { return m_mutableStyle.get(); }
     Ref<MutableStyleProperties> styleWithResolvedTextDecorations() const;
-    bool textDirection(WritingDirection&) const;
+    Optional<WritingDirection> textDirection() const;
     bool isEmpty() const;
     void setStyle(RefPtr<MutableStyleProperties>&&);
     void overrideWithStyle(const StyleProperties&);
