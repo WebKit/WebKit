@@ -258,6 +258,9 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
             action.sa_sigaction = jscSignalHandler;
             auto result = sigfillset(&action.sa_mask);
             RELEASE_ASSERT(!result);
+            // Do not block this signal since it is used on non-Darwin systems to suspend and resume threads.
+            result = sigdelset(&action.sa_mask, SigThreadSuspendResume);
+            RELEASE_ASSERT(!result);
             action.sa_flags = SA_SIGINFO;
             auto systemSignals = toSystemSignal(signal);
             result = sigaction(std::get<0>(systemSignals), &action, &oldActions[offsetForSystemSignal(std::get<0>(systemSignals))]);

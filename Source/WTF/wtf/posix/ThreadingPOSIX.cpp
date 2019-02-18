@@ -105,8 +105,6 @@ private:
 };
 static LazyNeverDestroyed<Semaphore> globalSemaphoreForSuspendResume;
 
-// We use SIGUSR1 to suspend and resume machine threads in JavaScriptCore.
-static constexpr const int SigThreadSuspendResume = SIGUSR1;
 static std::atomic<Thread*> targetThread { nullptr };
 
 void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
