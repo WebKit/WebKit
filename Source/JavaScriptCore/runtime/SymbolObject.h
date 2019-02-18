@@ -28,7 +28,7 @@ namespace JSC {
 
 class SymbolObject final : public JSWrapperObject {
 public:
-    typedef JSWrapperObject Base;
+    using Base = JSWrapperObject;
 
     static SymbolObject* create(VM& vm, Structure* structure)
     {

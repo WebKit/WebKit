@@ -1,5 +1,49 @@
 2019-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] JSWrapperObject should not be destructible
+        https://bugs.webkit.org/show_bug.cgi?id=194743
+
+        Reviewed by Saam Barati.
+
+        JSWrapperObject should be just a wrapper object for JSValue, thus, it should not be a JSDestructibleObject.
+        Currently it is destructible object because DateInstance uses it. This patch changes Base of DateInstance from
+        JSWrapperObject to JSDestructibleObject, and makes JSWrapperObject non-destructible.
+
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::BigIntObject):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * runtime/BooleanObject.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        (JSC::DateInstance::finishCreation):
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncGetTime):
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSCPoison.h:
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        * runtime/NumberObject.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * runtime/StringObject.h:
+        (JSC::StringObject::internalValue const):
+        * runtime/SymbolObject.cpp:
+        (JSC::SymbolObject::SymbolObject):
+        * runtime/SymbolObject.h:
+
+2019-02-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Shrink UnlinkedFunctionExecutable
         https://bugs.webkit.org/show_bug.cgi?id=194733
 
