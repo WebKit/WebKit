@@ -143,6 +143,7 @@ private:
     bool m_shouldDelayEventFiring { false };
     Deque<Ref<Event>> m_pendingEvents;
     bool m_dispatchedErrorEvent { false };
+    RefPtr<PendingActivity<WebSocket>> m_pendingActivity;
 };
 
 } // namespace WebCore
