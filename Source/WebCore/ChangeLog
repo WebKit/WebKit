@@ -1,3 +1,16 @@
+2019-02-18  Jer Noble  <jer.noble@apple.com>
+
+        Uncaught Exception crash in MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus()
+        https://bugs.webkit.org/show_bug.cgi?id=194786
+
+        Reviewed by Eric Carlson.
+
+        Convert a runtime crash to a debug assert by wrapping the call to -[AVPlayer removeObserver:forKeyPath:]
+        in an exception handler.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus):
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element
