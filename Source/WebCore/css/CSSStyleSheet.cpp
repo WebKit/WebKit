@@ -228,12 +228,12 @@ CSSRule* CSSStyleSheet::item(unsigned index)
 {
     unsigned ruleCount = length();
     if (index >= ruleCount)
-        return 0;
+        return nullptr;
 
-    if (m_childRuleCSSOMWrappers.isEmpty())
+    ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == ruleCount);
+    if (m_childRuleCSSOMWrappers.size() < ruleCount)
         m_childRuleCSSOMWrappers.grow(ruleCount);
-    ASSERT(m_childRuleCSSOMWrappers.size() == ruleCount);
-    
+
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
     if (!cssRule)
         cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(this);
