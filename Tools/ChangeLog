@@ -1,3 +1,12 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API test after r241728
+       ​https://bugs.webkit.org/show_bug.cgi?id=194723
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        The test should check the default preference value, not make sure the preference is NO after setting it to YES :/
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

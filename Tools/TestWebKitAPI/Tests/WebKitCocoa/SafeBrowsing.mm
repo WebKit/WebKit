@@ -170,9 +170,9 @@ TEST(SafeBrowsing, Preference)
     };
 
     auto webView = adoptNS([WKWebView new]);
+    EXPECT_FALSE([webView configuration].preferences._safeBrowsingEnabled);
     [webView configuration].preferences._safeBrowsingEnabled = YES;
     [webView setNavigationDelegate:delegate.get()];
-    EXPECT_FALSE([webView configuration].preferences._safeBrowsingEnabled);
     [webView configuration].preferences._safeBrowsingEnabled = YES;
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
     while (![webView _safeBrowsingWarning])
