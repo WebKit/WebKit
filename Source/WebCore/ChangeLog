@@ -1,3 +1,22 @@
+2019-02-18  John Wilander  <wilander@apple.com>
+
+        Check the existence of the frame in Document::hasFrameSpecificStorageAccess() and Document::setHasFrameSpecificStorageAccess()
+        https://bugs.webkit.org/show_bug.cgi?id=194777
+        <rdar://problem/47731945>
+
+        Reviewed by Geoffrey Garen and Chris Dumez.
+
+        Test: http/tests/storageAccess/remove-requesting-iframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::hasFrameSpecificStorageAccess const):
+            Now checks for the existence of the frame.
+        (WebCore::Document::setHasFrameSpecificStorageAccess):
+            Now checks for the existence of the frame.
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+            Now checks that the session ID is valid.
+
 2019-02-18  Jer Noble  <jer.noble@apple.com>
 
         -[AVSampleBufferDisplayLayer player]: Unrecognized selector crash

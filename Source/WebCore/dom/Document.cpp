@@ -8458,12 +8458,13 @@ void Document::updateMainArticleElementAfterLayout()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 bool Document::hasFrameSpecificStorageAccess() const
 {
-    return m_frame->loader().client().hasFrameSpecificStorageAccess();
+    return m_frame && m_frame->loader().client().hasFrameSpecificStorageAccess();
 }
     
 void Document::setHasFrameSpecificStorageAccess(bool value)
 {
-    m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
+    if (m_frame)
+        m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
 }
 
 bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain)

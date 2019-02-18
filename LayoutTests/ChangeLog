@@ -1,3 +1,15 @@
+2019-02-18  John Wilander  <wilander@apple.com>
+
+        Check the existence of the frame in Document::hasFrameSpecificStorageAccess() and Document::setHasFrameSpecificStorageAccess()
+        https://bugs.webkit.org/show_bug.cgi?id=194777
+        <rdar://problem/47731945>
+
+        Reviewed by Geoffrey Garen and Chris Dumez.
+
+        * http/tests/storageAccess/remove-requesting-iframe-expected.txt: Added.
+        * http/tests/storageAccess/remove-requesting-iframe.html: Added.
+        * http/tests/storageAccess/resources/request-storage-access-and-immediately-postmessage-iframe.html: Added.
+
 2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better categorize CPU usage per-thread / worker
