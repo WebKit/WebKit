@@ -81,7 +81,8 @@ void initializeThreading()
         thread.setSavedLastStackTop(thread.stack().origin());
 
 #if ENABLE(WEBASSEMBLY)
-        Wasm::Thunks::initialize();
+        if (Options::useWebAssembly())
+            Wasm::Thunks::initialize();
 #endif
 
         if (VM::isInMiniMode())

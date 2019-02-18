@@ -149,7 +149,8 @@ void JSLock::didAcquireLock()
 
     m_vm->heap.machineThreads().addCurrentThread();
 #if ENABLE(WEBASSEMBLY)
-    Wasm::startTrackingCurrentThread();
+    if (Options::useWebAssembly())
+        Wasm::startTrackingCurrentThread();
 #endif
 
 #if HAVE(MACH_EXCEPTIONS)
