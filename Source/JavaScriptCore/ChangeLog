@@ -1,3 +1,15 @@
+2019-02-13  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: don't include accessibility role in DOM.Node object payloads
+        https://bugs.webkit.org/show_bug.cgi?id=194623
+        <rdar://problem/36384037>
+
+        Reviewed by Devin Rousso.
+
+        Remove property of DOM.Node that is no longer being sent.
+
+        * inspector/protocol/DOM.json:
+
 2019-02-13  Keith Miller  <keith_miller@apple.com> and Yusuke Suzuki  <ysuzuki@apple.com>
 
         We should only make rope strings when concatenating strings long enough.

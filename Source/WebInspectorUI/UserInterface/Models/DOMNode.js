@@ -48,7 +48,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._nodeValue = payload.nodeValue;
         this._pseudoType = payload.pseudoType;
         this._shadowRootType = payload.shadowRootType;
-        this._computedRole = payload.role;
+        this._computedRole = null;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
 
         if (this._nodeType === Node.DOCUMENT_NODE)
@@ -586,6 +586,8 @@ WI.DOMNode = class DOMNode extends WI.Object
         function accessibilityPropertiesCallback(error, accessibilityProperties)
         {
             if (!error && callback && accessibilityProperties) {
+                this._computedRole = accessibilityProperties.role;
+
                 callback({
                     activeDescendantNodeId: accessibilityProperties.activeDescendantNodeId,
                     busy: accessibilityProperties.busy,
