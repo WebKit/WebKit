@@ -107,6 +107,14 @@ static inline DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction
 void DragAndDropHandler::startDrag(Ref<SelectionData>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
 {
 #if GTK_CHECK_VERSION(3, 16, 0)
+    // WebCore::EventHandler does not support more than one DnD operation at the same time for
+    // a given page, so we should cancel any previous operation whose context we might have
+    // stored, should we receive a new startDrag event before finishing a previous DnD operation.
+    if (m_dragContext) {
+        gtk_drag_cancel(m_dragContext.get());
+        m_dragContext = nullptr;
+    }
+
     m_draggingSelectionData = WTFMove(selection);
     GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForSelectionData(*m_draggingSelectionData);
 #else
@@ -119,11 +127,6 @@ void DragAndDropHandler::startDrag(Ref<SelectionData>&& selection, DragOperation
         GDK_BUTTON_PRIMARY, currentEvent.get());
 
 #if GTK_CHECK_VERSION(3, 16, 0)
-    // WebCore::EventHandler does not support more than one DnD operation at the same time for
-    // a given page, so we should cancel any previous operation whose context we might have
-    // stored, should we receive a new startDrag event before finishing a previous DnD operation.
-    if (m_dragContext)
-        gtk_drag_cancel(m_dragContext.get());
     m_dragContext = context;
 #else
     // We don't have gtk_drag_cancel() in GTK+ < 3.16, so we use the old code.
