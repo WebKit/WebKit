@@ -1,3 +1,15 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable safe browsing in WKWebView and remove its WKPreferences API
+        https://bugs.webkit.org/show_bug.cgi?id=194723
+        <rdar://problem/48122993>
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/mac-wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt:
+        This test has results that depend on timing, and I need to update its results when I disable safe browsing.
+        I've done this several times before.  See r237876 for an example.
+
 2019-02-18  Antoine Quint  <graouts@apple.com>
 
         [iOS] Dispatch additional events along with pointerdown and pointerup

@@ -10,8 +10,6 @@ CONSOLE MESSAGE: line 52: Inserting text "c".
 CONSOLE MESSAGE: line 55: Pasting text "d".
 CONSOLE MESSAGE: line 58: Input element value after text input events: "".
 CONSOLE MESSAGE: line 20: Pressing "z" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.
-CONSOLE MESSAGE: line 18: keydownevent dispatched (isTrusted: true).
-CONSOLE MESSAGE: line 18: keyupevent dispatched (isTrusted: true).
 CONSOLE MESSAGE: line 6: Finished navigating to resources/keyboard-events-after-navigation.html.
 CONSOLE MESSAGE: line 7: Trusted events should be logged and the input element should have the value "acd".
 CONSOLE MESSAGE: line 34: Dispatching untrusted keypress event.

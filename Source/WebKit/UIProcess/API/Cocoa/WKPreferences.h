@@ -53,12 +53,6 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  */
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
-/*! @abstract A Boolean value indicating whether warnings should be
- shown for suspected unsafe content such as phishing or malware.
- @discussion The default value is YES.
- */
-@property (nonatomic, getter=isSafeBrowsingEnabled) BOOL safeBrowsingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 #if !TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether Java is enabled.
  @discussion The default value is NO.

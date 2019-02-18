@@ -1,3 +1,17 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable safe browsing in WKWebView and remove its WKPreferences API
+        https://bugs.webkit.org/show_bug.cgi?id=194723
+        <rdar://problem/48122993>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        (safeBrowsingView):
+        Make tests use SPI instead of API.
+
 2019-02-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use dumpJSConsoleLogInStdErr=true webkit-test-runner option for non-imported tests instead of using DumpJSConsoleLogInStdErr expectation in TestExpectations

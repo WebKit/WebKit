@@ -1,3 +1,17 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable safe browsing in WKWebView and remove its WKPreferences API
+        https://bugs.webkit.org/show_bug.cgi?id=194723
+        <rdar://problem/48122993>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences setSafeBrowsingEnabled:]): Deleted.
+        (-[WKPreferences isSafeBrowsingEnabled]): Deleted.
+
 2019-02-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: PSON: Going back from apple.com to search results, cannot interact with HTML content. Disabling Swap Processes on Cross-Site Navigation resolves the issue.
