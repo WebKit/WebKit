@@ -512,7 +512,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         var name = payload.name;
         var value = payload.value || "";
         var priority = payload.priority || "";
-        let range = payload.range || null;
 
         var enabled = true;
         var overridden = false;
@@ -535,19 +534,6 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             // FIXME: Is this still needed? This includes UserAgent styles and HTML attribute styles.
             anonymous = true;
             break;
-        }
-
-        if (range) {
-            // Last property of inline style has mismatching range.
-            // The actual text has one line, but the range spans two lines.
-            let rangeLineCount = 1 + range.endLine - range.startLine;
-            if (rangeLineCount > 1) {
-                let textLineCount = text.lineCount;
-                if (textLineCount === rangeLineCount - 1) {
-                    range.endLine = range.startLine + (textLineCount - 1);
-                    range.endColumn = range.startColumn + text.lastLine.length;
-                }
-            }
         }
 
         var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
