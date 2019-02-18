@@ -39,7 +39,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
-#include <wtf/Environment.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
@@ -177,7 +176,7 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
     bool available = (availability == Options::Availability::Normal)
         || Options::isAvailable(id, availability);
 
-    const char* stringValue = Environment::getRaw(name);
+    const char* stringValue = getenv(name);
     if (!stringValue)
         return false;
     
@@ -190,11 +189,12 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
 
 bool Options::overrideAliasedOptionWithHeuristic(const char* name)
 {
-    const char* stringValue = Environment::getRaw(name);
+    const char* stringValue = getenv(name);
     if (!stringValue)
         return false;
 
-    auto aliasedOption = makeString(&name[4], "=", stringValue);
+    String aliasedOption;
+    aliasedOption = String(&name[4]) + "=" + stringValue;
     if (Options::setOption(aliasedOption.utf8().data()))
         return true;
 
@@ -597,9 +597,9 @@ void Options::initialize()
 
 #if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_FAST_MEMORY)
             if (Options::useWebAssemblyFastMemory()) {
-                auto asanOptions = Environment::get("ASAN_OPTIONS");
+                const char* asanOptions = getenv("ASAN_OPTIONS");
                 bool okToUseWebAssemblyFastMemory = asanOptions
-                    && asanOptions->contains("allow_user_segv_handler=1") || asanOptions->contains("handle_segv=0");
+                    && (strstr(asanOptions, "allow_user_segv_handler=1") || strstr(asanOptions, "handle_segv=0"));
                 if (!okToUseWebAssemblyFastMemory) {
                     dataLogLn("WARNING: ASAN interferes with JSC signal handlers; useWebAssemblyFastMemory will be disabled.");
                     Options::useWebAssemblyFastMemory() = false;

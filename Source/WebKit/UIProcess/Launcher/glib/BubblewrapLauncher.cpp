@@ -25,7 +25,6 @@
 #include <glib.h>
 #include <seccomp.h>
 #include <sys/ioctl.h>
-#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -166,7 +165,7 @@ public:
             syncFdStr.get(),
         };
 
-        if (Environment::hasValue("WEBKIT_ENABLE_DBUS_PROXY_LOGGING", "1"))
+        if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"))
             proxyArgs.append("--log");
 
         proxyArgs.appendVector(m_permissions);
@@ -283,7 +282,7 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
 static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
 {
     if (!proxy.isRunning())
-        proxy.setAddress(Environment::getRaw("DBUS_SESSION_BUS_ADDRESS"), DBusAddressType::Normal);
+        proxy.setAddress(g_getenv("DBUS_SESSION_BUS_ADDRESS"), DBusAddressType::Normal);
 
     if (proxy.proxyPath().data()) {
         args.appendVector(Vector<CString>({
@@ -294,25 +293,25 @@ static void bindDBusSession(Vector<CString>& args, XDGDBusProxyLauncher& proxy)
 
 static void bindX11(Vector<CString>& args)
 {
-    const char* display = Environment::getRaw("DISPLAY");
+    const char* display = g_getenv("DISPLAY");
     if (!display || display[0] != ':' || !g_ascii_isdigit(const_cast<char*>(display)[1]))
         display = ":0";
     GUniquePtr<char> x11File(g_strdup_printf("/tmp/.X11-unix/X%s", display + 1));
     bindIfExists(args, x11File.get(), BindFlags::ReadWrite);
 
-    if (const char* xauth = Environment::getRaw("XAUTHORITY"))
-        bindIfExists(args, xauth);
-    else {
+    const char* xauth = g_getenv("XAUTHORITY");
+    if (!xauth) {
         const char* homeDir = g_get_home_dir();
         GUniquePtr<char> xauthFile(g_build_filename(homeDir, ".Xauthority", nullptr));
         bindIfExists(args, xauthFile.get());
-    }
+    } else
+        bindIfExists(args, xauth);
 }
 
 #if PLATFORM(WAYLAND) && USE(EGL)
 static void bindWayland(Vector<CString>& args)
 {
-    const char* display = Environment::getRaw("WAYLAND_DISPLAY");
+    const char* display = g_getenv("WAYLAND_DISPLAY");
     if (!display)
         display = "wayland-0";
 
@@ -326,7 +325,8 @@ static void bindPulse(Vector<CString>& args)
 {
     // FIXME: The server can be defined in config files we'd have to parse.
     // They can also be set as X11 props but that is getting a bit ridiculous.
-    if (const char* pulseServer = Environment::getRaw("PULSE_SERVER")) {
+    const char* pulseServer = g_getenv("PULSE_SERVER");
+    if (pulseServer) {
         if (g_str_has_prefix(pulseServer, "unix:"))
             bindIfExists(args, pulseServer + 5, BindFlags::ReadWrite);
         // else it uses tcp
@@ -336,7 +336,8 @@ static void bindPulse(Vector<CString>& args)
         bindIfExists(args, pulseRuntimeDir.get(), BindFlags::ReadWrite);
     }
 
-    if (const char* pulseConfig = Environment::getRaw("PULSE_CLIENTCONFIG"))
+    const char* pulseConfig = g_getenv("PULSE_CLIENTCONFIG");
+    if (pulseConfig)
         bindIfExists(args, pulseConfig);
 
     const char* configDir = g_get_user_config_dir();
@@ -449,7 +450,7 @@ static void bindA11y(Vector<CString>& args)
 
 static bool bindPathVar(Vector<CString>& args, const char* varname)
 {
-    const char* pathValue = Environment::getRaw(varname);
+    const char* pathValue = g_getenv(varname);
     if (!pathValue)
         return false;
 
@@ -476,8 +477,8 @@ static void bindGStreamerData(Vector<CString>& args)
     bindIfExists(args, gstCache.get(), BindFlags::ReadWrite);
 
     // /usr/lib is already added so this is only requried for other dirs
-    const char* scannerPath = Environment::getRaw("GST_PLUGIN_SCANNER") ?: "/usr/libexec/gstreamer-1.0/gst-plugin-scanner";
-    const char* helperPath = Environment::getRaw("GST_INSTALL_PLUGINS_HELPER ") ?: "/usr/libexec/gst-install-plugins-helper";
+    const char* scannerPath = g_getenv("GST_PLUGIN_SCANNER") ?: "/usr/libexec/gstreamer-1.0/gst-plugin-scanner";
+    const char* helperPath = g_getenv("GST_INSTALL_PLUGINS_HELPER ") ?: "/usr/libexec/gst-install-plugins-helper";
 
     bindIfExists(args, scannerPath);
     bindIfExists(args, helperPath);
@@ -719,12 +720,12 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     // We would have to parse ld config files for more info.
     bindPathVar(sandboxArgs, "LD_LIBRARY_PATH");
 
-    auto libraryPath = Environment::get("LD_LIBRARY_PATH");
-    if (libraryPath && !libraryPath->isEmpty()) {
+    const char* libraryPath = g_getenv("LD_LIBRARY_PATH");
+    if (libraryPath && libraryPath[0]) {
         // On distros using a suid bwrap it drops this env var
         // so we have to pass it through to the children.
         sandboxArgs.appendVector(Vector<CString>({
-            "--setenv", "LD_LIBRARY_PATH", libraryPath->utf8(),
+            "--setenv", "LD_LIBRARY_PATH", libraryPath,
         }));
     }
 
@@ -803,8 +804,9 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     }
 
 #if ENABLE(DEVELOPER_MODE)
-    if (auto execDirectory = Environment::get("WEBKIT_EXEC_PATH")) {
-        auto parentDir = FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(execDirectory->utf8().data()));
+    const char* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
+    if (execDirectory) {
+        String parentDir = FileSystem::directoryName(FileSystem::stringFromFileSystemRepresentation(execDirectory));
         bindIfExists(sandboxArgs, parentDir.utf8().data());
     }
 

@@ -24,7 +24,7 @@
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#include <wtf/Environment.h>
+#include <string.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -32,7 +32,7 @@ namespace WebCore {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    auto logEnv = Environment::get("WEBKIT_DEBUG");
+    char* logEnv = getenv("WEBKIT_DEBUG");
     if (!logEnv)
         return emptyString();
 
@@ -42,7 +42,7 @@ String logLevelString()
 #endif
 
     // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
-    return makeString("NotYetImplemented,", *logEnv);
+    return String("NotYetImplemented,") + logEnv;
 #else
     return String();
 #endif

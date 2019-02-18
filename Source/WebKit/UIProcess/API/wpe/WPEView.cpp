@@ -36,7 +36,6 @@
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
 #include <wpe/wpe.h>
-#include <wtf/Environment.h>
 
 using namespace WebKit;
 
@@ -71,7 +70,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
 
 #if ENABLE(MEMORY_SAMPLER)
-    if (Environment::get("WEBKIT_SAMPLE_MEMORY"))
+    if (getenv("WEBKIT_SAMPLE_MEMORY"))
         pool->startMemorySampler(0);
 #endif
 

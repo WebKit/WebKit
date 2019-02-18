@@ -83,7 +83,6 @@
 #include <type_traits>
 #include <wtf/Box.h>
 #include <wtf/CommaPrinter.h>
-#include <wtf/Environment.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
@@ -2251,11 +2250,9 @@ static double s_timeoutMultiplier = 1.0;
 
 static void startTimeoutThreadIfNeeded()
 {
-    if (auto timeoutString = Environment::get("JSCTEST_timeout")) {
-        bool ok;
-        s_desiredTimeout = timeoutString->toDouble(&ok);
-        if (!ok) {
-            dataLog("WARNING: timeout string is malformed, got ", *timeoutString,
+    if (char* timeoutString = getenv("JSCTEST_timeout")) {
+        if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
+            dataLog("WARNING: timeout string is malformed, got ", timeoutString,
                 " but expected a number. Not using a timeout.\n");
         } else {
             Thread::create("jsc Timeout Thread", [] () {

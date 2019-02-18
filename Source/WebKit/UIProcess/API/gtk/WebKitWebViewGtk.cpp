@@ -29,7 +29,6 @@
 #include <WebCore/PlatformScreen.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
-#include <wtf/Environment.h>
 
 gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationRequest* request)
 {
@@ -195,7 +194,8 @@ void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support maximize, so we resize the window to the screen size.
     if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
-        if (Environment::hasValue("UNDER_XVFB", "yes")) {
+        const char* underXvfb = g_getenv("UNDER_XVFB");
+        if (!g_strcmp0(underXvfb, "yes")) {
             auto screenRect = WebCore::screenAvailableRect(nullptr);
             gtk_window_move(window, screenRect.x(), screenRect.y());
             gtk_window_resize(window, screenRect.width(), screenRect.height());
@@ -247,7 +247,8 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support maximize, so we resize the window to the default size.
     if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
-        if (Environment::hasValue("UNDER_XVFB", "yes")) {
+        const char* underXvfb = g_getenv("UNDER_XVFB");
+        if (!g_strcmp0(underXvfb, "yes")) {
             int x, y;
             gtk_window_get_default_size(window, &x, &y);
             gtk_window_resize(window, x, y);

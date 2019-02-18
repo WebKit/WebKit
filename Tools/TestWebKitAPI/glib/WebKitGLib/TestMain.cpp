@@ -21,7 +21,6 @@
 #include "TestMain.h"
 
 #include <glib/gstdio.h>
-#include <wtf/Environment.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -67,19 +66,19 @@ static void removeNonEmptyDirectory(const char* directoryPath)
 
 int main(int argc, char** argv)
 {
-    Environment::remove("DBUS_SESSION_BUS_ADDRESS");
+    g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
 #if PLATFORM(GTK)
     gtk_test_init(&argc, &argv, nullptr);
 #else
     g_test_init(&argc, &argv, nullptr);
 #endif
-    Environment::setIfNotDefined("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH);
-    Environment::setIfNotDefined("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH);
-    Environment::set("LC_ALL", "C");
-    Environment::set("GIO_USE_VFS", "local");
-    Environment::set("GSETTINGS_BACKEND", "memory");
+    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
+    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+    g_setenv("LC_ALL", "C", TRUE);
+    g_setenv("GIO_USE_VFS", "local", TRUE);
+    g_setenv("GSETTINGS_BACKEND", "memory", TRUE);
     // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
-    Environment::set("G_ENABLE_DIAGNOSTIC", "0");
+    g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();

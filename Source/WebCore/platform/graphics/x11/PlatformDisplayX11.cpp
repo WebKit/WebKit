@@ -27,7 +27,6 @@
 #include "PlatformDisplayX11.h"
 
 #include "GLContext.h"
-#include <wtf/Environment.h>
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
@@ -45,7 +44,7 @@ namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create()
 {
-    Display* display = XOpenDisplay(Environment::getRaw("DISPLAY"));
+    Display* display = XOpenDisplay(getenv("DISPLAY"));
     if (!display)
         return nullptr;
 

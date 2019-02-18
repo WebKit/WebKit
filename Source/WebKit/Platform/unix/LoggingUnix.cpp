@@ -27,22 +27,19 @@
 #include "config.h"
 #include "Logging.h"
 
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-
-#include <wtf/Environment.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebKit {
+
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 String logLevelString()
 {
 #if !LOG_DISABLED
-    return Environment::get("WEBKIT_DEBUG").valueOr(emptyString());
+    return getenv("WEBKIT_DEBUG");
 #else
     return String();
 #endif
 }
 
-} // namespace WebKit
-
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+}

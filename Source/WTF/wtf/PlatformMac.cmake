@@ -64,7 +64,6 @@ list(APPEND WTF_SOURCES
     mac/FileSystemMac.mm
     mac/SchedulePairMac.mm
 
-    posix/EnvironmentPOSIX.cpp
     posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp

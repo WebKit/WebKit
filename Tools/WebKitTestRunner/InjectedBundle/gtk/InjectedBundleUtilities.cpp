@@ -30,7 +30,6 @@
 #include "InjectedBundleUtilities.h"
 
 #include <gtk/gtk.h>
-#include <wtf/Environment.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -38,8 +37,8 @@ namespace WTR {
 
 CString topLevelPath()
 {
-    if (auto topLevelDirectory = Environment::get("WEBKIT_TOP_LEVEL"))
-        return topLevelDirectory->utf8();
+    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
+        return topLevelDirectory;
 
     // If the environment variable wasn't provided then assume we were built into
     // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build

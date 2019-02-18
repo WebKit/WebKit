@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
-#include <wtf/Environment.h>
 #include <wtf/FileMetadata.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -425,8 +424,8 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     char buffer[PATH_MAX];
+    const char* tmpDir = getenv("TMPDIR");
 
-    const char* tmpDir = Environment::getRaw("TMPDIR");
     if (!tmpDir)
         tmpDir = "/tmp";
 

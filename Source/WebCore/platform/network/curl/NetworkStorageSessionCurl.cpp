@@ -35,7 +35,6 @@
 #include "CurlContext.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
-#include <wtf/Environment.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -47,8 +46,9 @@ namespace WebCore {
 static String defaultCookieJarPath()
 {
     static const char* defaultFileName = "cookie.jar.db";
-    if (auto cookieJarPath = Environment::get("CURL_COOKIE_JAR_PATH"))
-        return *cookieJarPath;
+    char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
+    if (cookieJarPath)
+        return cookieJarPath;
 
 #if PLATFORM(WIN)
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);

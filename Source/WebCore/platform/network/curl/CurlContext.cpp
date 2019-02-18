@@ -35,7 +35,6 @@
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
 #include <mutex>
-#include <wtf/Environment.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -47,6 +46,36 @@
 #endif
 
 namespace WebCore {
+
+class EnvironmentVariableReader {
+public:
+    const char* read(const char* name) { return ::getenv(name); }
+    bool defined(const char* name) { return read(name) != nullptr; }
+
+    template<typename T> Optional<T> readAs(const char* name)
+    {
+        if (const char* valueStr = read(name)) {
+            T value;
+            if (sscanf(valueStr, sscanTemplate<T>(), &value) == 1)
+                return value;
+        }
+
+        return WTF::nullopt;
+    }
+
+private:
+    template<typename T> const char* sscanTemplate()
+    {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+};
+
+template<>
+constexpr const char* EnvironmentVariableReader::sscanTemplate<signed>() { return "%d"; }
+
+template<>
+constexpr const char* EnvironmentVariableReader::sscanTemplate<unsigned>() { return "%u"; }
 
 // ALPN Protocol ID (RFC7301) https://tools.ietf.org/html/rfc7301
 static const ASCIILiteral httpVersion10 { "http/1.0"_s };
@@ -65,31 +94,34 @@ CurlContext::CurlContext()
 {
     initShareHandle();
 
-    if (auto value = Environment::getUInt("WEBKIT_CURL_DNS_CACHE_TIMEOUT"))
+    EnvironmentVariableReader envVar;
+
+    if (auto value = envVar.readAs<unsigned>("WEBKIT_CURL_DNS_CACHE_TIMEOUT"))
         m_dnsCacheTimeout = Seconds(*value);
 
-    if (auto value = Environment::getUInt("WEBKIT_CURL_CONNECT_TIMEOUT"))
+    if (auto value = envVar.readAs<unsigned>("WEBKIT_CURL_CONNECT_TIMEOUT"))
         m_connectTimeout = Seconds(*value);
 
     long maxConnects { CurlDefaultMaxConnects };
     long maxTotalConnections { CurlDefaultMaxTotalConnections };
     long maxHostConnections { CurlDefaultMaxHostConnections };
 
-    if (auto value = Environment::getInt("WEBKIT_CURL_MAXCONNECTS"))
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAXCONNECTS"))
         maxConnects = *value;
 
-    if (auto value = Environment::getInt("WEBKIT_CURL_MAX_TOTAL_CONNECTIONS"))
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_TOTAL_CONNECTIONS"))
         maxTotalConnections = *value;
 
-    if (auto value = Environment::getInt("WEBKIT_CURL_MAX_HOST_CONNECTIONS"))
+    if (auto value = envVar.readAs<signed>("WEBKIT_CURL_MAX_HOST_CONNECTIONS"))
         maxHostConnections = *value;
 
     m_scheduler = std::make_unique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
 #ifndef NDEBUG
-    m_verbose = !!Environment::get("DEBUG_CURL");
+    m_verbose = envVar.defined("DEBUG_CURL");
 
-    if (const char* logFile = Environment::getRaw("CURL_LOG_FILE"))
+    auto logFile = envVar.read("CURL_LOG_FILE");
+    if (logFile)
         m_logFile = fopen(logFile, "a");
 #endif
 }

@@ -61,8 +61,6 @@ enum class ThreadGroupAddResult;
 class ThreadGroup;
 class PrintStream;
 
-WTF_EXPORT_PRIVATE bool threadingIsInitialized();
-
 // This function can be called from any threads.
 WTF_EXPORT_PRIVATE void initializeThreading();
 

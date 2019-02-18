@@ -26,7 +26,6 @@ list(APPEND WTF_SOURCES
     linux/MemoryFootprintLinux.cpp
     linux/MemoryPressureHandlerLinux.cpp
 
-    posix/EnvironmentPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 

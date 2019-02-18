@@ -26,15 +26,14 @@
 #include "config.h"
 #include <wtf/DataLog.h>
 
-#include <mutex>
 #include <stdarg.h>
 #include <string.h>
-#include <thread>
-#include <wtf/Environment.h>
 #include <wtf/FilePrintStream.h>
 #include <wtf/LockedPrintStream.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Threading.h>
+#include <mutex>
+#include <thread>
 
 #if OS(UNIX) || OS(DARWIN)
 #include <unistd.h>
@@ -94,7 +93,7 @@ static void initializeLogFileOnce()
 #elif defined(DATA_LOG_FILENAME)
     filename = DATA_LOG_FILENAME;
 #else
-    filename = Environment::getRaw("WTF_DATA_LOG_FILENAME");
+    filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
     char actualFilename[maxPathLength + 1];
 

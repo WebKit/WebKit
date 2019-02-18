@@ -29,7 +29,7 @@
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
 #include <windows.h>
-#include <wtf/Environment.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,7 +37,17 @@ namespace WebCore {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    return Environment::get("WebCoreLogging").valueOr(emptyString());
+    static char* const loggingEnvironmentVariable = "WebCoreLogging";
+    DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
+    if (!length)
+        return emptyString();
+
+    Vector<char> buffer(length);
+
+    if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.data(), length))
+        return emptyString();
+
+    return String(buffer.data());
 #else
     return String();
 #endif
