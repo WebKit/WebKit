@@ -70,6 +70,7 @@ private:
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in " what); \
         result = m_expressionStack.takeLast();                                              \
+        m_toKillAfterExpression.append(result);                                             \
     } while (0)
 
     template<OpType>
@@ -90,6 +91,8 @@ private:
 
     OpType m_currentOpcode;
     size_t m_currentOpcodeStartingOffset { 0 };
+
+    Vector<ExpressionType, 8> m_toKillAfterExpression;
 
     unsigned m_unreachableBlocks { 0 };
 };
@@ -136,6 +139,8 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
     m_controlStack.append({ ExpressionList(), m_context.addTopLevel(m_signature.returnType()) });
     uint8_t op;
     while (m_controlStack.size()) {
+        ASSERT(m_toKillAfterExpression.isEmpty());
+
         m_currentOpcodeStartingOffset = m_offset;
         WASM_PARSER_FAIL_IF(!parseUInt8(op), "can't decode opcode");
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
@@ -149,8 +154,11 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 
         if (m_unreachableBlocks)
             WASM_FAIL_IF_HELPER_FAILS(parseUnreachableExpression());
-        else
+        else {
             WASM_FAIL_IF_HELPER_FAILS(parseExpression());
+            while (m_toKillAfterExpression.size())
+                m_context.didKill(m_toKillAfterExpression.takeLast());
+        }
     }
 
     ASSERT(op == OpType::End);
@@ -481,7 +489,8 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
 
     case Drop: {
         WASM_PARSER_FAIL_IF(!m_expressionStack.size(), "can't drop on empty stack");
-        m_expressionStack.takeLast();
+        auto expression = m_expressionStack.takeLast();
+        m_toKillAfterExpression.append(expression);
         return { };
     }
 

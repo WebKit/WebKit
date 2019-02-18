@@ -56,6 +56,7 @@ assembler/Printer.cpp
 assembler/ProbeContext.cpp
 assembler/ProbeStack.cpp
 
+b3/air/AirAllocateRegistersAndStackAndGenerateCode.cpp
 b3/air/AirAllocateRegistersAndStackByLinearScan.cpp
 b3/air/AirAllocateRegistersByGraphColoring.cpp
 b3/air/AirAllocateStackByGraphColoring.cpp

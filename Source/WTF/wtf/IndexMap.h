@@ -37,9 +37,11 @@ namespace WTF {
 template<typename Key, typename Value>
 class IndexMap {
 public:
-    IndexMap()
-    {
-    }
+    IndexMap() = default;
+    IndexMap(IndexMap&&) = default;
+    IndexMap& operator=(IndexMap&&) = default;
+    IndexMap(const IndexMap&) = default;
+    IndexMap& operator=(const IndexMap&) = default;
     
     template<typename... Args>
     explicit IndexMap(size_t size, Args&&... args)
@@ -61,25 +63,30 @@ public:
 
     size_t size() const { return m_vector.size(); }
 
-    Value& operator[](size_t index)
+    Value& at(const Key& key)
+    {
+        return m_vector[IndexKeyType<Key>::index(key)];
+    }
+    
+    const Value& at(const Key& key) const
+    {
+        return m_vector[IndexKeyType<Key>::index(key)];
+    }
+
+    Value& at(size_t index)
     {
         return m_vector[index];
     }
 
-    const Value& operator[](size_t index) const
+    const Value& at(size_t index) const
     {
         return m_vector[index];
     }
     
-    Value& operator[](const Key& key)
-    {
-        return m_vector[IndexKeyType<Key>::index(key)];
-    }
-    
-    const Value& operator[](const Key& key) const
-    {
-        return m_vector[IndexKeyType<Key>::index(key)];
-    }
+    Value& operator[](size_t index) { return at(index); }
+    const Value& operator[](size_t index) const { return at(index); }
+    Value& operator[](const Key& key) { return at(key); }
+    const Value& operator[](const Key& key) const { return at(key); }
     
     template<typename PassedValue>
     void append(const Key& key, PassedValue&& value)

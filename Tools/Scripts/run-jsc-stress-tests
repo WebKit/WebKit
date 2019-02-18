@@ -486,6 +486,7 @@ EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", 
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
 B3O1_OPTIONS = ["--defaultB3OptLevel=1"]
+B3O0_OPTIONS = ["--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 PROBE_OSR_EXIT_OPTION = ["--useProbeOSRExit=true"]
 
@@ -678,8 +679,8 @@ def runFTLNoCJIT(*optionalTestSpecificOptions)
     run("misc-ftl-no-cjit", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runFTLNoCJITB3O1(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-b3o1", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
+def runFTLNoCJITB3O0(*optionalTestSpecificOptions)
+    run("ftl-no-cjit-b3o0", "--useArrayAllocationProfiling=false", "--forcePolyProto=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O0_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)
@@ -781,7 +782,7 @@ def defaultRun
             return if $mode == "basic"
 
             runFTLNoCJITValidate
-            runFTLNoCJITB3O1
+            runFTLNoCJITB3O0
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEagerNoCJITB3O1
@@ -811,7 +812,7 @@ def defaultNoNoLLIntRun
 
             return if $mode == "basic"
 
-            runFTLNoCJITB3O1
+            runFTLNoCJITB3O0
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
@@ -840,7 +841,7 @@ def defaultSpotCheckNoMaximalFlush
 
     runFTLNoCJITOSRValidation
     runFTLNoCJITNoAccessInlining
-    runFTLNoCJITB3O1
+    runFTLNoCJITB3O0
 end
 
 def defaultSpotCheck
@@ -866,7 +867,7 @@ def defaultNoEagerRun
         return if $mode == "basic"
 
         runFTLNoCJITNoInlineValidate
-        runFTLNoCJITB3O1
+        runFTLNoCJITB3O0
     end
 end
 
