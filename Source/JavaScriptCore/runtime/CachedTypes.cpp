@@ -1266,8 +1266,8 @@ public:
     {
         m_sourceOrigin.encode(encoder, sourceProvider.sourceOrigin());
         m_url.encode(encoder, sourceProvider.url());
-        m_sourceURLDirective.encode(encoder, sourceProvider.sourceURL());
-        m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURL());
+        m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
+        m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
         m_startPosition.encode(encoder, sourceProvider.startPosition());
     }
 
@@ -1429,6 +1429,24 @@ private:
     int m_startColumn;
 };
 
+class CachedFunctionExecutableRareData : public CachedObject<UnlinkedFunctionExecutable::RareData> {
+public:
+    void encode(Encoder& encoder, const UnlinkedFunctionExecutable::RareData& rareData)
+    {
+        m_classSource.encode(encoder, rareData.m_classSource);
+    }
+
+    UnlinkedFunctionExecutable::RareData* decode(Decoder& decoder) const
+    {
+        UnlinkedFunctionExecutable::RareData* rareData = new UnlinkedFunctionExecutable::RareData { };
+        m_classSource.decode(decoder, rareData->m_classSource);
+        return rareData;
+    }
+
+private:
+    CachedSourceCode m_classSource;
+};
+
 class CachedFunctionExecutable : public CachedObject<UnlinkedFunctionExecutable> {
 public:
     void encode(Encoder&, const UnlinkedFunctionExecutable&);
@@ -1464,6 +1482,8 @@ public:
     Identifier ecmaName(Decoder& decoder) const { return m_ecmaName.decode(decoder); }
     Identifier inferredName(Decoder& decoder) const { return m_inferredName.decode(decoder); }
 
+    UnlinkedFunctionExecutable::RareData* rareData(Decoder& decoder) const { return m_rareData.decodeAsPtr(decoder); }
+
 private:
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
@@ -1489,7 +1509,7 @@ private:
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
 
-    CachedSourceCode m_classSource;
+    CachedOptional<CachedFunctionExecutableRareData> m_rareData;
 
     CachedIdentifier m_name;
     CachedIdentifier m_ecmaName;
@@ -1824,7 +1844,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_superBinding = executable.m_superBinding;
     m_derivedContextType = executable.m_derivedContextType;
 
-    m_classSource.encode(encoder, executable.m_classSource);
+    m_rareData.encode(encoder, executable.m_rareData);
 
     m_name.encode(encoder, executable.name());
     m_ecmaName.encode(encoder, executable.ecmaName());
@@ -1844,7 +1864,6 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
     UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, env, *this);
     executable->finishCreation(decoder.vm());
 
-    m_classSource.decode(decoder, executable->m_classSource);
     m_unlinkedCodeBlockForCall.decode(decoder, executable->m_unlinkedCodeBlockForCall, executable);
     m_unlinkedCodeBlockForConstruct.decode(decoder, executable->m_unlinkedCodeBlockForConstruct, executable);
 
@@ -1882,6 +1901,8 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_inferredName(cachedExecutable.inferredName(decoder))
 
     , m_parentScopeTDZVariables(decoder.vm().m_compactVariableMap->get(parentScopeTDZVariables))
+
+    , m_rareData(cachedExecutable.rareData(decoder))
 {
 }
 

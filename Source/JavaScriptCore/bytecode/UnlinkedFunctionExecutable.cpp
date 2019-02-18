@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-static_assert(sizeof(UnlinkedFunctionExecutable) <= 160, "UnlinkedFunctionExecutable should fit in a 160-byte cell. If you increase the size of this class, consider making a size class that perfectly fits it.");
+static_assert(sizeof(UnlinkedFunctionExecutable) <= 128, "UnlinkedFunctionExecutable should fit in a 128-byte cell to keep allocated blocks count to only one after initializing JSGlobalObject.");
 
 const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 
@@ -106,7 +106,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_name(node->ident())
     , m_ecmaName(node->ecmaName())
     , m_inferredName(node->inferredName())
-    , m_classSource(node->classSource())
     , m_parentScopeTDZVariables(WTFMove(parentScopeTDZVariables))
 {
     // Make sure these bitfields are adequately wide.
@@ -117,6 +116,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     ASSERT(m_superBinding == static_cast<unsigned>(node->superBinding()));
     ASSERT(m_derivedContextType == static_cast<unsigned>(derivedContextType));
     ASSERT(!(m_isBuiltinDefaultClassConstructor && constructorKind() == ConstructorKind::None));
+    if (!node->classSource().isNull())
+        setClassSource(node->classSource());
 }
 
 void UnlinkedFunctionExecutable::destroy(JSCell* cell)
@@ -241,6 +242,13 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
     vm.unlinkedFunctionExecutableSpace.set.add(this);
     return result;
+}
+
+UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()
+{
+    ASSERT(!m_rareData);
+    m_rareData = std::make_unique<RareData>();
+    return *m_rareData;
 }
 
 void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()

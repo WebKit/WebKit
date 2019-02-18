@@ -70,8 +70,10 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         bool endColumnIsOnStartLine = !lineCount;
         unsigned endColumn = unlinkedCodeBlock->endColumn() + (endColumnIsOnStartLine ? startColumn : 1);
         executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine().oneBasedInt() + lineCount, endColumn);
-        source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
-        source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
+        if (!unlinkedCodeBlock->sourceURLDirective().isNull())
+            source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
+        if (!unlinkedCodeBlock->sourceMappingURLDirective().isNull())
+            source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
         return unlinkedCodeBlock;
     }
 
@@ -115,8 +117,10 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
         functionConstructorParametersEndPosition);
     UnlinkedFunctionExecutable* executable = m_sourceCode.findCacheAndUpdateAge<UnlinkedFunctionExecutable>(vm, key);
     if (executable && Options::useCodeCache()) {
-        source.provider()->setSourceURLDirective(executable->sourceURLDirective());
-        source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());
+        if (!executable->sourceURLDirective().isNull())
+            source.provider()->setSourceURLDirective(executable->sourceURLDirective());
+        if (!executable->sourceMappingURLDirective().isNull())
+            source.provider()->setSourceMappingURLDirective(executable->sourceMappingURLDirective());
         return executable;
     }
 
@@ -149,8 +153,10 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, vm.m_compactVariableMap->get(emptyTDZVariables), DerivedContextType::None);
 
-    functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
-    functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());
+    if (!source.provider()->sourceURLDirective().isNull())
+        functionExecutable->setSourceURLDirective(source.provider()->sourceURLDirective());
+    if (!source.provider()->sourceMappingURLDirective().isNull())
+        functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
 
     if (Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));

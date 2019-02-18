@@ -863,7 +863,7 @@ String SamplingProfiler::StackFrame::url()
 
     String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
     if (url.isEmpty())
-        return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURL(); // Fall back to sourceURL directive.
+        return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURLDirective(); // Fall back to sourceURL directive.
     return url;
 }
 
