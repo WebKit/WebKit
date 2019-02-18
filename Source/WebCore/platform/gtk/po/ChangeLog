@@ -1,3 +1,12 @@
+2019-02-14  Milo Casagrande  <milo@milo.name>
+
+        [l10n] Updated Italian translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=194652
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * it.po:
+
 2019-01-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Expose JavaScriptCore options in GLib public API
