@@ -1,3 +1,47 @@
+2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not even allocate JIT worklists in non-JIT mode
+        https://bugs.webkit.org/show_bug.cgi?id=194693
+
+        Reviewed by Mark Lam.
+
+        Heap always allocates JIT worklists for Baseline, DFG, and FTL. While they do not have actual threads, Worklist itself already allocates some memory.
+        And we do not perform any GC operations that are only meaningful in JIT environment.
+
+        1. We add VM::canUseJIT() check in Heap's ensureXXXWorklist things to prevent them from being allocated.
+        2. We remove DFG marking constraint in non-JIT mode.
+        3. We do not gather conservative roots from scratch buffers under the non-JIT mode (BTW, # of scratch buffers are always zero in non-JIT mode)
+        4. We do not visit JITStubRoutineSet.
+        5. Align JITWorklist function names to the other worklists.
+
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::markCodeBlocks): Deleted.
+        * dfg/DFGWorklist.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::completeAllJITPlans):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::gatherScratchBufferRoots):
+        (JSC::Heap::removeDeadCompilerWorklistEntries):
+        (JSC::Heap::stopThePeriphery):
+        (JSC::Heap::suspendCompilerThreads):
+        (JSC::Heap::resumeCompilerThreads):
+        (JSC::Heap::addCoreConstraints):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::existingGlobalWorklistOrNull):
+        (JSC::JITWorklist::ensureGlobalWorklist):
+        (JSC::JITWorklist::instance): Deleted.
+        * jit/JITWorklist.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        (JSC::VM::gatherScratchBufferRoots):
+        (JSC::VM::gatherConservativeRoots): Deleted.
+        * runtime/VM.h:
+
 2019-02-15  Saam barati  <sbarati@apple.com>
 
         [WebAssembly] Write a new register allocator for Air O0 and make BBQ use it

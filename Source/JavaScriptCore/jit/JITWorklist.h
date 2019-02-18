@@ -57,7 +57,8 @@ public:
     
     void compileNow(CodeBlock*, unsigned loopOSREntryBytecodeOffset = 0);
     
-    static JITWorklist* instance();
+    static JITWorklist& ensureGlobalWorklist();
+    static JITWorklist* existingGlobalWorklistOrNull();
     
 private:
     JITWorklist();

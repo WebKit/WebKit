@@ -740,7 +740,7 @@ public:
         return m_exceptionFuzzBuffer.get();
     }
 
-    void gatherConservativeRoots(ConservativeRoots&);
+    void gatherScratchBufferRoots(ConservativeRoots&);
 
     VMEntryScope* entryScope;
 

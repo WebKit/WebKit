@@ -322,16 +322,24 @@ void JITWorklist::finalizePlans(Plans& myPlans)
     }
 }
 
-JITWorklist* JITWorklist::instance()
+static JITWorklist* theGlobalJITWorklist { nullptr };
+
+JITWorklist* JITWorklist::existingGlobalWorklistOrNull()
 {
-    static JITWorklist* worklist;
+    return theGlobalJITWorklist;
+}
+
+JITWorklist& JITWorklist::ensureGlobalWorklist()
+{
     static std::once_flag once;
     std::call_once(
         once,
         [] {
-            worklist = new JITWorklist();
+            auto* worklist = new JITWorklist();
+            WTF::storeStoreFence();
+            theGlobalJITWorklist = worklist;
         });
-    return worklist;
+    return *theGlobalJITWorklist;
 }
 
 } // namespace JSC

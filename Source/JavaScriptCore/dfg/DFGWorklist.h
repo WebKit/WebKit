@@ -144,7 +144,6 @@ Worklist& existingWorklistForIndex(unsigned index);
 #endif // ENABLE(DFG_JIT)
 
 void completeAllPlansForVM(VM&);
-void markCodeBlocks(VM&, SlotVisitor&);
 
 template<typename Func>
 void iterateCodeBlocksForGC(VM&, const Func&);

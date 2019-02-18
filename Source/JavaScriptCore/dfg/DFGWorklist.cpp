@@ -661,10 +661,6 @@ void completeAllPlansForVM(VM&)
 {
 }
 
-void markCodeBlocks(VM&, SlotVisitor&)
-{
-}
-
 #endif // ENABLE(DFG_JIT)
 
 } } // namespace JSC::DFG
