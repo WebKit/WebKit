@@ -1,5 +1,20 @@
 2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [bmalloc] NSBundle-based application name check should be executed after debug-heap environment variable check
+        https://bugs.webkit.org/show_bug.cgi?id=194694
+
+        Reviewed by Mark Lam.
+
+        Interestingly, NSBundle allocates fair amount of memory and keeps it for a process-long time. For example, it
+        allocates global NSConcreteHashTable, which takes 2.5KB. This patch changes the order of gigacage-check, we
+        first check "Malloc=1" status, and then check the process name through NSBundle. This allows us to remove NSBundle
+        related allocation in JSC initialization in the system malloc mode.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::shouldBeEnabled):
+
+2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [bmalloc] Do not start scavenger thread if we use system malloc
         https://bugs.webkit.org/show_bug.cgi?id=194674
 
