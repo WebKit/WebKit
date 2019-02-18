@@ -1,3 +1,16 @@
+2019-02-15  Chris Dumez  <cdumez@apple.com>
+
+        Sample domainsVisited diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=194657
+
+        Reviewed by Ryosuke Niwa.
+
+        Sample domainsVisited diagnostic logging, we are getting a lot of data from
+        this key and this is hurting our other keys.
+
+        * page/Page.cpp:
+        (WebCore::Page::logNavigation):
+
 2019-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in the hit testing code via HTMLPlugInElement::isReplacementObscured()

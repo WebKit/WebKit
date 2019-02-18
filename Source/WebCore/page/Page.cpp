@@ -2369,7 +2369,7 @@ void Page::logNavigation(const Navigation& navigation)
     diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription, ShouldSample::No);
 
     if (!navigation.domain.isEmpty())
-        diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainVisitedKey(), navigation.domain, ShouldSample::No);
+        diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainVisitedKey(), navigation.domain, ShouldSample::Yes);
 }
 
 void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
