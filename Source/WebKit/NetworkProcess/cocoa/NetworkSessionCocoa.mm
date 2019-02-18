@@ -53,6 +53,10 @@
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/NetworkSessionCocoaAdditions.h>
+#endif
+
 using namespace WebKit;
 
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
@@ -856,6 +860,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 #endif
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
+
+#if HAVE(LOAD_OPTIMIZER)
+    NETWORKSESSIONCOCOA_LOADOPTIMIZER_ADDITIONS
+#endif
 
 #if USE(CFNETWORK_AUTO_ADDED_HTTP_HEADER_SUPPRESSION)
     // Without this, CFNetwork would sometimes add a Content-Type header to our requests (rdar://problem/34748470).

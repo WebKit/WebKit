@@ -1,3 +1,14 @@
+2019-02-18  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Tell Networking Process to not optimize load
+        https://bugs.webkit.org/show_bug.cgi?id=194753
+        <rdar://problem/48143603>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2019-02-18  Dean Jackson  <dino@apple.com>
 
         iOS Safari will not load USDZ in QLPreview when opening as BLOB
