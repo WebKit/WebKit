@@ -1,3 +1,17 @@
+2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better categorize CPU usage per-thread / worker
+        https://bugs.webkit.org/show_bug.cgi?id=194564
+
+        Reviewed by Devin Rousso.
+
+        * wtf/Threading.h:
+        * wtf/Threading.cpp:
+        (WTF::Thread::allThreadsMutex):
+        (WTF::Thread::create):
+        (WTF::Thread::didExit):
+        Add a set of all WTF::Thread created threads.
+
 2019-02-18  Tadeu Zagallo  <tzagallo@apple.com>
 
         Bytecode cache should a have a boot-specific validation

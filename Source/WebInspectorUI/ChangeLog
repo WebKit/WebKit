@@ -1,3 +1,19 @@
+2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better categorize CPU usage per-thread / worker
+        https://bugs.webkit.org/show_bug.cgi?id=194564
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.cpuProfilerTrackingUpdated):
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord.prototype.get mainThreadUsage):
+        (WI.CPUTimelineRecord.prototype.get webkitThreadUsage):
+        (WI.CPUTimelineRecord.prototype.get workerThreadUsage):
+        (WI.CPUTimelineRecord.prototype.get unknownThreadUsage):
+        Build a better record from the protocol events.
+
 2019-02-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: duplicate left double quotation mark (\u201C) in 'Unable to show certificate for “%s“.'

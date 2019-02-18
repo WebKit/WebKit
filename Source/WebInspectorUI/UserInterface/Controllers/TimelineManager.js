@@ -444,7 +444,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._isCapturing)
             return;
 
-        this._addRecord(new WI.CPUTimelineRecord(event.timestamp, event.usage));
+        this._addRecord(new WI.CPUTimelineRecord(event));
     }
 
     cpuProfilerTrackingCompleted()

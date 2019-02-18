@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+let worker1 = new Worker("resources/busy-worker.js");
+let worker2 = new Worker("resources/busy-worker.js");
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("CPUProfiler.Threads");
+
+    suite.addTestCase({
+        name: "CPUProfiler.Threads",
+        test(resolve, reject) {
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingStart"}).then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingStart");
+                ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");
+            });
+
+            // Skip one update to be safe. The Workers may not have existed for long.
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingUpdate"})
+            .then(() => InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingUpdate"}))
+            .then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingUpdate");
+                ProtocolTest.expectThat(typeof messageObject.params.event === "object", "Should have an event object.");
+                ProtocolTest.expectThat(typeof messageObject.params.event.timestamp === "number", "Event should have a timestamp.");
+                ProtocolTest.expectThat(typeof messageObject.params.event.usage === "number", "Event should have a usage.");
+                ProtocolTest.expectThat(messageObject.params.event.usage >= 0, "usage should be greater than or equal to zero.");
+                ProtocolTest.expectThat(Array.isArray(messageObject.params.event.threads), "Event should have threads.");
+
+                let main = [];
+                let workers = [];
+                let others = [];
+                let threads = messageObject.params.event.threads;
+                for (let thread of threads) {
+                    if (thread.type === "main")
+                        main.push(thread);
+                    else if (thread.targetId)
+                        workers.push(thread);
+                    else
+                        others.push(thread);
+                }
+
+                ProtocolTest.expectThat(threads.every((x) => x.usage >= 0 && x.usage <= 100), "Every thread has between 0 and 100 usage.");
+                ProtocolTest.expectEqual(main.length, 1, "Event should have 1 main thread.");
+                ProtocolTest.expectEqual(workers.length, 2, "Event should have 2 worker threads.");
+                ProtocolTest.expectThat(others.length > 0, "Event should have other worker threads.");
+                ProtocolTest.expectGreaterThan(workers[0].usage, 0, "Worker 1 usage should be greater than zero.");
+                ProtocolTest.expectGreaterThan(workers[1].usage, 0, "Worker 2 usage should be greater than zero.");
+                ProtocolTest.expectGreaterThanOrEqual(messageObject.params.event.usage, workers[0].usage + workers[1].usage, "Total usage should be greater than or equal to the sum of both worker threads.");
+
+                InspectorProtocol.sendCommand("CPUProfiler.stopTracking", {});
+            }).catch(reject);
+
+            InspectorProtocol.awaitEvent({event: "CPUProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("CPUProfiler.trackingComplete");
+                resolve();
+            });
+
+            InspectorProtocol.sendCommand("CPUProfiler.startTracking", {});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that CPUProfiler tracking events include per-Thread CPU usage.</p>
+</body>
+</html>

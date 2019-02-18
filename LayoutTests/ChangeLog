@@ -1,3 +1,15 @@
+2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better categorize CPU usage per-thread / worker
+        https://bugs.webkit.org/show_bug.cgi?id=194564
+
+        Reviewed by Devin Rousso.
+
+        * inspector/cpu-profiler/resources/busy-worker.js: Added.
+        * inspector/cpu-profiler/threads-expected.txt: Added.
+        * inspector/cpu-profiler/threads.html: Added.
+        Test that WebKit receives per-Thread CPU usage numbers.
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

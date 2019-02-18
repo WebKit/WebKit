@@ -160,6 +160,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     // FIXME: Exclude the ResourceUsage thread.
     // FIXME: Exclude the SamplingProfiler thread.
+    // FIXME: Classify usage per thread.
     data.cpuExcludingDebuggerThreads = data.cpu;
 }
 

@@ -1,3 +1,41 @@
+2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Better categorize CPU usage per-thread / worker
+        https://bugs.webkit.org/show_bug.cgi?id=194564
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/cpu-profiler/threads.html
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThreadsMutex):
+        (WebCore::WorkerThread::workerThreadCount):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::~WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+        * workers/WorkerThread.h:
+        (WebCore::WorkerThread::identifier const):
+        Expose the set of all WorkerThreads.
+
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        (WebCore::InspectorCPUProfilerAgent::collectSample):
+        Send inspector additional per-thread data.
+
+        * page/ResourceUsageData.h:
+        (WebCore::WorkerCPUInfo::WorkerCPUInfo):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ThreadInfo::ThreadInfo):
+        (WebCore::threadInfos):
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        (WebCore::threadSendRights): Deleted.
+        (WebCore::cpuUsage): Deleted.
+        Compute per-thread values on cocoa ports.
+
+        * page/linux/ResourceUsageThreadLinux.cpp:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        Stub per-thread values on linux ports.
+
 2019-02-18  Jer Noble  <jer.noble@apple.com>
 
         Uncaught Exception crash in MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus()

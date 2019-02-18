@@ -36,6 +36,7 @@
 #include <wtf/Expected.h>
 #include <wtf/FastTLS.h>
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -96,6 +97,10 @@ public:
 
     // Returns Thread object.
     static Thread& current();
+
+    // Set of all WTF::Thread created threads.
+    WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads(const LockHolder&);
+    WTF_EXPORT_PRIVATE static Lock& allThreadsMutex();
 
 #if OS(WINDOWS)
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity

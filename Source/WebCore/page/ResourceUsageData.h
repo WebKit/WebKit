@@ -29,6 +29,7 @@
 
 #include <array>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -71,11 +72,26 @@ struct MemoryCategoryInfo {
     unsigned type { MemoryCategory::NumberOfCategories };
 };
 
+struct ThreadCPUInfo {
+    enum class Type : uint8_t {
+        Unknown,
+        Main,
+        WebKit,
+    };
+
+    String name;
+    String identifier;
+    float cpu { 0 };
+    Type type { ThreadCPUInfo::Type::Unknown };
+};
+
 struct ResourceUsageData {
-    constexpr ResourceUsageData() = default;
+    ResourceUsageData() = default;
 
     float cpu { 0 };
     float cpuExcludingDebuggerThreads { 0 };
+    Vector<ThreadCPUInfo> cpuThreads;
+
     size_t totalDirtySize { 0 };
     size_t totalExternalSize { 0 };
     std::array<MemoryCategoryInfo, MemoryCategory::NumberOfCategories> categories { {

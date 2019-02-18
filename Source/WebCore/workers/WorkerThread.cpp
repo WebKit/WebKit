@@ -53,20 +53,22 @@
 
 namespace WebCore {
 
-static Lock threadSetMutex;
-
-static HashSet<WorkerThread*>& workerThreads()
+HashSet<WorkerThread*>& WorkerThread::workerThreads(const LockHolder&)
 {
     static NeverDestroyed<HashSet<WorkerThread*>> workerThreads;
-
     return workerThreads;
+}
+
+Lock& WorkerThread::workerThreadsMutex()
+{
+    static Lock mutex;
+    return mutex;
 }
 
 unsigned WorkerThread::workerThreadCount()
 {
-    std::lock_guard<Lock> lock(threadSetMutex);
-
-    return workerThreads().size();
+    LockHolder lock(workerThreadsMutex());
+    return workerThreads(lock).size();
 }
 
 struct WorkerThreadStartupData {
@@ -107,7 +109,8 @@ WorkerThreadStartupData::WorkerThreadStartupData(const URL& scriptURL, const Str
 }
 
 WorkerThread::WorkerThread(const URL& scriptURL, const String& name, const String& identifier, const String& userAgent, bool isOnline, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags, PAL::SessionID sessionID)
-    : m_workerLoaderProxy(workerLoaderProxy)
+    : m_identifier(identifier.isolatedCopy())
+    , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerDebuggerProxy(workerDebuggerProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_runtimeFlags(runtimeFlags)
@@ -121,17 +124,15 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& name, const Strin
     UNUSED_PARAM(connectionProxy);
 #endif
 
-    std::lock_guard<Lock> lock(threadSetMutex);
-
-    workerThreads().add(this);
+    LockHolder lock(workerThreadsMutex());
+    workerThreads(lock).add(this);
 }
 
 WorkerThread::~WorkerThread()
 {
-    std::lock_guard<Lock> lock(threadSetMutex);
-
-    ASSERT(workerThreads().contains(this));
-    workerThreads().remove(this);
+    LockHolder lock(workerThreadsMutex());
+    ASSERT(workerThreads(lock).contains(this));
+    workerThreads(lock).remove(this);
 }
 
 void WorkerThread::start(WTF::Function<void(const String&)>&& evaluateCallback)
@@ -191,12 +192,12 @@ void WorkerThread::workerThread()
 
     String exceptionMessage;
     scriptController->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, URL(m_startupData->m_scriptURL)), &exceptionMessage);
-    
+
     callOnMainThread([evaluateCallback = WTFMove(m_evaluateCallback), message = exceptionMessage.isolatedCopy()] {
         if (evaluateCallback)
             evaluateCallback(message);
     });
-    
+
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
     // all ref/derefs of these objects are happening on the thread at this point). Note that
     // WorkerThread::~WorkerThread happens on a different thread where it was created.
@@ -307,9 +308,8 @@ void WorkerThread::stop(WTF::Function<void()>&& stoppedCallback)
 
 void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    std::lock_guard<Lock> lock(threadSetMutex);
-
-    for (auto* workerThread : workerThreads()) {
+    LockHolder lock(workerThreadsMutex());
+    for (auto* workerThread : workerThreads(lock)) {
         workerThread->runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();
         });

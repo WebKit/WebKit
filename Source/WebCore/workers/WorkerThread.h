@@ -62,6 +62,9 @@ class WorkerThread : public ThreadSafeRefCounted<WorkerThread> {
 public:
     virtual ~WorkerThread();
 
+    static HashSet<WorkerThread*>& workerThreads(const LockHolder&);
+    static Lock& workerThreadsMutex();
+
     WEBCORE_EXPORT void start(WTF::Function<void(const String&)>&& evaluateCallback);
     void stop(WTF::Function<void()>&& terminatedCallback);
 
@@ -85,6 +88,8 @@ public:
     
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
 
+    String identifier() const { return m_identifier; }
+
 protected:
     WorkerThread(const URL&, const String& name, const String& identifier, const String& userAgent, bool isOnline, const String& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags, PAL::SessionID);
 
@@ -104,6 +109,7 @@ private:
     virtual bool isServiceWorkerThread() const { return false; }
 
     RefPtr<Thread> m_thread;
+    String m_identifier;
     WorkerRunLoop m_runLoop;
     WorkerLoaderProxy& m_workerLoaderProxy;
     WorkerDebuggerProxy& m_workerDebuggerProxy;

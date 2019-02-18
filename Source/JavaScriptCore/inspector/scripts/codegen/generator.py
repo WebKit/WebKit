@@ -54,6 +54,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'bitmaprenderer': 'BitmapRenderer',  # Canvas.ContextType.bitmaprenderer
     'webrtc': 'WebRTC',  # Console.ChannelSource.webrtc
     'mediasource': 'MediaSource',  # Console.ChannelSource.mediasource
+    'webkit': 'WebKit',  # CPUProfiler.ThreadInfo.type
 }
 
 # These objects are built manually by creating and setting JSON::Value instances.

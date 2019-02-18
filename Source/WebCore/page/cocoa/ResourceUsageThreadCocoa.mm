@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
+#include "WorkerThread.h"
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/SamplingProfiler.h>
@@ -141,43 +142,6 @@ std::array<TagInfo, 256> pagesPerVMTag()
     return tags;
 }
 
-static Vector<MachSendRight> threadSendRights()
-{
-    thread_array_t threadList = nullptr;
-    mach_msg_type_number_t threadCount = 0;
-    kern_return_t kr = task_threads(mach_task_self(), &threadList, &threadCount);
-    if (kr != KERN_SUCCESS)
-        return { };
-
-    Vector<MachSendRight> machThreads;
-    for (mach_msg_type_number_t i = 0; i < threadCount; ++i)
-        machThreads.append(MachSendRight::adopt(threadList[i]));
-
-    kr = vm_deallocate(mach_task_self(), (vm_offset_t)threadList, threadCount * sizeof(thread_t));
-    ASSERT(kr == KERN_SUCCESS);
-
-    return machThreads;
-}
-
-static float cpuUsage(Vector<MachSendRight>& machThreads)
-{
-    float usage = 0;
-
-    for (auto& machThread : machThreads) {
-        thread_info_data_t threadInfo;
-        mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
-        auto kr = thread_info(machThread.sendRight(), THREAD_BASIC_INFO, static_cast<thread_info_t>(threadInfo), &threadInfoCount);
-        if (kr != KERN_SUCCESS)
-            return -1;
-
-        auto threadBasicInfo = reinterpret_cast<thread_basic_info_t>(threadInfo);
-        if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
-            usage += threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
-    }
-
-    return usage;
-}
-
 static unsigned categoryForVMTag(unsigned tag)
 {
     switch (tag) {
@@ -205,6 +169,68 @@ static unsigned categoryForVMTag(unsigned tag)
     }
 }
 
+struct ThreadInfo {
+    MachSendRight sendRight;
+    float usage { 0 };
+    String threadName;
+    String dispatchQueueName;
+};
+
+static Vector<ThreadInfo> threadInfos()
+{
+    thread_array_t threadList = nullptr;
+    mach_msg_type_number_t threadCount = 0;
+    kern_return_t kr = task_threads(mach_task_self(), &threadList, &threadCount);
+    ASSERT(kr == KERN_SUCCESS);
+    if (kr != KERN_SUCCESS)
+        return { };
+
+    Vector<ThreadInfo> infos;
+    for (mach_msg_type_number_t i = 0; i < threadCount; ++i) {
+        MachSendRight sendRight = MachSendRight::adopt(threadList[i]);
+
+        thread_info_data_t threadInfo;
+        mach_msg_type_number_t threadInfoCount = THREAD_INFO_MAX;
+        kr = thread_info(sendRight.sendRight(), THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&threadInfo), &threadInfoCount);
+        ASSERT(kr == KERN_SUCCESS);
+        if (kr != KERN_SUCCESS)
+            continue;
+
+        thread_identifier_info_data_t threadIdentifierInfo;
+        mach_msg_type_number_t threadIdentifierInfoCount = THREAD_IDENTIFIER_INFO_COUNT;
+        kr = thread_info(sendRight.sendRight(), THREAD_IDENTIFIER_INFO, reinterpret_cast<thread_info_t>(&threadIdentifierInfo), &threadIdentifierInfoCount);
+        ASSERT(kr == KERN_SUCCESS);
+        if (kr != KERN_SUCCESS)
+            continue;
+
+        thread_extended_info_data_t threadExtendedInfo;
+        mach_msg_type_number_t threadExtendedInfoCount = THREAD_EXTENDED_INFO_COUNT;
+        kr = thread_info(sendRight.sendRight(), THREAD_EXTENDED_INFO, reinterpret_cast<thread_info_t>(&threadExtendedInfo), &threadExtendedInfoCount);
+        ASSERT(kr == KERN_SUCCESS);
+        if (kr != KERN_SUCCESS)
+            continue;
+
+        float usage = 0;
+        auto threadBasicInfo = reinterpret_cast<thread_basic_info_t>(threadInfo);
+        if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
+            usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
+
+        String threadName = String(threadExtendedInfo.pth_name);
+        String dispatchQueueName;
+        if (threadIdentifierInfo.dispatch_qaddr) {
+            dispatch_queue_t queue = *reinterpret_cast<dispatch_queue_t*>(threadIdentifierInfo.dispatch_qaddr);
+            dispatchQueueName = String(dispatch_queue_get_label(queue));
+        }
+
+        infos.append(ThreadInfo { WTFMove(sendRight), usage, threadName, dispatchQueueName });
+    }
+
+    kr = vm_deallocate(mach_task_self(), (vm_offset_t)threadList, threadCount * sizeof(thread_t));
+    ASSERT(kr == KERN_SUCCESS);
+
+    return infos;
+}
+
 void ResourceUsageThread::platformSaveStateBeforeStarting()
 {
 #if ENABLE(SAMPLING_PROFILER)
@@ -214,13 +240,40 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
 
 void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& data)
 {
-    Vector<MachSendRight> threads = threadSendRights();
-    data.cpu = cpuUsage(threads);
+    Vector<ThreadInfo> threads = threadInfos();
+    if (threads.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    // Remove debugger threads.
+    // Main thread is always first.
+    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread");
+
     mach_port_t resourceUsageMachThread = mach_thread_self();
-    threads.removeAllMatching([&] (MachSendRight& thread) {
-        mach_port_t machThread = thread.sendRight();
+    mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
+
+    HashSet<mach_port_t> knownWebKitThreads;
+    {
+        LockHolder lock(Thread::allThreadsMutex());
+        for (auto* thread : Thread::allThreads(lock)) {
+            mach_port_t machThread = thread->machThread();
+            if (machThread != MACH_PORT_NULL)
+                knownWebKitThreads.add(machThread);
+        }
+    }
+
+    HashMap<mach_port_t, String> knownWorkerThreads;
+    {
+        LockHolder lock(WorkerThread::workerThreadsMutex());
+        for (auto* thread : WorkerThread::workerThreads(lock)) {
+            mach_port_t machThread = thread->thread()->machThread();
+            if (machThread != MACH_PORT_NULL)
+                knownWorkerThreads.set(machThread, thread->identifier().isolatedCopy());
+        }
+    }
+
+    auto isDebuggerThread = [&](const ThreadInfo& thread) -> bool {
+        mach_port_t machThread = thread.sendRight.sendRight();
         if (machThread == resourceUsageMachThread)
             return true;
 #if ENABLE(SAMPLING_PROFILER)
@@ -228,9 +281,44 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 #endif
         return false;
-    });
+    };
 
-    data.cpuExcludingDebuggerThreads = cpuUsage(threads);
+    auto isWebKitThread = [&](const ThreadInfo& thread) -> bool {
+        mach_port_t machThread = thread.sendRight.sendRight();
+        if (knownWebKitThreads.contains(machThread))
+            return true;
+
+        // The bmalloc scavenger thread is below WTF. Detect it by its name.
+        if (thread.threadName == "JavaScriptCore bmalloc scavenger")
+            return true;
+
+        // WebKit uses many WorkQueues with common prefixes.
+        if (thread.dispatchQueueName.startsWith("com.apple.IPC.")
+            || thread.dispatchQueueName.startsWith("com.apple.WebKit.")
+            || thread.dispatchQueueName.startsWith("org.webkit."))
+            return true;
+
+        return false;
+    };
+
+    for (auto& thread : threads) {
+        data.cpu += thread.usage;
+        if (isDebuggerThread(thread))
+            continue;
+
+        data.cpuExcludingDebuggerThreads += thread.usage;
+
+        mach_port_t machThread = thread.sendRight.sendRight();
+        if (machThread == mainThreadMachThread) {
+            data.cpuThreads.append(ThreadCPUInfo { "Main Thread"_s, String(), thread.usage, ThreadCPUInfo::Type::Main});
+            continue;
+        }
+
+        String threadIdentifier = knownWorkerThreads.get(machThread);
+        bool isWorkerThread = !threadIdentifier.isEmpty();
+        ThreadCPUInfo::Type type = (isWorkerThread || isWebKitThread(thread)) ? ThreadCPUInfo::Type::WebKit : ThreadCPUInfo::Type::Unknown;
+        data.cpuThreads.append(ThreadCPUInfo { thread.threadName, threadIdentifier, thread.usage, type });
+    }
 }
 
 void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageData& data)
