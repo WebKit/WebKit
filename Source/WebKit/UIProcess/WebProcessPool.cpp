@@ -2115,14 +2115,14 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 }
 #endif
 
-void WebProcessPool::addProcessToOriginCacheSet(WebPageProxy& page)
+void WebProcessPool::addProcessToOriginCacheSet(WebProcessProxy& process, const URL& url)
 {
-    auto registrableDomain = toRegistrableDomain({ { }, page.pageLoadState().url() });
-    auto result = m_swappedProcessesPerRegistrableDomain.add(registrableDomain, &page.process());
+    auto registrableDomain = toRegistrableDomain(url);
+    auto result = m_swappedProcessesPerRegistrableDomain.add(registrableDomain, &process);
     if (!result.isNewEntry)
-        result.iterator->value = &page.process();
+        result.iterator->value = &process;
 
-    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.utf8().data(), page.process().processIdentifier());
+    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.utf8().data(), process.processIdentifier());
     if (!result.isNewEntry)
         LOG(ProcessSwapping, "(ProcessSwapping) Note: It already had one saved");
 }
@@ -2142,32 +2142,32 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
         m_swappedProcessesPerRegistrableDomain.remove(registrableDomain);
 }
 
-void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
+void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
-    processForNavigationInternal(page, navigation, processSwapRequestedByClient, [this, page = makeRefPtr(page), navigation = makeRef(navigation), processSwapRequestedByClient, completionHandler = WTFMove(completionHandler)](Ref<WebProcessProxy>&& process, SuspendedPageProxy* suspendedPage, const String& reason) mutable {
+    processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, [this, page = makeRefPtr(page), navigation = makeRef(navigation), sourceProcess = sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, completionHandler = WTFMove(completionHandler)](Ref<WebProcessProxy>&& process, SuspendedPageProxy* suspendedPage, const String& reason) mutable {
         // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
-        bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != &page->process();
+        bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
         if (doingAnAutomaticProcessSwap && !configuration().wasAutomaticProcessWarmingSetByClient() && !configuration().clientWouldBenefitFromAutomaticProcessPrewarming()) {
             RELEASE_LOG(PerformanceLogging, "Automatically turning on process prewarming because the client would benefit from it");
             configuration().setClientWouldBenefitFromAutomaticProcessPrewarming(true);
         }
 
-        if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page->process()) {
+        if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != sourceProcess.ptr()) {
             static std::once_flag onceFlag;
             std::call_once(onceFlag, [] {
                 WTFLogAlways("WARNING: The option to always keep swapped web processes alive is active. This is meant for debugging and testing only.");
             });
 
-            addProcessToOriginCacheSet(*page);
+            addProcessToOriginCacheSet(sourceProcess, sourceURL);
 
-            LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", page->currentURL().utf8().data(), navigation->currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
+            LOG(ProcessSwapping, "(ProcessSwapping) Navigating from %s to %s, keeping around old process. Now holding on to old processes for %u origins.", sourceURL.string().utf8().data(), navigation->currentRequest().url().string().utf8().data(), m_swappedProcessesPerRegistrableDomain.size());
         }
 
         completionHandler(WTFMove(process), suspendedPage, reason);
     });
 }
 
-void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
+void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& pageSourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
     auto& targetURL = navigation.currentRequest().url();
     auto registrableDomain = toRegistrableDomain(targetURL);
@@ -2193,30 +2193,30 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     };
 
     if (usesSingleWebProcess())
-        return completionHandler(page.process(), nullptr, "Single WebProcess mode is enabled"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Single WebProcess mode is enabled"_s);
 
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         return completionHandler(createNewProcess(), nullptr, "Process swap was requested by the client"_s);
 
     if (!m_configuration->processSwapsOnNavigation())
-        return completionHandler(page.process(), nullptr, "Feature is disabled"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Feature is disabled"_s);
 
     if (m_automationSession)
-        return completionHandler(page.process(), nullptr, "An automation session is active"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "An automation session is active"_s);
 
-    if (!page.process().hasCommittedAnyProvisionalLoads()) {
-        tryPrewarmWithDomainInformation(page.process(), targetURL);
-        return completionHandler(page.process(), nullptr, "Process has not yet committed any provisional loads"_s);
+    if (!sourceProcess->hasCommittedAnyProvisionalLoads()) {
+        tryPrewarmWithDomainInformation(sourceProcess, targetURL);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s);
     }
 
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.
     // The issue is that the opener has a handle to the WindowProxy.
     if (navigation.openedByDOMWithOpener() && !m_configuration->processSwapsOnWindowOpenWithOpener())
-        return completionHandler(page.process(), nullptr, "Browsing context been opened by DOM without 'noopener'"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Browsing context been opened by DOM without 'noopener'"_s);
 
     // FIXME: We should support process swap when a window has opened other windows via window.open.
     if (navigation.hasOpenedFrames())
-        return completionHandler(page.process(), nullptr, "Browsing context has opened other windows"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Browsing context has opened other windows"_s);
 
     if (auto* targetItem = navigation.targetItem()) {
         if (auto* suspendedPage = targetItem->suspendedPage()) {
@@ -2245,13 +2245,13 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     }
 
     if (navigation.treatAsSameOriginNavigation())
-        return completionHandler(page.process(), nullptr, "The treatAsSameOriginNavigation flag is set"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "The treatAsSameOriginNavigation flag is set"_s);
 
     URL sourceURL;
     if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isEmpty())
         sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
     else
-        sourceURL = URL { { }, page.pageLoadState().url() };
+        sourceURL = pageSourceURL;
 
     if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
         sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
@@ -2259,7 +2259,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     }
 
     if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || registrableDomainsAreEqual(sourceURL, targetURL))
-        return completionHandler(page.process(), nullptr, "Navigation is same-site"_s);
+        return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s);
 
     String reason = "Navigation is cross-site"_s;
     

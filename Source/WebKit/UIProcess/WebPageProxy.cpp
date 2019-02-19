@@ -2748,7 +2748,17 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         return;
     }
 
-    process().processPool().processForNavigation(*this, *navigation, processSwapRequestedByClient, [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation),
+    Ref<WebProcessProxy> sourceProcess = process();
+    URL sourceURL = URL { URL(), pageLoadState().url() };
+    if (auto* provisionalPage = provisionalPageProxy()) {
+        if (provisionalPage->navigationID() == navigation->navigationID()) {
+            ASSERT(navigation->currentRequestIsRedirect());
+            sourceProcess = provisionalPage->process();
+            sourceURL = provisionalPage->provisionalURL();
+        }
+    }
+
+    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation), sourceProcess = sourceProcess.copyRef(),
         data = WTFMove(data), sender = WTFMove(sender), processSwapRequestedByClient] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, const String& reason) mutable {
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
@@ -2756,14 +2766,14 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
             return;
         }
 
-        if (processForNavigation.ptr() != &process()) {
+        bool shouldProcessSwap = processForNavigation.ptr() != sourceProcess.ptr();
+        if (shouldProcessSwap) {
             policyAction = PolicyAction::StopAllLoads;
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
-        bool shouldProcessSwap = processForNavigation.ptr() != &process();
         receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? WTF::nullopt : WTFMove(data), WTFMove(sender), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
 
         if (!shouldProcessSwap)
@@ -4798,23 +4808,28 @@ void WebPageProxy::didPerformClientRedirectShared(Ref<WebProcessProxy>&& process
 
 void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
-    RELEASE_LOG_IF_ALLOWED(Loading, "didPerformServerRedirect: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
+    didPerformServerRedirectShared(m_process.copyRef(), sourceURLString, destinationURLString, frameID);
+}
+
+void WebPageProxy::didPerformServerRedirectShared(Ref<WebProcessProxy>&& process, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    RELEASE_LOG_IF_ALLOWED(Loading, "didPerformServerRedirect: webPID = %i, pageID = %" PRIu64, process->processIdentifier(), m_pageID);
 
     PageClientProtector protector(pageClient());
 
     if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
         return;
     
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(m_process, frame);
-    MESSAGE_CHECK(m_process, frame->page() == this);
+    WebFrameProxy* frame = process->webFrame(frameID);
+    MESSAGE_CHECK(process, frame);
+    MESSAGE_CHECK(process, frame->page() == this);
 
-    MESSAGE_CHECK_URL(m_process, sourceURLString);
-    MESSAGE_CHECK_URL(m_process, destinationURLString);
+    MESSAGE_CHECK_URL(process, sourceURLString);
+    MESSAGE_CHECK_URL(process, destinationURLString);
 
     if (frame->isMainFrame())
         m_historyClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString);
-    process().processPool().historyClient().didPerformServerRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
+    process->processPool().historyClient().didPerformServerRedirect(process->processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
 
 void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID)

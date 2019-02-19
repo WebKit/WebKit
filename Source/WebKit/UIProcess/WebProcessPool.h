@@ -457,7 +457,7 @@ public:
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
 #endif
 
-    void processForNavigation(WebPageProxy&, const API::Navigation&, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
     // SuspendedPageProxy management.
     void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
@@ -499,7 +499,7 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    void processForNavigationInternal(WebPageProxy&, const API::Navigation&, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    void processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
@@ -562,7 +562,7 @@ private:
     void resolvePathsForSandboxExtensions();
     void platformResolvePathsForSandboxExtensions();
 
-    void addProcessToOriginCacheSet(WebPageProxy&);
+    void addProcessToOriginCacheSet(WebProcessProxy&, const URL&);
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
     void tryPrewarmWithDomainInformation(WebProcessProxy&, const URL&);
