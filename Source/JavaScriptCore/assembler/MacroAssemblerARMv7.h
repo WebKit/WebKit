@@ -177,14 +177,14 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
-
-        // For adds with stack pointer destination, moving the src first to sp is
-        // needed to avoid unpredictable instruction
+        // For adds with stack pointer destination avoid unpredictable instruction
         if (dest == ARMRegisters::sp && src != dest) {
-            move(src, ARMRegisters::sp);
-            src = ARMRegisters::sp;
+            add32(imm, src, dataTempRegister);
+            move(dataTempRegister, dest);
+            return;
         }
+
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
 
         if (armImm.isValid())
             m_assembler.add(dest, src, armImm);

@@ -1,3 +1,21 @@
+2019-02-18  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Fix crash with sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=194772
+
+        Reviewed by Mark Lam.
+
+        sampling-profiler-richards.js was crashing with an enabled sampling profiler. add32
+        did not update the stack pointer in a single instruction. The src register was first
+        moved into the stack pointer, the immediate imm was added in a subsequent instruction.
+
+        This was problematic when a signal handler was invoked before applying the immediate,
+        when the stack pointer is still set to the temporary value. Avoid this by calculating src+imm in
+        a temporary register and then move it in one go into the stack pointer.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+
 2019-02-18  Mark Lam  <mark.lam@apple.com>
 
         Fix DFG doesGC() for CompareEq/Less/LessEq/Greater/GreaterEq and CompareStrictEq nodes.

@@ -1,6 +1,4 @@
-// [JSC] [Armv7] stress/sampling-profiler-richards.js crashes
-// https://bugs.webkit.org/show_bug.cgi?id=190426
-//@ skip if ["arm", "mips"].include?($architecture) and $hostOS == "linux"
+//@ skip if $architecture == "mips" and $hostOS == "linux"
 //@ skip if $architecture == "x86"
 //@ runDefault("--collectContinuously=1", "--useSamplingProfiler=1", "--collectSamplingProfilerDataForJSCShell=1")
 
