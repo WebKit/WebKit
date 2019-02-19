@@ -1,5 +1,37 @@
 2019-02-19  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce use of LegacySync IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=194783
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        (WebKit::WebProcessProxy::shouldTerminate):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::setException):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.messages.in:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::didCreatePlugin):
+        (WebKit::PluginProxy::didFailToCreatePlugin):
+        (WebKit::PluginProxy::proxiesForURL):
+        (WebKit::PluginProxy::cookiesForURL):
+        (WebKit::PluginProxy::getAuthenticationInfo):
+        (WebKit::PluginProxy::getPluginElementNPObject):
+        (WebKit::PluginProxy::evaluate):
+        (WebKit::PluginProxy::createPluginContainer):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+
+2019-02-19  Alex Christensen  <achristensen@webkit.org>
+
         Remove assertion introduced in r229683
         https://bugs.webkit.org/show_bug.cgi?id=194825
         <rdar://problem/47628258>

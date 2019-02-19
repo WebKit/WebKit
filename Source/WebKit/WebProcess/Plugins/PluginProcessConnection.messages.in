@@ -24,7 +24,7 @@
 
 messages -> PluginProcessConnection LegacyReceiver {
     # Set a global JavaScript exception.
-    SetException(String exceptionString) -> () LegacySync
+    SetException(String exceptionString) -> () Delayed
 }
 
 #endif

@@ -70,7 +70,7 @@ private:
 
     // Message handlers.
     void didReceiveSyncPluginProcessConnectionMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
-    void setException(const String&);
+    void setException(const String&, CompletionHandler<void()>&&);
 
     PluginProcessConnectionManager* m_pluginProcessConnectionManager;
     uint64_t m_pluginProcessToken;

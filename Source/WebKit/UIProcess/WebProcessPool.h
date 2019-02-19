@@ -512,7 +512,7 @@ private:
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
-    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
+    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 
