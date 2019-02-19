@@ -201,6 +201,24 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         return this._isCapturingPageReload;
     }
 
+    willAutoStop()
+    {
+        return !!this._stopCapturingTimeout;
+    }
+
+    relaxAutoStop()
+    {
+        if (this._stopCapturingTimeout) {
+            clearTimeout(this._stopCapturingTimeout);
+            this._stopCapturingTimeout = undefined;
+        }
+
+        if (this._deadTimeTimeout) {
+            clearTimeout(this._deadTimeTimeout);
+            this._deadTimeTimeout = undefined;
+        }
+    }
+
     startCapturing(shouldCreateRecording)
     {
         console.assert(!this._isCapturing, "TimelineManager is already capturing.");

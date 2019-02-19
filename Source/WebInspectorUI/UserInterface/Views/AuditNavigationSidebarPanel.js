@@ -52,11 +52,11 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             let contentPlaceholder = WI.createMessageTextView(WI.UIString("No audit selected"));
             contentView.element.appendChild(contentPlaceholder);
 
-             let importNavigationItem = new WI.ButtonNavigationItem("import-audit", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+            let importNavigationItem = new WI.ButtonNavigationItem("import-audit", WI.UIString("Import"), "Images/Import.svg", 15, 15);
             importNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
             importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
 
-             let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to import a test or result file"), importNavigationItem);
+            let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to import a test or result file"), importNavigationItem);
             contentPlaceholder.appendChild(importHelpElement);
         }
 

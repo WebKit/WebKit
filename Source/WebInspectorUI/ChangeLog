@@ -1,5 +1,37 @@
 2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Provide a way to avoid a recording auto-stop on reload
+        https://bugs.webkit.org/show_bug.cgi?id=194793
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New tooltip.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.willAutoStop):
+        (WI.TimelineManager.prototype.relaxAutoStop):
+        Getter and relaxer for auto stop behavior.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        Drive-by fix some whitespace issues.
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        (WI.TimelineTabContentView.prototype._showRecordButton):
+        (WI.TimelineTabContentView.prototype._showContinueButton):
+        (WI.TimelineTabContentView.prototype._updateNavigationBarButtons):
+        (WI.TimelineTabContentView.prototype._capturingStartedOrStopped):
+        (WI.TimelineTabContentView.prototype._globalModifierKeysDidChange):
+        (WI.TimelineTabContentView.prototype._continueButtonClicked):
+        Show a "continue" like icon instead of the usual stop button when
+        a recording would auto-stop and the alt key is down. When pressed
+        this button will relax the auto-stop and continue the recording
+        until explicitly stopped by the user.
+
+2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix a typo causing assertions in ConsoleManager
         https://bugs.webkit.org/show_bug.cgi?id=194792
 

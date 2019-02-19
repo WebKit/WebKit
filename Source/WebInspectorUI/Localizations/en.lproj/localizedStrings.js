@@ -253,6 +253,7 @@ localizedStrings["Content Security Policy violation of directive: %s"] = "Conten
 localizedStrings["Continuation Frame"] = "Continuation Frame";
 localizedStrings["Continue script execution (%s or %s)"] = "Continue script execution (%s or %s)";
 localizedStrings["Continue to Here"] = "Continue to Here";
+localizedStrings["Continue without automatically stopping"] = "Continue without automatically stopping";
 localizedStrings["Controls"] = "Controls";
 localizedStrings["Cookies"] = "Cookies";
 localizedStrings["Copy"] = "Copy";

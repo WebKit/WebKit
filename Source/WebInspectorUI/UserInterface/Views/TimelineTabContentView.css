@@ -28,16 +28,20 @@
     filter: brightness(100%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item.record-start-stop:hover {
+.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue):hover {
     filter: brightness(95%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item.record-start-stop:active {
+.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue):active {
     filter: brightness(80%);
 }
 
-.timeline.tab.content-view .navigation-bar > .item.record-start-stop * {
+.timeline.tab.content-view .navigation-bar > .item:matches(.record-start-stop, .record-continue) * {
     pointer-events: none;
+}
+
+.timeline.tab.content-view .navigation-bar > .item.record-continue {
+    fill: var(--glyph-color);
 }
 
 .timeline.tab.content-view .navigation-bar > .item.radio {
