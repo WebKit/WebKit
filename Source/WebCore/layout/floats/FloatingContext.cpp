@@ -277,7 +277,8 @@ void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
         floatAvoider.setVerticalConstraint(floats.verticalConstraint());
 
         // Ensure that the float avoider
-        // 1. does not overflow its containing block with the current horiztonal constraints
+        // 1. does not "overflow" its containing block with the current horiztonal constraints. It simply means that the float avoider's
+        // containing block could push the candidate position beyond the current float horizontally (too far to the left/right)
         // 2. avoids floats on both sides.
         if (!floatAvoider.overflowsContainingBlock() && !floats.intersects(floatAvoider.rect()))
             return;
@@ -318,33 +319,14 @@ const FloatingState::FloatItem* FloatingPair::right() const
     return &m_floats[*m_rightIndex];
 }
 
-bool FloatingPair::intersects(const Display::Box::Rect& candidateRect) const
+bool FloatingPair::intersects(const Display::Box::Rect& floatAvoiderRect) const
 {
-    auto intersects = [&](const FloatingState::FloatItem* floating, Float floatingType) {
-        if (!floating)
-            return false;
-
-        auto marginRect = floating->rectWithMargin();
-        // Before intersecting, check if the candidate position is too far to the left/right.
-        // The new float's containing block could push the candidate position beyond the current float horizontally.
-        if ((floatingType == Float::Left && candidateRect.left() < marginRect.right())
-            || (floatingType == Float::Right && candidateRect.right() > marginRect.left()))
-            return true;
-        return marginRect.intersects(candidateRect);
+    auto intersects = [&](auto* floating) {
+        return floating ? floating->rectWithMargin().intersects(floatAvoiderRect) : false;
     };
 
-    if (!m_leftIndex && !m_rightIndex) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    if (intersects(left(), Float::Left))
-        return true;
-
-    if (intersects(right(), Float::Right))
-        return true;
-
-    return false;
+    ASSERT(m_leftIndex || m_rightIndex);
+    return intersects(left()) || intersects(right());
 }
 
 bool FloatingPair::operator ==(const FloatingPair& other) const
