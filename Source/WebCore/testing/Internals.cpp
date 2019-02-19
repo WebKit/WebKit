@@ -117,9 +117,6 @@
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
 #include "NetworkLoadInformation.h"
-#if USE(CG)
-#include "PDFDocumentImage.h"
-#endif
 #include "Page.h"
 #include "PageCache.h"
 #include "PageOverlay.h"
@@ -183,15 +180,18 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/HexNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Language.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/URLHelpers.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-#include <wtf/text/StringView.h>
+
+#if USE(CG)
+#include "PDFDocumentImage.h"
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -621,7 +621,7 @@ ExceptionOr<double> Internals::svgAnimationsInterval(SVGSVGElement& element) con
 
 String Internals::address(Node& node)
 {
-    return String::format("%p", &node);
+    return makeString("0x", hex(reinterpret_cast<uintptr_t>(&node)));
 }
 
 bool Internals::nodeNeedsStyleRecalc(Node& node)

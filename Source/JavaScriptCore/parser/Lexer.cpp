@@ -38,6 +38,7 @@
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Variant.h>
 #include <wtf/dtoa.h>
 
@@ -530,7 +531,7 @@ String Lexer<T>::invalidCharacterMessage() const
     case 96:
         return "Invalid character: '`'"_s;
     default:
-        return String::format("Invalid character '\\u%04x'", static_cast<unsigned>(m_current));
+        return makeString("Invalid character '\\u", hex(m_current, 4, Lowercase), '\'');
     }
 }
 

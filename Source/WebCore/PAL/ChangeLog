@@ -1,3 +1,13 @@
+2019-02-16  Darin Adler  <darin@apple.com>
+
+        Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
+        https://bugs.webkit.org/show_bug.cgi?id=194752
+
+        Reviewed by Daniel Bates.
+
+        * pal/FileSizeFormatter.cpp:
+        (fileSizeDescription): Use makeString instead of String::format.
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Keyups for non-modifier keys identified as "Dead" when not focused in a content-editable element

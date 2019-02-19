@@ -87,6 +87,8 @@
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
 		93934BD318A1E8C300D0D6A1 /* StringViewCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */; };
 		93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */; };
+		93B5B44E2213D616004B7AA7 /* HexNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B5B44D2213D616004B7AA7 /* HexNumber.cpp */; };
+		93B5B45122171EEA004B7AA7 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B5B45022171EE9004B7AA7 /* Logger.cpp */; };
 		93F1993E19D7958D00C2390B /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1993D19D7958D00C2390B /* StringView.cpp */; };
 		9BC70F05176C379D00101DEC /* AtomicStringTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC70F04176C379D00101DEC /* AtomicStringTable.cpp */; };
 		A32D8FA521FFFAB400780662 /* ThreadingPOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32D8FA421FFFAB400780662 /* ThreadingPOSIX.cpp */; };
@@ -429,6 +431,8 @@
 		93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringViewCocoa.mm; sourceTree = "<group>"; };
 		93934BD418A1F16900D0D6A1 /* StringViewCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewCF.cpp; sourceTree = "<group>"; };
 		93AC91A718942FC400244939 /* LChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LChar.h; sourceTree = "<group>"; };
+		93B5B44D2213D616004B7AA7 /* HexNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HexNumber.cpp; sourceTree = "<group>"; };
+		93B5B45022171EE9004B7AA7 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		93D191CF20CAECE800C51B8E /* objcSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objcSPI.h; sourceTree = "<group>"; };
 		93DDE9311CDC052D00FD3491 /* dyldSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyldSPI.h; sourceTree = "<group>"; };
 		93F1993D19D7958D00C2390B /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
@@ -967,6 +971,7 @@
 				A8A472B8151A825A004123FF /* HashTable.cpp */,
 				A8A472B9151A825A004123FF /* HashTable.h */,
 				A8A472BA151A825A004123FF /* HashTraits.h */,
+				93B5B44D2213D616004B7AA7 /* HexNumber.cpp */,
 				A8A472BB151A825A004123FF /* HexNumber.h */,
 				517A53571F5734B700DCDC0A /* Identified.h */,
 				FE8925AF1D00DAEC0046907E /* Indenter.h */,
@@ -1001,6 +1006,7 @@
 				0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
 				5311BD551EA7E15A00525281 /* LocklessBag.h */,
+				93B5B45022171EE9004B7AA7 /* Logger.cpp */,
 				077CD86A1FD9CFD200828587 /* Logger.h */,
 				077CD86B1FD9CFD300828587 /* LoggerHelper.h */,
 				513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */,
@@ -1536,6 +1542,7 @@
 				0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
+				93B5B44E2213D616004B7AA7 /* HexNumber.cpp in Sources */,
 				7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */,
 				E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */,
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
@@ -1543,6 +1550,7 @@
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,
 				0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */,
+				93B5B45122171EEA004B7AA7 /* Logger.cpp in Sources */,
 				53534F2A1EC0E10E00141B2F /* MachExceptions.defs in Sources */,
 				7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,

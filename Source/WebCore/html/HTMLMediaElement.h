@@ -1206,45 +1206,28 @@ String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
 
 namespace WTF {
 
-template <>
-struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
-    static String toString(const WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason)
-    {
-        return convertEnumerationToString(reason);
-    }
+template<> struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
+    static String toString(WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason) { return convertEnumerationToString(reason); }
 };
-    
-} // namespace WTF
 
 #if ENABLE(VIDEO_TRACK) && !defined(NDEBUG)
-namespace WTF {
 
 // Template specialization required by PodIntervalTree in debug mode.
-template <> struct ValueToString<WebCore::TextTrackCue*> {
-    static String string(WebCore::TextTrackCue* const& cue)
-    {
-        String text;
-        if (cue->isRenderable())
-            text = WebCore::toVTTCue(cue)->text();
-        return String::format("%p id=%s interval=%s-->%s cue=%s)", cue, cue->id().utf8().data(), toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), text.utf8().data());
-    }
+template<> struct ValueToString<WebCore::TextTrackCue*> {
+    static String string(const WebCore::TextTrackCue* cue) { return cue->debugString(); }
 };
 
-} // namespace WTF
 #endif
 
 #ifndef NDEBUG
-namespace WTF {
 
 template<> struct ValueToString<MediaTime> {
-    static String string(const MediaTime& time)
-    {
-        return toString(time);
-    }
+    static String string(const MediaTime& time) { return toString(time); }
 };
 
-} // namespace WTF
 #endif
+
+} // namespace WTF
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLMediaElement)
     static bool isType(const WebCore::Element& element) { return element.isMediaElement(); }

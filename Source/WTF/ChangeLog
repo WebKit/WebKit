@@ -1,3 +1,39 @@
+2019-02-16  Darin Adler  <darin@apple.com>
+
+        Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
+        https://bugs.webkit.org/show_bug.cgi?id=194752
+
+        Reviewed by Daniel Bates.
+
+        * WTF.xcodeproj/project.pbxproj: Added HexNumber.cpp and Logger.cpp.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/HexNumber.cpp: Added.
+        (WTF::Internal::appendHex): Non-inline, non-template hex formatting logic.
+
+        * wtf/HexNumber.h:
+        (WTF::Internal::appendHex): Refactored main logic of appendUnsignedAsHex and
+        appendUnsignedAsHexFixedSize so they can be reused in a function named hex for
+        use with StringTypeAdapter.
+        (WTF::appendUnsignedAsHex): Ditto.
+        (WTF::appendUnsignedAsHexFixedSize): Ditto.
+        (WTF::hex): Added.
+        (WTF::StringTypeAdapter<HexNumberBuffer>): Added.
+
+        * wtf/Logger.cpp: Added.
+        (WTF::Logger::LogSiteIdentifier::toString const): Made this a non-template
+        function and moved it here so that we don't need to include HexNumber.h
+        in Logger.h. Since HexNumber.h has substantial code in it, it's good if we
+        don't include it in any other headers.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument<Logger::LogSiteIdentifier>::toString): Changed to call
+        a non-template function, LogSiteIdentifier::toString.
+
+        * wtf/text/StringConcatenateNumbers.h: Replaced overloaded writeTo functions
+        with function templates and used StringImpl::copyCharacters instead of
+        hand-written loops.
+
 2019-02-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Better categorize CPU usage per-thread / worker

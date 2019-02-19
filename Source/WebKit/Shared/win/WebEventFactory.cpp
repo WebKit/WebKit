@@ -33,6 +33,7 @@
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <windowsx.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/HexNumber.h>
 
 namespace WebKit {
 
@@ -324,7 +325,7 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
     case VK_DELETE:
         return String("U+007F"); // Standard says that DEL becomes U+007F.
     default:
-        return String::format("U+%04X", toASCIIUpper(keyCode));
+        return makeString("U+", hex(toASCIIUpper(keyCode), 4));
     }
 }
 

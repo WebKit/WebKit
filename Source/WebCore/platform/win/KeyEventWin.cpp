@@ -28,6 +28,7 @@
 
 #include <windows.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/HexNumber.h>
 
 #ifndef MAPVK_VSC_TO_VK_EX
 #define MAPVK_VSC_TO_VK_EX 3
@@ -140,7 +141,7 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
         case VK_DELETE:
             return "U+007F";
         default:
-            return String::format("U+%04X", toASCIIUpper(keyCode));
+            return makeString("U+", hex(toASCIIUpper(keyCode), 4));
     }
 }
 

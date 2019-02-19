@@ -35,16 +35,13 @@ template<typename SignedInt>
 class StringTypeAdapter<SignedInt, typename std::enable_if_t<std::is_integral<SignedInt>::value && std::is_signed<SignedInt>::value>> {
 public:
     StringTypeAdapter(SignedInt number)
-        : m_number(number)
+        : m_number { number }
     {
     }
 
     unsigned length() const { return lengthOfNumberAsStringSigned(m_number); }
     bool is8Bit() const { return true; }
-
-    void writeTo(LChar* destination) const { writeNumberToBufferSigned(m_number, destination); }
-    void writeTo(UChar* destination) const { writeNumberToBufferSigned(m_number, destination); }
-
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { writeNumberToBufferSigned(m_number, destination); }
     String toString() const { return String::number(m_number); }
 
 private:
@@ -55,16 +52,13 @@ template<typename UnsignedInt>
 class StringTypeAdapter<UnsignedInt, typename std::enable_if_t<std::is_integral<UnsignedInt>::value && !std::is_signed<UnsignedInt>::value>> {
 public:
     StringTypeAdapter(UnsignedInt number)
-        : m_number(number)
+        : m_number { number }
     {
     }
 
     unsigned length() const { return lengthOfNumberAsStringUnsigned(m_number); }
     bool is8Bit() const { return true; }
-
-    void writeTo(LChar* destination) const { writeNumberToBufferUnsigned(m_number, destination); }
-    void writeTo(UChar* destination) const { writeNumberToBufferUnsigned(m_number, destination); }
-
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { writeNumberToBufferUnsigned(m_number, destination); }
     String toString() const { return String::number(m_number); }
 
 private:
@@ -82,22 +76,12 @@ public:
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return true; }
-
-    void writeTo(LChar* destination) const
-    {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
-    }
-
-    void writeTo(UChar* destination) const
-    {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_buffer[i];
-    }
-
-    String toString() const { return { m_buffer, m_length }; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
+    String toString() const { return { buffer(), m_length }; }
 
 private:
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(m_buffer); }
+
     NumberToStringBuffer m_buffer;
     unsigned m_length;
 };
@@ -131,34 +115,18 @@ private:
 template<>
 class StringTypeAdapter<FormattedNumber> {
 public:
-    StringTypeAdapter(const FormattedNumber& numberFormatter)
-        : m_numberFormatter(numberFormatter)
+    StringTypeAdapter(const FormattedNumber& number)
+        : m_number { number }
     {
     }
 
-    unsigned length() const { return m_numberFormatter.length(); }
+    unsigned length() const { return m_number.length(); }
     bool is8Bit() const { return true; }
-
-    void writeTo(LChar* destination) const
-    {
-        auto buffer = m_numberFormatter.buffer();
-        auto length = m_numberFormatter.length();
-        for (unsigned i = 0; i < length; ++i)
-            destination[i] = buffer[i];
-    }
-
-    void writeTo(UChar* destination) const
-    {
-        auto buffer = m_numberFormatter.buffer();
-        auto length = m_numberFormatter.length();
-        for (unsigned i = 0; i < length; ++i)
-            destination[i] = buffer[i];
-    }
-
-    String toString() const { return { m_numberFormatter.buffer(), m_numberFormatter.length() }; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, m_number.buffer(), m_number.length()); }
+    String toString() const { return { m_number.buffer(), m_number.length() }; }
 
 private:
-    const FormattedNumber& m_numberFormatter;
+    const FormattedNumber& m_number;
 };
 
 }

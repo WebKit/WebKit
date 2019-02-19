@@ -27,8 +27,8 @@
 #include "Connection.h"
 
 #include "DataReference.h"
+#include <wtf/HexNumber.h>
 #include <wtf/RandomNumber.h>
-#include <wtf/text/WTFString.h>
 
 namespace IPC {
 
@@ -41,7 +41,7 @@ bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HAND
 
     do {
         unsigned uniqueID = randomNumber() * std::numeric_limits<unsigned>::max();
-        pipeName = String::format("\\\\.\\pipe\\com.apple.WebKit.%x", uniqueID);
+        pipeName = makeString("\\\\.\\pipe\\com.apple.WebKit.", hex(uniqueID));
 
         serverIdentifier = ::CreateNamedPipe(pipeName.charactersWithNullTermination().data(),
             PIPE_ACCESS_DUPLEX | FILE_FLAG_FIRST_PIPE_INSTANCE | FILE_FLAG_OVERLAPPED,

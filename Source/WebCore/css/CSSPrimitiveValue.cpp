@@ -43,7 +43,6 @@
 #include <wtf/DecimalNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)

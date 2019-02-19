@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,14 @@ inline const LChar* hexDigitsForMode(HexConversionMode mode)
     return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
 }
 
+WTF_EXPORT std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
+
+template<size_t arraySize, typename NumberType>
+inline std::pair<LChar*, unsigned> appendHex(std::array<LChar, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)
+{
+    return appendHex(&buffer.front(), buffer.size(), static_cast<typename std::make_unsigned<NumberType>::type>(number), minimumDigits, mode);
+}
+
 } // namespace Internal
 
 template<typename T>
@@ -46,40 +54,66 @@ inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMod
     destination.append(hexDigits[byte & 0xF]);
 }
 
+// FIXME: Consider renaming to appendHex.
 template<typename NumberType, typename DestinationType>
 inline void appendUnsignedAsHex(NumberType number, DestinationType& destination, HexConversionMode mode = Uppercase)
 {
-    // Each byte can generate up to two digits.
-    std::array<LChar, sizeof(NumberType) * 2> buffer;
-    auto start = buffer.end();
-    auto unsignedNumber = static_cast<typename std::make_unsigned<NumberType>::type>(number);
-    auto hexDigits = Internal::hexDigitsForMode(mode);
-    do {
-        ASSERT(start > buffer.begin());
-        *--start = hexDigits[unsignedNumber & 0xF];
-        unsignedNumber >>= 4;
-    } while (unsignedNumber);
-    destination.append(&*start, buffer.end() - start);
+    appendUnsignedAsHexFixedSize(number, destination, 0, mode);
 }
 
+// FIXME: Consider renaming to appendHex.
 // Same as appendUnsignedAsHex, but zero-padding to get at least the desired number of digits.
 template<typename NumberType, typename DestinationType>
-inline void appendUnsignedAsHexFixedSize(NumberType number, DestinationType& destination, unsigned desiredDigits, HexConversionMode mode = Uppercase)
+inline void appendUnsignedAsHexFixedSize(NumberType number, DestinationType& destination, unsigned minimumDigits, HexConversionMode mode = Uppercase)
 {
-    unsigned digits = 0;
-    auto unsignedNumber = static_cast<typename std::make_unsigned<NumberType>::type>(number);
-    do {
-        ++digits;
-        unsignedNumber >>= 4;
-    } while (unsignedNumber);
-    for (; digits < desiredDigits; ++digits)
-        destination.append('0');
-    appendUnsignedAsHex(number, destination, mode);
+    // Each byte can generate up to two digits.
+    std::array<LChar, sizeof(NumberType) * 2> buffer;
+    auto result = Internal::appendHex(buffer, number, minimumDigits, mode);
+    destination.append(result.first, result.second);
 }
+
+struct HexNumberBuffer {
+    std::array<LChar, 16> characters;
+    unsigned length;
+};
+
+template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned minimumDigits = 0, HexConversionMode mode = Uppercase)
+{
+    // Each byte can generate up to two digits.
+    HexNumberBuffer buffer;
+    static_assert(sizeof(buffer.characters) >= sizeof(NumberType) * 2, "number too large for hexNumber");
+    auto result = Internal::appendHex(buffer.characters, number, minimumDigits, mode);
+    buffer.length = result.second;
+    return buffer;
+}
+
+template<typename NumberType> HexNumberBuffer hex(NumberType number, HexConversionMode mode)
+{
+    return hex(number, 0, mode);
+}
+
+template<> class StringTypeAdapter<HexNumberBuffer> {
+public:
+    StringTypeAdapter(const HexNumberBuffer& buffer)
+        : m_buffer { buffer }
+    {
+    }
+
+    unsigned length() const { return m_buffer.length; }
+    bool is8Bit() const { return true; }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, characters(), length()); }
+    String toString() const { return { characters(), length() }; }
+
+private:
+    const LChar* characters() const { return &*(m_buffer.characters.end() - length()); }
+
+    const HexNumberBuffer& m_buffer;
+};
 
 } // namespace WTF
 
 using WTF::appendByteAsHex;
 using WTF::appendUnsignedAsHex;
 using WTF::appendUnsignedAsHexFixedSize;
+using WTF::hex;
 using WTF::Lowercase;

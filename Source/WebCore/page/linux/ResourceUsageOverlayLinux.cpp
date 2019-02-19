@@ -36,6 +36,7 @@
 #include "RenderTheme.h"
 #include "ResourceUsageThread.h"
 #include <JavaScriptCore/VM.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -51,11 +52,11 @@ static String cpuUsageString(float cpuUsage)
 static String formatByteNumber(size_t number)
 {
     if (number >= 1024 * 1048576)
-        return String::format("%.3f GB", static_cast<double>(number) / (1024 * 1048576));
+        return makeString(FormattedNumber::fixedWidth(number / (1024. * 1048576), 3), " GB");
     if (number >= 1048576)
-        return String::format("%.2f MB", static_cast<double>(number) / 1048576);
+        return makeString(FormattedNumber::fixedWidth(number / 1048576., 2), " MB");
     if (number >= 1024)
-        return String::format("%.1f kB", static_cast<double>(number) / 1024);
+        return makeString(FormattedNumber::fixedWidth(number / 1024, 1), " kB");
     return String::number(number);
 }
 

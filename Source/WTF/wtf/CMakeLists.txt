@@ -363,11 +363,13 @@ set(WTF_SOURCES
     GlobalVersion.cpp
     GregorianDateTime.cpp
     HashTable.cpp
+    HexNumber.cpp
     JSONValues.cpp
     JSValueMalloc.cpp
     Language.cpp
     Lock.cpp
     LockedPrintStream.cpp
+    Logger.cpp
     MD5.cpp
     MainThread.cpp
     MediaTime.cpp

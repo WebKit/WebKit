@@ -1,3 +1,19 @@
+2019-02-16  Darin Adler  <darin@apple.com>
+
+        Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
+        https://bugs.webkit.org/show_bug.cgi?id=194752
+
+        Reviewed by Daniel Bates.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json): Added back the "0x" that was removed when changing
+        this file to use appendUnsignedAsHex instead of "%p". The intent at that time was to
+        keep behavior the same, so let's do that.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::invalidCharacterMessage const): Use makeString and hex instead of
+        String::format and "%04x".
+
 2019-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add LazyClassStructure::getInitializedOnMainThread

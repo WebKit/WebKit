@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,28 @@
  */
 
 #include "config.h"
-#include "CSSUnicodeRangeValue.h"
+#include "Logger.h"
 
 #include <wtf/HexNumber.h>
 
-namespace WebCore {
+namespace WTF {
 
-String CSSUnicodeRangeValue::customCSSText() const
+String Logger::LogSiteIdentifier::toString() const
 {
-    return makeString("U+", hex(m_from, Lowercase), '-', hex(m_to, Lowercase));
+    StringBuilder builder;
+
+    if (className) {
+        builder.append(className);
+        builder.appendLiteral("::");
+    }
+    builder.append(methodName);
+    builder.append('(');
+    appendUnsignedAsHex(objectPtr, builder);
+    builder.appendLiteral(") ");
+    return builder.toString();
 }
 
-bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const
-{
-    return m_from == other.m_from && m_to == other.m_to;
-}
+} // namespace WTF
 
-}
+using WTF::Logger;
+using WTF::JSONLogValue;

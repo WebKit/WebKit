@@ -86,6 +86,7 @@ public:
     virtual void didChange();
 
     String toJSONString() const;
+    String debugString() const;
 
     using RefCounted::ref;
     using RefCounted::deref;
@@ -126,15 +127,10 @@ private:
 
 namespace WTF {
 
-template<typename Type>
-struct LogArgument;
+template<typename> struct LogArgument;
 
-template <>
-struct LogArgument<WebCore::TextTrackCue> {
-    static String toString(const WebCore::TextTrackCue& cue)
-    {
-        return cue.toJSONString();
-    }
+template<> struct LogArgument<WebCore::TextTrackCue> {
+    static String toString(const WebCore::TextTrackCue& cue) { return cue.toJSONString(); }
 };
 
 }

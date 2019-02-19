@@ -1,3 +1,96 @@
+2019-02-16  Darin Adler  <darin@apple.com>
+
+        Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
+        https://bugs.webkit.org/show_bug.cgi?id=194752
+
+        Reviewed by Daniel Bates.
+
+        * Modules/websockets/WebSocket.cpp: Added an include of HexNumber.h. This previously
+        got included because of Logger.h, but that no longer pulls in HexNumber.h.
+
+        * css/CSSMarkup.cpp: Removed unneeded include of StringBuffer.h.
+        * css/CSSPrimitiveValue.cpp: Ditto.
+
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::customCSSText const): Use makeString and hex instead
+        of String::format and "%x".
+
+        * html/HTMLMediaElement.h:
+        (WTF::ValueToString<WebCore::TextTrackCue::string): Use a non-template function,
+        TextTrackCure::debugString, so we don't need to use HextNumber.h in a header.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (GetErrorString): Use makeString and hex instead of String::format and "%04x".
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::debugString const): Added. Moved string conversion here
+        from HTMLMediaElement.h and use makeString instead of String::format. Also use
+        the word "debug" to make it clear that it's not OK to use this string, with a
+        pointer value serialized into it, outside of debugging.
+        * html/track/TextTrackCue.h: Added TextTrackCue::debugString.
+
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::formatByteNumber): Use makeString and FormattedNumber::fixedWidth
+        instead of String::format and "%.1f" etc.
+
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyIdentifierForCharCode): Use the new hex function here instead of
+        the old code that did each of the four characters explicitly.
+
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::HIDGamepad): Use makeString instead of String::format.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::nameForRenderTreeAsText const): Use hex instead of doing each
+        digit separately.
+
+        * platform/graphics/FloatPolygon.cpp:
+        (WebCore::FloatPolygonEdge::debugString const): Added. Moved string conversion here
+        from the header and use makeString instead of String::format. Also use
+        the word "debug" to make it clear that it's not OK to use this string, with a
+        pointer value serialized into it, outside of debugging.
+        * platform/graphics/FloatPolygon.h: Updated for the above.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName): Use makeString instead of String::format.
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges): DItto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Ditto.
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForGdkKeyCode): Ditto.
+        * platform/libwpe/PlatformKeyboardEventLibWPE.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForWPEKeyCode): Ditto.
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::makeElement): Ditto.
+        (WebCore::GStreamerVideoEncoder::InitEncode): Ditto.
+
+        * platform/text/TextCodecLatin1.cpp: Removed unneeded include of StringBuffer.h
+        and "using namespace WTF".
+
+        * platform/win/GDIObjectCounter.cpp:
+        (WebCore::GDIObjectCounter::GDIObjectCounter): Use makeString instead of String::format.
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode): Ditto.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::debugString const): Added. Moved string conversion here
+        from the header and use makeString instead of String::format. Also use
+        the word "debug" to make it clear that it's not OK to use this string, with a
+        pointer value serialized into it, outside of debugging.
+        * rendering/FloatingObjects.h: Updated for the above.
+
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::debugString const): Added. Moved string
+        conversion here from the header and use makeString instead of String::format.
+        Also use the word "debug" to make it clear that it's not OK to use this string,
+        with a pointer value serialized into it, outside of debugging.
+        * rendering/RenderFragmentContainer.h: Updated for the above.
+        * rendering/RenderFragmentedFlow.h: Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::address): Use makeString instead of String::format.
+
 2019-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support pasting item-provider-backed data on the pasteboard as attachment elements

@@ -35,7 +35,7 @@ String fileSizeDescription(uint64_t size)
     // FIXME: These strings should be localized, but that would require bringing LocalizedStrings into PAL.
     // See <https://bugs.webkit.org/show_bug.cgi?id=179019> for more details.
     if (size < 1000)
-        return String::format("%tu bytes", size);
+        return makeString(size, " bytes");
     if (size < 1000000)
         return makeString(FormattedNumber::fixedWidth(size / 1000., 1), " KB");
     if (size < 1000000000)

@@ -30,8 +30,8 @@
 #import "PlatformKeyboardEvent.h"
 #import "WindowsKeyboardCodes.h"
 #import <wtf/ASCIICType.h>
+#import <wtf/HexNumber.h>
 #import <wtf/MainThread.h>
-#import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "KeyEventCodesIOS.h"
@@ -494,12 +494,7 @@ String keyIdentifierForCharCode(unichar charCode)
             // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
             // For now, just fall through to the default.
         default:
-            UChar codeUnit = toASCIIUpper(charCode);
-            return makeString("U+",
-                upperNibbleToASCIIHexDigit(codeUnit >> 8),
-                lowerNibbleToASCIIHexDigit(codeUnit >> 8),
-                upperNibbleToASCIIHexDigit(codeUnit),
-                lowerNibbleToASCIIHexDigit(codeUnit));
+            return makeString("U+", hex(toASCIIUpper(charCode), 4));
     }
 }
 

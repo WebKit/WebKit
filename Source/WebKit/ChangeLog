@@ -1,3 +1,30 @@
+2019-02-16  Darin Adler  <darin@apple.com>
+
+        Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
+        https://bugs.webkit.org/show_bug.cgi?id=194752
+
+        Reviewed by Daniel Bates.
+
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::createServerAndClientIdentifiers): Use makeString instead of
+        String::format.
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::keyIdentifierFromEvent): Ditto.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::loggingString const): Use hex instead of String::format.
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::loggingString const): Ditto.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::loggingString): Added a "0x".
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::logHandleKeyboardEventForTesting): Use makeString and hex
+        instead of String::format and "%x".
+        (WebKit::InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting):
+        Ditto.
+
 2019-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support pasting item-provider-backed data on the pasteboard as attachment elements
