@@ -1,3 +1,13 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Revert functional part of r241451
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        It caused crashes and assertions on Linux and Cocoa without safe browsing, which
+        means it's fundamentally flawed in some way.  The testing piping was fine.
+
 2019-02-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (PSON): Can't access optumbank.com from myuhc.com

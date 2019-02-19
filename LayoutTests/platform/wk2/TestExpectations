@@ -749,7 +749,7 @@ storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Pass ]
 
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 
-http/tests/adClickAttribution [ Pass ]
+http/tests/adClickAttribution [ Failure ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################

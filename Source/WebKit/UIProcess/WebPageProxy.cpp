@@ -4144,15 +4144,8 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navi
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
     RefPtr<API::Navigation> navigation;
-    if (frame->isMainFrame() && navigationID) {
+    if (frame->isMainFrame() && navigationID)
         navigation = navigationState().navigation(navigationID);
-        if (navigation) {
-            if (auto& adClickAttribution = navigation->adClickAttribution()) {
-                if (adClickAttribution->destination().matches(frame->url()))
-                    m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution));
-            }
-        }
-    }
 
     if (frame->isMainFrame())
         m_navigationClient->didFinishDocumentLoad(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());

@@ -1,3 +1,10 @@
+2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+        Revert functional part of r241451
+        https://bugs.webkit.org/show_bug.cgi?id=194510
+
+        * platform/wk2/TestExpectations:
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] Focus ring for checkboxes, radio buttons, buttons and search fields should hug tighter to the contour
