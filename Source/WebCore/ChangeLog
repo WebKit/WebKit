@@ -1,5 +1,14 @@
 2019-02-19  Zalan Bujtas  <zalan@apple.com>
 
+        Fix post-commit feedback.
+
+        Unreviewed. 
+
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingPair::intersects const):
+
+2019-02-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Floats] Remove redundant intersecting logic
         https://bugs.webkit.org/show_bug.cgi?id=194804
 

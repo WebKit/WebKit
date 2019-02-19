@@ -322,7 +322,7 @@ const FloatingState::FloatItem* FloatingPair::right() const
 bool FloatingPair::intersects(const Display::Box::Rect& floatAvoiderRect) const
 {
     auto intersects = [&](auto* floating) {
-        return floating ? floating->rectWithMargin().intersects(floatAvoiderRect) : false;
+        return floating && floating->rectWithMargin().intersects(floatAvoiderRect);
     };
 
     ASSERT(m_leftIndex || m_rightIndex);
