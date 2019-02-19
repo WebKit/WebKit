@@ -39,10 +39,6 @@
 #include "UnlinkedFunctionCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
-#include <sys/stat.h>
-#include <wtf/Forward.h>
-#include <wtf/Scope.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
@@ -110,60 +106,14 @@ public:
     template<typename UnlinkedCodeBlockType>
     UnlinkedCodeBlockType* fetchFromDiskImpl(VM& vm, const SourceCodeKey& key)
     {
-        {
-            const auto* cachedBytecode = key.source().provider().cachedBytecode();
-            if (cachedBytecode && cachedBytecode->size()) {
-                VERBOSE_LOG("Found cached CodeBlock in the SourceProvider");
-                UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, cachedBytecode->data(), cachedBytecode->size());
-                if (unlinkedCodeBlock)
-                    return unlinkedCodeBlock;
-            }
+        const CachedBytecode* cachedBytecode = key.source().provider().cachedBytecode();
+        if (cachedBytecode && cachedBytecode->size()) {
+            VERBOSE_LOG("Found cached CodeBlock in the SourceProvider");
+            UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, cachedBytecode->data(), cachedBytecode->size());
+            if (unlinkedCodeBlock)
+                return unlinkedCodeBlock;
         }
-
-#if OS(DARWIN)
-        const char* cachePath = Options::diskCachePath();
-        if (!cachePath)
-            return nullptr;
-
-        unsigned hash = key.hash();
-        char filename[512];
-        int count = snprintf(filename, 512, "%s/%u.cache", cachePath, hash);
-        if (count < 0 || count > 512)
-            return nullptr;
-
-        int fd = open(filename, O_RDONLY);
-        if (fd == -1)
-            return nullptr;
-
-        auto closeFD = makeScopeExit([&] {
-            close(fd);
-        });
-
-        int rc = flock(fd, LOCK_SH | LOCK_NB);
-        if (rc)
-            return nullptr;
-
-        struct stat sb;
-        int res = fstat(fd, &sb);
-        size_t size = static_cast<size_t>(sb.st_size);
-        if (res || !size)
-            return nullptr;
-
-        void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
-        UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, buffer, size);
-        munmap(buffer, size);
-
-        if (!unlinkedCodeBlock)
-            return nullptr;
-
-        VERBOSE_LOG("Found cached CodeBlock on disk");
-        addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_age, true));
-        return unlinkedCodeBlock;
-#else
-        UNUSED_PARAM(vm);
-        UNUSED_PARAM(key);
         return nullptr;
-#endif
     }
 
     template<typename UnlinkedCodeBlockType>

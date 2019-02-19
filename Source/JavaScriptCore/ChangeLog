@@ -1,3 +1,32 @@
+2019-02-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Move bytecode cache-related filesystem code out of CodeCache
+        https://bugs.webkit.org/show_bug.cgi?id=194675
+
+        Reviewed by Saam Barati.
+
+        The code is only used for the bytecode-cache tests, so it should live in
+        jsc.cpp rather than in the CodeCache. The logic now lives in ShellSourceProvider,
+        which overrides the a virtual method in SourceProvider, `cacheBytecode`,
+        in order to write the cache to disk.
+
+        * jsc.cpp:
+        (ShellSourceProvider::create):
+        (ShellSourceProvider::~ShellSourceProvider):
+        (ShellSourceProvider::cachePath const):
+        (ShellSourceProvider::loadBytecode):
+        (ShellSourceProvider::ShellSourceProvider):
+        (jscSource):
+        (GlobalObject::moduleLoaderFetch):
+        (functionDollarEvalScript):
+        (runWithOptions):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::cacheBytecode const):
+        * runtime/CodeCache.cpp:
+        (JSC::writeCodeBlock):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+
 2019-02-18  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM] Fix crash with sampling profiler
