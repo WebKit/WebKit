@@ -1,3 +1,19 @@
+2019-02-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove assertion introduced in r229683
+        https://bugs.webkit.org/show_bug.cgi?id=194825
+        <rdar://problem/47628258>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        If we reach this code and the form's original Document's Frame has been destroyed,
+        we have already been told to submit the form so do so, just like we do if the WebPage
+        has been destroyed.  This is a rare edge case having to do with the timing of Frame
+        destruction and decidePolicyForNavigationAction response, which unfortunately does not
+        reproduce with a test case unless the timing of IPC is just right.
+
 2019-02-19  Antoine Quint  <graouts@apple.com>
 
         [iOS] "touch-action: none" should not prevent text selection or tapping on a link

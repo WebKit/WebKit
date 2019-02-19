@@ -973,9 +973,11 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, Completi
     auto& form = formState.form();
 
     auto* sourceCoreFrame = formState.sourceDocument().frame();
-    RELEASE_ASSERT(sourceCoreFrame);
+    if (!sourceCoreFrame)
+        return completionHandler();
     auto* sourceFrame = WebFrame::fromCoreFrame(*sourceCoreFrame);
-    ASSERT(sourceFrame);
+    if (!sourceFrame)
+        return completionHandler();
 
     auto& values = formState.textFieldValues();
 
