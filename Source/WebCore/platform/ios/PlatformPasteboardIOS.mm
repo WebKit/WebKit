@@ -78,16 +78,6 @@ void PlatformPasteboard::getTypes(Vector<String>& types)
         types.append(pasteboardType);
 }
 
-void PlatformPasteboard::getTypesByFidelityForItemAtIndex(Vector<String>& types, int index)
-{
-    if (index >= [m_pasteboard numberOfItems] || ![m_pasteboard respondsToSelector:@selector(pasteboardTypesByFidelityForItemAtIndex:)])
-        return;
-
-    NSArray *pasteboardTypesByFidelity = [m_pasteboard pasteboardTypesByFidelityForItemAtIndex:index];
-    for (NSString *typeIdentifier in pasteboardTypesByFidelity)
-        types.append(typeIdentifier);
-}
-
 RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& type)
 {
     if (NSData *data = [m_pasteboard dataForPasteboardType:type])
@@ -139,6 +129,7 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
         return { };
 
     PasteboardItemInfo info;
+    NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
     if ([m_pasteboard respondsToSelector:@selector(fileUploadURLsAtIndex:fileTypes:)]) {
         NSArray<NSString *> *fileTypes = nil;
         NSArray *urls = [m_pasteboard fileUploadURLsAtIndex:index fileTypes:&fileTypes];
@@ -149,17 +140,27 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
             info.pathsForFileUpload.uncheckedAppend(url.path);
 
         info.contentTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
-        for (NSString *fileType : fileTypes)
+        for (NSString *fileType in fileTypes)
             info.contentTypesForFileUpload.uncheckedAppend(fileType);
+    } else {
+        NSArray *fileTypes = itemProvider.web_fileUploadContentTypes;
+        info.contentTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
+        info.pathsForFileUpload.reserveInitialCapacity(fileTypes.count);
+        for (NSString *fileType in fileTypes) {
+            info.contentTypesForFileUpload.uncheckedAppend(fileType);
+            info.pathsForFileUpload.uncheckedAppend({ });
+        }
     }
 
-    NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
 #if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
 #endif
     info.containsFileURLAndFileUploadContent = itemProvider.web_containsFileURLAndFileUploadContent;
     info.suggestedFileName = itemProvider.suggestedName;
-    for (NSString *typeIdentifier in itemProvider.registeredTypeIdentifiers) {
+    NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
+    info.contentTypesByFidelity.reserveInitialCapacity(registeredTypeIdentifiers.count);
+    for (NSString *typeIdentifier in registeredTypeIdentifiers) {
+        info.contentTypesByFidelity.uncheckedAppend(typeIdentifier);
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
         if (!UTTypeIsDeclared(cfTypeIdentifier))
             continue;
@@ -177,7 +178,6 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
             continue;
 
         info.isNonTextType = true;
-        break;
     }
 
     return info;

@@ -285,13 +285,31 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
     NSArray *types = supportedWebContentPasteboardTypes();
     int numberOfTypes = [types count];
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+#else
+    bool canReadAttachment = false;
+#endif
+
     for (int i = 0; i < numberOfItems; i++) {
+        auto info = strategy.informationForItemAtIndex(i, m_pasteboardName);
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (canReadAttachment) {
+            auto typeForFileUpload = info.contentTypeForHighestFidelityItem();
+            if (!typeForFileUpload.isEmpty() && info.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment) {
+                auto buffer = strategy.readBufferFromPasteboard(i, typeForFileUpload, m_pasteboardName);
+                if (buffer && reader.readDataBuffer(*buffer, typeForFileUpload, info.suggestedFileName))
+                    continue;
+            }
+        }
+#endif
+
         for (int typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
             NSString *type = [types objectAtIndex:typeIndex];
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 
-            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, i, strategy.informationForItemAtIndex(i, m_pasteboardName));
+            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, type, i, info);
             if (itemResult == ReaderResult::PasteboardWasChangedExternally)
                 return;
 
@@ -325,10 +343,8 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
 #endif
         // Try to read data from each type identifier that this pasteboard item supports, and WebKit also recognizes. Type identifiers are
         // read in order of fidelity, as specified by each pasteboard item.
-        Vector<String> typesForItemInOrderOfFidelity;
-        strategy.getTypesByFidelityForItemAtIndex(typesForItemInOrderOfFidelity, index, m_pasteboardName);
         ReaderResult result = ReaderResult::DidNotReadType;
-        for (auto& type : typesForItemInOrderOfFidelity) {
+        for (auto& type : info.contentTypesByFidelity) {
             if (!isTypeAllowedByReadingPolicy(type, policy))
                 continue;
 

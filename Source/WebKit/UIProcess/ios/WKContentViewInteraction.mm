@@ -2732,6 +2732,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         if ([pasteboard containsPasteboardTypes:types inItemSet:indices])
             return YES;
 
+#if PLATFORM(IOS)
+        if (editorState.isContentRichlyEditable && _webView.configuration._attachmentElementEnabled) {
+            for (NSItemProvider *itemProvider in pasteboard.itemProviders) {
+                if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleAttachment && itemProvider.web_fileUploadContentTypes.count)
+                    return YES;
+            }
+        }
+#endif // PLATFORM(IOS)
+
         auto focusedDocumentOrigin = editorState.originIdentifierForPasteboard;
         if (focusedDocumentOrigin.isEmpty())
             return NO;

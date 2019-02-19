@@ -179,10 +179,6 @@ void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData& da
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPasteboardProxy::getPasteboardTypesByFidelityForItemAtIndex(uint64_t index, const String& pasteboardName, Vector<String>& types)
-{
-    PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);
-}
 
 void WebPasteboardProxy::writeURLToPasteboard(const PasteboardURL& url, const String& pasteboardName)
 {

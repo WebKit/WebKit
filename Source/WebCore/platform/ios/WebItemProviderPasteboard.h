@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSItemProvider (WebCoreExtras)
 @property (nonatomic, readonly) BOOL web_containsFileURLAndFileUploadContent;
+@property (nonatomic, readonly) NSArray<NSString *> *web_fileUploadContentTypes;
 @end
 
 /*! A WebItemProviderRegistrar encapsulates a single call to register something to an item provider.

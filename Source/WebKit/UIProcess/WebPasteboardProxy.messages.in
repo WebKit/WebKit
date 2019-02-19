@@ -33,7 +33,6 @@ messages -> WebPasteboardProxy {
     AllPasteboardItemInfo(String pasteboardName) -> (Vector<WebCore::PasteboardItemInfo> allInfo) LegacySync
     InformationForItemAtIndex(uint64_t index, String pasteboardName) -> (struct WebCore::PasteboardItemInfo info) LegacySync
     UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
-    GetPasteboardTypesByFidelityForItemAtIndex(uint64_t index, String pasteboardName) -> (Vector<String> types) LegacySync
 #endif
 
     WriteCustomData(struct WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount) LegacySync

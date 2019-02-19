@@ -269,12 +269,6 @@ void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<St
     notImplemented();
 }
 
-String WebEditorClient::replacementURLForResource(Ref<WebCore::SharedBuffer>&&, const String&)
-{
-    notImplemented();
-    return { };
-}
-
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
     COMPtr<IWebEditingDelegate> ed;

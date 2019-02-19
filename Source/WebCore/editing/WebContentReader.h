@@ -78,6 +78,7 @@ private:
     bool readImage(Ref<SharedBuffer>&&, const String& type) override;
     bool readURL(const URL&, const String& title) override;
     bool readVirtualContactFile(const String& filePath, const URL&, const String& urlTitle) override;
+    bool readDataBuffer(SharedBuffer&, const String& type, const String& name) override;
 #endif
     bool readPlainText(const String&) override;
 };
@@ -101,6 +102,7 @@ private:
     bool readRTF(SharedBuffer&) override;
     bool readImage(Ref<SharedBuffer>&&, const String&) override { return false; }
     bool readURL(const URL&, const String&) override { return false; }
+    bool readDataBuffer(SharedBuffer&, const String&, const String&) override { return false; }
 #endif
     bool readPlainText(const String&) override { return false; }
 };

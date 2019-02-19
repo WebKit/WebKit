@@ -158,10 +158,6 @@ long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData&
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPlatformStrategies::getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName)
-{
-    PlatformPasteboard(pasteboardName).getTypesByFidelityForItemAtIndex(types, index);
-}
 
 void WebPlatformStrategies::writeToPasteboard(const PasteboardURL& url, const String& pasteboardName)
 {

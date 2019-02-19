@@ -1,3 +1,88 @@
+2019-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Support pasting item-provider-backed data on the pasteboard as attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=194670
+        <rdar://problem/39066529>
+
+        Reviewed by Tim Horton.
+
+        Adds support for pasting files on the pasteboard as attachment elements, if the attachment element runtime
+        switch is enabled. Currently, the only types of data that can be pasted as attachments are images, which take a
+        special codepath in WebContentReader::readImage.
+
+        This patch adds a readDataBuffer method that converts a given blob of data from the pasteboard into an
+        attachment-element-backed representation in the DOM (i.e. either an attachment element or image element that
+        contains an attachment element). In the case where the given pasteboard item has been explicitly marked as an
+        attachment (via the preferredPresentationStyle hint) and the item has at least one type representation that
+        conforms to "public.content", we take this codepath instead of first attempting the web content reading types
+        supported by default in WebKit.
+
+        See below for more detail.
+
+        Test: WKAttachmentTestsIOS.InsertPastedFilesAsAttachments
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::clientReplacementURLForResource): Deleted.
+        * editing/Editor.h:
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::mimeTypeFromContentType):
+        (WebCore::contentTypeIsSuitableForInlineImageRepresentation):
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+
+        Remove all logic for handling subresource URL replacement. See WebKit ChangeLog for more details on this.
+
+        (WebCore::WebContentReader::readImage):
+        (WebCore::attachmentForFilePath):
+        (WebCore::attachmentForData):
+
+        Add a helper that creates an attachment element for a given blob of data and content type. The logic here is
+        quite similar to that of attachmentForFilePath, and we should find a way to either merge them, or pull out more
+        of their similarities into helper functions.
+
+        (WebCore::WebContentReader::readDataBuffer):
+        (WebCore::replaceSubresourceURLsWithURLsFromClient): Deleted.
+
+        Remove more logic for handling subresource URL replacement. See WebKit ChangeLog for more details on this.
+
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+        * platform/Pasteboard.h:
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::contentTypeForHighestFidelityItem const):
+        (WebCore::PasteboardItemInfo::pathForHighestFidelityItem const):
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Add contentTypesByFidelity to PasteboardItemInfo, instead of requesting this information using a separate IPC
+        message. This means we can also remove getTypesByFidelityForItemAtIndex, and just use the item's types in
+        fidelity order instead.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+
+        Shave off (potentially many) sync IPC messages to the UI process by pulling each call to
+        informationForItemAtIndex out of the inner loop when reading web content.
+
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
+        Shave off one extraneous sync IPC message by rolling the types in fidelity order into the request for
+        PasteboardItemInfo, instead of being sent in a separate message.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+
+        Populate contentTypesForFileUpload in the case where UIPasteboard is used (i.e. copy and paste).
+
+        (WebCore::PlatformPasteboard::getTypesByFidelityForItemAtIndex): Deleted.
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard pasteboardTypesByFidelityForItemAtIndex:]): Deleted.
+
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
         Clean up and modernize RenderThemeIOS::paintCheckboxDecorations()

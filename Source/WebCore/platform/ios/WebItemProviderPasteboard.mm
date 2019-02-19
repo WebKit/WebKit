@@ -487,11 +487,6 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     _supportedTypeIdentifiers = types;
 }
 
-- (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index
-{
-    return [self itemProviderAtIndex:index].registeredTypeIdentifiers ?: @[ ];
-}
-
 - (NSArray<NSString *> *)pasteboardTypes
 {
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];

@@ -4258,14 +4258,6 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
     return font;
 }
 
-String Editor::clientReplacementURLForResource(Ref<SharedBuffer>&& resourceData, const String& mimeType)
-{
-    if (auto* editorClient = client())
-        return editorClient->replacementURLForResource(WTFMove(resourceData), mimeType);
-
-    return { };
-}
-
 RefPtr<HTMLImageElement> Editor::insertEditableImage()
 {
     return InsertEditableImageCommand::insertEditableImage(document());

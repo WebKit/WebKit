@@ -54,7 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable WebItemProviderRegistrationInfoList *)takeRegistrationList;
 #endif
 - (void)setItems:(NSArray<NSDictionary *> *)items;
-- (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index;
 @property (readonly, nonatomic) NSInteger numberOfFiles;
 @property (readonly, nonatomic) NSArray<NSURL *> *allDroppedFileURLs;
 

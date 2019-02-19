@@ -1158,39 +1158,6 @@ TEST(WKAttachmentTests, InsertDuplicateAttachmentAndUpdateData)
     EXPECT_FALSE([[originalAttachment info].fileWrapper isEqual:fileWrapper.get()]);
 }
 
-TEST(WKAttachmentTests, InjectedBundleReplaceURLsWhenPastingAttributedString)
-{
-    platformCopyRichTextWithMultipleAttachments();
-
-    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
-    [[configuration processPool] _setObject:@{ @"image/png" : @"cid:foo-bar" } forBundleParameter:@"MIMETypeToReplacementURLMap"];
-    auto webView = webViewForTestingAttachments(CGSizeMake(500, 500), configuration.get());
-    {
-        ObserveAttachmentUpdatesForScope observer(webView.get());
-        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
-        EXPECT_EQ(2U, observer.observer().inserted.count);
-    }
-    [webView expectElementTagsInOrder:@[ @"IMG", @"ATTACHMENT", @"ATTACHMENT" ]];
-    EXPECT_WK_STREQ("cid:foo-bar", [webView valueOfAttribute:@"src" forQuerySelector:@"img"]);
-    EXPECT_WK_STREQ(@"", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('img')[0].attachmentIdentifier"]);
-}
-
-TEST(WKAttachmentTests, InjectedBundleReplaceURLWhenPastingImage)
-{
-    platformCopyPNG();
-
-    NSString *replacementURL = @"cid:foo-bar";
-    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
-    [[configuration processPool] _setObject:@{ @"image/tiff" : replacementURL, @"image/png" : replacementURL } forBundleParameter:@"MIMETypeToReplacementURLMap"];
-    auto webView = webViewForTestingAttachments(CGSizeMake(500, 500), configuration.get());
-    {
-        ObserveAttachmentUpdatesForScope observer(webView.get());
-        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
-        EXPECT_EQ(0U, observer.observer().inserted.count);
-    }
-    EXPECT_WK_STREQ("cid:foo-bar", [webView valueOfAttribute:@"src" forQuerySelector:@"img"]);
-}
-
 TEST(WKAttachmentTests, InsertAttachmentUsingFileWrapperWithFilePath)
 {
     auto webView = webViewForTestingAttachments();
@@ -1879,6 +1846,49 @@ TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
     _WKAttachmentInfo *info = [simulator insertedAttachments].firstObject.info;
     EXPECT_WK_STREQ("Foo Bar.vcf", info.name);
     EXPECT_WK_STREQ("text/vcard", info.contentType);
+}
+
+TEST(WKAttachmentTestsIOS, InsertPastedFilesAsAttachments)
+{
+    auto pdfItem = adoptNS([[NSItemProvider alloc] init]);
+    [pdfItem setSuggestedName:@"doc"];
+    [pdfItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [pdfItem registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
+
+    auto textItem = adoptNS([[NSItemProvider alloc] init]);
+    [textItem setSuggestedName:@"hello"];
+    [textItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [textItem registerData:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding] type:(__bridge NSString *)kUTTypePlainText];
+
+    UIPasteboard.generalPasteboard.itemProviders = @[ pdfItem.get(), textItem.get() ];
+
+    RetainPtr<_WKAttachment> textAttachment;
+    RetainPtr<_WKAttachment> pdfAttachment;
+    auto webView = webViewForTestingAttachments();
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(2U, observer.observer().inserted.count);
+        _WKAttachment *firstAttachment = observer.observer().inserted.firstObject;
+        if ([firstAttachment.info.contentType isEqualToString:@"text/plain"]) {
+            textAttachment = firstAttachment;
+            pdfAttachment = observer.observer().inserted.lastObject;
+        } else {
+            EXPECT_WK_STREQ(firstAttachment.info.contentType, @"application/pdf");
+            textAttachment = observer.observer().inserted.lastObject;
+            pdfAttachment = firstAttachment;
+        }
+        observer.expectAttachmentUpdates(@[ ], @[ pdfAttachment.get(), textAttachment.get() ]);
+    }
+
+    [webView expectElementCount:2 querySelector:@"attachment"];
+    EXPECT_WK_STREQ("doc", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment[type^=application]"]);
+    EXPECT_WK_STREQ("doc", [pdfAttachment info].name);
+    EXPECT_WK_STREQ("hello", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment[type^=text]"]);
+    EXPECT_WK_STREQ("hello", [textAttachment info].name);
+    [pdfAttachment expectRequestedDataToBe:testPDFData()];
+    [textAttachment expectRequestedDataToBe:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding]];
+    EXPECT_TRUE([webView canPerformAction:@selector(paste:) withSender:nil]);
 }
 
 #if HAVE(PENCILKIT)

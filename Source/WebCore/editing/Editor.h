@@ -500,8 +500,6 @@ public:
 
     bool canCopyExcludingStandaloneImages() const;
 
-    String clientReplacementURLForResource(Ref<SharedBuffer>&& resourceData, const String& mimeType);
-
 #if !PLATFORM(WIN)
     WEBCORE_EXPORT void writeSelectionToPasteboard(Pasteboard&);
     WEBCORE_EXPORT void writeImageToPasteboard(Pasteboard&, Element& imageElement, const URL&, const String& title);

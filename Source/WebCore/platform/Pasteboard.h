@@ -143,6 +143,7 @@ public:
     virtual bool readRTF(SharedBuffer&) = 0;
     virtual bool readImage(Ref<SharedBuffer>&&, const String& type) = 0;
     virtual bool readURL(const URL&, const String& title) = 0;
+    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name) = 0;
 #endif
     virtual bool readPlainText(const String&) = 0;
 };
