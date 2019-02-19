@@ -1,5 +1,19 @@
 2019-02-18  Daniel Bates  <dabates@apple.com>
 
+        Clean up and modernize RenderThemeIOS::paintCheckboxDecorations()
+        https://bugs.webkit.org/show_bug.cgi?id=194785
+
+        Reviewed by Simon Fraser.
+
+        Change from early return to else-clause to make the states clearer and make it more straightforward
+        to share more common code. Use constexpr, allocate temporary vectors with inline capacity, and
+        switch to uniform initializer syntax.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintCheckboxDecorations):
+
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
         [iOS] Focus ring for checkboxes, radio buttons, buttons and search fields should hug tighter to the contour
         https://bugs.webkit.org/show_bug.cgi?id=193599
         <rdar://problem/47399602>

@@ -377,68 +377,57 @@ static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points,
 
 bool RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
+    bool checked = isChecked(box);
+    bool indeterminate = isIndeterminate(box);
+    CGContextRef cgContext = paintInfo.context().platformContext();
 
+    GraphicsContextStateSaver stateSaver { paintInfo.context() };
+    auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
     float width = clip.width();
     float height = clip.height();
 
-    bool checked = isChecked(box);
-    bool indeterminate = isIndeterminate(box);
+    if (checked || indeterminate) {
+        drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
 
-    CGContextRef cgContext = paintInfo.context().platformContext();
-    if (!checked && !indeterminate) {
-        FloatPoint bottomCenter(clip.x() + clip.width() / 2.0f, clip.maxY());
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
+        constexpr float thicknessRatio = 2 / 14.0;
+        float lineWidth = std::min(width, height) * 2.0f * thicknessRatio;
+
+        Vector<CGPoint, 3> line;
+        Vector<CGPoint, 3> shadow;
+        if (checked) {
+            constexpr CGSize size { 14.0f, 14.0f };
+            constexpr CGPoint pathRatios[] = {
+                { 2.5f / size.width, 7.5f / size.height },
+                { 5.5f / size.width, 10.5f / size.height },
+                { 11.5f / size.width, 2.5f / size.height }
+            };
+
+            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[0].x, clip.y() + height * pathRatios[0].y));
+            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[1].x, clip.y() + height * pathRatios[1].y));
+            line.uncheckedAppend(CGPointMake(clip.x() + width * pathRatios[2].x, clip.y() + height * pathRatios[2].y));
+
+            shadow.uncheckedAppend(shortened(line[0], line[1], lineWidth / 4.0f));
+            shadow.uncheckedAppend(line[1]);
+            shadow.uncheckedAppend(shortened(line[2], line[1], lineWidth / 4.0f));
+        } else {
+            line.uncheckedAppend(CGPointMake(clip.x() + 3.5, clip.center().y()));
+            line.uncheckedAppend(CGPointMake(clip.maxX() - 3.5, clip.center().y()));
+
+            shadow.uncheckedAppend(shortened(line[0], line[1], lineWidth / 4.0f));
+            shadow.uncheckedAppend(shortened(line[1], line[0], lineWidth / 4.0f));
+        }
+
+        lineWidth = std::max<float>(lineWidth, 1);
+        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(shadow) }, kCGLineCapSquare, lineWidth, Color { 0.0f, 0.0f, 0.0f, 0.7f });
+
+        lineWidth = std::max<float>(std::min(clip.width(), clip.height()) * thicknessRatio, 1);
+        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(line) }, kCGLineCapButt, lineWidth, Color { 1.0f, 1.0f, 1.0f, 240 / 255.0f });
+    } else {
+        FloatPoint bottomCenter { clip.x() + clip.width() / 2.0f, clip.maxY() };
+
+        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
         drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, sqrtf((width * width) / 4.0f + height * height), ExponentialInterpolation);
-        return false;
     }
-
-    drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-
-    static const float thicknessRatio = 2 / 14.0;
-    static const CGSize size = { 14.0f, 14.0f };
-    float lineWidth = std::min(width, height) * 2.0f * thicknessRatio;
-
-    Vector<CGPoint> line;
-    Vector<CGPoint> shadow;
-
-    if (checked) {
-        static const CGPoint pathRatios[3] = {
-            { 2.5f / size.width, 7.5f / size.height },
-            { 5.5f / size.width, 10.5f / size.height },
-            { 11.5f / size.width, 2.5f / size.height }
-        };
-
-        line = {
-            CGPointMake(clip.x() + width * pathRatios[0].x, clip.y() + height * pathRatios[0].y),
-            CGPointMake(clip.x() + width * pathRatios[1].x, clip.y() + height * pathRatios[1].y),
-            CGPointMake(clip.x() + width * pathRatios[2].x, clip.y() + height * pathRatios[2].y)
-        };
-
-        shadow = {
-            shortened(line[0], line[1], lineWidth / 4.0f),
-            line[1],
-            shortened(line[2], line[1], lineWidth / 4.0f)
-        };
-    } else if (indeterminate) {
-        line = {
-            CGPointMake(clip.x() + 3.5, clip.center().y()),
-            CGPointMake(clip.maxX() - 3.5, clip.center().y())
-        };
-
-        shadow = {
-            shortened(line[0], line[1], lineWidth / 4.0f),
-            shortened(line[1], line[0], lineWidth / 4.0f)
-        };
-    }
-
-    lineWidth = std::max<float>(lineWidth, 1);
-    drawJoinedLines(cgContext, shadow, kCGLineCapSquare, lineWidth, Color(0.0f, 0.0f, 0.0f, 0.7f));
-
-    lineWidth = std::max<float>(std::min(clip.width(), clip.height()) * thicknessRatio, 1);
-    drawJoinedLines(cgContext, line, kCGLineCapButt, lineWidth, Color(1.0f, 1.0f, 1.0f, 240 / 255.0f));
-
     return false;
 }
 
