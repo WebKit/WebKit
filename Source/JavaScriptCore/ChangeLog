@@ -1,3 +1,13 @@
+2019-02-19  Robin Morisset  <rmorisset@apple.com>
+
+        CachedCall should not consider it UNLIKELY that it will not stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=194831
+
+        Reviewed by Mark Lam.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+
 2019-02-19  Mark Lam  <mark.lam@apple.com>
 
         Fix DFG doesGC() for TryGetById and ProfileType nodes.
