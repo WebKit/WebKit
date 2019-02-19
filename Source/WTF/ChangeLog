@@ -1,3 +1,16 @@
+2019-02-19  Keith Miller  <keith_miller@apple.com>
+
+        Code quality cleanup in NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=194824
+
+        Reviewed by Yusuke Suzuki.
+
+        First, move data members to the end of the class per WebKit
+        style. Also, add forbid heap allocation since we expect the
+        NeverDestroyed classes to be static.
+
+        * wtf/NeverDestroyed.h:
+
 2019-02-16  Darin Adler  <darin@apple.com>
 
         Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.

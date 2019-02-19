@@ -27,6 +27,7 @@
 
 #include <type_traits>
 #include <utility>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/RefCounted.h>
 
 // NeverDestroyed is a smart-pointer-like class that ensures that the destructor
@@ -43,8 +44,9 @@ namespace WTF {
 
 template<typename T> class NeverDestroyed {
     WTF_MAKE_NONCOPYABLE(NeverDestroyed);
-
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
+
     template<typename... Args> NeverDestroyed(Args&&... args)
     {
         MaybeRelax<T>(new (storagePointer()) T(std::forward<Args>(args)...));
@@ -66,16 +68,16 @@ private:
 
     PointerType storagePointer() const { return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage)); }
 
-    // FIXME: Investigate whether we should allocate a hunk of virtual memory
-    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
-
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
         explicit MaybeRelax(PtrType*) { }
     };
     template<typename PtrType> struct MaybeRelax<PtrType, true> {
         explicit MaybeRelax(PtrType* ptr) { ptr->relaxAdoptionRequirement(); }
     };
+
+    // FIXME: Investigate whether we should allocate a hunk of virtual memory
+    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
 };
 
 template<typename T> NeverDestroyed<T> makeNeverDestroyed(T&&);
@@ -85,7 +87,7 @@ template<typename T> NeverDestroyed<T> makeNeverDestroyed(T&&);
 // share more of the code with the main NeverDestroyed above.
 template<typename T> class LazyNeverDestroyed {
     WTF_MAKE_NONCOPYABLE(LazyNeverDestroyed);
-
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     LazyNeverDestroyed() = default;
 
@@ -124,10 +126,6 @@ private:
         return const_cast<PointerType>(reinterpret_cast<const T*>(&m_storage));
     }
 
-    // FIXME: Investigate whether we should allocate a hunk of virtual memory
-    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
-
     template<typename PtrType, bool ShouldRelax = std::is_base_of<RefCountedBase, PtrType>::value> struct MaybeRelax {
         explicit MaybeRelax(PtrType*) { }
     };
@@ -140,6 +138,10 @@ private:
     // It must not be initialized dynamically; that would not be thread safe.
     bool m_isConstructed;
 #endif
+
+    // FIXME: Investigate whether we should allocate a hunk of virtual memory
+    // and hand out chunks of it to NeverDestroyed instead, to reduce fragmentation.
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_storage;
 };
 
 template<typename T> inline NeverDestroyed<T> makeNeverDestroyed(T&& argument)
