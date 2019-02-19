@@ -1,5 +1,40 @@
 2019-02-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241641. rdar://problem/47833813
+
+    NetworkDataTask should check its client before calling shouldCaptureExtraNetworkLoadMetrics
+    https://bugs.webkit.org/show_bug.cgi?id=194732
+    
+    Reviewed by Geoffrey Garen.
+    
+    NetworkDataTask may be kept alive if refing it after its NetworkLoad is gone.
+    This might happen for instance in DownloadManager or when checking for TLS certificates.
+    In that case, if the NetworkLoad gets destroyed, it clears the client of the NetworkDataTask.
+    To ensure that NetworkDataTask does not try to use its client, add a null check.
+    
+    * NetworkProcess/NetworkDataTask.cpp:
+    (WebKit::NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241641 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Youenn Fablet  <youenn@apple.com>
+
+            NetworkDataTask should check its client before calling shouldCaptureExtraNetworkLoadMetrics
+            https://bugs.webkit.org/show_bug.cgi?id=194732
+
+            Reviewed by Geoffrey Garen.
+
+            NetworkDataTask may be kept alive if refing it after its NetworkLoad is gone.
+            This might happen for instance in DownloadManager or when checking for TLS certificates.
+            In that case, if the NetworkLoad gets destroyed, it clears the client of the NetworkDataTask.
+            To ensure that NetworkDataTask does not try to use its client, add a null check.
+
+            * NetworkProcess/NetworkDataTask.cpp:
+            (WebKit::NetworkDataTask::shouldCaptureExtraNetworkLoadMetrics const):
+
+2019-02-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241631. rdar://problem/48126255
 
     [PSON] Disable WebContent process cache on devices with less than 3GB of RAM
