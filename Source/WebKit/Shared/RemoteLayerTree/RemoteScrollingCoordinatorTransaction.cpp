@@ -179,6 +179,9 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::HorizontalScrollbarLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.horizontalScrollbarLayer());
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.rootContentsLayer());
 }
 
 void ArgumentCoder<ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const ScrollingStateFrameHostingNode& node)
@@ -309,6 +312,13 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
         if (!decoder.decode(layerID))
             return false;
         node.setHorizontalScrollbarLayer(layerID);
+    }
+
+    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::RootContentsLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setRootContentsLayer(layerID);
     }
 
     return true;
