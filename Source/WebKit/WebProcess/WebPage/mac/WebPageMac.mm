@@ -111,12 +111,20 @@ void WebPage::platformInitialize()
     if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)mockAccessibilityElement accessibilitySetPresenterProcessIdentifier:pid];
     [mockAccessibilityElement setWebPage:this];
-
-    // send data back over
-    NSData* remoteToken = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:mockAccessibilityElement];
-    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
-    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
     m_mockAccessibilityElement = mockAccessibilityElement;
+
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+}
+
+void WebPage::platformReinitialize()
+{
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+}
+
+RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
+{
+    ASSERT(m_mockAccessibilityElement);
+    return [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:m_mockAccessibilityElement.get()];
 }
 
 void WebPage::platformDetach()
