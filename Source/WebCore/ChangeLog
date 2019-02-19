@@ -1,3 +1,35 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Focus ring for checkboxes, radio buttons, buttons and search fields should hug tighter to the contour
+        https://bugs.webkit.org/show_bug.cgi?id=193599
+        <rdar://problem/47399602>
+
+        Reviewed by Simon Fraser.
+
+        For now, iOS uses a 3px outline width for its focus rings. Do not inset the focus ring on iOS
+        for text fields, textareas, keygens, and selects so as to match the visual appearance of all
+        the other controls.
+
+        Tests: fast/forms/ios/focus-button.html
+               fast/forms/ios/focus-checkbox.html
+               fast/forms/ios/focus-checked-checkbox.html
+               fast/forms/ios/focus-checked-radio.html
+               fast/forms/ios/focus-radio.html
+               fast/forms/ios/focus-reset-button.html
+               fast/forms/ios/focus-search-field.html
+               fast/forms/ios/focus-submit-button.html
+               fast/forms/ios/focus-text-field.html
+               fast/forms/ios/focus-textarea.html
+
+        * css/html.css:
+        (:focus): Use 3px outline width.
+        (input:focus, textarea:focus, keygen:focus, select:focus): Guard this code to exclude it when building for iOS.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Add FIXME comment.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintOutline): Call RenderTheme::adjustPaintRect() to adjust the paint rect.
+        Otherwise, the focus rings for radios and checkboxes are drawn at the wrong y-coordinate and are not snug.
+
 2019-02-18  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Handle indefinite percentages in fit-content()

@@ -1,3 +1,40 @@
+2019-02-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Focus ring for checkboxes, radio buttons, buttons and search fields should hug tighter to the contour
+        https://bugs.webkit.org/show_bug.cgi?id=193599
+        <rdar://problem/47399602>
+
+        Reviewed by Simon Fraser.
+
+        Ideally we should find a way to write non-pixel tests for focus rings. For now, add some mismatch ref
+        tests.
+
+        We cannot write a "good" mismatch ref test for <select> at the moment since there is no way to defocus
+        a <select> without closing its popup. We also cannot change outline-color when outline-style: auto is
+        used and outline-style: auto is needed to get shrink-wrapped focus rings :(
+
+        * fast/forms/ios/focus-button-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-button.html: Added.
+        * fast/forms/ios/focus-checkbox-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-checkbox.html: Added.
+        * fast/forms/ios/focus-checked-checkbox-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-checked-checkbox.html: Added.
+        * fast/forms/ios/focus-checked-radio-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-checked-radio.html: Added.
+        * fast/forms/ios/focus-radio-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-radio.html: Added.
+        * fast/forms/ios/focus-reset-button-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-reset-button.html: Added.
+        * fast/forms/ios/focus-search-field-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-search-field.html: Added.
+        * fast/forms/ios/focus-submit-button-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-submit-button.html: Added.
+        * fast/forms/ios/focus-text-field-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-text-field.html: Added.
+        * fast/forms/ios/focus-textarea-expected-mismatch.html: Added.
+        * fast/forms/ios/focus-textarea.html: Added.
+        * platform/ios/TestExpectations: Skip the tests for now on iOS we do not build with ENABLE(FULL_KEYBOARD_ACCESS) enabled.
+
 2019-02-18  John Wilander  <wilander@apple.com>
 
         Check the existence of the frame in Document::hasFrameSpecificStorageAccess() and Document::setHasFrameSpecificStorageAccess()

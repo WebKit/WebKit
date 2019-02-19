@@ -1162,7 +1162,11 @@ nobr {
 /* states */
 
 :focus {
+#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
+    outline: auto 3px -webkit-focus-ring-color;
+#else
     outline: auto 5px -webkit-focus-ring-color;
+#endif
 }
 
 /* Read-only text fields do not show a focus ring but do still receive focus */
@@ -1170,9 +1174,11 @@ html:focus, body:focus, input[readonly]:focus, applet:focus, embed:focus, iframe
     outline: none;
 }
 
+#if !defined(WTF_PLATFORM_IOS_FAMILY) || !WTF_PLATFORM_IOS_FAMILY
 input:focus, textarea:focus, keygen:focus, select:focus {
     outline-offset: -2px;
 }
+#endif
 
 input:matches([type="button"], [type="checkbox"], [type="file"], [type="hidden"], [type="image"], [type="radio"], [type="reset"], [type="search"], [type="submit"]):focus,
 input[type="file"]:focus::-webkit-file-upload-button {

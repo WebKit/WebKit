@@ -1302,10 +1302,11 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
 #if PLATFORM(IOS_FAMILY)
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
+    // FIXME: Consolidate this code with the same code in RenderElement::paintOutline(). See <https://bugs.webkit.org/show_bug.cgi?id=194781>.
     if (style().appearance() == CheckboxPart || style().appearance() == RadioPart) {
         int width = std::min(paintRect.width(), paintRect.height());
         int height = width;
-        paintRect = IntRect(paintRect.x(), paintRect.y() + (this->height() - height) / 2, width, height); // Vertically center the checkbox, like on desktop
+        paintRect = IntRect { paintRect.x(), paintRect.y() + (this->height() - height) / 2, width, height }; // Vertically center the checkbox, like on desktop
     }
 #endif
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());

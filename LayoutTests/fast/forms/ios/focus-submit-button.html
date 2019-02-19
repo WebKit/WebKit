@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<input id="test" type="submit"> <!-- Test PASSED if there is a focus ring -->
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    let testElement = document.getElementById("test");
+    testElement.addEventListener("focus", () => testRunner.notifyDone(), { once: true });
+    UIHelper.keyDown("\t", ["altKey"]);
+}
+</script>
+</body>
+</html>

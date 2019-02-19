@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+textarea {
+    caret-color: transparent;
+}
+</style>
+</head>
+<body>
+<textarea id="test"></textarea> <!-- Test PASSED if there is a focus ring -->
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    let testElement = document.getElementById("test");
+    testElement.addEventListener("focus", () => testRunner.notifyDone(), { once: true });
+    UIHelper.keyDown("\t", ["altKey"]);
+}
+</script>
+</body>
+</html>
