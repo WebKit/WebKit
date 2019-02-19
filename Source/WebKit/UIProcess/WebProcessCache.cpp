@@ -104,10 +104,14 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
         m_capacity = 0;
     } else {
         size_t memorySize = ramSize() / GB;
-
-        // Allow 4 processes in the cache per GB of RAM, up to 30 processes.
-        m_capacity = std::min<unsigned>(memorySize * 4, 30);
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache has a capacity of %u processes", this, capacity());
+        if (memorySize < 3) {
+            m_capacity = 0;
+            RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache is disabled because device does not have enough RAM", this);
+        } else {
+            // Allow 4 processes in the cache per GB of RAM, up to 30 processes.
+            m_capacity = std::min<unsigned>(memorySize * 4, 30);
+            RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::updateCapacity: Cache has a capacity of %u processes", this, capacity());
+        }
     }
 
     if (!m_capacity)
