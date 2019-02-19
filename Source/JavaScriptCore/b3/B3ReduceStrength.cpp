@@ -2376,7 +2376,7 @@ private:
         // predecessors during strength reduction since that minimizes the total number of fixpoint
         // iterations needed to kill a lot of code.
 
-        for (BasicBlock* block : m_proc) {
+        for (BasicBlock* block : m_proc.blocksInPostOrder()) {
             if (B3ReduceStrengthInternal::verbose)
                 dataLog("Considering block ", *block, ":\n");
 
