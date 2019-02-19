@@ -264,8 +264,7 @@ void IDBDatabase::connectionToServerLost(const IDBError& error)
     m_closePending = true;
     m_closedInServer = true;
 
-    auto transactions = copyToVector(m_activeTransactions.values());
-    for (auto& transaction : transactions)
+    for (auto& transaction : m_activeTransactions.values())
         transaction->connectionClosedFromServer(error);
 
     auto errorEvent = Event::create(m_eventNames.errorEvent, Event::CanBubble::Yes, Event::IsCancelable::No);

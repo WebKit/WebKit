@@ -405,8 +405,6 @@ enum CompositingPolicy {
     void beginSimulatedMemoryPressure();
     void endSimulatedMemoryPressure();
 
-    unsigned long numberOfIDBTransactions();
-
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);

@@ -378,8 +378,6 @@ public:
     ExceptionOr<void> insertAuthorCSS(const String&) const;
     ExceptionOr<void> insertUserCSS(const String&) const;
 
-    unsigned numberOfIDBTransactions() const;
-
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;

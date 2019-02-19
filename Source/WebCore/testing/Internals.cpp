@@ -93,8 +93,6 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
-#include "IDBRequest.h"
-#include "IDBTransaction.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClientLocal.h"
@@ -2383,11 +2381,6 @@ ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vect
         return parsedOptions.releaseException();
 
     return document->page()->countFindMatches(text, parsedOptions.releaseReturnValue(), 1000);
-}
-
-unsigned Internals::numberOfIDBTransactions() const
-{
-    return IDBTransaction::allIDBTransactions().size();
 }
 
 unsigned Internals::numberOfLiveNodes() const
