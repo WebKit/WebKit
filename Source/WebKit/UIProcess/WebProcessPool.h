@@ -97,6 +97,7 @@ class WebAutomationSession;
 class WebContextSupplement;
 class WebPageGroup;
 class WebPageProxy;
+class WebProcessCache;
 struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
@@ -171,6 +172,8 @@ public:
     template<typename T> void sendToNetworkingProcessRelaunchingIfNecessary(T&& message);
 
     void processDidFinishLaunching(WebProcessProxy*);
+
+    WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
 
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
@@ -452,6 +455,7 @@ public:
     void removeSuspendedPage(SuspendedPageProxy&);
     bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy* = nullptr) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
+    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&);
 
     void didReachGoodTimeToPrewarm();
 
@@ -532,6 +536,8 @@ private:
     void registerNotificationObservers();
     void unregisterNotificationObservers();
 #endif
+
+    void setApplicationIsActive(bool);
 
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, PAL::SessionID);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash, PAL::SessionID);
@@ -634,6 +640,8 @@ private:
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     RetainPtr<NSObject> m_scrollerStyleNotificationObserver;
 #endif
+    RetainPtr<NSObject> m_activationObserver;
+    RetainPtr<NSObject> m_deactivationObserver;
 
     std::unique_ptr<HighPerformanceGraphicsUsageSampler> m_highPerformanceGraphicsUsageSampler;
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
@@ -724,6 +732,7 @@ private:
     Deque<std::unique_ptr<SuspendedPageProxy>> m_suspendedPages;
     unsigned m_maxSuspendedPageCount { 0 };
 
+    UniqueRef<WebProcessCache> m_webProcessCache;
     HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
     HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;

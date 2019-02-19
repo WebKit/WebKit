@@ -47,6 +47,9 @@
 "%@ Web Content" = "%@ Web Content";
 
 /* Visible name of the web process. The argument is the application name. */
+"%@ Web Content (Cached)" = "%@ Web Content (Cached)";
+
+/* Visible name of the web process. The argument is the application name. */
 "%@ Web Content (Prewarmed)" = "%@ Web Content (Prewarmed)";
 
 /* Visible name of Web Inspector's web process. The argument is the application name. */

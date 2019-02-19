@@ -43,6 +43,7 @@ Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemSt
 WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backForwardListItemState, uint64_t pageID)
     : m_itemState(WTFMove(backForwardListItemState))
     , m_pageID(pageID)
+    , m_lastProcessIdentifier(m_itemState.identifier.processIdentifier)
 {
     auto result = allItems().add(m_itemState.identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
