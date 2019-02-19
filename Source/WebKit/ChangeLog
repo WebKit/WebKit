@@ -1,3 +1,17 @@
+2019-02-19  Antoine Quint  <graouts@apple.com>
+
+        [iOS] "touch-action: none" should not prevent text selection or tapping on a link
+        https://bugs.webkit.org/show_bug.cgi?id=194812
+        <rdar://problem/47901131>
+
+        Reviewed by Dean Jackson.
+
+        We shouldn't prevent all gestures to be disabled when "touch-action: none" is set and instead follow the same code path we would use should
+        "pan-x", "pan-y" or "pinch-zoom" be used.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleTouchActionsForTouchEvent:]):
+
 2019-02-18  Alex Christensen  <achristensen@webkit.org>
 
         Revert functional part of r241451

@@ -18,11 +18,7 @@ target_test({ width: "200px", height: "200px" }, (target, test) => {
 
     const eventTracker = new EventTracker(target, ["pointerover", "pointerenter", "pointerdown", "pointerup", "pointerout", "pointerleave"]);
 
-    const touch = ui.finger();
-    ui.sequence([
-        touch.begin({ x: 100, y: 100 }),
-        touch.end()
-    ]).then(() => {
+    ui.tap({ x: 100, y: 100 }).then(() => {
         eventTracker.assertMatchesEvents([
             { type: "pointerover", x: 100, y: 100, isPrimary: true },
             { type: "pointerenter", x: 100, y: 100, isPrimary: true },

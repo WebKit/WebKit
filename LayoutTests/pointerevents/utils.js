@@ -112,6 +112,11 @@ const ui = new (class UIController {
         return this._run(`uiController.dragFromPointToPoint(${from.x}, ${from.y}, ${to.x}, ${to.y}, ${durationInSeconds})`);
     }
 
+    tap(options)
+    {
+        return this._run(`uiController.singleTapAtPoint(${options.x}, ${options.y})`);
+    }
+
     pinchOut(options)
     {
         options.x = options.x || 0;

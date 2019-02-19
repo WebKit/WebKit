@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 400px;
+    touch-action: none;
+}
+
+</style>
+</head>
+<body>
+<iframe></iframe>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+async_test(test => {
+    const iframe = document.body.firstElementChild;
+    const link = iframe.contentDocument.body.appendChild(document.createElement("a"));
+    link.href = "../disabled.html";
+    link.setAttribute("style", `
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    `);
+
+    assert_equals(iframe.contentWindow.location.href, "about:blank", "The iframe initially has no URL.");
+
+    iframe.addEventListener("load", () => {
+        assert_true(iframe.contentWindow.location.href.includes("disabled.html"), "Upon navigation the URL has a location.");
+        test.done();
+    });
+
+    ui.tap({ x: 100, y: 100 });
+}, "Testing that setting touch-action: none allows link traversal.");
+
+</script>
+</body>
+</html>

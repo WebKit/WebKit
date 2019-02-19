@@ -1226,19 +1226,15 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         auto phase = touchPoint.phase();
         if (phase == WebKit::WebPlatformTouchPoint::TouchPressed) {
             auto touchActionData = scrollingCoordinator->touchActionDataAtPoint(touchPoint.location());
-            if (!touchActionData)
+            if (!touchActionData || touchActionData->touchActions.contains(WebCore::TouchAction::Manipulation))
                 continue;
-            if (touchActionData->touchActions == WebCore::TouchAction::None)
-                [_touchEventGestureRecognizer setDefaultPrevented:YES];
-            else if (!touchActionData->touchActions.contains(WebCore::TouchAction::Manipulation)) {
-                if (auto scrollingNodeID = touchActionData->scrollingNodeID)
-                    scrollingCoordinator->setTouchDataForTouchIdentifier(*touchActionData, touchPoint.identifier());
-                else {
-                    if (!touchActionData->touchActions.contains(WebCore::TouchAction::PinchZoom))
-                        _webView.scrollView.pinchGestureRecognizer.enabled = NO;
-                    _preventsPanningInXAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanX);
-                    _preventsPanningInYAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanY);
-                }
+            if (auto scrollingNodeID = touchActionData->scrollingNodeID)
+                scrollingCoordinator->setTouchDataForTouchIdentifier(*touchActionData, touchPoint.identifier());
+            else {
+                if (!touchActionData->touchActions.contains(WebCore::TouchAction::PinchZoom))
+                    _webView.scrollView.pinchGestureRecognizer.enabled = NO;
+                _preventsPanningInXAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanX);
+                _preventsPanningInYAxis = !touchActionData->touchActions.contains(WebCore::TouchAction::PanY);
             }
         } else if (phase == WebKit::WebPlatformTouchPoint::TouchReleased || phase == WebKit::WebPlatformTouchPoint::TouchCancelled)
             scrollingCoordinator->clearTouchDataForTouchIdentifier(touchPoint.identifier());
