@@ -1,3 +1,12 @@
+2019-02-19  Truitt Savell  <tsavell@apple.com>
+
+        [ iOS ] Layout Tests in editing/pasteboard/data-transfer-set-data-* are flaky Timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=188892
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2019-02-19  Shawn Roberts  <sroberts@apple.com>
 
         [ Mac WK2 iOS ] REGRESSION (r231008) Layout Test http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html is a flaky failure
