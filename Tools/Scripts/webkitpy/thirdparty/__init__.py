@@ -158,6 +158,8 @@ class AutoinstallImportHook(object):
                               "attrs-18.1.0/src/attr")
         self._install("https://files.pythonhosted.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
                               "pytest-3.6.2/src/_pytest")
+        self._install("https://files.pythonhosted.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
+                              "pytest-3.6.2/src/pytest.py")
 
     def _install_pylint(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()

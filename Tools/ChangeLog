@@ -1,3 +1,13 @@
+2019-02-19  Pablo Saavedra  <psaavedra@igalia.com>
+
+        pytest is not correctly auto-installed
+        https://bugs.webkit.org/show_bug.cgi?id=194707
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pytest):
+
 2019-02-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (PSON): Can't access optumbank.com from myuhc.com
