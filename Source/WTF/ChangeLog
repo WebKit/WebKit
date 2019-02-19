@@ -1,3 +1,16 @@
+2019-02-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r241770.
+        https://bugs.webkit.org/show_bug.cgi?id=194833
+
+        Caused crashes (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "Code quality cleanup in NeverDestroyed"
+        https://bugs.webkit.org/show_bug.cgi?id=194824
+        https://trac.webkit.org/changeset/241770
+
 2019-02-19  Keith Miller  <keith_miller@apple.com>
 
         Code quality cleanup in NeverDestroyed
