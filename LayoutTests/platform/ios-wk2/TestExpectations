@@ -1306,3 +1306,5 @@ fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
 fast/repaint/placeholder-after-caps-lock-hidden.html [ Skip ]
 
 webkit.org/b/190888 [ Release ] fast/animation/request-animation-frame.html [ Pass Failure ]
+
+webkit.org/b/194826 [ Debug ] http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]

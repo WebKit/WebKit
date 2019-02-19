@@ -1,3 +1,13 @@
+2019-02-19  Shawn Roberts  <sroberts@apple.com>
+
+        [ Mac WK2 iOS ] REGRESSION (r231008) Layout Test http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=194826
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Marking Debug flaky while waiting for bug fix
+        * platform/mac-wk2/TestExpectations: Marking Mac WK2 flaky while waiting for bug fix
+
 2019-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241722.
