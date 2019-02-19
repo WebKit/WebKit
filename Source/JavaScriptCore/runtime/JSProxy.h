@@ -31,7 +31,7 @@ namespace JSC {
 
 class JSProxy : public JSDestructibleObject {
 public:
-    typedef JSDestructibleObject Base;
+    using Base = JSDestructibleObject;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static JSProxy* create(VM& vm, Structure* structure, JSObject* target)
@@ -63,7 +63,7 @@ public:
 
 protected:
     JSProxy(VM& vm, Structure* structure)
-        : JSDestructibleObject(vm, structure)
+        : Base(vm, structure)
     {
     }
 

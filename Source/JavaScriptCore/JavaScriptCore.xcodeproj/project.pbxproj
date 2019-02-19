@@ -1767,6 +1767,7 @@
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
+		E38D999C221B78BB00D50474 /* JSNonDestructibleProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D999A221B789F00D50474 /* JSNonDestructibleProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4713,6 +4714,8 @@
 		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
+		E38D999A221B789F00D50474 /* JSNonDestructibleProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSNonDestructibleProxy.h; sourceTree = "<group>"; };
+		E38D999B221B789F00D50474 /* JSNonDestructibleProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSNonDestructibleProxy.cpp; sourceTree = "<group>"; };
 		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapImplInlines.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
@@ -6933,6 +6936,8 @@
 				E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */,
 				E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */,
 				E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */,
+				E38D999B221B789F00D50474 /* JSNonDestructibleProxy.cpp */,
+				E38D999A221B789F00D50474 /* JSNonDestructibleProxy.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				0F93275E1C21EF7F00CF6564 /* JSObjectInlines.h */,
@@ -8389,6 +8394,7 @@
 				534E034E1E4D4B1600213F64 /* AccessCase.h in Headers */,
 				E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */,
 				5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */,
+				524E9D7322092B5200A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h in Headers */,
 				0F2AC56B1E8A0BD50001EE3F /* AirAllocateRegistersAndStackByLinearScan.h in Headers */,
 				7965C2171E5D799600B7591D /* AirAllocateRegistersByGraphColoring.h in Headers */,
 				0FEC856E1BDACDC70080FF74 /* AirAllocateStackByGraphColoring.h in Headers */,
@@ -8857,7 +8863,6 @@
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
-				524E9D7322092B5200A6BEEE /* AirAllocateRegistersAndStackAndGenerateCode.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
@@ -9336,6 +9341,7 @@
 				E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */,
 				E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */,
 				E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */,
+				E38D999C221B78BB00D50474 /* JSNonDestructibleProxy.h in Headers */,
 				BC18C4240E16F5CD00B34460 /* JSObject.h in Headers */,
 				0F93275F1C21EF7F00CF6564 /* JSObjectInlines.h in Headers */,
 				BC18C4250E16F5CD00B34460 /* JSObjectRef.h in Headers */,

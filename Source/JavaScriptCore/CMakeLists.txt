@@ -859,6 +859,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSModuleLoader.h
     runtime/JSModuleRecord.h
     runtime/JSNativeStdFunction.h
+    runtime/JSNonDestructibleProxy.h
     runtime/JSONObject.h
     runtime/JSObject.h
     runtime/JSObjectInlines.h

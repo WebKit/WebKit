@@ -1,3 +1,32 @@
+2019-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce JSNonDestructibleProxy for JavaScriptCore.framework's GlobalThis
+        https://bugs.webkit.org/show_bug.cgi?id=194799
+
+        Reviewed by Saam Barati.
+
+        JSProxy is destructible one because we have JSWindowProxy which has ref counted object.
+        However, JavaScriptCore.framework's JSProxy for GlobalThis does not need to be destructible.
+        This is important since we need to separate Heap subspaces between destructible and non-destructible objects.
+        If we can put more and more objects in non-destructible status, we can get rid of low-usage MarkedBlock.
+        This patch adds JSNonDestructibleProxy, which is not destructible JSProxy. While it inherits JSDestructibleObject,
+        we can make the subclass still non-destructible thanks to Subspace mechanism. This drops one more low-usage MarkedBlock.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::resetPrototype):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/JSNonDestructibleProxy.cpp: Added.
+        * runtime/JSNonDestructibleProxy.h: Added.
+        (JSC::JSNonDestructibleProxy::subspaceFor):
+        (JSC::JSNonDestructibleProxy::create):
+        (JSC::JSNonDestructibleProxy::createStructure):
+        (JSC::JSNonDestructibleProxy::JSNonDestructibleProxy):
+        * runtime/JSProxy.h:
+        (JSC::JSProxy::JSProxy):
+
 2019-02-19  Robin Morisset  <rmorisset@apple.com>
 
         B3ReduceStrength::simplifyCFG() could do a lot more on each iteration
