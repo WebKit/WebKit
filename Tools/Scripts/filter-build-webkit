@@ -160,13 +160,15 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine("$command $path", STYLE_PLAIN);
     } elsif ($line =~ /^offlineasm\: /) {
         printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Generating (\S+) from (\S+)/) {
-        printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
         printLine("Generating $1 builtin", STYLE_PLAIN);
     } elsif ($line =~ /^Generating (bindings|messages? (header|receiver|dispatcher)|derived source) for (\S+)\.\.\./) {
         my ($command, $path) = ($1, basename($3));
         printLine("Generating $command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
+        printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^GXCF:/) {
+        printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {

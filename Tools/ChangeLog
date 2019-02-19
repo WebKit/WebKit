@@ -1,3 +1,17 @@
+2019-02-19  Dean Jackson  <dino@apple.com>
+
+        Clean-up output from generate-xcfilelists so it can be filtered
+        https://bugs.webkit.org/show_bug.cgi?id=194795
+
+        Reviewed by Joseph Pecoraro (and Keith Rollin).
+
+        Replace the "..." with "GXCF:" in generate-xcfilelists output, and
+        make a slight tweak to filter-build-webkit so such lines are marked
+        as plain.
+
+        * Scripts/filter-build-webkit:
+        * Scripts/generate-xcfilelists:
+
 2019-02-19  Pablo Saavedra  <psaavedra@igalia.com>
 
         pytest is not correctly auto-installed

@@ -210,7 +210,7 @@ function die()
 
 function log_debug()
 {
-    (( "${GX_DEBUG}" > 0 )) && stderr "... $@"
+    (( "${GX_DEBUG}" > 0 )) && stderr "GXCF: $@"
 }
 
 
@@ -235,14 +235,14 @@ function log_callstack_and_parameters()
         local GX_ARGS=("$@")
         local GX_CALLSTACK=("${FUNCNAME[@]}")
         unset GX_CALLSTACK[0]
-        stderr "... (${GX_CALLSTACK[@]}): ${GX_ARGS[@]}"
+        stderr "GXCF: (${GX_CALLSTACK[@]}): ${GX_ARGS[@]}"
     fi
 }
 
 
 function log_progress()
 {
-    stdout "... $@"
+    stdout "GXCF: $@"
 }
 
 
@@ -752,7 +752,7 @@ function generate_derivedsources_xcfilelists()
 
     if (( ${GX_RESULT} ))
     then
-        sed -E -e 's/^/... /' < "${GX_TEMP}/std.err"
+        sed -E -e 's/^/GXCF: /' < "${GX_TEMP}/std.err"
         die "Error generating derived sources: error = ${GX_RESULT}" ${GX_RESULT}
     fi
 
