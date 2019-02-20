@@ -1,3 +1,17 @@
+2019-02-20  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        Fix crash when opening Web Inspector after a WebSocket was blocked by content extensions
+        https://bugs.webkit.org/show_bug.cgi?id=194819
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: http/tests/inspector/network/contentextensions/blocked-websocket-crash.html
+
+        * Modules/websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::hasCreatedHandshake):
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        Ignore WebSocketChannel without an WebSocketHandshake, which would crash in InspectorNetworkAgent::enable.
+
 2019-02-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Make FloatAvoider::resetPosition implicit

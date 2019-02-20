@@ -1,3 +1,18 @@
+2019-02-20  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        Fix crash when opening Web Inspector after a WebSocket was blocked by content extensions
+        https://bugs.webkit.org/show_bug.cgi?id=194819
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations: Skip the test by default, like http/tests/contentextensions
+        * http/tests/inspector/network/contentextensions/blocked-websocket-crash-expected.txt: Added.
+        * http/tests/inspector/network/contentextensions/blocked-websocket-crash.html: Added.
+        * http/tests/inspector/network/contentextensions/blocked-websocket-crash.html.json: Added.
+        * platform/gtk/TestExpectations: Unskip the test
+        * platform/mac-wk2/TestExpectations: Ditto
+        * platform/wpe/TestExpectations: Ditto
+
 2019-02-20  Shawn Roberts  <sroberts@apple.com>
 
         REGRESSION (r240727) [ Mac iOS ] Layout Test http/tests/workers/service/basic-register-exceptions.html is flaky

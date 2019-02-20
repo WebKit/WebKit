@@ -1179,6 +1179,7 @@ webkit.org/b/141695 [ Debug ] fast/selectors/nth-last-child-of-register-requirem
 
 # Content extensions are Mac-WK2-only for now
 http/tests/contentextensions [ Skip ]
+http/tests/inspector/network/contentextensions [ Skip ]
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 http/wpt/beacon/contentextensions [ Skip ]
 

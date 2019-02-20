@@ -3858,6 +3858,7 @@ fast/text/emoji-gender-fe0f-8.html [ Pass ]
 fast/text/emoji-gender-fe0f-9.html [ Pass ]
 
 http/tests/contentextensions [ Pass ]
+http/tests/inspector/network/contentextensions [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-026.html [ Pass ]

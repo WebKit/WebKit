@@ -69,6 +69,9 @@ Vector<WebSocket*> PageNetworkAgent::activeWebSockets(const LockHolder& lock)
         if (!channel)
             continue;
 
+        if (!channel->hasCreatedHandshake())
+            continue;
+
         if (!is<Document>(webSocket->scriptExecutionContext()))
             continue;
 
