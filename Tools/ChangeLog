@@ -1,3 +1,12 @@
+2019-02-20  Jer Noble  <jer.noble@apple.com>
+
+        Add a git utility method that allows the caller to determine if a specific commitish is within a specified range of commits.
+        https://bugs.webkit.org/show_bug.cgi?id=191332
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/git-is-in-range: Added.
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects
