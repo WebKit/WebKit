@@ -304,6 +304,29 @@ void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIde
     m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, handle);
 }
 
+void ProvisionalPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, WebCore::PolicyCheckIdentifier identifier,
+    uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& frameInfoData, uint64_t originatingPageID,
+    const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse,
+    const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
+{
+    ASSERT(isMainFrame);
+    ASSERT(!m_mainFrame || m_mainFrame->frameID() == frameID);
+
+    if (!isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameID)) {
+        reply(identifier, WebCore::PolicyAction::Ignore, navigationID, DownloadID(), WTF::nullopt);
+        return;
+    }
+
+    if (!m_mainFrame) {
+        // This synchronous IPC message was processed before the asynchronous DidCreateMainFrame one so we do not know about this frameID yet.
+        didCreateMainFrame(frameID);
+    }
+    ASSERT(m_mainFrame);
+
+    m_page.decidePolicyForNavigationActionSyncShared(m_process.copyRef(), frameID, isMainFrame, WTFMove(frameSecurityOrigin), identifier, navigationID, WTFMove(navigationActionData),
+        WTFMove(frameInfoData), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, WTFMove(reply));
+}
+
 #if PLATFORM(COCOA)
 void ProvisionalPageProxy::registerWebProcessAccessibilityToken(const IPC::DataReference& data)
 {
@@ -401,6 +424,11 @@ void ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IP
 {
     if (decoder.messageName() == Messages::WebPageProxy::BackForwardGoToItem::name()) {
         IPC::handleMessageLegacySync<Messages::WebPageProxy::BackForwardGoToItem>(decoder, *replyEncoder, this, &ProvisionalPageProxy::backForwardGoToItem);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForNavigationActionSync::name()) {
+        IPC::handleMessageDelayed<Messages::WebPageProxy::DecidePolicyForNavigationActionSync>(connection, decoder, replyEncoder, this, &ProvisionalPageProxy::decidePolicyForNavigationActionSync);
         return;
     }
 
