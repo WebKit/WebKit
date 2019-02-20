@@ -1,5 +1,14 @@
 2019-02-20  Shawn Roberts  <sroberts@apple.com>
 
+        [ Mac WK2 ] REGRESSION (r239333) Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html
+        https://bugs.webkit.org/show_bug.cgi?id=194225
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Marking as flaky while waiting for fix to land
+
+2019-02-20  Shawn Roberts  <sroberts@apple.com>
+
         [ Mac WK2 ] REGRESSION (r238519) Layout Test fast/repaint/placeholder-after-caps-lock-hidden.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=194170
 
