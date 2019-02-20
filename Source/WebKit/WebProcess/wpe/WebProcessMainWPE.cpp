@@ -29,11 +29,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "WebProcess.h"
-#include <WebCore/PlatformDisplayLibWPE.h>
 #include <glib.h>
-#include <iostream>
-#include <libsoup/soup.h>
-#include <wpe/wpe.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -51,28 +47,6 @@ public:
         // FIXME: This should be probably called in other processes as well.
         g_set_prgname("WPEWebProcess");
 
-        return true;
-    }
-
-    bool parseCommandLine(int argc, char** argv) override
-    {
-        ASSERT(argc == 5);
-        if (argc < 5)
-            return false;
-
-        if (!AuxiliaryProcessMainBase::parseCommandLine(argc, argv))
-            return false;
-
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
-        wpe_loader_init(argv[3]);
-#endif
-
-        int wpeFd = atoi(argv[4]);
-        RunLoop::main().dispatch(
-            [wpeFd] {
-                RELEASE_ASSERT(is<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()));
-                downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).initialize(wpeFd);
-            });
         return true;
     }
 };

@@ -159,6 +159,11 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << screenProperties;
     encoder << useOverlayScrollbars;
 #endif
+
+#if PLATFORM(WPE)
+    encoder << hostClientFileDescriptor;
+    encoder << implementationLibraryName;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -418,6 +423,13 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.screenProperties = WTFMove(*screenProperties);
     if (!decoder.decode(parameters.useOverlayScrollbars))
+        return false;
+#endif
+
+#if PLATFORM(WPE)
+    if (!decoder.decode(parameters.hostClientFileDescriptor))
+        return false;
+    if (!decoder.decode(parameters.implementationLibraryName))
         return false;
 #endif
 

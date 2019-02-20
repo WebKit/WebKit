@@ -32,7 +32,12 @@
 #include "WebProcessCreationParameters.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/GStreamerCommon.h>
+#include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#if PLATFORM(WPE)
+#include <wpe/wpe.h>
+#endif
 
 namespace WebKit {
 
@@ -83,6 +88,13 @@ void WebProcessPool::platformInitialize()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if PLATFORM(WPE)
+    parameters.hostClientFileDescriptor = wpe_renderer_host_create_client();
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
+    parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(wpe_loader_get_loaded_implementation_library_name());
+#endif
+#endif
+
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
 
