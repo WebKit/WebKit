@@ -37,7 +37,6 @@ WTF_EXTERN_C_END
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
-#import <UIKit/UIFocusRingStyle.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
@@ -54,6 +53,10 @@ WTF_EXTERN_C_END
 - (GSKeyboardRef)_hardwareKeyboard;
 - (CGFloat)_iOSMacScale;
 @end
+
+#if __has_include(<UIKit/UIFocusRingStyle.h>)
+#import <UIKit/UIFocusRingStyle.h>
+#endif
 
 #else // USE(APPLE_INTERNAL_SDK)
 
