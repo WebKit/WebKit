@@ -1,3 +1,19 @@
+2019-02-19  Keith Rollin  <krollin@apple.com>
+
+        Add timing information to build output
+        https://bugs.webkit.org/show_bug.cgi?id=194839
+        <rdar://problem/48219609>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Configure xcodebuild with -ShowBuildOperationDuration, causing it to
+        emit each project's build time to its output. E.g.,
+
+            ** BUILD SUCCEEDED ** [0.132 sec]
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+
 2019-02-19  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241784.

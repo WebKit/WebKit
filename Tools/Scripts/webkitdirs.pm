@@ -910,6 +910,7 @@ sub XcodeOptions
     my @options;
     push @options, "-UseNewBuildSystem=NO";
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
+    push @options, "-ShowBuildOperationDuration=YES";
     push @options, ("-configuration", $configuration);
     push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
