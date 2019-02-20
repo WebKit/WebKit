@@ -42,6 +42,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
+#include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -559,5 +560,14 @@ CurrentRenderFragmentContainerMaintainer::~CurrentRenderFragmentContainerMaintai
     RenderFragmentedFlow* fragmentedFlow = m_fragment.fragmentedFlow();
     fragmentedFlow->setCurrentFragmentMaintainer(nullptr);
 }
+
+#ifndef NDEBUG
+
+String RenderFragmentContainer::debugString() const
+{
+    return makeString("0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
+}
+
+#endif
 
 } // namespace WebCore

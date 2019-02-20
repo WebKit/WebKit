@@ -121,6 +121,8 @@ public:
 
     virtual void absoluteQuadsForBoxInFragment(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
+    String debugString() const;
+
 protected:
     RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
     RenderFragmentContainer(Document&, RenderStyle&&, RenderFragmentedFlow*);

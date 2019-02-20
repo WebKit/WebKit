@@ -55,12 +55,12 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/HashSet.h>
+#include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 #if USE(WEB_THREAD)
 #include "WebCoreThreadRun.h"

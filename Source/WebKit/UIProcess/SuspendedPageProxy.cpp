@@ -35,6 +35,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <wtf/DebugUtilities.h>
+#include <wtf/HexNumber.h>
 #include <wtf/URL.h>
 
 namespace WebKit {
@@ -207,10 +208,12 @@ void SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, 
 }
 
 #if !LOG_DISABLED
+
 const char* SuspendedPageProxy::loggingString() const
 {
-    return debugString("(", String::format("%p", this), " page ID ", String::number(m_page.pageID()), ", m_suspensionState ", String::number(static_cast<unsigned>(m_suspensionState)), ")");
+    return debugString("(0x", hex(reinterpret_cast<uintptr_t>(this)), " page ID ", m_page.pageID(), ", m_suspensionState ", static_cast<unsigned>(m_suspensionState), ')');
 }
+
 #endif
 
 } // namespace WebKit

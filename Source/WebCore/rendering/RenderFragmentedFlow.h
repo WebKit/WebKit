@@ -275,19 +275,20 @@ protected:
 
 } // namespace WebCore
 
-// This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
+
 namespace WTF {
 
+// This structure is used by PODIntervalTree for debugging.
 template <> struct ValueToString<WebCore::RenderFragmentContainer*> {
-    static String string(const WebCore::RenderFragmentContainer* value) { return String::format("%p", value); }
+    static String string(const WebCore::RenderFragmentContainer* value) { return value->debugString(); }
 };
-
 template <> struct ValueToString<WeakPtr<WebCore::RenderFragmentContainer>> {
-    static String string(const WeakPtr<WebCore::RenderFragmentContainer> value) { return value.get() ? ValueToString<WebCore::RenderFragmentContainer*>::string(value.get()) : String(); }
+    static String string(const WeakPtr<WebCore::RenderFragmentContainer>& value) { return value ? value->debugString() : String { }; }
 };
 
 } // namespace WTF
+
 #endif
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentedFlow, isRenderFragmentedFlow())

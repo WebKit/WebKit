@@ -29,12 +29,9 @@
 #include "TextCodecASCIIFastPath.h"
 #include <array>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>
 
-
 namespace WebCore {
-using namespace WTF;
 
 static const UChar latin1ConversionTable[256] = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, // 00-07
@@ -109,22 +106,22 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, boo
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
     const uint8_t* end = reinterpret_cast<const uint8_t*>(bytes + length);
-    const uint8_t* alignedEnd = alignToMachineWord(end);
+    const uint8_t* alignedEnd = WTF::alignToMachineWord(end);
     LChar* destination = characters;
 
     while (source < end) {
         if (isASCII(*source)) {
             // Fast path for ASCII. Most Latin-1 text will be ASCII.
-            if (isAlignedToMachineWord(source)) {
+            if (WTF::isAlignedToMachineWord(source)) {
                 while (source < alignedEnd) {
-                    MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
+                    auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
 
-                    if (!isAllASCII<LChar>(chunk))
+                    if (!WTF::isAllASCII<LChar>(chunk))
                         goto useLookupTable;
 
                     copyASCIIMachineWord(destination, source);
-                    source += sizeof(MachineWord);
-                    destination += sizeof(MachineWord);
+                    source += sizeof(WTF::MachineWord);
+                    destination += sizeof(WTF::MachineWord);
                 }
 
                 if (source == end)
@@ -170,16 +167,16 @@ upConvertTo16Bit:
     while (source < end) {
         if (isASCII(*source)) {
             // Fast path for ASCII. Most Latin-1 text will be ASCII.
-            if (isAlignedToMachineWord(source)) {
+            if (WTF::isAlignedToMachineWord(source)) {
                 while (source < alignedEnd) {
-                    MachineWord chunk = *reinterpret_cast_ptr<const MachineWord*>(source);
+                    auto chunk = *reinterpret_cast_ptr<const WTF::MachineWord*>(source);
                     
-                    if (!isAllASCII<LChar>(chunk))
+                    if (!WTF::isAllASCII<LChar>(chunk))
                         goto useLookupTable16;
                     
                     copyASCIIMachineWord(destination16, source);
-                    source += sizeof(MachineWord);
-                    destination16 += sizeof(MachineWord);
+                    source += sizeof(WTF::MachineWord);
+                    destination16 += sizeof(WTF::MachineWord);
                 }
                 
                 if (source == end)

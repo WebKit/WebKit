@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FloatPolygon_h
-#define FloatPolygon_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -122,6 +121,8 @@ public:
     unsigned vertexIndex2() const { return m_vertexIndex2; }
     unsigned edgeIndex() const { return m_edgeIndex; }
 
+    String debugString() const;
+
 private:
     // Edge vertex index1 is less than index2, except the last edge, where index2 is 0. When a polygon edge
     // is defined by 3 or more colinear vertices, index2 can be the index of the last colinear vertex.
@@ -133,15 +134,15 @@ private:
 
 } // namespace WebCore
 
-// This structure is used by PODIntervalTree for debugging.
 #ifndef NDEBUG
+
 namespace WTF {
 
+// This structure is used by PODIntervalTree for debugging.
 template<> struct ValueToString<WebCore::FloatPolygonEdge*> {
-    static String string(const WebCore::FloatPolygonEdge* edge) { return String::format("%p (%f,%f %f,%f)", edge, edge->vertex1().x(), edge->vertex1().y(), edge->vertex2().x(), edge->vertex2().y()); }
+    static String string(const WebCore::FloatPolygonEdge* edge) { return edge->debugString(); }
 };
 
 }
-#endif
 
-#endif // FloatPolygon_h
+#endif

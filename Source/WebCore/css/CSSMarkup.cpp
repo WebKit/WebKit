@@ -29,7 +29,6 @@
 
 #include "CSSParserIdioms.h"
 #include <wtf/HexNumber.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

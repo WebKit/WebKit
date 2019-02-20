@@ -42,6 +42,7 @@
 #include <gst/pbutils/encoding-profile.h>
 #include <gst/video/video.h>
 #include <wtf/HashMap.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
 #include <wtf/StdMap.h>
 
@@ -100,7 +101,7 @@ public:
 
     GstElement* makeElement(const gchar* factoryName)
     {
-        auto name = String::format("%s_enc_%s_%p", Name(), factoryName, this);
+        auto name = makeString(Name(), "_enc_", factoryName, "_0x", hex(reinterpret_cast<uintptr_t>(this)));
         auto elem = gst_element_factory_make(factoryName, name.utf8().data());
 
         return elem;
@@ -142,7 +143,7 @@ public:
         gst_app_sink_set_emit_signals(GST_APP_SINK(sink), TRUE);
         g_signal_connect(sink, "new-sample", G_CALLBACK(newSampleCallbackTramp), this);
 
-        auto name = String::format("%s_enc_rawcapsfilter_%p", Name(), this);
+        auto name = makeString(Name(), "_enc_rawcapsfilter_0x", hex(reinterpret_cast<uintptr_t>(this)));
         m_capsFilter = gst_element_factory_make("capsfilter", name.utf8().data());
         if (m_restrictionCaps)
             g_object_set(m_capsFilter, "caps", m_restrictionCaps.get(), nullptr);

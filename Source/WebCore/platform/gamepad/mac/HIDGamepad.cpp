@@ -31,9 +31,9 @@
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDValue.h>
+#include <wtf/HexNumber.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(IOHIDElement);
 
@@ -57,7 +57,7 @@ HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice, unsigned index)
 
     // Currently the spec has no formatting for the id string.
     // This string formatting matches Firefox.
-    m_id = String::format("%x-%x-%s", vendorID, productID, productName.utf8().data());
+    m_id = makeString(hex(vendorID, Lowercase), '-', hex(productID, Lowercase), '-', productName);
 
     initElements();
 }

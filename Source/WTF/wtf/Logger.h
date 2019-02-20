@@ -25,13 +25,7 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
-#include <wtf/HexNumber.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -210,6 +204,8 @@ public:
         {
         }
 
+        WTF_EXPORT String toString() const;
+
         const char* className { nullptr };
         const char* methodName { nullptr };
         const uintptr_t objectPtr { 0 };
@@ -260,22 +256,8 @@ private:
     bool m_enabled { true };
 };
 
-template <>
-struct LogArgument<Logger::LogSiteIdentifier> {
-    static String toString(const Logger::LogSiteIdentifier& value)
-    {
-        StringBuilder builder;
-
-        if (value.className) {
-            builder.append(value.className);
-            builder.appendLiteral("::");
-        }
-        builder.append(value.methodName);
-        builder.append('(');
-        appendUnsignedAsHex(value.objectPtr, builder);
-        builder.appendLiteral(") ");
-        return builder.toString();
-    }
+template<> struct LogArgument<Logger::LogSiteIdentifier> {
+    static String toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
 };
 
 } // namespace WTF

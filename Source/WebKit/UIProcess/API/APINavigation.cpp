@@ -29,6 +29,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebNavigationState.h"
 #include <wtf/DebugUtilities.h>
+#include <wtf/HexNumber.h>
 
 namespace API {
 using namespace WebCore;
@@ -82,10 +83,12 @@ void Navigation::appendRedirectionURL(const WTF::URL& url)
 }
 
 #if !LOG_DISABLED
+
 const char* Navigation::loggingString() const
 {
-    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, WTF::String::format("' (%p)", m_targetItem.get()));
+    return debugString("Most recent URL: ", m_currentRequest.url().string(), " Back/forward list item URL: '", m_targetItem ? m_targetItem->url() : WTF::String { }, "' (0x", hex(reinterpret_cast<uintptr_t>(m_targetItem.get())), ')');
 }
+
 #endif
 
 } // namespace API

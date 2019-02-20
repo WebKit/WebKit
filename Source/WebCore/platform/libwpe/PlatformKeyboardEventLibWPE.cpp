@@ -30,6 +30,7 @@
 
 #include "WindowsKeyboardCodes.h"
 #include <wpe/wpe.h>
+#include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -871,7 +872,7 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
         break;
     }
 
-    return String::format("U+%04X", wpe_key_code_to_unicode(keyCode));
+    return makeString("U+", hex(wpe_key_code_to_unicode(keyCode), 4));
 }
 
 int PlatformKeyboardEvent::windowsKeyCodeForWPEKeyCode(unsigned keycode)

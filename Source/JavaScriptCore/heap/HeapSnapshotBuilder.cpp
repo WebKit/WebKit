@@ -435,9 +435,9 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
             json.append(',');
             json.appendNumber(labelIndex);
-            json.appendLiteral(",\"");
+            json.appendLiteral(",\"0x");
             appendUnsignedAsHex(reinterpret_cast<uintptr_t>(node.cell), json, Lowercase);
-            json.appendLiteral("\",\"");
+            json.appendLiteral("\",\"0x");
             appendUnsignedAsHex(reinterpret_cast<uintptr_t>(wrappedAddress), json, Lowercase);
             json.append('"');
         }

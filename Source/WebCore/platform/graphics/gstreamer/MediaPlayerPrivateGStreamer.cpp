@@ -52,6 +52,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)
 #include "GStreamerMediaStreamSource.h"
@@ -330,8 +331,9 @@ void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
 #if GST_CHECK_VERSION(1, 10, 0)
     m_streamPrivate = &stream;
-    auto pipelineName = String::format("mediastream_%s_%p",
-        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote", this);
+    auto pipelineName = makeString("mediastream_",
+        (stream.hasCaptureVideoSource() || stream.hasCaptureAudioSource()) ? "Local" : "Remote",
+        "_0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase));
 
     loadFull(String("mediastream://") + stream.id(), "playbin3", pipelineName);
     syncOnClock(false);
@@ -2431,7 +2433,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
     // gst_element_factory_make() returns a floating reference so
     // we should not adopt.
     setPipeline(gst_element_factory_make(playbinName,
-        pipelineName.isEmpty() ? String::format("play_%p", this).utf8().data() : pipelineName.utf8().data()));
+        (pipelineName.isEmpty() ? makeString("play_0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase)) : pipelineName).utf8().data()));
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));

@@ -33,6 +33,7 @@
 #include "GDIObjectCounter.h"
 
 #include "Logging.h"
+#include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 
 #include <windows.h>
@@ -46,7 +47,7 @@ GDIObjectCounter::GDIObjectCounter(const String& identifier)
 
 GDIObjectCounter::GDIObjectCounter(const String& className, void* instance)
 {
-    init(String::format("%s (%p)", className.latin1().data(), instance));
+    init(makeString(className, " (0x", hex(reinterpret_cast<uintptr_t>(instance)), ')'));
 }
 
 void GDIObjectCounter::init(const String& identifier)

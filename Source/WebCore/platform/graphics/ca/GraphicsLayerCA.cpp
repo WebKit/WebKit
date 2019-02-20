@@ -48,6 +48,7 @@
 #include <limits.h>
 #include <pal/spi/cf/CFUtilitiesSPI.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -477,11 +478,9 @@ void GraphicsLayerCA::setName(const String& name)
 {
 #if ENABLE(TREE_DEBUGGING)
     String caLayerDescription;
-
     if (!m_layer->isPlatformCALayerRemote())
-        caLayerDescription = String::format("CALayer(%p) ", m_layer->platformLayer());
-
-    GraphicsLayer::setName(caLayerDescription + String::format("GraphicsLayer(%p, %llu) ", this, primaryLayerID()) + name);
+        caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
+    GraphicsLayer::setName(makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID(), ") ", name));
 #else
     GraphicsLayer::setName(name);
 #endif
@@ -1533,7 +1532,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
         static NeverDestroyed<Color> washBorderColor(255, 0, 0, 100);
         
         m_visibleTileWashLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
-        String name = String::format("Visible Tile Wash Layer %p", m_visibleTileWashLayer->platformLayer());
+        String name = makeString("Visible Tile Wash Layer 0x", hex(reinterpret_cast<uintptr_t>(m_visibleTileWashLayer->platformLayer()), Lowercase));
         m_visibleTileWashLayer->setName(name);
         m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
         m_visibleTileWashLayer->setBorderColor(washBorderColor);

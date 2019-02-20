@@ -98,6 +98,7 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint32Array.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
@@ -6289,7 +6290,7 @@ namespace {
         case GraphicsContext3D::CONTEXT_LOST_WEBGL:
             return "CONTEXT_LOST_WEBGL"_s;
         default:
-            return String::format("WebGL ERROR(%04x)", error);
+            return makeString("WebGL ERROR(", hex(error, 4, Lowercase), ')');
         }
     }
 

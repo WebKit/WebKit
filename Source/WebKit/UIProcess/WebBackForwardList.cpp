@@ -480,7 +480,7 @@ const char* WebBackForwardList::loggingString()
 {
     StringBuilder builder;
 
-    builder.appendLiteral("WebBackForwardList ");
+    builder.appendLiteral("WebBackForwardList 0x");
     appendUnsignedAsHex(reinterpret_cast<uintptr_t>(this), builder);
     builder.appendLiteral(" - ");
     builder.appendNumber(m_entries.size());
