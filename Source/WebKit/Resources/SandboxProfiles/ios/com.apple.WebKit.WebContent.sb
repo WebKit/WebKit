@@ -687,5 +687,6 @@
         (syscall-number SYS_sem_open)
         (syscall-number SYS_sem_close)
         (syscall-number SYS_fsetattrlist)
+        (syscall-number SYS_guarded_open_dprotected_np) ; <rdar://problem/48166729>
     )
 )

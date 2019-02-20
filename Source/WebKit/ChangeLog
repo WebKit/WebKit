@@ -1,3 +1,13 @@
+2019-02-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Open sandbox for specific call.
+        https://bugs.webkit.org/show_bug.cgi?id=194860
+        <rdar://problem/48166729>
+
+        Reviewed by Brent Fulgham.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-02-20  Alex Christensen  <achristensen@webkit.org>
 
         Move API::HTTPCookieStore ownership from API::WebsiteDataStore to WebKit::WebsiteDataStore
