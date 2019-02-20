@@ -1,3 +1,13 @@
+2019-02-18  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Test gardening: Test running out of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=194771
+
+        Unreviewed. Do not run test without LLInt, test is running out of executable
+        memory on ARM otherwise.
+
+        * stress/tagged-template-object-collect.js:
+
 2019-02-18  Tomas Popela  <tpopela@redhat.com>
 
         Unreviewed, skip the test on platforms without sampling profiler
