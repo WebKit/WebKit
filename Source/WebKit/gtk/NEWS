@@ -1,4 +1,16 @@
 =================
+WebKitGTK 2.23.91
+=================
+
+What's new in WebKitGTK 2.23.91?
+
+  - Add new API to handle user content filters.
+  - Fix a UI process crash while filling selection data during drag and drop.
+  - Fix deadlock on Linux/x64 between SamplingProfiler and VMTraps.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Italian.
+
+=================
 WebKitGTK 2.23.90
 =================
 
