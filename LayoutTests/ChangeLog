@@ -1,3 +1,12 @@
+2019-02-20  Shawn Roberts  <sroberts@apple.com>
+
+        [ Mac WK2 ] REGRESSION (r238519) Layout Test fast/repaint/placeholder-after-caps-lock-hidden.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=194170
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Marking as flaky while waiting for fix to land
+
 2019-02-20  Timothy Hatcher  <timothy@apple.com>
 
         RenderThemeIOS should use RenderTheme's color cache instead of its own.
