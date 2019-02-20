@@ -1,3 +1,55 @@
+2019-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: [ iOS ] Layout Test editing/input/ios/rtl-keyboard-input-on-focus.html is a Timeout
+        https://bugs.webkit.org/show_bug.cgi?id=194601
+        <rdar://problem/48080316>
+
+        Reviewed by Tim Horton.
+
+        Following r241311, if a web view becomes first responder and is then moved offscreen (or obscured, hidden, or in
+        the case of WebKitTestRunner, its UIWindow loses its status as keyWindow), we end up holding on to the input
+        view update deferral token indefinitely, waiting for the current focused element to be blurred or refocused.
+
+        This also manifests other user-facing bugs, the most common of which is the keyboard occasionally remaining
+        onscreen after typing a URL in the unified field in MobileSafari and hitting Return, in the case where there is
+        no autofocused element on the page.
+
+        To fix this, when becoming the first responder, additionally install a callback to detect when the page is
+        finished handling the activity state change, and invalidate the input deferral token then. This retains the
+        behavior where calling -becomeFirstResponder on the web view while a different view is focused will keep the
+        keyboard stable, since the focused element message from the web process should be dispatched when handling the
+        activity state change within the web process.
+
+        Of course, the web process may not be responsive at all while the web view is still in the view hierarchy, in
+        which case we may still end up deferring input view updates indefinitely. In this case, we maintain a separate
+        watchdog timer with a short delay, after which we unconditionally invalidate the token.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::installActivityStateChangeCompletionHandler):
+
+        Move the implementation of installActivityStateChangeCompletionHandler into cross-platform code.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _cancelPreviousResetInputViewDeferralRequest]):
+        (-[WKContentView _scheduleResetInputViewDeferralAfterBecomingFirstResponder]):
+        (-[WKContentView _resetInputViewDeferral]):
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _commitPotentialTapFailed]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        (-[WKContentView _didCompleteSyntheticClick]):
+
+        Funnel all existing calls that reset _inputViewDeferralToken to nullptr, such that they go through a helper
+        method instead that also cancels any scheduled requests to clear the token.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+
+        Respond to all pending callbacks after handling the activity state change.
+
 2019-02-20  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) "Reload without content extensions" does not work when the main resource is blocked

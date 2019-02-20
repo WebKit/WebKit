@@ -868,7 +868,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     }
 #endif
 
-    _inputViewUpdateDeferrer = nullptr;
+    [self _resetInputViewDeferral];
     _focusedElementInformation = { };
     
     [_keyboardScrollingAnimator invalidate];
@@ -1072,6 +1072,25 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 }
 
+- (void)_cancelPreviousResetInputViewDeferralRequest
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_resetInputViewDeferral) object:nil];
+}
+
+- (void)_scheduleResetInputViewDeferralAfterBecomingFirstResponder
+{
+    [self _cancelPreviousResetInputViewDeferralRequest];
+
+    const NSTimeInterval inputViewDeferralWatchdogTimerDuration = 0.5;
+    [self performSelector:@selector(_resetInputViewDeferral) withObject:self afterDelay:inputViewDeferralWatchdogTimerDuration];
+}
+
+- (void)_resetInputViewDeferral
+{
+    [self _cancelPreviousResetInputViewDeferralRequest];
+    _inputViewUpdateDeferrer = nullptr;
+}
+
 - (BOOL)canBecomeFirstResponder
 {
     return _becomingFirstResponder;
@@ -1106,12 +1125,22 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     }
 
     if (didBecomeFirstResponder) {
+        _page->installActivityStateChangeCompletionHandler([weakSelf = WeakObjCPtr<WKContentView>(self)] {
+            if (!weakSelf)
+                return;
+
+            auto strongSelf = weakSelf.get();
+            [strongSelf _resetInputViewDeferral];
+        });
+
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
 
         if ([self canShowNonEmptySelectionView])
             [_textSelectionAssistant activateSelection];
+
+        [self _scheduleResetInputViewDeferralAfterBecomingFirstResponder];
     } else
-        _inputViewUpdateDeferrer = nullptr;
+        [self _resetInputViewDeferral];
 
     return didBecomeFirstResponder;
 }
@@ -1137,7 +1166,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [self _cancelInteraction];
     [_textSelectionAssistant deactivateSelection];
     
-    _inputViewUpdateDeferrer = nullptr;
+    [self _resetInputViewDeferral];
 
     // If the user explicitly dismissed the keyboard then we will lose first responder
     // status only to gain it back again. Just don't resign in that case.
@@ -2177,12 +2206,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     [self _cancelInteraction];
     
-    _inputViewUpdateDeferrer = nullptr;
+    [self _resetInputViewDeferral];
 }
 
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point
 {
-    _inputViewUpdateDeferrer = nullptr;
+    [self _resetInputViewDeferral];
 
     // FIXME: we should also take into account whether or not the UI delegate
     // has handled this notification.
@@ -2202,7 +2231,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_didCompleteSyntheticClick
 {
-    _inputViewUpdateDeferrer = nullptr;
+    [self _resetInputViewDeferral];
 }
 
 - (void)_singleTapCommited:(UITapGestureRecognizer *)gestureRecognizer

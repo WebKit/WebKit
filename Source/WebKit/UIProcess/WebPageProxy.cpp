@@ -8004,20 +8004,6 @@ NSObject *WebPageProxy::immediateActionAnimationControllerForHitTestResult(RefPt
     return pageClient().immediateActionAnimationControllerForHitTestResult(hitTestResult, type, userData);
 }
 
-void WebPageProxy::installActivityStateChangeCompletionHandler(WTF::Function<void ()>&& completionHandler)
-{
-    if (!isValid()) {
-        completionHandler();
-        return;
-    }
-
-    auto voidCallback = VoidCallback::create([completionHandler = WTFMove(completionHandler)] (CallbackBase::Error) {
-        completionHandler();
-    }, m_process->throttler().backgroundActivityToken());
-    auto callbackID = m_callbacks.put(WTFMove(voidCallback));
-    m_nextActivityStateChangeCallbacks.append(callbackID);
-}
-
 void WebPageProxy::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
 {
     m_process->send(Messages::WebPage::HandleAcceptedCandidate(acceptedCandidate), m_pageID);
@@ -8051,6 +8037,20 @@ void WebPageProxy::setFooterBannerHeightForTesting(int height)
 }
 
 #endif
+
+void WebPageProxy::installActivityStateChangeCompletionHandler(Function<void()>&& completionHandler)
+{
+    if (!isValid()) {
+        completionHandler();
+        return;
+    }
+
+    auto voidCallback = VoidCallback::create([completionHandler = WTFMove(completionHandler)] (auto) {
+        completionHandler();
+    }, m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(voidCallback));
+    m_nextActivityStateChangeCallbacks.append(callbackID);
+}
 
 void WebPageProxy::imageOrMediaDocumentSizeChanged(const WebCore::IntSize& newSize)
 {

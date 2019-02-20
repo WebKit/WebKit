@@ -1288,14 +1288,14 @@ public:
 
     NSObject *immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult>, uint64_t, RefPtr<API::Object>);
 
-    void installActivityStateChangeCompletionHandler(WTF::Function<void ()>&&);
-
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
     void didHandleAcceptedCandidate();
 
     void setHeaderBannerHeightForTesting(int);
     void setFooterBannerHeightForTesting(int);
 #endif
+
+    void installActivityStateChangeCompletionHandler(Function<void()>&&);
 
 #if USE(UNIFIED_TEXT_CHECKING)
     void checkTextOfParagraph(const String& text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint, Vector<WebCore::TextCheckingResult>& results);
