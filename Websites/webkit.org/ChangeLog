@@ -1,3 +1,12 @@
+2019-02-20  Jon Davis  <jond@apple.com>
+
+        Added macOS Mojave builds to the WebKit Build Archives.
+        https://bugs.webkit.org/show_bug.cgi?id=190908
+
+        Reviewed by Lucas Forschler.
+
+        * wp-content/themes/webkit/build-archives.php:
+
 2019-02-07  Jon Davis  <jond@apple.com>
 
         Fixed animation positioning when homepage animation completes
@@ -318,7 +327,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=192278
 
         Reviewed by Zalan Bujtas.
-        
+
         Remove a stray '='.
 
         * wp-content/themes/webkit/css-status.php:
@@ -362,8 +371,8 @@
         https://bugs.webkit.org/show_bug.cgi?id=191205
 
         Reviewed by Timothy Hatcher.
-        
-        This change makes it far easier to add new SVG icons to the 
+
+        This change makes it far easier to add new SVG icons to the
         icons.svg sprite and provides better positioning control
         over the icons within the blog post tile frame.
 

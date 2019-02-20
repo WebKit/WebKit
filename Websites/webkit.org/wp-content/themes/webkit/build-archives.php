@@ -10,9 +10,9 @@ class WebKitBuildArchives {
     private static $object = null;
 
     public static $platforms = array(
+        'mac-mojave-x86_64'     => 'Mojave',
         'mac-highsierra-x86_64' => 'High Sierra',
-        'mac-sierra-x86_64'     => 'Sierra',
-        'mac-elcapitan-x86_64'  => 'El Capitan',
+        'mac-sierra-x86_64'     => 'Sierra'
     );
 
     public static function object() {
@@ -92,7 +92,7 @@ add_action('wp_head', function() { ?>
                     list.classList.add("current");
                 };
 
-            var currentHash = window.location.hash.length ? window.location.hash.replace("#", "") : "mac-highsierra-x86_64";
+            var currentHash = window.location.hash.length ? window.location.hash.replace("#", "") : "mac-mojave-x86_64";
             for (var link of tabnav) {
                 link.addEventListener("click", currentTab);
                 if (link.className.indexOf(currentHash) !== -1)
