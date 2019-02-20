@@ -11274,6 +11274,7 @@
 		A1AFEDE51F8BFF6D0087013F /* MockPaymentCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockPaymentCoordinator.cpp; sourceTree = "<group>"; };
 		A1B5B29C1AAA846E008B6042 /* MockContentFilterSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockContentFilterSettings.cpp; sourceTree = "<group>"; };
 		A1B5B29D1AAA846E008B6042 /* MockContentFilterSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockContentFilterSettings.h; sourceTree = "<group>"; };
+		A1B89B8D221E01EF00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A1BB85992159AEA10067E07D /* ApplePayErrorCode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayErrorCode.h; sourceTree = "<group>"; };
 		A1BB859B2159AEA10067E07D /* ApplePayErrorCode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayErrorCode.idl; sourceTree = "<group>"; };
 		A1BB85A02159AF570067E07D /* ApplePayErrorContactField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayErrorContactField.h; sourceTree = "<group>"; };
@@ -17214,6 +17215,7 @@
 				1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */,
 				449098B10F8F82520076A327 /* FeatureDefines.xcconfig */,
 				5355E8DD1F9680420031E08C /* GenerateUnifiedSources.xcconfig */,
+				A1B89B8D221E01EF00EB4CEA /* SDKVariant.xcconfig */,
 				1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */,
 				1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */,
 				E1BA66F21742BDCC00C20251 /* WebCoreTestShim.xcconfig */,

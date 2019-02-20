@@ -1,3 +1,12 @@
+2019-02-20  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Add SDKVariant.xcconfig to various Xcode projects
+        https://bugs.webkit.org/show_bug.cgi?id=194869
+
+        Rubber-stamped by Jer Noble.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Enable support for CONTENT_EXTENSIONS

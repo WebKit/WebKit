@@ -33,6 +33,7 @@
 		7A41C8F11EC1F919003DBC76 /* ImageDiff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDiff.cpp; sourceTree = "<group>"; };
 		7A41C8F31EC1F935003DBC76 /* PlatformImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformImage.cpp; sourceTree = "<group>"; };
 		7A41C8F51EC1F946003DBC76 /* PlatformImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformImage.h; sourceTree = "<group>"; };
+		A1B89B9A221E02AD00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +73,7 @@
 				31DF42C41EBBBBB90096ED44 /* Base.xcconfig */,
 				31DF42C51EBBBBB90096ED44 /* DebugRelease.xcconfig */,
 				31DF42C61EBBBBB90096ED44 /* ImageDiff.xcconfig */,
+				A1B89B9A221E02AD00EB4CEA /* SDKVariant.xcconfig */,
 			);
 			name = Configurations;
 			path = cg/Configurations;

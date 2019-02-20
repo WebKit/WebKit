@@ -1,3 +1,12 @@
+2019-02-20  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Add SDKVariant.xcconfig to various Xcode projects
+        https://bugs.webkit.org/show_bug.cgi?id=194869
+
+        Rubber-stamped by Jer Noble.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view

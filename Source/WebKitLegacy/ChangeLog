@@ -1,3 +1,12 @@
+2019-02-20  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Add SDKVariant.xcconfig to various Xcode projects
+        https://bugs.webkit.org/show_bug.cgi?id=194869
+
+        Rubber-stamped by Jer Noble.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2019-01-31  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Remove unnecessary member from NetworkStorageSession.

@@ -7312,6 +7312,7 @@
 		5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libwebrtc.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		A1B89B8A221E004C00EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libwebrtc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -9110,8 +9111,8 @@
 		419C847B1FE256A80040C30F /* fiat */ = {
 			isa = PBXGroup;
 			children = (
-				415449B721CAC4EC001C0A55 /* p256.c */,
 				419C847C1FE256B90040C30F /* curve25519.c */,
+				415449B721CAC4EC001C0A55 /* p256.c */,
 			);
 			path = fiat;
 			sourceTree = "<group>";
@@ -9799,21 +9800,21 @@
 		41EA53AF1EFC2C8B002FF04C /* ec */ = {
 			isa = PBXGroup;
 			children = (
-				415449B521CAC4CE001C0A55 /* util.c */,
-				415449AC21CAC3F4001C0A55 /* felem.c */,
-				415449AE21CAC3F5001C0A55 /* scalar.c */,
-				415449AD21CAC3F5001C0A55 /* simple_mul.c */,
 				41EA53B01EFC2C8B002FF04C /* asm */,
 				41EA53B21EFC2C8B002FF04C /* ec.c */,
 				41EA53B31EFC2C8B002FF04C /* ec_key.c */,
 				41EA53B41EFC2C8B002FF04C /* ec_montgomery.c */,
+				415449AC21CAC3F4001C0A55 /* felem.c */,
 				41EA53B71EFC2C8B002FF04C /* internal.h */,
 				41EA53B81EFC2C8B002FF04C /* oct.c */,
 				41EA53B91EFC2C8B002FF04C /* p224-64.c */,
 				41EA53BB1EFC2C8B002FF04C /* p256-x86_64-table.h */,
 				41EA53BC1EFC2C8B002FF04C /* p256-x86_64.c */,
 				41EA53BD1EFC2C8B002FF04C /* p256-x86_64.h */,
+				415449AE21CAC3F5001C0A55 /* scalar.c */,
 				41EA53C01EFC2C8B002FF04C /* simple.c */,
+				415449AD21CAC3F5001C0A55 /* simple_mul.c */,
+				415449B521CAC4CE001C0A55 /* util.c */,
 				41EA53C21EFC2C8B002FF04C /* wnaf.c */,
 			);
 			name = ec;
@@ -9840,8 +9841,6 @@
 		41EA53DA1EFC2D1A002FF04C /* bn */ = {
 			isa = PBXGroup;
 			children = (
-				415449A521CAC399001C0A55 /* div_extra.c */,
-				415449A621CAC399001C0A55 /* gcd_extra.c */,
 				41EA53DC1EFC2D1A002FF04C /* asm */,
 				41EA53DB1EFC2D1A002FF04C /* add.c */,
 				41EA53E61EFC2D1A002FF04C /* bn.c */,
@@ -9849,8 +9848,10 @@
 				41EA53EB1EFC2D1A002FF04C /* cmp.c */,
 				41EA53EC1EFC2D1A002FF04C /* ctx.c */,
 				41EA53ED1EFC2D1A002FF04C /* div.c */,
+				415449A521CAC399001C0A55 /* div_extra.c */,
 				41EA53EE1EFC2D1A002FF04C /* exponentiation.c */,
 				41EA53EF1EFC2D1A002FF04C /* gcd.c */,
+				415449A621CAC399001C0A55 /* gcd_extra.c */,
 				41EA53F01EFC2D1A002FF04C /* generic.c */,
 				41EA53F11EFC2D1A002FF04C /* internal.h */,
 				41EA53F21EFC2D1A002FF04C /* jacobi.c */,
@@ -10395,12 +10396,12 @@
 		5C4B44421E42A588002651C8 /* bytestring */ = {
 			isa = PBXGroup;
 			children = (
-				415449A121CAC34D001C0A55 /* unicode.c */,
 				5C4B46301E42A994002651C8 /* asn1_compat.c */,
 				5C4B46311E42A994002651C8 /* ber.c */,
 				5C4B46321E42A994002651C8 /* cbb.c */,
 				5C4B46331E42A994002651C8 /* cbs.c */,
 				5C4B46341E42A994002651C8 /* internal.h */,
+				415449A121CAC34D001C0A55 /* unicode.c */,
 			);
 			name = bytestring;
 			sourceTree = "<group>";
@@ -10626,7 +10627,6 @@
 		5C4B44631E42A6A7002651C8 /* x509v3 */ = {
 			isa = PBXGroup;
 			children = (
-				415449A321CAC371001C0A55 /* v3_ocsp.c */,
 				5C4B44641E42A6E2002651C8 /* ext_dat.h */,
 				5C4B44651E42A6E2002651C8 /* pcy_cache.c */,
 				5C4B44661E42A6E2002651C8 /* pcy_data.c */,
@@ -10651,6 +10651,7 @@
 				5C4B447A1E42A6E2002651C8 /* v3_int.c */,
 				5C4B447B1E42A6E2002651C8 /* v3_lib.c */,
 				5C4B447C1E42A6E2002651C8 /* v3_ncons.c */,
+				415449A321CAC371001C0A55 /* v3_ocsp.c */,
 				5C4B447D1E42A6E2002651C8 /* v3_pci.c */,
 				5C4B447E1E42A6E2002651C8 /* v3_pcia.c */,
 				5C4B447F1E42A6E2002651C8 /* v3_pcons.c */,
@@ -13550,6 +13551,7 @@
 				5C0885361E4AA38900403995 /* libwebrtcpcrtc.xcconfig */,
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
+				A1B89B8A221E004C00EB4CEA /* SDKVariant.xcconfig */,
 				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
 				37119A8020CCB6DD002C6DC9 /* Version.xcconfig */,
 				37119A8120CCB6DD002C6DC9 /* WebKitTargetConditionals.xcconfig */,
@@ -15969,9 +15971,7 @@
 			files = (
 				5C4B47471E42AAF5002651C8 /* a_bitstr.c in Sources */,
 				5C4B47481E42AAF5002651C8 /* a_bool.c in Sources */,
-				415449A721CAC39A001C0A55 /* div_extra.c in Sources */,
 				5C4B47491E42AAF5002651C8 /* a_d2i_fp.c in Sources */,
-				415449BB21CAC5B4001C0A55 /* ecdh_extra.c in Sources */,
 				5C4B466D1E42AA3C002651C8 /* a_digest.c in Sources */,
 				5C4B474A1E42AAF5002651C8 /* a_dup.c in Sources */,
 				5C4B474B1E42AAF5002651C8 /* a_enum.c in Sources */,
@@ -15986,14 +15986,12 @@
 				5C4B466F1E42AA3C002651C8 /* a_strex.c in Sources */,
 				5C4B47531E42AAF5002651C8 /* a_strnid.c in Sources */,
 				5C4B47541E42AAF5002651C8 /* a_time.c in Sources */,
-				415449B821CAC4EC001C0A55 /* p256.c in Sources */,
 				5C4B47551E42AAF5002651C8 /* a_type.c in Sources */,
 				5C4B47561E42AAF5002651C8 /* a_utctm.c in Sources */,
 				5C4B47571E42AAF5002651C8 /* a_utf8.c in Sources */,
 				5C4B46701E42AA3C002651C8 /* a_verify.c in Sources */,
 				41EA53FC1EFC2D1B002FF04C /* add.c in Sources */,
 				41A3918F1EFC44EB00C4516A /* aead.c in Sources */,
-				415449A021CAC330001C0A55 /* ecdh.c in Sources */,
 				41A392211EFC5CFA00C4516A /* aes.c in Sources */,
 				5C4B46711E42AA3C002651C8 /* algorithm.c in Sources */,
 				5C4B471E1E42AAD6002651C8 /* asn1_compat.c in Sources */,
@@ -16037,10 +16035,10 @@
 				5C4B470A1E42AABE002651C8 /* dh_asn1.c in Sources */,
 				41EA53AB1EFC2C4D002FF04C /* digest.c in Sources */,
 				41A391DD1EFC489A00C4516A /* digest_extra.c in Sources */,
-				415449B021CAC3F5001C0A55 /* simple_mul.c in Sources */,
 				41EA53AC1EFC2C4D002FF04C /* digests.c in Sources */,
 				5C4B46E31E42AA97002651C8 /* digestsign.c in Sources */,
 				41EA54031EFC2D1B002FF04C /* div.c in Sources */,
+				415449A721CAC39A001C0A55 /* div_extra.c in Sources */,
 				5C4B47041E42AAB4002651C8 /* dsa.c in Sources */,
 				5C4B48471E42C0F6002651C8 /* dsa_asn1.c in Sources */,
 				41A392201EFC5CF500C4516A /* e_aes.c in Sources */,
@@ -16054,9 +16052,10 @@
 				41A391B21EFC454F00C4516A /* e_tls.c in Sources */,
 				41EA53C31EFC2C8B002FF04C /* ec.c in Sources */,
 				41A391E41EFC48CE00C4516A /* ec_asn1.c in Sources */,
-				415449A421CAC372001C0A55 /* v3_ocsp.c in Sources */,
 				41EA53C41EFC2C8B002FF04C /* ec_key.c in Sources */,
 				41EA53C51EFC2C8B002FF04C /* ec_montgomery.c in Sources */,
+				415449A021CAC330001C0A55 /* ecdh.c in Sources */,
+				415449BB21CAC5B4001C0A55 /* ecdh_extra.c in Sources */,
 				41EA53D81EFC2CDC002FF04C /* ecdsa.c in Sources */,
 				41A391E31EFC48AE00C4516A /* ecdsa_asn1.c in Sources */,
 				5C4B46F21E42AAA1002651C8 /* engine.c in Sources */,
@@ -16070,9 +16069,11 @@
 				5C4B475E1E42AAF5002651C8 /* f_int.c in Sources */,
 				5C4B475F1E42AAF5002651C8 /* f_string.c in Sources */,
 				5C4B473E1E42AAEA002651C8 /* fd.c in Sources */,
+				415449AF21CAC3F5001C0A55 /* felem.c in Sources */,
 				5C4B473F1E42AAEA002651C8 /* file.c in Sources */,
 				41A392151EFC4B3A00C4516A /* forkunsafe.c in Sources */,
 				41EA54051EFC2D1B002FF04C /* gcd.c in Sources */,
+				415449A821CAC39A001C0A55 /* gcd_extra.c in Sources */,
 				41A3917A1EFC447C00C4516A /* gcm.c in Sources */,
 				41EA54061EFC2D1B002FF04C /* generic.c in Sources */,
 				5C4B47401E42AAEA002651C8 /* hexdump.c in Sources */,
@@ -16080,10 +16081,10 @@
 				41EA53A51EFC2C14002FF04C /* hmac.c in Sources */,
 				5C4B46761E42AA3C002651C8 /* i2d_pr.c in Sources */,
 				41EA54081EFC2D1B002FF04C /* jacobi.c in Sources */,
+				415449AB21CAC3CF001C0A55 /* kdf.c in Sources */,
 				41A392001EFC493000C4516A /* key_wrap.c in Sources */,
 				5C4B46DF1E42AA89002651C8 /* lhash.c in Sources */,
 				41EA54191EFC2D53002FF04C /* md4.c in Sources */,
-				415449AB21CAC3CF001C0A55 /* kdf.c in Sources */,
 				41EA541A1EFC2D53002FF04C /* md5.c in Sources */,
 				5C4B463F1E42AA2C002651C8 /* mem.c in Sources */,
 				41A392011EFC493000C4516A /* mode_wrappers.c in Sources */,
@@ -16096,6 +16097,7 @@
 				41A3917D1EFC447C00C4516A /* ofb.c in Sources */,
 				41EA53CA1EFC2C8B002FF04C /* p224-64.c in Sources */,
 				41EA53CD1EFC2C8B002FF04C /* p256-x86_64.c in Sources */,
+				415449B821CAC4EC001C0A55 /* p256.c in Sources */,
 				5C4B46BC1E42AA66002651C8 /* p5_pbev2.c in Sources */,
 				5C4B46E81E42AA97002651C8 /* p_dsa_asn1.c in Sources */,
 				5C4B46EA1E42AA97002651C8 /* p_ec.c in Sources */,
@@ -16104,7 +16106,6 @@
 				41A392081EFC4A7100C4516A /* p_ed25519_asn1.c in Sources */,
 				5C4B46EC1E42AA97002651C8 /* p_rsa.c in Sources */,
 				5C4B46EB1E42AA97002651C8 /* p_rsa_asn1.c in Sources */,
-				415449A221CAC34D001C0A55 /* unicode.c in Sources */,
 				41A391861EFC447C00C4516A /* padding.c in Sources */,
 				5C4B47421E42AAEA002651C8 /* pair.c in Sources */,
 				5C4B470C1E42AABE002651C8 /* params.c in Sources */,
@@ -16120,7 +16121,6 @@
 				5C4B46C31E42AA6B002651C8 /* pem_lib.c in Sources */,
 				5C4B46C41E42AA6B002651C8 /* pem_oth.c in Sources */,
 				5C4B46C51E42AA6B002651C8 /* pem_pk8.c in Sources */,
-				415449B121CAC3F5001C0A55 /* scalar.c in Sources */,
 				5C4B46C61E42AA6B002651C8 /* pem_pkey.c in Sources */,
 				5C4B46C71E42AA6B002651C8 /* pem_x509.c in Sources */,
 				5C4B46C81E42AA6B002651C8 /* pem_xaux.c in Sources */,
@@ -16143,6 +16143,7 @@
 				41A391881EFC447C00C4516A /* rsa_impl.c in Sources */,
 				5C4B467A1E42AA3C002651C8 /* rsa_pss.c in Sources */,
 				41EA540E1EFC2D1B002FF04C /* rsaz_exp.c in Sources */,
+				415449B121CAC3F5001C0A55 /* scalar.c in Sources */,
 				41A391731EFC447C00C4516A /* sha1-altivec.c in Sources */,
 				41A391741EFC447C00C4516A /* sha1.c in Sources */,
 				41A391751EFC447C00C4516A /* sha256.c in Sources */,
@@ -16150,6 +16151,7 @@
 				41EA54101EFC2D1B002FF04C /* shift.c in Sources */,
 				5C4B46F01E42AA97002651C8 /* sign.c in Sources */,
 				41EA53D01EFC2C8B002FF04C /* simple.c in Sources */,
+				415449B021CAC3F5001C0A55 /* simple_mul.c in Sources */,
 				5C4B47451E42AAEA002651C8 /* socket.c in Sources */,
 				5C4B47441E42AAEA002651C8 /* socket_helper.c in Sources */,
 				5C4B4D021E432185002651C8 /* spake25519.c in Sources */,
@@ -16171,11 +16173,12 @@
 				5C4B46461E42AA2C002651C8 /* thread_win.c in Sources */,
 				41A392031EFC495B00C4516A /* time_support.c in Sources */,
 				41A391B41EFC454F00C4516A /* tls_cbc.c in Sources */,
+				415449A221CAC34D001C0A55 /* unicode.c in Sources */,
 				41A391831EFC447C00C4516A /* urandom.c in Sources */,
+				415449B621CAC4CE001C0A55 /* util.c in Sources */,
 				5C4B46521E42AA34002651C8 /* v3_akey.c in Sources */,
 				5C4B46531E42AA34002651C8 /* v3_akeya.c in Sources */,
 				5C4B46541E42AA34002651C8 /* v3_alt.c in Sources */,
-				415449AF21CAC3F5001C0A55 /* felem.c in Sources */,
 				5C4B46551E42AA34002651C8 /* v3_bcons.c in Sources */,
 				5C4B46561E42AA34002651C8 /* v3_bitst.c in Sources */,
 				5C4B46571E42AA34002651C8 /* v3_conf.c in Sources */,
@@ -16184,12 +16187,12 @@
 				5C4B465A1E42AA34002651C8 /* v3_enum.c in Sources */,
 				5C4B465B1E42AA34002651C8 /* v3_extku.c in Sources */,
 				5C4B465C1E42AA34002651C8 /* v3_genn.c in Sources */,
-				415449B621CAC4CE001C0A55 /* util.c in Sources */,
 				5C4B465D1E42AA34002651C8 /* v3_ia5.c in Sources */,
 				5C4B465E1E42AA34002651C8 /* v3_info.c in Sources */,
 				5C4B465F1E42AA34002651C8 /* v3_int.c in Sources */,
 				5C4B46601E42AA34002651C8 /* v3_lib.c in Sources */,
 				5C4B46611E42AA34002651C8 /* v3_ncons.c in Sources */,
+				415449A421CAC372001C0A55 /* v3_ocsp.c in Sources */,
 				5C4B46621E42AA34002651C8 /* v3_pci.c in Sources */,
 				5C4B46631E42AA34002651C8 /* v3_pcia.c in Sources */,
 				5C4B46641E42AA34002651C8 /* v3_pcons.c in Sources */,
@@ -16217,7 +16220,6 @@
 				5C4B469B1E42AA3C002651C8 /* x509_txt.c in Sources */,
 				5C4B469C1E42AA3C002651C8 /* x509_v3.c in Sources */,
 				5C4B469D1E42AA3C002651C8 /* x509_vfy.c in Sources */,
-				415449A821CAC39A001C0A55 /* gcd_extra.c in Sources */,
 				5C4B469E1E42AA3C002651C8 /* x509_vpm.c in Sources */,
 				5C4B46A01E42AA3C002651C8 /* x509cset.c in Sources */,
 				5C4B46A11E42AA3C002651C8 /* x509name.c in Sources */,

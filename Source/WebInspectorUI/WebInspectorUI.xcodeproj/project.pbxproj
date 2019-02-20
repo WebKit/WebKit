@@ -23,6 +23,7 @@
 		1C60FFE114E79B0F006CD77D /* copy-user-interface-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "copy-user-interface-resources.pl"; sourceTree = "<group>"; };
 		1C78EE131760E115002F6AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C78EE1617611340002F6AA5 /* WebInspectorUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WebInspectorUI.c; sourceTree = "<group>"; };
+		A1B89B8F221E021000EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
 		A54C2257148B23DF00373FA3 /* WebInspectorUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebInspectorUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,6 +33,7 @@
 			children = (
 				1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */,
 				1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */,
+				A1B89B8F221E021000EB4CEA /* SDKVariant.xcconfig */,
 				1C60FE3214E5F3CD006CD77D /* Version.xcconfig */,
 				1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */,
 			);
