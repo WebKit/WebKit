@@ -1,3 +1,15 @@
+2019-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) "Reload without content extensions" does not work when the main resource is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=194872
+        <rdar://problem/47924500>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-20  Jer Noble  <jer.noble@apple.com>
 
         Add a git utility method that allows the caller to determine if a specific commitish is within a specified range of commits.

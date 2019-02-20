@@ -4913,6 +4913,81 @@ TEST(ProcessSwap, ContentBlockingAfterProcessSwap)
     done = false;
 }
 
+static const char* notifyLoadedBytes = R"PSONRESOURCE(
+<script>
+    window.webkit.messageHandlers.pson.postMessage("Loaded");
+</script>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, ContentExtensionBlocksMainLoadThenReloadWithoutExtensions)
+{
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"ContentBlockingAfterProcessSwapExtension" completionHandler:^(NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    RetainPtr<PSONMessageHandler> messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    __block bool doneCompiling = false;
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"ContentBlockingAfterProcessSwapExtension" encodedContentRuleList:blockmeFilter completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+
+        EXPECT_NOT_NULL(ruleList);
+        EXPECT_NULL(error);
+
+        [webViewConfiguration.get().userContentController addContentRuleList:ruleList];
+
+        doneCompiling = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCompiling);
+
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.apple.com/blockme.html" toData:notifyLoadedBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    receivedMessage = false;
+    failed = false;
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/blockme.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&failed);
+    failed = false;
+    EXPECT_FALSE(receivedMessage);
+
+    [webView _loadAlternateHTMLString:@"Blocked" baseURL:[NSURL URLWithString:@"data:text/html,"] forUnreachableURL:[NSURL URLWithString:@"pson://www.apple.com/blockme.html"]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView _reloadWithoutContentBlockers];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_FALSE(failed);
+    EXPECT_TRUE(receivedMessage);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/blockme.html", [[webView URL] absoluteString]);
+
+    [[WKContentRuleListStore defaultStore] removeContentRuleListForIdentifier:@"ContentBlockingAfterProcessSwapExtension" completionHandler:^(NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 static bool isCapturing = false;
 @interface GetUserMediaUIDelegate : NSObject<WKUIDelegate>
 - (void)_webView:(WKWebView *)webView requestUserMediaAuthorizationForDevices:(_WKCaptureDevices)devices url:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL decisionHandler:(void (^)(BOOL authorized))decisionHandler;

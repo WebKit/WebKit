@@ -1,3 +1,27 @@
+2019-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) "Reload without content extensions" does not work when the main resource is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=194872
+        <rdar://problem/47924500>
+
+        Reviewed by Alex Christensen.
+
+        [WKWebView _reloadWithoutContentBlockers] relies on a ReloadOption flag that is passed to WebCore
+        instead of using WebsitePolicies.contentBlockersEnabled flag. If the reload causes a process swap
+        due to PSON, then the new process does not know about this ReloadOption and fails to honor it.
+
+        Since the modern way to do this is WebsitePolicies, and since WebsitePolicies are properly
+        propagated cross-process in case of process swap, this patch updates _reloadWithoutContentBlockers
+        to set a flag on the Navigation which we use to later set the WebsitePolicies.contentBlockersEnabled
+        flag in WebPageProxy::receivedNavigationPolicyDecision().
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setUserContentExtensionsEnabled):
+        (API::Navigation::userContentExtensionsEnabled const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2019-02-20  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r241817.

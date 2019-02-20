@@ -1346,6 +1346,11 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     
     auto navigation = m_navigationState->createReloadNavigation();
 
+    // Store decision to reload without content blockers on the navigation so that we can later set the corresponding
+    // WebsitePolicies flag in WebPageProxy::receivedNavigationPolicyDecision().
+    if (options.contains(WebCore::ReloadOption::DisableContentBlockers))
+        navigation->setUserContentExtensionsEnabled(false);
+
     m_process->send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer().start();
 
@@ -2738,6 +2743,12 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         data = policies->data();
         if (policies->websiteDataStore())
             changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
+    }
+
+    if (navigation && !navigation->userContentExtensionsEnabled()) {
+        if (!data)
+            data = WebsitePoliciesData { };
+        data->contentBlockersEnabled = false;
     }
 
     if (policyAction == PolicyAction::Use && navigation && (navigation->isSystemPreview() || navigation->shouldForceDownload()))
