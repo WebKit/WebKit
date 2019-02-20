@@ -1,3 +1,17 @@
+2019-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r241788>): ASSERTION FAILED: !m_normalFlowListDirty in TestWebKitAPI.WebKit.ResizeReversePaginatedWebView test
+        https://bugs.webkit.org/show_bug.cgi?id=194866
+
+        Reviewed by Antti Koivisto.
+
+        r241788 removed some calls that updated layer lists (normal flow and z-order) during compositing updates, causing
+        a later call to RenderLayerCompositor::recursiveRepaintLayer() to assert when the lists were dirty. Fix by updating
+        the lists in RenderLayerCompositor::recursiveRepaintLayer(), as we do in various other places.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayer):
+
 2019-02-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Tweak UI for focus rings
