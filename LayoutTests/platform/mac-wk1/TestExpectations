@@ -671,3 +671,5 @@ webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor
 webkit.org/b/190627  [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
+
+webkit.org/b/194309 media/modern-media-controls/compact-media-controls/compact-media-controls-layout.html [ Pass Failure ]
