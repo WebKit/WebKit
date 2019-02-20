@@ -193,7 +193,7 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
-    if (!shouldLog(document.sessionID().isEphemeral()))
+    if (!document.sessionID().isValid() || !shouldLog(document.sessionID().isEphemeral()))
         return;
 
     auto& url = document.url();
