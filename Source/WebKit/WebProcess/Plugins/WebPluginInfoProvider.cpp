@@ -36,7 +36,6 @@
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>
-#include <WebCore/Settings.h>
 #include <WebCore/SubframeLoader.h>
 #include <wtf/text/StringHash.h>
 
@@ -147,12 +146,11 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& pa
 void WebPluginInfoProvider::populatePluginCache(const WebCore::Page& page)
 {
     if (!m_pluginCacheIsPopulated) {
-        if (page.settings().arePluginsEnabled()) {
-            HangDetectionDisabler hangDetectionDisabler;
-            if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
-                Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginIdentifiers), 0))
-                return;
-        }
+        HangDetectionDisabler hangDetectionDisabler;
+
+        if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins),
+            Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins, m_cachedSupportedPluginIdentifiers), 0))
+            return;
 
         m_shouldRefreshPlugins = false;
         m_pluginCacheIsPopulated = true;

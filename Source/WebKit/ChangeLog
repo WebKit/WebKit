@@ -1,3 +1,16 @@
+2019-02-20  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r241817.
+
+        Caused 4 API failures
+
+        Reverted changeset:
+
+        "[GTK] Epiphany searching for plugins even if plugins are
+        disabled"
+        https://bugs.webkit.org/show_bug.cgi?id=194352
+        https://trac.webkit.org/changeset/241817
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects
