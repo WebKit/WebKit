@@ -914,3 +914,5 @@ webkit.org/b/191658 [ Sierra Release ] fast/layers/no-clipping-overflow-hidden-a
 webkit.org/b/193976 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]
 
 webkit.org/b/194826 http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html [ Pass Timeout ]
+
+webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ Pass Failure ]

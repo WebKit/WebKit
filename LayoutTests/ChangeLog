@@ -1,3 +1,13 @@
+2019-02-20  Shawn Roberts  <sroberts@apple.com>
+
+        REGRESSION (r240727) [ Mac iOS ] Layout Test http/tests/workers/service/basic-register-exceptions.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=194368
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating test expectations while waiting for a fix
+        * platform/mac-wk2/TestExpectations: ditto
+
 2019-02-19  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): Toggling visibility on the <html> element can result in a blank web view

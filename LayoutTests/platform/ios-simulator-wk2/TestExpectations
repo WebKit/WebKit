@@ -43,3 +43,4 @@ webkit.org/b/175865 quicklook/multi-sheet-numbers-09.html [ Pass Failure ]
 
 webkit.org/b/187699 [ Debug ] fast/forms/submit-change-fragment.html [ Pass Timeout ]
 
+webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ Pass Failure ]
