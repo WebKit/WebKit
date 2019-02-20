@@ -1,3 +1,14 @@
+2019-02-18  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Fix crash with sampling profiler
+        https://bugs.webkit.org/show_bug.cgi?id=194772
+
+        Reviewed by Mark Lam.
+
+        Do not skip test since crash with sampling profiler is now fixed.
+
+        * stress/sampling-profiler-richards.js:
+
 2019-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add LazyClassStructure::getInitializedOnMainThread
