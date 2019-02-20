@@ -1,3 +1,24 @@
+2019-02-19  Mark Lam  <mark.lam@apple.com>
+
+        Fix DFG doesGC() for TryGetById and ProfileType nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=194821
+        <rdar://problem/48206690>
+
+        Reviewed by Saam Barati.
+
+        Fix doesGC() for the following nodes:
+
+            ProfileType:
+                calls operationProcessTypeProfilerLogDFG(), which can calculatedClassName(),
+                which can call JSString::tryGetValue(), which can resolve a rope.
+
+            TryGetById:
+                calls operationTryGetByIdOptimize(), which can startWatchingPropertyForReplacements()
+                on a structure, which can allocate StructureRareData.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-02-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Introduce JSNonDestructibleProxy for JavaScriptCore.framework's GlobalThis
