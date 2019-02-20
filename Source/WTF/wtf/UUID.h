@@ -45,6 +45,9 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE String createCanonicalUUIDString();
 
+WTF_EXPORT_PRIVATE String bootSessionUUIDString();
+
 }
 
 using WTF::createCanonicalUUIDString;
+using WTF::bootSessionUUIDString;

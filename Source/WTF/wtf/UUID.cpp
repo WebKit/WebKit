@@ -31,9 +31,14 @@
 #include "config.h"
 #include <wtf/UUID.h>
 
+#include <mutex>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
+
+#if OS(DARWIN)
+#include <sys/sysctl.h>
+#endif
 
 namespace WTF {
 
@@ -57,6 +62,22 @@ String createCanonicalUUIDString()
     appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
     appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
     return builder.toString();
+}
+
+String bootSessionUUIDString()
+{
+    static LazyNeverDestroyed<String> bootSessionUUID;
+#if OS(DARWIN)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        size_t uuidLength = 37;
+        char uuid[uuidLength];
+        if (sysctlbyname("kern.bootsessionuuid", uuid, &uuidLength, nullptr, 0))
+            return;
+        bootSessionUUID.construct(static_cast<const char*>(uuid), uuidLength - 1);
+    });
+#endif
+    return bootSessionUUID;
 }
 
 } // namespace WTF
