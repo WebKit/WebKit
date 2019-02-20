@@ -1,3 +1,26 @@
+2019-02-18  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Handle indefinite percentages in fit-content()
+        https://bugs.webkit.org/show_bug.cgi?id=194509
+
+        Reviewed by Javier Fernandez.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-fit-content-percentage.html
+
+        If the size of the grid container depends on the size of its tracks,
+        a percentage in fit-content() is indefinite. Without this patch, some
+        places treated this case as fit-content(0), which prevented the grid
+        container from growing enough to contain the max-content contribution
+        of its grid items.
+
+        This patch treats such fit-content() as minmax(auto, max-content),
+        but once the size of the grid container is known and it is laid out
+        "for real", then the percentage is definite and it's used.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::gridTrackSize const):
+        (WebCore::GridTrackSizingAlgorithm::initializeTrackSizes):
+
 2019-02-18  John Wilander  <wilander@apple.com>
 
         Check the existence of the frame in Document::hasFrameSpecificStorageAccess() and Document::setHasFrameSpecificStorageAccess()

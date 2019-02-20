@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-content-distribution-must-account-for-track-sizing-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-fit-content-percentage.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-intrinsic-size-with-orthogonal-items.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-layout-free-space-unit-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-layout-free-space-unit.html

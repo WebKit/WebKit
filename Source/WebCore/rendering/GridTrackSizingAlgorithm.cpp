@@ -645,7 +645,7 @@ GridTrackSize GridTrackSizingAlgorithm::gridTrackSize(GridTrackSizingDirection d
 
     auto& trackSize = rawGridTrackSize(direction, translatedIndex);
     if (trackSize.isFitContent())
-        return trackSize;
+        return isRelativeGridLengthAsAuto(trackSize.fitContentTrackBreadth(), direction) ? GridTrackSize(Length(Auto), Length(MaxContent)) : trackSize;
 
     GridLength minTrackBreadth = trackSize.minTrackBreadth();
     GridLength maxTrackBreadth = trackSize.maxTrackBreadth();
@@ -1099,7 +1099,6 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
     ASSERT(!m_hasPercentSizedRowsIndefiniteHeight);
 
     Vector<GridTrack>& allTracks = tracks(m_direction);
-    const bool hasDefiniteFreeSpace = !!availableSpace();
     const bool indefiniteHeight = m_direction == ForRows && !m_renderGrid->hasDefiniteLogicalHeight();
     LayoutUnit maxSize = std::max(0_lu, availableSpace().valueOr(0_lu));
     // 1. Initialize per Grid track variables.
@@ -1111,11 +1110,8 @@ void GridTrackSizingAlgorithm::initializeTrackSizes()
         track.setGrowthLimit(initialGrowthLimit(trackSize, track.baseSize()));
         track.setInfinitelyGrowable(false);
 
-        if (trackSize.isFitContent()) {
-            GridLength gridLength = trackSize.fitContentTrackBreadth();
-            if (!gridLength.isPercentage() || hasDefiniteFreeSpace)
-                track.setGrowthLimitCap(valueForLength(gridLength.length(), maxSize));
-        }
+        if (trackSize.isFitContent())
+            track.setGrowthLimitCap(valueForLength(trackSize.fitContentTrackBreadth().length(), maxSize));
         if (trackSize.isContentSized())
             m_contentSizedTracksIndex.append(i);
         if (trackSize.maxTrackBreadth().isFlex())
