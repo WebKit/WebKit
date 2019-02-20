@@ -9,12 +9,13 @@ function test()
 
     WI.TestHeapSnapshotNode = class TestHeapSnapshotNode
     {
-        constructor(identifier, className, size, internal)
+        constructor(identifier, className, size, flags)
         {
             this.id = identifier;
             this.className = className;
             this.size = size; 
-            this.internal = internal;
+            this.internal = flags & (1 << 0) ? true : false;
+            this.isObjectType = flags & (1 << 1) ? true : false;
             this.gcRoot = false;
             this.outgoingEdges = [];
             this.incomingEdges = [];
@@ -59,9 +60,9 @@ function test()
                 let id = nodes[i++];
                 let size = nodes[i++];
                 let classNameIndex = nodes[i++];
-                let internal = nodes[i++];
+                let flags = nodes[i++];
 
-                let node = new WI.TestHeapSnapshotNode(id, nodeClassNames[classNameIndex], size, !!internal);
+                let node = new WI.TestHeapSnapshotNode(id, nodeClassNames[classNameIndex], size, flags);
                 nodeMap.set(id, node);
                 processedNodes.push(node);
             }
@@ -127,6 +128,7 @@ function test()
             && node1.size === node2.size
             && node1.className === node2.className
             && node1.internal === node2.internal
+            && node1.isObjectType === node2.isObjectType
             && node1.gcRoot === node2.gcRoot;
     }
 
@@ -189,6 +191,7 @@ function test()
                 InspectorTest.expectThat(heapSnapshotNode.id === testSnapshotNodeForWindowObject.id, "Node identifier should match.")
                 InspectorTest.expectThat(heapSnapshotNode.size === testSnapshotNodeForWindowObject.size, "Node size should match.");
                 InspectorTest.expectThat(heapSnapshotNode.internal === testSnapshotNodeForWindowObject.internal, "Node internal state should match.");
+                InspectorTest.expectThat(heapSnapshotNode.isObjectType === testSnapshotNodeForWindowObject.isObjectType, "Node isObjectType state should match.");
                 InspectorTest.expectThat(heapSnapshotNode.gcRoot === testSnapshotNodeForWindowObject.gcRoot, "Node gcRoot state should match.");
                 InspectorTest.expectThat(heapSnapshotNode.retainedSize >= heapSnapshotNode.size, "Node retainedSize should at least be the size.");
                 resolve();

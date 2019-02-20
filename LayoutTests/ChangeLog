@@ -1,3 +1,15 @@
+2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view
+        https://bugs.webkit.org/show_bug.cgi?id=172848
+        <rdar://problem/25709212>
+
+        Reviewed by Mark Lam.
+
+        * inspector/unit-tests/heap-snapshot-expected.txt:
+        * inspector/unit-tests/heap-snapshot.html:
+        Update for the new node flag.
+
 2019-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r240909): Release assertion in FrameLoader::loadPostRequest when opening new window

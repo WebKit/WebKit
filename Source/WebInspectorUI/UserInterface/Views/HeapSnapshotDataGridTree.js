@@ -218,7 +218,9 @@ WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree e
         // Populate the first level with the different classes.
         let skipInternalOnlyObjects = !WI.settings.debugShowInternalObjectsInHeapSnapshot.value;
 
-        for (let [className, {size, retainedSize, count, internalCount, deadCount}] of this.heapSnapshot.categories) {
+        for (let [className, {size, retainedSize, count, internalCount, deadCount, objectCount}] of this.heapSnapshot.categories) {
+            console.assert(count > 0);
+
             // Possibly skip internal only classes.
             if (skipInternalOnlyObjects && count === internalCount)
                 continue;
@@ -228,7 +230,11 @@ WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree e
             if (!liveCount)
                 continue;
 
-            this.appendChild(new WI.HeapSnapshotClassDataGridNode({className, size, retainedSize, count: liveCount}, this));
+            // If over half of the objects with this class name are Object sub-types, treat this as an Object category.
+            // This can happen if the page has a JavaScript Class with the same name as a native class.
+            let isObjectSubcategory = (objectCount / count) > 0.5;
+
+            this.appendChild(new WI.HeapSnapshotClassDataGridNode({className, size, retainedSize, isObjectSubcategory, count: liveCount}, this));
         }
 
         this.didPopulate();

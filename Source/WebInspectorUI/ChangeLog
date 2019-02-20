@@ -1,5 +1,43 @@
 2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view
+        https://bugs.webkit.org/show_bug.cgi?id=172848
+        <rdar://problem/25709212>
+
+        Reviewed by Mark Lam.
+
+        * UserInterface/Workers/HeapSnapshot/HeapSnapshot.js:
+        (HeapSnapshot):
+        Support the new snapshot version. The only thing that changes are the
+        node flags, and its actually completely compatible with version 1.
+
+        (HeapSnapshot.updateCategoriesAndMetadata):
+        List the count of object type instances in each class category.
+
+        (HeapSnapshot.prototype.serializeNode):
+        Include whether or not the node is an object type.
+
+        * UserInterface/Proxies/HeapSnapshotNodeProxy.js:
+        (WebInspector.HeapSnapshotNodeProxy):
+        (WebInspector.HeapSnapshotNodeProxy.deserialize):
+        Add a new Node isObjectType property based on the new data.
+
+        * UserInterface/Views/HeapSnapshotClassDataGridNode.js:
+        (WebInspector.HeapSnapshotClassDataGridNode.prototype.createCellContent):
+        * UserInterface/Views/HeapSnapshotClusterContentView.js:
+        (WebInspector.HeapSnapshotClusterContentView.iconStyleClassNameForClassName):
+        If a class contains 50% or more object type instances then treat it as such
+        instead of defaulting to native.
+
+        * UserInterface/Views/HeapSnapshotDataGridTree.js:
+        (WebInspector.HeapSnapshotInstancesDataGridTree.prototype.populateTopLevel):
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.createCellContent):
+        We can be more specific than the default if the individual instance is
+        known to be an object type.
+
+2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Scripts timeline on-going-recording text looks poor in dark mode
         https://bugs.webkit.org/show_bug.cgi?id=194809
 
