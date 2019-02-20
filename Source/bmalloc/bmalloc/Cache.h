@@ -56,8 +56,10 @@ public:
 private:
     BEXPORT static void* tryAllocateSlowCaseNullCache(HeapKind, size_t);
     BEXPORT static void* allocateSlowCaseNullCache(HeapKind, size_t);
+    BEXPORT static void* tryAllocateSlowCaseNullCache(HeapKind, size_t alignment, size_t);
     BEXPORT static void* allocateSlowCaseNullCache(HeapKind, size_t alignment, size_t);
     BEXPORT static void deallocateSlowCaseNullCache(HeapKind, void*);
+    BEXPORT static void* tryReallocateSlowCaseNullCache(HeapKind, void*, size_t);
     BEXPORT static void* reallocateSlowCaseNullCache(HeapKind, void*, size_t);
 
     Deallocator m_deallocator;
@@ -84,7 +86,7 @@ inline void* Cache::tryAllocate(HeapKind heapKind, size_t alignment, size_t size
 {
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
-        return allocateSlowCaseNullCache(heapKind, alignment, size);
+        return tryAllocateSlowCaseNullCache(heapKind, alignment, size);
     return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().tryAllocate(alignment, size);
 }
 
@@ -108,7 +110,7 @@ inline void* Cache::tryReallocate(HeapKind heapKind, void* object, size_t newSiz
 {
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
     if (!caches)
-        return reallocateSlowCaseNullCache(heapKind, object, newSize);
+        return tryReallocateSlowCaseNullCache(heapKind, object, newSize);
     return caches->at(mapToActiveHeapKindAfterEnsuringGigacage(heapKind)).allocator().tryReallocate(object, newSize);
 }
 
