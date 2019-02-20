@@ -79,11 +79,7 @@ public:
     ElementType* get(const OwnerType* owner) const
     {
         ASSERT(!isCompilationThread());
-        if (UNLIKELY(m_pointer & lazyTag)) {
-            FuncType func = *bitwise_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
-            return func(Initializer(const_cast<OwnerType*>(owner), *const_cast<LazyProperty*>(this)));
-        }
-        return bitwise_cast<ElementType*>(m_pointer);
+        return getInitializedOnMainThread(owner);
     }
     
     ElementType* getConcurrently() const
@@ -92,6 +88,16 @@ public:
         if (pointer & lazyTag)
             return nullptr;
         return bitwise_cast<ElementType*>(pointer);
+    }
+
+    ElementType* getInitializedOnMainThread(const OwnerType* owner) const
+    {
+        if (UNLIKELY(m_pointer & lazyTag)) {
+            ASSERT(!isCompilationThread());
+            FuncType func = *bitwise_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
+            return func(Initializer(const_cast<OwnerType*>(owner), *const_cast<LazyProperty*>(this)));
+        }
+        return bitwise_cast<ElementType*>(m_pointer);
     }
     
     void setMayBeNull(VM&, const OwnerType* owner, ElementType*);
