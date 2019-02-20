@@ -25,14 +25,10 @@
 
 #include "BInline.h"
 #include "Cache.h"
-#include "DebugHeap.h"
-#include "Environment.h"
 #include "Heap.h"
 #include "PerProcess.h"
 
 namespace bmalloc {
-
-static DebugHeap* debugHeapCache { nullptr };
 
 void Cache::scavenge(HeapKind heapKind)
 {
@@ -46,82 +42,34 @@ void Cache::scavenge(HeapKind heapKind)
     caches->at(heapKind).deallocator().scavenge();
 }
 
-static BINLINE DebugHeap* debugHeap()
-{
-    if (debugHeapCache)
-        return debugHeapCache;
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
-        debugHeapCache = PerProcess<DebugHeap>::get();
-        return debugHeapCache;
-    }
-    return nullptr;
-}
-
 Cache::Cache(HeapKind heapKind)
     : m_deallocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind))
     , m_allocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind), m_deallocator)
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
 }
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    // FIXME: DebugHeap does not have tryAllocate feature.
-    // https://bugs.webkit.org/show_bug.cgi?id=194837
-    if (auto* heap = debugHeap())
-        return heap->malloc(size);
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    if (auto* heap = debugHeap())
-        return heap->malloc(size);
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(size);
-}
-
-BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
-{
-    if (auto* heap = debugHeap()) {
-        constexpr bool crashOnFailure = false;
-        return heap->memalign(alignment, size, crashOnFailure);
-    }
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(alignment, size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
 {
-    if (auto* heap = debugHeap()) {
-        constexpr bool crashOnFailure = true;
-        return heap->memalign(alignment, size, crashOnFailure);
-    }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(alignment, size);
 }
 
 BNO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* object)
 {
-    if (auto* heap = debugHeap()) {
-        heap->free(object);
-        return;
-    }
     PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).deallocator().deallocate(object);
-}
-
-BNO_INLINE void* Cache::tryReallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
-{
-    if (auto* heap = debugHeap()) {
-        constexpr bool crashOnFailure = false;
-        return heap->realloc(object, newSize, crashOnFailure);
-    }
-    return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryReallocate(object, newSize);
 }
 
 BNO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
 {
-    if (auto* heap = debugHeap()) {
-        constexpr bool crashOnFailure = true;
-        return heap->realloc(object, newSize, crashOnFailure);
-    }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().reallocate(object, newSize);
 }
 

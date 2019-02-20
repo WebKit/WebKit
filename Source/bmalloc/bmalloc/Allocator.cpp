@@ -27,7 +27,7 @@
 #include "BAssert.h"
 #include "Chunk.h"
 #include "Deallocator.h"
-#include "Environment.h"
+#include "DebugHeap.h"
 #include "Heap.h"
 #include "PerProcess.h"
 #include "Sizes.h"
@@ -38,9 +38,9 @@ namespace bmalloc {
 
 Allocator::Allocator(Heap& heap, Deallocator& deallocator)
     : m_heap(heap)
+    , m_debugHeap(heap.debugHeap())
     , m_deallocator(deallocator)
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
     for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass)
         m_bumpAllocators[sizeClass].init(objectSize(sizeClass));
 }
@@ -52,6 +52,9 @@ Allocator::~Allocator()
 
 void* Allocator::tryAllocate(size_t size)
 {
+    if (m_debugHeap)
+        return m_debugHeap->malloc(size);
+
     if (size <= smallMax)
         return allocate(size);
 
@@ -74,6 +77,9 @@ void* Allocator::tryAllocate(size_t alignment, size_t size)
 void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure)
 {
     BASSERT(isPowerOfTwo(alignment));
+
+    if (m_debugHeap)
+        return m_debugHeap->memalign(alignment, size, crashOnFailure);
 
     if (!size)
         size = alignment;
@@ -101,6 +107,9 @@ void* Allocator::tryReallocate(void* object, size_t newSize)
 
 void* Allocator::reallocateImpl(void* object, size_t newSize, bool crashOnFailure)
 {
+    if (m_debugHeap)
+        return m_debugHeap->realloc(object, newSize, crashOnFailure);
+
     size_t oldSize = 0;
     switch (objectType(m_heap.kind(), object)) {
     case ObjectType::Small: {
@@ -191,6 +200,9 @@ BNO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
 
 void* Allocator::allocateSlowCase(size_t size)
 {
+    if (m_debugHeap)
+        return m_debugHeap->malloc(size);
+
     if (size <= maskSizeClassMax) {
         size_t sizeClass = bmalloc::maskSizeClass(size);
         BumpAllocator& allocator = m_bumpAllocators[sizeClass];
