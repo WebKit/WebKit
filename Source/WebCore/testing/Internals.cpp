@@ -2515,6 +2515,8 @@ static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
         layerTreeFlags |= LayerTreeFlagsIncludeAcceleratesDrawing;
     if (flags & Internals::LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED)
         layerTreeFlags |= LayerTreeFlagsIncludeBackingStoreAttached;
+    if (flags & Internals::LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES)
+        layerTreeFlags |= LayerTreeFlagsIncludeRootLayerProperties;
 
     return layerTreeFlags;
 }

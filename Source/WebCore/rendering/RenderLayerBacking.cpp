@@ -2099,6 +2099,9 @@ static bool isCompositedPlugin(RenderObject& renderer)
 // This is a useful optimization, because it allows us to avoid allocating backing store.
 bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& contentsInfo) const
 {
+    if (m_owningLayer.isRenderViewLayer())
+        return false;
+
     if (renderer().isRenderReplaced() && (!isCompositedPlugin(renderer()) || isRestartedPlugin(renderer())))
         return false;
 
@@ -2113,29 +2116,6 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     
     if (renderer().isDocumentElementRenderer() && m_owningLayer.isolatesCompositedBlending())
         return false;
-
-    if (renderer().isRenderView()) {
-        // Look to see if the root object has a non-simple background
-        auto* rootObject = renderer().document().documentElement() ? renderer().document().documentElement()->renderer() : nullptr;
-        if (!rootObject)
-            return false;
-        
-        // Reject anything that has a border, a border-radius or outline,
-        // or is not a simple background (no background, or solid color).
-        if (hasPaintedBoxDecorationsOrBackgroundImage(rootObject->style()))
-            return false;
-        
-        // Now look at the body's renderer.
-        auto* body = renderer().document().body();
-        if (!body)
-            return false;
-        auto* bodyRenderer = body->renderer();
-        if (!bodyRenderer)
-            return false;
-        
-        if (hasPaintedBoxDecorationsOrBackgroundImage(bodyRenderer->style()))
-            return false;
-    }
 
     return true;
 }
@@ -2724,11 +2704,11 @@ bool RenderLayerBacking::shouldSkipLayerInDump(const GraphicsLayer* layer, Layer
     return m_isMainFrameRenderViewLayer && layer && layer == m_childContainmentLayer.get();
 }
 
-bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName) const
+bool RenderLayerBacking::shouldDumpPropertyForLayer(const GraphicsLayer* layer, const char* propertyName, LayerTreeAsTextBehavior flags) const
 {
     // For backwards compatibility with WebKit1 and other platforms,
     // skip some properties on the root tile cache.
-    if (m_isMainFrameRenderViewLayer && layer == m_graphicsLayer.get()) {
+    if (m_isMainFrameRenderViewLayer && layer == m_graphicsLayer.get() && !(flags & LayerTreeAsTextIncludeRootLayerProperties)) {
         if (!strcmp(propertyName, "drawsContent"))
             return false;
 

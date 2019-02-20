@@ -227,7 +227,7 @@ public:
 
     bool isTrackingRepaints() const override;
     bool shouldSkipLayerInDump(const GraphicsLayer*, LayerTreeAsTextBehavior) const override;
-    bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName) const override;
+    bool shouldDumpPropertyForLayer(const GraphicsLayer*, const char* propertyName, LayerTreeAsTextBehavior) const override;
 
     bool shouldAggressivelyRetainTiles(const GraphicsLayer*) const override;
     bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
