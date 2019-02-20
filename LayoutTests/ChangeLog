@@ -1,3 +1,15 @@
+2019-02-20  Timothy Hatcher  <timothy@apple.com>
+
+        RenderThemeIOS should use RenderTheme's color cache instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=194822
+        rdar://problem/48208296
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/fast/css/apple-system-colors-expected.txt: Rebased for -apple-system-purple.
+        * platform/win/fast/css/apple-system-colors-expected.txt: Rebased for invalid color now
+        that -apple-system colors are macOS and iOS only.
+
 2019-02-20  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         Fix crash when opening Web Inspector after a WebSocket was blocked by content extensions

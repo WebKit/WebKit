@@ -75,8 +75,13 @@
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSAdditions.mm>)
+#include <WebKitAdditions/RenderThemeIOSAdditions.mm>
+#endif
 
 @interface WebCoreRenderThemeBundle : NSObject
 @end
@@ -1413,7 +1418,14 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
+    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
+
+    auto& cache = colorCache(options);
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>)
+#include <WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>
+#endif
 
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here by
@@ -1421,48 +1433,45 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     if (forVisitedLink && cssValueID == CSSValueWebkitLink)
         return RenderTheme::systemColor(cssValueID, options);
 
+    ASSERT_UNUSED(useSystemAppearance, !useSystemAppearance);
     ASSERT(!forVisitedLink);
 
-    auto addResult = m_systemColorCache.add(cssValueID, Color());
-    if (!addResult.isNewEntry)
-        return addResult.iterator->value;
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
+        auto cssColorToSelector = [cssValueID] () -> SEL {
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>)
+#include <WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>
+#endif
 
-    Color color;
-    switch (cssValueID) {
-    case CSSValueAppleWirelessPlaybackTargetActive:
-        color = [PAL::getUIColorClass() systemBlueColor].CGColor;
-        break;
-    case CSSValueAppleSystemBlue:
-        color = [PAL::getUIColorClass() systemBlueColor].CGColor;
-        break;
-    case CSSValueAppleSystemGray:
-        color = [PAL::getUIColorClass() systemGrayColor].CGColor;
-        break;
-    case CSSValueAppleSystemGreen:
-        color = [PAL::getUIColorClass() systemGreenColor].CGColor;
-        break;
-    case CSSValueAppleSystemOrange:
-        color = [PAL::getUIColorClass() systemOrangeColor].CGColor;
-        break;
-    case CSSValueAppleSystemPink:
-        color = [PAL::getUIColorClass() systemPinkColor].CGColor;
-        break;
-    case CSSValueAppleSystemRed:
-        color = [PAL::getUIColorClass() systemRedColor].CGColor;
-        break;
-    case CSSValueAppleSystemYellow:
-        color = [PAL::getUIColorClass() systemYellowColor].CGColor;
-        break;
-    default:
-        break;
-    }
+            switch (cssValueID) {
+            case CSSValueAppleWirelessPlaybackTargetActive:
+            case CSSValueAppleSystemBlue:
+                return @selector(systemBlueColor);
+            case CSSValueAppleSystemGray:
+                return @selector(systemGrayColor);
+            case CSSValueAppleSystemGreen:
+                return @selector(systemGreenColor);
+            case CSSValueAppleSystemOrange:
+                return @selector(systemOrangeColor);
+            case CSSValueAppleSystemPink:
+                return @selector(systemPinkColor);
+            case CSSValueAppleSystemPurple:
+                return @selector(systemPurpleColor);
+            case CSSValueAppleSystemRed:
+                return @selector(systemRedColor);
+            case CSSValueAppleSystemYellow:
+                return @selector(systemYellowColor);
+            default:
+                return nullptr;
+            }
+        };
 
-    if (!color.isValid())
-        color = RenderTheme::systemColor(cssValueID, options);
+        if (auto selector = cssColorToSelector()) {
+            if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
+                return Color(color.CGColor, Color::Semantic);
+        }
 
-    addResult.iterator->value = color;
-
-    return addResult.iterator->value;
+        return RenderTheme::systemColor(cssValueID, options);
+    }).iterator->value;
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

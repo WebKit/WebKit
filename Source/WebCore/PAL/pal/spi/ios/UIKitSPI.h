@@ -109,6 +109,7 @@ typedef enum {
 + (UIColor *)systemGreenColor;
 + (UIColor *)systemOrangeColor;
 + (UIColor *)systemPinkColor;
++ (UIColor *)systemPurpleColor;
 + (UIColor *)systemRedColor;
 + (UIColor *)systemYellowColor;
 

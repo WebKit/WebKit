@@ -159,8 +159,6 @@ private:
     String m_legacyMediaControlsStyleSheet;
     String m_mediaControlsStyleSheet;
 
-    mutable HashMap<int, Color> m_systemColorCache;
-
 #if USE(SYSTEM_PREVIEW)
     RetainPtr<CIContext> m_ciContext;
 #if HAVE(IOSURFACE)

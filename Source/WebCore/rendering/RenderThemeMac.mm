@@ -776,7 +776,6 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
                 return @selector(gridColor);
 #endif
             case CSSValueAppleWirelessPlaybackTargetActive:
-                return @selector(systemBlueColor);
             case CSSValueAppleSystemBlue:
                 return @selector(systemBlueColor);
             case CSSValueAppleSystemBrown:

@@ -262,6 +262,7 @@ public:
 
 #if USE(CG)
     WEBCORE_EXPORT Color(CGColorRef);
+    WEBCORE_EXPORT Color(CGColorRef, SemanticTag);
 #endif
 
 #if PLATFORM(WIN)

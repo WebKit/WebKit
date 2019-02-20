@@ -8,4 +8,4 @@
 -apple-system-red : rgba(0, 0, 0, 0)
 -apple-system-yellow : rgba(0, 0, 0, 0)
 -apple-wireless-playback-target-active : rgba(0, 0, 0, 0)
-current-color with inherited -apple-system-blue : rgba(0, 0, 0, 0)
+current-color with inherited -apple-system-blue : rgb(0, 0, 0)

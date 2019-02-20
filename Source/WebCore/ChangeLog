@@ -1,3 +1,26 @@
+2019-02-20  Timothy Hatcher  <timothy@apple.com>
+
+        RenderThemeIOS should use RenderTheme's color cache instead of its own.
+        https://bugs.webkit.org/show_bug.cgi?id=194822
+        rdar://problem/48208296
+
+        Reviewed by Tim Horton.
+
+        Tested by fast/css/apple-system-colors.html.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isAppleLegacyCssValueKeyword):
+        * platform/graphics/Color.h:
+        * platform/graphics/cg/ColorCG.cpp:
+        (WebCore::makeRGBAFromCGColor):
+        (WebCore::Color::Color):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const):
+
 2019-02-20  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         Fix crash when opening Web Inspector after a WebSocket was blocked by content extensions

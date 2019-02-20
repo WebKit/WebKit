@@ -51,13 +51,8 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 
 namespace WebCore {
 
-Color::Color(CGColorRef color)
+static RGBA32 makeRGBAFromCGColor(CGColorRef color)
 {
-    if (!color) {
-        m_colorData.rgbaAndFlags = invalidRGBAColor;
-        return;
-    }
-
     size_t numComponents = CGColorGetNumberOfComponents(color);
     const CGFloat* components = CGColorGetComponents(color);
 
@@ -81,7 +76,29 @@ Color::Color(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    setRGB(makeRGBA(r * 255, g * 255, b * 255, a * 255));
+    static const double scaleFactor = nextafter(256.0, 0.0);
+    return makeRGBA(r * scaleFactor, g * scaleFactor, b * scaleFactor, a * scaleFactor);
+}
+
+Color::Color(CGColorRef color)
+{
+    if (!color) {
+        m_colorData.rgbaAndFlags = invalidRGBAColor;
+        return;
+    }
+
+    setRGB(makeRGBAFromCGColor(color));
+}
+
+Color::Color(CGColorRef color, SemanticTag)
+{
+    if (!color) {
+        m_colorData.rgbaAndFlags = invalidRGBAColor;
+        return;
+    }
+
+    setRGB(makeRGBAFromCGColor(color));
+    setIsSemantic();
 }
 
 static CGColorRef leakCGColor(const Color& color)
