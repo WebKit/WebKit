@@ -1,3 +1,26 @@
+2019-02-19  Robin Morisset  <rmorisset@apple.com>
+
+        B3ReduceStrength::simplifyCFG() could do a lot more on each iteration
+        https://bugs.webkit.org/show_bug.cgi?id=194475
+
+        Reviewed by Saam Barati.
+
+        B3ReduceStrength::simplifyCFG() does three optimizations (which I will call A, B and C):
+        - A makes any terminal that points to a block that is empty except for a jump point to that jump's target instead.
+        - B transforms any branch or switch that points to a single block into a jump
+        - C finds blocks ending with jumps, whose successor has a single predecessor, and inline that successor block in place of the jump
+
+        It currently is limited in the following way:
+        - A and C can only fire once per block per iteration
+        - B can create jumps that would trigger A, but they may not be seen until the next iteration
+
+        Both problems are mitigated by going through the blocks in post-order, so that when a block is optimized most of its successors have already been optimized.
+        In a sense it is the symmetric of the peephole optimizer that goes in pre-order so that when an instruction is optimized most of its children have already been optimized.
+
+        On JetStream2 it reduces the average number of iterations from 3.35 to 3.24.
+
+        * b3/B3ReduceStrength.cpp:
+
 2019-02-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Move bytecode cache-related filesystem code out of CodeCache
