@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -79,7 +79,7 @@ void HeapSnapshotBuilder::buildSnapshot()
 void HeapSnapshotBuilder::appendNode(JSCell* cell)
 {
     ASSERT(m_profiler.activeSnapshotBuilder() == this);
-
+    
     ASSERT(Heap::isMarked(cell));
 
     NodeIdentifier identifier;
@@ -177,12 +177,12 @@ bool HeapSnapshotBuilder::previousSnapshotHasNodeForCell(JSCell* cell, NodeIdent
 //  Inspector snapshots:
 //
 //   {
-//      "version": 2,
+//      "version": 1.0,
 //      "type": "Inspector",
-//      // [<address>, <labelIndex>, <wrappedAddress>] only present in GCDebuggingSnapshot-type snapshots
+//      // [<address>, <labelIndex>, <wrappedEddress>] only present in GCDebuggingSnapshot-type snapshots
 //      "nodes": [
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>
 //          ...
 //      ],
 //      "nodeClassNames": [
@@ -204,11 +204,11 @@ bool HeapSnapshotBuilder::previousSnapshotHasNodeForCell(JSCell* cell, NodeIdent
 //  GC heap debugger snapshots:
 //
 //   {
-//      "version": 2,
+//      "version": 1.0,
 //      "type": "GCDebugging",
 //      "nodes": [
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>, <labelIndex>, <cellEddress>, <wrappedAddress>,
-//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>, <labelIndex>, <cellEddress>, <wrappedAddress>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, <labelIndex>, <cellEddress>, <wrappedEddress>,
+//          <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, <labelIndex>, <cellEddress>, <wrappedEddress>,
 //          ...
 //      ],
 //      "nodeClassNames": [
@@ -240,10 +240,8 @@ bool HeapSnapshotBuilder::previousSnapshotHasNodeForCell(JSCell* cell, NodeIdent
 //     <nodeClassNameIndex>
 //       - index into the "nodeClassNames" list.
 //
-//     <flags>
-//       - 0b0000 - no flags
-//       - 0b0001 - internal instance
-//       - 0b0010 - Object subclassification
+//     <internal>
+//       - 0 = false, 1 = true.
 //
 //     <edgeTypeIndex>
 //       - index into the "edgeTypes" list.
@@ -255,11 +253,6 @@ bool HeapSnapshotBuilder::previousSnapshotHasNodeForCell(JSCell* cell, NodeIdent
 //
 //      <rootReasonIndex>
 //       - index into the "labels" list.
-
-enum class NodeFlags {
-    Internal      = 1 << 0,
-    ObjectSubtype = 1 << 1,
-};
 
 static uint8_t edgeTypeToNumber(EdgeType type)
 {
@@ -365,8 +358,8 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     HashMap<JSCell*, NodeIdentifier> allowedNodeIdentifiers;
 
     // Build a list of used class names.
-    HashMap<String, unsigned> classNameIndexes;
-    classNameIndexes.set("<root>"_s, 0);
+    HashMap<const char*, unsigned> classNameIndexes;
+    classNameIndexes.set("<root>", 0);
     unsigned nextClassNameIndex = 1;
 
     // Build a list of labels (this is just a string table).
@@ -385,37 +378,19 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         if (!allowNodeCallback(node))
             return;
 
-        unsigned flags = 0;
-
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        String className = node.cell->classInfo(vm)->className;
-        if (node.cell->isObject() && className == JSObject::info()->className) {
-            flags |= NodeFlags::ObjectSubtype;
-
-            // Skip calculating a class name if this object has a `constructor` own property.
-            // These cases are typically F.prototype objects and we want to treat these as
-            // "Object" in snapshots and not get the name of the prototype's parent.
-            JSObject* object = asObject(node.cell);
-            if (JSGlobalObject* globalObject = object->globalObject(vm)) {
-                ExecState* exec = globalObject->globalExec();
-                PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry);
-                if (!object->getOwnPropertySlot(object, exec, vm.propertyNames->constructor, slot))
-                    className = JSObject::calculatedClassName(object);
-            }
-        }
-
-        auto result = classNameIndexes.add(className, nextClassNameIndex);
+        auto result = classNameIndexes.add(node.cell->classInfo(vm)->className, nextClassNameIndex);
         if (result.isNewEntry)
             nextClassNameIndex++;
         unsigned classNameIndex = result.iterator->value;
 
+        bool isInternal = false;
         void* wrappedAddress = 0;
         unsigned labelIndex = 0;
         if (!node.cell->isString()) {
             Structure* structure = node.cell->structure(vm);
-            if (!structure || !structure->globalObject())
-                flags |= NodeFlags::Internal;
+            isInternal = !structure || !structure->globalObject();
 
             if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
                 String nodeLabel;
@@ -429,7 +404,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                             nodeLabel = function->calculatedDisplayName(vm);
                     }
                 }
-
+                
                 String description = descriptionForCell(node.cell);
                 if (description.length()) {
                     if (nodeLabel.length())
@@ -443,12 +418,12 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                         nextLabelIndex++;
                     labelIndex = result.iterator->value;
                 }
-
+                
                 wrappedAddress = m_wrappedObjectPointers.get(node.cell);
             }
         }
 
-        // <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <flags>, [<labelIndex>, <cellEddress>, <wrappedAddress>]
+        // <nodeId>, <sizeInBytes>, <nodeClassNameIndex>, <internal>, [<labelIndex>, <cellEddress>, <wrappedEddress>]
         json.append(',');
         json.appendNumber(node.identifier);
         json.append(',');
@@ -456,7 +431,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         json.append(',');
         json.appendNumber(classNameIndex);
         json.append(',');
-        json.appendNumber(flags);
+        json.append(isInternal ? '1' : '0');
         if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
             json.append(',');
             json.appendNumber(labelIndex);
@@ -504,7 +479,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     json.append('{');
 
     // version
-    json.appendLiteral("\"version\":2");
+    json.appendLiteral("\"version\":1");
 
     // type
     json.append(',');
@@ -531,7 +506,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     json.append(',');
     json.appendLiteral("\"nodeClassNames\":");
     json.append('[');
-    Vector<String> orderedClassNames(classNameIndexes.size());
+    Vector<const char *> orderedClassNames(classNameIndexes.size());
     for (auto& entry : classNameIndexes)
         orderedClassNames[entry.value] = entry.key;
     classNameIndexes.clear();
@@ -628,7 +603,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         json.append(',');
         json.appendLiteral("\"roots\":");
         json.append('[');
-
+        
         HeapSnapshot* snapshot = m_profiler.mostRecentSnapshot();
 
         bool firstNode = true;
@@ -644,7 +619,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
             firstNode = false;
             json.appendNumber(snapshotNode.value().identifier);
-
+            
             // Maybe we should just always encode the root names.
             const char* rootName = rootTypeToString(it.value.markReason);
             auto result = labelIndexes.add(rootName, nextLabelIndex);

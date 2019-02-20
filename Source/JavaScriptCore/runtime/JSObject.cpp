@@ -524,61 +524,35 @@ String JSObject::toStringName(const JSObject* object, ExecState* exec)
 
 String JSObject::calculatedClassName(JSObject* object)
 {
-    String constructorFunctionName;
-    auto* structure = object->structure();
-    auto* globalObject = structure->globalObject();
+    String prototypeFunctionName;
+    auto globalObject = object->globalObject();
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto* exec = globalObject->globalExec();
 
-    // Check for a display name of obj.constructor.
-    // This is useful to get `Foo` for the `(class Foo).prototype` object.
-    PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry);
-    if (object->getOwnPropertySlot(object, exec, vm.propertyNames->constructor, slot)) {
+    ExecState* exec = globalObject->globalExec();
+    PropertySlot slot(object->getPrototypeDirect(vm), PropertySlot::InternalMethodType::VMInquiry);
+    PropertyName constructor(vm.propertyNames->constructor);
+    if (object->getPropertySlot(exec, constructor, slot)) {
         EXCEPTION_ASSERT(!scope.exception());
         if (slot.isValue()) {
-            if (JSObject* ctorObject = jsDynamicCast<JSObject*>(vm, slot.getValue(exec, vm.propertyNames->constructor))) {
-                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
-                    constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
-                    constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-            }
-        }
-    }
-
-    EXCEPTION_ASSERT(!scope.exception() || constructorFunctionName.isNull());
-    if (UNLIKELY(scope.exception()))
-        scope.clearException();
-
-    // Get the display name of obj.__proto__.constructor.
-    // This is useful to get `Foo` for a `new Foo` object.
-    if (constructorFunctionName.isNull()) {
-        MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
-        if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype)) {
-            JSValue protoValue = object->getPrototypeDirect(vm);
-            if (protoValue.isObject()) {
-                JSObject* protoObject = asObject(protoValue);
-                PropertySlot slot(protoValue, PropertySlot::InternalMethodType::VMInquiry);
-                if (protoObject->getPropertySlot(exec, vm.propertyNames->constructor, slot)) {
-                    EXCEPTION_ASSERT(!scope.exception());
-                    if (slot.isValue()) {
-                        if (JSObject* ctorObject = jsDynamicCast<JSObject*>(vm, slot.getValue(exec, vm.propertyNames->constructor))) {
-                            if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
-                                constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                            else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
-                                constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                        }
+            JSValue constructorValue = slot.getValue(exec, constructor);
+            if (constructorValue.isCell()) {
+                if (JSCell* constructorCell = constructorValue.asCell()) {
+                    if (JSObject* ctorObject = constructorCell->getObject()) {
+                        if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
+                        else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
+                            prototypeFunctionName = constructorFunction->calculatedDisplayName(vm);
                     }
                 }
             }
         }
     }
-
-    EXCEPTION_ASSERT(!scope.exception() || constructorFunctionName.isNull());
+    EXCEPTION_ASSERT(!scope.exception() || prototypeFunctionName.isNull());
     if (UNLIKELY(scope.exception()))
         scope.clearException();
 
-    if (constructorFunctionName.isNull() || constructorFunctionName == "Object") {
+    if (prototypeFunctionName.isNull() || prototypeFunctionName == "Object") {
         String tableClassName = object->methodTable(vm)->className(object, vm);
         if (!tableClassName.isNull() && tableClassName != "Object")
             return tableClassName;
@@ -587,11 +561,11 @@ String JSObject::calculatedClassName(JSObject* object)
         if (!classInfoName.isNull())
             return classInfoName;
 
-        if (constructorFunctionName.isNull())
+        if (prototypeFunctionName.isNull())
             return "Object"_s;
     }
 
-    return constructorFunctionName;
+    return prototypeFunctionName;
 }
 
 bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, unsigned i, PropertySlot& slot)

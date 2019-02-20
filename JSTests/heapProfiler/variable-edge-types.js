@@ -1,5 +1,3 @@
-var SimpleObject = $vm.SimpleObject;
-
 load("./driver/driver.js");
 
 let globalScopeVariable = "globalScopeVariableValue";

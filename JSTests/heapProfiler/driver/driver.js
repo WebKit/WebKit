@@ -9,18 +9,14 @@ function assert(condition, reason) {
 // Contains two large lists of all node data and all edge data.
 // Lazily creates node and edge objects off of indexes into these lists.
 
-// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:flags>, <4:firstEdgeIndex>];
+// [<0:id>, <1:size>, <2:classNameTableIndex>, <3:internal>, <4:firstEdgeIndex>];
 const nodeFieldCount = 5;
 const nodeIdOffset = 0;
 const nodeSizeOffset = 1;
 const nodeClassNameOffset = 2;
-const nodeFlagsOffset = 3;
+const nodeInternalOffset = 3;
 const nodeFirstEdgeOffset = 4;
 const nodeNoEdgeValue = 0xffffffff; // UINT_MAX
-
-// Node Flags.
-const internalFlagMask = (1 << 0);
-const objectTypeMask = (1 << 1);
 
 // [<0:fromId>, <1:toId>, <2:typeTableIndex>, <3:edgeDataIndexOrEdgeNameIndex>]
 const edgeFieldCount = 4;
@@ -39,10 +35,7 @@ CheapHeapSnapshotNode = class CheapHeapSnapshotNode
         this.id = nodes[nodeIndex + nodeIdOffset];
         this.size = nodes[nodeIndex + nodeSizeOffset];
         this.className = snapshot.classNameFromTableIndex(nodes[nodeIndex + nodeClassNameOffset]);
-
-        let flags = nodes[nodeIndex + nodeFlagsOffset];
-        this.internal = flags & internalFlagMask ? true : false;
-        this.isObjectType = flags & objectTypeMask ? true : false;
+        this.internal = nodes[nodeIndex + nodeInternalOffset] ? true : false;
 
         this.outgoingEdges = [];
         let firstEdgeIndex = nodes[nodeIndex + nodeFirstEdgeOffset];
@@ -98,7 +91,7 @@ CheapHeapSnapshot = class CheapHeapSnapshot
             this._nodes[n++] = nodes[i++]; // id
             this._nodes[n++] = nodes[i++]; // size
             this._nodes[n++] = nodes[i++]; // classNameTableIndex
-            this._nodes[n++] = nodes[i++]; // flags
+            this._nodes[n++] = nodes[i++]; // internal
             this._nodes[n++] = nodeNoEdgeValue;
         }
 
@@ -161,7 +154,7 @@ function createCheapHeapSnapshot() {
     let json = generateHeapSnapshot();
 
     let {version, nodes, nodeClassNames, edges, edgeTypes} = json;
-    assert(version === 2, "Heap Snapshot payload should be version 2");
+    assert(version === 1, "Heap Snapshot payload should be version 1");
     assert(nodes.length, "Heap Snapshot should have nodes");
     assert(nodeClassNames.length, "Heap Snapshot should have nodeClassNames");
     assert(edges.length, "Heap Snapshot should have edges");
@@ -217,8 +210,7 @@ HeapSnapshot = class HeapSnapshot
             let id = nodes[i++];
             let size = nodes[i++];
             let classNameIndex = nodes[i++];
-            let flags = nodes[i++];
-            let internal = flags & internalFlagMask ? true : false;
+            let internal = nodes[i++];
 
             let node = new HeapSnapshotNode(id, nodeClassNames[classNameIndex], size, internal);
             this.nodeMap.set(id, node);
@@ -264,7 +256,7 @@ function createHeapSnapshot() {
     let json = generateHeapSnapshot();
 
     let {version, nodes, nodeClassNames, edges, edgeTypes} = json;
-    assert(version === 2, "Heap Snapshot payload should be version 2");
+    assert(version === 1, "Heap Snapshot payload should be version 1");
     assert(nodes.length, "Heap Snapshot should have nodes");
     assert(nodeClassNames.length, "Heap Snapshot should have nodeClassNames");
     assert(edges.length, "Heap Snapshot should have edges");

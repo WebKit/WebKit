@@ -58,12 +58,10 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
 
     // Static
 
-    static iconStyleClassNameForClassName(className, internal, isObjectType)
+    static iconStyleClassNameForClassName(className, internal)
     {
         if (internal)
             return "native";
-        if (isObjectType)
-            return "object";
 
         switch (className) {
         case "Object":

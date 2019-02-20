@@ -146,12 +146,12 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             return Number.bytesToString(this._node.size);
 
         if (columnIdentifier === "className") {
-            let {className, id, internal, isObjectType} = this._node;
+            let {className, id, internal} = this._node;
             let containerElement = document.createElement("span");
             containerElement.addEventListener("contextmenu", this._contextMenuHandler.bind(this));
 
             let iconElement = containerElement.appendChild(document.createElement("img"));
-            iconElement.classList.add("icon", WI.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(className, internal, isObjectType));
+            iconElement.classList.add("icon", WI.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(className, internal));
 
             if (this._edge) {
                 let nameElement = containerElement.appendChild(document.createElement("span"));
@@ -410,7 +410,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             containerElement.classList.add("node");
 
             let iconElement = containerElement.appendChild(document.createElement("img"));
-            iconElement.classList.add("icon", WI.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(node.className, node.internal, node.isObjectType));
+            iconElement.classList.add("icon", WI.HeapSnapshotClusterContentView.iconStyleClassNameForClassName(node.className, node.internal));
 
             let classNameElement = containerElement.appendChild(document.createElement("span"));
             classNameElement.textContent = sanitizeClassName(node.className) + " ";
