@@ -1,5 +1,15 @@
 2019-02-20  Shawn Roberts  <sroberts@apple.com>
 
+        [ Mac WK2 iOS Debug ] REGRESSION (r240713) Layout Test scrollingcoordinator/scrolling-tree/fixed-inside-frame.html is flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=194253
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Marking as flaky until a fix lands
+        * platform/mac-wk2/TestExpectations: ditto
+
+2019-02-20  Shawn Roberts  <sroberts@apple.com>
+
         [ Mac WK2 ] REGRESSION (r239333) Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html
         https://bugs.webkit.org/show_bug.cgi?id=194225
 
