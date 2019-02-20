@@ -49,7 +49,7 @@ namespace JSC {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             ASSERT(!function->isHostFunctionNonInline());
-            if (UNLIKELY(vm.isSafeToRecurseSoft())) {
+            if (LIKELY(vm.isSafeToRecurseSoft())) {
                 m_arguments.ensureCapacity(argumentCount);
                 if (LIKELY(!m_arguments.hasOverflowed()))
                     m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, &m_protoCallFrame, function, argumentCount + 1, function->scope(), m_arguments);
