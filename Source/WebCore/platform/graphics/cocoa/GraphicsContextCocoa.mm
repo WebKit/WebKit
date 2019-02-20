@@ -42,6 +42,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "Color.h"
 #import "WKGraphics.h"
+#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 
@@ -74,9 +75,9 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset,
     focusRingStyle.version = 0;
     focusRingStyle.tint = kCGFocusRingTintBlue;
     focusRingStyle.ordering = kCGFocusRingOrderingNone;
-    focusRingStyle.alpha = kCGFocusRingAlphaDefault;
-    focusRingStyle.radius = kCGFocusRingRadiusDefault;
-    focusRingStyle.threshold = kCGFocusRingThresholdDefault;
+    focusRingStyle.alpha = [PAL::getUIFocusRingStyleClass() maxAlpha];
+    focusRingStyle.radius = [PAL::getUIFocusRingStyleClass() cornerRadius];
+    focusRingStyle.threshold = [PAL::getUIFocusRingStyleClass() alphaThreshold];
     focusRingStyle.bounds = CGRectZero;
 #endif
 

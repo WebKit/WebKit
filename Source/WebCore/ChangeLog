@@ -1,3 +1,16 @@
+2019-02-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Tweak UI for focus rings
+        https://bugs.webkit.org/show_bug.cgi?id=194864
+        <rdar://problem/47831886>
+
+        Reviewed by Brent Fulgham.
+
+        Make use of UIKit constants to make focus rings pretty.
+
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::drawFocusRingAtTime):
+
 2019-02-20  Timothy Hatcher  <timothy@apple.com>
 
         RenderThemeIOS should use RenderTheme's color cache instead of its own.

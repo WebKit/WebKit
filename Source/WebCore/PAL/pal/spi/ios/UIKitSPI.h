@@ -37,6 +37,7 @@ WTF_EXTERN_C_END
 #import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIColor_Private.h>
+#import <UIKit/UIFocusRingStyle.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
@@ -148,6 +149,12 @@ NS_ASSUME_NONNULL_END
 #if ENABLE(FULL_KEYBOARD_ACCESS)
 @interface UIColor (IPI)
 + (UIColor *)keyboardFocusIndicatorColor;
+@end
+
+@interface UIFocusRingStyle (Staging_47831886)
++ (CGFloat)cornerRadius;
++ (CGFloat)maxAlpha;
++ (CGFloat)alphaThreshold;
 @end
 #endif
 
