@@ -1,3 +1,13 @@
+2019-02-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [MSVC] Fix compilation errors with lambdas in Service Workers
+        https://bugs.webkit.org/show_bug.cgi?id=194841
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveRedirectResponse):
+
 2019-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Epiphany searching for plugins even if plugins are disabled
