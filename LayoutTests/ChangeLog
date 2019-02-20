@@ -1,3 +1,13 @@
+2019-02-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        drawImage() clears the canvas if it's the source of the image and globalCompositeOperation is "copy"
+        https://bugs.webkit.org/show_bug.cgi?id=194746
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-drawImage-composite-copy-expected.html: Added.
+        * fast/canvas/canvas-drawImage-composite-copy.html: Added.
+
 2019-02-20  Shawn Roberts  <sroberts@apple.com>
 
         [ Mac WK2 ] REGRESSION (r231450) Layout Test http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html is a flaky failure
