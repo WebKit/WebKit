@@ -33,6 +33,28 @@
 namespace WTR {
 
 struct TestOptions {
+    struct ContextOptions {
+        Vector<String> overrideLanguages;
+        bool ignoreSynchronousMessagingTimeouts { false };
+        bool enableProcessSwapOnNavigation { true };
+        bool enableProcessSwapOnWindowOpen { false };
+
+        bool hasSameInitializationOptions(const ContextOptions& options) const
+        {
+            if (ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts
+                || overrideLanguages != options.overrideLanguages
+                || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
+                || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen)
+                return false;
+            return true;
+        }
+
+        bool shouldEnableProcessSwapOnNavigation() const
+        {
+            return enableProcessSwapOnNavigation || enableProcessSwapOnWindowOpen;
+        }
+    };
+
     bool useThreadedScrolling { false };
     bool useAcceleratedDrawing { false };
     bool useRemoteLayerTree { false };
@@ -58,8 +80,6 @@ struct TestOptions {
     bool dumpJSConsoleLogInStdErr { false };
     bool allowCrossOriginSubresourcesToAskForCredentials { false };
     bool domPasteAllowed { true };
-    bool enableProcessSwapOnNavigation { true };
-    bool enableProcessSwapOnWindowOpen { false };
     bool enableColorFilter { false };
     bool punchOutWhiteBackgroundsInDarkMode { false };
     bool runSingly { false };
@@ -69,16 +89,16 @@ struct TestOptions {
     bool enableEditableImages { false };
     bool editable { false };
     bool enableUndoManagerAPI { false };
-    bool ignoreSynchronousMessagingTimeouts { false };
 
     double contentInsetTop { 0 };
 
     float deviceScaleFactor { 1 };
-    Vector<String> overrideLanguages;
     std::string applicationManifest;
     std::string jscOptions;
     HashMap<String, bool> experimentalFeatures;
     HashMap<String, bool> internalDebugFeatures;
+
+    ContextOptions contextOptions;
 
     TestOptions(const std::string& pathOrURL);
 
@@ -90,7 +110,6 @@ struct TestOptions {
     {
         if (useThreadedScrolling != options.useThreadedScrolling
             || useAcceleratedDrawing != options.useAcceleratedDrawing
-            || overrideLanguages != options.overrideLanguages
             || useMockScrollbars != options.useMockScrollbars
             || needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
             || useCharacterSelectionGranularity != options.useCharacterSelectionGranularity
@@ -107,8 +126,6 @@ struct TestOptions {
             || applicationManifest != options.applicationManifest
             || allowCrossOriginSubresourcesToAskForCredentials != options.allowCrossOriginSubresourcesToAskForCredentials
             || domPasteAllowed != options.domPasteAllowed
-            || enableProcessSwapOnNavigation != options.enableProcessSwapOnNavigation
-            || enableProcessSwapOnWindowOpen != options.enableProcessSwapOnWindowOpen
             || enableColorFilter != options.enableColorFilter
             || punchOutWhiteBackgroundsInDarkMode != options.punchOutWhiteBackgroundsInDarkMode
             || jscOptions != options.jscOptions
@@ -119,8 +136,10 @@ struct TestOptions {
             || enableEditableImages != options.enableEditableImages
             || editable != options.editable
             || enableUndoManagerAPI != options.enableUndoManagerAPI
-            || contentInsetTop != options.contentInsetTop
-            || ignoreSynchronousMessagingTimeouts != options.ignoreSynchronousMessagingTimeouts)
+            || contentInsetTop != options.contentInsetTop)
+            return false;
+
+        if (!contextOptions.hasSameInitializationOptions(options.contextOptions))
             return false;
 
         if (experimentalFeatures != options.experimentalFeatures)
@@ -130,11 +149,6 @@ struct TestOptions {
             return false;
 
         return true;
-    }
-    
-    bool shouldEnableProcessSwapOnNavigation() const
-    {
-        return enableProcessSwapOnNavigation || enableProcessSwapOnWindowOpen;
     }
 };
 

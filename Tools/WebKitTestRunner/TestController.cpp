@@ -454,12 +454,23 @@ void TestController::initialize(int argc, const char* argv[])
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 }
 
-WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions& options) const
+WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions::ContextOptions& options) const
 {
     auto configuration = adoptWK(WKContextConfigurationCreate());
     WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath());
     WKContextConfigurationSetFullySynchronousModeIsAllowedForTesting(configuration.get(), true);
     WKContextConfigurationSetIgnoreSynchronousMessagingTimeoutsForTesting(configuration.get(), options.ignoreSynchronousMessagingTimeouts);
+
+    WKRetainPtr<WKMutableArrayRef> overrideLanguages = adoptWK(WKMutableArrayCreate());
+    for (auto& language : options.overrideLanguages)
+        WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
+    WKContextConfigurationSetOverrideLanguages(configuration.get(), overrideLanguages.get());
+
+    if (options.shouldEnableProcessSwapOnNavigation()) {
+        WKContextConfigurationSetProcessSwapsOnNavigation(configuration.get(), true);
+        if (options.enableProcessSwapOnWindowOpen)
+            WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(configuration.get(), true);
+    }
 
     if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
         String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
@@ -475,29 +486,33 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     return configuration;
 }
 
-WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WKContextConfigurationRef configuration)
+WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(const TestOptions& options)
 {
-    m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(configuration)).get(), configuration);
+    if (!m_context || !m_contextOptions->hasSameInitializationOptions(options.contextOptions)) {
+        auto contextConfiguration = generateContextConfiguration(options.contextOptions);
+        m_context = platformAdjustContext(adoptWK(WKContextCreateWithConfiguration(contextConfiguration.get())).get(), contextConfiguration.get());
+        m_contextOptions = options.contextOptions;
 
-    m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
+        m_geolocationProvider = std::make_unique<GeolocationProviderMock>(m_context.get());
 
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+        if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
+            String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
 
-        // FIXME: This should be migrated to WKContextConfigurationRef.
-        // Disable icon database to avoid fetching <http://127.0.0.1:8000/favicon.ico> and making tests flaky.
-        // Invividual tests can enable it using testRunner.setIconDatabaseEnabled, although it's not currently supported in WebKitTestRunner.
-        WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
+            // FIXME: This should be migrated to WKContextConfigurationRef.
+            // Disable icon database to avoid fetching <http://127.0.0.1:8000/favicon.ico> and making tests flaky.
+            // Invividual tests can enable it using testRunner.setIconDatabaseEnabled, although it's not currently supported in WebKitTestRunner.
+            WKContextSetIconDatabasePath(m_context.get(), toWK(emptyString()).get());
+        }
+
+        WKContextSetDiskCacheSpeculativeValidationEnabled(m_context.get(), true);
+        WKContextUseTestingNetworkSession(m_context.get());
+        WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
+
+        auto* websiteDataStore = WKContextGetWebsiteDataStore(m_context.get());
+        WKWebsiteDataStoreSetCacheStoragePerOriginQuota(websiteDataStore, 400 * 1024);
+
+        platformInitializeContext();
     }
-
-    WKContextSetDiskCacheSpeculativeValidationEnabled(m_context.get(), true);
-    WKContextUseTestingNetworkSession(m_context.get());
-    WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
-
-    auto* websiteDataStore = WKContextGetWebsiteDataStore(m_context.get());
-    WKWebsiteDataStoreSetCacheStoragePerOriginQuota(websiteDataStore, 400 * 1024);
-    
-    platformInitializeContext();
 
     WKContextInjectedBundleClientV1 injectedBundleClient = {
         { 1, this },
@@ -547,20 +562,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(WK
 
 void TestController::createWebViewWithOptions(const TestOptions& options)
 {
-    auto contextConfiguration = generateContextConfiguration(options);
-
-    WKRetainPtr<WKMutableArrayRef> overrideLanguages = adoptWK(WKMutableArrayCreate());
-    for (auto& language : options.overrideLanguages)
-        WKArrayAppendItem(overrideLanguages.get(), adoptWK(WKStringCreateWithUTF8CString(language.utf8().data())).get());
-    WKContextConfigurationSetOverrideLanguages(contextConfiguration.get(), overrideLanguages.get());
-
-    if (options.shouldEnableProcessSwapOnNavigation()) {
-        WKContextConfigurationSetProcessSwapsOnNavigation(contextConfiguration.get(), true);
-        if (options.enableProcessSwapOnWindowOpen)
-            WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(contextConfiguration.get(), true);
-    }
-
-    auto configuration = generatePageConfiguration(contextConfiguration.get());
+    auto configuration = generatePageConfiguration(options);
 
     // Some preferences (notably mock scroll bars setting) currently cannot be re-applied to an existing view, so we need to set them now.
     // FIXME: Migrate these preferences to WKContextConfigurationRef.
@@ -736,7 +738,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     for (const auto& internalDebugFeature : options.internalDebugFeatures)
         WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
 
-    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
+    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.contextOptions.shouldEnableProcessSwapOnNavigation());
     WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled(preferences, false);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
@@ -1229,7 +1231,7 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
         }
 
         if (key == "language")
-            testOptions.overrideLanguages = String(value.c_str()).split(',');
+            testOptions.contextOptions.overrideLanguages = String(value.c_str()).split(',');
         else if (key == "useThreadedScrolling")
             testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
         else if (key == "useAcceleratedDrawing")
@@ -1273,9 +1275,9 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
         else if (key == "domPasteAllowed")
             testOptions.domPasteAllowed = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnNavigation")
-            testOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
+            testOptions.contextOptions.enableProcessSwapOnNavigation = parseBooleanTestHeaderValue(value);
         else if (key == "enableProcessSwapOnWindowOpen")
-            testOptions.enableProcessSwapOnWindowOpen = parseBooleanTestHeaderValue(value);
+            testOptions.contextOptions.enableProcessSwapOnWindowOpen = parseBooleanTestHeaderValue(value);
         else if (key == "enableColorFilter")
             testOptions.enableColorFilter = parseBooleanTestHeaderValue(value);
         else if (key == "punchOutWhiteBackgroundsInDarkMode")
@@ -1297,7 +1299,7 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
         else if (key == "contentInset.top")
             testOptions.contentInsetTop = std::stod(value);
         else if (key == "ignoreSynchronousMessagingTimeouts")
-            testOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
+            testOptions.contextOptions.ignoreSynchronousMessagingTimeouts = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

@@ -142,9 +142,9 @@ WKPreferencesRef TestController::platformPreferences()
 void TestController::platformAddTestOptions(TestOptions& options) const
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnNavigation"])
-        options.enableProcessSwapOnNavigation = true;
+        options.contextOptions.enableProcessSwapOnNavigation = true;
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
-        options.enableProcessSwapOnWindowOpen = true;
+        options.contextOptions.enableProcessSwapOnWindowOpen = true;
 }
 
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)

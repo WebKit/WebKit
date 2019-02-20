@@ -1,3 +1,32 @@
+2019-02-20  Chris Dumez  <cdumez@apple.com>
+
+        [WKTR] Avoid starting new NetworkProcesses unnecessarily when running the layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=194829
+        <rdar://problem/47889906>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Every time the TestOptions were changing we were creating both a new Web view and
+        a new WKContext, which would start a new Network process. In most cases, we only
+        need to contruct a new Web view and we do can keep reusing the same WKContext.
+        This patch implements this optimization and thus avoids spinning a lot of new
+        Network processes while running the layout tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::ContextOptions::hasSameInitializationOptions const):
+        (WTR::TestOptions::ContextOptions::shouldEnableProcessSwapOnNavigation const):
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        (WTR::TestOptions::shouldEnableProcessSwapOnNavigation const): Deleted.
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformAddTestOptions const):
+
 2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Enable support for CONTENT_EXTENSIONS
