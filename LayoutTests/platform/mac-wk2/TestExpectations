@@ -921,3 +921,5 @@ webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ 
 webkit.org/b/194225 [ Mojave Debug ] http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html [ Pass Crash ]
 
 webkit.org/b/194253 scrollingcoordinator/scrolling-tree/fixed-inside-frame.html [ Pass Failure ]
+
+webkit.org/b/194350 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html [ Pass Failure ]
