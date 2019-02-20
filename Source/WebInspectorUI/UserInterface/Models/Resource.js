@@ -1111,7 +1111,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     async showCertificate()
     {
-        let errorString = WI.UIString("Unable to show certificate for \u201C%s\u201C").format(this.url);
+        let errorString = WI.UIString("Unable to show certificate for \u201C%s\u201D").format(this.url);
 
         try {
             let {serializedCertificate} = await NetworkAgent.getSerializedCertificate(this._requestIdentifier);
