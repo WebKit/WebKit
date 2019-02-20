@@ -1,5 +1,17 @@
 2019-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Epiphany searching for plugins even if plugins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=194352
+
+        Reviewed by Michael Catanzaro.
+
+        Check pluginsEnabled setting before trying to get plugins from UI process.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+
+2019-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Send client host fd and library name as web process creation parameters
         https://bugs.webkit.org/show_bug.cgi?id=194494
 
