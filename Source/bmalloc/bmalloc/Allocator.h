@@ -33,7 +33,6 @@
 namespace bmalloc {
 
 class Deallocator;
-class DebugHeap;
 class Heap;
 
 // Per-cache object allocator.
@@ -69,7 +68,6 @@ private:
     std::array<BumpRangeCache, sizeClassCount> m_bumpRangeCaches;
 
     Heap& m_heap;
-    DebugHeap* m_debugHeap;
     Deallocator& m_deallocator;
 };
 

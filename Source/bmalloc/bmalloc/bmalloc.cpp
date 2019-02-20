@@ -25,6 +25,7 @@
 
 #include "bmalloc.h"
 
+#include "Environment.h"
 #include "PerProcess.h"
 
 namespace bmalloc { namespace api {
@@ -87,11 +88,9 @@ void scavenge()
     PerProcess<Scavenger>::get()->scavenge();
 }
 
-bool isEnabled(HeapKind kind)
+bool isEnabled(HeapKind)
 {
-    kind = mapToActiveHeapKind(kind);
-    std::unique_lock<Mutex> lock(Heap::mutex());
-    return !PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).debugHeap();
+    return !PerProcess<Environment>::get()->isDebugHeapEnabled();
 }
 
 #if BOS(DARWIN)
