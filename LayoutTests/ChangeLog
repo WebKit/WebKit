@@ -1,3 +1,17 @@
+2019-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): Toggling visibility on the <html> element can result in a blank web view
+        https://bugs.webkit.org/show_bug.cgi?id=194827
+        rdar://problem/47620594
+
+        Reviewed by Antti Koivisto.
+
+        Test dumps layer tree with RenderLayerBacking::shouldDumpPropertyForLayer to show that the root has (drawsContent 1)
+
+        * compositing/visibility/root-visibility-toggle-expected.txt: Added.
+        * compositing/visibility/root-visibility-toggle.html: Added.
+        * platform/mac-wk1/compositing/visibility/root-visibility-toggle-expected.txt: Added.
+
 2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view

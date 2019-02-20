@@ -1,3 +1,50 @@
+2019-02-19  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): Toggling visibility on the <html> element can result in a blank web view
+        https://bugs.webkit.org/show_bug.cgi?id=194827
+        rdar://problem/47620594
+
+        Reviewed by Antti Koivisto.
+
+        Incremental compositing updates, added in rr238090, use repaints as a trigger for re-evaluating
+        layer configurations, since a repaint implies that a layer gains painted content. This is done
+        via the call to setNeedsCompositingConfigurationUpdate() in RenderLayerBacking::setContentsNeedDisplay{InRect}.
+        The RenderView's layer is opted out of this to avoid doing lots of redundant layer config recomputation
+        for the root. The configuration state that matters here is whether the layer contains painted content,
+        and therefore needs backing store; this is computed by RenderLayerBacking::isSimpleContainerCompositingLayer(),
+        and feeds into GraphicsLayer::drawsContent().
+
+        However, if <html> starts as "visibility:hidden" or "opacity:0", as some sites do to hide incremental loading,
+        then we'll fail to recompute 'drawsContent' for the root and leave the root with drawsContent=false, which
+        causes RenderLayerBacking::setContentsNeedDisplay{InRect} to short-circuit, and then we paint nothing.
+
+        Ironically, 'drawsContent' doesn't actually save any backing store for the root, since it has no affect on
+        the root tile caches; we always make tiles. So the simple fix here is to change RenderLayerBacking::isSimpleContainerCompositingLayer()
+        to always return false for the RenderView's layer (the root).
+        
+        Testing this was tricky; ref testing doesn't work because we force repaint, and we normally skip
+        properties of the root in layer tree dumps to hide WK1/WK2 differences. Therefore I had to add
+        LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES and fix RenderLayerBacking::shouldDumpPropertyForLayer to
+        respect it.
+
+        Test: compositing/visibility/root-visibility-toggle.html
+
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties const):
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldDumpPropertyForLayer const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer const):
+        (WebCore::RenderLayerBacking::shouldDumpPropertyForLayer const):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * testing/Internals.cpp:
+        (WebCore::toLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-02-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r240909): Release assertion in FrameLoader::loadPostRequest when opening new window
