@@ -3521,7 +3521,7 @@ void testBitNotMem32(int32_t a)
     CHECK(isIdentical(input, static_cast<int32_t>((static_cast<uint32_t>(a) ^ 0xffffffff))));
 }
 
-void testBitNotOnBooleanAndBranch32(int64_t a, int64_t b)
+void testNotOnBooleanAndBranch32(int64_t a, int64_t b)
 {
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -3534,7 +3534,7 @@ void testBitNotOnBooleanAndBranch32(int64_t a, int64_t b)
         root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
     Value* argsAreEqual = root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2);
     Value* argsAreNotEqual = root->appendNew<Value>(proc, BitXor, Origin(),
-        root->appendNew<Const32Value>(proc, Origin(), -1),
+        root->appendNew<Const32Value>(proc, Origin(), 1),
         argsAreEqual);
 
     root->appendNewControlValue(
@@ -3551,6 +3551,35 @@ void testBitNotOnBooleanAndBranch32(int64_t a, int64_t b)
         elseCase->appendNew<Const32Value>(proc, Origin(), -42));
 
     int32_t expectedValue = (a != b) ? 42 : -42;
+    CHECK(compileAndRun<int32_t>(proc, a, b) == expectedValue);
+}
+
+void testBitNotOnBooleanAndBranch32(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    Value* arg1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* arg2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1));
+    Value* argsAreEqual = root->appendNew<Value>(proc, Equal, Origin(), arg1, arg2);
+    Value* bitNotArgsAreEqual = root->appendNew<Value>(proc, BitXor, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), -1),
+        argsAreEqual);
+
+    root->appendNewControlValue(proc, Branch, Origin(),
+        bitNotArgsAreEqual, FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNewControlValue(proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 42));
+
+    elseCase->appendNewControlValue(proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), -42));
+
+    int32_t expectedValue = ~(a == b) ? 42 : -42; // always 42
     CHECK(compileAndRun<int32_t>(proc, a, b) == expectedValue);
 }
 
@@ -16858,6 +16887,7 @@ void run(const char* filter)
     RUN_UNARY(testBitNotArg32, int32Operands());
     RUN_UNARY(testBitNotImm32, int32Operands());
     RUN_UNARY(testBitNotMem32, int32Operands());
+    RUN_BINARY(testNotOnBooleanAndBranch32, int32Operands(), int32Operands());
     RUN_BINARY(testBitNotOnBooleanAndBranch32, int32Operands(), int32Operands());
 
     RUN(testShlArgs(1, 0));
