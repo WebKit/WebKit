@@ -1,5 +1,24 @@
 2019-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [bmalloc] DebugHeap::malloc does not have "try" version.
+        https://bugs.webkit.org/show_bug.cgi?id=194837
+
+        Reviewed by Mark Lam.
+
+        Since DebugHeap::malloc does not have "try" version, our tryAllocate implementation does not work well with DebugHeap.
+        This patch adds crashOnFailure flag to DebugHeap::malloc.
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::malloc):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::debugMalloc):
+
+2019-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [bmalloc] bmalloc::Cache should not be instantiated if we are using system malloc
         https://bugs.webkit.org/show_bug.cgi?id=194811
 

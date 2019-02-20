@@ -182,8 +182,10 @@ bool IsoTLS::isUsingDebugHeap()
 auto IsoTLS::debugMalloc(size_t size) -> DebugMallocResult
 {
     DebugMallocResult result;
-    if ((result.usingDebugHeap = isUsingDebugHeap()))
-        result.ptr = PerProcess<DebugHeap>::get()->malloc(size);
+    if ((result.usingDebugHeap = isUsingDebugHeap())) {
+        constexpr bool crashOnFailure = true;
+        result.ptr = PerProcess<DebugHeap>::get()->malloc(size, crashOnFailure);
+    }
     return result;
 }
 

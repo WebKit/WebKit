@@ -66,17 +66,19 @@ Cache::Cache(HeapKind heapKind)
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    // FIXME: DebugHeap does not have tryAllocate feature.
-    // https://bugs.webkit.org/show_bug.cgi?id=194837
-    if (auto* heap = debugHeap())
-        return heap->malloc(size);
+    if (auto* heap = debugHeap()) {
+        constexpr bool crashOnFailure = false;
+        return heap->malloc(size, crashOnFailure);
+    }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    if (auto* heap = debugHeap())
-        return heap->malloc(size);
+    if (auto* heap = debugHeap()) {
+        constexpr bool crashOnFailure = true;
+        return heap->malloc(size, crashOnFailure);
+    }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(size);
 }
 
