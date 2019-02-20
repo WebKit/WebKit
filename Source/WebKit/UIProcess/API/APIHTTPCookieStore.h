@@ -51,7 +51,7 @@ class WebsiteDataStore;
 
 class HTTPCookieStore final : public ObjectImpl<Object::Type::HTTPCookieStore> {
 public:
-    static Ref<HTTPCookieStore> create(WebsiteDataStore& websiteDataStore)
+    static Ref<HTTPCookieStore> create(WebKit::WebsiteDataStore& websiteDataStore)
     {
         return adoptRef(*new HTTPCookieStore(websiteDataStore));
     }
@@ -75,7 +75,7 @@ public:
     void cookieManagerDestroyed();
 
 private:
-    HTTPCookieStore(WebsiteDataStore&);
+    HTTPCookieStore(WebKit::WebsiteDataStore&);
 
     void registerForNewProcessPoolNotifications();
     void unregisterForNewProcessPoolNotifications();
@@ -87,6 +87,7 @@ private:
     void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
     void stopObservingChangesToDefaultUIProcessCookieStore();
     
+    // FIXME: This is a reference cycle.
     Ref<WebKit::WebsiteDataStore> m_owningDataStore;
     HashSet<Observer*> m_observers;
 

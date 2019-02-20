@@ -91,7 +91,6 @@ private:
     static WTF::String websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName);
 
     Ref<WebKit::WebsiteDataStore> m_websiteDataStore;
-    RefPtr<HTTPCookieStore> m_apiHTTPCookieStore;
 };
 
 }

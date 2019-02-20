@@ -1,3 +1,20 @@
+2019-02-20  Alex Christensen  <achristensen@webkit.org>
+
+        Move API::HTTPCookieStore ownership from API::WebsiteDataStore to WebKit::WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=194842
+
+        Reviewed by Geoff Garen.
+
+        We need a way to get from WebKit::WebsiteDataStore to API::HTTPCookieStore.  It can't be done before this.
+        This made an existing reference cycle easier to see, and we should fix it in a followup patch.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::httpCookieStore):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::cookieStore):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-02-20  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Crash under WebKit::WebPageProxy::decidePolicyForNavigationActionSync

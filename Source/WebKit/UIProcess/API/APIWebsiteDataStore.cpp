@@ -85,10 +85,7 @@ WebsiteDataStore::~WebsiteDataStore()
 
 HTTPCookieStore& WebsiteDataStore::httpCookieStore()
 {
-    if (!m_apiHTTPCookieStore)
-        m_apiHTTPCookieStore = HTTPCookieStore::create(*this);
-
-    return *m_apiHTTPCookieStore;
+    return m_websiteDataStore->cookieStore();
 }
 
 bool WebsiteDataStore::isPersistent()

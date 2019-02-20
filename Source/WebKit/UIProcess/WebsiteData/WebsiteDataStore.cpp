@@ -2097,6 +2097,14 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(MockWebAuthenticati
 }
 #endif
 
+API::HTTPCookieStore& WebsiteDataStore::cookieStore()
+{
+    if (!m_cookieStore)
+        m_cookieStore = API::HTTPCookieStore::create(*this);
+
+    return *m_cookieStore;
+}
+
 void WebsiteDataStore::didCreateNetworkProcess()
 {
 }

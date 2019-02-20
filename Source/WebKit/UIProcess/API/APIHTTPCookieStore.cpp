@@ -37,8 +37,8 @@ using namespace WebKit;
 
 namespace API {
 
-HTTPCookieStore::HTTPCookieStore(WebsiteDataStore& websiteDataStore)
-    : m_owningDataStore(websiteDataStore.websiteDataStore())
+HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
+    : m_owningDataStore(websiteDataStore)
 {
     if (!m_owningDataStore->processPoolForCookieStorageOperations())
         registerForNewProcessPoolNotifications();

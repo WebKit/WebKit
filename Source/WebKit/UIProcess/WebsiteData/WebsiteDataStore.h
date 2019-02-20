@@ -56,6 +56,10 @@
 #include <WebKitAdditions/WebsiteDataStoreAdditions.h>
 #endif
 
+namespace API {
+class HTTPCookieStore;
+}
+
 namespace WebCore {
 class SecurityOrigin;
 }
@@ -229,6 +233,8 @@ public:
     WebsiteDataStoreClient& client() { return m_client.get(); }
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }
 
+    API::HTTPCookieStore& cookieStore();
+
 #if HAVE(LOAD_OPTIMIZER)
 WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_1
 #endif
@@ -309,6 +315,8 @@ private:
 #endif
 
     UniqueRef<WebsiteDataStoreClient> m_client;
+
+    RefPtr<API::HTTPCookieStore> m_cookieStore;
 };
 
 }
