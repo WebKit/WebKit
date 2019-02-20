@@ -87,6 +87,7 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -954,12 +955,100 @@ static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>&
     return true;
 }
 
+class ShellSourceProvider : public StringSourceProvider {
+public:
+    static Ref<ShellSourceProvider> create(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+    {
+        return adoptRef(*new ShellSourceProvider(source, sourceOrigin, WTFMove(url), startPosition, sourceType));
+    }
+
+    ~ShellSourceProvider()
+    {
+#if OS(DARWIN)
+        if (m_cachedBytecode.size())
+            munmap(const_cast<void*>(m_cachedBytecode.data()), m_cachedBytecode.size());
+#endif
+    }
+
+    const CachedBytecode* cachedBytecode() const override
+    {
+        return &m_cachedBytecode;
+    }
+
+    void cacheBytecode(const BytecodeCacheGenerator& generator) const override
+    {
+#if OS(DARWIN)
+        String filename = cachePath();
+        if (filename.isNull())
+            return;
+        int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY | O_TRUNC | O_EXLOCK | O_NONBLOCK, 0666);
+        if (fd == -1)
+            return;
+        CachedBytecode cachedBytecode = generator();
+        write(fd, cachedBytecode.data(), cachedBytecode.size());
+        close(fd);
+#endif
+    }
+
+private:
+    String cachePath() const
+    {
+        const char* cachePath = Options::diskCachePath();
+        if (!cachePath)
+            return static_cast<const char*>(nullptr);
+        String filename = sourceOrigin().string();
+        filename.replace('/', '_');
+        return makeString(cachePath, '/', source().toString().hash(), '-', filename, ".bytecode-cache");
+    }
+
+    void loadBytecode()
+    {
+#if OS(DARWIN)
+        String filename = cachePath();
+        if (filename.isNull())
+            return;
+
+        int fd = open(filename.utf8().data(), O_RDONLY | O_SHLOCK | O_NONBLOCK);
+        if (fd == -1)
+            return;
+
+        auto closeFD = makeScopeExit([&] {
+            close(fd);
+        });
+
+        struct stat sb;
+        int res = fstat(fd, &sb);
+        size_t size = static_cast<size_t>(sb.st_size);
+        if (res || !size)
+            return;
+
+        void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (buffer == MAP_FAILED)
+            return;
+        m_cachedBytecode = CachedBytecode { buffer, size };
+#endif
+    }
+
+    ShellSourceProvider(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+        : StringSourceProvider(source, sourceOrigin, WTFMove(url), startPosition, sourceType)
+    {
+        loadBytecode();
+    }
+
+    CachedBytecode m_cachedBytecode;
+};
+
+static inline SourceCode jscSource(const String& source, const SourceOrigin& sourceOrigin, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+{
+    return SourceCode(ShellSourceProvider::create(source, sourceOrigin, WTFMove(url), startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+}
+
 template<typename Vector>
 static inline SourceCode jscSource(const Vector& utf8, const SourceOrigin& sourceOrigin, const String& filename)
 {
     // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
     String str = stringFromUTF(utf8);
-    return makeSource(str, sourceOrigin, URL({ }, filename));
+    return jscSource(str, sourceOrigin, URL({ }, filename));
 }
 
 template<typename Vector>
@@ -1042,7 +1131,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     }
 #endif
 
-    auto sourceCode = JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, WTFMove(moduleURL), TextPosition(), SourceProviderSourceType::Module));
+    auto sourceCode = JSSourceCode::create(vm, jscSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, WTFMove(moduleURL), TextPosition(), SourceProviderSourceType::Module));
     catchScope.releaseAssertNoException();
     auto result = deferred->resolve(exec, sourceCode);
     catchScope.clearException();
@@ -1715,7 +1804,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarEvalScript(ExecState* exec)
         return JSValue::encode(throwException(exec, scope, createError(exec, "Expected global to point to a global object"_s)));
     
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), makeSource(sourceCode, exec->callerSourceOrigin()), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), jscSource(sourceCode, exec->callerSourceOrigin()), JSValue(), evaluationException);
     if (evaluationException)
         throwException(exec, scope, evaluationException);
     return JSValue::encode(result);
@@ -2471,7 +2560,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         if (isModule) {
             if (!promise) {
                 // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
-                promise = loadAndEvaluateModule(globalObject->globalExec(), makeSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, URL({ }, fileName), TextPosition(), SourceProviderSourceType::Module), jsUndefined());
+                promise = loadAndEvaluateModule(globalObject->globalExec(), jscSource(stringFromUTF(scriptBuffer), SourceOrigin { absolutePath(fileName) }, URL({ }, fileName), TextPosition(), SourceProviderSourceType::Module), jsUndefined());
             }
             scope.clearException();
 

@@ -104,6 +104,7 @@ namespace JSC {
         const void* m_data;
     };
 
+    using BytecodeCacheGenerator = Function<CachedBytecode()>;
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
@@ -116,6 +117,7 @@ namespace JSC {
         virtual unsigned hash() const = 0;
         virtual StringView source() const = 0;
         virtual const CachedBytecode* cachedBytecode() const { return nullptr; }
+        virtual void cacheBytecode(const BytecodeCacheGenerator&) const { }
 
         StringView getRange(int start, int end) const
         {
