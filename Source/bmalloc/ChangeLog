@@ -1,3 +1,46 @@
+2019-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] bmalloc::Cache should not be instantiated if we are using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=194811
+
+        Reviewed by Mark Lam.
+
+        bmalloc::Cache is very large. It is 13KB. Since it exists per HeapKind, it takes 40KB.
+        But this is meaningless if we are under the system malloc mode by using "Malloc=1". We
+        found that it continues using so much dirty memory region even under the system malloc mode.
+        This patch avoids instantiation of bmalloc::Cache under the system malloc mode.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocateImpl):
+        (bmalloc::Allocator::allocateSlowCase):
+        Allocator is a per Cache object. So we no longer need to keep m_debugHeap. If debug heap is enabled,
+        Allocator is never created.
+
+        * bmalloc/Allocator.h:
+        * bmalloc/Cache.cpp:
+        (bmalloc::debugHeap):
+        (bmalloc::Cache::Cache):
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        (bmalloc::Cache::deallocateSlowCaseNullCache):
+        (bmalloc::Cache::tryReallocateSlowCaseNullCache):
+        (bmalloc::Cache::reallocateSlowCaseNullCache):
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::tryAllocate):
+        (bmalloc::Cache::tryReallocate):
+        If the debug heap mode is enabled, we keep Cache::getFast() returning nullptr. And in the slow path case, we use debugHeap.
+        This makes bmalloc fast path fast, while we avoid Cache instantiation.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h:
+        Ditto for Deallocator.
+
 2019-02-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] NSBundle-based application name check should be executed after debug-heap environment variable check
