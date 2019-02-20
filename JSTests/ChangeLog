@@ -1,3 +1,14 @@
+2019-02-18  Tomas Popela  <tpopela@redhat.com>
+
+        Unreviewed, skip the test on platforms without sampling profiler
+
+        * stress/sampling-profiler-stack-trace-with-double-quote-in-function-name.js:
+        (platformSupportsSamplingProfiler.foo):
+        (platformSupportsSamplingProfiler.test):
+        (platformSupportsSamplingProfiler):
+        (foo): Deleted.
+        (test): Deleted.
+
 2019-02-17  Saam Barati  <sbarati@apple.com>
 
         Deadlock when adding a Structure property transition and then doing incremental marking
