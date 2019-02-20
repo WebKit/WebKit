@@ -38,6 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(FloatBox);
 FloatBox::FloatBox(const Box& layoutBox, const FloatingState& floatingState, const LayoutState& layoutState)
     : FloatAvoider(layoutBox, floatingState, layoutState)
 {
+    displayBox().setTopLeft({ initialHorizontalPosition(), initialVerticalPosition() });
 }
 
 Display::Box::Rect FloatBox::rect() const
@@ -63,7 +64,7 @@ PositionInContextRoot FloatBox::initialVerticalPosition() const
 {
     // Incoming float cannot be placed higher than existing floats (margin box of the last float).
     // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-    auto top = FloatAvoider::initialVerticalPosition() - marginBefore();
+    auto top = displayBox().top() - marginBefore();
     if (auto lastFloat = floatingState().last())
         top = std::max(top, lastFloat->rectWithMargin().top());
     top += marginBefore();

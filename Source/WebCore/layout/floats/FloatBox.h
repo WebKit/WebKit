@@ -51,7 +51,7 @@ private:
     PositionInContextRoot horizontalPositionCandidate(HorizontalConstraints) final;
     PositionInContextRoot verticalPositionCandidate(PositionInContextRoot) final;
 
-    PositionInContextRoot initialVerticalPosition() const final;
+    PositionInContextRoot initialVerticalPosition() const;
 };
 
 }

@@ -1,3 +1,25 @@
+2019-02-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Make FloatAvoider::resetPosition implicit
+        https://bugs.webkit.org/show_bug.cgi?id=194855
+
+        Reviewed by Antti Koivisto.
+
+        Let's compute the initial top/left position during c'tor time.
+        This is in preparation for fixing formatting root box placement in a float context.
+
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::resetPosition): Deleted.
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::displayBox):
+        (WebCore::Layout::FloatAvoider::initialVerticalPosition const): Deleted.
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::FloatBox):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatBox.h:
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+
 2019-02-20  Don Olmstead  <don.olmstead@sony.com>
 
         [MSVC] Fix compilation errors with lambdas in Service Workers

@@ -261,9 +261,6 @@ FloatingContext::ClearancePosition FloatingContext::verticalPositionWithClearanc
 
 void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
 {
-    // Ensure the float avoider starts with no constraints.
-    floatAvoider.resetPosition();
-
     Optional<PositionInContextRoot> bottomMost;
     auto end = Layout::end(m_floatingState);
     for (auto iterator = begin(m_floatingState, { floatAvoider.rect().top() }); iterator != end; ++iterator) {
