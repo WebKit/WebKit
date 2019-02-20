@@ -29,12 +29,13 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_NETWORK_ERROR    webkit_network_error_quark ()
-#define WEBKIT_POLICY_ERROR     webkit_policy_error_quark ()
-#define WEBKIT_PLUGIN_ERROR     webkit_plugin_error_quark ()
-#define WEBKIT_DOWNLOAD_ERROR   webkit_download_error_quark ()
-#define WEBKIT_JAVASCRIPT_ERROR webkit_javascript_error_quark ()
-#define WEBKIT_SNAPSHOT_ERROR   webkit_snapshot_error_quark ()
+#define WEBKIT_NETWORK_ERROR             webkit_network_error_quark ()
+#define WEBKIT_POLICY_ERROR              webkit_policy_error_quark ()
+#define WEBKIT_PLUGIN_ERROR              webkit_plugin_error_quark ()
+#define WEBKIT_DOWNLOAD_ERROR            webkit_download_error_quark ()
+#define WEBKIT_JAVASCRIPT_ERROR          webkit_javascript_error_quark ()
+#define WEBKIT_SNAPSHOT_ERROR            webkit_snapshot_error_quark ()
+#define WEBKIT_USER_CONTENT_FILTER_ERROR webkit_user_content_filter_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -126,23 +127,38 @@ typedef enum {
     WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE = 799
 } WebKitSnapshotError;
 
-WEBKIT_API GQuark
-webkit_network_error_quark    (void);
+/**
+ * WebKitUserContentFilterError:
+ * @WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE: The JSON source for a content filter is invalid.
+ * @WEBKIT_USER_CONTENT_FILTER_ERROR_NOT_FOUND: The requested content filter could not be found.
+ *
+ * Since: 2.24
+ */
+typedef enum {
+    WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE,
+    WEBKIT_USER_CONTENT_FILTER_ERROR_NOT_FOUND,
+} WebKitUserContentFilterError;
 
 WEBKIT_API GQuark
-webkit_policy_error_quark     (void);
+webkit_network_error_quark             (void);
 
 WEBKIT_API GQuark
-webkit_plugin_error_quark     (void);
+webkit_policy_error_quark              (void);
 
 WEBKIT_API GQuark
-webkit_download_error_quark   (void);
+webkit_plugin_error_quark              (void);
 
 WEBKIT_API GQuark
-webkit_javascript_error_quark (void);
+webkit_download_error_quark            (void);
 
 WEBKIT_API GQuark
-webkit_snapshot_error_quark   (void);
+webkit_javascript_error_quark          (void);
+
+WEBKIT_API GQuark
+webkit_snapshot_error_quark            (void);
+
+WEBKIT_API GQuark
+webkit_user_content_filter_error_quark (void);
 
 G_END_DECLS
 

@@ -136,6 +136,22 @@ webkit_user_script_new_for_world (const gchar                    *source,
                                   const gchar* const             *whitelist,
                                   const gchar* const             *blacklist);
 
+#define WEBKIT_TYPE_USER_CONTENT_FILTER   (webkit_user_content_filter_get_type())
+
+typedef struct _WebKitUserContentFilter WebKitUserContentFilter;
+
+WEBKIT_API GType
+webkit_user_content_filter_get_type       (void);
+
+WEBKIT_API const char*
+webkit_user_content_filter_get_identifier (WebKitUserContentFilter     *user_content_filter);
+
+WEBKIT_API WebKitUserContentFilter *
+webkit_user_content_filter_ref            (WebKitUserContentFilter     *user_content_filter);
+
+WEBKIT_API void
+webkit_user_content_filter_unref          (WebKitUserContentFilter     *user_content_filter);
+
 G_END_DECLS
 
 #endif

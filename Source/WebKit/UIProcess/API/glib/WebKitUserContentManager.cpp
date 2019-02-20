@@ -318,6 +318,56 @@ void webkit_user_content_manager_unregister_script_message_handler_in_world(WebK
     manager->priv->userContentController->removeUserMessageHandlerForName(String::fromUTF8(name), webkitUserContentWorld(worldName));
 }
 
+/**
+ * webkit_user_content_manager_add_filter:
+ * @manager: A #WebKitUserContentManager
+ * @filter: A #WebKitUserContentFilter
+ *
+ * Adds a #WebKitUserContentFilter to the given #WebKitUserContentManager.
+ * The same #WebKitUserContentFilter can be reused with multiple
+ * #WebKitUserContentManager instances.
+ *
+ * Filters need to be saved and loaded from #WebKitUserContentFilterStore.
+ *
+ * Since: 2.24
+ */
+void webkit_user_content_manager_add_filter(WebKitUserContentManager* manager, WebKitUserContentFilter* filter)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(filter);
+    manager->priv->userContentController->addContentRuleList(webkitUserContentFilterGetContentRuleList(filter));
+}
+
+/**
+ * webkit_user_content_manager_remove_filter:
+ * @manager: A #WebKitUserContentManager
+ * @filter: A #WebKitUserContentFilter
+ *
+ * Removes a filter from the given #WebKitUserContentManager.
+ *
+ * Since 2.24
+ */
+void webkit_user_content_manager_remove_filter(WebKitUserContentManager* manager, WebKitUserContentFilter* filter)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    g_return_if_fail(filter);
+    manager->priv->userContentController->removeContentRuleList(webkitUserContentFilterGetContentRuleList(filter).name());
+}
+
+/**
+ * webkit_user_content_manager_remove_all_filters:
+ * @manager: A #WebKitUserContentManager
+ *
+ * Removes all content filters from the given #WebKitUserContentManager.
+ *
+ * Since: 2.24
+ */
+void webkit_user_content_manager_remove_all_filters(WebKitUserContentManager* manager)
+{
+    g_return_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(manager));
+    manager->priv->userContentController->removeAllContentRuleLists();
+}
+
 WebUserContentControllerProxy* webkitUserContentManagerGetUserContentControllerProxy(WebKitUserContentManager* manager)
 {
     return manager->priv->userContentController.get();

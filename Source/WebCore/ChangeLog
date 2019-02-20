@@ -1,3 +1,13 @@
+2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Enable support for CONTENT_EXTENSIONS
+        https://bugs.webkit.org/show_bug.cgi?id=167941
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/po/POTFILES.in: Added WebKitUserContentFilterStore.cpp
+        to the list of files with translatable strings.
+
 2019-02-19  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): Toggling visibility on the <html> element can result in a blank web view

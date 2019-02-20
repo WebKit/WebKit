@@ -39,6 +39,7 @@ static gboolean headlessMode;
 static gboolean privateMode;
 static gboolean automationMode;
 static gboolean ignoreTLSErrors;
+static const char* contentFilter;
 static const char* cookiesFile;
 static const char* cookiesPolicy;
 static const char* proxy;
@@ -53,6 +54,7 @@ static const GOptionEntry commandLineOptions[] =
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", nullptr },
+    { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
 };
@@ -125,6 +127,18 @@ static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32
     return std::make_unique<WPEToolingBackends::WindowViewBackend>(width, height);
 }
 
+typedef struct {
+    GMainLoop* mainLoop { nullptr };
+    WebKitUserContentFilter* filter { nullptr };
+    GError* error { nullptr };
+} FilterSaveData;
+
+static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResult *result, FilterSaveData *data)
+{
+    data->filter = webkit_user_content_filter_store_save_finish(store, result, &data->error);
+    g_main_loop_quit(data->mainLoop);
+}
+
 int main(int argc, char *argv[])
 {
 #if ENABLE_DEVELOPER_MODE
@@ -184,6 +198,32 @@ int main(int argc, char *argv[])
     webkit_web_context_set_process_model(webContext, (singleprocess && *singleprocess) ?
         WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS : WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 
+    WebKitUserContentManager* userContentManager = nullptr;
+    if (contentFilter) {
+        GFile* contentFilterFile = g_file_new_for_commandline_arg(contentFilter);
+
+        FilterSaveData saveData = { nullptr, };
+        gchar* filtersPath = g_build_filename(g_get_user_cache_dir(), g_get_prgname(), "filters", nullptr);
+        WebKitUserContentFilterStore* store = webkit_user_content_filter_store_new(filtersPath);
+        g_free(filtersPath);
+
+        webkit_user_content_filter_store_save_from_file(store, "WPEMiniBrowserFilter", contentFilterFile, nullptr, (GAsyncReadyCallback)filterSavedCallback, &saveData);
+        saveData.mainLoop = g_main_loop_new(nullptr, FALSE);
+        g_main_loop_run(saveData.mainLoop);
+        g_object_unref(store);
+
+        if (saveData.filter) {
+            userContentManager = webkit_user_content_manager_new();
+            webkit_user_content_manager_add_filter(userContentManager, saveData.filter);
+        } else
+            g_printerr("Cannot save filter '%s': %s\n", contentFilter, saveData.error->message);
+
+        g_clear_pointer(&saveData.error, g_error_free);
+        g_clear_pointer(&saveData.filter, webkit_user_content_filter_unref);
+        g_main_loop_unref(saveData.mainLoop);
+        g_object_unref(contentFilterFile);
+    }
+
     auto* settings = webkit_settings_new_with_settings(
         "enable-developer-extras", TRUE,
         "enable-webgl", TRUE,
@@ -200,6 +240,7 @@ int main(int argc, char *argv[])
         "backend", viewBackend,
         "web-context", webContext,
         "settings", settings,
+        "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
         nullptr));
     g_object_unref(settings);

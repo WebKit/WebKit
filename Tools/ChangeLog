@@ -1,3 +1,42 @@
+2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Enable support for CONTENT_EXTENSIONS
+        https://bugs.webkit.org/show_bug.cgi?id=167941
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/main.c:
+        (filterSavedCallback): Added.
+        (main): Support loading a JSON rule set file for content filtering.
+        * MiniBrowser/wpe/main.cpp:
+        (filterSavedCallback): Added.
+        (main): Support loading a JSON rule set file for content filtering.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentFilterStore.cpp: Added.
+        (WTF::refGPtr): Added locally for WebKitUserContentFilter, as it would not be used anywhere else.
+        (WTF::derefGPtr): Ditto.
+        (testEmptyStore):
+        (testSaveInvalidFilter):
+        (testSaveLoadFilter):
+        (testSavedFilterIdentifierMatch):
+        (testRemoveFilter):
+        (testSaveMultipleFilters):
+        (testSaveFilterFromFile):
+        (testFilterPersistence):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (removeOldInjectedContentAndResetLists): Also reset content filters.
+        (isCSSBlockedForURLAtPath): Added. Tests whether the test filter, which blocks a
+        CSS style sheet, has blocked the load of the CSS by looking at the resulting style of
+        the element affected by the style sheet.
+        (getUserContentFilter): Added. Stores the test filter in a WebKitUserContentFilterStore
+        and returns it to be used by tests.
+        (testUserContentManagerContentFilter): Added. Tests whether adding and removing a filter
+        from the WebKitUserContentManager results in the a CSS style sheet being blocked.
+        (serverCallback): Add support for serving a CSS style sheet for testing.
+        (beforeAll): Add call to testUserContentManagerContentFilter().
+        * TestWebKitAPI/glib/CMakeLists.txt: Added TestWebKitUserContentFilterStore.
+
 2019-02-19  Keith Rollin  <krollin@apple.com>
 
         Add timing information to build output

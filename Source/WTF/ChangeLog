@@ -1,3 +1,17 @@
+2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Enable support for CONTENT_EXTENSIONS
+        https://bugs.webkit.org/show_bug.cgi?id=167941
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add specialization of the refGPtr() and derefGPtr() templates for GMappedFile.
+
+        * wtf/glib/GRefPtr.cpp:
+        (WTF::refGPtr): Added.
+        (WTF::derefGPtr): Added.
+        * wtf/glib/GRefPtr.h: Declare template specializations.
+
 2019-02-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r241770.

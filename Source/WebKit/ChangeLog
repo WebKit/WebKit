@@ -1,3 +1,79 @@
+2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Enable support for CONTENT_EXTENSIONS
+        https://bugs.webkit.org/show_bug.cgi?id=167941
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adds new API to manage a collection of content extensions on disk (including compilation
+        of new ones) using WebKitUserContentFilterStore; the associated WebKitUserContentFilter
+        type (which represents a compiled content extension); and the functions needed to enable
+        and disable them for a given WebKitUserContentManager.
+
+        The WebKitUserContentFilterStore public API is expressed in abstract terms of "saving"
+        filters into the store (which involves compiling the JSON source rule set); and "loading"
+        them back as main operations. This way we do not disclose to users of the API any detail
+        about compilation, nor how contents are laid out on disk, and the documentation explicitly
+        tells about only using the provided functions to manipulate the on-disk contents. This
+        way we allow ourselves some leeway if the implementation needs changing in the future.
+
+        * PlatformGTK.cmake: Added WebKitUserContentFilterStore.h to the list of public API headers.
+        * PlatformWPE.cmake: Ditto.
+        * SourcesGTK.txt: Added WebKitUserContentFilterStore.cpp
+        * SourcesWPE.txt: Ditto.
+        * UIProcess/API/glib/WebKitError.cpp: Add definition of webkit_user_content_filter_error_quark().
+        * UIProcess/API/glib/WebKitUserContent.cpp: Added WebKitUserContentFilter.
+        (_WebKitUserContentFilter::_WebKitUserContentFilter):
+        (webkit_user_content_filter_ref):
+        (webkit_user_content_filter_unref):
+        (webkit_user_content_filter_get_identifier):
+        (webkitUserContentFilterCreate):
+        (webkitUserContentFilterGetContentRuleList):
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp: Added.
+        (toGError): Utility function to convert content extension error codes to GError.
+        (webkit_user_content_filter_store_class_init):
+        (webkit_user_content_filter_store_new):
+        (webkit_user_content_filter_store_get_path):
+        (webkitUserContentFilterStoreSaveBytes): Common function used as final step for all the
+        functions which save (compile) JSON rule sets into the store, to avoid duplicating code.
+        (webkit_user_content_filter_store_save):
+        (webkit_user_content_filter_store_save_finish):
+        (webkit_user_content_filter_store_save_from_file):
+        (webkit_user_content_filter_store_save_from_file_finish):
+        (webkit_user_content_filter_store_remove):
+        (webkit_user_content_filter_store_remove_finish):
+        (webkit_user_content_filter_store_load):
+        (webkit_user_content_filter_store_lookup_finish):
+        (webkit_user_content_filter_store_fetch_identifiers):
+        (webkit_user_content_filter_store_fetch_identifiers_finish):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp: Added definitions for the new API
+        functions to add and remove filters from an user content manager.
+        (webkit_user_content_manager_add_filter):
+        (webkit_user_content_manager_remove_filter):
+        (webkit_user_content_manager_remove_all_filters):
+        * UIProcess/API/glib/WebKitUserContentPrivate.h: Added declarations for
+        webkitUserContentFilterCreate() and webkitUserContentFilterGetContentRuleList().
+        * UIProcess/API/gtk/WebKitAutocleanups.h: Added autocleanups for WebKitUserContentFilter
+        and WebKitUserContentFilterStore.
+        * UIProcess/API/gtk/WebKitError.h: Added declarations for WEBKIT_USER_CONTENT_FILTER_ERROR
+        plus the associated webkit_user_content_filter_error_quark() function and
+        WebKitUserContentFilterErrror enum.
+        * UIProcess/API/gtk/WebKitUserContent.h: Added declarations for WebKitUserContentFilter
+        and its associated functions.
+        * UIProcess/API/gtk/WebKitUserContentFilterStore.h: Added.
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Added declarations for the functions to
+        add and remove filters from the user content manager.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Added new API functions and types to
+        be included in the documentation.
+        * UIProcess/API/gtk/webkit2.h: Added inclusion of WebKitUserContentFilterStore.h
+        * UIProcess/API/wpe/WebKitError.h: Same as for the GTK port header.
+        * UIProcess/API/wpe/WebKitUserContent.h: Same as for the GTK port header.
+        * UIProcess/API/wpe/WebKitUserContentFilterStore.h: Added.
+        * UIProcess/API/wpe/WebKitUserContentManager.h: Same as for the GTK port header.
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt: Added new API functions and types to be
+        included in the documentation.
+        * UIProcess/API/wpe/webkit.h: Added inclusion of WebKitUserContentFilterStore.h
+
 2019-02-19  Antti Koivisto  <antti@apple.com>
 
         Pass rootContentsLayer to Mac remote layer tree
