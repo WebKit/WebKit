@@ -1,3 +1,26 @@
+2019-02-18  Mark Lam  <mark.lam@apple.com>
+
+        Fix DFG doesGC() for CompareEq/Less/LessEq/Greater/GreaterEq and CompareStrictEq nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=194800
+        <rdar://problem/48183773>
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix doesGC() for the following nodes:
+
+            CompareEq:
+            CompareLess:
+            CompareLessEq:
+            CompareGreater:
+            CompareGreaterEq:
+            CompareStrictEq:
+                Only return false (i.e. does not GC) for child node use kinds that have
+                been vetted to not do anything that can GC.  For all other use kinds
+                (including StringUse and BigIntUse), we return true (i.e. does GC).
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
 2019-02-16  Darin Adler  <darin@apple.com>
 
         Continue reducing use of String::format, now focusing on hex: "%p", "%x", etc.
