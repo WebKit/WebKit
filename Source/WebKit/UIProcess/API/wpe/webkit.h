@@ -69,6 +69,7 @@
 #include <wpe/WebKitURISchemeRequest.h>
 #include <wpe/WebKitURIUtilities.h>
 #include <wpe/WebKitUserContent.h>
+#include <wpe/WebKitUserContentFilterStore.h>
 #include <wpe/WebKitUserContentManager.h>
 #include <wpe/WebKitUserMediaPermissionRequest.h>
 #include <wpe/WebKitVersion.h>

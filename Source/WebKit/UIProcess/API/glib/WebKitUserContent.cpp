@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2014, 2018-2019 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -316,4 +316,86 @@ WebKitUserScript* webkit_user_script_new_for_world(const gchar* source, WebKitUs
 API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 {
     return *userScript->userScript;
+}
+
+
+struct _WebKitUserContentFilter {
+    _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
+        : identifier(contentRuleList->name().utf8())
+        , contentRuleList(WTFMove(contentRuleList))
+        , referenceCount(1)
+    {
+    }
+
+    CString identifier;
+    RefPtr<API::ContentRuleList> contentRuleList;
+    int referenceCount;
+};
+
+G_DEFINE_BOXED_TYPE(WebKitUserContentFilter, webkit_user_content_filter, webkit_user_content_filter_ref, webkit_user_content_filter_unref)
+
+/**
+ * webkit_user_content_filter_ref:
+ * @user_content_filter: A #WebKitUserContentFilter
+ *
+ * Atomically increments the reference count of @user_content_filter by one.
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Since: 2.24
+ */
+WebKitUserContentFilter* webkit_user_content_filter_ref(WebKitUserContentFilter* userContentFilter)
+{
+    g_return_val_if_fail(userContentFilter, nullptr);
+    g_atomic_int_inc(&userContentFilter->referenceCount);
+    return userContentFilter;
+}
+
+/**
+ * webkit_user_content_filter_unref:
+ * @user_content_filter: A #WebKitUserContentFilter
+ *
+ * Atomically decrements the reference count of @user_content_filter by one.
+ * If the reference count drops to 0, all the memory allocated by the
+ * #WebKitUserContentFilter is released. This function is MT-safe and may
+ * be called from any thread.
+ *
+ * Since: 2.24
+ */
+void webkit_user_content_filter_unref(WebKitUserContentFilter* userContentFilter)
+{
+    g_return_if_fail(userContentFilter);
+    if (g_atomic_int_dec_and_test(&userContentFilter->referenceCount)) {
+        userContentFilter->~WebKitUserContentFilter();
+        fastFree(userContentFilter);
+    }
+}
+
+/**
+ * webkit_user_content_filter_get_identifier:
+ * @user_content_filter: A #WebKitUserContentFilter
+ *
+ * Obtain the identifier previously used to save the @user_content_filter in the
+ * #WebKitUserContentFilterStore.
+ *
+ * Returns: (transfer none): the identifier for the filter
+ *
+ * Since: 2.24
+ */
+const char* webkit_user_content_filter_get_identifier(WebKitUserContentFilter* userContentFilter)
+{
+    g_return_val_if_fail(userContentFilter, nullptr);
+    return userContentFilter->identifier.data();
+}
+
+WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&& contentRuleList)
+{
+    WebKitUserContentFilter* userContentFilter = static_cast<WebKitUserContentFilter*>(fastMalloc(sizeof(WebKitUserContentFilter)));
+    new (userContentFilter) WebKitUserContentFilter(WTFMove(contentRuleList));
+    return userContentFilter;
+}
+
+API::ContentRuleList& webkitUserContentFilterGetContentRuleList(WebKitUserContentFilter* userContentFilter)
+{
+    ASSERT(userContentFilter);
+    return *userContentFilter->contentRuleList;
 }

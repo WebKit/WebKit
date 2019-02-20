@@ -169,6 +169,19 @@ template <> void derefGPtr(GRegex* ptr)
         g_regex_unref(ptr);
 }
 
+template <> GMappedFile* refGPtr(GMappedFile* ptr)
+{
+    if (ptr)
+        g_mapped_file_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GMappedFile* ptr)
+{
+    if (ptr)
+        g_mapped_file_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // USE(GLIB)

@@ -239,6 +239,8 @@ template <> WTF_EXPORT_PRIVATE GClosure* refGPtr(GClosure*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GClosure*);
 template <> WTF_EXPORT_PRIVATE GRegex* refGPtr(GRegex*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GRegex*);
+template <> WTF_EXPORT_PRIVATE GMappedFile* refGPtr(GMappedFile*);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GMappedFile*);
 
 template <typename T> inline T* refGPtr(T* ptr)
 {

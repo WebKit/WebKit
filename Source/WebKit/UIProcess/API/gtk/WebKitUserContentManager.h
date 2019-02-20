@@ -93,6 +93,17 @@ webkit_user_content_manager_add_script                                 (WebKitUs
 WEBKIT_API void
 webkit_user_content_manager_remove_all_scripts                         (WebKitUserContentManager *manager);
 
+WEBKIT_API void
+webkit_user_content_manager_add_filter                                 (WebKitUserContentManager *manager,
+                                                                        WebKitUserContentFilter  *filter);
+
+WEBKIT_API void
+webkit_user_content_manager_remove_filter                              (WebKitUserContentManager *manager,
+                                                                        WebKitUserContentFilter  *filter);
+
+WEBKIT_API void
+webkit_user_content_manager_remove_all_filters                         (WebKitUserContentManager *manager);
+
 G_END_DECLS
 
 #endif

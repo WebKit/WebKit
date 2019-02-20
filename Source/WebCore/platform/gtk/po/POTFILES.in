@@ -19,6 +19,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp
+../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp

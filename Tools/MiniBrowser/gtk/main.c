@@ -48,6 +48,7 @@ static gboolean privateMode;
 static gboolean automationMode;
 static gboolean fullScreen;
 static gboolean ignoreTLSErrors;
+static const char *contentFilter;
 static const char *cookiesFile;
 static const char *cookiesPolicy;
 static const char *proxy;
@@ -112,6 +113,7 @@ static const GOptionEntry commandLineOptions[] =
     { "proxy", 0, 0, G_OPTION_ARG_STRING, &proxy, "Set proxy", "PROXY" },
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
+    { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -471,6 +473,18 @@ static void automationStartedCallback(WebKitWebContext *webContext, WebKitAutoma
     g_signal_connect(session, "create-web-view", G_CALLBACK(createWebViewForAutomationCallback), NULL);
 }
 
+typedef struct {
+    GMainLoop *mainLoop;
+    WebKitUserContentFilter *filter;
+    GError *error;
+} FilterSaveData;
+
+static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResult *result, FilterSaveData *data)
+{
+    data->filter = webkit_user_content_filter_store_save_finish(store, result, &data->error);
+    g_main_loop_quit(data->mainLoop);
+}
+
 int main(int argc, char *argv[])
 {
 #if ENABLE_DEVELOPER_MODE
@@ -538,6 +552,30 @@ int main(int argc, char *argv[])
     WebKitUserContentManager *userContentManager = webkit_user_content_manager_new();
     webkit_user_content_manager_register_script_message_handler(userContentManager, "aboutData");
     g_signal_connect(userContentManager, "script-message-received::aboutData", G_CALLBACK(aboutDataScriptMessageReceivedCallback), webContext);
+
+    if (contentFilter) {
+        GFile *contentFilterFile = g_file_new_for_commandline_arg(contentFilter);
+
+        FilterSaveData saveData = { NULL, NULL, NULL };
+        gchar *filtersPath = g_build_filename(g_get_user_cache_dir(), g_get_prgname(), "filters", NULL);
+        WebKitUserContentFilterStore *store = webkit_user_content_filter_store_new(filtersPath);
+        g_free(filtersPath);
+
+        webkit_user_content_filter_store_save_from_file(store, "GTKMiniBrowserFilter", contentFilterFile, NULL, (GAsyncReadyCallback)filterSavedCallback, &saveData);
+        saveData.mainLoop = g_main_loop_new(NULL, FALSE);
+        g_main_loop_run(saveData.mainLoop);
+        g_object_unref(store);
+
+        if (saveData.filter)
+            webkit_user_content_manager_add_filter(userContentManager, saveData.filter);
+        else
+            g_printerr("Cannot save filter '%s': %s\n", contentFilter, saveData.error->message);
+
+        g_clear_pointer(&saveData.error, g_error_free);
+        g_clear_pointer(&saveData.filter, webkit_user_content_filter_unref);
+        g_main_loop_unref(saveData.mainLoop);
+        g_object_unref(contentFilterFile);
+    }
 
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), NULL);
