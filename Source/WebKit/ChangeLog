@@ -1,3 +1,75 @@
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Crash under RemoteLayerTreePropertyApplier::applyProperties when reattaching to old process
+        https://bugs.webkit.org/show_bug.cgi?id=194845
+        <rdar://problem/47944579>
+
+        Reviewed by Antti Koivisto.
+
+        New test: ProcessSwap.PageOverlayLayerPersistence
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::notePropertiesChanged):
+        Keep track of all properties that have ever changed on a layer, so we
+        can re-send them if a layer moves between contexts.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::~DrawingArea):
+        (WebKit::DrawingArea::removeMessageReceiverIfNeeded):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::layerHostDidFlushLayers):
+        Make it possible to tear down DrawingArea's MessageReceiver before it is destroyed,
+        so that we can keep two DrawingAreas alive in a single process for a short time.
+
+        (WebKit::DrawingArea::adoptLayersFromDrawingArea):
+        Add adoptLayersFromDrawingArea; see below for its only useful implementation.
+
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp:
+        (WebKit::GraphicsLayerCARemote::GraphicsLayerCARemote):
+        (WebKit::GraphicsLayerCARemote::~GraphicsLayerCARemote):
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayer):
+        (WebKit::GraphicsLayerCARemote::createPlatformCALayerForEmbeddedView):
+        (WebKit::GraphicsLayerCARemote::moveToContext):
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.h:
+        Make it possible to move a GraphicsLayerCARemote between RemoteLayerTreeContexts.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::create):
+        (WebKit::PlatformCALayerRemote::createForEmbeddedView):
+        (WebKit::PlatformCALayerRemote::~PlatformCALayerRemote):
+        (WebKit::PlatformCALayerRemote::moveToContext):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::create):
+        (WebKit::PlatformCALayerRemoteCustom::clone const):
+        Make it possible to move a PlatformCALayerRemote between RemoteLayerTreeContexts.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::~RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::adoptLayersFromContext):
+        (WebKit::RemoteLayerTreeContext::layerDidEnterContext):
+        (WebKit::RemoteLayerTreeContext::layerWillLeaveContext):
+        (WebKit::RemoteLayerTreeContext::graphicsLayerDidEnterContext):
+        (WebKit::RemoteLayerTreeContext::graphicsLayerWillLeaveContext):
+        (WebKit::RemoteLayerTreeContext::layerWasCreated): Deleted.
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed): Deleted.
+        Keep track of all GraphicsLayerCARemote instances in the context, like we
+        do for PlatformCALayerRemote, so that we can update their context backpointers if needed.
+
+        Also make it possible to move all outstanding layers to a new context.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        When doing a DrawingArea swap, transition all layers from the old context
+        to the new one. In order to do this, we temporarily keep both DrawingAreas
+        alive, but make use of the new mechanism to remove the old one's MessageReceiver
+        before installing the new one, so that destroying the old one later doesn't
+        remove it (avoiding re-introducing bug 189481).
+
 2019-02-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed API test fix after r241855.

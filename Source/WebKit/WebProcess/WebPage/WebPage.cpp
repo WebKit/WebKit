@@ -695,9 +695,8 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setSize(parameters.viewSize);
 
     if (m_shouldResetDrawingAreaAfterSuspend) {
-        // Make sure we destroy the previous drawing area before constructing the new one as DrawingArea registers / unregisters
-        // itself as an IPC::MesssageReceiver in its constructor / destructor.
-        m_drawingArea = nullptr;
+        auto oldDrawingArea = std::exchange(m_drawingArea, nullptr);
+        oldDrawingArea->removeMessageReceiverIfNeeded();
         m_shouldResetDrawingAreaAfterSuspend = false;
 
         m_drawingArea = DrawingArea::create(*this, parameters);
@@ -705,6 +704,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
         m_drawingArea->setPaintingEnabled(true);
+
+        m_drawingArea->adoptLayersFromDrawingArea(*oldDrawingArea);
+
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
 

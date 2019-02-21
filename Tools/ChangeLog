@@ -1,3 +1,14 @@
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Crash under RemoteLayerTreePropertyApplier::applyProperties when reattaching to old process
+        https://bugs.webkit.org/show_bug.cgi?id=194845
+        <rdar://problem/47944579>
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Add support for placing formatting roots in-between floats.

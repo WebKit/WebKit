@@ -92,6 +92,7 @@
 		2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */; };
 		2D1C04A71D76298B000A6816 /* TestNavigationDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */; };
 		2D21FE591F04642900B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */; };
+		2D3CA3A8221DF4B40088E803 /* PageOverlayPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */; };
 		2D4CF8BD1D8360CC0001CE8D /* WKThumbnailView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */; };
 		2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */; };
 		2D70059621EDA0C6003463CB /* TabOutOfWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D70059521EDA0C6003463CB /* TabOutOfWebView.mm */; };
@@ -1427,6 +1428,7 @@
 		2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestNavigationDelegate.mm; path = cocoa/TestNavigationDelegate.mm; sourceTree = "<group>"; };
 		2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FixedLayoutSize.mm; sourceTree = "<group>"; };
 		2D21FE581F04642800B58E7D /* WKPDFViewStablePresentationUpdateCallback.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFViewStablePresentationUpdateCallback.mm; sourceTree = "<group>"; };
+		2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageOverlayPlugin.mm; sourceTree = "<group>"; };
 		2D4CF8BC1D8360CC0001CE8D /* WKThumbnailView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKThumbnailView.mm; path = WebKit/WKThumbnailView.mm; sourceTree = "<group>"; };
 		2D51A0C51C8BF00400765C45 /* DOMHTMLVideoElementWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTMLVideoElementWrapper.mm; sourceTree = "<group>"; };
 		2D61EC3021B0B75C00A7D1CB /* PencilKitTestSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PencilKitTestSPI.h; sourceTree = "<group>"; };
@@ -2558,6 +2560,7 @@
 				37A22AA51DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
+				2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */,
 				F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */,
 				F44C79FD20F9E8710014478C /* ParserYieldTokenTests.h */,
 				F44C79FE20F9E8710014478C /* ParserYieldTokenTests.mm */,
@@ -4421,6 +4424,7 @@
 				5CB5B3C21FFC55CF00C27BB0 /* FrameHandleSerialization.mm in Sources */,
 				0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */,
 				79C5D431209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm in Sources */,
+				2D3CA3A8221DF4B40088E803 /* PageOverlayPlugin.mm in Sources */,
 				F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,

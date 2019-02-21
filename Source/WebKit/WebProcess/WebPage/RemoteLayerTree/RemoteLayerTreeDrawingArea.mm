@@ -532,4 +532,13 @@ bool RemoteLayerTreeDrawingArea::dispatchDidReachLayoutMilestone(OptionSet<WebCo
     return true;
 }
 
+void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDrawingArea)
+{
+    RELEASE_ASSERT(oldDrawingArea.type() == type());
+
+    RemoteLayerTreeDrawingArea& oldRemoteDrawingArea = static_cast<RemoteLayerTreeDrawingArea&>(oldDrawingArea);
+
+    m_remoteLayerTreeContext->adoptLayersFromContext(*oldRemoteDrawingArea.m_remoteLayerTreeContext);
+}
+
 } // namespace WebKit

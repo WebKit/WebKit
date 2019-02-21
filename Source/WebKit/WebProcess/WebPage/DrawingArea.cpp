@@ -78,7 +78,7 @@ DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
 
 DrawingArea::~DrawingArea()
 {
-    WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
+    removeMessageReceiverIfNeeded();
 }
 
 void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&& function)
@@ -93,5 +93,13 @@ RefPtr<WebCore::DisplayRefreshMonitor> DrawingArea::createDisplayRefreshMonitor(
     return nullptr;
 }
 #endif
+
+void DrawingArea::removeMessageReceiverIfNeeded()
+{
+    if (m_hasRemovedMessageReceiver)
+        return;
+    m_hasRemovedMessageReceiver = true;
+    WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
+}
 
 } // namespace WebKit

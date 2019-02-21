@@ -140,7 +140,7 @@ public:
     virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) { }
 #endif
 
-    virtual void layerHostDidFlushLayers() { };
+    virtual void layerHostDidFlushLayers() { }
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
@@ -149,6 +149,10 @@ public:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
+
+    virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
+
+    void removeMessageReceiverIfNeeded();
 
 protected:
     DrawingArea(DrawingAreaType, WebPage&);
@@ -186,6 +190,8 @@ private:
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
     virtual void destroyNativeSurfaceHandleForCompositing(bool&) = 0;
 #endif
+
+    bool m_hasRemovedMessageReceiver { false };
 };
 
 } // namespace WebKit

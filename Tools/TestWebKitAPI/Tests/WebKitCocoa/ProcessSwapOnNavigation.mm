@@ -5136,4 +5136,66 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     EXPECT_FALSE(pid1 == pid2);
 }
 
+static void traverseLayerTree(CALayer *layer, void(^block)(CALayer *))
+{
+    for (CALayer *child in layer.sublayers)
+        traverseLayerTree(child, block);
+    block(layer);
+}
+
+static bool hasOverlay(CALayer *layer)
+{
+    __block bool hasViewOverlay = false;
+    traverseLayerTree(layer, ^(CALayer *layer) {
+        if ([layer.name isEqualToString:@"View overlay container"])
+            hasViewOverlay = true;
+    });
+    return hasViewOverlay;
+}
+
+TEST(ProcessSwap, PageOverlayLayerPersistence)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [processPool _setObject:@"PageOverlayPlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/page-overlay" toData:""];
+    [handler addMappingFromURLString:@"pson://www.apple.com/page-overlay" toData:""];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    auto request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/page-overlay"]]);
+    [webView loadRequest:request.get()];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(hasOverlay([webView layer]));
+
+    request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/page-overlay"]]);
+    [webView loadRequest:request.get()];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView waitForNextPresentationUpdate];
+
+    [webView goBack]; // Back to webkit.org.
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(hasOverlay([webView layer]));
+}
+
 #endif // WK_API_ENABLED

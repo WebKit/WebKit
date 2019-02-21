@@ -123,6 +123,8 @@ private:
 
     bool markLayersVolatileImmediatelyIfPossible() override;
 
+    void adoptLayersFromDrawingArea(DrawingArea&) override;
+
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
         static Ref<BackingStoreFlusher> create(IPC::Connection*, std::unique_ptr<IPC::Encoder>, Vector<RetainPtr<CGContextRef>>);
