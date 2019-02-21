@@ -125,25 +125,11 @@ webkit.org/b/121951 fast/dom/Window/window-screen-properties.html [ Failure Pass
 
 # Content extensions, the failures need up-to-date expectations.
 http/tests/contentextensions/basic-filter.html [ Failure ]
-http/tests/contentextensions/block-cookies-in-csp-report.php [ Failure ]
-http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html [ Failure Timeout ]
-http/tests/contentextensions/block-cookies-in-ping.html [ Failure ]
-http/tests/contentextensions/block-cookies-send.html [ Failure ]
-http/tests/contentextensions/block-csp-report.php [ Failure ]
-http/tests/contentextensions/block-everything-unless-domain-redirect.php [ Failure ]
-http/tests/contentextensions/block-image-load-in-onunload.html [ Failure Timeout ]
-http/tests/contentextensions/block-ping.html [ Failure ]
 http/tests/contentextensions/character-set-basic-support.html [ Failure ]
 http/tests/contentextensions/css-display-none.html [ Failure ]
 http/tests/contentextensions/domain-rules.html [ Failure ]
-http/tests/contentextensions/fetch-redirect-blocked.html [ Failure ]
 http/tests/contentextensions/filters-with-quantifiers-combined.html [ Failure ]
-http/tests/contentextensions/hide-on-csp-report.php [ Failure ]
-http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Failure ]
-http/tests/contentextensions/hide-on-ping.html [ Failure ]
 http/tests/contentextensions/injected-script-callback.html [ Failure ]
-http/tests/contentextensions/main-resource-redirect-blocked.php [ Failure ]
-http/tests/contentextensions/main-resource-redirect-error.html [ Failure ]
 http/tests/contentextensions/media-filtered.html [ Failure ]
 http/tests/contentextensions/reload-without-contentextensions.html [ Failure ]
 http/tests/contentextensions/subresource-redirect-blocked.html [ Failure ]
@@ -243,7 +229,6 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 # See also bug #175578
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Crash Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
@@ -489,13 +474,10 @@ webkit.org/b/169917 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/glsl-conformance.html [ Failure ]
-webkit.org/b/169917 fast/canvas/webgl/match-page-color-space.html [ ImageOnlyFailure ]
 webkit.org/b/169917 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/169917 fast/canvas/webgl/unprefixed-anisotropic-extension.html [ Failure Pass ]
-webkit.org/b/169917 webgl/1.0.2/conformance/canvas/buffer-offscreen-test.html [ Failure ]
-webkit.org/b/169917 webgl/1.0.2/conformance/context/context-attribute-preserve-drawing-buffer.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.2/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.2/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.2/conformance/extensions/oes-texture-float.html [ Failure ]
@@ -515,8 +497,6 @@ webkit.org/b/169917 webgl/1.0.3/conformance/renderbuffers/feedback-loop.html [ F
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
 webkit.org/b/169917 webgl/webgl-vertex-array-object-defined.html [ Failure ]
-webkit.org/b/169917 webgl/webgl-border.html [ ImageOnlyFailure ]
-webkit.org/b/169917 webgl/webgl-box-shadow.html [ ImageOnlyFailure ]
 # WebGL flaky tests
 webkit.org/b/169917 webgl/1.0.2/conformance/canvas/drawingbuffer-test.html [ Failure Pass ]
 webkit.org/b/169917 webgl/1.0.2/conformance/extensions/oes-vertex-array-object.html [ Failure Pass ]
@@ -554,7 +534,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/context/context-eviction-with-garbag
 webkit.org/b/169917 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Slow ]
 # WebGL crashes
 webkit.org/b/169917 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Crash ]
-webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure Crash ]
+webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Failure Pass ]
 
 # WebGL 2.0 still not enabled
 webkit.org/b/166536 webgl/webgl2-rendering-context-defined.html [ Skip ]
@@ -3320,8 +3300,6 @@ webkit.org/b/168552 fast/text/hyphenate-locale.html [ Failure ]
 
 webkit.org/b/168555 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
-webkit.org/b/168557 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure ]
-
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/169075 editing/deleting/skip-virama-001.html [ Failure ]
@@ -3453,8 +3431,6 @@ webkit.org/b/18328 [ Release ] imported/w3c/web-platform-tests/css/css-ui/text-o
 
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
-webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
-
 webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
@@ -3505,7 +3481,6 @@ webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure 
 webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
 webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
 
-webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/onloadend-event-after-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Failure ]
 webkit.org/b/185254 http/tests/xmlhttprequest/state-after-network-error.html [ Failure ]
@@ -3742,8 +3717,6 @@ webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 webkit.org/b/193637 inspector/canvas/recording-bitmaprenderer.html [ Failure ]
 
 webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
-
-webkit.org/b/193639 webgl/webgl-texture-image-buffer-reuse.html [ ImageOnlyFailure ]
 
 webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
 
