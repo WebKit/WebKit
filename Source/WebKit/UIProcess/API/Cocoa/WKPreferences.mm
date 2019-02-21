@@ -140,16 +140,6 @@
     _preferences->setStorageAccessPromptsEnabled(enabled);
 }
 
-- (void)setSafeBrowsingEnabled:(BOOL)enabled
-{
-    _preferences->setSafeBrowsingEnabled(enabled);
-}
-
-- (BOOL)isSafeBrowsingEnabled
-{
-    return _preferences->safeBrowsingEnabled();
-}
-
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)

@@ -1,5 +1,55 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241728. rdar://problem/48243264
+
+    Disable safe browsing in WKWebView and remove its WKPreferences API
+    https://bugs.webkit.org/show_bug.cgi?id=194723
+    <rdar://problem/48122993>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    * Shared/WebPreferences.yaml:
+    * UIProcess/API/Cocoa/WKPreferences.h:
+    * UIProcess/API/Cocoa/WKPreferences.mm:
+    (-[WKPreferences setSafeBrowsingEnabled:]): Deleted.
+    (-[WKPreferences isSafeBrowsingEnabled]): Deleted.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+    (TEST):
+    (safeBrowsingView):
+    Make tests use SPI instead of API.
+    
+    LayoutTests:
+    
+    * platform/mac-wk2/http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt:
+    This test has results that depend on timing, and I need to update its results when I disable safe browsing.
+    I've done this several times before.  See r237876 for an example.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241728 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+            Disable safe browsing in WKWebView and remove its WKPreferences API
+            https://bugs.webkit.org/show_bug.cgi?id=194723
+            <rdar://problem/48122993>
+
+            Reviewed by Geoffrey Garen.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+            * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+            (TEST):
+            (safeBrowsingView):
+            Make tests use SPI instead of API.
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241845. rdar://problem/48267029
 
     Regression(PSON) "Reload without content extensions" does not work when the main resource is blocked
