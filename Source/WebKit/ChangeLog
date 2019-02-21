@@ -1,3 +1,12 @@
+2019-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Fix API test crashes after r241855.
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+
 2019-02-21  Alex Christensen  <achristensen@webkit.org>
 
         API::HTTPCookieStore should expose setCookies()

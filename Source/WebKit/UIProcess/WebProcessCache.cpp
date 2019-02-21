@@ -66,14 +66,14 @@ bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Checking if process %i is responsive before caching it...", this, process->processIdentifier());
     process->setIsInProcessCache(true);
-    process->isResponsive([process = process.copyRef(), registrableDomain](bool isResponsive) {
+    process->isResponsive([process = process.copyRef(), processPool = makeRef(process->processPool()), registrableDomain](bool isResponsive) {
         process->setIsInProcessCache(false);
         if (!isResponsive) {
             RELEASE_LOG_ERROR(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because it is not responsive", &process->processPool().webProcessCache(), process->processIdentifier());
             process->shutDown();
             return;
         }
-        if (!process->processPool().webProcessCache().addProcess(registrableDomain, process.copyRef()))
+        if (!processPool->webProcessCache().addProcess(registrableDomain, process.copyRef()))
             process->shutDown();
     });
     return true;
