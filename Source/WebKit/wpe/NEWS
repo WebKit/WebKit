@@ -1,4 +1,28 @@
 ==================
+WPE WebKit 2.23.90
+==================
+
+What's new in WPE WebKit 2.23.90?
+
+  - Add a new setting to disable JavaScript elments from documents during parsing.
+  - Add initial support for subprocess sandboxing in Linux.
+  - Add initial support for variation fonts.
+  - Add new API to convert a URI to a format for display.
+  - Add new API to expose JavaScriptCore options.
+  - Add new API to handle user content filters.
+  - Add new permission request type for media device information.
+  - Add support for JPEG2000 images.
+  - Fix a UI process crash while filling selection data during drag and drop.
+  - Fix a web process deadlock when starting the remote inspector.
+  - Fix crashes when closing the WebDriver session.
+  - Fix deadlock on Linux/x64 between SamplingProfiler and VMTraps.
+  - Fix rendering artifacts in some websites with accelerated compositing enabled.
+  - Fix the build with OpenGL disabled.
+  - Remove experimental sandboxing support, it's not yet ready for stable release.
+  - Sleep disabler now inhibits idle when a "System" sleep disabler is requested.
+  - Fix several crashes and rendering issues.
+
+==================
 WPE WebKit 2.21.91
 ==================
 
