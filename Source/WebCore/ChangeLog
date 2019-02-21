@@ -1,5 +1,35 @@
 2019-02-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241738. rdar://problem/48243338
+
+    Uncaught Exception crash in MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus()
+    https://bugs.webkit.org/show_bug.cgi?id=194786
+    
+    Reviewed by Eric Carlson.
+    
+    Convert a runtime crash to a debug assert by wrapping the call to -[AVPlayer removeObserver:forKeyPath:]
+    in an exception handler.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241738 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-18  Jer Noble  <jer.noble@apple.com>
+
+            Uncaught Exception crash in MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus()
+            https://bugs.webkit.org/show_bug.cgi?id=194786
+
+            Reviewed by Eric Carlson.
+
+            Convert a runtime crash to a debug assert by wrapping the call to -[AVPlayer removeObserver:forKeyPath:]
+            in an exception handler.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldObserveTimeControlStatus):
+
+2019-02-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241721. rdar://problem/48243376
 
     AX: PSON: Going back from apple.com to search results, cannot interact with HTML content. Disabling Swap Processes on Cross-Site Navigation resolves the issue.
