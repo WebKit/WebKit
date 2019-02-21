@@ -206,7 +206,7 @@ public:
 
     ProcessThrottler& throttler() { return m_throttler; }
 
-    void isResponsive(WTF::Function<void(bool isWebProcessResponsive)>&&);
+    void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
     void didReceiveMainThreadPing();
     void didReceiveBackgroundResponsivenessPing();
@@ -409,7 +409,7 @@ private:
     bool m_isInProcessCache { false };
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
-    Vector<WTF::Function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
+    Vector<CompletionHandler<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
     VisibleWebPageCounter m_visiblePageCounter;
 

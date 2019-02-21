@@ -44,9 +44,43 @@ WebProcessCache::WebProcessCache(WebProcessPool& processPool)
     platformInitialize();
 }
 
-bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcessProxy>&& process)
+bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&& process)
 {
     ASSERT(!registrableDomain.isEmpty());
+    ASSERT(!process->pageCount());
+    ASSERT(!process->provisionalPageCount());
+    ASSERT(!process->processPool().hasSuspendedPageFor(process));
+
+    if (!capacity())
+        return false;
+
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we are under memory pressure", this, process->processIdentifier());
+        return false;
+    }
+
+    if (m_processesPerRegistrableDomain.contains(registrableDomain)) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
+        return false;
+    }
+
+    RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Checking if process %i is responsive before caching it...", this, process->processIdentifier());
+    process->setIsInProcessCache(true);
+    process->isResponsive([process = process.copyRef(), registrableDomain](bool isResponsive) {
+        process->setIsInProcessCache(false);
+        if (!isResponsive) {
+            RELEASE_LOG_ERROR(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because it is not responsive", &process->processPool().webProcessCache(), process->processIdentifier());
+            process->shutDown();
+            return;
+        }
+        if (!process->processPool().webProcessCache().addProcess(registrableDomain, process.copyRef()))
+            process->shutDown();
+    });
+    return true;
+}
+
+bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcessProxy>&& process)
+{
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->processPool().hasSuspendedPageFor(process));
@@ -68,8 +102,10 @@ bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcess
     auto addResult = m_processesPerRegistrableDomain.ensure(registrableDomain, [process = process.copyRef()]() mutable {
         return std::make_unique<CachedProcess>(WTFMove(process));
     });
-    if (!addResult.isNewEntry)
+    if (!addResult.isNewEntry) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
         return false;
+    }
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess: Adding process %i to WebProcess cache, cache size: [%u / %u]", this, process->processIdentifier(), size(), capacity());
     return true;

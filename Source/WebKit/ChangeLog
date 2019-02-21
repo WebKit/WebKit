@@ -1,5 +1,39 @@
 2019-02-20  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] Make sure hung processes are not kept alive by suspended pages or process caching
+        https://bugs.webkit.org/show_bug.cgi?id=194881
+        <rdar://problem/48249014>
+
+        Reviewed by Geoffrey Garen.
+
+        After we construct a SuspendedPageProxy and before we send the IPC to the WebProcess to
+        ask it to suspend, start a 10 seconds timer. If the process does not answer the request
+        to suspend before the timer fires, we destroy the SuspendedPageProxy so that we do not
+        keep a hung process around.
+
+        For the WebProcessCache, we now call WebProcessProxy::isResponsive() on the process
+        before adding it to the cache. Internally, this relies on an IPC handshake with the
+        WebProcess. If the process is not responsive, we do not add it to the cache and we
+        shut it down. If it is responsive then we proceed normally with adding it to the
+        cache.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::didProcessRequestToSuspend):
+        (WebKit::SuspendedPageProxy::suspensionTimedOut):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::addProcess):
+        * UIProcess/WebProcessCache.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::maybeShutDown):
+        (WebKit::WebProcessProxy::isResponsive):
+        * UIProcess/WebProcessProxy.h:
+
+2019-02-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r241823.
 
         * UIProcess/SuspendedPageProxy.h:
