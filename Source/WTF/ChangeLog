@@ -1,3 +1,13 @@
+2019-02-20  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Platform.h: Add HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED).
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects

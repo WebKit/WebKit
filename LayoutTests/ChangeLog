@@ -1,3 +1,33 @@
+2019-02-20  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Reviewed by Simon Fraser.
+
+        Update an old pixel test to be a new ref test, and remove all the old platform-specific
+        -expected versions.
+
+        * animations/additive-transform-animations-expected.png: Removed.
+        * animations/additive-transform-animations.html:
+        * legacy-animation-engine/animations/additive-transform-animations-expected.png: Removed.
+        * legacy-animation-engine/animations/additive-transform-animations.html:
+        * platform/gtk/animations/additive-transform-animations-expected.png: Removed.
+        * platform/gtk/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/gtk/legacy-animation-engine/animations/additive-transform-animations-expected.png: Removed.
+        * platform/gtk/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/ios/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/ios/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/mac/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/mac/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/win/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/win/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/wincairo/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/wincairo/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/wpe/animations/additive-transform-animations-expected.txt: Removed.
+        * platform/wpe/legacy-animation-engine/animations/additive-transform-animations-expected.txt: Removed.
+
 2019-02-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         drawImage() clears the canvas if it's the source of the image and globalCompositeOperation is "copy"

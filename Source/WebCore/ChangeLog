@@ -1,3 +1,25 @@
+2019-02-20  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Reviewed by Simon Fraser.
+
+        Some versions of CoreAnimation apply additive animations in reverse
+        order. Detect this and reverse the list of animations we provide.
+
+        Update the existing animations/additive-transform-animations.html test to
+        be a ref-test that would identify this failure. Previously it relied on
+        a pixel test.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Use 
+            HAVE_CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED to decide whether or
+            not to flip the list of animations (and mark the correct ones as
+            additive).
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+
 2019-02-20  Don Olmstead  <don.olmstead@sony.com>
 
         [Win] Guard CF usage in RenderThemeWin
