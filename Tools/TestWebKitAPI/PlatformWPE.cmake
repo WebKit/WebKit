@@ -93,10 +93,7 @@ set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
 set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
 
 # TestWebKitAPIBase
-list(APPEND TestWebKitAPIBase_LIBRARIES
-    WPEBackend-fdo-0.1
-)
-find_package(WPEBackend-fdo REQUIRED)
+list(APPEND TestWebKitAPIBase_LIBRARIES ${WPEBACKEND_FDO_LIBRARIES})
 list(APPEND TestWebKitAPI_LIBRARIES ${WPEBACKEND_FDO_LIBRARIES})
 list(APPEND TestWebKitAPIBase_SOURCES
     ${TOOLS_DIR}/wpe/backends/ViewBackend.cpp

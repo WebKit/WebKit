@@ -1,3 +1,14 @@
+2019-02-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Do not hardcode WPEBackend-fdo library name for linking tests
+        https://bugs.webkit.org/show_bug.cgi?id=194901
+
+        Unreviewed build fix.
+
+        * TestWebKitAPI/PlatformWPE.cmake: Set TestWebKitAPIBase to be linked
+        against the detected ${WPEBACKEND_FDO_LIBRARIES} instead of hardcoding
+        WPEBackend-fdo-0.1 as library name.
+
 2019-02-21  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser
