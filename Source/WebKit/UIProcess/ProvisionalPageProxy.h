@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "WebPageProxyMessages.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
