@@ -2023,6 +2023,81 @@ TEST(ProcessSwap, NavigationWithLockedHistoryWithPSON)
     runNavigationWithLockedHistoryTest(ShouldEnablePSON::Yes);
 }
 
+static void runQuickBackForwardNavigationTest(ShouldEnablePSON shouldEnablePSON)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().processSwapsOnNavigation = shouldEnablePSON == ShouldEnablePSON::Yes ? YES : NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView configuration].preferences.safeBrowsingEnabled = NO;
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+    if (shouldEnablePSON == ShouldEnablePSON::Yes)
+        EXPECT_NE(webkitPID, applePID);
+    else
+        EXPECT_EQ(webkitPID, applePID);
+
+    for (unsigned i = 0; i < 10; ++i) {
+        [webView goBack];
+        TestWebKitAPI::Util::sleep(0.1);
+        [webView goForward];
+        TestWebKitAPI::Util::spinRunLoop(0.1);
+    }
+
+    Vector<String> backForwardListURLs;
+    auto* backForwardList = [webView backForwardList];
+    for (unsigned i = 0; i < backForwardList.backList.count; ++i)
+        backForwardListURLs.append([backForwardList.backList[i].URL absoluteString]);
+    backForwardListURLs.append([backForwardList.currentItem.URL absoluteString]);
+    for (unsigned i = 0; i < backForwardList.forwardList.count; ++i)
+        backForwardListURLs.append([backForwardList.forwardList[i].URL absoluteString]);
+    EXPECT_EQ(3u, backForwardListURLs.size());
+    EXPECT_WK_STREQ("pson://www.webkit.org/main1.html", backForwardListURLs[0]);
+    EXPECT_WK_STREQ("pson://www.webkit.org/main2.html", backForwardListURLs[1]);
+    EXPECT_WK_STREQ("pson://www.apple.com/main.html", backForwardListURLs[2]);
+}
+
+TEST(ProcessSwap, QuickBackForwardNavigationWithoutPSON)
+{
+    runQuickBackForwardNavigationTest(ShouldEnablePSON::No);
+}
+
+TEST(ProcessSwap, QuickBackForwardNavigationWithPSON)
+{
+    runQuickBackForwardNavigationTest(ShouldEnablePSON::Yes);
+}
+
 TEST(ProcessSwap, NavigationWithLockedHistoryWithoutPSON)
 {
     runNavigationWithLockedHistoryTest(ShouldEnablePSON::No);
