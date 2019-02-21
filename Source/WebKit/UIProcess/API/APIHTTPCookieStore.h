@@ -74,9 +74,6 @@ public:
     void cookiesDidChange();
     void cookieManagerDestroyed();
 
-    void ref() const;
-    void deref() const;
-    
 private:
     HTTPCookieStore(WebKit::WebsiteDataStore&);
 
@@ -90,7 +87,8 @@ private:
     void startObservingChangesToDefaultUIProcessCookieStore(Function<void()>&&);
     void stopObservingChangesToDefaultUIProcessCookieStore();
     
-    WebKit::WebsiteDataStore& m_owningDataStore;
+    // FIXME: This is a reference cycle.
+    Ref<WebKit::WebsiteDataStore> m_owningDataStore;
     HashSet<Observer*> m_observers;
 
     WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };

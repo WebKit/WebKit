@@ -1,3 +1,15 @@
+2019-02-20  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r241838.
+
+        Broke API tests
+
+        Reverted changeset:
+
+        "Resolve WebsiteDataStore/HTTPCookieStore ref cycle"
+        https://bugs.webkit.org/show_bug.cgi?id=194868
+        https://trac.webkit.org/changeset/241838
+
 2019-02-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: [ iOS ] Layout Test editing/input/ios/rtl-keyboard-input-on-focus.html is a Timeout
