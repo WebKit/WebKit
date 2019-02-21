@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+if (location.search == '?third') {
+    alert('PASS');
+    if (window.testRunner)
+        testRunner.notifyDone();
+} else if (self == top) {
+    document.write(`<p>This tests navigating via an anchor element with a non-existent target name, which should create a new window.<br>
+WebKit should not hit any assertions and alert "PASS".</p>`);
+    const frame = document.createElement('iframe');
+    frame.src = '?first';
+    let step = 0;
+    frame.onload = () => {
+        switch (step++) {
+        case 0:
+            setTimeout(() => frame.src = '?second', 0);
+            break;
+        case 1:
+            setTimeout(() => history.back(), 0);
+            break;
+        }
+    }
+    document.body.appendChild(frame);
+} else {
+    if (location.search == '?first') {
+        if (localStorage.getItem('loaded')) {
+            localStorage.removeItem('loaded');
+            window.onload = () => {
+                setTimeout(() => document.querySelector('form').submit(), 0);
+            }
+        } else
+            localStorage.setItem('loaded', 'true');
+    }
+    document.write(location.search);
+    document.write(` <form action="?third" method="post" target="unknownTarget"><input type="text" name="query"><input type="submit"></a>`);
+}
+
+</script>
+</body>
+</html>

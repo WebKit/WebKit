@@ -80,9 +80,9 @@ PolicyCheckIdentifier PolicyCheckIdentifier::create()
 
 bool PolicyCheckIdentifier::isValidFor(PolicyCheckIdentifier expectedIdentifier)
 {
-    RELEASE_ASSERT_WITH_MESSAGE(m_policyCheck, "Received 0 as the policy check identifier");
-    RELEASE_ASSERT_WITH_MESSAGE(m_process == expectedIdentifier.m_process, "Received a policy check response for a wrong process");
-    RELEASE_ASSERT_WITH_MESSAGE(m_policyCheck <= expectedIdentifier.m_policyCheck, "Received a policy check response from the future");
+    ASSERT_WITH_MESSAGE(m_policyCheck, "Received 0 as the policy check identifier");
+    ASSERT_WITH_MESSAGE(m_process == expectedIdentifier.m_process, "Received a policy check response for a wrong process");
+    ASSERT_WITH_MESSAGE(m_policyCheck <= expectedIdentifier.m_policyCheck, "Received a policy check response from the future");
     return m_policyCheck == expectedIdentifier.m_policyCheck;
 }
 

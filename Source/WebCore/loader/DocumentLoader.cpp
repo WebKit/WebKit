@@ -664,7 +664,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     // FIXME: Add a load type check.
     auto& policyChecker = frameLoader()->policyChecker();
-    RELEASE_ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || frameLoader()->history().provisionalItem());
+    ASSERT(!isBackForwardLoadType(policyChecker.loadType()) || frameLoader()->history().provisionalItem());
     policyChecker.checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
 }
 
@@ -845,7 +845,11 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     auto requestIdentifier = PolicyCheckIdentifier::create();
     frameLoader()->checkContentPolicy(m_response, requestIdentifier, [this, protectedThis = makeRef(*this), mainResourceLoader = WTFMove(mainResourceLoader),
         completionHandler = completionHandlerCaller.release(), requestIdentifier] (PolicyAction policy, PolicyCheckIdentifier responseIdentifeir) mutable {
-        RELEASE_ASSERT(responseIdentifeir.isValidFor(requestIdentifier));
+#if ASSERT_DISABLED
+        UNUSED_PARAM(requestIdentifier);
+        UNUSED_PARAM(responseIdentifeir);
+#endif
+        ASSERT(responseIdentifeir.isValidFor(requestIdentifier));
         continueAfterContentPolicy(policy);
         if (mainResourceLoader)
             mainResourceLoader->didReceiveResponsePolicy();
