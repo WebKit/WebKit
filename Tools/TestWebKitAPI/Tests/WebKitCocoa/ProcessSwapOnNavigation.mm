@@ -5183,7 +5183,7 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 
     // We can only look for the overlay layer in the UI-side layer tree on platforms
     // that use UI-side compositing.
-#if PLATFORM(MAC)
+#if !PLATFORM(MAC)
     EXPECT_TRUE(hasOverlay([webView layer]));
 #endif
 
@@ -5199,7 +5199,7 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 
     [webView waitForNextPresentationUpdate];
 
-#if PLATFORM(MAC)
+#if !PLATFORM(MAC)
     EXPECT_TRUE(hasOverlay([webView layer]));
 #endif
 }

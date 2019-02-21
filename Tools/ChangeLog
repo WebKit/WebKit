@@ -3,6 +3,13 @@
         Fix ProcessSwap.PageOverlayLayerPersistence on macOS
 
         * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        I am a backwards.
+
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Fix ProcessSwap.PageOverlayLayerPersistence on macOS
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
         We can't find the UI-side layer on macOS because we don't use UI-side compositing.
         We could force on UI-side compositing, but I feel like the test might be more
         valuable exercising the normal path on each platform (though the original
