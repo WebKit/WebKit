@@ -1,3 +1,49 @@
+2019-02-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r241547. rdar://problem/48220627
+
+    Web Inspector: don't include accessibility role in DOM.Node object payloads
+    https://bugs.webkit.org/show_bug.cgi?id=194623
+    <rdar://problem/36384037>
+    
+    Reviewed by Devin Rousso.
+    
+    Source/JavaScriptCore:
+    
+    Remove property of DOM.Node that is no longer being sent.
+    
+    * inspector/protocol/DOM.json:
+    
+    Source/WebCore:
+    
+    Accessibility properties are complicated to fetch at all the points where we want to build and push nodes immediately.
+    Turning on AX often indirectly causes style recalc and layout. This is bad because we are often building nodes in the
+    first place due to a DOM node tree update (i.e., NodeInserted).
+    
+    It turns out that DOM.getAccessibilityPropertiesForNode is called every time we display
+    the computed role in the Elements Tab > Nodes Sidebar > Accessibility Section. So it is not
+    necessary to collect this information in a problematic way when initially pushing the node, as
+    it will be updated anyway.
+    
+    No new tests, no change in behavior.
+    
+    * inspector/agents/InspectorDOMAgent.cpp:
+    (WebCore::InspectorDOMAgent::buildObjectForNode):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241547 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-13  Brian Burg  <bburg@apple.com>
+
+            Web Inspector: don't include accessibility role in DOM.Node object payloads
+            https://bugs.webkit.org/show_bug.cgi?id=194623
+            <rdar://problem/36384037>
+
+            Reviewed by Devin Rousso.
+
+            Remove property of DOM.Node that is no longer being sent.
+
+            * inspector/protocol/DOM.json:
+
 2019-02-13  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241267. rdar://problem/47971556
