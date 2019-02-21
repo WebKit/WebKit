@@ -1,3 +1,21 @@
+2019-02-20  Antti Koivisto  <antti@apple.com>
+
+        Make programmatic frame scrolling work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194886
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
+        Don't move based on the layout scroll position. This just overrides the user scroll position.
+        Remove ScrolledContentsLayer checks, we only need to deal with the ScrollContainerLayer here.
+
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::setScrollLayerPosition):
+
+        Scroll the UIScrollView correctly. This is called as a result of setting the RequestedScrollPosition property.
+        Remove scroll origin code, it doesn't look correct (and is untested).
+
 2019-02-20  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Make sure hung processes are not kept alive by suspended pages or process caching

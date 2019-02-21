@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Programmatic scrolling of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        if (window.internals)
+            internals.settings.setAsyncFrameScrollingEnabled(true);
+
+        function runTest() {
+            // This checks scrolling to the location of the green square.
+            document.getElementById("doNotScroll").contentWindow.window.scrollTo(0, 0);
+            document.getElementById("maxScrollX").contentWindow.window.scrollTo(100, 0);
+            document.getElementById("maxScrollY").contentWindow.window.scrollTo(0, 100);
+            document.getElementById("maxScrollXY").contentWindow.window.scrollTo(100, 100);
+            document.getElementById("scrollMiddle").contentWindow.window.scrollTo(50, 50);
+
+            // This checks scrolling outside the limit of the frame.
+            document.getElementById("scrollBelowXLimit").contentWindow.window.scrollBy(-100, 0);
+            document.getElementById("scrollAboveXLimit").contentWindow.window.scrollBy(200, 0);
+            document.getElementById("scrollBelowYLimit").contentWindow.window.scrollBy(0, -100);
+            document.getElementById("scrollAboveYLimit").contentWindow.window.scrollBy(0, 200);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        var frameToLoadCount = 9;
+        function newFrameLoaded() {
+            frameToLoadCount--;
+            if (frameToLoadCount == 0)
+                runTest();
+        }
+     </script>
+    <style>
+        iframe {
+            float: left;
+            background: linear-gradient(135deg, red, orange);
+            border: 0;
+            height: 100px;
+            width: 100px;
+            overflow: none;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green rectangle.</p>
+    <div style="position: absolute; top: 3em; width: 300px; height: 400px; background: green;">
+        <iframe id="doNotScroll" style="left: 0px; top: 0px;" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="maxScrollX" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='left: 100px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="maxScrollY" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='top: 100px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="maxScrollXY" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='left: 100px; top: 100px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="scrollMiddle" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='left: 50px; top: 50px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="scrollBelowXLimit" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 200px; height: 200px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="scrollAboveXLimit" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 200px; height: 200px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="scrollBelowYLimit" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 200px; height: 200px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+        <iframe id="scrollAboveYLimit" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='position: absolute; width: 200px; height: 200px; background: green;'></div>
+            </body>" onload="newFrameLoaded()">
+        </iframe>
+    </div>
+  </body>
+</html>

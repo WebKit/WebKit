@@ -1,3 +1,15 @@
+2019-02-20  Antti Koivisto  <antti@apple.com>
+
+        Make programmatic frame scrolling work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194886
+
+        Reviewed by Simon Fraser.
+
+        Test by Frederic Wang.
+
+        * fast/scrolling/ios/programmatic-scroll-iframe-expected.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe.html: Added.
+
 2019-02-20  Dean Jackson  <dino@apple.com>
 
         Rotation animations sometimes use the wrong origin (affects apple.com)

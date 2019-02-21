@@ -223,7 +223,6 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 {
     SetForScope<bool> updatingChange(m_updatingFromStateNode, true);
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)
-        || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize)
         || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)
@@ -232,8 +231,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
         ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
 
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)
-            || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollContainerLayer)) {
             if (!m_scrollViewDelegate)
                 m_scrollViewDelegate = adoptNS([[WKScrollingNodeScrollViewDelegate alloc] initWithScrollingTreeNodeDelegate:this]);
 
@@ -247,12 +245,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
             recomputeInsets = true;
         }
 
-        if ((scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition)
-            || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
-            && ![m_scrollViewDelegate _isInUserInteraction]) {
-            scrollView.contentOffset = scrollingStateNode.scrollPosition() + scrollOrigin();
+        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
             recomputeInsets = true;
-        }
 
         if (recomputeInsets) {
             UIEdgeInsets insets = UIEdgeInsetsMake(0, 0, 0, 0);
@@ -297,7 +291,12 @@ FloatPoint ScrollingTreeScrollingNodeDelegateIOS::scrollPosition() const
 
 void ScrollingTreeScrollingNodeDelegateIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
 {
-    [m_scrollLayer setPosition:CGPointMake(scrollPosition.x() + scrollOrigin().x(), scrollPosition.y() + scrollOrigin().y())];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+    ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+    [scrollView setContentOffset:scrollPosition];
+    END_BLOCK_OBJC_EXCEPTIONS
+
     updateChildNodesAfterScroll(scrollPosition);
 }
 
