@@ -28,6 +28,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
 #if PLATFORM(COCOA)
@@ -69,7 +70,7 @@ enum ReasonForCallingCanExecuteScripts {
     NotAboutToExecuteScript
 };
 
-class ScriptController {
+class ScriptController : public CanMakeWeakPtr<ScriptController> {
     WTF_MAKE_FAST_ALLOCATED;
 
     using RootObjectMap = HashMap<void*, Ref<JSC::Bindings::RootObject>>;
