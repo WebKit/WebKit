@@ -1,3 +1,12 @@
+2019-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/text/international/khmer-selection.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=191368
+
+        Reviewed by Brent Fulgham.
+
+        * platform/win/TestExpectations:
+
 2019-02-21  Dean Jackson  <dino@apple.com>
 
         Rotation animations sometimes use the wrong origin (affects apple.com)

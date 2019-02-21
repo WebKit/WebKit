@@ -1,3 +1,30 @@
+2019-02-21  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/text/international/khmer-selection.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=191368
+
+        Reviewed by Brent Fulgham.
+
+        GlyphBuffer's offset array wasn't getting filled by UniscribeController.
+        Our underlining code requires this array.
+
+        Uniscribe gives us a character -> glyph mapping, so we just have to compute
+        the inverse and give it to the GlyphBuffer.
+
+        This patch is written by Myles C. Maxfield.
+
+        Test: fast/text/international/khmer-selection.html.
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::generateGlyphBuffer const):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+        (WebCore::UniscribeController::itemizeShapeAndPlace):
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+        * platform/graphics/win/UniscribeController.h:
+
 2019-02-21  Andy Estes  <aestes@apple.com>
 
         contentfiltering tests leak documents

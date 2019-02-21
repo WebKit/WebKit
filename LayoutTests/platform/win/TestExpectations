@@ -2505,7 +2505,7 @@ fast/frames/frame-navigation.html [ Skip ]
 
 fast/text/atsui-pointtooffset-calls-cg.html [ Pass Failure ]
 fast/text/international/hindi-whitespace.html [ Failure ]
-fast/text/international/khmer-selection.html [ Failure Crash ]
+fast/text/international/khmer-selection.html [ Failure ]
 webkit.org/b/140231 fast/text/international/plane2.html [ Failure ]
 webkit.org/b/35973 fast/multicol/hit-test-above-or-below.html [ Failure ]
 webkit.org/b/49769 fast/dom/HTMLProgressElement/progress-element-with-child-crash.html [ Failure ]
@@ -4220,10 +4220,6 @@ webkit.org/b/191194 fast/inline/simple-shrink-to-fit-inline-block.html [ Failure
 webkit.org/b/191366 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
 webkit.org/b/191366 fast/block/basic/height-percentage-simple.html [ Failure ]
 webkit.org/b/191366 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
-
-webkit.org/b/191368 fast/text/stroking-decorations.html [ Crash ]
-webkit.org/b/191368 imported/blink/fast/text/international/complex-text-trailing-space.html [ Crash ]
-webkit.org/b/191368 imported/blink/fast/text/sub-pixel/complex-text-preferred-width.html [ Crash ]
 
 webkit.org/b/191584 animations/animation-direction-normal.html [ Failure ]
 webkit.org/b/191584 animations/animation-direction-reverse.html [ Failure ]

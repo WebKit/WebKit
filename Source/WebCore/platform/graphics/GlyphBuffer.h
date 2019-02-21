@@ -117,7 +117,7 @@ public:
         add(glyph, font, advance, offsetInString);
     }
 
-    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, unsigned offsetInString = noOffset)
+    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, unsigned offsetInString)
     {
         m_font.append(font);
         m_glyphs.append(glyph);
