@@ -1,3 +1,14 @@
+2019-02-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Do not hardcode WPEBackend-fdo library name for linking tests
+        https://bugs.webkit.org/show_bug.cgi?id=194901
+
+        Unreviewed build fix.
+
+        * Source/cmake/FindWPEBackend-fdo.cmake: Use WPEBACKEND_FDO as prefix
+        for the output variables instead of WPEBackend-fdo, for consistency
+        with other usages of of find_package_handle_standard_args().
+
 2019-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.91 release
