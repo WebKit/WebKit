@@ -1,3 +1,9 @@
+2019-02-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r241823.
+
+        * UIProcess/SuspendedPageProxy.h:
+
 2019-02-20  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r241838.
