@@ -1,3 +1,10 @@
+2019-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed API test fix after r241855.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+
 2019-02-21  Antoine Quint  <graouts@apple.com>
 
         Move UIWebTouchEventsGestureRecognizer.activeTouchesByIdentifier to SPI

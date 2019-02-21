@@ -168,6 +168,10 @@ WebProcessProxy::~WebProcessProxy()
         processPool().stopDisplayLinks(*connection());
 #endif
 
+    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
+    for (auto& callback : isResponsiveCallbacks)
+        callback(false);
+
     if (m_webConnection)
         m_webConnection->invalidate();
 
