@@ -1,3 +1,16 @@
+2019-02-21  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Darin Adler.
+
+        Add tests involving leading and trailing whitespace, non-token
+        characters and quoted strings.
+
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-02-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Only build DumpRenderTree when WebKit Legacy is enabled

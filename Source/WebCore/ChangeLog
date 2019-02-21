@@ -1,3 +1,44 @@
+2019-02-21  Rob Buis  <rbuis@igalia.com>
+
+        Update MIME type parser
+        https://bugs.webkit.org/show_bug.cgi?id=180526
+
+        Reviewed by Darin Adler.
+
+        Further testing showed the MIME parser needs these fixes:
+        - stripWhitespace is wrong for removing HTTP whitespace, use
+          stripLeadingAndTrailingHTTPSpaces instead.
+        - HTTP Token code points checking for Rfc2045 and Mimesniff were
+          mixed up, use the dedicated isValidHTTPToken for Mimesniff mode.
+        - Quoted Strings were not unescaped/escaped, this seems ok for
+          serializing but is wrong when gettings individual parameter values.
+          Implement [1] and [2] Step 2.4 to properly unescape and escape.
+
+        This change also tries to avoid hard to read uses of find.
+
+        Test: ParsedContentType.Serialize
+
+        [1] https://fetch.spec.whatwg.org/#collect-an-http-quoted-string
+        [2] https://mimesniff.spec.whatwg.org/#serializing-a-mime-type
+
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::skipSpaces):
+        (WebCore::parseToken):
+        (WebCore::isNotQuoteOrBackslash):
+        (WebCore::collectHTTPQuotedString):
+        (WebCore::containsNonTokenCharacters):
+        (WebCore::parseQuotedString):
+        (WebCore::ParsedContentType::parseContentType):
+        (WebCore::ParsedContentType::create):
+        (WebCore::ParsedContentType::setContentType):
+        (WebCore::containsNonQuoteStringTokenCharacters):
+        (WebCore::ParsedContentType::setContentTypeParameter):
+        (WebCore::ParsedContentType::serialize const):
+        (WebCore::substringForRange): Deleted.
+        (WebCore::isNonTokenCharacter): Deleted.
+        (WebCore::isNonQuotedStringTokenCharacter): Deleted.
+        * platform/network/ParsedContentType.h:
+
 2019-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (240698): Fixed position banners flicker and move when scrolling on iOS

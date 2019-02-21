@@ -57,6 +57,6 @@ PASS 52) MIME types need to be parsed and serialized: </>
 PASS 53) MIME types need to be parsed and serialized: (/) 
 PASS 54) MIME types need to be parsed and serialized: ÿ/ÿ 
 PASS 55) MIME types need to be parsed and serialized: text/html(;doesnot=matter 
-FAIL 56) MIME types need to be parsed and serialized: {/} assert_equals: expected "application/octet-stream" but got "{/}"
+PASS 56) MIME types need to be parsed and serialized: {/} 
 PASS 57) MIME types need to be parsed and serialized: Ā/Ā 
 
