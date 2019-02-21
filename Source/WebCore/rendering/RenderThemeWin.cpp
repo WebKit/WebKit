@@ -1048,9 +1048,10 @@ static void fillBufferWithContentsOfFile(FileSystem::PlatformFileHandle file, lo
     buffer[filesize] = 0;
 }
 
-String RenderThemeWin::stringWithContentsOfFile(CFStringRef name, CFStringRef type)
+String RenderThemeWin::stringWithContentsOfFile(const String& name, const String& type)
 {
-    RetainPtr<CFURLRef> requestedURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name, type, 0));
+#if USE(CF)
+    RetainPtr<CFURLRef> requestedURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), name.createCFString().get(), type.createCFString().get(), 0));
     if (!requestedURLRef)
         return String();
 
@@ -1073,13 +1074,16 @@ String RenderThemeWin::stringWithContentsOfFile(CFStringRef name, CFStringRef ty
     FileSystem::closeFile(requestedFileHandle);
 
     return String(fileContents.data(), static_cast<size_t>(filesize));
+#else
+    return emptyString();
+#endif
 }
 
 String RenderThemeWin::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsStyleSheet.isEmpty())
-        m_mediaControlsStyleSheet = stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("css"));
+        m_mediaControlsStyleSheet = stringWithContentsOfFile("mediaControlsApple"_s, "css"_s);
     return m_mediaControlsStyleSheet;
 #else
     return emptyString();
@@ -1091,8 +1095,8 @@ String RenderThemeWin::mediaControlsScript()
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsScript.isEmpty()) {
         StringBuilder scriptBuilder;
-        scriptBuilder.append(stringWithContentsOfFile(CFSTR("mediaControlsLocalizedStrings"), CFSTR("js")));
-        scriptBuilder.append(stringWithContentsOfFile(CFSTR("mediaControlsApple"), CFSTR("js")));
+        scriptBuilder.append(stringWithContentsOfFile("mediaControlsLocalizedStrings"_s, "js"_s));
+        scriptBuilder.append(stringWithContentsOfFile("mediaControlsApple"_s, "js"_s));
         m_mediaControlsScript = scriptBuilder.toString();
     }
     return m_mediaControlsScript;

@@ -115,7 +115,7 @@ public:
 
     static void setWebKitIsBeingUnloaded();
 
-    static String stringWithContentsOfFile(CFStringRef name, CFStringRef type);
+    static String stringWithContentsOfFile(const String& name, const String& type);
 
     bool supportsFocusRing(const RenderStyle&) const override;
 
