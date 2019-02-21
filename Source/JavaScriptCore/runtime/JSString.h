@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -163,7 +163,7 @@ public:
 
     inline bool equal(ExecState*, JSString* other) const;
     const String& value(ExecState*) const;
-    inline const String& tryGetValue() const;
+    inline const String& tryGetValue(bool allocationAllowed = true) const;
     const StringImpl* tryGetValueImpl() const;
     ALWAYS_INLINE unsigned length() const { return m_length; }
 
@@ -515,6 +515,8 @@ inline JSString* jsEmptyString(VM* vm)
 
 ALWAYS_INLINE JSString* jsSingleCharacterString(VM* vm, UChar c)
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm->heap.expectDoesGC());
     if (c <= maxSingleCharacterString)
         return vm->smallStrings.singleCharacterString(c);
     return JSString::create(*vm, StringImpl::create(&c, 1));
@@ -539,6 +541,8 @@ ALWAYS_INLINE Identifier JSString::toIdentifier(ExecState* exec) const
 
 ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
         static_cast<const JSRopeString*>(this)->resolveRopeToAtomicString(exec);
     return AtomicString(m_value);
@@ -546,6 +550,8 @@ ALWAYS_INLINE AtomicString JSString::toAtomicString(ExecState* exec) const
 
 ALWAYS_INLINE RefPtr<AtomicStringImpl> JSString::toExistingAtomicString(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->resolveRopeToExistingAtomicString(exec);
     if (m_value.impl()->isAtomic())
@@ -555,17 +561,24 @@ ALWAYS_INLINE RefPtr<AtomicStringImpl> JSString::toExistingAtomicString(ExecStat
 
 inline const String& JSString::value(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
         static_cast<const JSRopeString*>(this)->resolveRope(exec);
     return m_value;
 }
 
-inline const String& JSString::tryGetValue() const
+inline const String& JSString::tryGetValue(bool allocationAllowed) const
 {
-    if (isRope()) {
-        // Pass nullptr for the ExecState so that resolveRope does not throw in the event of an OOM error.
-        static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
-    }
+    if (allocationAllowed) {
+        if (validateDFGDoesGC)
+            RELEASE_ASSERT(vm()->heap.expectDoesGC());
+        if (isRope()) {
+            // Pass nullptr for the ExecState so that resolveRope does not throw in the event of an OOM error.
+            static_cast<const JSRopeString*>(this)->resolveRope(nullptr);
+        }
+    } else
+        RELEASE_ASSERT(!isRope());
     return m_value;
 }
 
@@ -739,6 +752,8 @@ inline bool isJSString(JSValue v)
 
 ALWAYS_INLINE StringView JSRopeString::unsafeView(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isSubstring()) {
         if (is8Bit())
             return StringView(substringBase()->m_value.characters8() + substringOffset(), length());
@@ -750,6 +765,8 @@ ALWAYS_INLINE StringView JSRopeString::unsafeView(ExecState* exec) const
 
 ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingString(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isSubstring()) {
         auto& base = substringBase()->m_value;
         if (is8Bit())
@@ -762,6 +779,8 @@ ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingStr
 
 ALWAYS_INLINE StringView JSString::unsafeView(ExecState* exec) const
 {
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm()->heap.expectDoesGC());
     if (isRope())
         return static_cast<const JSRopeString*>(this)->unsafeView(exec);
     return m_value;

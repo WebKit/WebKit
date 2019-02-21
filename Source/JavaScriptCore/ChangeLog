@@ -1,3 +1,61 @@
+2019-02-20  Mark Lam  <mark.lam@apple.com>
+
+        Add code to validate expected GC activity modelled by doesGC() against what the runtime encounters.
+        https://bugs.webkit.org/show_bug.cgi?id=193938
+        <rdar://problem/47616277>
+
+        Reviewed by Michael Saboff, Saam Barati, and Robin Morisset.
+
+        In DFG::SpeculativeJIT::compile() and FTL::LowerDFGToB3::compileNode(), before
+        emitting code / B3IR for each DFG node, we emit a write to set Heap::m_expectDoesGC
+        to the value returned by doesGC() for that node.  In the runtime (i.e. in allocateCell()
+        and functions that can resolve a rope), we assert that Heap::m_expectDoesGC is
+        true.
+
+        This validation code is currently only enabled for debug builds.  It is disabled
+        for release builds by default, but it can easily be made to run on release builds
+        as well by forcing ENABLE_DFG_DOES_GC_VALIDATION to 1 in Heap.h.
+
+        To allow this validation code to run on release builds as well, the validation uses
+        RELEASE_ASSERT instead of ASSERT.
+
+        To ensure that Heap.h is #include'd for all files that needs to do this validation
+        (so that the validation code is accidentally disabled), we guard the validation
+        code with an if conditional on constexpr bool validateDFGDoesGC (instead of using
+        a #if ENABLE(DFG_DOES_GC_VALIDATION)).  This way, if Heap.h isn't #include'd, the
+        validation code will fail to build (no silent failures).
+
+        Currently, all JSC tests and Layout tests should pass with this validation enabled
+        in debug builds.  We'll only see new failures if there's a regression or if new
+        tests reveal a previously untested code path that has an undetected issue.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * heap/Heap.h:
+        (JSC::Heap::expectDoesGC const):
+        (JSC::Heap::setExpectDoesGC):
+        (JSC::Heap::addressOfExpectDoesGC):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        * runtime/JSCellInlines.h:
+        (JSC::tryAllocateCellHelper):
+        * runtime/JSString.h:
+        (JSC::jsSingleCharacterString):
+        (JSC::JSString::toAtomicString const):
+        (JSC::JSString::toExistingAtomicString const):
+        (JSC::JSString::value const):
+        (JSC::JSString::tryGetValue const):
+        (JSC::JSRopeString::unsafeView const):
+        (JSC::JSRopeString::viewWithUnderlyingString const):
+        (JSC::JSString::unsafeView const):
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects
