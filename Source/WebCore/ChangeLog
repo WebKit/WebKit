@@ -1,3 +1,24 @@
+2019-02-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (240698): Fixed position banners flicker and move when scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194889
+        rdar://problem/47755552
+
+        Reviewed by Tim Horton.
+        
+        After r240698 we could commit scrolling changes for a fixed node where the "viewportRectAtLastLayout" and the layer
+        position were mismatched; this happened when AsyncScrollingCoordinator::reconcileScrollingState() came back from the UI process
+        with an unstable update and set a new layoutViewport, then some other layout triggered a compositing tree update. During the tree
+        update, we'd update the fixed scrolling node with the new viewport, and an old layer position.
+        
+        Fix by ensuring that we only update the geometry info for a scrolling tree node when we update layer geometry for the corresponding
+        layer.
+
+        Not currently testable.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+
 2019-02-20  Dean Jackson  <dino@apple.com>
 
         Rotation animations sometimes use the wrong origin (affects apple.com)
