@@ -1,5 +1,37 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241618. rdar://problem/48243264
+
+    Add SPI version of WKPreferences.safeBrowsingEnabled
+    https://bugs.webkit.org/show_bug.cgi?id=194718
+    <rdar://problem/48122993>
+    
+    Rubber-stamped by Brady Eidson.
+    
+    * UIProcess/API/Cocoa/WKPreferences.mm:
+    (-[WKPreferences _isSafeBrowsingEnabled]):
+    (-[WKPreferences _setSafeBrowsingEnabled:]):
+    * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241618 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Alex Christensen  <achristensen@webkit.org>
+
+            Add SPI version of WKPreferences.safeBrowsingEnabled
+            https://bugs.webkit.org/show_bug.cgi?id=194718
+            <rdar://problem/48122993>
+
+            Rubber-stamped by Brady Eidson.
+
+            * UIProcess/API/Cocoa/WKPreferences.mm:
+            (-[WKPreferences _isSafeBrowsingEnabled]):
+            (-[WKPreferences _setSafeBrowsingEnabled:]):
+            * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241855. rdar://problem/48267027
 
     [PSON] Make sure hung processes are not kept alive by suspended pages or process caching
