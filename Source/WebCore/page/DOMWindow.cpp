@@ -456,16 +456,20 @@ void DOMWindow::willDestroyCachedFrame()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
-    for (auto& property : copyToVector(m_properties))
-        property->willDestroyGlobalObjectInCachedFrame();
+    for (auto* property : copyToVector(m_properties)) {
+        if (m_properties.contains(property))
+            property->willDestroyGlobalObjectInCachedFrame();
+    }
 }
 
 void DOMWindow::willDestroyDocumentInFrame()
 {
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
-    for (auto& property : copyToVector(m_properties))
-        property->willDestroyGlobalObjectInFrame();
+    for (auto* property : copyToVector(m_properties)) {
+        if (m_properties.contains(property))
+            property->willDestroyGlobalObjectInFrame();
+    }
 }
 
 void DOMWindow::willDetachDocumentFromFrame()
@@ -475,8 +479,10 @@ void DOMWindow::willDetachDocumentFromFrame()
 
     // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
-    for (auto& property : copyToVector(m_properties))
-        property->willDetachGlobalObjectFromFrame();
+    for (auto& property : copyToVector(m_properties)) {
+        if (m_properties.contains(property))
+            property->willDetachGlobalObjectFromFrame();
+    }
 
     if (m_performance)
         m_performance->clearResourceTimings();
@@ -520,16 +526,20 @@ void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
 
 void DOMWindow::suspendForPageCache()
 {
-    for (auto& property : copyToVector(m_properties))
-        property->suspendForPageCache();
+    for (auto* property : copyToVector(m_properties)) {
+        if (m_properties.contains(property))
+            property->suspendForPageCache();
+    }
 
     m_suspendedForDocumentSuspension = true;
 }
 
 void DOMWindow::resumeFromPageCache()
 {
-    for (auto& property : copyToVector(m_properties))
-        property->resumeFromPageCache();
+    for (auto* property : copyToVector(m_properties)) {
+        if (m_properties.contains(property))
+            property->resumeFromPageCache();
+    }
 
     m_suspendedForDocumentSuspension = false;
 }
