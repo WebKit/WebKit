@@ -70,11 +70,6 @@ void SymbolTableEntry::prepareToWatch()
     entry->m_watchpoints = adoptRef(new WatchpointSet(ClearWatchpoint));
 }
 
-void SymbolTableEntry::addWatchpoint(Watchpoint* watchpoint)
-{
-    fatEntry()->m_watchpoints->add(watchpoint);
-}
-
 SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
 {
     FatEntry* entry = new FatEntry(m_bits);

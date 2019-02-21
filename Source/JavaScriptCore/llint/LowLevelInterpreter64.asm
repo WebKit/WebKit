@@ -2310,8 +2310,10 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         get(m_value, t0)
         loadConstantOrVariable(size, t0, t1)
         loadp OpPutToScope::Metadata::m_watchpointSet[t5], t2
-        loadp OpPutToScope::Metadata::m_operand[t5], t0
+        btpz t2, .noVariableWatchpointSet
         notifyWrite(t2, .pDynamic)
+    .noVariableWatchpointSet:
+        loadp OpPutToScope::Metadata::m_operand[t5], t0
         storeq t1, [t0]
     end
 
