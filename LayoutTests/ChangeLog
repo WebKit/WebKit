@@ -1,3 +1,13 @@
+2019-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Add support for placing formatting roots in-between floats.
+        https://bugs.webkit.org/show_bug.cgi?id=194902
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/floats-and-block-formatting-roots-expected.html: Added.
+        * fast/block/block-only/floats-and-block-formatting-roots.html: Added.
+
 2019-02-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening for unexpected passes

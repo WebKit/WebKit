@@ -1,3 +1,52 @@
+2019-02-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Floats] Add support for placing formatting roots in-between floats.
+        https://bugs.webkit.org/show_bug.cgi?id=194902
+
+        Reviewed by Antti Koivisto.
+
+        This patch add support for placing a formatting root box in-between existing floats.
+        The initial vertical position of a formatting root is its static position which can make the box
+        placed above exsiting floats (whereas we can never place a regular float above existing floats.)
+
+        Test: fast/block/block-only/floats-and-block-formatting-roots.html
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatPair::LeftRightIndex::isEmpty const):
+        (WebCore::Layout::FloatPair::isEmpty const):
+        (WebCore::Layout::FloatPair::operator* const):
+        (WebCore::Layout::Iterator::operator* const):
+        (WebCore::Layout::begin):
+        (WebCore::Layout::end):
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFormattingContextRoot const):
+        (WebCore::Layout::findAvailablePosition):
+        (WebCore::Layout::FloatingContext::findPositionForFloatBox const):
+        (WebCore::Layout::FloatingContext::findPositionForFormattingContextRoot const):
+        (WebCore::Layout::FloatPair::FloatPair):
+        (WebCore::Layout::FloatPair::left const):
+        (WebCore::Layout::FloatPair::right const):
+        (WebCore::Layout::FloatPair::intersects const):
+        (WebCore::Layout::FloatPair::operator == const):
+        (WebCore::Layout::FloatPair::horizontalConstraints const):
+        (WebCore::Layout::FloatPair::bottom const):
+        (WebCore::Layout::Iterator::operator++):
+        (WebCore::Layout::Iterator::set):
+        (WebCore::Layout::FloatingPair::isEmpty const): Deleted.
+        (WebCore::Layout::FloatingPair::verticalConstraint const): Deleted.
+        (WebCore::Layout::FloatingContext::positionForFloatAvoiding const): Deleted.
+        (WebCore::Layout::FloatingContext::floatingPosition const): Deleted.
+        (WebCore::Layout::FloatingPair::FloatingPair): Deleted.
+        (WebCore::Layout::FloatingPair::left const): Deleted.
+        (WebCore::Layout::FloatingPair::right const): Deleted.
+        (WebCore::Layout::FloatingPair::intersects const): Deleted.
+        (WebCore::Layout::FloatingPair::operator == const): Deleted.
+        (WebCore::Layout::FloatingPair::horizontalConstraints const): Deleted.
+        (WebCore::Layout::FloatingPair::bottom const): Deleted.
+        * layout/floats/FloatingContext.h:
+
 2019-02-21  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

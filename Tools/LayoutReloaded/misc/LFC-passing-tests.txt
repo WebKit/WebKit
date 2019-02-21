@@ -81,6 +81,7 @@ fast/block/block-only/floating-multiple-lefts-in-body.html
 fast/block/block-only/floating-multiple-lefts-multiple-lines.html
 fast/block/block-only/floating-multiple-lefts.html
 fast/block/block-only/floating-with-new-block-formatting-context.html
+fast/block/block-only/floats-and-block-formatting-roots.html
 fast/block/block-only/inflow-min-max-height.html
 fast/block/block-only/inflow-min-max-width.html
 fast/block/block-only/margin-collapse-bottom-bottom.html
@@ -843,9 +844,10 @@ css2.1/20110323/float-replaced-width-004.htm
 css2.1/20110323/float-replaced-width-005.htm
 css2.1/20110323/float-replaced-width-006.htm
 css2.1/20110323/float-replaced-width-011.htm
-css2.1/20110323/floats-wrap-top-below-bfc-002l.htm
 css2.1/20110323/floats-001.html
 css2.1/20110323/floats-102.html
+css2.1/20110323/floats-wrap-top-below-bfc-002l.htm
+css2.1/20110323/floats-wrap-top-below-bfc-002r.htm
 css2.1/20110323/inline-block-non-replaced-width-001.htm
 css2.1/20110323/inline-block-non-replaced-width-002.htm
 css2.1/20110323/inline-block-non-replaced-width-003.htm

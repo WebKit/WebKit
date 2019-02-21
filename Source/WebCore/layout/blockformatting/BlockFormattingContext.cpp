@@ -291,7 +291,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     if (floatingContext.floatingState().isEmpty())
         return;
 
-    if (auto adjustedPosition = floatingContext.positionForFloatAvoiding(layoutBox))
+    if (auto adjustedPosition = floatingContext.positionForFormattingContextRoot(layoutBox))
         layoutState.displayBoxForLayoutBox(layoutBox).setTopLeft(*adjustedPosition);
 }
 
