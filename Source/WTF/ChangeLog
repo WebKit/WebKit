@@ -1,3 +1,14 @@
+2019-02-21  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Follow-up commit to ensure this change only affects newer versions
+        of iOS.
+
+        * wtf/Platform.h: Add a version check.
+
 2019-02-20  Alex Christensen  <achristensen@webkit.org>
 
         URL percent-encode operations should use checked arithmetic for buffer allocation length
