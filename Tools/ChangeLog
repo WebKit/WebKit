@@ -1,5 +1,29 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241736. rdar://problem/48243264
+
+    Fix API test after r241728
+           ​https://bugs.webkit.org/show_bug.cgi?id=194723
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+    (TEST):
+    The test should check the default preference value, not make sure the preference is NO after setting it to YES :/
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241736 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-18  Alex Christensen  <achristensen@webkit.org>
+
+            Fix API test after r241728
+           ​https://bugs.webkit.org/show_bug.cgi?id=194723
+
+            * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+            (TEST):
+            The test should check the default preference value, not make sure the preference is NO after setting it to YES :/
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241728. rdar://problem/48243264
 
     Disable safe browsing in WKWebView and remove its WKPreferences API
