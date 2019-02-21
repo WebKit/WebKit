@@ -1,3 +1,13 @@
+2019-02-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: RTL: Scripts Timeline loading indicator has incorrect margins
+        https://bugs.webkit.org/show_bug.cgi?id=194882
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser .recording-progress > .status > .indeterminate-progress-spinner):
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects
