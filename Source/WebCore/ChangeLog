@@ -1,3 +1,26 @@
+2019-02-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in DOMWindowExtension::suspendForPageCache
+        https://bugs.webkit.org/show_bug.cgi?id=194871
+
+        Reviewed by Chris Dumez.
+
+        This is a speculative fix for a crash in DOMWindowExtension::suspendForPageCache.
+
+        We think it's possible for DOMWindowExtension::suspendForPageCache notifying the clients via
+        dispatchWillDisconnectDOMWindowExtensionFromGlobalObject to remove other DOMWindowExtension's.
+        Check that each DOMWindowProperty is still in m_properties before invoking suspendForPageCache
+        to avoid the crash.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDestroyCachedFrame):
+        (WebCore::DOMWindow::willDestroyDocumentInFrame):
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::suspendForPageCache):
+        (WebCore::DOMWindow::resumeFromPageCache):
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::suspendForPageCache):
+
 2019-02-20  Alex Christensen  <achristensen@webkit.org>
 
         Always call CompletionHandlers after r240909

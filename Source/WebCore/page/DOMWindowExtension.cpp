@@ -48,11 +48,11 @@ void DOMWindowExtension::suspendForPageCache()
     // Calling out to the client might result in this DOMWindowExtension being destroyed
     // while there is still work to do.
     Ref<DOMWindowExtension> protectedThis(*this);
-    
-    Frame* frame = this->frame();
+
+    auto frame = makeRef(*this->frame());
     frame->loader().client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
 
-    m_disconnectedFrame = frame;
+    m_disconnectedFrame = WTFMove(frame);
 
     DOMWindowProperty::suspendForPageCache();
 }
