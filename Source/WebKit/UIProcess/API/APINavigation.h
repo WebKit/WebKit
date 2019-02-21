@@ -122,6 +122,9 @@ public:
     bool openedByDOMWithOpener() const { return m_lastNavigationAction.openedByDOMWithOpener; }
     const WebCore::SecurityOriginData& requesterOrigin() const { return m_lastNavigationAction.requesterOrigin; }
 
+    void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
+    bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
+
     WebCore::LockHistory lockHistory() const { return m_lastNavigationAction.lockHistory; }
     WebCore::LockBackForwardList lockBackForwardList() const { return m_lastNavigationAction.lockBackForwardList; }
 
@@ -161,6 +164,7 @@ private:
     WebKit::NavigationActionData m_lastNavigationAction;
     WebKit::FrameInfoData m_originatingFrameInfo;
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
+    bool m_userContentExtensionsEnabled { true };
 };
 
 } // namespace API
