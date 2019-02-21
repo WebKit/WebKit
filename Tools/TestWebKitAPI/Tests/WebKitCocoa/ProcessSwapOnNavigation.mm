@@ -2946,7 +2946,14 @@ TEST(ProcessSwap, SuspendedPageLimit)
     EXPECT_EQ(5u, seenPIDs.size());
 
     // But not all of those processes should still be alive (1 visible, maximumSuspendedPageCount suspended).
-    EXPECT_EQ([processPool _webProcessCountIgnoringPrewarmedAndCached], (1U + maximumSuspendedPageCount));
+    auto expectedProcessCount = 1 + maximumSuspendedPageCount;
+    int timeout = 20;
+    while ([processPool _webProcessCountIgnoringPrewarmedAndCached] != expectedProcessCount && timeout >= 0) {
+        TestWebKitAPI::Util::sleep(0.1);
+        --timeout;
+    }
+
+    EXPECT_EQ(expectedProcessCount, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
 }
 
 TEST(ProcessSwap, PageCache1)

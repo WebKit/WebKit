@@ -1,3 +1,15 @@
+2019-02-21  Chris Dumez  <cdumez@apple.com>
+
+        Flaky API Test: TestWebKitAPI.ProcessSwap.SuspendedPageLimit
+        https://bugs.webkit.org/show_bug.cgi?id=194481
+
+        Reviewed by Alex Christensen.
+
+        Give the processes a chance to shutdown and wait until we reached the expected number
+        of processes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-21  Tim Horton  <timothy_horton@apple.com>
 
         Fix the macOS build
