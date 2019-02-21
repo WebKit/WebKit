@@ -808,9 +808,11 @@ String userVisibleURL(const CString& url)
 
     bool mayNeedHostNameDecoding = false;
 
-    // The buffer should be large enough to %-escape every character.
-    int bufferLength = (length * 3) + 1;
-    Vector<char, urlBytesBufferLength> after(bufferLength);
+    Checked<int, RecordOverflow> bufferLength = length;
+    bufferLength = bufferLength * 3 + 1; // The buffer should be large enough to %-escape every character.
+    if (bufferLength.hasOverflowed())
+        return { };
+    Vector<char, urlBytesBufferLength> after(bufferLength.unsafeGet());
 
     char* q = after.data();
     {
@@ -850,7 +852,7 @@ String userVisibleURL(const CString& url)
         // then we will copy back bytes to the start of the buffer 
         // as we convert.
         int afterlength = q - after.data();
-        char* p = after.data() + bufferLength - afterlength - 1;
+        char* p = after.data() + bufferLength.unsafeGet() - afterlength - 1;
         memmove(p, after.data(), afterlength + 1); // copies trailing '\0'
         char* q = after.data();
         while (*p) {

@@ -1,3 +1,16 @@
+2019-02-20  Alex Christensen  <achristensen@webkit.org>
+
+        URL percent-encode operations should use checked arithmetic for buffer allocation length
+        https://bugs.webkit.org/show_bug.cgi?id=194877
+        <rdar://problem/48212062>
+
+        Reviewed by Tim Horton.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::userVisibleURL):
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::dataWithUserTypedString):
+
 2019-02-20  Dean Jackson  <dino@apple.com>
 
         Rotation animations sometimes use the wrong origin (affects apple.com)
