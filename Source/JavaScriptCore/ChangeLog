@@ -1,5 +1,51 @@
 2019-02-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241772. rdar://problem/48248228
+
+    Fix DFG doesGC() for TryGetById and ProfileType nodes.
+    https://bugs.webkit.org/show_bug.cgi?id=194821
+    <rdar://problem/48206690>
+    
+    Reviewed by Saam Barati.
+    
+    Fix doesGC() for the following nodes:
+    
+        ProfileType:
+            calls operationProcessTypeProfilerLogDFG(), which can calculatedClassName(),
+            which can call JSString::tryGetValue(), which can resolve a rope.
+    
+        TryGetById:
+            calls operationTryGetByIdOptimize(), which can startWatchingPropertyForReplacements()
+            on a structure, which can allocate StructureRareData.
+    
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241772 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-19  Mark Lam  <mark.lam@apple.com>
+
+            Fix DFG doesGC() for TryGetById and ProfileType nodes.
+            https://bugs.webkit.org/show_bug.cgi?id=194821
+            <rdar://problem/48206690>
+
+            Reviewed by Saam Barati.
+
+            Fix doesGC() for the following nodes:
+
+                ProfileType:
+                    calls operationProcessTypeProfilerLogDFG(), which can calculatedClassName(),
+                    which can call JSString::tryGetValue(), which can resolve a rope.
+
+                TryGetById:
+                    calls operationTryGetByIdOptimize(), which can startWatchingPropertyForReplacements()
+                    on a structure, which can allocate StructureRareData.
+
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+
+2019-02-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241753. rdar://problem/48243425
 
     Fix DFG doesGC() for CompareEq/Less/LessEq/Greater/GreaterEq and CompareStrictEq nodes.

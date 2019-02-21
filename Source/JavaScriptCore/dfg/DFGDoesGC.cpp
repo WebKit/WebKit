@@ -116,7 +116,6 @@ bool doesGC(Graph& graph, Node* node)
     case ValueSub:
     case ValueMul:
     case ValueDiv:
-    case TryGetById:
     case CheckStructure:
     case CheckStructureOrEmpty:
     case CheckStructureImmediate:
@@ -143,7 +142,6 @@ bool doesGC(Graph& graph, Node* node)
     case CompareBelow:
     case CompareBelowEq:
     case CompareEqPtr:
-    case ProfileType:
     case ProfileControlFlow:
     case OverridesHasInstance:
     case IsEmpty:
@@ -299,6 +297,7 @@ bool doesGC(Graph& graph, Node* node)
     case LoadVarargs:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
+    case ProfileType:
     case PutById:
     case PutByIdDirect:
     case PutByIdFlush:
@@ -333,6 +332,7 @@ bool doesGC(Graph& graph, Node* node)
     case ToObject:
     case ToPrimitive:
     case ToThis:
+    case TryGetById:
     case CreateThis:
     case ObjectCreate:
     case ObjectKeys:
