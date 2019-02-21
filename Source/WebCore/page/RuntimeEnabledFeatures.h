@@ -371,7 +371,7 @@ private:
     bool m_inspectorAdditionsEnabled { false };
     bool m_webVREnabled { false };
     bool m_accessibilityObjectModelEnabled { false };
-    bool m_ariaReflectionEnabled { true };
+    bool m_ariaReflectionEnabled { false };
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_crossOriginResourcePolicyEnabled { true };
@@ -419,7 +419,7 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isWebRTCVP8CodecEnabled { true };
-    bool m_isWebRTCUnifiedPlanEnabled { true };
+    bool m_isWebRTCUnifiedPlanEnabled { false };
     bool m_isPeerConnectionEnabled { true };
     bool m_isWebRTCMDNSICECandidatesEnabled { false };
     bool m_isWebRTCH264SimulcastEnabled { true };

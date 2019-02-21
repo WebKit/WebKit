@@ -647,7 +647,7 @@ public:
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
@@ -662,7 +662,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
         [NSNumber numberWithBool:NO], WebKitMediaDevicesEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitMediaStreamEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES], WebKitMediaRecorderEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitMediaRecorderEnabledPreferenceKey,
 #endif
 #if ENABLE(WEB_RTC)
         [NSNumber numberWithBool:YES], WebKitPeerConnectionEnabledPreferenceKey,
@@ -686,7 +686,7 @@ public:
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         @NO, WebKitAccessibilityObjectModelEnabledPreferenceKey,
-        @YES, WebKitAriaReflectionEnabledPreferenceKey,
+        @NO, WebKitAriaReflectionEnabledPreferenceKey,
         @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
         @NO, WebKitFetchAPIKeepAliveEnabledPreferenceKey,
         @NO, WebKitServerTimingEnabledPreferenceKey,
