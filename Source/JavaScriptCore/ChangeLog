@@ -1,5 +1,56 @@
 2019-02-20  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241753. rdar://problem/48243425
+
+    Fix DFG doesGC() for CompareEq/Less/LessEq/Greater/GreaterEq and CompareStrictEq nodes.
+    https://bugs.webkit.org/show_bug.cgi?id=194800
+    <rdar://problem/48183773>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Fix doesGC() for the following nodes:
+    
+        CompareEq:
+        CompareLess:
+        CompareLessEq:
+        CompareGreater:
+        CompareGreaterEq:
+        CompareStrictEq:
+            Only return false (i.e. does not GC) for child node use kinds that have
+            been vetted to not do anything that can GC.  For all other use kinds
+            (including StringUse and BigIntUse), we return true (i.e. does GC).
+    
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241753 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-18  Mark Lam  <mark.lam@apple.com>
+
+            Fix DFG doesGC() for CompareEq/Less/LessEq/Greater/GreaterEq and CompareStrictEq nodes.
+            https://bugs.webkit.org/show_bug.cgi?id=194800
+            <rdar://problem/48183773>
+
+            Reviewed by Yusuke Suzuki.
+
+            Fix doesGC() for the following nodes:
+
+                CompareEq:
+                CompareLess:
+                CompareLessEq:
+                CompareGreater:
+                CompareGreaterEq:
+                CompareStrictEq:
+                    Only return false (i.e. does not GC) for child node use kinds that have
+                    been vetted to not do anything that can GC.  For all other use kinds
+                    (including StringUse and BigIntUse), we return true (i.e. does GC).
+
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+
+2019-02-20  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241634. rdar://problem/48243442
 
     RELEASE_ASSERT at com.apple.JavaScriptCore: JSC::jsSubstringOfResolved
