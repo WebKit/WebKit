@@ -1,3 +1,7 @@
+2019-02-20  Alan Coon  <alancoon@apple.com>
+
+        Revert r237978. rdar://problem/48244945
+
 2019-02-18  Babak Shafiei  <bshafiei@apple.com>
 
         Apply patch. rdar://problem/48122553
