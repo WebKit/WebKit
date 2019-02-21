@@ -1,3 +1,14 @@
+2019-02-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Fix !USE(CF) build of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=194879
+
+        Reviewed by Konstantin Tokarev.
+
+        * PlatformAppleWin.cmake:
+        * PlatformWin.cmake:
+        * PlatformWinCairo.cmake:
+
 2019-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Add support for placing formatting roots in-between floats.

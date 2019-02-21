@@ -36,9 +36,7 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_LIBRARIES
-    ${CURL_LIBRARY}
     ${DirectX_LIBRARIES}
-    CFLite
     comctl32
     crypt32
     iphlpapi
@@ -52,7 +50,6 @@ list(APPEND WebCore_LIBRARIES
 
 list(APPEND WebCoreTestSupport_LIBRARIES
     ${CAIRO_LIBRARIES}
-    CFLite
     shlwapi
 )
 

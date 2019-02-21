@@ -65,6 +65,8 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/ResourceResponseCFNet.cpp
     platform/network/cf/SocketStreamHandleImplCFNet.cpp
     platform/network/cf/SynchronousLoaderClientCFNet.cpp
+
+    platform/text/LocaleNone.cpp
 )
 
 if (${USE_DIRECT2D})

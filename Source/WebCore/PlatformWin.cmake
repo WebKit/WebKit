@@ -22,7 +22,6 @@ list(APPEND WebCore_SOURCES
     accessibility/win/AccessibilityObjectWin.cpp
     accessibility/win/AccessibilityObjectWrapperWin.cpp
 
-    editing/SmartReplaceCF.cpp
     editing/win/EditorWin.cpp
 
     html/HTMLSelectElementWin.cpp
@@ -73,8 +72,6 @@ list(APPEND WebCore_SOURCES
 
     platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
-
-    platform/text/LocaleNone.cpp
 
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
@@ -244,6 +241,8 @@ if (USE_CF)
     )
 
     list(APPEND WebCore_SOURCES
+        editing/SmartReplaceCF.cpp
+
         loader/archive/cf/LegacyWebArchive.cpp
 
         platform/cf/KeyedDecoderCF.cpp
@@ -263,6 +262,20 @@ if (USE_CF)
         platform/cf
 
         platform/cf/win
+    )
+
+    list(APPEND WebCore_LIBRARIES ${COREFOUNDATION_LIBRARY})
+    list(APPEND WebCoreTestSupport_LIBRARIES ${COREFOUNDATION_LIBRARY})
+else ()
+    list(APPEND WebCore_SOURCES
+        platform/generic/KeyedDecoderGeneric.cpp
+        platform/generic/KeyedEncoderGeneric.cpp
+
+        platform/text/Hyphenation.cpp
+    )
+
+    list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
+        platform/generic
     )
 endif ()
 
