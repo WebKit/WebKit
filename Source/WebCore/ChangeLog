@@ -1,3 +1,39 @@
+2019-02-21  Daniel Bates  <dabates@apple.com>
+
+        Same Site Lax cookies are not sent with cross-site redirect from client-initiated load
+        https://bugs.webkit.org/show_bug.cgi?id=194906
+        <rdar://problem/44305947>
+
+        Reviewed by Brent Fulgham.
+
+        Ensure that a request for a top-level navigation is annotated as such regardless of whether
+        the request has a computed Same Site policy.
+
+        "New loads" initiated by a the client (Safari) either by API or a human either explicitly
+        typing a URL in the address bar or Command + clicking a hyperlink to open it in a new window/tab
+        are always considered Same Site. This is by definition from the spec. [1] as we aren't navigating
+        from an existing page. (Command + click should be thought of as a convenience to the user from
+        having to copy the hyperlink's URL, create a new window, and paste the URL into the address bar).
+        Currently the frame loader marks a request as a top-level navigation if and only if the request
+        does not have a pre-computed Same Site policy. However, "New loads" have a pre-computed Same Site
+        policy. So, these loads would never be marked as a top-level navigation by the frame loading code.
+        Therefore, if the "new load" turned out to be a cross-site redirect then WebKit would incorrectly
+        tell the networking stack that the load was a cross-site, non-top-level navigation, and per the
+        Same Site spec [2], the networking stack would not send Same Site Lax cookies. Instead,
+        WebKit should unconditionally ensure that requests are marked as a top-level navigation, if applicable.
+
+        [1] See Note for (1) in  <https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02#section-5.2>
+        [2] <https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02#section-5.3.7.1>
+
+        Test: http/tests/cookies/same-site/user-load-cross-site-redirect.php
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Unconditionally update the request's top-
+        level navigation bit.
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setAsIsolatedCopy): Unconditionally copy a request's top-
+        level navigation bit.
+
 2019-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/text/international/khmer-selection.html is crashing

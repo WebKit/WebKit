@@ -1,3 +1,17 @@
+2019-02-21  Daniel Bates  <dabates@apple.com>
+
+        Same Site Lax cookies are not sent with cross-site redirect from client-initiated load
+        https://bugs.webkit.org/show_bug.cgi?id=194906
+        <rdar://problem/44305947>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test that is representative of a user loading a cross-site page that redirects
+        to a page that expects Same Site Lax cookies.
+
+        * http/tests/cookies/same-site/user-load-cross-site-redirect-expected.txt: Added.
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.php: Added.
+
 2019-02-21  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/text/international/khmer-selection.html is crashing

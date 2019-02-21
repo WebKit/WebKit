@@ -70,10 +70,9 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     if (auto inspectorInitiatorNodeIdentifier = other.inspectorInitiatorNodeIdentifier())
         setInspectorInitiatorNodeIdentifier(*inspectorInitiatorNodeIdentifier);
 
-    if (!other.isSameSiteUnspecified()) {
+    if (!other.isSameSiteUnspecified())
         setIsSameSite(other.isSameSite());
-        setIsTopSite(other.isTopSite());
-    }
+    setIsTopSite(other.isTopSite());
 
     updateResourceRequest();
     m_httpHeaderFields = other.httpHeaderFields().isolatedCopy();
