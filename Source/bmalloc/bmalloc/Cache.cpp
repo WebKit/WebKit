@@ -32,8 +32,6 @@
 
 namespace bmalloc {
 
-static DebugHeap* debugHeapCache { nullptr };
-
 void Cache::scavenge(HeapKind heapKind)
 {
     PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
@@ -46,17 +44,6 @@ void Cache::scavenge(HeapKind heapKind)
     caches->at(heapKind).deallocator().scavenge();
 }
 
-static BINLINE DebugHeap* debugHeap()
-{
-    if (debugHeapCache)
-        return debugHeapCache;
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
-        debugHeapCache = PerProcess<DebugHeap>::get();
-        return debugHeapCache;
-    }
-    return nullptr;
-}
-
 Cache::Cache(HeapKind heapKind)
     : m_deallocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind))
     , m_allocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind), m_deallocator)
@@ -66,44 +53,44 @@ Cache::Cache(HeapKind heapKind)
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = false;
-        return heap->malloc(size, crashOnFailure);
+        return debugHeap->malloc(size, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = true;
-        return heap->malloc(size, crashOnFailure);
+        return debugHeap->malloc(size, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(size);
 }
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = false;
-        return heap->memalign(alignment, size, crashOnFailure);
+        return debugHeap->memalign(alignment, size, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryAllocate(alignment, size);
 }
 
 BNO_INLINE void* Cache::allocateSlowCaseNullCache(HeapKind heapKind, size_t alignment, size_t size)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = true;
-        return heap->memalign(alignment, size, crashOnFailure);
+        return debugHeap->memalign(alignment, size, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().allocate(alignment, size);
 }
 
 BNO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* object)
 {
-    if (auto* heap = debugHeap()) {
-        heap->free(object);
+    if (auto* debugHeap = DebugHeap::tryGet()) {
+        debugHeap->free(object);
         return;
     }
     PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).deallocator().deallocate(object);
@@ -111,18 +98,18 @@ BNO_INLINE void Cache::deallocateSlowCaseNullCache(HeapKind heapKind, void* obje
 
 BNO_INLINE void* Cache::tryReallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = false;
-        return heap->realloc(object, newSize, crashOnFailure);
+        return debugHeap->realloc(object, newSize, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().tryReallocate(object, newSize);
 }
 
 BNO_INLINE void* Cache::reallocateSlowCaseNullCache(HeapKind heapKind, void* object, size_t newSize)
 {
-    if (auto* heap = debugHeap()) {
+    if (auto* debugHeap = DebugHeap::tryGet()) {
         constexpr bool crashOnFailure = true;
-        return heap->realloc(object, newSize, crashOnFailure);
+        return debugHeap->realloc(object, newSize, crashOnFailure);
     }
     return PerThread<PerHeapKind<Cache>>::getSlowCase()->at(mapToActiveHeapKind(heapKind)).allocator().reallocate(object, newSize);
 }

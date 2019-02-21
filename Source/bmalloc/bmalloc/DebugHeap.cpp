@@ -33,6 +33,8 @@
 #include <thread>
 
 namespace bmalloc {
+
+DebugHeap* debugHeapCache { nullptr };
     
 #if BOS(DARWIN)
 

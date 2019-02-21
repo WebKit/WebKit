@@ -102,9 +102,9 @@ void* Allocator::tryReallocate(void* object, size_t newSize)
 void* Allocator::reallocateImpl(void* object, size_t newSize, bool crashOnFailure)
 {
     size_t oldSize = 0;
-    switch (objectType(m_heap.kind(), object)) {
+    switch (objectType(m_heap, object)) {
     case ObjectType::Small: {
-        BASSERT(objectType(m_heap.kind(), nullptr) == ObjectType::Small);
+        BASSERT(objectType(m_heap, nullptr) == ObjectType::Small);
         if (!object)
             break;
 

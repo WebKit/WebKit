@@ -25,7 +25,6 @@
 
 #include "IsoTLS.h"
 
-#include "DebugHeap.h"
 #include "Environment.h"
 #include "Gigacage.h"
 #include "IsoTLSEntryInlines.h"
@@ -55,6 +54,7 @@ void IsoTLS::scavenge()
 
 IsoTLS::IsoTLS()
 {
+    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
 }
 
 IsoTLS* IsoTLS::ensureEntries(unsigned offset)
@@ -172,30 +172,6 @@ void IsoTLS::forEachEntry(const Func& func)
         [&] (IsoTLSEntry* entry) {
             func(entry, m_data + entry->offset());
         });
-}
-
-bool IsoTLS::isUsingDebugHeap()
-{
-    return PerProcess<Environment>::get()->isDebugHeapEnabled();
-}
-
-auto IsoTLS::debugMalloc(size_t size) -> DebugMallocResult
-{
-    DebugMallocResult result;
-    if ((result.usingDebugHeap = isUsingDebugHeap())) {
-        constexpr bool crashOnFailure = true;
-        result.ptr = PerProcess<DebugHeap>::get()->malloc(size, crashOnFailure);
-    }
-    return result;
-}
-
-bool IsoTLS::debugFree(void* p)
-{
-    if (isUsingDebugHeap()) {
-        PerProcess<DebugHeap>::get()->free(p);
-        return true;
-    }
-    return false;
 }
 
 void IsoTLS::determineMallocFallbackState()

@@ -1,3 +1,71 @@
+2019-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] bmalloc::Heap is allocated even though we use system malloc mode
+        https://bugs.webkit.org/show_bug.cgi?id=194836
+
+        Reviewed by Mark Lam.
+
+        Previously, bmalloc::Heap holds DebugHeap, and delegates allocation and deallocation to debug heap.
+        However, bmalloc::Heap is large. We would like to avoid initialization of bmalloc::Heap under the
+        system malloc mode.
+
+        This patch extracts out DebugHeap from bmalloc::Heap, and logically puts this in a boundary of
+        bmalloc::api. bmalloc::api delegates allocation and deallocation to DebugHeap if DebugHeap is enabled.
+        Otherwise, using bmalloc's usual mechanism. The challenge is that we would like to keep bmalloc fast
+        path fast.
+
+        1. For IsoHeaps, we use the similar techniques done in Cache. If the debug mode is enabled, we always go
+           to the slow path of the IsoHeap allocation, and keep IsoTLS::get() returning nullptr. In the slow path,
+           we just fallback to the usual bmalloc::api::tryMalloc implementation. This is efficient because bmalloc
+           continues using the fast path.
+
+        2. For the other APIs, like freeLargeVirtual, we just put DebugHeap check because this API itself takes fair
+           amount of time. Then debug heap check does not matter.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocateImpl):
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::tryAllocateSlowCaseNullCache):
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        (bmalloc::Cache::deallocateSlowCaseNullCache):
+        (bmalloc::Cache::tryReallocateSlowCaseNullCache):
+        (bmalloc::Cache::reallocateSlowCaseNullCache):
+        (): Deleted.
+        (bmalloc::debugHeap): Deleted.
+        * bmalloc/DebugHeap.cpp:
+        * bmalloc/DebugHeap.h:
+        (bmalloc::DebugHeap::tryGet):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::footprint):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::debugHeap): Deleted.
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::IsoTLS):
+        (bmalloc::IsoTLS::isUsingDebugHeap): Deleted.
+        (bmalloc::IsoTLS::debugMalloc): Deleted.
+        (bmalloc::IsoTLS::debugFree): Deleted.
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateSlow):
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::scavenge):
+        (bmalloc::api::isEnabled):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        (bmalloc::api::commitAlignedPhysical):
+        (bmalloc::api::decommitAlignedPhysical):
+        (bmalloc::api::enableMiniMode):
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects

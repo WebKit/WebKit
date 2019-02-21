@@ -32,7 +32,7 @@ namespace bmalloc {
 
 class Environment {
 public:
-    Environment(std::lock_guard<Mutex>&);
+    BEXPORT Environment(std::lock_guard<Mutex>&);
     
     bool isDebugHeapEnabled() { return m_isDebugHeapEnabled; }
 

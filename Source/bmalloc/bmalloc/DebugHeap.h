@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "Environment.h"
 #include "Mutex.h"
+#include "PerProcess.h"
 #include <mutex>
 #include <unordered_map>
 
@@ -47,6 +49,8 @@ public:
     void* memalignLarge(size_t alignment, size_t);
     void freeLarge(void* base);
 
+    static DebugHeap* tryGet();
+
 private:
 #if BOS(DARWIN)
     malloc_zone_t* m_zone;
@@ -57,5 +61,17 @@ private:
     std::mutex m_lock;
     std::unordered_map<void*, size_t> m_sizeMap;
 };
+
+extern BEXPORT DebugHeap* debugHeapCache;
+BINLINE DebugHeap* DebugHeap::tryGet()
+{
+    if (debugHeapCache)
+        return debugHeapCache;
+    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+        debugHeapCache = PerProcess<DebugHeap>::get();
+        return debugHeapCache;
+    }
+    return nullptr;
+}
 
 } // namespace bmalloc
