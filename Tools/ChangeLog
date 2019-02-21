@@ -1,5 +1,16 @@
 2019-02-21  Tim Horton  <timothy_horton@apple.com>
 
+        Fix ProcessSwap.PageOverlayLayerPersistence on macOS
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        We can't find the UI-side layer on macOS because we don't use UI-side compositing.
+        We could force on UI-side compositing, but I feel like the test might be more
+        valuable exercising the normal path on each platform (though the original
+        bug was also UI-side specific). Though we can't validate that the overlay
+        layer was installed successfully, there are layout tests that do that.
+
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
         Crash under RemoteLayerTreePropertyApplier::applyProperties when reattaching to old process
         https://bugs.webkit.org/show_bug.cgi?id=194845
         <rdar://problem/47944579>

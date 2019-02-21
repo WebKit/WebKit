@@ -5181,7 +5181,11 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 
     [webView waitForNextPresentationUpdate];
 
+    // We can only look for the overlay layer in the UI-side layer tree on platforms
+    // that use UI-side compositing.
+#if PLATFORM(MAC)
     EXPECT_TRUE(hasOverlay([webView layer]));
+#endif
 
     request = adoptNS([NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/page-overlay"]]);
     [webView loadRequest:request.get()];
@@ -5195,7 +5199,9 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 
     [webView waitForNextPresentationUpdate];
 
+#if PLATFORM(MAC)
     EXPECT_TRUE(hasOverlay([webView layer]));
+#endif
 }
 
 #endif // WK_API_ENABLED
