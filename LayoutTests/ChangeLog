@@ -1,3 +1,15 @@
+2019-02-21  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Reviewed by Simon Fraser.
+
+        Forgot the expected results file.
+
+        * animations/additive-transform-animations-expected.html: Added.
+
 2019-02-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Floats] Add support for placing formatting roots in-between floats.
