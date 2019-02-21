@@ -1,5 +1,11 @@
 2019-02-21  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the macOS build
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
         Fix ProcessSwap.PageOverlayLayerPersistence on macOS
 
         * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:

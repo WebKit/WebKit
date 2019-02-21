@@ -5136,6 +5136,7 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
     EXPECT_FALSE(pid1 == pid2);
 }
 
+#if !PLATFORM(MAC)
 static void traverseLayerTree(CALayer *layer, void(^block)(CALayer *))
 {
     for (CALayer *child in layer.sublayers)
@@ -5152,6 +5153,7 @@ static bool hasOverlay(CALayer *layer)
     });
     return hasViewOverlay;
 }
+#endif
 
 TEST(ProcessSwap, PageOverlayLayerPersistence)
 {
