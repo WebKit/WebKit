@@ -1,3 +1,21 @@
+2019-02-21  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: leak UniqueIDBDatabase in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=194870
+        <rdar://problem/48163812>
+
+        Reviewed by Geoffrey Garen.
+
+        UniqueIDBDatabase owns a pointer to itself after it is hard closed. It should release the pointer when it 
+        receives confirmation from clients and all pending tasks are done. UniqueIDBDatabase already checks whether the
+        pointer should be released when a database task finishes, but it didn't perform a check when a confirm message 
+        is received. 
+
+        No new test as the order of task completion and confirmation arrival is uncertain.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::confirmDidCloseFromServer):
+
 2019-02-21  Andy Estes  <aestes@apple.com>
 
         contentfiltering tests leak documents
