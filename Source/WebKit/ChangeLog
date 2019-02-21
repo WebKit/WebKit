@@ -1,5 +1,21 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241853. rdar://problem/48248223
+
+    Unreviewed build fix after r241823.
+    
+    * UIProcess/SuspendedPageProxy.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241853 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-20  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r241823.
+
+            * UIProcess/SuspendedPageProxy.h:
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241823. rdar://problem/48248223
 
     Regression(PSON) Crash under WebKit::WebPageProxy::decidePolicyForNavigationActionSync

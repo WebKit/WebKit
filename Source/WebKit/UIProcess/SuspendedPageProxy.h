@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
