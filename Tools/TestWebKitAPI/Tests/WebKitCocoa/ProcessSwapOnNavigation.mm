@@ -1406,11 +1406,15 @@ TEST(ProcessSwap, ServerRedirect)
     serverRedirected = false;
 
     seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
 
     EXPECT_FALSE(serverRedirected);
     EXPECT_EQ(3, numberOfDecidePolicyCalls);
@@ -1455,11 +1459,15 @@ TEST(ProcessSwap, ServerRedirect2)
     serverRedirected = false;
 
     seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
 
     EXPECT_FALSE(serverRedirected);
     EXPECT_EQ(3, numberOfDecidePolicyCalls);
@@ -1473,6 +1481,87 @@ TEST(ProcessSwap, ServerRedirect2)
     done = false;
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
+}
+
+enum class ShouldCacheProcessFirst { No, Yes };
+static void runSameOriginServerRedirectTest(ShouldCacheProcessFirst shouldCacheProcessFirst)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:crossSiteClientSideRedirectBytes];
+    [handler addRedirectFromURLString:@"pson://www.apple.com/main.html" toURLString:@"pson://www.apple.com/main2.html"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request;
+
+    if (shouldCacheProcessFirst == ShouldCacheProcessFirst::Yes) {
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main3.html"]];
+        [webView loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    }
+
+    delegate->didStartProvisionalNavigationHandler = ^{
+        seenPIDs.add([webView _webProcessIdentifier]);
+        if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+            seenPIDs.add(provisionalPID);
+    };
+
+    willPerformClientRedirect = false;
+    didPerformClientRedirect = false;
+    serverRedirected = false;
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&willPerformClientRedirect);
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
+
+    TestWebKitAPI::Util::run(&didPerformClientRedirect);
+    didPerformClientRedirect = false;
+    willPerformClientRedirect = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
+
+    TestWebKitAPI::Util::run(&serverRedirected);
+    serverRedirected = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    seenPIDs.add([webView _webProcessIdentifier]);
+    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
+        seenPIDs.add(provisionalPID);
+
+    EXPECT_EQ(2u, seenPIDs.size());
+}
+
+TEST(ProcessSwap, SameOriginServerRedirect)
+{
+    runSameOriginServerRedirectTest(ShouldCacheProcessFirst::No);
+}
+
+TEST(ProcessSwap, SameOriginServerRedirectFromCachedProcess)
+{
+    runSameOriginServerRedirectTest(ShouldCacheProcessFirst::Yes);
 }
 
 TEST(ProcessSwap, TerminateProcessRightAfterSwap)

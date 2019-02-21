@@ -284,6 +284,16 @@ void ProvisionalPageProxy::decidePolicyForResponse(uint64_t frameID, const WebCo
     m_page.decidePolicyForResponseShared(m_process.copyRef(), frameID, frameSecurityOrigin, identifier, navigationID, response, request, canShowMIMEType, listenerID, userData);
 }
 
+void ProvisionalPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    m_page.didPerformServerRedirectShared(m_process.copyRef(), sourceURLString, destinationURLString, frameID);
+}
+
+void ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceRequest&& request, const UserData& userData)
+{
+    m_page.didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(request), userData);
+}
+
 void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& parameters)
 {
     m_page.startURLSchemeTaskShared(m_process.copyRef(), WTFMove(parameters));
@@ -371,6 +381,16 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebPageProxy::DidCommitLoadForFrame::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame>(decoder, this, &ProvisionalPageProxy::didCommitLoadForFrame);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame>(decoder, this, &ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DidPerformServerRedirect::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidPerformServerRedirect>(decoder, this, &ProvisionalPageProxy::didPerformServerRedirect);
         return;
     }
 

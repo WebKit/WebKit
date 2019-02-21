@@ -1,3 +1,60 @@
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/48243214
+
+    REGRESSION (PSON): Can't access optumbank.com from myuhc.com https://bugs.webkit.org/show_bug.cgi?id=194797 <rdar://problem/48055151>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    The issue was caused by us mistakenly process-swapping for a same-site server side redirect.
+    The reason we were getting it wrong is because the logic in
+    WebProcessPool::processForNavigationInternal() was expecting page.process() to be the source
+    process and page.pageLoadState().url() to be the source URL. Those assumptions are incorrect
+    when a server-side redirect occurs in a provisional process. In such case, the source process
+    is the ProvisionalPageProxy's process and the source URL is the provisional URL, not the
+    committed one.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::didPerformServerRedirect):
+    (WebKit::ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+    (WebKit::ProvisionalPageProxy::didReceiveMessage):
+    * UIProcess/ProvisionalPageProxy.h:
+    Make sure the provisional page forwards IPC related to server-side redirects to the page so
+    that the client gets informed.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+    (WebKit::WebPageProxy::didPerformServerRedirect):
+    (WebKit::WebPageProxy::didPerformServerRedirectShared):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::processForNavigation):
+    (WebKit::WebProcessPool::processForNavigationInternal):
+    * UIProcess/WebProcessPool.h:
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@241752 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    (cherry picked from commit 53ac6d765e577c36c5c5e02659ee3ca21f25599f)
+
+    2019-02-18  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (PSON): Can't access optumbank.com from myuhc.com
+            https://bugs.webkit.org/show_bug.cgi?id=194797
+            <rdar://problem/48055151>
+
+            Reviewed by Geoffrey Garen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241606. rdar://problem/48243273
