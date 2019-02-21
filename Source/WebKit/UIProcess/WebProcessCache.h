@@ -41,7 +41,7 @@ class WebProcessCache {
 public:
     explicit WebProcessCache(WebProcessPool&);
 
-    bool addProcess(const String& registrableDomain, Ref<WebProcessProxy>&&);
+    bool addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&&);
     RefPtr<WebProcessProxy> takeProcess(const String& registrableDomain, WebsiteDataStore&);
 
     void updateCapacity(WebProcessPool&);
@@ -58,6 +58,7 @@ private:
 
     void evictProcess(WebProcessProxy&);
     void platformInitialize();
+    bool addProcess(const String& registrableDomain, Ref<WebProcessProxy>&&);
 
     unsigned m_capacity { 0 };
 
