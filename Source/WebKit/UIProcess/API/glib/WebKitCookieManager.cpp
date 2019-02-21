@@ -267,7 +267,7 @@ void webkit_cookie_manager_add_cookie(WebKitCookieManager* manager, SoupCookie* 
     // Cookies are read/written from/to the same SQLite database on disk regardless
     // of the process we access them from, so just use the first process pool.
     const auto& processPools = webkitWebsiteDataManagerGetProcessPools(manager->priv->dataManager);
-    processPools[0]->supplement<WebCookieManagerProxy>()->setCookie(manager->priv->sessionID(), WebCore::Cookie(cookie), [task = WTFMove(task)](CallbackBase::Error error) {
+    processPools[0]->supplement<WebCookieManagerProxy>()->setCookies(manager->priv->sessionID(), { WebCore::Cookie(cookie) }, [task = WTFMove(task)](CallbackBase::Error error) {
         if (error != CallbackBase::Error::None) {
             // This can only happen in cases where the web process is not available,
             // consider the operation "cancelled" from the point of view of the client.

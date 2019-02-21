@@ -28,7 +28,7 @@
     void DeleteCookiesForHostname(PAL::SessionID sessionID, String hostname)
     void DeleteAllCookies(PAL::SessionID sessionID)
 
-    void SetCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
+    void SetCookie(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookie, WebKit::CallbackID callbackID)
     void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, URL url, URL mainDocumentURL, WebKit::CallbackID callbackID)
     void GetAllCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
     void GetCookies(PAL::SessionID sessionID, URL url, WebKit::CallbackID callbackID)

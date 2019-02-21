@@ -87,7 +87,7 @@ private:
 
 - (void)setCookie:(NSHTTPCookie *)cookie completionHandler:(void (^)(void))completionHandler
 {
-    _cookieStore->setCookie(cookie, [handler = adoptNS([completionHandler copy])]() {
+    _cookieStore->setCookies({ cookie }, [handler = adoptNS([completionHandler copy])]() {
         auto rawHandler = (void (^)())handler.get();
         if (rawHandler)
             rawHandler();

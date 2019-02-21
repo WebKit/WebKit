@@ -142,10 +142,10 @@ void WebCookieManagerProxy::deleteAllCookiesModifiedSince(PAL::SessionID session
     processPool()->sendToNetworkingProcess(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(sessionID, time, callbackID));
 }
 
-void WebCookieManagerProxy::setCookie(PAL::SessionID sessionID, const Cookie& cookie, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction), processPool()->ensureNetworkProcess().throttler().backgroundActivityToken());
-    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookie(sessionID, cookie, callbackID));
+    processPool()->sendToNetworkingProcess(Messages::WebCookieManager::SetCookie(sessionID, cookies, callbackID));
 }
 
 void WebCookieManagerProxy::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL, Function<void (CallbackBase::Error)>&& callbackFunction)

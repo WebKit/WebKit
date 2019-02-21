@@ -59,7 +59,7 @@ public:
     virtual ~HTTPCookieStore();
 
     void cookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
-    void setCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
+    void setCookies(const Vector<WebCore::Cookie>&, CompletionHandler<void()>&&);
     void deleteCookie(const WebCore::Cookie&, CompletionHandler<void()>&&);
 
     class Observer {

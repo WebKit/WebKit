@@ -74,24 +74,24 @@ void HTTPCookieStore::cookies(CompletionHandler<void(const Vector<WebCore::Cooki
     });
 }
 
-void HTTPCookieStore::setCookie(const WebCore::Cookie& cookie, CompletionHandler<void()>&& completionHandler)
+void HTTPCookieStore::setCookies(const Vector<WebCore::Cookie>& cookies, CompletionHandler<void()>&& completionHandler)
 {
     auto* pool = m_owningDataStore->processPoolForCookieStorageOperations();
     if (!pool) {
-        // FIXME: pendingCookies used for defaultSession because session cookies cannot be propagated to Network Process with uiProcessCookieStorageIdentifier.
-        if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session)
-            setCookieInDefaultUIProcessCookieStore(cookie);
-        else
-            m_owningDataStore->addPendingCookie(cookie);
+        for (auto& cookie : cookies) {
+            // FIXME: pendingCookies used for defaultSession because session cookies cannot be propagated to Network Process with uiProcessCookieStorageIdentifier.
+            if (m_owningDataStore->sessionID() == PAL::SessionID::defaultSessionID() && !cookie.session)
+                setCookieInDefaultUIProcessCookieStore(cookie);
+            else
+                m_owningDataStore->addPendingCookie(cookie);
+        }
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler)] () mutable {
-            completionHandler();
-        });
+        callOnMainThread(WTFMove(completionHandler));
         return;
     }
 
     auto* cookieManager = pool->supplement<WebKit::WebCookieManagerProxy>();
-    cookieManager->setCookie(m_owningDataStore->sessionID(), cookie, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] (CallbackBase::Error error) mutable {
+    cookieManager->setCookies(m_owningDataStore->sessionID(), cookies, [pool = WTFMove(pool), completionHandler = WTFMove(completionHandler)] (CallbackBase::Error error) mutable {
         completionHandler();
     });
 }
