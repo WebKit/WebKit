@@ -48,6 +48,7 @@
 }
 
 .sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content {
+    flex-grow: 1;
     overflow-y: scroll;
 }
 

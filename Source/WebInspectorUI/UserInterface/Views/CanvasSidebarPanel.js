@@ -580,8 +580,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         console.assert(isInitialStateAction || this._recordingTreeOutline.children.lastValue instanceof WI.FolderTreeElement, "There should be a WI.FolderTreeElement for the frame for this action.");
         this._createRecordingActionTreeElement(action, index, isInitialStateAction ? this._recordingTreeOutline : this._recordingTreeOutline.children.lastValue);
 
-        if (isInitialStateAction && !this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
-            this.action = action;
+        if (this._recording.ready && !this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
+            this.action = this._recording.actions[0];
 
         if (action === this._recording.actions.lastValue && this._recordingProcessingOptionsContainer) {
             this._recordingProcessingOptionsContainer.remove();

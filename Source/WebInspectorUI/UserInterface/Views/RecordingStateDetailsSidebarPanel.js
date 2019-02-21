@@ -58,6 +58,8 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
 
         for (let subview of this.contentView.subviews)
             this.contentView.removeSubview(subview);
+
+        this._dataGrids = [];
     }
 
     set action(action)
