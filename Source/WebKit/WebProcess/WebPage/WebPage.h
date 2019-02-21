@@ -1146,6 +1146,7 @@ private:
     uint64_t messageSenderDestinationID() override;
 
     void platformInitialize();
+    void platformReinitialize();
     void platformDetach();
     void platformEditorState(WebCore::Frame&, EditorState& result, IncludePostLayoutDataHint) const;
     void sendEditorStateUpdate();
@@ -1433,6 +1434,8 @@ private:
 
 #if PLATFORM(COCOA)
     void requestActiveNowPlayingSessionInfo(CallbackID);
+    RetainPtr<NSData> accessibilityRemoteTokenData() const;
+    void accessibilityTransferRemoteToken(RetainPtr<NSData>);
 #endif
 
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }

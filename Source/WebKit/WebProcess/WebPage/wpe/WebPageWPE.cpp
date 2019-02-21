@@ -39,6 +39,10 @@ void WebPage::platformInitialize()
 {
 }
 
+void WebPage::platformReinitialize()
+{
+}
+
 void WebPage::platformDetach()
 {
 }
