@@ -67,10 +67,6 @@ void WebPage::platformInitialize()
 #endif
 }
 
-void WebPage::platformReinitialize()
-{
-}
-
 void WebPage::platformDetach()
 {
 }

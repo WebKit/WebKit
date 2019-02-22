@@ -141,18 +141,10 @@ void WebPage::platformInitializeAccessibility()
 {
     m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
     [m_mockAccessibilityElement setWebPage:this];
-
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
-}
-
-void WebPage::platformReinitialize()
-{
-    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
-}
-
-RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
-{
-    return newAccessibilityRemoteToken([NSUUID UUID]);
+    
+    NSData *remoteToken = newAccessibilityRemoteToken([NSUUID UUID]);
+    IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
 }
 
 static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)

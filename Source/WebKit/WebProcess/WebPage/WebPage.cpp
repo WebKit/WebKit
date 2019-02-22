@@ -710,8 +710,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, Vector<CallbackID>());
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
-
-    platformReinitialize();
 }
 
 void WebPage::updateThrottleState()
