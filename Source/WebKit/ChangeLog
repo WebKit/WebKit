@@ -1,3 +1,27 @@
+2019-02-19  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r241584. rdar://problem/46793397
+
+    Unreviewed. Fix GTK+ build after r241556
+    
+    I guess this is due to unified builds after a new file being added in r241556.
+    
+    Patch by Carlos Garcia Campos <cgarcia@igalia.com> on 2019-02-15
+    
+    * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+    * UIProcess/API/C/WKPage.cpp:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241584 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            Unreviewed. Fix GTK+ build after r241556
+
+            I guess this is due to unified builds after a new file being added in r241556.
+
+            * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+            * UIProcess/API/C/WKPage.cpp:
+
 2019-02-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241752. rdar://problem/48055151
