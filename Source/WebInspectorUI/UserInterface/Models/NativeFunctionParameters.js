@@ -485,7 +485,6 @@ WI.NativePrototypeFunctionParameters = {
         getCSSCanvasContext: "contextId, name, width, height",
         getElementById: "id",
         getElementsByName: "name",
-        getOverrideStyle: "[element], [pseudoElement]",
         importNode: "node, deep",
         queryCommandEnabled: "command",
         queryCommandIndeterm: "command",

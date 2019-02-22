@@ -1119,16 +1119,9 @@ WebKitDOMTreeWalker* webkit_dom_document_create_tree_walker(WebKitDOMDocument* s
     return WebKit::kit(gobjectResult.get());
 }
 
-WebKitDOMCSSStyleDeclaration* webkit_dom_document_get_override_style(WebKitDOMDocument* self, WebKitDOMElement* element, const gchar* pseudoElement)
+WebKitDOMCSSStyleDeclaration* webkit_dom_document_get_override_style(WebKitDOMDocument*, WebKitDOMElement*, const gchar*)
 {
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
-    g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(element), 0);
-    WebCore::Document* item = WebKit::core(self);
-    WebCore::Element* convertedElement = WebKit::core(element);
-    WTF::String convertedPseudoElement = WTF::String::fromUTF8(pseudoElement);
-    RefPtr<WebCore::CSSStyleDeclaration> gobjectResult = WTF::getPtr(item->getOverrideStyle(convertedElement, convertedPseudoElement));
-    return WebKit::kit(gobjectResult.get());
+    return nullptr;
 }
 
 WebKitDOMXPathExpression* webkit_dom_document_create_expression(WebKitDOMDocument* self, const gchar* expression, WebKitDOMXPathNSResolver* resolver, GError** error)

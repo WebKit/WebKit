@@ -1,3 +1,170 @@
+2019-02-21  Darin Adler  <darin@apple.com>
+
+        Some refinements for Node and Document
+        https://bugs.webkit.org/show_bug.cgi?id=194764
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press): Use shadowHost instead of
+        deprecatedShadowAncestorNode.
+        (WebCore::AccessibilityObject::axObjectCache const): Tweak coding style.
+        (WebCore::AccessibilityObject::focusedUIElement const): Use existing page
+        function to streamline.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessKey const): Use
+        attributeWithoutSynchronization for efficiency and consistency with other
+        code working with the accesskey attribute.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged): Added call to
+        invalidateAccessKeyCache, replacing old scheme tied to style recalculation.
+
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes): Update for name and return
+        type change of createDecoderIfNeeded to decoder.
+        (WebCore::DecodedDataDocumentParser::flush): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::elementForAccessKey): Renamed from getElementForAccessKey
+        to match WebKit coding style. Changed to use unique_ptr instead of separate
+        boolean to keep track of map validity status.
+        (WebCore::Document::buildAccessKeyCache): Renamed from buildAccessKeyMap to
+        clarify that this is a cache. Changed to use composedTreeDescendants rather
+        than explicit calls to shadowRoot. Use add instead of set so that first element
+        in document order wins, instead of last element in document order. Updated
+        to make a new map in a new unique_ptr instead of populating a map.
+        (WebCore::Document::invalidateAccessKeyCacheSlowCase): Renamed from
+        invalidateAccessKeyMap, and left an inline part in the header so the fast case
+        of quickly checking for a null pointer can be inlined.
+        (WebCore::Document::doctype const): Use downcast instead of static_cast.
+        (WebCore::Document::scheduleStyleRecalc): Moved call to invalidateAccessKeyMap
+        from here to childrenChanged and accesskey attribute change handling.
+        (WebCore::Document::processFormatDetection): Set m_isTelephoneNumberParsingAllowed
+        directly since this is the only place that does it and we don't need to factor
+        that one line of code into a function.
+        (WebCore::Document::getOverrideStyle): Moved to header since it's just a stub
+        that always returns nullptr and can be inlined.
+        (WebCore::Document::setIsTelephoneNumberParsingAllowed): Deleted.
+        (WebCore::Document::ensureTemplateDocument): Removed nullptr frame argument to
+        the create function, since Document::create now always involves no frame.
+        (WebCore::Document::didAssociateFormControl): Changed argument type to a reference
+        and simplified the logic with a local variable.
+        (WebCore::Document::didAssociateFormControlsTimerFired): Simplified the null
+        checks and rearranged things so that m_associatedFormControls will always
+        get cleared even if the document is no longer associated with a page.
+
+        * dom/Document.h: Removed unnnecessary explicit values for enumerations (first
+        value is always zero, etc.) and formatted simple enumerations in a single line
+        for easier reading. Moved Document::create fucntion bodies out of line, removed
+        the frame argument from the simple "create with URL" overload and made the frame
+        argument for createNonRenderedPlaceholder be a reference rather than a pointer.
+        Renamed getElementByAccessKey to elementForAccessKey, invalidateAccessKeyMap to
+        invalidateAccessKeyCache, buildAccessKeyMap to buildAccessKeCache,
+        m_elementsByAccessKey to m_accessKeyCache and changed its type.
+        Removed bogus "DOM methods" comment, unused setParserFeature friend declaration,
+        setIsTelephoneNumberParsingAllowed function, and m_accessKeyMapValid flag.
+
+        * dom/Document.idl: Added comment highlighting that getOverrideStyle is just a
+        placeholder returning null.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): Call invalidateAccessKeyCache when the
+        value of the accesskey attribute is changed. Also moved the class attribute code
+        so the attributes here are in alphabetical order (only class and id were out of
+        alphabetical order).
+
+        * dom/Node.cpp:
+        (WebCore::Node::isDescendantOrShadowDescendantOf const): Rewrote to no longer
+        use deprecatedShadowAncestorNode and used boolean operators to make it a
+        single line and easier to understand. Also added a FIXME since the
+        containsIncludingShadowDOM function is so similar, yet differently written.
+        (WebCore::Node::contains const): Rewrote as a single line to make this easier
+        to read and to *slightly* improve the speed in the "this == node" case.
+        (WebCore::Node::containsIncludingHostElements const): Use downcast.
+        (WebCore::Node::deprecatedShadowAncestorNode const): Deleted.
+
+        * dom/Node.h: Deleted now-unused deprecatedShadowAncestorNode.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Rewrote to use shadowHost
+        instead of deprecatedShadowAncestorNode.
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::resetFormOwner): Pass reference to
+        didAssociateFormControl.
+        (WebCore::FormAssociatedElement::formAttributeChanged): Ditto.
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseAttribute): Removed special case for accesskey
+        attribute, because we want to call the base class parseAttribute in that case.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::insertedIntoAncestor): Pass reference to
+        didAssociateFormControl.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute): Removed special case for accesskey
+        attribute with mysterious FIXME, because we want to call the base class
+        parseAttribute in that case. The old code had no effect before; the access key
+        logic would still find the attribute; if the goal is to ignore the attribute
+        for these elements we will need a different solution.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute): Ditto.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader): Removed code that was always passing
+        nullptr as the frame for the newly created DocumentWriter. It used m_frame, but
+        m_frame was always null.
+        (WebCore::DocumentLoader::attachToFrame): Pass reference to DocumentWriter::setFrame.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::DocumentWriter): Deleted. The old version set m_frame to
+        the passed in frame, which was always nullptr, and initialized some booleans and an
+        enumeration, which are now initialized in the class definition.
+        (WebCore::DocumentWriter::createDocument): Pass a reference for the frame.
+        (WebCore::DocumentWriter::begin): Updated now that State is an enum class.
+        (WebCore::DocumentWriter::decoder): Renamed from createDecoderIfNeeded and changed
+        to return a reference.
+        (WebCore::DocumentWriter::addData): Use RELEASE_ASSERT instead of if/CRASH and
+        updated now that State is an enum class.
+        (WebCore::DocumentWriter::insertDataSynchronously): Updated now that State is an
+        enum class.
+        (WebCore::DocumentWriter::end): Ditto.
+
+        * loader/DocumentWriter.h: Removed unneeded include and forward declaration.
+        Removed the frame pointer argument to the constructor, caller was always passing a
+        nullptr. Changed argument to setFrame to be a reference. Renamed createDecoderIfNeeded
+        to decoder and changed it to return a reference. Initialized m_frame,
+        m_hasReceivedSomeData, m_encodingWasChosenByUser, and m_state here so we don't need
+        to initialize them in a constructor. Renamed the enum from WriterState to State since
+        it's a member of DocumentWriter already, and made it an enum class rather than ending
+        each enumeration value with WritingState.
+
+        * page/DragController.cpp:
+        (WebCore::isEnabledColorInput): Removed boolean argument setToShadowAncestor. The
+        one caller that formerly passed true now calls the new hasEnabledColorInputAsShadowHost
+        function instead.
+        (WebCore::hasEnabledColorInputAsShadowHost): Added.
+        (WebCore::elementUnderMouse): Use shadowHost instead of deprecatedShadowAncestorNode.
+        Also added FIXME since it seems this should instead be using parentElementInComposedTree.
+        (WebCore::DragController::concludeEditDrag): Removed "false" argument to isEnabledColorInput.
+        (WebCore::DragController::canProcessDrag): Removed "true" argument to isEnabledColorInput
+        and added call to hasEnabledColorInputAsShadowHost. Also put the value of the node to drag
+        into a local variable to simplify code.
+        (WebCore::DragController::draggableElement const): Removed "false" argument to isEnabledColorInput.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey): Update name of elementForAccessKey.
+
+        * page/FocusController.cpp:
+        (WebCore::clearSelectionIfNeeded): Use shadowHost instead of deprecatedShadowAncestorNode.
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::createPageForServiceWorker): Pass reference instead of pointer for frame to
+        Document::createNonRenderedPlaceholder.
+
 2019-02-21  Daniel Bates  <dabates@apple.com>
 
         Same Site Lax cookies are not sent with cross-site redirect from client-initiated load

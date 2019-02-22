@@ -175,7 +175,8 @@ typedef (
     attribute boolean xmlStandalone;
 
     // FIXME: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).
-    CSSStyleDeclaration getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
+    // And it's just a stub that always returns null, so we can probably remove it some time soon.
+    CSSStyleDeclaration? getOverrideStyle(optional Element? element = null, optional DOMString pseudoElement = "undefined");
 
     // FIXME: Should be moved to GlobalEventHandlers (http://w3c.github.io/selection-api/#extensions-to-globaleventhandlers).
     [NotEnumerable] attribute EventHandler onselectstart; // FIXME: Should be enumerable.

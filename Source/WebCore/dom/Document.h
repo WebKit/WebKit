@@ -252,13 +252,10 @@ class Scope;
 
 const uint64_t HTMLMediaElementInvalidID = 0;
 
-enum PageshowEventPersistence {
-    PageshowEventNotPersisted = 0,
-    PageshowEventPersisted = 1
-};
+enum PageshowEventPersistence { PageshowEventNotPersisted, PageshowEventPersisted };
 
 enum NodeListInvalidationType {
-    DoNotInvalidateOnAttributeChanges = 0,
+    DoNotInvalidateOnAttributeChanges,
     InvalidateOnClassAttrChange,
     InvalidateOnIdNameAttrChange,
     InvalidateOnNameAttrChange,
@@ -283,7 +280,6 @@ enum DocumentClass {
     TextDocumentClass = 1 << 6,
     XMLDocumentClass = 1 << 7,
 };
-
 typedef unsigned char DocumentClassFlags;
 
 enum class DocumentCompatibilityMode : unsigned char {
@@ -294,10 +290,7 @@ enum class DocumentCompatibilityMode : unsigned char {
 
 enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
 
-enum class SelectionRestorationMode {
-    Restore,
-    SetDefault,
-};
+enum class SelectionRestorationMode { Restore, SetDefault };
 
 enum class HttpEquivPolicy {
     Enabled,
@@ -352,15 +345,8 @@ class Document
     , public Logger::Observer {
     WTF_MAKE_ISO_ALLOCATED(Document);
 public:
-    static Ref<Document> create(Frame* frame, const URL& url)
-    {
-        return adoptRef(*new Document(frame, url));
-    }
-
-    static Ref<Document> createNonRenderedPlaceholder(Frame* frame, const URL& url)
-    {
-        return adoptRef(*new Document(frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
-    }
+    static Ref<Document> create(const URL&);
+    static Ref<Document> createNonRenderedPlaceholder(Frame&, const URL&);
     static Ref<Document> create(Document&);
 
     virtual ~Document();
@@ -406,13 +392,11 @@ public:
 
     bool canContainRangeEndPoint() const final { return true; }
 
-    Element* getElementByAccessKey(const String& key);
-    void invalidateAccessKeyMap();
+    Element* elementForAccessKey(const String& key);
+    void invalidateAccessKeyCache();
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
     void clearSelectorQueryCache();
-
-    // DOM methods & attributes for Document
 
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
@@ -431,10 +415,7 @@ public:
 
     WEBCORE_EXPORT DOMImplementation& implementation();
     
-    Element* documentElement() const
-    {
-        return m_documentElement.get();
-    }
+    Element* documentElement() const { return m_documentElement.get(); }
     static ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
     WEBCORE_EXPORT Element* activeElement();
@@ -462,11 +443,7 @@ public:
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     Element* scrollingElement();
 
-    enum ReadyState {
-        Loading,
-        Interactive,
-        Complete
-    };
+    enum ReadyState { Loading, Interactive,  Complete };
     ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
@@ -570,8 +547,8 @@ public:
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
 
-    WEBCORE_EXPORT FrameView* view() const; // can be NULL
-    WEBCORE_EXPORT Page* page() const; // can be NULL
+    WEBCORE_EXPORT FrameView* view() const; // Can be null.
+    WEBCORE_EXPORT Page* page() const; // Can be null.
     const Settings& settings() const { return m_settings.get(); }
     Settings& mutableSettings() { return m_settings.get(); }
 
@@ -606,10 +583,7 @@ public:
     
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks {
-        Asynchronously,
-        Synchronously,
-    };
+    enum class RunPostLayoutTasks { Asynchronously, Synchronously };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
@@ -883,7 +857,7 @@ public:
     bool hasMutationObservers() const { return m_mutationObserverTypes; }
     void addMutationObserverTypes(MutationObserverOptions types) { m_mutationObserverTypes |= types; }
 
-    WEBCORE_EXPORT CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
+    CSSStyleDeclaration* getOverrideStyle(Element*, const String&) { return nullptr; }
 
     // Handles an HTTP header equivalent set by a meta tag using <meta http-equiv="..." content="...">. This is called
     // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
@@ -1352,7 +1326,7 @@ public:
     void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = templateDocumentHost; }
     Document* templateDocumentHost() { return m_templateDocumentHost; }
 
-    void didAssociateFormControl(Element*);
+    void didAssociateFormControl(Element&);
     bool hasDisabledFieldsetElement() const { return m_disabledFieldsetElementsCount; }
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
@@ -1600,7 +1574,8 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
-    void buildAccessKeyMap(TreeScope&);
+    void invalidateAccessKeyCacheSlowCase();
+    void buildAccessKeyCache();
 
     void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
 
@@ -1622,11 +1597,6 @@ private:
 #endif
 
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
-
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    friend void setParserFeature(const String& key, const String& value, Document*, void* userData);
-    void setIsTelephoneNumberParsingAllowed(bool);
-#endif
 
     void setVisualUpdatesAllowed(ReadyState);
     void setVisualUpdatesAllowed(bool);
@@ -1827,7 +1797,7 @@ private:
     HashSet<HTMLMediaElement*> m_allowsMediaDocumentInlinePlaybackElements;
 #endif
 
-    HashMap<StringImpl*, Element*, ASCIICaseInsensitiveHash> m_elementsByAccessKey;
+    std::unique_ptr<HashMap<String, Element*, ASCIICaseInsensitiveHash>> m_accessKeyCache;
 
     std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
@@ -2029,7 +1999,6 @@ private:
     bool m_isDNSPrefetchEnabled { false };
     bool m_haveExplicitlyDisabledDNSPrefetch { false };
 
-    bool m_accessKeyMapValid { false };
     bool m_isSynthesized { false };
     bool m_isNonRenderedPlaceholder { false };
 
@@ -2126,6 +2095,22 @@ inline AXObjectCache* Document::existingAXObjectCache() const
     if (!hasEverCreatedAnAXObjectCache)
         return nullptr;
     return existingAXObjectCacheSlow();
+}
+
+inline Ref<Document> Document::create(const URL& url)
+{
+    return adoptRef(*new Document(nullptr, url));
+}
+
+inline Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
+{
+    return adoptRef(*new Document(&frame, url, DefaultDocumentClass, NonRenderedPlaceholder));
+}
+
+inline void Document::invalidateAccessKeyCache()
+{
+    if (UNLIKELY(m_accessKeyCache))
+        invalidateAccessKeyCacheSlowCase();
 }
 
 // These functions are here because they require the Document class definition and we want to inline them.

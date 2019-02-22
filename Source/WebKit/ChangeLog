@@ -1,3 +1,20 @@
+2019-02-21  Darin Adler  <darin@apple.com>
+
+        Some refinements for Node and Document
+        https://bugs.webkit.org/show_bug.cgi?id=194764
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+        (webkit_dom_document_get_override_style): Changed to return nullptr directly instead of
+        calling a bunch of WebCore code first. No real value in checking arguments or doing any work.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldAlwaysUsePluginDocument const): Deleted.
+        No need to override the function inherited from the base class, nor to keep track of the
+        unnecessary task of implementing this some day.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h: Updated for the above.
+
 2019-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Discard cached processes when clearing website data store

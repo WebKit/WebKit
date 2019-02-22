@@ -146,7 +146,6 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
 DocumentLoader::DocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : FrameDestructionObserver(nullptr)
     , m_cachedResourceLoader(CachedResourceLoader::create(this))
-    , m_writer(m_frame)
     , m_originalRequest(request)
     , m_substituteData(substituteData)
     , m_originalRequestCopy(request)
@@ -1183,7 +1182,7 @@ void DocumentLoader::attachToFrame(Frame& frame)
 
     ASSERT(!m_frame);
     observeFrame(&frame);
-    m_writer.setFrame(&frame);
+    m_writer.setFrame(frame);
     attachToFrame();
 
 #ifndef NDEBUG

@@ -42,7 +42,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter& writer, const char* 
     if (!length)
         return;
 
-    String decoded = writer.createDecoderIfNeeded()->decode(data, length);
+    String decoded = writer.decoder().decode(data, length);
     if (decoded.isEmpty())
         return;
 
@@ -52,7 +52,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter& writer, const char* 
 
 void DecodedDataDocumentParser::flush(DocumentWriter& writer)
 {
-    String remainingData = writer.createDecoderIfNeeded()->flush();
+    String remainingData = writer.decoder().flush();
     if (remainingData.isEmpty())
         return;
 

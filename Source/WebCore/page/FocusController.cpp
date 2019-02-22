@@ -767,21 +767,23 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (caretBrowsing)
         return;
 
-    Node* selectionStartNode = selection.start().deprecatedNode();
-    if (selectionStartNode == newFocusedNode || selectionStartNode->isDescendantOf(newFocusedNode) || selectionStartNode->deprecatedShadowAncestorNode() == newFocusedNode)
-        return;
-        
+    if (newFocusedNode) {
+        Node* selectionStartNode = selection.start().deprecatedNode();
+        if (newFocusedNode->contains(selectionStartNode) || selectionStartNode->shadowHost() == newFocusedNode)
+            return;
+    }
+
     if (Node* mousePressNode = newFocusedFrame->eventHandler().mousePressNode()) {
         if (mousePressNode->renderer() && !mousePressNode->canStartSelection()) {
             // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
-            Node * root = selection.rootEditableElement();
+            auto* root = selection.rootEditableElement();
             if (!root)
                 return;
-
-            if (Node* shadowAncestorNode = root->deprecatedShadowAncestorNode()) {
-                if (!is<HTMLInputElement>(*shadowAncestorNode) && !is<HTMLTextAreaElement>(*shadowAncestorNode))
-                    return;
-            }
+            auto* host = root->shadowHost();
+            // FIXME: Seems likely we can just do the check on "host" here instead of "rootOrHost".
+            auto* rootOrHost = host ? host : root;
+            if (!is<HTMLInputElement>(*rootOrHost) && !is<HTMLTextAreaElement>(*rootOrHost))
+                return;
         }
     }
 

@@ -58,14 +58,6 @@ static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame
     return parentFrame && parentFrame->document()->securityOrigin().canAccess(frame->document()->securityOrigin());
 }
     
-DocumentWriter::DocumentWriter(Frame* frame)
-    : m_frame(frame)
-    , m_hasReceivedSomeData(false)
-    , m_encodingWasChosenByUser(false)
-    , m_state(NotStartedWritingState)
-{
-}
-
 // This is only called by ScriptController::executeIfJavaScriptURL
 // and always contains the result of evaluating a javascript: url.
 // This is the <iframe src="javascript:'html'"> case.
@@ -122,7 +114,7 @@ Ref<Document> DocumentWriter::createDocument(const URL& url)
         return SinkDocument::create(m_frame, url);
 #endif
     if (!m_frame->loader().client().hasHTMLView())
-        return Document::createNonRenderedPlaceholder(m_frame, url);
+        return Document::createNonRenderedPlaceholder(*m_frame, url);
     return DOMImplementation::createDocument(m_mimeType, m_frame, url);
 }
 
@@ -194,11 +186,11 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (m_frame->view() && m_frame->loader().client().hasHTMLView())
         m_frame->view()->setContentsSize(IntSize());
 
-    m_state = StartedWritingState;
+    m_state = State::Started;
     return true;
 }
 
-TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()
+TextResourceDecoder& DocumentWriter::decoder()
 {
     if (!m_decoder) {
         m_decoder = TextResourceDecoder::create(m_mimeType,
@@ -225,7 +217,7 @@ TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()
         }
         m_frame->document()->setDecoder(m_decoder.get());
     }
-    return m_decoder.get();
+    return *m_decoder;
 }
 
 void DocumentWriter::reportDataReceived()
@@ -241,22 +233,17 @@ void DocumentWriter::reportDataReceived()
 
 void DocumentWriter::addData(const char* bytes, size_t length)
 {
-    // Check that we're inside begin()/end().
-    // FIXME: Change these to ASSERT once https://bugs.webkit.org/show_bug.cgi?id=80427 has
-    // been resolved.
-    if (m_state == NotStartedWritingState)
-        CRASH();
-    if (m_state == FinishedWritingState)
-        CRASH();
-
+    // FIXME: Change these to ASSERT once https://bugs.webkit.org/show_bug.cgi?id=80427 has been resolved.
+    RELEASE_ASSERT(m_state != State::NotStarted);
+    RELEASE_ASSERT(m_state != State::Finished);
     ASSERT(m_parser);
     m_parser->appendBytes(*this, bytes, length);
 }
 
 void DocumentWriter::insertDataSynchronously(const String& markup)
 {
-    ASSERT(m_state != NotStartedWritingState);
-    ASSERT(m_state != FinishedWritingState);
+    ASSERT(m_state != State::NotStarted);
+    ASSERT(m_state != State::Finished);
     ASSERT(m_parser);
     m_parser->insert(markup);
 }
@@ -268,7 +255,7 @@ void DocumentWriter::end()
 
     // The parser is guaranteed to be released after this point. begin() would
     // have to be called again before we can start writing more data.
-    m_state = FinishedWritingState;
+    m_state = State::Finished;
 
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it can be deleted by checkCompleted(), 
