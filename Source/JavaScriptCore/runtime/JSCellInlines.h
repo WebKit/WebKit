@@ -166,9 +166,6 @@ template<typename T>
 ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     VM& vm = *heap.vm();
-    if (validateDFGDoesGC)
-        RELEASE_ASSERT(heap.expectDoesGC());
-
     ASSERT(deferralContext || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
     JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocateNonVirtual(vm, size, deferralContext, failureMode));

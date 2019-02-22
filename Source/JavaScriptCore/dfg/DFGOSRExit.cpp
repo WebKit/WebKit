@@ -1015,6 +1015,12 @@ void JIT_OPERATION OSRExit::compileOSRExit(ExecState* exec)
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
 
+    if (validateDFGDoesGC) {
+        // We're about to exit optimized code. So, there's no longer any optimized
+        // code running that expects no GC.
+        vm->heap.setExpectDoesGC(true);
+    }
+
     if (vm->callFrameForCatch)
         RELEASE_ASSERT(vm->callFrameForCatch == exec);
 
@@ -1399,6 +1405,11 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC. We need to set this before arguments
         // materialization below (see emitRestoreArguments()).
+
+        // Even though we set Heap::m_expectDoesGC in compileOSRExit(), we also need
+        // to set it here because compileOSRExit() is only called on the first time
+        // we exit from this site, but all subsequent exits will take this compiled
+        // ramp without calling compileOSRExit() first.
         jit.store8(CCallHelpers::TrustedImm32(true), vm.heap.addressOfExpectDoesGC());
     }
 

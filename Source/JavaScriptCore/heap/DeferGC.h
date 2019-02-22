@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ namespace JSC {
 
 class DeferGC {
     WTF_MAKE_NONCOPYABLE(DeferGC);
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     DeferGC(Heap& heap)
         : m_heap(heap)
@@ -42,6 +43,8 @@ public:
     
     ~DeferGC()
     {
+        if (validateDFGDoesGC)
+            RELEASE_ASSERT(m_heap.expectDoesGC());
         m_heap.decrementDeferralDepthAndGCIfNeeded();
     }
 
@@ -51,6 +54,7 @@ private:
 
 class DeferGCForAWhile {
     WTF_MAKE_NONCOPYABLE(DeferGCForAWhile);
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     DeferGCForAWhile(Heap& heap)
         : m_heap(heap)
@@ -69,6 +73,7 @@ private:
 
 class DisallowGC : public DisallowScope<DisallowGC> {
     WTF_MAKE_NONCOPYABLE(DisallowGC);
+    WTF_FORBID_HEAP_ALLOCATION;
     typedef DisallowScope<DisallowGC> Base;
 public:
 #ifdef NDEBUG

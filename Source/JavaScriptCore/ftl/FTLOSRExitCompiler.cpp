@@ -248,6 +248,11 @@ static void compileStub(
         // We're about to exit optimized code. So, there's no longer any optimized
         // code running that expects no GC. We need to set this before object
         // materialization below.
+
+        // Even though we set Heap::m_expectDoesGC in compileFTLOSRExit(), we also need
+        // to set it here because compileFTLOSRExit() is only called on the first time
+        // we exit from this site, but all subsequent exits will take this compiled
+        // ramp without calling compileFTLOSRExit() first.
         jit.store8(CCallHelpers::TrustedImm32(true), vm->heap.addressOfExpectDoesGC());
     }
 
@@ -526,6 +531,13 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
 
     VM& vm = exec->vm();
+
+    if (validateDFGDoesGC) {
+        // We're about to exit optimized code. So, there's no longer any optimized
+        // code running that expects no GC.
+        vm.heap.setExpectDoesGC(true);
+    }
+
     if (vm.callFrameForCatch)
         RELEASE_ASSERT(vm.callFrameForCatch == exec);
     
