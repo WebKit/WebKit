@@ -1,3 +1,12 @@
+2019-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        wpewebkit-2.23.90 Failing to build on Fedora
+        https://bugs.webkit.org/show_bug.cgi?id=194922
+
+        Unreviewed. Fix path to WebKitUserContentFilterStore.h in WPE_API_INSTALLED_HEADERS.
+
+        * PlatformWPE.cmake:
+
 2019-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Hardcode Visual Viewports on everywhere except iOS WK1
