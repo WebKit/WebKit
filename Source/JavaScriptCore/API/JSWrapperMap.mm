@@ -28,6 +28,7 @@
 
 #if JSC_OBJC_API_ENABLED
 #import "APICast.h"
+#import "APIUtils.h"
 #import "JSAPIWrapperObject.h"
 #import "JSCInlines.h"
 #import "JSCallbackObject.h"
@@ -178,14 +179,31 @@ static NSMutableDictionary *createRenameMap(Protocol *protocol, BOOL isInstanceM
     return renameMap;
 }
 
-inline void putNonEnumerable(JSValue *base, NSString *propertyName, JSValue *value)
+inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *propertyName, JSValue *value)
 {
-    [base defineProperty:propertyName descriptor:@{
-        JSPropertyDescriptorValueKey: value,
-        JSPropertyDescriptorWritableKey: @YES,
-        JSPropertyDescriptorEnumerableKey: @NO,
-        JSPropertyDescriptorConfigurableKey: @YES
-    }];
+    if (![base isObject])
+        return;
+    JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSObject* baseObject = JSC::asObject(toJS(exec, [base JSValueRef]));
+    auto name = OpaqueJSString::tryCreate(propertyName);
+    if (!name)
+        return;
+
+    JSC::PropertyDescriptor descriptor;
+    descriptor.setValue(toJS(exec, [value JSValueRef]));
+    descriptor.setEnumerable(false);
+    descriptor.setConfigurable(true);
+    descriptor.setWritable(true);
+    bool shouldThrow = false;
+    baseObject->methodTable(vm)->defineOwnProperty(baseObject, exec, name->identifier(&vm), descriptor, shouldThrow);
+
+    JSValueRef exception = 0;
+    if (handleExceptionIfNeeded(scope, exec, &exception) == ExceptionStatus::DidThrow)
+        [context valueFromNotifyException:exception];
 }
 
 static bool isInitFamilyMethod(NSString *name)
@@ -254,7 +272,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
-                putNonEnumerable(object, name, [JSValue valueWithJSValueRef:method inContext:context]);
+                putNonEnumerable(context, object, name, [JSValue valueWithJSValueRef:method inContext:context]);
         }
     });
 
@@ -484,8 +502,9 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
         JSValue* prototype = [JSValue valueWithJSValueRef:toRef(jsPrototype) inContext:context];
         JSValue* constructor = [JSValue valueWithJSValueRef:toRef(jsConstructor) inContext:context];
-        putNonEnumerable(prototype, @"constructor", constructor);
-        putNonEnumerable(constructor, @"prototype", prototype);
+
+        putNonEnumerable(context, prototype, @"constructor", constructor);
+        putNonEnumerable(context, constructor, @"prototype", prototype);
 
         Protocol *exportProtocol = getJSExportProtocol();
         forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol, bool&){
@@ -511,8 +530,8 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         if (JSObjectRef method = objCCallbackFunctionForBlock(context, object)) {
             JSValue *constructor = [JSValue valueWithJSValueRef:method inContext:context];
             JSValue *prototype = [JSValue valueWithNewObjectInContext:context];
-            putNonEnumerable(constructor, @"prototype", prototype);
-            putNonEnumerable(prototype, @"constructor", constructor);
+            putNonEnumerable(context, constructor, @"prototype", prototype);
+            putNonEnumerable(context, prototype, @"constructor", constructor);
             return toJS(method);
         }
     }

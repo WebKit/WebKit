@@ -1,5 +1,36 @@
 2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] putNonEnumerable in JSWrapperMap is too costly
+        https://bugs.webkit.org/show_bug.cgi?id=194935
+
+        Reviewed by Mark Lam.
+
+        When we convert Objective-C blocks to JS objects, we need to set up a corresponding function object correctly.
+        During this allocation, we call [JSValue defineProperty:descriptor] to connect a "prototype" object and "constructor" object.
+        The problem is that this API has a particularly costly implementation:
+
+            [[_context globalObject][@"Object"] invokeMethod:@"defineProperty" withArguments:@[ self, key, descriptor ]];
+
+        This wraps each JS objects appear in this code with Objective-C wrapper. And we convert a NSDictionary to JSObject, which
+        has "writable", "enumerable", "configurable", "value" fields, and call the "defineProperty" JS function through Objective-C wrapper.
+        This allocates many Objective-C wrappers and JS objects for descriptors. Since JSC has a direct C++ API "defineOwnProperty", we should
+        bypass these Objective-C APIs and call JSC's code directly.
+
+        This patch changes `putNonEnumerable` implementation, from calling [JSValue defineProperty:descriptor] to calling JSC C++ code directly.
+        We do not change [JSValue defineProperty:descriptor] implementation for now because of two reasons. (1) This is not used in our benchmarks
+        except for this (converting an Objective-C block to a JS object) one path. And (2) even if we were to re-write [JSValue defineProperty:descriptor]
+        to be more optimized, we would still want to call the JSC C++ version of defineProperty directly here to avoid NSDictionary allocation for a descriptor.
+
+        * API/APIUtils.h:
+        (setException):
+        * API/JSWrapperMap.mm:
+        (putNonEnumerable):
+        (copyMethodsToObject):
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeInContext:]):
+        (-[JSObjCClassInfo wrapperForObject:inContext:]):
+
+2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, build fix after r241954
         https://bugs.webkit.org/show_bug.cgi?id=194939
 

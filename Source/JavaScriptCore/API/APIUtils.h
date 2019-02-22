@@ -57,7 +57,7 @@ inline void setException(JSC::ExecState* exec, JSValueRef* returnedExceptionRef,
     if (returnedExceptionRef)
         *returnedExceptionRef = toRef(exec, exception);
 #if ENABLE(REMOTE_INSPECTOR)
-    VM& vm = exec->vm();
+    JSC::VM& vm = exec->vm();
     vm.vmEntryGlobalObject(exec)->inspectorController().reportAPIException(exec, JSC::Exception::create(vm, exception));
 #endif
 }
