@@ -214,6 +214,8 @@ private:
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
 
     bool prepareToFinishTransaction(UniqueIDBDatabaseTransaction&);
+    
+    void clearStalePendingOpenDBRequests();
 
     void postDatabaseTask(CrossThreadTask&&);
     void postDatabaseTaskReply(CrossThreadTask&&);

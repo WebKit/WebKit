@@ -1,3 +1,28 @@
+2019-02-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash under IDBServer::IDBConnectionToClient::identifier() const
+        https://bugs.webkit.org/show_bug.cgi?id=194843
+        <rdar://problem/48203102>
+
+        Reviewed by Geoffrey Garen.
+
+        UniqueIDBDatabase should ignore requests from connections that are already closed.
+
+        Tests are hard to create without some tricks on UniqueIDBDatabase so this fix is verified manually. 
+        One test is created by adding delay to UniqueIDBDatabase::openBackingStore on the background thread to make sure
+        disconnection of web process happens before UniqueIDBDatabase::didOpenBackingStore, because didOpenBackingStore
+        may start a version change transaction and ask for identifier from the connection that is already gone.
+
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::connectionToClientClosed):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        (WebCore::IDBServer::IDBConnectionToClient::isClosed):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::clearStalePendingOpenDBRequests):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Input type "formatSetInlineTextDirection" is dispatched when changing paragraph-level text direction
