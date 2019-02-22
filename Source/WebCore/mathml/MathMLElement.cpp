@@ -219,18 +219,6 @@ int MathMLElement::tabIndex() const
     return Element::tabIndex();
 }
 
-StringView MathMLElement::stripLeadingAndTrailingWhitespace(const StringView& stringView)
-{
-    unsigned start = 0, stringLength = stringView.length();
-    while (stringLength > 0 && isHTMLSpace(stringView[start])) {
-        start++;
-        stringLength--;
-    }
-    while (stringLength > 0 && isHTMLSpace(stringView[start + stringLength - 1]))
-        stringLength--;
-    return stringView.substring(start, stringLength);
-}
-
 }
 
 #endif // ENABLE(MATHML)

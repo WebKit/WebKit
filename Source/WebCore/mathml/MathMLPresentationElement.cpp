@@ -35,6 +35,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTTPParsers.h"
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
 #include "RenderMathMLBlock.h"
@@ -294,18 +295,19 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     // Instead, we just use isHTMLSpace and toFloat to parse these parts.
 
     // We first skip whitespace from both ends of the string.
-    StringView stringView = stripLeadingAndTrailingWhitespace(string);
+    StringView stringView = string;
+    StringView strippedLength = stripLeadingAndTrailingHTTPSpaces(stringView);
 
-    if (stringView.isEmpty())
+    if (strippedLength.isEmpty())
         return Length();
 
     // We consider the most typical case: a number followed by an optional unit.
-    UChar firstChar = stringView[0];
+    UChar firstChar = strippedLength[0];
     if (isASCIIDigit(firstChar) || firstChar == '-' || firstChar == '.')
-        return parseNumberAndUnit(stringView);
+        return parseNumberAndUnit(strippedLength);
 
     // Otherwise, we try and parse a named space.
-    return parseNamedSpace(stringView);
+    return parseNamedSpace(strippedLength);
 }
 
 const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const QualifiedName& name, Optional<Length>& length)

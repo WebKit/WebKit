@@ -30,6 +30,7 @@
 
 #if ENABLE(MATHML)
 
+#include "HTTPParsers.h"
 #include "MathMLNames.h"
 #include "RenderMathMLToken.h"
 #include <wtf/IsoMallocInlines.h>
@@ -82,7 +83,7 @@ bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
 
 Optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string)
 {
-    auto codePoints = stripLeadingAndTrailingWhitespace(string).codePoints();
+    auto codePoints = stripLeadingAndTrailingHTTPSpaces(string).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
         return WTF::nullopt;
