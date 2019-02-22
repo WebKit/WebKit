@@ -3059,6 +3059,8 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
 }
 
+#if PLATFORM(MAC)
+
 TEST(ProcessSwap, NumberOfCachedProcesses)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -3112,8 +3114,9 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     EXPECT_EQ(1u, [processPool _webProcessCount]);
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
-
 }
+
+#endif // PLATFORM(MAC)
 
 static const char* visibilityBytes = R"PSONRESOURCE(
 <script>

@@ -1,3 +1,11 @@
+2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, disable API test added in r241928 on iOS.
+
+        The cache is not enabled on devices with less than 3GB of RAM.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Hardcode Visual Viewports on everywhere except iOS WK1
