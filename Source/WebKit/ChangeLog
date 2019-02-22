@@ -1,3 +1,14 @@
+2019-02-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] No API documentation generated for WebKitUserContentFilterStore
+        https://bugs.webkit.org/show_bug.cgi?id=194908
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Add entry for webkit_user_content_filter_store_get_type().
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add entry for WebKitUserContentFilterStore.
+        * UIProcess/API/wpe/docs/wpe-docs.sgml: Ditto.
+
 2019-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         wpewebkit-2.23.90 Failing to build on Fedora
