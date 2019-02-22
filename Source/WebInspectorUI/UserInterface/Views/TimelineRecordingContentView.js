@@ -34,7 +34,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this.element.classList.add("timeline-recording");
 
-        this._timelineOverview = new WI.TimelineOverview(this._recording, this);
+        this._timelineOverview = new WI.TimelineOverview(this._recording);
         this._timelineOverview.addEventListener(WI.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
         this._timelineOverview.addEventListener(WI.TimelineOverview.Event.RecordSelected, this._recordSelected, this);
         this._timelineOverview.addEventListener(WI.TimelineOverview.Event.TimelineSelected, this._timelineSelected, this);
@@ -260,25 +260,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         const hasChildren = false;
         return new WI.GeneralTreeElement(iconClassName, title, representedObject, hasChildren);
-    }
-
-    // TimelineOverview delegate
-
-    timelineOverviewUserSelectedRecord(timelineOverview, timelineRecord)
-    {
-        let timelineViewForRecord = null;
-        for (let timelineView of this._timelineViewMap.values()) {
-            if (timelineView.representedObject.type === timelineRecord.type) {
-                timelineViewForRecord = timelineView;
-                break;
-            }
-        }
-
-        if (!timelineViewForRecord)
-            return;
-
-        this._timelineContentBrowser.showContentView(timelineViewForRecord);
-        timelineViewForRecord.userSelectedRecordFromOverview(timelineRecord);
     }
 
     // Private

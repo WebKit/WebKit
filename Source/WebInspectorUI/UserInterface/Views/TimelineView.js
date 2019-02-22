@@ -295,11 +295,6 @@ WI.TimelineView = class TimelineView extends WI.ContentView
 
     // Protected
 
-    userSelectedRecordFromOverview(timelineRecord)
-    {
-        // Implemented by sub-classes if needed.
-    }
-
     filterDidChange()
     {
         // Implemented by sub-classes if needed.
