@@ -2,9 +2,6 @@
 <script src="../../resources/testharness.js"></script>
 <script src="../../resources/testharnessreport.js"></script>
 <script>
-    if (window.internals)
-        internals.settings.setVisualViewportEnabled(true);
-
     var test = async_test('Verify that a resize event gets fired when the window is resized.');
 
     function resizeHandler() {

@@ -11,16 +11,22 @@
       if (window.internals)
           window.internals.settings.setAsyncFrameScrollingEnabled(true);
 
+      var firstScrollingTree = "";
+      var secondScrollingTree = "";
+      
       function subFrameBecameNonScrollable()
       {
           if (window.internals)
-              document.getElementById('scrollingTree1').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+              firstScrollingTree = window.internals.scrollingStateTreeAsText() + "\n";
       }
 
       function subFrameBecameScrollable()
       {
           if (window.internals)
-              document.getElementById('scrollingTree2').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+              secondScrollingTree = window.internals.scrollingStateTreeAsText() + "\n";
+              
+          document.getElementById('scrollingTree1').innerText = firstScrollingTree;
+          document.getElementById('scrollingTree2').innerText = secondScrollingTree;
 
           if (window.testRunner)
               testRunner.notifyDone();

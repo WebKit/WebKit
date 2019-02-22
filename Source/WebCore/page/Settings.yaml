@@ -571,7 +571,7 @@ layoutViewportHeightExpansionFactor:
 
 # Runtime-enabled features
 visualViewportEnabled:
-  initial: false
+  initial: true
   onChange: setNeedsRecalcStyleInAllFrames
 
 visualViewportAPIEnabled:

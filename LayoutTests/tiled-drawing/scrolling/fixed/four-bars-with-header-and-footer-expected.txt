@@ -13,7 +13,6 @@
     (has enabled vertical scrollbar 1))
   (header height 100)
   (footer height 100)
-  (visual viewport enabled 1)
   (layout viewport at (0,100) size 785x600)
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,1621))

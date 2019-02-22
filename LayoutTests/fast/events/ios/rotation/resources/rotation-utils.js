@@ -1,8 +1,5 @@
 jsTestIsAsync = true;
 
-if (window.internals)
-    internals.settings.setVisualViewportEnabled(true);
-
 function stringFromRect(domRect)
 {
     return `${domRect.x}, ${domRect.y} - ${domRect.width} x ${domRect.height}`;

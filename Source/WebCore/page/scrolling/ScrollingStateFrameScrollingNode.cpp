@@ -63,7 +63,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
-    , m_visualViewportEnabled(stateNode.visualViewportEnabled())
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
 {
     if (hasChangedProperty(RootContentsLayer))
@@ -118,7 +117,6 @@ void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(BehaviorForFixedElements);
     setPropertyChangedBit(TopContentInset);
     setPropertyChangedBit(FixedElementsLayoutRelativeToFrame);
-    setPropertyChangedBit(VisualViewportEnabled);
     setPropertyChangedBit(AsyncFrameOrOverflowScrollingEnabled);
     setPropertyChangedBit(LayoutViewport);
     setPropertyChangedBit(MinLayoutViewportOrigin);
@@ -299,16 +297,6 @@ void ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame(boo
     setPropertyChanged(FixedElementsLayoutRelativeToFrame);
 }
 
-// Only needed while visual viewports are runtime-switchable.
-void ScrollingStateFrameScrollingNode::setVisualViewportEnabled(bool visualViewportEnabled)
-{
-    if (visualViewportEnabled == m_visualViewportEnabled)
-        return;
-    
-    m_visualViewportEnabled = visualViewportEnabled;
-    setPropertyChanged(VisualViewportEnabled);
-}
-
 void ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
 {
     if (enabled == m_asyncFrameOrOverflowScrollingEnabled)
@@ -348,12 +336,9 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     if (m_footerHeight)
         ts.dumpProperty("footer height", m_footerHeight);
     
-    if (m_visualViewportEnabled) {
-        ts.dumpProperty("visual viewport enabled", m_visualViewportEnabled);
-        ts.dumpProperty("layout viewport", m_layoutViewport);
-        ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
-        ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
-    }
+    ts.dumpProperty("layout viewport", m_layoutViewport);
+    ts.dumpProperty("min layout viewport origin", m_minLayoutViewportOrigin);
+    ts.dumpProperty("max layout viewport origin", m_maxLayoutViewportOrigin);
     
     if (m_behaviorForFixed == StickToViewportBounds)
         ts.dumpProperty("behavior for fixed", m_behaviorForFixed);

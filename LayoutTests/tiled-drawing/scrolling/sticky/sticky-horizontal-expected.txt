@@ -12,7 +12,6 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
     (horizontal scrollbar mode 0)
     (vertical scrollbar mode 0)
     (has enabled horizontal scrollbar 1))
-  (visual viewport enabled 1)
   (layout viewport at (800,0) size 800x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (1208,0))

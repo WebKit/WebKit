@@ -145,7 +145,6 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
     frameScrollingNode.setFooterHeight(frameView.footerHeight());
     frameScrollingNode.setTopContentInset(frameView.topContentInset());
 
-    frameScrollingNode.setVisualViewportEnabled(visualViewportEnabled());
     frameScrollingNode.setLayoutViewport(frameView.layoutViewportRect());
     frameScrollingNode.setAsyncFrameOrOverflowScrollingEnabled(asyncFrameOrOverflowScrollingEnabled());
 
@@ -387,17 +386,13 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
         [&frameView](Optional<FloatPoint> origin) {
             if (origin)
                 frameView.setBaseLayoutViewportOrigin(LayoutPoint(origin.value()), FrameView::TriggerLayoutOrNot::No);
-        }, [&frameView, &layoutViewportRect, viewportRectStability, visualViewportEnabled = visualViewportEnabled()](Optional<FloatRect> overrideRect) {
+        }, [&frameView, &layoutViewportRect, viewportRectStability](Optional<FloatRect> overrideRect) {
             if (!overrideRect)
                 return;
 
             layoutViewportRect = overrideRect;
-            if (visualViewportEnabled && viewportRectStability != ViewportRectStability::ChangingObscuredInsetsInteractively)
+            if (viewportRectStability != ViewportRectStability::ChangingObscuredInsetsInteractively)
                 frameView.setLayoutViewportOverrideRect(LayoutRect(overrideRect.value()), viewportRectStability == ViewportRectStability::Stable ? FrameView::TriggerLayoutOrNot::Yes : FrameView::TriggerLayoutOrNot::No);
-#if PLATFORM(IOS_FAMILY)
-            else if (viewportRectStability == ViewportRectStability::Stable)
-                frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(overrideRect.value()));
-#endif
         }
     );
 
@@ -694,11 +689,6 @@ bool AsyncScrollingCoordinator::isRubberBandInProgress() const
 void AsyncScrollingCoordinator::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
     scrollingTree()->setScrollPinningBehavior(pinning);
-}
-
-bool AsyncScrollingCoordinator::visualViewportEnabled() const
-{
-    return m_page->mainFrame().settings().visualViewportEnabled();
 }
 
 bool AsyncScrollingCoordinator::asyncFrameOrOverflowScrollingEnabled() const

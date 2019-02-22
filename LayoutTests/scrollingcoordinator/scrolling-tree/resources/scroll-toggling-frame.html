@@ -20,10 +20,12 @@
         window.addEventListener('load', () => {
             requestAnimationFrame(() => {
                 document.body.classList.add('changed');
+                document.body.offsetWidth;
                 parent.subFrameBecameNonScrollable();
 
                 requestAnimationFrame(() => {
                     document.body.classList.remove('changed');
+                    document.body.offsetWidth;
                     parent.subFrameBecameScrollable();
                 });
             });

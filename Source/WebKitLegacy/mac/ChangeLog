@@ -1,3 +1,30 @@
+2019-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Hardcode Visual Viewports on everywhere except iOS WK1
+        https://bugs.webkit.org/show_bug.cgi?id=194928
+
+        Reviewed by Zalan Bujtas.
+
+        Remove the WK1 and WK2 preferences and MiniBrowser menu item for "visual viewports",
+        change the default value of the Setting to 'true', and hardcode WebView on iOS to
+        set it to false. The setting has shipped for several years and there's no need to turn
+        it off now.
+
+        Similarly, disable the "Visual Viewport API" on iOS WK1, since it makes no sense if
+        Visual Viewports are not enabled.
+        
+        Remove the "visualViewportEnabled" flag and unused code paths from scrolling tree code
+        that only runs in WK2
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences visualViewportEnabled]): Deleted.
+        (-[WebPreferences setVisualViewportEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-02-21  Darin Adler  <darin@apple.com>
 
         Some refinements for Node and Document

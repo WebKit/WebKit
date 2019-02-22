@@ -12,9 +12,6 @@
     <script>
         description("This test zooms and scrolls the page and checks that the layout and visual viewports respond as expected.");
 
-        if (window.internals)
-            internals.settings.setVisualViewportEnabled(true);
-
         window.jsTestIsAsync = true;
 
         function doAfterZooming()

@@ -578,10 +578,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
         break;
     case CoordinateSystem::LayoutViewport:
         // The element bounds are already in client coordinates.
-        if (frame->coreFrame()->settings().visualViewportEnabled())
-            resultElementBounds = WebCore::IntRect(mainView->clientToLayoutViewportRect(WebCore::FloatRect(rootElementBounds)));
-        else
-            resultElementBounds = rootElementBounds;
+        resultElementBounds = WebCore::IntRect(mainView->clientToLayoutViewportRect(WebCore::FloatRect(rootElementBounds)));
         break;
     }
 
@@ -597,10 +594,7 @@ void WebAutomationSessionProxy::computeElementLayout(uint64_t pageID, uint64_t f
                 break;
             case CoordinateSystem::LayoutViewport:
                 // The point is already in client coordinates.
-                if (frame->coreFrame()->settings().visualViewportEnabled())
-                    resultInViewCenterPoint = WebCore::IntPoint(mainView->clientToLayoutViewportPoint(rootInViewCenterPoint));
-                else
-                    resultInViewCenterPoint = rootInViewCenterPoint;
+                resultInViewCenterPoint = WebCore::IntPoint(mainView->clientToLayoutViewportPoint(rootInViewCenterPoint));
                 break;
             }
         }

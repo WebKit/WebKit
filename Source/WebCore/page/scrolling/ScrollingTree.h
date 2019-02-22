@@ -54,8 +54,6 @@ public:
     virtual bool isRemoteScrollingTree() const { return false; }
     virtual bool isScrollingTreeIOS() const { return false; }
 
-    bool visualViewportEnabled() const { return m_visualViewportEnabled; }
-
     // This implies that we'll do hit-testing in the scrolling tree.
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
@@ -156,7 +154,6 @@ public:
     
 protected:
     void setMainFrameScrollPosition(FloatPoint);
-    void setVisualViewportEnabled(bool b) { m_visualViewportEnabled = b; }
 
     WEBCORE_EXPORT virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
 
@@ -193,7 +190,6 @@ private:
     bool m_mainFrameIsScrollSnapping { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_isHandlingProgrammaticScroll { false };
-    bool m_visualViewportEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
     

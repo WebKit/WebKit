@@ -244,13 +244,11 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeCons
 {
     updateMainFramePinState(scrollPosition);
 
-    Optional<FloatPoint> layoutViewportOrigin;
-    if (scrollingTree().visualViewportEnabled()) {
-        FloatPoint visibleContentOrigin = scrollPosition;
-        FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
-        setLayoutViewport(newLayoutViewport);
-        layoutViewportOrigin = newLayoutViewport.location();
-    }
+    Optional<FloatPoint> layoutViewportOrigin; // FIXME
+    FloatPoint visibleContentOrigin = scrollPosition;
+    FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
+    setLayoutViewport(newLayoutViewport);
+    layoutViewportOrigin = newLayoutViewport.location();
 
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
@@ -269,22 +267,9 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
     scrolledContentsLayer().position = -position;
 
     FloatRect visibleContentRect(position, scrollableAreaSize());
-    FloatRect fixedPositionRect;
-    ScrollBehaviorForFixedElements behaviorForFixed = StickToViewportBounds;
 
-    if (scrollingTree().visualViewportEnabled())
-        fixedPositionRect = layoutViewport;
-    else {
-        behaviorForFixed = scrollBehaviorForFixedElements();
-        
-        FloatPoint scrollPositionForFixedChildren = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(visibleContentRect), LayoutSize(totalContentsSize()),
-            LayoutPoint(position), scrollOrigin(), frameScaleFactor(), fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight());
-
-        fixedPositionRect = { scrollPositionForFixedChildren, visibleContentRect.size() };
-    }
-    
     if (m_counterScrollingLayer)
-        m_counterScrollingLayer.get().position = fixedPositionRect.location();
+        m_counterScrollingLayer.get().position = layoutViewport.location();
 
     float topContentInset = this->topContentInset();
     if (m_insetClipLayer && m_rootContentsLayer && topContentInset) {
@@ -297,13 +282,8 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
     if (m_headerLayer || m_footerLayer) {
         // Generally the banners should have the same horizontal-position computation as a fixed element. However,
         // the banners are not affected by the frameScaleFactor(), so if there is currently a non-1 frameScaleFactor()
-        // then we should recompute fixedPositionRect.x() for the banner with a scale factor of 1.
-        float horizontalScrollOffsetForBanner = fixedPositionRect.x();
-        if (!scrollingTree().visualViewportEnabled() && frameScaleFactor() != 1) {
-            horizontalScrollOffsetForBanner = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(visibleContentRect), LayoutSize(totalContentsSize()),
-                LayoutPoint(position), scrollOrigin(), 1, fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight()).x();
-        }
-
+        // then we should recompute layoutViewport.x() for the banner with a scale factor of 1.
+        float horizontalScrollOffsetForBanner = layoutViewport.x();
         if (m_headerLayer)
             m_headerLayer.get().position = FloatPoint(horizontalScrollOffsetForBanner, FrameView::yPositionForHeaderLayer(position, topContentInset));
 
@@ -337,7 +317,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint
         return;
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
+        child->updateLayersAfterAncestorChange(*this, layoutViewport, FloatSize());
 }
 
 void ScrollingTreeFrameScrollingNodeMac::updateLayersAfterViewportChange(const FloatRect&, double)

@@ -1,3 +1,97 @@
+2019-02-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Hardcode Visual Viewports on everywhere except iOS WK1
+        https://bugs.webkit.org/show_bug.cgi?id=194928
+
+        Reviewed by Zalan Bujtas.
+        
+        Remove "(visual viewport enabled 1)" from scrolling tree dumps. Remove calls
+        to "internals.settings.setVisualViewportEnabled(true)"
+
+        * fast/dom/elementFromPoint-scaled-scrolled-layout-viewport.html:
+        * fast/events/ios/rotation/resources/rotation-utils.js:
+        * fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html:
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html:
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport.html:
+        * fast/visual-viewport/nonzoomed-rects.html:
+        * fast/visual-viewport/resize-event-fired-window-resized.html:
+        * fast/visual-viewport/resize-event-fired.html:
+        * fast/visual-viewport/rtl-nonzoomed-rects.html:
+        * fast/visual-viewport/rtl-zoomed-rects.html:
+        * fast/visual-viewport/rubberbanding-viewport-rects-extended-background.html:
+        * fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html:
+        * fast/visual-viewport/rubberbanding-viewport-rects.html:
+        * fast/visual-viewport/scroll-event-fired.html:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up.html:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state-expected.txt:
+        * fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html:
+        * fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html:
+        * fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html:
+        * fast/visual-viewport/viewport-dimensions-iframe.html:
+        * fast/visual-viewport/viewport-dimensions-under-page-zoom.html:
+        * fast/visual-viewport/viewport-dimensions.html:
+        * fast/visual-viewport/visual-viewport-same-object.html:
+        * fast/visual-viewport/zoomed-fixed-header-and-footer.html:
+        * fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html:
+        * fast/visual-viewport/zoomed-fixed.html:
+        * fast/visual-viewport/zoomed-rects.html:
+        * fast/visual-viewport/zoomed-scroll-into-view-fixed.html:
+        * fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * scrollingcoordinator/scrolling-tree/fixed-inside-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent-expected.txt:
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-coordinated-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-includes-frame-expected.txt:
+        * scrollingcoordinator/scrolling-tree/scrolling-tree-is-z-order-expected.txt:
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling-expected.txt:
+        * scrollingcoordinator/scrolling-tree/toggle-coordinated-frame-scrolling.html: Don't insert the first scrolling tree
+        dump until the end, to avoid it affecting main frame height before we get the second layer tree.
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-in-overflow-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-in-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/nested-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/percentage-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2019-02-21  Darin Adler  <darin@apple.com>
 
         Some refinements for Node and Document

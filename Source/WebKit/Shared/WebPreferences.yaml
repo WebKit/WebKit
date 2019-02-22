@@ -672,10 +672,6 @@ ApplePayCapabilityDisclosureAllowed:
   defaultValue: true
   condition: ENABLE(APPLE_PAY)
 
-VisualViewportEnabled:
-  type: bool
-  defaultValue: true
-
 LayoutViewportHeightExpansionFactor:
   type: double
   defaultValue: DEFAULT_VISUAL_VIEWPORT_HEIGHT_EXPANSION_FACTOR

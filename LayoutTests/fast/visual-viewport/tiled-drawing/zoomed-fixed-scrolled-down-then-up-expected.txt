@@ -13,7 +13,6 @@
     (has enabled horizontal scrollbar 1)
     (has enabled vertical scrollbar 1))
   (frame scale factor 2.00)
-  (visual viewport enabled 1)
   (layout viewport at (0,230) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (1223,1436))

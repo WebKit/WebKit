@@ -2401,14 +2401,6 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == TextDirection::RTL;
-
-        auto* frameView = elementFrame.view();
-        if (inFixed && elementFrame.isMainFrame() && !frameView->frame().settings().visualViewportEnabled()) {
-            IntRect currentFixedPositionRect = frameView->customFixedPositionLayoutRect();
-            frameView->setCustomFixedPositionLayoutRect(frameView->renderView()->documentRect());
-            information.elementRect = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
-            frameView->setCustomFixedPositionLayoutRect(currentFixedPositionRect);
-        }
     } else
         information.elementRect = IntRect();
 
@@ -2781,15 +2773,10 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     frameView.updateLayoutAndStyleIfNeededRecursive();
 
     auto& settings = frameView.frame().settings();
-    if (settings.visualViewportEnabled()) {
-        LayoutRect documentRect = IntRect(frameView.scrollOrigin(), frameView.contentsSize());
-        auto layoutViewportSize = FrameView::expandedLayoutViewportSize(frameView.baseLayoutViewportSize(), LayoutSize(documentRect.size()), settings.layoutViewportHeightExpansionFactor());
-        LayoutRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(frameView.layoutViewportRect(), documentRect, LayoutSize(newUnobscuredContentRect.size()), LayoutRect(newUnobscuredContentRect), layoutViewportSize, frameView.minStableLayoutViewportOrigin(), frameView.maxStableLayoutViewportOrigin(), FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
-        frameView.setLayoutViewportOverrideRect(layoutViewportRect);
-    } else {
-        IntRect fixedPositionLayoutRect = enclosingIntRect(frameView.viewportConstrainedObjectsRect());
-        frameView.setCustomFixedPositionLayoutRect(fixedPositionLayoutRect);
-    }
+    LayoutRect documentRect = IntRect(frameView.scrollOrigin(), frameView.contentsSize());
+    auto layoutViewportSize = FrameView::expandedLayoutViewportSize(frameView.baseLayoutViewportSize(), LayoutSize(documentRect.size()), settings.layoutViewportHeightExpansionFactor());
+    LayoutRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(frameView.layoutViewportRect(), documentRect, LayoutSize(newUnobscuredContentRect.size()), LayoutRect(newUnobscuredContentRect), layoutViewportSize, frameView.minStableLayoutViewportOrigin(), frameView.maxStableLayoutViewportOrigin(), FrameView::LayoutViewportConstraint::ConstrainedToDocumentRect);
+    frameView.setLayoutViewportOverrideRect(layoutViewportRect);
 
     frameView.setCustomSizeForResizeEvent(expandedIntSize(targetUnobscuredRectInScrollViewCoordinates.size()));
     setDeviceOrientation(deviceOrientation);
@@ -3053,23 +3040,20 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     frameView.setScrollVelocity(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.timestamp());
 
     if (m_isInStableState) {
-        if (frameView.frame().settings().visualViewportEnabled()) {
-            if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
-                frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
-            else
-                frameView.setVisualViewportOverrideRect(WTF::nullopt);
+        if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
+            frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
+        else
+            frameView.setVisualViewportOverrideRect(WTF::nullopt);
 
-            LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.customFixedPositionRect());
-            frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
-            if (selectionIsInsideFixedPositionContainer(frame)) {
-                // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
-                frameView.frame().selection().setCaretRectNeedsUpdate();
-                sendPartialEditorStateAndSchedulePostLayoutUpdate();
-            }
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.customFixedPositionRect());
+        frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
+        if (selectionIsInsideFixedPositionContainer(frame)) {
+            // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
+            frameView.frame().selection().setCaretRectNeedsUpdate();
+            sendPartialEditorStateAndSchedulePostLayoutUpdate();
+        }
 
-            frameView.didUpdateViewportOverrideRects();
-        } else
-            frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
+        frameView.didUpdateViewportOverrideRects();
     }
 
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())

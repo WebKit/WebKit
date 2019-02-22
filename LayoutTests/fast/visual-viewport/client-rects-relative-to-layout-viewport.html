@@ -28,9 +28,6 @@
     <script>
         description("This test zooms and scrolls the page and checks that client rects are correct.");
 
-        if (window.internals)
-            internals.settings.setVisualViewportEnabled(true);
-
         window.jsTestIsAsync = true;
 
         function stringFromRect(domRect)

@@ -11,9 +11,6 @@
 <script>
     var pageScaleFactor = 2;
 
-    if (window.internals)
-        internals.settings.setVisualViewportEnabled(true);
-
     var test = async_test('Verify a resize event gets fired on window.visualViewport after pinch-zoom');
 
     var resizeDone = false;

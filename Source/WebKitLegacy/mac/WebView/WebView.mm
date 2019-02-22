@@ -2970,7 +2970,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically] || shouldAllowWindowOpenWithoutUserGesture());
 
-    settings.setVisualViewportEnabled([preferences visualViewportEnabled]);
     settings.setVisualViewportAPIEnabled([preferences visualViewportAPIEnabled]);
     settings.setCSSOMViewScrollingAPIEnabled([preferences CSSOMViewScrollingAPIEnabled]);
     settings.setMediaContentTypesRequiringHardwareSupport([preferences mediaContentTypesRequiringHardwareSupport]);
@@ -3005,6 +3004,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAllowsAirPlayForMediaPlayback([preferences allowsAirPlayForMediaPlayback]);
 #endif
 #if PLATFORM(IOS_FAMILY)
+    settings.setVisualViewportEnabled(false);
+    settings.setVisualViewportAPIEnabled(false);
     settings.setStandalone([preferences _standalone]);
     settings.setTelephoneNumberParsingEnabled([preferences _telephoneNumberParsingEnabled]);
     settings.setAllowMultiElementImplicitSubmission([preferences _allowMultiElementImplicitFormSubmission]);

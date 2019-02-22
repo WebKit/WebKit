@@ -29,7 +29,6 @@
 function runTest() {
     description("This test applies page scale and scrolls the page, and checks that elementFromPoint returns the correct element.");
     if (window.internals) {
-        window.internals.settings.setVisualViewportEnabled(true);
         window.internals.settings.setClientCoordinatesRelativeToLayoutViewport(true);
         window.internals.setPageScaleFactor(2, 0, 0);
     }

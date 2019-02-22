@@ -155,7 +155,6 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion)
             || rootNode->hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)
-            || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled)
             || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))) {
         LockHolder lock(m_mutex);
 
@@ -164,9 +163,6 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::EventTrackingRegion))
             m_eventTrackingRegions = scrollingStateTree->rootStateNode()->eventTrackingRegions();
-
-        if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::VisualViewportEnabled))
-            m_visualViewportEnabled = scrollingStateTree->rootStateNode()->visualViewportEnabled();
 
         if (rootStateNodeChanged || rootNode->hasChangedProperty(ScrollingStateFrameScrollingNode::AsyncFrameOrOverflowScrollingEnabled))
             m_asyncFrameOrOverflowScrollingEnabled = scrollingStateTree->rootStateNode()->asyncFrameOrOverflowScrollingEnabled();

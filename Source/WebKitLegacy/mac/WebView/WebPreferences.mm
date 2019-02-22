@@ -651,11 +651,10 @@ public:
         [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
-        [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
+        @NO, WebKitVisualViewportAPIEnabledPreferenceKey,
 #else
-        [NSNumber numberWithBool:YES], WebKitVisualViewportEnabledPreferenceKey,
+        @YES, WebKitVisualViewportAPIEnabledPreferenceKey,
 #endif
-        [NSNumber numberWithBool:YES], WebKitVisualViewportAPIEnabledPreferenceKey,
 
         [NSNumber numberWithBool:NO], WebKitCSSOMViewScrollingAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
@@ -3117,16 +3116,6 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)directoryUploadEnabled
 {
     return [self _boolValueForKey:WebKitDirectoryUploadEnabledPreferenceKey];
-}
-
-- (BOOL)visualViewportEnabled
-{
-    return [self _boolValueForKey:WebKitVisualViewportEnabledPreferenceKey];
-}
-
-- (void)setVisualViewportEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitVisualViewportEnabledPreferenceKey];
 }
 
 - (BOOL)visualViewportAPIEnabled

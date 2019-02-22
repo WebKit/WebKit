@@ -62,7 +62,6 @@ static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWin
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
 static NSString * const EnableSubPixelCSSOMMetricsPreferenceKey = @"EnableSubPixelCSSOMMetrics";
 
-static NSString * const VisualViewportEnabledPreferenceKey = @"VisualViewportEnabled";
 static NSString * const LargeImageAsyncDecodingEnabledPreferenceKey = @"LargeImageAsyncDecodingEnabled";
 static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"AnimatedImageAsyncDecodingEnabled";
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
@@ -113,7 +112,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
         SubpixelAntialiasedLayerTextEnabledPreferenceKey,
 #endif
-        VisualViewportEnabledPreferenceKey,
         LargeImageAsyncDecodingEnabledPreferenceKey,
         AnimatedImageAsyncDecodingEnabledPreferenceKey,
     ];
@@ -170,7 +168,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Enable Accelerated Drawing" action:@selector(toggleAcceleratedDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Display List Drawing" action:@selector(toggleDisplayListDrawingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Subpixel-antialiased Layer Text" action:@selector(toggleSubpixelAntialiasedLayerTextEnabled:) indented:NO];
-    [self _addItemWithTitle:@"Enable Visual Viewport" action:@selector(toggleVisualViewportEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Resource Load Statistics" action:@selector(toggleResourceLoadStatisticsEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Large Image Async Decoding" action:@selector(toggleLargeImageAsyncDecodingEnabled:) indented:NO];
     [self _addItemWithTitle:@"Enable Animated Image Async Decoding" action:@selector(toggleAnimatedImageAsyncDecodingEnabled:) indented:NO];
@@ -291,8 +288,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleVisualViewportEnabled:))
-        [menuItem setState:[self visualViewportEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
         [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -554,16 +549,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleResourceLoadStatisticsEnabled:(id)sender
 {
     [self _toggleBooleanDefault:ResourceLoadStatisticsEnabledPreferenceKey];
-}
-
-- (BOOL)visualViewportEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:VisualViewportEnabledPreferenceKey];
-}
-
-- (void)toggleVisualViewportEnabled:(id)sender
-{
-    [self _toggleBooleanDefault:VisualViewportEnabledPreferenceKey];
 }
 
 - (BOOL)resourceLoadStatisticsEnabled

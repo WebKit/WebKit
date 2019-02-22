@@ -89,7 +89,6 @@ private:
 
     bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const override { return false; }
     
-    bool visualViewportEnabled() const;
     bool asyncFrameOrOverflowScrollingEnabled() const;
 
     WEBCORE_EXPORT void frameViewLayoutUpdated(FrameView&) override;

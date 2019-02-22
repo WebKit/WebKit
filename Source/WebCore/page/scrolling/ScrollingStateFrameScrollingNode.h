@@ -64,7 +64,6 @@ public:
         BehaviorForFixedElements,
         TopContentInset,
         FixedElementsLayoutRelativeToFrame,
-        VisualViewportEnabled,
         AsyncFrameOrOverflowScrollingEnabled,
         LayoutViewport,
         MinLayoutViewportOrigin,
@@ -136,9 +135,6 @@ public:
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
-    bool visualViewportEnabled() const { return m_visualViewportEnabled; };
-    WEBCORE_EXPORT void setVisualViewportEnabled(bool);
-
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
 
@@ -185,7 +181,6 @@ private:
     ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
     bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
     bool m_fixedElementsLayoutRelativeToFrame { false };
-    bool m_visualViewportEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
 

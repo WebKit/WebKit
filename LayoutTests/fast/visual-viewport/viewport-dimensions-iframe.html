@@ -15,9 +15,6 @@
     var pageScaleFactor = 2;
     var scrollbarThicknessInCSSPixels;
 
-    if (window.internals)
-        internals.settings.setVisualViewportEnabled(true);
-
     function frameViewport() {
         var frame = document.getElementById("frame");
         return frame.contentWindow.visualViewport;

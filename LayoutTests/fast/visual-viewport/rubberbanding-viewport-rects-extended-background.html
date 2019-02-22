@@ -13,7 +13,6 @@
         description("This test scrolls the page with extended backgrounds enabled and checks that the layout and visual viewports respond as expected.");
 
         if (window.internals) {
-            internals.settings.setVisualViewportEnabled(true);
             internals.settings.setAllowUnclampedScrollPosition(true);
             internals.settings.setBackgroundShouldExtendBeyondPage(true);
         }

@@ -3,9 +3,6 @@
 <script src="../../resources/testharnessreport.js"></script>
 <script src="../../resources/gc.js"></script>
 <script>
-if (window.internals)
-    internals.settings.setVisualViewportEnabled(true);
-
 test(() => {
     window.visualViewport.newValue = 23;
     gc();
