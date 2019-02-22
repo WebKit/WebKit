@@ -29,6 +29,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKBackForwardListItemPrivate.h>
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
@@ -4861,6 +4862,8 @@ TEST(ProcessSwap, GoBackToSuspendedPageWithMainFrameIDThatIsNotOne)
     EXPECT_EQ(pid1, pid5);
 }
 
+#endif // PLATFORM(MAC)
+
 static const char* tallPageBytes = R"PSONRESOURCE(
 <!DOCTYPE html>
 <html>
@@ -4875,10 +4878,29 @@ body {
 </style>
 </head>
 <body>
+<script>
+// Pages with dedicated workers do not go into page cache.
+var myWorker = new Worker('worker.js');
+</script>
 <a id="testLink" href="pson://www.apple.com/main.html">Test</a>
 </body>
 </html>
 )PSONRESOURCE";
+
+static unsigned waitUntilScrollPositionIsRestored(WKWebView *webView)
+{
+    unsigned scrollPosition = 0;
+    do {
+        [webView evaluateJavaScript:@"window.scrollY" completionHandler: [&] (id result, NSError *error) {
+            scrollPosition = [result integerValue];
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    } while (!scrollPosition);
+
+    return scrollPosition;
+}
 
 TEST(ProcessSwap, ScrollPositionRestoration)
 {
@@ -4890,8 +4912,6 @@ TEST(ProcessSwap, ScrollPositionRestoration)
     auto handler = adoptNS([[PSONScheme alloc] init]);
     [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:tallPageBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
-
-    [[webViewConfiguration preferences] _setUsesPageCache:NO];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -4907,6 +4927,10 @@ TEST(ProcessSwap, ScrollPositionRestoration)
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    do {
+        TestWebKitAPI::Util::sleep(0.05);
+    } while (lroundf([[[webView backForwardList] currentItem] _scrollPosition].y) != 5000);
 
     [webView evaluateJavaScript:@"testLink.click()" completionHandler: nil];
 
@@ -4924,15 +4948,38 @@ TEST(ProcessSwap, ScrollPositionRestoration)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [webView evaluateJavaScript:@"window.scrollY" completionHandler: [&] (id result, NSError *error) {
-        EXPECT_EQ(5000, [result integerValue]);
+    auto scrollPosition = waitUntilScrollPositionIsRestored(webView.get());
+    EXPECT_EQ(5000U, scrollPosition);
+
+    [webView evaluateJavaScript:@"scroll(0, 4000)" completionHandler: [&] (id result, NSError *error) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
-}
 
-#endif // PLATFORM(MAC)
+    do {
+        TestWebKitAPI::Util::sleep(0.05);
+    } while (lroundf([[[webView backForwardList] currentItem] _scrollPosition].y) != 4000);
+
+    [webView evaluateJavaScript:@"testLink.click()" completionHandler: nil];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"window.scrollY" completionHandler: [&] (id result, NSError *error) {
+        EXPECT_EQ(0, [result integerValue]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    scrollPosition = waitUntilScrollPositionIsRestored(webView.get());
+    EXPECT_EQ(4000U, scrollPosition);
+}
 
 static NSString *blockmeFilter = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*blockme.html\"}}]";
 

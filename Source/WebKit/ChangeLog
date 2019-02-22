@@ -1,3 +1,27 @@
+2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(PSON) Scroll position is sometimes not restored on history navigation
+        https://bugs.webkit.org/show_bug.cgi?id=194924
+        <rdar://problem/48216125>
+
+        Reviewed by Geoffrey Garen.
+
+        When process-swapping, we would create a new WebPage in the new process, which would
+        call restoreSessionInternal() to restore the HistoryItems based on the UIProcess's
+        backforward list. The issue is that this session restoring would send HistoryItem
+        updates back to the UIProcess. Without PSON, this would be unnecessary but harmless.
+        With PSON though, this may end up overwriting values set by the previous process,
+        such as the scroll position.
+
+        Address the issue by temporarily disabling the HistoryItem update notifications to
+        the UIProcess while restoring a session.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+        (-[WKBackForwardListItem _scrollPosition]):
+        * UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSessionInternal):
+
 2019-02-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] No API documentation generated for WebKitUserContentFilterStore
