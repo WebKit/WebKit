@@ -1,5 +1,27 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241919. rdar://problem/48267027
+
+    Fix API test crashes after r241855.
+    
+    Reviewed by Ryosuke Niwa.
+    
+    * UIProcess/WebProcessCache.cpp:
+    (WebKit::WebProcessCache::addProcessIfPossible):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241919 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-21  Chris Dumez  <cdumez@apple.com>
+
+            Fix API test crashes after r241855.
+
+            Reviewed by Ryosuke Niwa.
+
+            * UIProcess/WebProcessCache.cpp:
+            (WebKit::WebProcessCache::addProcessIfPossible):
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241868. rdar://problem/48267027
 
     Unreviewed API test fix after r241855.
