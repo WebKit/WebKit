@@ -650,6 +650,9 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return false;
 }
 
+#endif
+
+#if ENABLE(DATA_INTERACTION)
 bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint&)
 {
     Ref<Frame> protectedFrame(m_frame);
