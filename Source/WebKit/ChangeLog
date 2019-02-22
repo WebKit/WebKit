@@ -1,3 +1,26 @@
+2019-02-22  Alexander Mikhaylenko  <exalm7659@gmail.com>
+
+        [GTK] Navigation gesture improvements
+        https://bugs.webkit.org/show_bug.cgi?id=194943
+
+        Reviewed by Michael Catanzaro.
+
+        Cancel the gesture if progress is less than 0.5 and velocity is not high enough.
+
+        Allow to continue the gesture during animation. Introduce finished state to be used
+        when showing snapshot after the animation ends.
+
+        Fix duration calculation, also slow it down so that the initial velocity matches
+        what it was during the gesture.
+
+        * UIProcess/ViewGestureController.h: Add shouldCancel() and State::Finishing to SwipeProgressTracker.
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::SwipeProgressTracker::handleEvent):
+        Fix velocity calculation, allow scrolling during State::Animating.
+        (WebKit::ViewGestureController::SwipeProgressTracker::shouldCancel): Added.
+        (WebKit::ViewGestureController::SwipeProgressTracker::startAnimation): Use shouldCancel() and fix duration calculation.
+        (WebKit::ViewGestureController::SwipeProgressTracker::endAnimation): Set state to State::Finishing when the animation ends.
+
 2019-02-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(PSON) Scroll position is sometimes not restored on history navigation

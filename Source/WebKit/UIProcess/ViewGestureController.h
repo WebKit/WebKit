@@ -374,8 +374,11 @@ private:
             None,
             Pending,
             Scrolling,
-            Animating
+            Animating,
+            Finishing
         };
+
+        bool shouldCancel();
 
         void startAnimation();
         gboolean onAnimationTick(GdkFrameClock*);
