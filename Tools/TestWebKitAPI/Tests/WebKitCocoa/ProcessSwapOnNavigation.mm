@@ -52,6 +52,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -3056,6 +3057,62 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
     EXPECT_EQ(3u, [processPool _webProcessCount]);
     EXPECT_EQ(2u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_TRUE([processPool _hasPrewarmedWebProcess]);
+}
+
+TEST(ProcessSwap, NumberOfCachedProcesses)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    EXPECT_GT([processPool _maximumSuspendedPageCount], 0u);
+    EXPECT_GT([processPool _processCacheCapacity], 0u);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+
+    const unsigned maxSuspendedPageCount = [processPool _maximumSuspendedPageCount];
+    for (unsigned i = 0; i < maxSuspendedPageCount + 2; i++)
+        [handler addMappingFromURLString:makeString("pson://www.domain-", i, ".com") toData:pageCache1Bytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-", i, ".com")]];
+        [webView loadRequest:request];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        EXPECT_EQ(i + 1, [processPool _webProcessCount]);
+        EXPECT_EQ(i + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+        EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
+    }
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("pson://www.domain-", maxSuspendedPageCount + 1, ".com")]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(maxSuspendedPageCount + 2, [processPool _webProcessCount]);
+    EXPECT_EQ(maxSuspendedPageCount + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
+
+    static bool readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    EXPECT_EQ(1u, [processPool _webProcessCount]);
+    EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+    EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
+
 }
 
 static const char* visibilityBytes = R"PSONRESOURCE(

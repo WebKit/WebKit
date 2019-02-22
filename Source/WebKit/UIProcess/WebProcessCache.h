@@ -49,6 +49,8 @@ public:
 
     unsigned size() const { return m_processesPerRegistrableDomain.size(); }
 
+    void setIsDisabled(bool isDisabled) { m_isDisabled = isDisabled; }
+
     void clear();
     void setApplicationIsActive(bool);
 
@@ -61,6 +63,7 @@ private:
     bool addProcess(const String& registrableDomain, Ref<WebProcessProxy>&&);
 
     unsigned m_capacity { 0 };
+    bool m_isDisabled { false };
 
     class CachedProcess {
         WTF_MAKE_FAST_ALLOCATED;

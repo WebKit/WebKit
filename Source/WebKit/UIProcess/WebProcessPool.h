@@ -468,6 +468,7 @@ public:
     bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy* = nullptr) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
     RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&);
+    void clearSuspendedPages();
 
     void didReachGoodTimeToPrewarm();
 

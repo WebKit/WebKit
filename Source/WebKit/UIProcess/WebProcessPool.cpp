@@ -1340,7 +1340,7 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
         m_prewarmedProcess->shutDown();
     ASSERT(!m_prewarmedProcess);
 
-    m_suspendedPages.clear();
+    clearSuspendedPages();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -2350,6 +2350,11 @@ bool WebProcessPool::hasSuspendedPageFor(WebProcessProxy& process, WebPageProxy*
     return m_suspendedPages.findIf([&process, page](auto& suspendedPage) {
         return &suspendedPage->process() == &process && (!page || &suspendedPage->page() == page);
     }) != m_suspendedPages.end();
+}
+
+void WebProcessPool::clearSuspendedPages()
+{
+    m_suspendedPages.clear();
 }
 
 void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)

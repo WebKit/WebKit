@@ -51,7 +51,7 @@ bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->processPool().hasSuspendedPageFor(process));
 
-    if (!capacity())
+    if (!capacity() || m_isDisabled)
         return false;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
@@ -85,7 +85,7 @@ bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcess
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->processPool().hasSuspendedPageFor(process));
 
-    if (!capacity())
+    if (!capacity() || m_isDisabled)
         return false;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
