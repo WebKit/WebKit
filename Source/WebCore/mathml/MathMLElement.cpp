@@ -97,6 +97,15 @@ bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
+static String convertToPercentageIfNeeded(const AtomicString& value)
+{
+    bool ok = false;
+    float unitlessValue = value.toFloat(&ok);
+    if (ok)
+        return String::format("%.3f%%", unitlessValue * 100.0);
+    return value;
+}
+
 void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStyleProperties& style)
 {
     if (name == mathbackgroundAttr)
@@ -104,7 +113,7 @@ void MathMLElement::collectStyleForPresentationAttribute(const QualifiedName& na
     else if (name == mathsizeAttr) {
         // The following three values of mathsize are handled in WebCore/css/mathml.css
         if (value != "normal" && value != "small" && value != "big")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, value);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, convertToPercentageIfNeeded(value));
     } else if (name == mathcolorAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyColor, value);
     // FIXME: deprecated attributes that should loose in a conflict with a non deprecated attribute

@@ -719,9 +719,7 @@ imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/f
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.sub.html [ Pass Failure ]
 
 # These MathML WPT tests fail.
-webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-1.html [ ImageOnlyFailure ]
 webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-2.html [ ImageOnlyFailure ]
-webkit.org/b/180013 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html [ Failure ]
 
 # These webmessaging WPT tests time out.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_onmessage_postMessage_infinite_loop.html [ Skip ]

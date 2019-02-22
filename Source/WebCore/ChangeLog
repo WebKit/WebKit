@@ -1,3 +1,17 @@
+2019-02-22  Rob Buis  <rbuis@igalia.com>
+
+        Fix unitless usage of mathsize
+        https://bugs.webkit.org/show_bug.cgi?id=194940
+
+        Reviewed by Frédéric Wang.
+
+        Convert unitless lengths to percentage values to correct the computed
+        font size.
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::convertToPercentageIfNeeded):
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute):
+
 2019-02-21  Simon Fraser  <simon.fraser@apple.com>
 
         Hardcode Visual Viewports on everywhere except iOS WK1
