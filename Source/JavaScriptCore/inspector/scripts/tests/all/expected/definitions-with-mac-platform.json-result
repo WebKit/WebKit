@@ -306,6 +306,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class NetworkFrontendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     NetworkFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void resourceLoaded();

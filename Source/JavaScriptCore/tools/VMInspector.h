@@ -34,6 +34,9 @@
 namespace JSC {
 
 class VMInspector {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(VMInspector);
+    VMInspector() = default;
 public:
     enum class Error {
         None,

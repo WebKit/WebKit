@@ -1,3 +1,24 @@
+2019-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use Fast Malloc as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=194316
+
+        Reviewed by Mark Lam.
+
+        We should use Fast Malloc as much as possible to offer the whole memory view to bmalloc.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result:
+        * jit/ExecutableAllocator.h:
+        * jsc.cpp:
+        * runtime/JSRunLoopTimer.h:
+        * tools/VMInspector.h:
+        * wasm/WasmThunks.h:
+
 2019-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove WatchpointSet creation for SymbolTable entries if VM::canUseJIT() returns false

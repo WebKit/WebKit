@@ -123,6 +123,8 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 }
 
 class ExecutableAllocator {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ExecutableAllocator);
     enum ProtectionSetting { Writable, Executable };
 
 public:

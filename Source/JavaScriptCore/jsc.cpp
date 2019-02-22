@@ -255,6 +255,8 @@ private:
 };
 
 class Workers {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Workers);
 public:
     Workers();
     ~Workers();
