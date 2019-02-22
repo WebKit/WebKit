@@ -1,3 +1,14 @@
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Input type "formatSetInlineTextDirection" is dispatched when changing paragraph-level text direction
+        https://bugs.webkit.org/show_bug.cgi?id=194703
+        <rdar://problem/48111775>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (undoNameForEditAction):
+
 2019-02-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Support pasting item-provider-backed data on the pasteboard as attachment elements

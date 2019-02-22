@@ -14,24 +14,24 @@ Using English keyboard:
 
 Observed 'beforeinput' events: [
     {
-        "inputType": "formatSetInlineTextDirection",
+        "inputType": "formatSetBlockTextDirection",
         "data": "rtl",
         "order": 1
     },
     {
-        "inputType": "formatSetInlineTextDirection",
+        "inputType": "formatSetBlockTextDirection",
         "data": "ltr",
         "order": 3
     }
 ]
 Observed 'input' events: [
     {
-        "inputType": "formatSetInlineTextDirection",
+        "inputType": "formatSetBlockTextDirection",
         "data": "rtl",
         "order": 2
     },
     {
-        "inputType": "formatSetInlineTextDirection",
+        "inputType": "formatSetBlockTextDirection",
         "data": "ltr",
         "order": 4
     }

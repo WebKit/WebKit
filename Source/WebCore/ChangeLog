@@ -1,3 +1,37 @@
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Input type "formatSetInlineTextDirection" is dispatched when changing paragraph-level text direction
+        https://bugs.webkit.org/show_bug.cgi?id=194703
+        <rdar://problem/48111775>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, when changing text direction, WebKit always sends input events of type formatSetInlineTextDirection,
+        even when changing paragraph text direction. Instead, we should be emitting formatSetBlockTextDirection in this
+        scenario. This is problematic when using the context menus on macOS to change writing direction, since changing
+        "Selection Direction" is currently indistinguishable from changing "Paragraph Direction".
+
+        To fix this, we split EditAction::SetWritingDirection into EditAction::SetInlineWritingDirection and
+        EditAction::SetBlockWritingDirection, which emit inline and block text direction input events, respectively.
+
+        Tests: fast/events/before-input-events-prevent-block-text-direction.html
+               fast/events/before-input-events-prevent-inline-text-direction.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::apply):
+        * editing/EditAction.cpp:
+        (WebCore::undoRedoLabel):
+        * editing/EditAction.h:
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+        * editing/Editor.cpp:
+        (WebCore::inputEventDataForEditingStyleAndAction):
+        (WebCore::Editor::setBaseWritingDirection):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeMakeTextWritingDirectionLeftToRight):
+        (WebCore::executeMakeTextWritingDirectionNatural):
+        (WebCore::executeMakeTextWritingDirectionRightToLeft):
+
 2019-02-22  Rob Buis  <rbuis@igalia.com>
 
         Remove stripLeadingAndTrailingWhitespace from MathMLElement.cpp

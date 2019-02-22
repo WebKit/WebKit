@@ -110,8 +110,10 @@ String inputTypeNameForEditingAction(EditAction action)
         return "formatIndent"_s;
     case EditAction::Outdent:
         return "formatOutdent"_s;
-    case EditAction::SetWritingDirection:
+    case EditAction::SetInlineWritingDirection:
         return "formatSetInlineTextDirection"_s;
+    case EditAction::SetBlockWritingDirection:
+        return "formatSetBlockTextDirection"_s;
     default:
         return emptyString();
     }

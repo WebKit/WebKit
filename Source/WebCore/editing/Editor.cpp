@@ -153,7 +153,8 @@ static String inputEventDataForEditingStyleAndAction(const StyleProperties* styl
     switch (action) {
     case EditAction::SetColor:
         return style->getPropertyValue(CSSPropertyColor);
-    case EditAction::SetWritingDirection:
+    case EditAction::SetInlineWritingDirection:
+    case EditAction::SetBlockWritingDirection:
         return style->getPropertyValue(CSSPropertyDirection);
     default:
         return { };
@@ -1803,7 +1804,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
 
         auto& focusedFormElement = downcast<HTMLTextFormControlElement>(*focusedElement);
         auto directionValue = direction == WritingDirection::LeftToRight ? "ltr" : "rtl";
-        auto writingDirectionInputTypeName = inputTypeNameForEditingAction(EditAction::SetWritingDirection);
+        auto writingDirectionInputTypeName = inputTypeNameForEditingAction(EditAction::SetBlockWritingDirection);
         if (!dispatchBeforeInputEvent(focusedFormElement, writingDirectionInputTypeName, directionValue))
             return;
 
@@ -1815,7 +1816,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
 
     auto style = MutableStyleProperties::create();
     style->setProperty(CSSPropertyDirection, direction == WritingDirection::LeftToRight ? "ltr" : direction == WritingDirection::RightToLeft ? "rtl" : "inherit", false);
-    applyParagraphStyleToSelection(style.ptr(), EditAction::SetWritingDirection);
+    applyParagraphStyleToSelection(style.ptr(), EditAction::SetBlockWritingDirection);
 }
 
 WritingDirection Editor::baseWritingDirectionForSelectionStart() const

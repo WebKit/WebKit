@@ -74,7 +74,8 @@ String undoRedoLabel(EditAction editAction)
         return WEB_UI_STRING_KEY("Center", "Center (Undo action name)", "Undo action name");
     case EditAction::Justify:
         return WEB_UI_STRING_KEY("Justify", "Justify (Undo action name)", "Undo action name");
-    case EditAction::SetWritingDirection:
+    case EditAction::SetInlineWritingDirection:
+    case EditAction::SetBlockWritingDirection:
         return WEB_UI_STRING_KEY("Set Writing Direction", "Set Writing Direction (Undo action name)", "Undo action name");
     case EditAction::Subscript:
         return WEB_UI_STRING_KEY("Subscript", "Subscript (Undo action name)", "Undo action name");

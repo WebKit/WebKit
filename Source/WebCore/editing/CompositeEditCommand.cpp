@@ -342,7 +342,8 @@ void CompositeEditCommand::apply()
         case EditAction::TypingInsertFinalComposition:
         case EditAction::Paste:
         case EditAction::DeleteByDrag:
-        case EditAction::SetWritingDirection:
+        case EditAction::SetInlineWritingDirection:
+        case EditAction::SetBlockWritingDirection:
         case EditAction::Cut:
         case EditAction::Unspecified:
         case EditAction::Insert:

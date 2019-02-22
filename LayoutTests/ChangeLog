@@ -1,3 +1,24 @@
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Input type "formatSetInlineTextDirection" is dispatched when changing paragraph-level text direction
+        https://bugs.webkit.org/show_bug.cgi?id=194703
+        <rdar://problem/48111775>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline some existing tests to expect input events of type "formatSetBlockTextDirection" instead of
+        "formatSetInlineTextDirection" when changing paragraph text direction; additionally, add a new layout test that
+        changes the inline text direction in some Bidi text, and verify that "formatSetInlineTextDirection" is emitted
+        in this scenario, and that calling `preventDefault()` in the beforeinput event handler causes no change to be
+        made.
+
+        * editing/input/ios/rtl-keyboard-input-on-focus-expected.txt:
+        * fast/events/before-input-events-prevent-block-text-direction-expected.txt: Added.
+        * fast/events/before-input-events-prevent-block-text-direction.html: Renamed from LayoutTests/fast/events/before-input-events-prevent-text-direction.html.
+        * fast/events/before-input-events-prevent-inline-text-direction-expected.txt: Added.
+        * fast/events/before-input-events-prevent-inline-text-direction.html: Added.
+        * fast/events/before-input-events-prevent-text-direction-expected.txt: Removed.
+
 2019-02-22  Rob Buis  <rbuis@igalia.com>
 
         Fix unitless usage of mathsize
