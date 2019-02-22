@@ -146,14 +146,8 @@ bool doesGC(Graph& graph, Node* node)
     case RegExpTest:
     case RegExpMatchFast:
     case RegExpMatchFastGlobal:
-    case CompareLess:
-    case CompareLessEq:
-    case CompareGreater:
-    case CompareGreaterEq:
     case CompareBelow:
     case CompareBelowEq:
-    case CompareEq:
-    case CompareStrictEq:
     case CompareEqPtr:
     case SameValue:
     case Call:
@@ -372,6 +366,46 @@ bool doesGC(Graph& graph, Node* node)
     case ParseInt: // We might resolve a rope even though we don't clobber anything.
     case SetAdd:
     case MapSet:
+        return true;
+
+    case CompareEq:
+    case CompareLess:
+    case CompareLessEq:
+    case CompareGreater:
+    case CompareGreaterEq:
+        if (node->isBinaryUseKind(Int32Use)
+#if USE(JSVALUE64)
+            || node->isBinaryUseKind(Int52RepUse)
+#endif
+            || node->isBinaryUseKind(DoubleRepUse)
+            || node->isBinaryUseKind(StringIdentUse)
+            )
+            return false;
+        if (node->op() == CompareEq) {
+            if (node->isBinaryUseKind(BooleanUse)
+                || node->isBinaryUseKind(SymbolUse)
+                || node->isBinaryUseKind(ObjectUse)
+                || node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) || node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse))
+                return false;
+        }
+        return true;
+
+    case CompareStrictEq:
+        if (node->isBinaryUseKind(BooleanUse)
+            || node->isBinaryUseKind(Int32Use)
+#if USE(JSVALUE64)
+            || node->isBinaryUseKind(Int52RepUse)
+#endif
+            || node->isBinaryUseKind(DoubleRepUse)
+            || node->isBinaryUseKind(SymbolUse)
+            || node->isBinaryUseKind(SymbolUse, UntypedUse)
+            || node->isBinaryUseKind(UntypedUse, SymbolUse)
+            || node->isBinaryUseKind(StringIdentUse)
+            || node->isBinaryUseKind(ObjectUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, ObjectUse)
+            || node->isBinaryUseKind(ObjectUse)
+            || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse)
+            || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse))
+            return false;
         return true;
 
     case GetIndexedPropertyStorage:
