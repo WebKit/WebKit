@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "JSBase.h"
+#include "JSBaseInternal.h"
 #include "JSBasePrivate.h"
 
 #include "APICast.h"
@@ -47,25 +48,15 @@
 
 using namespace JSC;
 
-JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+JSValueRef JSEvaluateScriptInternal(const JSLockHolder&, ExecState* exec, JSContextRef ctx, JSObjectRef thisObject, const SourceCode& source, JSValueRef* exception)
 {
-    if (!ctx) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ExecState* exec = toJS(ctx);
-    VM& vm = exec->vm();
-    JSLockHolder locker(vm);
+    UNUSED_PARAM(ctx);
 
     JSObject* jsThisObject = toJS(thisObject);
 
-    startingLineNumber = std::max(1, startingLineNumber);
-
     // evaluate sets "this" to the global object if it is NULL
+    VM& vm = exec->vm();
     JSGlobalObject* globalObject = vm.vmEntryGlobalObject(exec);
-    auto sourceURLString = sourceURL ? sourceURL->string() : String();
-    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURLString }, URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
-
     NakedPtr<Exception> evaluationException;
     JSValue returnValue = profiledEvaluate(globalObject->globalExec(), ProfilingReason::API, source, jsThisObject, evaluationException);
 
@@ -80,7 +71,7 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
         // We could stash it in the inspector in case an inspector is ever opened.
         globalObject->inspectorController().reportAPIException(exec, evaluationException);
 #endif
-        return 0;
+        return nullptr;
     }
 
     if (returnValue)
@@ -88,6 +79,24 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
     // happens, for example, when the only statement is an empty (';') statement
     return toRef(exec, jsUndefined());
+}
+
+JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
+{
+    if (!ctx) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    ExecState* exec = toJS(ctx);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+
+    startingLineNumber = std::max(1, startingLineNumber);
+
+    auto sourceURLString = sourceURL ? sourceURL->string() : String();
+    SourceCode source = makeSource(script->string(), SourceOrigin { sourceURLString }, URL({ }, sourceURLString), TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()));
+
+    return JSEvaluateScriptInternal(locker, exec, ctx, thisObject, source, exception);
 }
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)

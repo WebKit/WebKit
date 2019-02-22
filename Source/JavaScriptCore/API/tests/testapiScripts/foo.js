@@ -23,20 +23,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-// Since we include files that haven't passed through the rewriter we need to handle the non-rewritten values...
-#define JSC_API_AVAILABLE(...)
-#define JSC_API_DEPRECATED(...)
-#define JSC_CLASS_AVAILABLE(...)
-#define JSC_MAC_VERSION_TBA 0
-#define JSC_IOS_VERSION_TBA 0
-
-// umbrella header
-#import <JavaScriptCore/JavaScriptCore.h>
-
-// private headers
-#import <JavaScriptCore/JSContextPrivate.h>
-#import <JavaScriptCore/JSScript.h>
-#import <JavaScriptCore/JSValuePrivate.h>
-#import <JavaScriptCore/JSVirtualMachinePrivate.h>
-
+import "./bar.js";

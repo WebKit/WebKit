@@ -44,7 +44,7 @@ int testFunctionOverrides()
 
     const char* oldFunctionOverrides = Options::functionOverrides();
     
-    Options::functionOverrides() = "testapi-function-overrides.js";
+    Options::functionOverrides() = "./testapiScripts/testapi-function-overrides.js";
     JSC::FunctionOverrides::reinstallOverrides();
 
     JSGlobalContextRef context = JSGlobalContextCreateInGroup(nullptr, nullptr);

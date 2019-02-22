@@ -36,12 +36,16 @@
 #import "ParserError.h"
 #import "Symbol.h"
 #include <sys/stat.h>
+#include <wtf/FileSystem.h>
 
 #if JSC_OBJC_API_ENABLED
 
 @implementation JSScript {
     __weak JSVirtualMachine* m_virtualMachine;
+    JSScriptType m_type;
+    FileSystem::MappedFileData m_mappedSource;
     String m_source;
+    RetainPtr<NSURL> m_sourceURL;
     RetainPtr<NSURL> m_cachePath;
     JSC::CachedBytecode m_cachedBytecode;
     JSC::Strong<JSC::JSSourceCode> m_jsSourceCode;
@@ -53,6 +57,7 @@
     JSScript *result = [[[JSScript alloc] init] autorelease];
     result->m_source = source;
     result->m_virtualMachine = vm;
+    result->m_type = kJSScriptTypeModule;
     return result;
 }
 
@@ -90,12 +95,13 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
 
 + (instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
 {
-    // FIXME: This should check codeSigning.
     UNUSED_PARAM(codeSigningPath);
+    UNUSED_PARAM(cachePath);
+
     URL filePathURL([filePath absoluteURL]);
     if (!filePathURL.isLocalFile())
         return nil;
-    // FIXME: This should mmap the contents of the file instead of copying it into dirty memory.
+
     Vector<LChar> buffer;
     if (!fillBufferWithContentsOfFile(filePathURL.fileSystemPath(), buffer))
         return nil;
@@ -106,14 +112,60 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
     JSScript *result = [[[JSScript alloc] init] autorelease];
     result->m_virtualMachine = vm;
     result->m_source = String::fromUTF8WithLatin1Fallback(buffer.data(), buffer.size());
-    result->m_cachePath = cachePath;
-    [result readCache];
+    result->m_type = kJSScriptTypeModule;
     return result;
 }
 
 + (instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
 {
     return [JSScript scriptFromASCIIFile:filePath inVirtualMachine:vm withCodeSigning:codeSigningPath andBytecodeCache:cachePath];
+}
+
+static JSScript *createError(NSString *message, NSError** error)
+{
+    if (error)
+        *error = [NSError errorWithDomain:@"JSScriptErrorDomain" code:1 userInfo:@{ @"message": message }];
+    return nil;
+}
+
++ (instancetype)scriptOfType:(JSScriptType)type withSource:(NSString *)source andSourceURL:(NSURL *)sourceURL andBytecodeCache:(NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError **)error
+{
+    UNUSED_PARAM(error);
+    JSScript *result = [[[JSScript alloc] init] autorelease];
+    result->m_virtualMachine = vm;
+    result->m_type = type;
+    result->m_source = source;
+    result->m_sourceURL = sourceURL;
+    result->m_cachePath = cachePath;
+    [result readCache];
+    return result;
+}
+
++ (instancetype)scriptOfType:(JSScriptType)type memoryMappedFromASCIIFile:(NSURL *)filePath withSourceURL:(NSURL *)sourceURL andBytecodeCache:(NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError **)error
+{
+    UNUSED_PARAM(error);
+    URL filePathURL([filePath absoluteURL]);
+    if (!filePathURL.isLocalFile())
+        return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSString *>(filePathURL)], error);
+
+    bool success = false;
+    String systemPath = filePathURL.fileSystemPath();
+    FileSystem::MappedFileData fileData(systemPath, success);
+    if (!success)
+        return createError([NSString stringWithFormat:@"File at path %@ could not be mapped.", static_cast<NSString *>(systemPath)], error);
+
+    if (!charactersAreAllASCII(reinterpret_cast<const LChar*>(fileData.data()), fileData.size()))
+        return createError([NSString stringWithFormat:@"Not all characters in file at %@ are ASCII.", static_cast<NSString *>(systemPath)], error);
+
+    JSScript *result = [[[JSScript alloc] init] autorelease];
+    result->m_virtualMachine = vm;
+    result->m_type = type;
+    result->m_source = String(StringImpl::createWithoutCopying(bitwise_cast<const LChar*>(fileData.data()), fileData.size()));
+    result->m_mappedSource = WTFMove(fileData);
+    result->m_sourceURL = sourceURL;
+    result->m_cachePath = cachePath;
+    [result readCache];
+    return result;
 }
 
 - (void)dealloc
@@ -152,22 +204,26 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
     m_cachedBytecode = JSC::CachedBytecode { buffer, size };
 }
 
-- (void)writeCache
+- (BOOL)cacheBytecodeWithError:(NSError **)error
 {
-    if (m_cachedBytecode.size() || !m_cachePath)
-        return;
+    String errorString { };
+    [self writeCache:errorString];
+    if (!errorString.isNull()) {
+        createError(errorString, error);
+        return NO;
+    }
 
-    JSC::ParserError error;
-    m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, m_jsSourceCode->sourceCode(), error);
-    if (error.isValid())
-        return;
-    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_WRONLY, 0666);
-    if (fd == -1)
-        return;
-    int rc = flock(fd, LOCK_EX | LOCK_NB);
-    if (!rc)
-        write(fd, m_cachedBytecode.data(), m_cachedBytecode.size());
-    close(fd);
+    return YES;
+}
+
+- (NSURL *)sourceURL
+{
+    return m_sourceURL.get();
+}
+
+- (JSScriptType)type
+{
+    return m_type;
 }
 
 @end
@@ -189,24 +245,75 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& 
     return &m_cachedBytecode;
 }
 
-- (JSC::JSSourceCode*)jsSourceCode:(const JSC::Identifier&)moduleKey
+- (JSC::JSSourceCode*)jsSourceCode
 {
-    if (m_jsSourceCode) {
-        ASSERT(moduleKey.impl() == m_moduleKey);
+    if (m_jsSourceCode)
         return m_jsSourceCode.get();
+
+    return [self forceRecreateJSSourceCode];
+}
+
+- (BOOL)writeCache:(String&)error
+{
+    if (m_cachedBytecode.size())
+        return YES;
+
+    if (!m_cachePath) {
+        error = "No cache was path provided during construction of this JSScript."_s;
+        return NO;
     }
 
+    JSC::ParserError parserError;
+    switch (m_type) {
+    case kJSScriptTypeModule:
+        m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
+        break;
+    case kJSScriptTypeProgram:
+        m_cachedBytecode = JSC::generateBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
+        break;
+    }
+
+    if (parserError.isValid()) {
+        m_cachedBytecode = { };
+        error = makeString("Unable to generate bytecode for this JSScript because of a parser error: ", parserError.message());
+        return NO;
+    }
+
+    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_WRONLY, 0666);
+    if (fd == -1) {
+        error = makeString("Unable to open file: ", [m_cachePath path].UTF8String, " due to error: ", strerror(errno));
+        return NO;
+    }
+    int returnCode = flock(fd, LOCK_EX | LOCK_NB);
+    if (returnCode)
+        error = "Unable to lock the cache file; it may already be in use."_s;
+    else
+        write(fd, m_cachedBytecode.data(), m_cachedBytecode.size());
+    close(fd);
+    return !returnCode;
+}
+
+- (void)setSourceURL:(NSURL *)url
+{
+    m_sourceURL = url;
+}
+
+- (JSC::JSSourceCode*)forceRecreateJSSourceCode
+{
     JSC::VM& vm = m_virtualMachine.vm;
+    JSC::JSLockHolder locker(vm);
+
     TextPosition startPosition { };
-    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, JSC::SourceOrigin(moduleKey.string()), URL({ }, moduleKey.string()), TextPosition(), JSC::SourceProviderSourceType::Module);
+
+    String url = String { [[self sourceURL] absoluteString] };
+    auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
+    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, JSC::SourceOrigin(url), URL({ }, url), startPosition, type);
     JSC::SourceCode sourceCode(WTFMove(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, WTFMove(sourceCode));
     m_jsSourceCode.set(vm, jsSourceCode);
-    [self writeCache];
     return jsSourceCode;
 }
 
 @end
-
 
 #endif

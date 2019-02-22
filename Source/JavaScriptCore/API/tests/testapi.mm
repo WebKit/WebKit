@@ -41,6 +41,12 @@
 #import "Regress141275.h"
 #import "Regress141809.h"
 
+#if __has_include(<libproc.h>)
+#define HAS_LIBPROC 1
+#import <libproc.h>
+#else
+#define HAS_LIBPROC 0
+#endif
 #import <pthread.h>
 #import <vector>
 #import <wtf/MemoryFootprint.h>
@@ -54,7 +60,7 @@ extern "C" bool _Block_has_signature(id);
 extern "C" const char * _Block_signature(id);
 
 extern int failed;
-extern "C" void testObjectiveCAPI(void);
+extern "C" void testObjectiveCAPI(const char*);
 extern "C" void checkResult(NSString *, bool);
 
 #if JSC_OBJC_API_ENABLED
@@ -1980,22 +1986,30 @@ static void testImportModuleTwice()
     }
 }
 
-static void testBytecodeCache()
+static NSURL *tempFile(NSString *string)
+{
+    NSURL* tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+    return [tempDirectory URLByAppendingPathComponent:string];
+}
+
+static void testModuleBytecodeCache()
 {
     @autoreleasepool {
-        NSURL* tempDirectory = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        NSString *fooSource = @"import 'otherDirectory/baz.js'; export let n = null;";
+        NSString *barSource = @"import { n } from '../foo.js'; export let foo = () => n;";
+        NSString *bazSource = @"import { foo } from '../directory/bar.js'; globalThis.ran = null; export let exp = foo();";
 
-        NSString* fooSource = @"import { n } from \"../foo.js\"; export let foo = n;";
-        NSString* barSource = @"import \"otherDirectory/baz.js\"; export let n = null;";
-        NSString* bazSource = @"import { foo } from \"../directory/bar.js\"; globalThis.ran = null; export let exp = foo;";
+        NSURL *fooPath = tempFile(@"foo.js");
+        NSURL *barPath = tempFile(@"bar.js");
+        NSURL *bazPath = tempFile(@"baz.js");
 
-        NSURL* fooPath = [tempDirectory URLByAppendingPathComponent:@"foo.js"];
-        NSURL* barPath = [tempDirectory URLByAppendingPathComponent:@"bar.js"];
-        NSURL* bazPath = [tempDirectory URLByAppendingPathComponent:@"baz.js"];
+        NSURL *fooCachePath = tempFile(@"foo.js.cache");
+        NSURL *barCachePath = tempFile(@"bar.js.cache");
+        NSURL *bazCachePath = tempFile(@"baz.js.cache");
 
-        NSURL* fooCachePath = [tempDirectory URLByAppendingPathComponent:@"foo.js.cache"];
-        NSURL* barCachePath = [tempDirectory URLByAppendingPathComponent:@"bar.js.cache"];
-        NSURL* bazCachePath = [tempDirectory URLByAppendingPathComponent:@"baz.js.cache"];
+        NSURL *fooFakePath = [NSURL fileURLWithPath:@"/foo.js"];
+        NSURL *barFakePath = [NSURL fileURLWithPath:@"/directory/bar.js"];
+        NSURL *bazFakePath = [NSURL fileURLWithPath:@"/otherDirectory/baz.js"];
 
         [fooSource writeToURL:fooPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
         [barSource writeToURL:barPath atomically:NO encoding:NSASCIIStringEncoding error:nil];
@@ -2003,13 +2017,19 @@ static void testBytecodeCache()
 
         auto block = ^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
             JSC::Options::forceDiskCache() = true;
-            if ([identifier isEqualToObject:@"file:///directory/bar.js"])
-                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:fooPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:fooCachePath]]];
-            else if ([identifier isEqualToObject:@"file:///foo.js"])
-                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:barPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:barCachePath]]];
-            else if ([identifier isEqualToObject:@"file:///otherDirectory/baz.js"])
-                [resolve callWithArguments:@[[JSScript scriptFromASCIIFile:bazPath inVirtualMachine:context.virtualMachine withCodeSigning:nil andBytecodeCache:bazCachePath]]];
-            else
+            JSScript *script = nil;
+            if ([identifier isEqualToObject:[fooFakePath absoluteString]])
+                script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:fooPath withSourceURL:fooFakePath andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
+            else if ([identifier isEqualToObject:[barFakePath absoluteString]])
+                script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:barPath withSourceURL:barFakePath andBytecodeCache:barCachePath inVirtualMachine:context.virtualMachine error:nil];
+            else if ([identifier isEqualToObject:[bazFakePath absoluteString]])
+                script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:bazPath withSourceURL:bazFakePath andBytecodeCache:bazCachePath inVirtualMachine:context.virtualMachine error:nil];
+
+            if (script) {
+                if (![script cacheBytecodeWithError:nil])
+                    CRASH();
+                [resolve callWithArguments:@[script]];
+            } else
                 [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
         };
 
@@ -2023,12 +2043,75 @@ static void testBytecodeCache()
         }
 
         NSFileManager* fileManager = [NSFileManager defaultManager];
-        [fileManager removeItemAtURL:fooPath error:nil];
-        [fileManager removeItemAtURL:barPath error:nil];
-        [fileManager removeItemAtURL:bazPath error:nil];
-        [fileManager removeItemAtURL:fooCachePath error:nil];
-        [fileManager removeItemAtURL:barCachePath error:nil];
-        [fileManager removeItemAtURL:bazCachePath error:nil];
+        BOOL removedAll = true;
+        removedAll &= [fileManager removeItemAtURL:fooPath error:nil];
+        removedAll &= [fileManager removeItemAtURL:barPath error:nil];
+        removedAll &= [fileManager removeItemAtURL:bazPath error:nil];
+        removedAll &= [fileManager removeItemAtURL:fooCachePath error:nil];
+        removedAll &= [fileManager removeItemAtURL:barCachePath error:nil];
+        removedAll &= [fileManager removeItemAtURL:bazCachePath error:nil];
+        checkResult(@"Removed all temp files created", removedAll);
+    }
+}
+
+static void testProgramBytecodeCache()
+{
+    @autoreleasepool {
+        NSString *fooSource = @"function foo() { return 42; }; function bar() { return 40; }; foo() + bar();";
+        NSURL *fooCachePath = tempFile(@"foo.js.cache");
+        JSContext *context = [[JSContext alloc] init];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        if (![script cacheBytecodeWithError:nil])
+            CRASH();
+
+        JSC::Options::forceDiskCache() = true;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        RELEASE_ASSERT([result isNumber]);
+        checkResult(@"result of cached program is 40+42", [[result toNumber] intValue] == 40 + 42);
+        JSC::Options::forceDiskCache() = false;
+
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        BOOL removedAll = [fileManager removeItemAtURL:fooCachePath error:nil];
+        checkResult(@"Removed all temp files created", removedAll);
+    }
+}
+
+static void testBytecodeCacheWithSyntaxError(JSScriptType type)
+{
+    @autoreleasepool {
+        NSString *fooSource = @"this is a syntax error";
+        NSURL *fooCachePath = tempFile(@"foo.js.cache");
+        JSContext *context = [[JSContext alloc] init];
+        JSScript *script = [JSScript scriptOfType:type withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        NSError *error = nil;
+        if ([script cacheBytecodeWithError:&error])
+            CRASH();
+        RELEASE_ASSERT(error);
+        checkResult(@"Got error when trying to cache bytecode for a script with a syntax error.", [[error description] containsString:@"Unable to generate bytecode for this JSScript because of a parser error"]);
+    }
+}
+
+static void testProgramJSScriptException()
+{
+    @autoreleasepool {
+        NSString *source = @"throw 42;";
+        JSContext *context = [[JSContext alloc] init];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        __block bool handledException = false;
+        context.exceptionHandler = ^(JSContext *, JSValue *exception) {
+            handledException = true;
+            RELEASE_ASSERT([exception isNumber]);
+            checkResult(@"Program JSScript with exception should have the exception value be 42.", [[exception toNumber] intValue] == 42);
+        };
+
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        checkResult(@"Program JSScript with exception should return undefined.", [result isUndefined]);
+        checkResult(@"Program JSScript with exception should call exception handler.", handledException);
     }
 }
 
@@ -2078,7 +2161,7 @@ static NSURL *resolvePathToScripts()
 
 @end
 
-static void testLoadBasicFile()
+static void testLoadBasicFileLegacySPI()
 {
     @autoreleasepool {
         auto *context = [JSContextFileLoaderDelegate newContext];
@@ -2089,41 +2172,179 @@ static void testLoadBasicFile()
     }
 }
 
-void testObjectiveCAPI()
+
+@interface JSContextMemoryMappedLoaderDelegate : JSContext <JSModuleLoaderDelegate>
+
++ (instancetype)newContext;
+
+@end
+
+@implementation JSContextMemoryMappedLoaderDelegate {
+}
+
++ (instancetype)newContext
+{
+    auto *result = [[JSContextMemoryMappedLoaderDelegate alloc] init];
+    return result;
+}
+
+- (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
+{
+    NSURL *filePath = [NSURL URLWithString:[identifier toString]];
+    auto *script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+    if (script)
+        [resolve callWithArguments:@[script]];
+    else
+        [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Unable to create Script" inContext:context]]];
+}
+
+@end
+
+static void testLoadBasicFile()
+{
+#if HAS_LIBPROC
+    size_t count = proc_pidinfo(getpid(), PROC_PIDLISTFDS, 0, 0, 0);
+#endif
+    @autoreleasepool {
+        auto *context = [JSContextMemoryMappedLoaderDelegate newContext];
+        context.moduleLoaderDelegate = context;
+        JSValue *promise = [context evaluateScript:@"import('./basic.js');" withSourceURL:resolvePathToScripts()];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+#if HAS_LIBPROC
+        size_t afterCount = proc_pidinfo(getpid(), PROC_PIDLISTFDS, 0, 0, 0);
+        checkResult(@"JSScript should not hold a file descriptor", count == afterCount);
+#endif
+        checkModuleCodeRan(context, promise, null);
+    }
+#if HAS_LIBPROC
+    size_t after = proc_pidinfo(getpid(), PROC_PIDLISTFDS, 0, 0, 0);
+    checkResult(@"File descriptor count sholudn't change after context is dealloced", count == after);
+#endif
+}
+
+@interface JSContextAugmentedLoaderDelegate : JSContext <JSModuleLoaderDelegate>
+
++ (instancetype)newContext;
+
+@end
+
+@implementation JSContextAugmentedLoaderDelegate {
+}
+
++ (instancetype)newContext
+{
+    auto *result = [[JSContextAugmentedLoaderDelegate alloc] init];
+    return result;
+}
+
+- (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
+{
+    UNUSED_PARAM(reject);
+
+    NSURL *filePath = [NSURL URLWithString:[identifier toString]];
+    NSString *pathString = [filePath absoluteString];
+    if ([pathString containsString:@"basic.js"] || [pathString containsString:@"foo.js"]) {
+        auto *script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        [resolve callWithArguments:@[script]];
+        return;
+    }
+
+    if ([pathString containsString:@"bar.js"]) {
+        auto *script = [JSScript scriptOfType:kJSScriptTypeModule withSource:@"" andSourceURL:[NSURL fileURLWithPath:@"/not/path/to/bar.js"] andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        [resolve callWithArguments:@[script]];
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+@end
+
+static void testJSScriptURL()
+{
+    @autoreleasepool {
+        auto *context = [JSContextAugmentedLoaderDelegate newContext];
+        context.moduleLoaderDelegate = context;
+        NSURL *basic = [NSURL URLWithString:@"./basic.js" relativeToURL:resolvePathToScripts()];
+        JSScript *script1 = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:basic withSourceURL:basic andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+
+        JSValue *result1 = [context evaluateJSScript:script1];
+        JSValue *null = [JSValue valueWithNullInContext:context];
+        checkModuleCodeRan(context, result1, null);
+
+        NSURL *foo = [NSURL URLWithString:@"./foo.js" relativeToURL:resolvePathToScripts()];
+        JSScript *script2 = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:foo withSourceURL:foo andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script2);
+        JSValue *result2 = [context evaluateJSScript:script2];
+
+        __block bool wasRejected = false;
+        [result2 invokeMethod:@"catch" withArguments:@[^(JSValue *reason) {
+            wasRejected = [reason isObject];
+            RELEASE_ASSERT([[reason toString] containsString:@"The same JSScript was provided for two different identifiers"]);
+        }]];
+
+        checkResult(@"Module JSScript imported with different identifiers is rejected", wasRejected);
+    }
+}
+
+#define RUN(test) do { \
+        if (!shouldRun(#test)) \
+            break; \
+        NSLog(@"%s...\n", #test); \
+        test; \
+        NSLog(@"%s: done.\n", #test); \
+    } while (false)
+
+void testObjectiveCAPI(const char* filter)
 {
     NSLog(@"Testing Objective-C API");
 
-    checkNegativeNSIntegers();
-    runJITThreadLimitTests();
+    auto shouldRun = [&] (const char* test) -> bool {
+        if (filter)
+            return strcasestr(test, filter);
+        return true;
+    };
 
-    testLoaderResolvesAbsoluteScriptURL();
-    testFetch();
-    testFetchWithTwoCycle();
-    testFetchWithThreeCycle();
-    testImportModuleTwice();
-    testBytecodeCache();
+    RUN(checkNegativeNSIntegers());
+    RUN(runJITThreadLimitTests());
 
-    testLoaderRejectsNilScriptURL();
-    testLoaderRejectsFailedFetch();
+    RUN(testLoaderResolvesAbsoluteScriptURL());
+    RUN(testFetch());
+    RUN(testFetchWithTwoCycle());
+    RUN(testFetchWithThreeCycle());
+    RUN(testImportModuleTwice());
+    RUN(testModuleBytecodeCache());
+    RUN(testProgramBytecodeCache());
+    RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeProgram));
+    RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeModule));
+    RUN(testProgramJSScriptException());
+
+    RUN(testLoaderRejectsNilScriptURL());
+    RUN(testLoaderRejectsFailedFetch());
+
+    RUN(testJSScriptURL());
 
     // File loading
-    testLoadBasicFile();
+    RUN(testLoadBasicFileLegacySPI());
+    RUN(testLoadBasicFile());
 
-    promiseWithExecutor(Resolution::ResolveEager);
-    promiseWithExecutor(Resolution::RejectEager);
-    promiseWithExecutor(Resolution::ResolveLate);
-    promiseWithExecutor(Resolution::RejectLate);
-    promiseRejectOnJSException();
-    promiseCreateResolved();
-    promiseCreateRejected();
-    parallelPromiseResolveTest();
+    RUN(promiseWithExecutor(Resolution::ResolveEager));
+    RUN(promiseWithExecutor(Resolution::RejectEager));
+    RUN(promiseWithExecutor(Resolution::ResolveLate));
+    RUN(promiseWithExecutor(Resolution::RejectLate));
+    RUN(promiseRejectOnJSException());
+    RUN(promiseCreateResolved());
+    RUN(promiseCreateRejected());
+    RUN(parallelPromiseResolveTest());
 
     testObjectiveCAPIMain();
 }
 
 #else
 
-void testObjectiveCAPI()
+void testObjectiveCAPI(const char*)
 {
 }
 

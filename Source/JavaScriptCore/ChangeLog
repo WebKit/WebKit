@@ -1,3 +1,92 @@
+2019-02-21  Saam Barati  <sbarati@apple.com>
+
+        Update JSScript SPI based on feedback
+        https://bugs.webkit.org/show_bug.cgi?id=194517
+
+        Reviewed by Keith Miller.
+
+        This patch updates the JSScript SPI in the following ways:
+        - JSScript can now represent both modules and programs. This is a property
+        of the script determined during creation.
+        - JSScript now takes a sourceURL during construction. For modules, this acts
+        as the module identifier.
+        - JSScript now has SPI for writing the cache out to disk. We don't do this
+        automatically.
+        - JSScript will load the bytecode cache on creation if it exists.
+        - We retrofit these new requirements on the prior JSScript SPI that
+        we're going to remove as soon as we can: https://bugs.webkit.org/show_bug.cgi?id=194909.
+        Previous SPI assumes all JSScripts are modules. Previous SPI also assigns
+        a sourceURL to the JSScript based on what the module loader decided the
+        identifier should be. We'll remove this once we remove the old SPI.
+        
+        This patch also adds SPI to JSContext to evaluate a JSScript. For modules,
+        this is like returning the result of doing dynamic import. For programs,
+        this does normal program evaluation.
+        
+        This patch also fixes a bug in generateBytecode/generateModuleBytecode where
+        we would try to cache the bytecode even if recursivelyGenerateUnlinkedCodeBlock
+        returned null. E.g, if the script had a syntax error.
+        
+        When writing tests, I also discovered that someone previously broke
+        testapi. This patch also fixes those failures. They were broken when
+        we switched to using a testapiScripts directory to hold our test .js
+        scripts. 
+
+        * API/JSAPIGlobalObject.h:
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderResolve):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        (JSC::JSAPIGlobalObject::loadAndEvaluateJSScriptModule):
+        * API/JSBase.cpp:
+        (JSEvaluateScriptInternal):
+        (JSEvaluateScript):
+        * API/JSBaseInternal.h: Added.
+        * API/JSContext.mm:
+        (-[JSContext evaluateScript:withSourceURL:]):
+        (-[JSContext evaluateJSScript:]):
+        * API/JSContextPrivate.h:
+        * API/JSScript.h:
+        * API/JSScript.mm:
+        (+[JSScript scriptWithSource:inVirtualMachine:]):
+        (+[JSScript scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:]):
+        (createError):
+        (+[JSScript scriptOfType:inVirtualMachine:withSourceURL:andSource:andBytecodeCache:error:]):
+        (+[JSScript scriptOfType:inVirtualMachine:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:error:]):
+        (-[JSScript cacheBytecodeWithError:]):
+        (-[JSScript sourceURL]):
+        (-[JSScript type]):
+        (-[JSScript jsSourceCode]):
+        (-[JSScript writeCache:]):
+        (-[JSScript setSourceURL:]):
+        (-[JSScript forceRecreateJSSourceCode]):
+        (-[JSScript writeCache]): Deleted.
+        (-[JSScript jsSourceCode:]): Deleted.
+        * API/JSScriptInternal.h:
+        * API/tests/FunctionOverridesTest.cpp:
+        (testFunctionOverrides):
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.mm:
+        (tempFile):
+        (testModuleBytecodeCache):
+        (testProgramBytecodeCache):
+        (testBytecodeCacheWithSyntaxError):
+        (testProgramJSScriptException):
+        (testLoadBasicFileLegacySPI):
+        (+[JSContextMemoryMappedLoaderDelegate newContext]):
+        (-[JSContextMemoryMappedLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (testLoadBasicFile):
+        (+[JSContextAugmentedLoaderDelegate newContext]):
+        (-[JSContextAugmentedLoaderDelegate context:fetchModuleForIdentifier:withResolveHandler:andRejectHandler:]):
+        (testJSScriptURL):
+        (testObjectiveCAPI):
+        (testBytecodeCache): Deleted.
+        * API/tests/testapiScripts/foo.js: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Completion.cpp:
+        (JSC::generateBytecode):
+        (JSC::generateModuleBytecode):
+
 2019-02-21  Mark Lam  <mark.lam@apple.com>
 
         Add more doesGC() assertions.

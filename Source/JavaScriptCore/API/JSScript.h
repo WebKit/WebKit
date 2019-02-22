@@ -31,37 +31,84 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class JSVirtualMachine;
 
+/*!
+ @enum JSScriptType
+ @abstract     A constant identifying the execution type of a JSScript.
+ @constant     kJSScriptTypeProgram  The type of a normal JavaScript program.
+ @constant     kJSScriptTypeModule   The type of a module JavaScript program.
+ */
+typedef NS_ENUM(NSInteger, JSScriptType) {
+    kJSScriptTypeProgram,
+    kJSScriptTypeModule,
+};
+
+
 JSC_CLASS_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA))
 @interface JSScript : NSObject
 
 /*!
+ This SPI is deprecated and should not be used. Use "scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:" instead.
+ */
++ (nullable instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm JSC_API_DEPRECATED("Use +scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error: instead.", macosx(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
+
+/*!
+ This SPI is deprecated and should not be used. Use "scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error:" instead.
+ */
++ (nullable instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath JSC_API_DEPRECATED("Use +scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error: instead.", macosx(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
+
+/*!
+ This API is deprecated and should not be used.
+ */
++ (nullable instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath JSC_API_DEPRECATED("Do not use this. Use +scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error: or +scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error: instead", macosx(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
+
+/*!
  @method
  @abstract Create a JSScript for the specified virtual machine.
+ @param type The type of JavaScript source.
  @param source The source code to use when the script is evaluated by the JS vm.
+ @param sourceURL The source URL to associate with this script. For modules, this is the module identifier.
+ @param cachePath A URL containing the path where the VM should cache for future execution. On creation, we use this path to load the cached bytecode off disk. If the cached bytecode at this location is stale, you should delete that file before calling this constructor.
  @param vm The JSVirtualMachine the script can be evaluated in.
+ @param error A description of why the script could not be created if the result is nil.
  @result The new script.
+ @discussion The file at cachePath should not be externally modified for the lifecycle of vm.
  */
-+ (nullable instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm;
++ (nullable instancetype)scriptOfType:(JSScriptType)type withSource:(NSString *)source andSourceURL:(NSURL *)sourceURL andBytecodeCache:(nullable NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError * _Nullable * _Nullable)error;
 
 /*!
  @method
  @abstract Create a JSScript for the specified virtual machine with a path to a codesigning and bytecode caching.
+ @param type The type of JavaScript source.
  @param filePath A URL containing the path to a JS source code file on disk.
+ @param sourceURL The source URL to associate with this script. For modules, this is the module identifier.
+ @param cachePath A URL containing the path where the VM should cache for future execution. On creation, we use this path to load the cached bytecode off disk. If the cached bytecode at this location is stale, you should delete that file before calling this constructor.
  @param vm The JSVirtualMachine the script can be evaluated in.
- @param codeSigningPath A URL containing the path to the codeSigning file for filePath on disk.
- @param cachePath A URL containing the path where the VM should cache for future execution.
+ @param error A description of why the script could not be created if the result is nil.
  @result The new script.
- @discussion the files at filePath, codeSigningPath, and cachePath should not be externally modified  for the lifecycle of vm. Note that codeSigningPath and cachePath are not used currently, but that will change in the near future.
+ @discussion The files at filePath and cachePath should not be externally modified for the lifecycle of vm. This method will file back the memory for the source.
 
  If the file at filePath is not ascii this method will return nil.
  */
-+ (nullable instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath;
-
++ (nullable instancetype)scriptOfType:(JSScriptType)type memoryMappedFromASCIIFile:(NSURL *)filePath withSourceURL:(NSURL *)sourceURL andBytecodeCache:(nullable NSURL *)cachePath inVirtualMachine:(JSVirtualMachine *)vm error:(out NSError * _Nullable * _Nullable)error;
 
 /*!
- This is deprecated and is equivalent to scriptFromASCIIFile:inVirtualMachine:withCodeSigning:andBytecodeCache:.
+ @method
+ @abstract Cache the bytecode for this JSScript to disk at the path passed in during creation.
+ @param error A description of why the script could not be cached if the result is FALSE.
  */
-+ (nullable instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath;
+- (BOOL)cacheBytecodeWithError:(out NSError * _Nullable * _Nullable)error;
+
+/*!
+ @method
+ @abstract Returns the JSScriptType of this JSScript.
+ */
+- (JSScriptType)type;
+
+/*!
+ @method
+ @abstract Returns the sourceURL of this JSScript.
+ */
+- (NSURL *)sourceURL;
 
 @end
 

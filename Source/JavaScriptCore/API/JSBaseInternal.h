@@ -20,23 +20,17 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#pragma once
 
-// Since we include files that haven't passed through the rewriter we need to handle the non-rewritten values...
-#define JSC_API_AVAILABLE(...)
-#define JSC_API_DEPRECATED(...)
-#define JSC_CLASS_AVAILABLE(...)
-#define JSC_MAC_VERSION_TBA 0
-#define JSC_IOS_VERSION_TBA 0
+#include <JavaScriptCore/JSBase.h>
+#include <JavaScriptCore/WebKitAvailability.h>
 
-// umbrella header
-#import <JavaScriptCore/JavaScriptCore.h>
+namespace JSC {
+class JSLockHolder;
+class ExecState;
+}
 
-// private headers
-#import <JavaScriptCore/JSContextPrivate.h>
-#import <JavaScriptCore/JSScript.h>
-#import <JavaScriptCore/JSValuePrivate.h>
-#import <JavaScriptCore/JSVirtualMachinePrivate.h>
-
+extern "C" JSValueRef JSEvaluateScriptInternal(const JSC::JSLockHolder&, JSC::ExecState*, JSContextRef, JSObjectRef thisObject, const JSC::SourceCode&, JSValueRef* exception);

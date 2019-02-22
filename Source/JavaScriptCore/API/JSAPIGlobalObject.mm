@@ -34,8 +34,10 @@
 #import "Error.h"
 #import "Exception.h"
 #import "JSContextInternal.h"
+#import "JSInternalPromise.h"
 #import "JSInternalPromiseDeferred.h"
 #import "JSNativeStdFunction.h"
+#import "JSPromiseDeferred.h"
 #import "JSScriptInternal.h"
 #import "JSSourceCode.h"
 #import "JSValueInternal.h"
@@ -43,7 +45,6 @@
 #import "JavaScriptCore.h"
 #import "ObjectConstructor.h"
 #import "SourceOrigin.h"
-
 #import <wtf/URL.h>
 
 namespace JSC {
@@ -75,12 +76,20 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     ASSERT(key.isString() || key.isSymbol());
     String name =  key.toWTFString(exec);
 
-    URL referrerURL(URL(), jsCast<JSString*>(referrer)->tryGetValue());
-    RELEASE_ASSERT(referrerURL.isValid());
+    if (JSString* referrerString = jsDynamicCast<JSString*>(vm, referrer)) {
+        String value = referrerString->value(exec);
+        URL referrerURL({ }, value);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_ASSERT(referrerURL.isValid());
 
-    URL url = URL(referrerURL, name);
-    if (url.isValid())
-        return Identifier::fromString(exec, url);
+        URL url = URL(referrerURL, name);
+        if (url.isValid())
+            return Identifier::fromString(exec, url);
+    } else {
+        URL url = URL({ }, name);
+        if (url.isValid())
+            return Identifier::fromString(exec, url);
+    }
 
     throwVMError(exec, scope, "Could not form valid URL from identifier and base"_s);
     return { };
@@ -162,20 +171,43 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         return deferred->reject(exec, createError(exec, "No module loader provided."));
 
     auto deferredPromise = Strong<JSInternalPromiseDeferred>(vm, deferred);
-    auto strongKey = Strong<JSString>(vm, jsSecureCast<JSString*>(vm, key));
     auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (ExecState* exec) {
         // This captures the globalObject but that's ok because our structure keeps it alive anyway.
+        VM& vm = exec->vm();
         JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject->globalExec())];
         id script = valueToObject(context, toRef(exec, exec->argument(0)));
 
         MarkedArgumentBuffer args;
-        if (UNLIKELY(![script isKindOfClass:[JSScript class]])) {
-            args.append(createTypeError(exec, "First argument of resolution callback is not a JSScript"));
+
+        auto rejectPromise = [&] (String message) {
+            args.append(createTypeError(exec, message));
             call(exec, deferredPromise->JSPromiseDeferred::reject(), args, "This should never be seen...");
             return encodedJSUndefined();
+        };
+
+        if (UNLIKELY(![script isKindOfClass:[JSScript class]]))
+            return rejectPromise("First argument of resolution callback is not a JSScript"_s);
+
+        JSScript* jsScript = static_cast<JSScript *>(script);
+
+        JSSourceCode* source = [jsScript jsSourceCode];
+        if (UNLIKELY([jsScript type] != kJSScriptTypeModule))
+            return rejectPromise("The JSScript that was provided did not have expected type of kJSScriptTypeModule."_s);
+
+        // FIXME: The SPI we're deprecating did not require sourceURL, so we just
+        // ignore this check for such use cases until we can remove that SPI. Once
+        // we do that, we can remove the null check for sourceURL:
+        // https://bugs.webkit.org/show_bug.cgi?id=194909
+        if (NSURL *sourceURL = [jsScript sourceURL]) {
+            String oldModuleKey { [sourceURL absoluteString] };
+            if (UNLIKELY(Identifier::fromString(&vm, oldModuleKey) != moduleKey))
+                return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
+        } else {
+            [jsScript setSourceURL:[NSURL URLWithString:static_cast<NSString *>(moduleKey.string())]];
+            source = [jsScript forceRecreateJSSourceCode];
         }
 
-        args.append([static_cast<JSScript *>(script) jsSourceCode:moduleKey]);
+        args.append(source);
         call(exec, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");
         return encodedJSUndefined();
     });
@@ -208,6 +240,22 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
+}
+
+JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *script)
+{
+    ASSERT(script.type == kJSScriptTypeModule);
+    VM& vm = this->vm();
+    ExecState* exec = globalExec();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Identifier key = Identifier::fromString(exec, String { [[script sourceURL] absoluteString] });
+    JSInternalPromise* promise = importModule(exec, key, jsUndefined(), jsUndefined());
+    RETURN_IF_EXCEPTION(scope, { });
+    auto result = JSPromiseDeferred::tryCreate(exec, this);
+    RETURN_IF_EXCEPTION(scope, { });
+    result->resolve(exec, promise);
+    return result->promise();
 }
 
 }

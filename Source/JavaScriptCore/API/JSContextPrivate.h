@@ -74,6 +74,16 @@
 /*! @abstract The delegate the context will use when trying to load a module. Note, this delegate will be ignored for contexts returned by UIWebView. */
 @property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
+/*!
+ @method
+ @abstract Run a JSScript.
+ @param script the JSScript to evaluate.
+ @discussion If the provided JSScript was created with kJSScriptTypeProgram, the script will run synchronously and return the result of evaluation.
+
+ Otherwise, if the script was created with kJSScriptTypeModule, the module will be run asynchronously and will return a promise resolved when the module and any transitive dependencies are loaded. The module loader will treat the script as if it had been returned from a delegate call to moduleLoaderDelegate. This mirrors the JavaScript dynamic import operation.
+ */
+- (JSValue *)evaluateJSScript:(JSScript *)script;
+
 @end
 
 #endif

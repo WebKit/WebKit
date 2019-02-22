@@ -27,6 +27,7 @@
 
 #import "APICast.h"
 #import "Completion.h"
+#import "JSBaseInternal.h"
 #import "JSCInlines.h"
 #import "JSContextInternal.h"
 #import "JSContextPrivate.h"
@@ -112,8 +113,36 @@
 
     if (exceptionValue)
         return [self valueFromNotifyException:exceptionValue];
-
     return [JSValue valueWithJSValueRef:result inContext:self];
+}
+
+- (JSValue *)evaluateJSScript:(JSScript *)script
+{
+    JSC::ExecState* exec = toJS(m_context);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+
+    if (script.type == kJSScriptTypeProgram) {
+        JSValueRef exceptionValue = nullptr;
+        JSValueRef result = JSEvaluateScriptInternal(locker, exec, m_context, nullptr, [script jsSourceCode]->sourceCode(), &exceptionValue);
+
+        if (exceptionValue)
+            return [self valueFromNotifyException:exceptionValue];
+        return [JSValue valueWithJSValueRef:result inContext:self];
+    }
+
+    auto* globalObject = JSC::jsDynamicCast<JSC::JSAPIGlobalObject*>(vm, exec->lexicalGlobalObject());
+    if (!globalObject)
+        return [JSValue valueWithNewPromiseRejectedWithReason:[JSValue valueWithNewErrorFromMessage:@"Context does not support module loading" inContext:self] inContext:self];
+
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSValue result = globalObject->loadAndEvaluateJSScriptModule(locker, script);
+    if (scope.exception()) {
+        JSValueRef exceptionValue = toRef(exec, scope.exception()->value());
+        scope.clearException();
+        return [JSValue valueWithNewPromiseRejectedWithReason:[JSValue valueWithJSValueRef:exceptionValue inContext:self] inContext:self];
+    }
+    return [JSValue valueWithJSValueRef:toRef(vm, result) inContext:self];
 }
 
 - (void)setException:(JSValue *)value
