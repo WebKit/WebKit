@@ -1,5 +1,23 @@
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r241868. rdar://problem/48267027
+
+    Unreviewed API test fix after r241855.
+    
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::~WebProcessProxy):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241868 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-21  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed API test fix after r241855.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::~WebProcessProxy):
+
+2019-02-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241728. rdar://problem/48243264
 
     Disable safe browsing in WKWebView and remove its WKPreferences API

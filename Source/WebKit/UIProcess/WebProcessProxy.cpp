@@ -163,6 +163,10 @@ WebProcessProxy::~WebProcessProxy()
 
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
+    auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
+    for (auto& callback : isResponsiveCallbacks)
+        callback(false);
+    
     if (m_webConnection)
         m_webConnection->invalidate();
 
