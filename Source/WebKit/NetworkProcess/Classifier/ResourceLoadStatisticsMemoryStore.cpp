@@ -354,7 +354,7 @@ void ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
         }
     }
 
-    removeDataRecords([this, weakThis = makeWeakPtr(*this)] {
+    removeDataRecords([this, weakThis = makeWeakPtr(*this)]() mutable {
         ASSERT(!RunLoop::isMain());
         if (!weakThis)
             return;
@@ -366,7 +366,7 @@ void ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords()
         if (!m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
             return;
 
-        RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)] {
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis)]() {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;

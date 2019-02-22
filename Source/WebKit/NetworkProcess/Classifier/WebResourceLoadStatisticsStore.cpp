@@ -30,6 +30,7 @@
 
 #include "APIDictionary.h"
 #include "Logging.h"
+#include "NetworkProcess.h"
 #include "NetworkSession.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "ResourceLoadStatisticsPersistentStorage.h"
@@ -305,7 +306,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const String& s
             ASSERT_UNUSED(promptEnabled, promptEnabled);
             auto subFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(subFrameHost);
             auto topFramePrimaryDomain = ResourceLoadStatistics::primaryDomain(topFrameHost);
-            CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = makeRef(*this), subFrameHost = WTFMove(subFrameHost), topFrameHost = WTFMove(topFrameHost), frameID, pageID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
+            CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = protectedThis.copyRef(), subFrameHost = WTFMove(subFrameHost), topFrameHost = WTFMove(topFrameHost), frameID, pageID, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
                 if (userDidGrantAccess)
                     grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userDidGrantAccess, WTFMove(completionHandler));
                 else
