@@ -127,7 +127,7 @@ public:
         m_ptrToOffsetMap.add(ptr, offset);
     }
 
-    WTF::Optional<ptrdiff_t> offsetForPtr(const void* ptr)
+    WTF::Optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
     {
         auto it = m_ptrToOffsetMap.find(ptr);
         if (it == m_ptrToOffsetMap.end())
@@ -227,8 +227,8 @@ public:
 
     ~Decoder()
     {
-        for (auto& pair : m_finalizers)
-            pair.value();
+        for (auto& finalizer : m_finalizers)
+            finalizer();
     }
 
     VM& vm() { return m_vm; }
@@ -245,7 +245,7 @@ public:
         m_offsetToPtrMap.add(offset, ptr);
     }
 
-    WTF::Optional<void*> ptrForOffset(ptrdiff_t offset)
+    WTF::Optional<void*> cachedPtrForOffset(ptrdiff_t offset)
     {
         auto it = m_offsetToPtrMap.find(offset);
         if (it == m_offsetToPtrMap.end())
@@ -254,9 +254,9 @@ public:
     }
 
     template<typename Functor>
-    void addFinalizer(ptrdiff_t offset, const Functor& fn)
+    void addFinalizer(const Functor& finalizer)
     {
-        m_finalizers.add(offset, fn);
+        m_finalizers.append(finalizer);
     }
 
 private:
@@ -266,7 +266,7 @@ private:
     size_t m_size;
 #endif
     HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
-    HashMap<ptrdiff_t, std::function<void()>> m_finalizers;
+    Vector<std::function<void()>> m_finalizers;
 };
 
 template<typename T>
@@ -377,7 +377,7 @@ public:
         if (m_isEmpty)
             return;
 
-        if (WTF::Optional<ptrdiff_t> offset = encoder.offsetForPtr(src)) {
+        if (WTF::Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
             this->m_offset = *offset - encoder.offsetOf(&this->m_offset);
             return;
         }
@@ -388,18 +388,30 @@ public:
     }
 
     template<typename... Args>
-    Source* decode(Decoder& decoder, Args... args) const
+    Source* decode(Decoder& decoder, bool& isNewAllocation, Args&&... args) const
     {
-        if (m_isEmpty)
+        if (m_isEmpty) {
+            isNewAllocation = false;
             return nullptr;
+        }
 
         ptrdiff_t bufferOffset = decoder.offsetOf(this->buffer());
-        if (WTF::Optional<void*> ptr = decoder.ptrForOffset(bufferOffset))
+        if (WTF::Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
+            isNewAllocation = false;
             return reinterpret_cast<Source*>(*ptr);
+        }
 
-        Source* ptr = get()->decode(decoder, args...);
+        isNewAllocation = true;
+        Source* ptr = get()->decode(decoder, std::forward<Args>(args)...);
         decoder.cacheOffset(bufferOffset, ptr);
         return ptr;
+    }
+
+    template<typename... Args>
+    Source* decode(Decoder& decoder, Args&&... args) const
+    {
+        bool unusedIsNewAllocation;
+        return decode(decoder, unusedIsNewAllocation, std::forward<Args>(args)...);
     }
 
     const T* operator->() const { return get(); }
@@ -431,10 +443,15 @@ public:
 
     RefPtr<Source> decode(Decoder& decoder) const
     {
-        Source* decodedPtr = m_ptr.decode(decoder);
+        bool isNewAllocation;
+        Source* decodedPtr = m_ptr.decode(decoder, isNewAllocation);
         if (!decodedPtr)
             return nullptr;
-        decoder.addFinalizer(decoder.offsetOf(m_ptr.buffer()), [=] { derefIfNotNull(decodedPtr); });
+        if (isNewAllocation) {
+            decoder.addFinalizer([=] {
+                derefIfNotNull(decodedPtr);
+            });
+        }
         refIfNotNull(decodedPtr);
         return adoptRef(decodedPtr);
     }
@@ -876,6 +893,65 @@ public:
 private:
     bool m_isEverythingCaptured;
     CachedHashMap<CachedRefPtr<CachedUniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> m_map;
+};
+
+class CachedCompactVariableEnvironment : public CachedObject<CompactVariableEnvironment> {
+public:
+    void encode(Encoder& encoder, const CompactVariableEnvironment& env)
+    {
+        m_variables.encode(encoder, env.m_variables);
+        m_variableMetadata.encode(encoder, env.m_variableMetadata);
+        m_hash = env.m_hash;
+        m_isEverythingCaptured = env.m_isEverythingCaptured;
+    }
+
+    void decode(Decoder& decoder, CompactVariableEnvironment& env) const
+    {
+        m_variables.decode(decoder, env.m_variables);
+        m_variableMetadata.decode(decoder, env.m_variableMetadata);
+        env.m_hash = m_hash;
+        env.m_isEverythingCaptured = m_isEverythingCaptured;
+    }
+
+    CompactVariableEnvironment* decode(Decoder& decoder) const
+    {
+        CompactVariableEnvironment* env = new CompactVariableEnvironment;
+        decode(decoder, *env);
+        return env;
+    }
+
+private:
+    CachedVector<CachedRefPtr<CachedUniquedStringImpl>> m_variables;
+    CachedVector<VariableEnvironmentEntry> m_variableMetadata;
+    unsigned m_hash;
+    bool m_isEverythingCaptured;
+};
+
+class CachedCompactVariableMapHandle : public CachedObject<CompactVariableMap::Handle> {
+public:
+    void encode(Encoder& encoder, const CompactVariableMap::Handle& handle)
+    {
+        m_environment.encode(encoder, handle.m_environment);
+    }
+
+    CompactVariableMap::Handle decode(Decoder& decoder) const
+    {
+        bool isNewAllocation;
+        CompactVariableEnvironment* environment = m_environment.decode(decoder, isNewAllocation);
+        bool isNewEntry;
+        CompactVariableMap::Handle handle = decoder.vm().m_compactVariableMap->get(environment, isNewEntry);
+        if (!isNewAllocation)
+            ASSERT(!isNewEntry);
+        else if (!isNewEntry) {
+            decoder.addFinalizer([=] {
+                delete environment;
+            });
+        }
+        return handle;
+    }
+
+private:
+    CachedPtr<CachedCompactVariableEnvironment> m_environment;
 };
 
 template<typename T, typename Source = SourceType<T>>
@@ -1517,7 +1593,7 @@ private:
     CachedIdentifier m_ecmaName;
     CachedIdentifier m_inferredName;
 
-    CachedVariableEnvironment m_parentScopeTDZVariables;
+    CachedCompactVariableMapHandle m_parentScopeTDZVariables;
 
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
@@ -1852,7 +1928,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_ecmaName.encode(encoder, executable.ecmaName());
     m_inferredName.encode(encoder, executable.inferredName());
 
-    m_parentScopeTDZVariables.encode(encoder, executable.parentScopeTDZVariables());
+    m_parentScopeTDZVariables.encode(encoder, executable.m_parentScopeTDZVariables);
 
     m_unlinkedCodeBlockForCall.encode(encoder, executable.m_unlinkedCodeBlockForCall);
     m_unlinkedCodeBlockForConstruct.encode(encoder, executable.m_unlinkedCodeBlockForConstruct);
@@ -1860,10 +1936,8 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
 ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decoder& decoder) const
 {
-    VariableEnvironment env;
-    m_parentScopeTDZVariables.decode(decoder, env);
-
-    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, env, *this);
+    CompactVariableMap::Handle env = m_parentScopeTDZVariables.decode(decoder);
+    UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, WTFMove(env), *this);
     executable->finishCreation(decoder.vm());
 
     m_unlinkedCodeBlockForCall.decode(decoder, executable->m_unlinkedCodeBlockForCall, executable);
@@ -1872,7 +1946,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
     return executable;
 }
 
-ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, VariableEnvironment& parentScopeTDZVariables, const CachedFunctionExecutable& cachedExecutable)
+ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, CompactVariableMap::Handle parentScopeTDZVariables, const CachedFunctionExecutable& cachedExecutable)
     : Base(decoder.vm(), decoder.vm().unlinkedFunctionExecutableStructure.get())
     , m_firstLineOffset(cachedExecutable.firstLineOffset())
     , m_lineCount(cachedExecutable.lineCount())
@@ -1902,7 +1976,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_ecmaName(cachedExecutable.ecmaName(decoder))
     , m_inferredName(cachedExecutable.inferredName(decoder))
 
-    , m_parentScopeTDZVariables(decoder.vm().m_compactVariableMap->get(parentScopeTDZVariables))
+    , m_parentScopeTDZVariables(WTFMove(parentScopeTDZVariables))
 
     , m_rareData(cachedExecutable.rareData(decoder))
 {

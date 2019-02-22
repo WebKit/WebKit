@@ -125,6 +125,9 @@ private:
 class CompactVariableEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CompactVariableEnvironment);
+
+    friend class CachedCompactVariableEnvironment;
+
 public:
     CompactVariableEnvironment(const VariableEnvironment&);
     VariableEnvironment toVariableEnvironment() const;
@@ -133,6 +136,8 @@ public:
     unsigned hash() const { return m_hash; }
 
 private:
+    CompactVariableEnvironment() = default;
+
     Vector<RefPtr<UniquedStringImpl>> m_variables;
     Vector<VariableEnvironmentEntry> m_variableMetadata;
     unsigned m_hash;
@@ -204,6 +209,8 @@ namespace JSC {
 class CompactVariableMap : public RefCounted<CompactVariableMap> {
 public:
     class Handle {
+        friend class CachedCompactVariableMapHandle;
+
     public:
         Handle() = default;
 
@@ -241,6 +248,10 @@ public:
 
 private:
     friend class Handle;
+    friend class CachedCompactVariableMapHandle;
+
+    Handle get(CompactVariableEnvironment*, bool& isNewEntry);
+
     HashMap<CompactVariableMapKey, unsigned> m_map;
 };
 

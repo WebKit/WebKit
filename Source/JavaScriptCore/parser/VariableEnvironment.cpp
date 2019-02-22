@@ -154,12 +154,21 @@ VariableEnvironment CompactVariableEnvironment::toVariableEnvironment() const
 CompactVariableMap::Handle CompactVariableMap::get(const VariableEnvironment& env)
 {
     auto* environment = new CompactVariableEnvironment(env);
+    bool isNewEntry;
+    auto handle = get(environment, isNewEntry);
+    if (!isNewEntry)
+        delete environment;
+    return handle;
+}
+
+CompactVariableMap::Handle CompactVariableMap::get(CompactVariableEnvironment* environment, bool& isNewEntry)
+{
     CompactVariableMapKey key { *environment };
     auto addResult = m_map.add(key, 1);
+    isNewEntry = addResult.isNewEntry;
     if (addResult.isNewEntry)
         return CompactVariableMap::Handle(*environment, *this);
 
-    delete environment;
     ++addResult.iterator->value;
     return CompactVariableMap::Handle(addResult.iterator->key.environment(), *this);
 }

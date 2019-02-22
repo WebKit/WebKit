@@ -191,7 +191,7 @@ public:
 
 private:
     UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, FunctionMetadataNode*, UnlinkedFunctionKind, ConstructAbility, JSParserScriptMode, CompactVariableMap::Handle,  JSC::DerivedContextType, bool isBuiltinDefaultClassConstructor);
-    UnlinkedFunctionExecutable(Decoder&, VariableEnvironment&, const CachedFunctionExecutable&);
+    UnlinkedFunctionExecutable(Decoder&, CompactVariableMap::Handle, const CachedFunctionExecutable&);
 
     unsigned m_firstLineOffset;
     unsigned m_lineCount;

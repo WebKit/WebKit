@@ -1,3 +1,31 @@
+2019-02-22  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Cache CompactVariableMap::Handle instead of VariableEnvironment for UnlinkedFunctionExecutable
+        https://bugs.webkit.org/show_bug.cgi?id=194706
+
+        Reviewed by Saam Barati.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=194583 we started using a
+        CompactVariableMap::Handle instead of VariableEnvironment for
+        UnlinkedFunctionExecutables, but we were creating the full environment
+        to encode the executable in the bytecode cache. This patch changes it so
+        that we cache the handle instead of the environment. This avoids duplicating
+        the VariableEnvironment whenever we have to cache two handles that point
+        to the environment.
+
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * parser/VariableEnvironment.cpp:
+        (JSC::CompactVariableMap::get):
+        * parser/VariableEnvironment.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCompactVariableEnvironment::encode):
+        (JSC::CachedCompactVariableEnvironment::decode const):
+        (JSC::CachedCompactVariableMapHandle::encode):
+        (JSC::CachedCompactVariableMapHandle::decode const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+
 2019-02-21  Saam Barati  <sbarati@apple.com>
 
         Update JSScript SPI based on feedback
