@@ -1,3 +1,9 @@
+2019-02-22  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Bump version numbers
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump version numbers
