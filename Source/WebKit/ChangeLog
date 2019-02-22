@@ -1,3 +1,17 @@
+2019-02-21  Tim Horton  <timothy_horton@apple.com>
+
+        Turn a high-value UI-side-compositing assertion into a release assert
+        https://bugs.webkit.org/show_bug.cgi?id=194887
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        There is absolutely no situation in which this assert should fire
+        if WebKit is behaving correctly, and it will basically always result
+        in a UI process crash (or at least confusion), so make it a release assert.
+        This would have saved us a lot of stress in bug 194845.
+
 2019-02-21  Don Olmstead  <don.olmstead@sony.com>
 
         [MSVC] Fix compilation errors with lambdas in ResourceLoadStatistics

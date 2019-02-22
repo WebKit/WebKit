@@ -168,7 +168,7 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
 void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& context, RemoteLayerTreeTransaction& transaction)
 {
     ASSERT(!m_properties.backingStore || owner());
-    ASSERT_WITH_SECURITY_IMPLICATION(&context == m_context);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&context == m_context);
     
     if (m_properties.backingStore && (!owner() || !owner()->platformCALayerDrawsContent())) {
         m_properties.backingStore = nullptr;
