@@ -60,7 +60,7 @@ void SmallStrings::initializeCommonStrings(VM& vm)
     initialize(&vm, m_nullObjectString, "[object Null]");
     initialize(&vm, m_undefinedObjectString, "[object Undefined]");
 
-    setInitialized(true);
+    setIsInitialized(true);
 }
 
 void SmallStrings::visitStrongReferences(SlotVisitor& visitor)

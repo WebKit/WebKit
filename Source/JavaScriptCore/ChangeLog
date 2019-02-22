@@ -1,5 +1,17 @@
 2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, build fix after r241954
+        https://bugs.webkit.org/show_bug.cgi?id=194939
+
+        Renaming setCanAccessHeap was incomplete.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
+2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] SmallStringsStorage is unnecessary
         https://bugs.webkit.org/show_bug.cgi?id=194939
 

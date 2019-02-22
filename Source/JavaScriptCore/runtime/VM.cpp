@@ -540,7 +540,7 @@ VM::~VM()
 
     ASSERT(currentThreadIsHoldingAPILock());
     m_apiLock->willDestroyVM(this);
-    smallStrings.setInitialized(false);
+    smallStrings.setIsInitialized(false);
     heap.lastChanceToFinalize();
 
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
