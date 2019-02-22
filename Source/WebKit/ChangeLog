@@ -1,3 +1,22 @@
+2019-02-21  Alex Christensen  <achristensen@webkit.org>
+
+        Clicking "Go Back" on a safe browsing warning before a WKWebView has loaded any page should request to close the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=194914
+        <rdar://problem/47586889>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didShowSafeBrowsingWarning):
+        (API::UIClient::didClickGoBackFromSafeBrowsingWarning): Deleted.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didClickGoBackFromSafeBrowsingWarning): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-02-21  Tim Horton  <timothy_horton@apple.com>
 
         Turn a high-value UI-side-compositing assertion into a release assert

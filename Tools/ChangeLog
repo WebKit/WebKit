@@ -1,3 +1,16 @@
+2019-02-21  Alex Christensen  <achristensen@webkit.org>
+
+        Clicking "Go Back" on a safe browsing warning before a WKWebView has loaded any page should request to close the WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=194914
+        <rdar://problem/47586889>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (-[SafeBrowsingNavigationDelegate webViewDidClose:]):
+        (TEST):
+        (-[SafeBrowsingNavigationDelegate _webViewDidClickGoBackFromSafeBrowsingWarning:]): Deleted.
+
 2019-02-21  David Kilzer  <ddkilzer@apple.com>
 
         Leak of CFErrorRef objects (1.92 Kbytes) in com.apple.WebKit.WebContent.Development running WebKit layout tests on iOS Simulator

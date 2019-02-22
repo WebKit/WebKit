@@ -182,7 +182,6 @@ public:
     virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }
     
     virtual void didShowSafeBrowsingWarning() { }
-    virtual void didClickGoBackFromSafeBrowsingWarning() { }
 };
 
 } // namespace API
