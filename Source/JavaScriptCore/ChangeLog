@@ -1,3 +1,52 @@
+2019-02-22  Robin Morisset  <rmorisset@apple.com>
+
+        B3ReduceStrength: missing peephole optimizations for binary operations
+        https://bugs.webkit.org/show_bug.cgi?id=194252
+
+        Reviewed by Saam Barati.
+
+        Adds several sets of optimizations for BitAnd, BitOr and BitXor.
+        Using BitAnd distributivity over BitOr and BitXor:
+          Turn any of these (for Op == BitOr || Op == BitXor):
+                Op(BitAnd(x1, x2), BitAnd(x1, x3))
+                Op(BitAnd(x2, x1), BitAnd(x1, x3))
+                Op(BitAnd(x1, x2), BitAnd(x3, x1))
+                Op(BitAnd(x2, x1), BitAnd(x3, x1))
+           Into this: BitAnd(Op(x2, x3), x1)
+           And any of these:
+                Op(BitAnd(x1, x2), x1)
+                Op(BitAnd(x2, x1), x1)
+                Op(x1, BitAnd(x1, x2))
+                Op(x1, BitAnd(x2, x1))
+           Into this: BitAnd(Op(x2, x1), x1)
+           This second set is equivalent to doing x1 => BitAnd(x1, x1), and then applying the first set.
+        Using de Morgan laws (we represent not as BitXor with allOnes):
+          BitAnd(BitXor(x1, allOnes), BitXor(x2, allOnes)) => BitXor(BitOr(x1, x2), allOnes)
+          BitOr(BitXor(x1, allOnes), BitXor(x2, allOnes) => BitXor(BitAnd(x1, x2), allOnes)
+          BitOr(BitXor(x, allOnes), c) => BitXor(BitAnd(x, ~c), allOnes)
+          BitAnd(BitXor(x, allOnes), c) => BitXor(BitOr(x, ~c), allOnes)
+        The latter two are equivalent to doing c => BitXor(~c, allOnes), and then applying the former two.
+
+        All of these transformations either reduce the number of operations (which we always do when possible), or bring the expression closer to having:
+          - BitXor with all ones at the outermost
+          - then BitAnd
+          - then other BitXor
+          - then BitOr at the innermost.
+        These transformations that don't directly reduce the number of operations are still useful for normalization (helping things like CSE), and also can enable
+        more optimizations (for example BitXor with all ones can easily cancel each other once they are all at the outermost level).
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testBitAndNotNot):
+        (JSC::B3::testBitAndNotImm):
+        (JSC::B3::testBitOrAndAndArgs):
+        (JSC::B3::testBitOrAndSameArgs):
+        (JSC::B3::testBitOrNotNot):
+        (JSC::B3::testBitOrNotImm):
+        (JSC::B3::testBitXorAndAndArgs):
+        (JSC::B3::testBitXorAndSameArgs):
+        (JSC::B3::run):
+
 2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] putNonEnumerable in JSWrapperMap is too costly

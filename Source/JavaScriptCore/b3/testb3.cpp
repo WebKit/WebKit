@@ -2486,6 +2486,41 @@ void testBitAndSameArg(int64_t a)
     CHECK(compileAndRun<int64_t>(proc, a) == a);
 }
 
+void testBitAndNotNot(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* notA = root->appendNew<Value>(proc, BitXor, Origin(), argA, root->appendNew<Const64Value>(proc, Origin(), -1));
+    Value* notB = root->appendNew<Value>(proc, BitXor, Origin(), argB, root->appendNew<Const64Value>(proc, Origin(), -1));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            notA,
+            notB));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a & ~b));
+}
+
+void testBitAndNotImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* notA = root->appendNew<Value>(proc, BitXor, Origin(), argA, root->appendNew<Const64Value>(proc, Origin(), -1));
+    Value* cstB = root->appendNew<Const64Value>(proc, Origin(), b);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitAnd, Origin(),
+            notA,
+            cstB));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a & b));
+}
+
 void testBitAndImms(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -2870,6 +2905,91 @@ void testBitOrSameArg(int64_t a)
     CHECK(compileAndRun<int64_t>(proc, a) == a);
 }
 
+void testBitOrAndAndArgs(int64_t a, int64_t b, int64_t c)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) | (a & c))
+    // ((a & b) | (c & a))
+    // ((b & a) | (a & c))
+    // ((b & a) | (c & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* argC = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* andAB = i & 2 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* andAC = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argC)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argC, argA);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, BitOr, Origin(),
+                andAB,
+                andAC));
+
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b, c), ((a & b) | (a & c)));
+    }
+}
+
+void testBitOrAndSameArgs(int64_t a, int64_t b)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) | a)
+    // ((b & a) | a)
+    // (a | (a & b))
+    // (a | (b & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* andAB = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* result = i & 2 ? root->appendNew<Value>(proc, BitOr, Origin(), andAB, argA)
+            : root->appendNew<Value>(proc, BitOr, Origin(), argA, andAB);
+        root->appendNewControlValue(proc, Return, Origin(), result);
+
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b), ((a & b) | a));
+    }
+}
+
+void testBitOrNotNot(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* notA = root->appendNew<Value>(proc, BitXor, Origin(), argA, root->appendNew<Const64Value>(proc, Origin(), -1));
+    Value* notB = root->appendNew<Value>(proc, BitXor, Origin(), argB, root->appendNew<Const64Value>(proc, Origin(), -1));
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            notA,
+            notB));
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a | ~b));
+}
+
+void testBitOrNotImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* notA = root->appendNew<Value>(proc, BitXor, Origin(), argA, root->appendNew<Const64Value>(proc, Origin(), -1));
+    Value* cstB = root->appendNew<Const64Value>(proc, Origin(), b);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, BitOr, Origin(),
+            notA,
+            cstB));
+    
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (~a | b));
+}
+
 void testBitOrImms(int64_t a, int64_t b)
 {
     Procedure proc;
@@ -3230,6 +3350,56 @@ void testBitXorSameArg(int64_t a)
             argument));
 
     CHECK(!compileAndRun<int64_t>(proc, a));
+}
+
+void testBitXorAndAndArgs(int64_t a, int64_t b, int64_t c)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) ^ (a & c))
+    // ((a & b) ^ (c & a))
+    // ((b & a) ^ (a & c))
+    // ((b & a) ^ (c & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* argC = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* andAB = i & 2 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* andAC = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argC)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argC, argA);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(
+                proc, BitXor, Origin(),
+                andAB,
+                andAC));
+
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b, c), ((a & b) ^ (a & c)));
+    }
+}
+
+void testBitXorAndSameArgs(int64_t a, int64_t b)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a & b) ^ a)
+    // ((b & a) ^ a)
+    // (a ^ (a & b))
+    // (a ^ (b & a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* andAB = i & 1 ? root->appendNew<Value>(proc, BitAnd, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, BitAnd, Origin(), argB, argA);
+        Value* result = i & 2 ? root->appendNew<Value>(proc, BitXor, Origin(), andAB, argA)
+            : root->appendNew<Value>(proc, BitXor, Origin(), argA, andAB);
+        root->appendNewControlValue(proc, Return, Origin(), result);
+        
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b), ((a & b) ^ a));
+    }
 }
 
 void testBitXorImms(int64_t a, int64_t b)
@@ -16452,6 +16622,22 @@ double negativeZero()
                 }));                                        \
         }                                                   \
     }
+#define RUN_TERNARY(test, valuesA, valuesB, valuesC) \
+    for (auto a : valuesA) {                                    \
+        for (auto b : valuesB) {                                \
+            for (auto c : valuesC) {                            \
+                CString testStr = toCString(#test, "(", a.name, ", ", b.name, ",", c.name, ")"); \
+                if (!shouldRun(testStr.data()))                 \
+                    continue;                                   \
+                tasks.append(createSharedTask<void()>(          \
+                    [=] () {                                    \
+                        dataLog(toCString(testStr, "...\n"));   \
+                        test(a.value, b.value, c.value);        \
+                        dataLog(toCString(testStr, ": OK!\n")); \
+                    }));                                        \
+            }                                                   \
+        }                                                       \
+    }
 
 void run(const char* filter)
 {
@@ -16780,6 +16966,8 @@ void run(const char* filter)
     RUN_BINARY(testBitAndArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitAndImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitAndArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testBitAndNotNot, int64Operands(), int64Operands());
+    RUN_BINARY(testBitAndNotImm, int64Operands(), int64Operands());
 
     RUN(testBitOrArgs(43, 43));
     RUN(testBitOrArgs(43, 0));
@@ -16842,6 +17030,10 @@ void run(const char* filter)
     RUN_BINARY(testBitOrArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitOrImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testBitOrArgsFloatWithUselessDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_TERNARY(testBitOrAndAndArgs, int64Operands(), int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrAndSameArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrNotNot, int64Operands(), int64Operands());
+    RUN_BINARY(testBitOrNotImm, int64Operands(), int64Operands());
 
     RUN_BINARY(testBitXorArgs, int64Operands(), int64Operands());
     RUN_UNARY(testBitXorSameArg, int64Operands());
@@ -16880,6 +17072,8 @@ void run(const char* filter)
     RUN(testBitXorImmBitXorArgImm32(7, 2, 3));
     RUN(testBitXorImmBitXorArgImm32(6, 1, 6));
     RUN(testBitXorImmBitXorArgImm32(24, 0xffff, 7));
+    RUN_TERNARY(testBitXorAndAndArgs, int64Operands(), int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorAndSameArgs, int64Operands(), int64Operands());
 
     RUN_UNARY(testBitNotArg, int64Operands());
     RUN_UNARY(testBitNotImm, int64Operands());
