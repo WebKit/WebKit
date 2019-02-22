@@ -1,3 +1,31 @@
+2019-02-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] SmallStringsStorage is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=194939
+
+        Reviewed by Mark Lam.
+
+        SmallStrings hold common small JSStrings. Their underlying StringImpl is also held by SmallStringsStorage.
+        But it is duplicate since we can get StringImpl from small JSStrings. This patch removes SmallStringsStorage,
+        and get StringImpls from JSStrings if necessary.
+
+        We also add m_canAccessHeap flag to SmallStrings. At the time of VM destruction, JSStrings are destroyed when
+        VM's Heap is finalized. We must not touch JSStrings before VM's heap (and JSStrings in SmallStrings) is initialized,
+        and after VM's Heap is destroyed. We add this m_canAccessHeap flag to allow users to get StringImpl during the
+        this sensitive period. If m_canAccessHeap is false, we get StringImpl from AtomicStringImpl::add.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::singleCharacterStringRep):
+        (JSC::SmallStringsStorage::rep): Deleted.
+        (JSC::SmallStringsStorage::SmallStringsStorage): Deleted.
+        (JSC::SmallStrings::createSingleCharacterString): Deleted.
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::setCanAccessHeap):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+
 2019-02-22  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache CompactVariableMap::Handle instead of VariableEnvironment for UnlinkedFunctionExecutable

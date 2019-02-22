@@ -34,30 +34,6 @@
 
 namespace JSC {
 
-class SmallStringsStorage {
-    WTF_MAKE_NONCOPYABLE(SmallStringsStorage); WTF_MAKE_FAST_ALLOCATED;
-public:
-    SmallStringsStorage();
-
-    StringImpl& rep(unsigned char character)
-    {
-        return *m_reps[character].get();
-    }
-
-private:
-    static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
-
-    RefPtr<StringImpl> m_reps[singleCharacterStringCount];
-};
-
-SmallStringsStorage::SmallStringsStorage()
-{
-    for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
-        const LChar string[] = { static_cast<LChar>(i) };
-        m_reps[i] = AtomicStringImpl::add(StringImpl::create(string, 1).ptr());
-    }
-}
-
 SmallStrings::SmallStrings()
 {
     COMPILE_ASSERT(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
@@ -69,14 +45,22 @@ SmallStrings::SmallStrings()
 void SmallStrings::initializeCommonStrings(VM& vm)
 {
     createEmptyString(&vm);
-    for (unsigned i = 0; i <= maxSingleCharacterString; ++i)
-        createSingleCharacterString(&vm, i);
+
+    for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
+        ASSERT(!m_singleCharacterStrings[i]);
+        const LChar string[] = { static_cast<LChar>(i) };
+        m_singleCharacterStrings[i] = JSString::createHasOtherOwner(vm, AtomicStringImpl::add(string, 1).releaseNonNull());
+        ASSERT(m_needsToBeVisited);
+    }
+
 #define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
     initialize(&vm, m_objectStringStart, "[object ");
     initialize(&vm, m_nullObjectString, "[object Null]");
     initialize(&vm, m_undefinedObjectString, "[object Undefined]");
+
+    setInitialized(true);
 }
 
 void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
@@ -104,20 +88,12 @@ void SmallStrings::createEmptyString(VM* vm)
     ASSERT(m_needsToBeVisited);
 }
 
-void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
+Ref<StringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)
 {
-    if (!m_storage)
-        m_storage = std::make_unique<SmallStringsStorage>();
-    ASSERT(!m_singleCharacterStrings[character]);
-    m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*vm, m_storage->rep(character));
-    ASSERT(m_needsToBeVisited);
-}
-
-StringImpl& SmallStrings::singleCharacterStringRep(unsigned char character)
-{
-    if (!m_storage)
-        m_storage = std::make_unique<SmallStringsStorage>();
-    return m_storage->rep(character);
+    if (LIKELY(m_isInitialized))
+        return *const_cast<StringImpl*>(m_singleCharacterStrings[character]->tryGetValueImpl());
+    const LChar string[] = { static_cast<LChar>(character) };
+    return AtomicStringImpl::add(string, 1).releaseNonNull();
 }
 
 void SmallStrings::initialize(VM* vm, JSString*& string, const char* value)

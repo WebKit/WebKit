@@ -51,7 +51,6 @@ namespace JSC {
 
 class VM;
 class JSString;
-class SmallStringsStorage;
 class SlotVisitor;
 
 static const unsigned maxSingleCharacterString = 0xFF;
@@ -72,7 +71,9 @@ public:
         return m_singleCharacterStrings[character];
     }
 
-    JS_EXPORT_PRIVATE WTF::StringImpl& singleCharacterStringRep(unsigned char character);
+    JS_EXPORT_PRIVATE Ref<StringImpl> singleCharacterStringRep(unsigned char character);
+
+    void setIsInitialized(bool isInitialized) { m_isInitialized = isInitialized; }
 
     JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 
@@ -127,7 +128,6 @@ private:
     static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
     void createEmptyString(VM*);
-    void createSingleCharacterString(VM*, unsigned char);
 
     void initialize(VM*, JSString*&, const char* value);
 
@@ -139,8 +139,8 @@ private:
     JSString* m_nullObjectString { nullptr };
     JSString* m_undefinedObjectString { nullptr };
     JSString* m_singleCharacterStrings[singleCharacterStringCount] { nullptr };
-    std::unique_ptr<SmallStringsStorage> m_storage;
     bool m_needsToBeVisited { true };
+    bool m_isInitialized { false };
 };
 
 } // namespace JSC

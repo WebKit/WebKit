@@ -340,11 +340,14 @@ VM::VM(VMType vmType, HeapType heapType)
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
     AtomicStringTable* existingEntryAtomicStringTable = Thread::current().setCurrentAtomicStringTable(m_atomicStringTable);
-    propertyNames = new CommonIdentifiers(this);
     structureStructure.set(*this, Structure::createStructure(*this));
     structureRareDataStructure.set(*this, StructureRareData::createStructure(*this, 0, jsNull()));
-    terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     stringStructure.set(*this, JSString::createStructure(*this, 0, jsNull()));
+
+    smallStrings.initializeCommonStrings(*this);
+
+    propertyNames = new CommonIdentifiers(this);
+    terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, 0, jsNull()));
     propertyNameEnumeratorStructure.set(*this, JSPropertyNameEnumerator::createStructure(*this, 0, jsNull()));
     customGetterSetterStructure.set(*this, CustomGetterSetter::createStructure(*this, 0, jsNull()));
     domAttributeGetterSetterStructure.set(*this, DOMAttributeGetterSetter::createStructure(*this, 0, jsNull()));
@@ -400,8 +403,6 @@ VM::VM(VMType vmType, HeapType heapType)
 
     sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
     sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));
-
-    smallStrings.initializeCommonStrings(*this);
 
     Thread::current().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
 
@@ -539,6 +540,7 @@ VM::~VM()
 
     ASSERT(currentThreadIsHoldingAPILock());
     m_apiLock->willDestroyVM(this);
+    smallStrings.setInitialized(false);
     heap.lastChanceToFinalize();
 
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
