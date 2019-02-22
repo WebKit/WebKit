@@ -51,6 +51,7 @@
     <xi:include href="xml/WebKitOptionMenuItem.xml"/>
     <xi:include href="xml/WebKitFormSubmissionRequest.xml"/>
     <xi:include href="xml/WebKitSecurityManager.xml"/>
+    <xi:include href="xml/WebKitUserContentFilterStore.xml"/>
     <xi:include href="xml/WebKitUserContentManager.xml"/>
     <xi:include href="xml/WebKitUserContent.xml"/>
     <xi:include href="xml/WebKitNotification.xml"/>
