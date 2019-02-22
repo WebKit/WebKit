@@ -1,3 +1,23 @@
+2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) Unable to preview password-protected documents on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=194954
+        <rdar://problem/48127957>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the ProvisionalPageProxy forwards to the WebPageProxy the QuickLook-related
+        IPC on iOS.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+        (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared):
+
 2019-02-22  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Sandbox should allow mach lookups related to media capturing

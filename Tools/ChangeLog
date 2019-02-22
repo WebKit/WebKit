@@ -1,5 +1,20 @@
 2019-02-22  Chris Dumez  <cdumez@apple.com>
 
+        Regression(PSON) Unable to preview password-protected documents on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=194954
+        <rdar://problem/48127957>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate _webViewDidRequestPasswordForQuickLookDocument:]):
+        (-[PSONNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]):
+        (-[PSONNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]):
+
+2019-02-22  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION(PSON) Scroll position is sometimes not restored on history navigation
         https://bugs.webkit.org/show_bug.cgi?id=194924
         <rdar://problem/48216125>

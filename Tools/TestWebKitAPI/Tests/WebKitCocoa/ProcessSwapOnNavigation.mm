@@ -70,6 +70,12 @@ static bool didCreateWebView;
 static int numberOfDecidePolicyCalls;
 static bool didRepondToPolicyDecisionCall;
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+static bool requestedQuickLookPassword;
+static bool didStartQuickLookLoad;
+static bool didFinishQuickLookLoad;
+#endif
+
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 bool didReceiveAlert;
 static bool receivedMessage;
@@ -98,7 +104,7 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
 }
 @end
 
-@interface PSONNavigationDelegate : NSObject <WKNavigationDelegate> {
+@interface PSONNavigationDelegate : NSObject <WKNavigationDelegatePrivate> {
     @public void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
     @public void (^didStartProvisionalNavigationHandler)();
     @public void (^didCommitNavigationHandler)();
@@ -173,6 +179,25 @@ static RetainPtr<NSURL> clientRedirectDestinationURL;
     clientRedirectSourceURL = sourceURL;
     didPerformClientRedirect = true;
 }
+
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+- (void)_webViewDidRequestPasswordForQuickLookDocument:(WKWebView *)webView
+{
+    requestedQuickLookPassword = true;
+}
+
+- (void)_webView:(WKWebView *)webView didStartLoadForQuickLookDocumentInMainFrameWithFileName:(NSString *)fileName uti:(NSString *)uti
+{
+    didStartQuickLookLoad = true;
+}
+
+- (void)_webView:(WKWebView *)webView didFinishLoadForQuickLookDocumentInMainFrame:(NSData *)documentData
+{
+    didFinishQuickLookLoad = true;
+}
+
+#endif
 
 @end
 
@@ -5319,5 +5344,43 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
     EXPECT_TRUE(hasOverlay([webView layer]));
 #endif
 }
+
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    auto* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&didStartQuickLookLoad);
+    didStartQuickLookLoad = false;
+
+    TestWebKitAPI::Util::run(&requestedQuickLookPassword);
+    requestedQuickLookPassword = false;
+
+    TestWebKitAPI::Util::run(&didFinishQuickLookLoad);
+    didFinishQuickLookLoad = false;
+}
+
+#endif
 
 #endif // WK_API_ENABLED
