@@ -88,7 +88,11 @@ static void activateSystemCoreWebFonts()
         // also activates e.g. Arial Unicode, which is not a variation of Arial.
         for (NSString *coreWebFontName in coreWebFontNames) {
             if ([fileName hasPrefix:coreWebFontName]) {
-                CTFontManagerRegisterFontsForURL((CFURLRef)fontURL, kCTFontManagerScopeProcess, 0);
+                CFErrorRef error = nullptr;
+                if (!CTFontManagerRegisterFontsForURL((__bridge CFURLRef)fontURL, kCTFontManagerScopeProcess, &error)) {
+                    NSLog(@"Failed to activate %@: %@", coreWebFontName, error);
+                    CFRelease(error);
+                }
                 break;
             }
         }
@@ -121,8 +125,8 @@ void activateFonts()
         [fontURLs addObject:[fontURL absoluteURL]];
     }
 
-    CFArrayRef errors = 0;
-    if (!CTFontManagerRegisterFontsForURLs((CFArrayRef)fontURLs, kCTFontManagerScopeProcess, &errors)) {
+    CFArrayRef errors = nullptr;
+    if (!CTFontManagerRegisterFontsForURLs((__bridge CFArrayRef)fontURLs, kCTFontManagerScopeProcess, &errors)) {
         NSLog(@"Failed to activate fonts: %@", errors);
         CFRelease(errors);
         exit(1);
@@ -138,7 +142,13 @@ void installFakeHelvetica(WKStringRef configuration)
     RetainPtr<CFStringRef> configurationString = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, configuration));
     NSURL *resourceURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithFormat:@"FakeHelvetica-%@.ttf", configurationString.get()] isDirectory:NO];
     CFErrorRef error = nullptr;
-    CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(resourceURL), kCTFontManagerScopeProcess, &error);
+    if (!CTFontManagerRegisterFontsForURL((__bridge CFURLRef)resourceURL, kCTFontManagerScopeProcess, &error)) {
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+        // Registering shadow fonts is only supported on macOS Mojave and iOS 12 or newer, but not iOS Simulator. See Bugs 180062 & 194761.
+        NSLog(@"Failed to activate fake Helvetica: %@", error);
+#endif
+        CFRelease(error);
+    }
 }
 
 void uninstallFakeHelvetica()
@@ -154,7 +164,7 @@ void uninstallFakeHelvetica()
         if ([[url lastPathComponent] hasPrefix:@"FakeHelvetica"])
             [fontsToRemove addObject:url];
     }
-    CTFontManagerUnregisterFontsForURLs(static_cast<CFArrayRef>(fontsToRemove), kCTFontManagerScopeProcess, nullptr);
+    CTFontManagerUnregisterFontsForURLs((__bridge CFArrayRef)fontsToRemove, kCTFontManagerScopeProcess, nullptr);
 }
 
 }

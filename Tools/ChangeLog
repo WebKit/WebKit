@@ -1,3 +1,24 @@
+2019-02-21  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of CFErrorRef objects (1.92 Kbytes) in com.apple.WebKit.WebContent.Development running WebKit layout tests on iOS Simulator
+        <https://webkit.org/b/194761>
+
+        Reviewed by Myles Maxfield.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::activateSystemCoreWebFonts): Log `error` to console if
+        CTFontManagerRegisterFontsForURL() fails (macOS only).  Update
+        to use ARC-compliant cast.
+        (WTR::activateFonts): Change `0` to `nullptr`.  Update to use
+        ARC-compliant cast.
+        (WTR::installFakeHelvetica): Log `error` to console if
+        CTFontManagerRegisterFontsForURL() fails, but only on supported
+        platforms (macOS Mojave/iOS 12 and newer, not iOS Simulator).
+        Call CFRelease() on `error` to fix the leak.  Update to use
+        ARC-compliant cast.
+        (WTR::uninstallFakeHelvetica): Update to use ARC-compliant
+        cast.
+
 2019-02-21  Chris Dumez  <cdumez@apple.com>
 
         Flaky API Test: TestWebKitAPI.ProcessSwap.SuspendedPageLimit
