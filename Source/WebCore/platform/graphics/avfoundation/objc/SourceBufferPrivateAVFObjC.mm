@@ -1117,7 +1117,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
     if (platformSample.type != PlatformSample::CMSampleBufferType)
         return;
 
-    DEBUG_LOG(LOGIDENTIFIER, "track ID = ", trackID, "sample = ", sample.get());
+    DEBUG_LOG(LOGIDENTIFIER, "track ID = ", trackID, ", sample = ", sample.get());
 
     if (trackID == m_enabledVideoTrackID) {
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);

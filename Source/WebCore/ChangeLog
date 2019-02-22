@@ -1,3 +1,38 @@
+2019-02-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Update some media logging
+        https://bugs.webkit.org/show_bug.cgi?id=194915
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::evictCodedFrames):
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::trySignalAllSamplesInTrackEnqueued):
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::checkPlaybackTargetCompatablity):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const):
+        (WebCore::HTMLMediaElement::seekTask):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setLoop):
+        (WebCore::HTMLMediaElement::setControls):
+        (WebCore::HTMLMediaElement::sourceWasRemoved):
+
+        * html/MediaElementSession.cpp:
+        (WebCore::convertEnumerationToString):
+
+        * html/MediaElementSession.h:
+        (WTF::LogArgument<WebCore::MediaPlaybackDenialReason>::toString):
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+
 2019-02-22  Rob Buis  <rbuis@igalia.com>
 
         Fix unitless usage of mathsize

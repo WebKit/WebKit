@@ -977,6 +977,22 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
     return page && page->allowsPlaybackControlsForAutoplayingAudio();
 }
 
+String convertEnumerationToString(const MediaPlaybackDenialReason enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("UserGestureRequired"),
+        MAKE_STATIC_STRING_IMPL("FullscreenRequired"),
+        MAKE_STATIC_STRING_IMPL("PageConsentRequired"),
+        MAKE_STATIC_STRING_IMPL("InvalidState"),
+    };
+    static_assert(static_cast<size_t>(MediaPlaybackDenialReason::UserGestureRequired) == 0, "MediaPlaybackDenialReason::UserGestureRequired is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlaybackDenialReason::FullscreenRequired) == 1, "MediaPlaybackDenialReason::FullscreenRequired is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlaybackDenialReason::PageConsentRequired) == 2, "MediaPlaybackDenialReason::PageConsentRequired is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaPlaybackDenialReason::InvalidState) == 3, "MediaPlaybackDenialReason::InvalidState is not 3 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+    
 }
 
 #endif // ENABLE(VIDEO)

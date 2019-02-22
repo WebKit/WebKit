@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1105,8 +1105,11 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
 void HTMLMediaElement::checkPlaybackTargetCompatablity()
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
     if (m_isPlayingToWirelessTarget && !m_player->canPlayToWirelessPlaybackTarget()) {
-        INFO_LOG(LOGIDENTIFIER, "calling setShouldPlayToPlaybackTarget(false)");
+        UNUSED_PARAM(logSiteIdentifier);
+        INFO_LOG(logSiteIdentifier, "calling setShouldPlayToPlaybackTarget(false)");
         m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
@@ -1513,7 +1516,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 {
     ASSERT(initialURL.isEmpty() || isSafeToLoadURL(initialURL, Complain));
 
-    INFO_LOG(LOGIDENTIFIER, initialURL, contentType.raw(), keySystem);
+    INFO_LOG(LOGIDENTIFIER, initialURL, contentType, keySystem);
 
     RefPtr<Frame> frame = document().frame();
     if (!frame) {
@@ -1567,7 +1570,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     if (resource) {
         url = ApplicationCacheHost::createFileURL(resource->path());
-        INFO_LOG(LOGIDENTIFIER, "will load ", url, " from app cache");
+        INFO_LOG(LOGIDENTIFIER, "will load from app cache ", url);
     }
 
     INFO_LOG(LOGIDENTIFIER, "m_currentSrc is ", m_currentSrc);
@@ -1783,7 +1786,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
                 return;
 
             auto currentMediaTime = weakThis->currentMediaTime();
-            INFO_LOG(LOGIDENTIFIER, " lambda, currentMediaTime:", currentMediaTime);
+            INFO_LOG(LOGIDENTIFIER, " lambda, currentMediaTime: ", currentMediaTime);
             weakThis->updateActiveTextTrackCues(currentMediaTime);
         }, nextInterestingTime);
     }
@@ -2405,17 +2408,44 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged(MediaPlayer*)
 
 SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
-    if (isAutoplaying()
-        && mediaSession().autoplayPermitted()
-        && paused()
-        && autoplay()
-        && !pausedForUserInteraction()
-        && !document().isSandboxed(SandboxAutomaticFeatures)
-        && m_readyState == HAVE_ENOUGH_DATA)
-        return mediaSession().playbackPermitted();
+    if (m_readyState != HAVE_ENOUGH_DATA) {
+        ALWAYS_LOG(LOGIDENTIFIER, "m_readyState != HAVE_ENOUGH_DATA");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (!isAutoplaying()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "!isAutoplaying");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (!mediaSession().autoplayPermitted()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "!mediaSession().autoplayPermitted");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (!paused()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "!paused");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (!autoplay()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "!autoplay");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (pausedForUserInteraction()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "pausedForUserInteraction");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
+    if (document().isSandboxed(SandboxAutomaticFeatures)) {
+        ALWAYS_LOG(LOGIDENTIFIER, "isSandboxed");
+        return MediaPlaybackDenialReason::PageConsentRequired;
+    }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "page consent required");
-    return MediaPlaybackDenialReason::PageConsentRequired;
+    auto permitted = mediaSession().playbackPermitted();
+#if !RELEASE_LOG_DISABLED
+    if (!permitted)
+        ALWAYS_LOG(LOGIDENTIFIER, permitted.value());
+    else
+        ALWAYS_LOG(LOGIDENTIFIER, "can transition!");
+#endif
+    
+    return permitted;
 }
 
 void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
@@ -3095,7 +3125,7 @@ void HTMLMediaElement::seekTask()
 #endif
 
     if (noSeekRequired) {
-        INFO_LOG(LOGIDENTIFIER, "seek to ", time, " ignored");
+        INFO_LOG(LOGIDENTIFIER, "ignored seek to ", time);
         if (time == now) {
             scheduleEvent(eventNames().seekingEvent);
             scheduleTimeupdateEvent(false);
@@ -3530,17 +3560,17 @@ void HTMLMediaElement::playInternal()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (isSuspended()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "  returning because context is suspended");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning because context is suspended");
         return;
     }
 
     if (!document().hasBrowsingContext()) {
-        INFO_LOG(LOGIDENTIFIER, "  returning because there is no browsing context");
+        INFO_LOG(LOGIDENTIFIER, "returning because there is no browsing context");
         return;
     }
 
     if (!m_mediaSession->clientWillBeginPlayback()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning because of interruption");
         return;
     }
     
@@ -3627,17 +3657,17 @@ void HTMLMediaElement::pauseInternal()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (isSuspended()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "  returning because context is suspended");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning because context is suspended");
         return;
     }
 
     if (!document().hasBrowsingContext()) {
-        INFO_LOG(LOGIDENTIFIER, "  returning because there is no browsing context");
+        INFO_LOG(LOGIDENTIFIER, "returning because there is no browsing context");
         return;
     }
 
     if (!m_mediaSession->clientWillPausePlayback()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
+        ALWAYS_LOG(LOGIDENTIFIER, "returning because of interruption");
         return;
     }
 
@@ -3687,10 +3717,10 @@ bool HTMLMediaElement::loop() const
     return hasAttributeWithoutSynchronization(loopAttr);
 }
 
-void HTMLMediaElement::setLoop(bool b)
+void HTMLMediaElement::setLoop(bool loop)
 {
-    INFO_LOG(LOGIDENTIFIER, b);
-    setBooleanAttribute(loopAttr, b);
+    INFO_LOG(LOGIDENTIFIER, loop);
+    setBooleanAttribute(loopAttr, loop);
 }
 
 bool HTMLMediaElement::controls() const
@@ -3704,10 +3734,10 @@ bool HTMLMediaElement::controls() const
     return hasAttributeWithoutSynchronization(controlsAttr);
 }
 
-void HTMLMediaElement::setControls(bool b)
+void HTMLMediaElement::setControls(bool controls)
 {
-    INFO_LOG(LOGIDENTIFIER, b);
-    setBooleanAttribute(controlsAttr, b);
+    INFO_LOG(LOGIDENTIFIER, controls);
+    setBooleanAttribute(controlsAttr, controls);
 }
 
 double HTMLMediaElement::volume() const
@@ -4803,7 +4833,7 @@ void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement& source)
         // 4.8.8 - Dynamically modifying a source element and its attribute when the element is already
         // inserted in a video or audio element will have no effect.
         m_currentSourceNode = nullptr;
-        INFO_LOG(LOGIDENTIFIER, "m_currentSourceNode set to 0");
+        INFO_LOG(LOGIDENTIFIER, "m_currentSourceNode cleared");
     }
 }
 

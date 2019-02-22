@@ -206,7 +206,25 @@ private:
 #endif
 };
 
+String convertEnumerationToString(const MediaPlaybackDenialReason);
+
 } // namespace WebCore
+
+namespace WTF {
+    
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::MediaPlaybackDenialReason> {
+    static String toString(const WebCore::MediaPlaybackDenialReason reason)
+    {
+        return convertEnumerationToString(reason);
+    }
+};
+    
+}; // namespace WTF
+
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaElementSession)
 static bool isType(const WebCore::PlatformMediaSession& session) { return WebCore::MediaElementSession::isMediaElementSessionMediaType(session.mediaType()); }
