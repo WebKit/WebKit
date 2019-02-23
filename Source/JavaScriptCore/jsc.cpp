@@ -989,6 +989,8 @@ public:
         CachedBytecode cachedBytecode = generator();
         write(fd, cachedBytecode.data(), cachedBytecode.size());
         close(fd);
+#else
+        UNUSED_PARAM(generator);
 #endif
     }
 

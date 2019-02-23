@@ -1,3 +1,9 @@
+2019-02-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wunused-param warning
+
+        * jsc.cpp:
+
 2019-02-23  Mark Lam  <mark.lam@apple.com>
 
         Add an exception check and some assertions in StringPrototype.cpp.
