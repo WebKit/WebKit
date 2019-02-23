@@ -1,3 +1,13 @@
+2019-02-23  Keith Miller  <keith_miller@apple.com>
+
+        Add new mac target numbers
+        https://bugs.webkit.org/show_bug.cgi?id=194955
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2019-02-20  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Internal build following r241828
