@@ -1,3 +1,20 @@
+2019-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in SWServerJobQueue::runNextJobSynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=194974
+
+        Reviewed by Geoffrey Garen.
+
+        We suspect the crash is happening due to m_jobQueue being empty in runNextJobSynchronously
+        or there is a timer heap corruption again :(
+
+        Exit early when m_jobQueue is empty. Also add a debug assert that this should never happen
+        but convert an existing release assert to a debug assert since this appears to be hitting
+        too frequently in wild.
+
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::runNextJobSynchronously):
+
 2019-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up the setScrollPosition/setScrollPositionWithoutContentEdgeConstraints confusion in the scrolling tree nodes
