@@ -81,9 +81,14 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         if (this._style.selectorEditable) {
             this._selectorTextField = new WI.SpreadsheetSelectorField(this, this._selectorElement);
+            this._selectorTextField.addEventListener(WI.SpreadsheetSelectorField.Event.StartedEditing, (event) => {
+                this._headerElement.classList.add("editing-selector");
+            });
+            this._selectorTextField.addEventListener(WI.SpreadsheetSelectorField.Event.StoppedEditing, (event) => {
+                this._headerElement.classList.remove("editing-selector");
+            });
+
             this._selectorElement.tabIndex = 0;
-            this._selectorElement.addEventListener("focus", () => this._headerElement.classList.add("editing-selector"));
-            this._selectorElement.addEventListener("blur", () => this._headerElement.classList.remove("editing-selector"));
         }
 
         this._propertiesEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this, this._style);

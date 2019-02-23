@@ -1,3 +1,26 @@
+2019-02-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Styles Redesign: clicking CSS property or selector should always select its text
+        https://bugs.webkit.org/show_bug.cgi?id=180791
+        <rdar://problem/36038366>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetSelectorField.js:
+        (WI.SpreadsheetSelectorField):
+        (WI.SpreadsheetSelectorField.prototype.startEditing):
+        (WI.SpreadsheetSelectorField.prototype.stopEditing):
+        (WI.SpreadsheetSelectorField.prototype._handleMouseDown): Added.
+        (WI.SpreadsheetSelectorField.prototype._handleMouseUp): Added.
+        (WI.SpreadsheetSelectorField.prototype._handleFocus): Deleted.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .selector.editing:focus, .spreadsheet-css-declaration .selector > .matched): Added.
+        (.spreadsheet-css-declaration .selector.spreadsheet-selector-field):
+        (.spreadsheet-css-declaration .selector:focus, .spreadsheet-css-declaration .selector > .matched): Deleted.
+
 2019-02-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Dark Mode: DOM Content Loaded blue marker is too dark

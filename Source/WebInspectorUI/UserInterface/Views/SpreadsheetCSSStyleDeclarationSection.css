@@ -103,7 +103,7 @@
     color: var(--text-color-secondary);
 }
 
-.spreadsheet-css-declaration .selector:focus,
+.spreadsheet-css-declaration .selector.editing:focus,
 .spreadsheet-css-declaration .selector > .matched {
     color: var(--text-color);
 }
@@ -119,7 +119,7 @@
 }
 
 .spreadsheet-css-declaration .selector.spreadsheet-selector-field {
-    outline-offset: -3px;
+    outline: none;
 }
 
 .spreadsheet-css-declaration .selector.spreadsheet-selector-field.editing {

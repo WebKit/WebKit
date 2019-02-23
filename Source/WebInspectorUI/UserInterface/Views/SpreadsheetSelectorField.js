@@ -23,19 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
+WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
 {
     constructor(delegate, element)
     {
+        super();
+
         this._delegate = delegate;
         this._element = element;
         this._element.classList.add("spreadsheet-selector-field");
 
-        this._element.addEventListener("focus", this._handleFocus.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
         this._element.addEventListener("blur", this._handleBlur.bind(this));
         this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
 
         this._editing = false;
+        this._handledMouseDown = false;
     }
 
     // Public
@@ -59,6 +63,8 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
         element.textContent = element.textContent;
 
         this._selectText();
+
+        this.dispatchEventToListeners(WI.SpreadsheetSelectorField.Event.StartedEditing);
     }
 
     stopEditing()
@@ -69,6 +75,8 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
         this._editing = false;
         this._element.classList.remove("editing");
         this._element.contentEditable = false;
+
+        this.dispatchEventToListeners(WI.SpreadsheetSelectorField.Event.StoppedEditing);
     }
 
     // Private
@@ -78,8 +86,18 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
         window.getSelection().selectAllChildren(this._element);
     }
 
-    _handleFocus(event)
+    _handleMouseDown(event)
     {
+        this._handledMouseDown = true;
+    }
+
+    _handleMouseUp(event)
+    {
+        if (!this._handledMouseDown)
+            return;
+
+        this._handledMouseDown = false;
+
         this.startEditing();
     }
 
@@ -129,4 +147,9 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField
                 this._delegate.spreadsheetSelectorFieldDidDiscard();
         }
     }
+};
+
+WI.SpreadsheetSelectorField.Event = {
+    StartedEditing: "spreadsheet-selector-field-started-editing",
+    StoppedEditing: "spreadsheet-selector-field-stopped-editing",
 };
