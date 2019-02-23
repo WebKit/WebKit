@@ -1,3 +1,9 @@
+2019-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added in r241932 on iOS for now.
+
+        * platform/ios/TestExpectations:
+
 2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker
