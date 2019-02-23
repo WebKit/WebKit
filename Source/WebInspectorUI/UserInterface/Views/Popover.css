@@ -31,7 +31,6 @@
     pointer-events: none;
     z-index: var(--z-index-popover);
 
-    --popover-text-color: black;
     --popover-background-color: var(--panel-background-color);
     --popover-border-color: hsla(0, 0%, 0%, 0.25);
     --popover-shadow-color: hsla(0, 0%, 0%, 0.5);

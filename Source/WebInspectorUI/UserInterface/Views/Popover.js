@@ -421,30 +421,32 @@ WI.Popover = class Popover extends WI.Object
         let computedStyle = window.getComputedStyle(this._element, null);
 
         let context = document.getCSSCanvasContext("2d", "popover", scaledWidth, scaledHeight);
-        context.save();
         context.clearRect(0, 0, scaledWidth, scaledHeight);
-        context.shadowOffsetX = 1;
-        context.shadowOffsetY = 1;
-        context.shadowBlur = 5;
-        context.shadowColor = computedStyle.getPropertyValue("--popover-shadow-color").trim();
-        context.scale(scaleFactor, scaleFactor);
 
-        // Clip the frame.
-        context.fillStyle = computedStyle.getPropertyValue("--popover-text-color").trim();
-        this._drawFrame(context, bounds, this._edge, this._anchorPoint);
-        context.clip();
+        function isolate(callback) {
+            context.save();
+            callback();
+            context.restore();
+        }
 
-        // Panel background color fill.
-        context.fillStyle = computedStyle.getPropertyValue("--popover-background-color").trim();
+        isolate(() => {
+            context.scale(scaleFactor, scaleFactor);
+            this._drawFrame(context, bounds, this._edge, this._anchorPoint);
 
-        context.fillRect(0, 0, width, height);
+            isolate(() => {
+                context.shadowBlur = 4;
+                context.shadowColor = computedStyle.getPropertyValue("--popover-shadow-color").trim();
 
-        // Stroke.
-        context.strokeStyle = computedStyle.getPropertyValue("--popover-border-color").trim();
-        context.lineWidth = 2;
-        this._drawFrame(context, bounds, this._edge, this._anchorPoint);
-        context.stroke();
-        context.restore();
+                context.strokeStyle = computedStyle.getPropertyValue("--popover-border-color").trim();
+                context.lineWidth = 2;
+                context.stroke();
+            });
+
+            isolate(() => {
+                context.fillStyle = computedStyle.getPropertyValue("--popover-background-color").trim();
+                context.fill();
+            });
+        });
     }
 
     _bestMetricsForEdge(preferredSize, targetFrame, containerFrame, edge)
