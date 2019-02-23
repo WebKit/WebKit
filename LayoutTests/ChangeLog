@@ -1,3 +1,15 @@
+2019-02-22  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo] Enable wk1/wk2 suffix for platform search path.
+        https://bugs.webkit.org/show_bug.cgi?id=194846
+
+        Reviewed by Don Olmstead.
+
+        Added WebKitLegacy specific TestExpectations.
+
+        * platform/wincairo-wk1/TestExpectations: Added.
+        * platform/wincairo/TestExpectations:
+
 2019-02-22  Dean Jackson  <dino@apple.com>
 
         Rotation animations sometimes use the wrong origin (affects apple.com)

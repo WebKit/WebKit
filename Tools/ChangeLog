@@ -1,3 +1,19 @@
+2019-02-22  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [WinCairo] Enable wk1/wk2 suffix for platform search path.
+        https://bugs.webkit.org/show_bug.cgi?id=194846
+
+        Reviewed by Don Olmstead.
+
+        Added _search_paths() and _port_specific_expectations_files() for
+        WinCairoPort.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort.default_baseline_search_path):
+        (WinCairoPort):
+        (WinCairoPort._port_specific_expectations_files):
+        (WinCairoPort._search_paths):
+
 2019-02-22  Tim Horton  <timothy_horton@apple.com>
 
         ProcessSwap.PageOverlayLayerPersistence fails on iOS and in debug builds

@@ -955,9 +955,6 @@ http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html [ Pass 
 http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/workers/worker-reload.html [ Timeout Pass ]
 
-# There is not NetworkProcess in WK1, so it can't crash.
-http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]
-
 http/tests/workers/service [ Skip ]
 http/tests/workers/worker-redirect.html [ Failure ]
 
