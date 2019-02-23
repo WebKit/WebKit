@@ -1,3 +1,16 @@
+2019-02-22  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Do not suppress deprecation warnings when calling sandbox_extension_issue_file
+        https://bugs.webkit.org/show_bug.cgi?id=194971
+        <rdar://problem/35786264>
+
+        Reviewed by Tim Horton.
+
+        sandbox_extension_issue_file is not actually deprecated.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtensionImpl::sandboxExtensionForType):
+
 2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker
