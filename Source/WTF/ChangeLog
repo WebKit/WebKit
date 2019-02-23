@@ -1,3 +1,32 @@
+2019-02-23  Mark Lam  <mark.lam@apple.com>
+
+        Add an exception check and some assertions in StringPrototype.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=194962
+        <rdar://problem/48013416>
+
+        Reviewed by Yusuke Suzuki and Saam Barati.
+
+        Add an AssertNoOverflow overflow handler which allows us to do CheckedArithmetic
+        for assertion purpose only on debug builds but sacrifices no performance on
+        release builds.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::AssertNoOverflow::overflowed):
+        (WTF::AssertNoOverflow::clearOverflow):
+        (WTF::AssertNoOverflow::crash):
+        (WTF::AssertNoOverflow::hasOverflowed const):
+        (WTF::observesOverflow):
+        (WTF::observesOverflow<AssertNoOverflow>):
+        (WTF::safeAdd):
+        (WTF::safeSub):
+        (WTF::safeMultiply):
+        (WTF::Checked::operator+=):
+        (WTF::Checked::operator-=):
+        (WTF::Checked::operator*=):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator*):
+
 2019-02-23  Keith Miller  <keith_miller@apple.com>
 
         Add new mac target numbers

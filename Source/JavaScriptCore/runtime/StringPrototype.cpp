@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -324,9 +324,14 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
         RELEASE_AND_RETURN(scope, jsString(exec, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
     }
 
-    int totalLength = 0;
+    // We know that the sum of substringRanges lengths cannot exceed length of
+    // source because the substringRanges were computed from the source string
+    // in removeUsingRegExpSearch(). Hence, totalLength cannot exceed
+    // String::MaxLength, and therefore, cannot overflow.
+    Checked<int, AssertNoOverflow> totalLength = 0;
     for (int i = 0; i < rangeCount; i++)
         totalLength += substringRanges[i].length;
+    ASSERT(totalLength <= String::MaxLength);
 
     if (!totalLength)
         return jsEmptyString(exec);
@@ -334,16 +339,16 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
     if (source.is8Bit()) {
         LChar* buffer;
         const LChar* sourceData = source.characters8();
-        auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+        auto impl = StringImpl::tryCreateUninitialized(totalLength.unsafeGet(), buffer);
         if (!impl) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;
         }
 
-        int bufferPos = 0;
+        Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < rangeCount; i++) {
             if (int srcLen = substringRanges[i].length) {
-                StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), sourceData + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
@@ -354,16 +359,16 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(ExecState* exec, JSString* sou
     UChar* buffer;
     const UChar* sourceData = source.characters16();
 
-    auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+    auto impl = StringImpl::tryCreateUninitialized(totalLength.unsafeGet(), buffer);
     if (!impl) {
         throwOutOfMemoryError(exec, scope);
         return nullptr;
     }
 
-    int bufferPos = 0;
+    Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < rangeCount; i++) {
         if (int srcLen = substringRanges[i].length) {
-            StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+            StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), sourceData + substringRanges[i].position, srcLen);
             bufferPos += srcLen;
         }
     }
@@ -414,17 +419,17 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec,
         }
 
         int maxCount = std::max(rangeCount, separatorCount);
-        int bufferPos = 0;
+        Checked<int, AssertNoOverflow> bufferPos = 0;
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
                 if (int srcLen = substringRanges[i].length) {
-                    StringImpl::copyCharacters(buffer + bufferPos, sourceData + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), sourceData + substringRanges[i].position, srcLen);
                     bufferPos += srcLen;
                 }
             }
             if (i < separatorCount) {
                 if (int sepLen = separators[i].length()) {
-                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters8(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), separators[i].characters8(), sepLen);
                     bufferPos += sepLen;
                 }
             }
@@ -441,23 +446,23 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(ExecState* exec,
     }
 
     int maxCount = std::max(rangeCount, separatorCount);
-    int bufferPos = 0;
+    Checked<int, AssertNoOverflow> bufferPos = 0;
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
             if (int srcLen = substringRanges[i].length) {
                 if (source.is8Bit())
-                    StringImpl::copyCharacters(buffer + bufferPos, source.characters8() + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), source.characters8() + substringRanges[i].position, srcLen);
                 else
-                    StringImpl::copyCharacters(buffer + bufferPos, source.characters16() + substringRanges[i].position, srcLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), source.characters16() + substringRanges[i].position, srcLen);
                 bufferPos += srcLen;
             }
         }
         if (i < separatorCount) {
             if (int sepLen = separators[i].length()) {
                 if (separators[i].is8Bit())
-                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters8(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), separators[i].characters8(), sepLen);
                 else
-                    StringImpl::copyCharacters(buffer + bufferPos, separators[i].characters16(), sepLen);
+                    StringImpl::copyCharacters(buffer + bufferPos.unsafeGet(), separators[i].characters16(), sepLen);
                 bufferPos += sepLen;
             }
         }
@@ -729,7 +734,9 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
         // ES5.1 15.5.4.10 step 8.a.
         searchValue->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, exec, thisValue, thisValue->value(exec), regExp));
+        const String& source = thisValue->value(exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, exec, thisValue, source, regExp));
     }
 
     CallData callData;
