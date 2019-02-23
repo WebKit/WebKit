@@ -49,13 +49,12 @@ protected:
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
     FloatPoint scrollPosition() const override;
-    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override;
 
     void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override;
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override;
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
-    void setScrollPosition(const FloatPoint&) override;
+    void setScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges) override;
     void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) override;
 
     FloatPoint minimumScrollPosition() const override;

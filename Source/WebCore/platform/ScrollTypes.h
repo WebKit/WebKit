@@ -44,6 +44,10 @@ enum ScrollLogicalDirection : uint8_t {
     ScrollInlineDirectionForward
 };
 
+enum class ScrollPositionClamp : uint8_t {
+    None,
+    ToContentEdges,
+};
 
 inline ScrollDirection logicalToPhysical(ScrollLogicalDirection direction, bool isVertical, bool isFlipped)
 {

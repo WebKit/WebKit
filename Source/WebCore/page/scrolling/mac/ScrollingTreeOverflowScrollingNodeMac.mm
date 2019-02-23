@@ -105,7 +105,7 @@ FloatPoint ScrollingTreeOverflowScrollingNodeMac::scrollPosition() const
     return -scrolledContentsLayer().position;
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollPosition " << scrollPosition << " from " << this->scrollPosition() << " (min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << ")");
 
@@ -113,13 +113,7 @@ void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& 
     // FIXME: when we support half-pixel scroll positions on Retina displays, this will need to round to half pixels.
     FloatPoint roundedPosition(roundf(scrollPosition.x()), roundf(scrollPosition.y()));
 
-    ScrollingTreeOverflowScrollingNode::setScrollPosition(roundedPosition);
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
-{
-    setScrollLayerPosition(scrollPosition, { });
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, { });
+    ScrollingTreeOverflowScrollingNode::setScrollPosition(roundedPosition, clamp);
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& fixedPositionRect)

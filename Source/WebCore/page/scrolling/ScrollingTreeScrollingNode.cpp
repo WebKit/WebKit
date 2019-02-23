@@ -122,16 +122,19 @@ void ScrollingTreeScrollingNode::updateLayersAfterAncestorChange(const Scrolling
         child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
 }
 
-void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp)
 {
-    FloatPoint newScrollPosition = scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
-    setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
-}
+    FloatPoint newScrollPosition = scrollPosition;
+    if (clamp == ScrollPositionClamp::ToContentEdges)
+        newScrollPosition = clampScrollPosition(scrollPosition);
 
-void ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
-{
     setScrollLayerPosition(scrollPosition, { });
     scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, WTF::nullopt);
+}
+
+FloatPoint ScrollingTreeScrollingNode::clampScrollPosition(const FloatPoint& scrollPosition) const
+{
+    return scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
 }
 
 FloatPoint ScrollingTreeScrollingNode::minimumScrollPosition() const
@@ -153,14 +156,9 @@ bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wh
     return newScrollPosition == oldScrollPosition;
 }
 
-void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta)
+void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollPositionClamp clamp)
 {
-    setScrollPosition(scrollPosition() + delta);
-}
-
-void ScrollingTreeScrollingNode::scrollByWithoutContentEdgeConstraints(const FloatSize& offset)
-{
-    setScrollPositionWithoutContentEdgeConstraints(scrollPosition() + offset);
+    setScrollPosition(scrollPosition() + delta, clamp);
 }
 
 LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) const

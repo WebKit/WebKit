@@ -106,13 +106,12 @@ FloatPoint ScrollingTreeFrameScrollingNodeIOS::scrollPosition() const
     return -scrolledContentsLayer().position;
 }
 
-void ScrollingTreeFrameScrollingNodeIOS::setScrollPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeIOS::setScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp)
 {
-    ScrollingTreeFrameScrollingNode::setScrollPosition(scrollPosition);
-}
+    auto scrollPosition = position;
+    if (clamp == ScrollPositionClamp::ToContentEdges)
+        scrollPosition = clampScrollPosition(scrollPosition);
 
-void ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
-{
     if (shouldUpdateScrollLayerPositionSynchronously()) {
         m_probableMainThreadScrollPosition = scrollPosition;
         scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, WTF::nullopt, ScrollingLayerPositionAction::Set);

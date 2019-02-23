@@ -54,14 +54,6 @@ FloatPoint ScrollingTreeFrameScrollingNodeNicosia::scrollPosition() const
     return { };
 }
 
-void ScrollingTreeFrameScrollingNodeNicosia::setScrollPosition(const FloatPoint&)
-{
-}
-
-void ScrollingTreeFrameScrollingNodeNicosia::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&)
-{
-}
-
 void ScrollingTreeFrameScrollingNodeNicosia::setScrollLayerPosition(const FloatPoint&, const FloatRect&)
 {
 }

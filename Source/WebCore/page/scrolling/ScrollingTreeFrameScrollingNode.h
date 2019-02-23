@@ -45,8 +45,6 @@ public:
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override = 0;
-    void setScrollPosition(const FloatPoint&) override;
-    void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&) override = 0;
 
     void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }

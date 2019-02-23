@@ -114,6 +114,7 @@ public:
 
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
+    FloatSize delta() const { return { m_deltaX, m_deltaY}; }
 
     float wheelTicksX() const { return m_wheelTicksX; }
     float wheelTicksY() const { return m_wheelTicksY; }

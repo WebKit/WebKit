@@ -140,6 +140,7 @@ void ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
         logScrollingMode = true;
     }
 
+    // FIXME: wrong if we're not the main frame.
     if (logScrollingMode && scrollingTree().scrollingPerformanceLoggingEnabled())
         scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
@@ -202,6 +203,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(const 
     m_delegate.handleWheelEvent(wheelEvent);
 
 #if ENABLE(CSS_SCROLL_SNAP)
+    // FIXME: wrong if we're not the main frame.
     scrollingTree().setMainFrameIsScrollSnapping(m_delegate.isScrollSnapInProgress());
     if (m_delegate.activeScrollSnapIndexDidChange())
         scrollingTree().setActiveScrollSnapIndices(scrollingNodeID(), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_delegate.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
@@ -221,15 +223,33 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::scrollPosition() const
     return -scrolledContentsLayer().position;
 }
 
-void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::setScrollPosition " << scrollPosition << " scrollPosition(): " << this->scrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac::setScrollPosition " << position << " scrollPosition(): " << this->scrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition());
 
     // Scroll deltas can be non-integral with some input devices, so scrollPosition may not be integral.
     // FIXME: when we support half-pixel scroll positions on Retina displays, this will need to round to half pixels.
-    FloatPoint roundedPosition(roundf(scrollPosition.x()), roundf(scrollPosition.y()));
+    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
 
-    ScrollingTreeFrameScrollingNode::setScrollPosition(roundedPosition);
+    if (clamp == ScrollPositionClamp::ToContentEdges)
+        scrollPosition = clampScrollPosition(scrollPosition);
+
+    // FIXME: wrong if we're not the main frame.
+    updateMainFramePinState(scrollPosition);
+
+    FloatPoint visibleContentOrigin = scrollPosition;
+    FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
+    setLayoutViewport(newLayoutViewport);
+    auto layoutViewportOrigin = newLayoutViewport.location();
+
+    if (shouldUpdateScrollLayerPositionSynchronously()) {
+        m_probableMainThreadScrollPosition = scrollPosition;
+        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollingLayerPositionAction::Set);
+    } else {
+        // This should call the base class once we clean up the layoutViewportOrigin stuff.
+        setScrollLayerPosition(scrollPosition, layoutViewport());
+        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin);
+    }
 
     if (scrollingTree().scrollingPerformanceLoggingEnabled()) {
         unsigned unfilledArea = exposedUnfilledArea();
@@ -238,26 +258,6 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& scr
 
         m_lastScrollHadUnfilledPixels = unfilledArea;
     }
-}
-
-void ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints(const FloatPoint& scrollPosition)
-{
-    updateMainFramePinState(scrollPosition);
-
-    Optional<FloatPoint> layoutViewportOrigin; // FIXME
-    FloatPoint visibleContentOrigin = scrollPosition;
-    FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
-    setLayoutViewport(newLayoutViewport);
-    layoutViewportOrigin = newLayoutViewport.location();
-
-    if (shouldUpdateScrollLayerPositionSynchronously()) {
-        m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin, ScrollingLayerPositionAction::Set);
-        return;
-    }
-
-    setScrollLayerPosition(scrollPosition, layoutViewport());
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin);
 }
 
 void ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(const FloatPoint& position, const FloatRect& layoutViewport)

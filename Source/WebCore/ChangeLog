@@ -1,3 +1,46 @@
+2019-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up the setScrollPosition/setScrollPositionWithoutContentEdgeConstraints confusion in the scrolling tree nodes
+        https://bugs.webkit.org/show_bug.cgi?id=194968
+
+        Reviewed by Antti Koivisto.
+
+        Having both setScrollPosition() and setScrollPositionWithoutContentEdgeConstraints() is confusing because
+        you can't tell which is the bottleneck. So add a 'clamp' parameter to setScrollPosition() and merge them.
+
+        ScrollingTreeFrameScrollingNodeMac::setScrollPosition() replicates a bit of code but future cleanups will
+        reduce that.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::setScrollPosition): Deleted. This was the same as the base class method.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::clampScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNode::scrollBy):
+        (WebCore::ScrollingTreeScrollingNode::setScrollPositionWithoutContentEdgeConstraints): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrollByWithoutContentEdgeConstraints): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h:
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::setScrollPositionWithoutContentEdgeConstraints): Deleted. Did nothing.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollByWithoutContentEdgeConstraints):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::delta const):
+        * platform/ScrollTypes.h:
+
 2019-02-22  Eric Liang  <ericliang@apple.com>
 
         AX: Treat AXChildrenInNavigationOrder as AXChildren before adding support for aria-flowto

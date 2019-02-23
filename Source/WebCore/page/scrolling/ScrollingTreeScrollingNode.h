@@ -53,11 +53,9 @@ public:
     WEBCORE_EXPORT void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta) override;
 
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) = 0;
-    WEBCORE_EXPORT virtual void setScrollPosition(const FloatPoint&);
-    WEBCORE_EXPORT virtual void setScrollPositionWithoutContentEdgeConstraints(const FloatPoint&);
+    WEBCORE_EXPORT virtual void setScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
 
-    void scrollBy(const FloatSize&);
-    void scrollByWithoutContentEdgeConstraints(const FloatSize&);
+    void scrollBy(const FloatSize&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
 
     virtual void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) = 0;
     virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
@@ -87,6 +85,8 @@ protected:
 
     WEBCORE_EXPORT virtual FloatPoint minimumScrollPosition() const;
     WEBCORE_EXPORT virtual FloatPoint maximumScrollPosition() const;
+
+    FloatPoint clampScrollPosition(const FloatPoint&) const;
 
     virtual void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) = 0;
 
