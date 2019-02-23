@@ -74,7 +74,7 @@ namespace WebKit {
 using namespace WebCore;
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
+    : DrawingArea(DrawingAreaTypeTiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
     , m_layerTreeStateIsFrozen(false)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
     , m_transientZoomScale(1)
@@ -118,7 +118,7 @@ void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded(
             return;
         LayerTreeContext layerTreeContext;
         layerTreeContext.contextID = m_layerHostingContext->contextID();
-        m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
+        send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
     });
 }
 
@@ -298,7 +298,7 @@ void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
         return;
 
     m_lastSentIntrinsicContentSize = contentSize;
-    m_webPage.send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
+    send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
 }
 
 void TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument(bool shouldScaleView)
@@ -504,7 +504,7 @@ void TiledCoreAnimationDrawingArea::flushLayers()
             applyTransientZoomToLayers(m_transientZoomScale, m_transientZoomOrigin);
 
         if (!m_pendingCallbackIDs.isEmpty()) {
-            m_webPage.send(Messages::DrawingAreaProxy::DispatchPresentationCallbacksAfterFlushingLayers(m_pendingCallbackIDs));
+            send(Messages::DrawingAreaProxy::DispatchPresentationCallbacksAfterFlushingLayers(m_pendingCallbackIDs));
             m_pendingCallbackIDs.clear();
         }
 
@@ -630,7 +630,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     if (flushSynchronously)
         [CATransaction flush];
 
-    m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 
     m_inUpdateGeometry = false;
 
@@ -649,7 +649,7 @@ void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode)
     // Finally, inform the UIProcess that the context has changed.
     LayerTreeContext layerTreeContext;
     layerTreeContext.contextID = m_layerHostingContext->contextID();
-    m_webPage.send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
+    send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
 }
 
 void TiledCoreAnimationDrawingArea::setColorSpace(const ColorSpaceData& colorSpace)

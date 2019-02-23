@@ -1079,7 +1079,7 @@ public:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
-    WebPageCreationParameters creationParameters(WebProcessProxy&);
+    WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&);
 
     void handleDownloadRequest(DownloadProxy*);
 

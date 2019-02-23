@@ -124,7 +124,7 @@ void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo
     // FIXME: Handle the case where the view is hidden.
 
     incorporateUpdate(updateInfo);
-    process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::DidUpdate());
 }
 
 void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)

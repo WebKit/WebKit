@@ -944,7 +944,7 @@ void WebPageProxy::initializeWebPage()
     setDrawingArea(pageClient().createDrawingAreaProxy(m_process));
     ASSERT(m_drawingArea);
 
-    process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(m_process)), 0);
+    process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(m_process, *m_drawingArea)), 0);
 
     m_needsToFinishInitializingWebPageAfterProcessLaunch = true;
     finishInitializingWebPageAfterProcessLaunch();
@@ -4878,7 +4878,7 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
         newPage->setOpenedByDOM();
 
-        reply(newPage->pageID(), newPage->creationParameters(m_process));
+        reply(newPage->pageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 
         WebsiteDataStore::cloneSessionData(*this, *newPage);
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL({ }, mainFrameURL), request.url());
@@ -6857,13 +6857,14 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_process->processTerminated();
 }
 
-WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process)
+WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea)
 {
     WebPageCreationParameters parameters;
 
     parameters.viewSize = pageClient().viewSize();
     parameters.activityState = m_activityState;
-    parameters.drawingAreaType = m_drawingArea->type();
+    parameters.drawingAreaType = drawingArea.type();
+    parameters.drawingAreaIdentifier = drawingArea.identifier();
     parameters.store = preferencesStore();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;

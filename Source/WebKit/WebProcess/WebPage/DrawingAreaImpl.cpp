@@ -242,7 +242,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
             m_shouldSendDidUpdateBackingStoreState = false;
 
             LayerTreeContext layerTreeContext;
-            m_webPage.send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
+            send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
             m_compositingAccordingToProxyMessages = false;
             return;
         }
@@ -308,12 +308,12 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     // Send along a complete update of the page so we can paint the contents right after we exit the
     // accelerated compositing mode, eliminiating flicker.
     if (m_compositingAccordingToProxyMessages) {
-        m_webPage.send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
+        send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
         m_compositingAccordingToProxyMessages = false;
     } else {
         // If we left accelerated compositing mode before we sent an EnterAcceleratedCompositingMode message to the
         // UI process, we still need to let it know about the new contents, so send an Update message.
-        m_webPage.send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
+        send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     }
 }
 
@@ -367,7 +367,7 @@ void DrawingAreaImpl::display()
         return;
     }
 
-    m_webPage.send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
+    send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
     m_isWaitingForDidUpdate = true;
 }
 

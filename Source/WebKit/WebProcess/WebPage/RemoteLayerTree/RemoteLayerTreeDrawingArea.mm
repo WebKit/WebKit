@@ -36,6 +36,7 @@
 #import "RemoteScrollingCoordinator.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPage.h"
+#import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
@@ -54,8 +55,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters&)
-    : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
+RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
+    : DrawingArea(DrawingAreaTypeRemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(std::make_unique<RemoteLayerTreeContext>(webPage))
     , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), *this))
     , m_layerFlushTimer(*this, &RemoteLayerTreeDrawingArea::flushLayers)
@@ -146,7 +147,7 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool fl
 
     scheduleCompositingLayerFlush();
 
-    m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView)
@@ -399,10 +400,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     m_nextFlushIsForImmediatePaint = false;
     m_waitingForBackingStoreSwap = true;
 
-    m_webPage.send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
+    send(Messages::RemoteLayerTreeDrawingAreaProxy::WillCommitLayerTree(layerTransaction.transactionID()));
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
-    auto commitEncoder = std::make_unique<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_webPage.pageID());
+    auto commitEncoder = std::make_unique<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::receiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder->encode(message.arguments());
 
     // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.

@@ -1,3 +1,88 @@
+2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+        Give DrawingAreas their own identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=194969
+        <rdar://problem/48154508>
+
+        Reviewed by Geoffrey Garen.
+
+        Give DrawingAreas their own identifiers instead of using the pageID. It will make the IPC more robust now that a
+        WebPageProxy can have several drawing areas with PSON.
+
+        * Shared/DrawingAreaInfo.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::sendUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState):
+        (WebKit::AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing):
+        (WebKit::AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::~DrawingAreaProxy):
+        (WebKit::DrawingAreaProxy::messageSenderConnection const):
+        (WebKit::DrawingAreaProxy::sendMessage):
+        (WebKit::DrawingAreaProxy::viewExposedRectChangedTimerFired):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::identifier const):
+        (WebKit::DrawingAreaProxy::process const):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::update):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForDidUpdateActivityState):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::commitTransientZoom):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::AcceleratedDrawingArea):
+        (WebKit::AcceleratedDrawingArea::layerHostDidFlushLayers):
+        (WebKit::AcceleratedDrawingArea::sendDidUpdateBackingStoreState):
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::DrawingArea):
+        (WebKit::DrawingArea::removeMessageReceiverIfNeeded):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::identifier const):
+        (WebKit::DrawingArea::send):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerHostingMode):
+
 2019-02-22  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Do not suppress deprecation warnings when calling sandbox_extension_issue_file

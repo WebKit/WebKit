@@ -183,7 +183,7 @@ void AcceleratedDrawingAreaProxy::sendUpdateBackingStoreState(RespondImmediately
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    process().send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset));
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {
@@ -222,7 +222,7 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
     // choose the most recent one, or the one that is closest to our current size.
 
     // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
-    process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_webPageProxy.pageID(), Seconds::fromMilliseconds(500));
+    process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_identifier.toUInt64(), Seconds::fromMilliseconds(500));
 }
 
 void AcceleratedDrawingAreaProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -256,7 +256,7 @@ void AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing(uint64_t 
         m_pendingNativeSurfaceHandleForCompositing = handle;
         return;
     }
-    process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing()
@@ -266,7 +266,7 @@ void AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing()
         return;
     }
     bool handled;
-    process().sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled), m_webPageProxy.pageID());
+    sendSync(Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing(), Messages::DrawingArea::DestroyNativeSurfaceHandleForCompositing::Reply(handled));
 }
 #endif
 

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ObjectIdentifier.h>
+
 namespace WebKit {
 
 enum DrawingAreaType {
@@ -42,5 +44,8 @@ enum {
     ActivityStateChangeAsynchronous = 0
 };
 typedef uint64_t ActivityStateChangeID;
+
+enum DrawingAreaIdentifierType { };
+using DrawingAreaIdentifier = ObjectIdentifier<DrawingAreaIdentifierType>;
 
 } // namespace WebKit

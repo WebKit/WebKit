@@ -709,6 +709,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
+    RELEASE_ASSERT(m_drawingArea->identifier() == parameters.drawingAreaIdentifier);
 
     setViewLayoutSize(parameters.viewLayoutSize);
 

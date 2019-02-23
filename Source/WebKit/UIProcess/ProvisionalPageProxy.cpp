@@ -135,7 +135,7 @@ void ProvisionalPageProxy::initializeWebPage()
 {
     m_drawingArea = m_page.pageClient().createDrawingAreaProxy(m_process);
 
-    auto parameters = m_page.creationParameters(m_process);
+    auto parameters = m_page.creationParameters(m_process, *m_drawingArea);
     parameters.isProcessSwap = true;
     m_process->send(Messages::WebProcess::CreateWebPage(m_page.pageID(), parameters), 0);
 

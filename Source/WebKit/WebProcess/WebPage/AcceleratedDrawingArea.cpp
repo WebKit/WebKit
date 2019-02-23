@@ -53,7 +53,7 @@ AcceleratedDrawingArea::~AcceleratedDrawingArea()
 }
 
 AcceleratedDrawingArea::AcceleratedDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
-    : DrawingArea(DrawingAreaTypeImpl, webPage)
+    : DrawingArea(DrawingAreaTypeImpl, parameters.drawingAreaIdentifier, webPage)
     , m_exitCompositingTimer(RunLoop::main(), this, &AcceleratedDrawingArea::exitAcceleratedCompositingMode)
     , m_discardPreviousLayerTreeHostTimer(RunLoop::main(), this, &AcceleratedDrawingArea::discardPreviousLayerTreeHost)
 {
@@ -183,7 +183,7 @@ void AcceleratedDrawingArea::layerHostDidFlushLayers()
 
     ASSERT(!m_compositingAccordingToProxyMessages);
     if (!exitAcceleratedCompositingModePending()) {
-        m_webPage.send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
+        send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(m_backingStoreStateID, m_layerTreeHost->layerTreeContext()));
         m_compositingAccordingToProxyMessages = true;
     }
 }
@@ -307,7 +307,7 @@ void AcceleratedDrawingArea::sendDidUpdateBackingStoreState()
         m_layerTreeHost->forceRepaint();
     }
 
-    m_webPage.send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
+    send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
     m_compositingAccordingToProxyMessages = !layerTreeContext.isEmpty();
 }
 

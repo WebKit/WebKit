@@ -37,6 +37,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << store;
     encoder.encodeEnum(drawingAreaType);
+    encoder << drawingAreaIdentifier;
     encoder << pageGroupData;
     encoder << drawsBackground;
     encoder << isEditable;
@@ -138,6 +139,11 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decodeEnum(parameters.drawingAreaType))
         return WTF::nullopt;
+    Optional<DrawingAreaIdentifier> drawingAreaIdentifier;
+    decoder >> drawingAreaIdentifier;
+    if (!drawingAreaIdentifier)
+        return WTF::nullopt;
+    parameters.drawingAreaIdentifier = *drawingAreaIdentifier;
     Optional<WebPageGroupData> pageGroupData;
     decoder >> pageGroupData;
     if (!pageGroupData)

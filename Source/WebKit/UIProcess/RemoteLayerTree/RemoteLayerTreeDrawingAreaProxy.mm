@@ -115,7 +115,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& w
     IOSurfacePool::sharedPool().setPoolSize(0);
 #endif
 
-    process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier.toUInt64(), *this);
 
     if (m_webPageProxy.preferences().tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
@@ -124,7 +124,7 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& w
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
     m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
-    process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
+    process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier.toUInt64());
 
 #if PLATFORM(IOS_FAMILY)
     [m_displayLinkHandler invalidate];
@@ -161,7 +161,7 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    process().send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
@@ -179,7 +179,7 @@ void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
 void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 {
     m_lastSentSize = m_size;
-    process().send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()));
     m_isWaitingForDidUpdateGeometry = true;
 }
 
@@ -264,12 +264,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, MonotonicTime startTime)
 {
-    process().send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(uint64_t layerID, const String& key)
 {
-    process().send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key));
 }
 
 static const float indicatorInset = 10;
@@ -430,7 +430,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
-    process().send(Messages::DrawingArea::DidUpdate(), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::DidUpdate());
 
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
 
@@ -458,7 +458,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     }();
 
     auto startTime = MonotonicTime::now();
-    while (process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_webPageProxy.pageID(), activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
+    while (process().connection()->waitForAndDispatchImmediately<Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree>(m_identifier.toUInt64(), activityStateUpdateTimeout - (MonotonicTime::now() - startTime), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
         if (activityStateChangeID == ActivityStateChangeAsynchronous || activityStateChangeID <= m_activityStateChangeID)
             return;
     }
@@ -471,7 +471,7 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function
         return;
     }
 
-    process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), process().throttler().backgroundActivityToken())), m_webPageProxy.pageID());
+    send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), process().throttler().backgroundActivityToken())));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

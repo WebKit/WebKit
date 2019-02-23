@@ -29,6 +29,7 @@
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
 #include "MessageReceiver.h"
+#include "WebPage.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
@@ -61,7 +62,6 @@ namespace WebKit {
 
 struct ColorSpaceData;
 class LayerTreeHost;
-class WebPage;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -74,6 +74,7 @@ public:
     virtual ~DrawingArea();
     
     DrawingAreaType type() const { return m_type; }
+    DrawingAreaIdentifier identifier() const { return m_identifier; }
 
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const WebCore::IntRect&) = 0;
@@ -155,9 +156,15 @@ public:
     void removeMessageReceiverIfNeeded();
 
 protected:
-    DrawingArea(DrawingAreaType, WebPage&);
+    DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
+
+    template<typename U> bool send(const U& message)
+    {
+        return m_webPage.send(message, m_identifier.toUInt64(), { });
+    }
 
     DrawingAreaType m_type;
+    DrawingAreaIdentifier m_identifier;
     WebPage& m_webPage;
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
