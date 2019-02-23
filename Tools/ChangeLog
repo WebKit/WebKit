@@ -1,3 +1,14 @@
+2019-02-22  Tim Horton  <timothy_horton@apple.com>
+
+        ProcessSwap.PageOverlayLayerPersistence fails on iOS and in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=194963
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        Do a `contains` check instead of `equals`, because in debug builds we
+        put the GraphicsLayer pointer in a prefix.
+
 2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker

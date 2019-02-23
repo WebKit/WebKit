@@ -1,3 +1,36 @@
+2019-02-22  Tim Horton  <timothy_horton@apple.com>
+
+        ProcessSwap.PageOverlayLayerPersistence fails on iOS and in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=194963
+
+        Reviewed by Dean Jackson.
+
+        Tested by existing failing API test.
+
+        * page/Page.cpp:
+        (WebCore::Page::installedPageOverlaysChanged): Deleted.
+        * page/Page.h:
+        (WebCore::Page::pageOverlayController):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::installedPageOverlaysChanged):
+        (WebCore::PageOverlayController::detachViewOverlayLayers):
+        (WebCore::PageOverlayController::installPageOverlay):
+        (WebCore::PageOverlayController::uninstallPageOverlay):
+        (WebCore::PageOverlayController::willDetachRootLayer): Deleted.
+        * page/PageOverlayController.h:
+        As intended by r240940, move installedPageOverlaysChanged to PageOverlayController.
+        Also, make it ignore isInWindow state; otherwise, if you install a overlay
+        and then come into window, nothing installs the root layer. There is no
+        need for this code to follow in-window state manually anymore since
+        the DrawingArea and RenderLayerCompositor just hook the layers up when needed.
+
+        Make some methods private, and make detachViewOverlayLayers only touch
+        *view* overlays, so that we don't detach the document-relative root
+        layer when you drop to having no view overlays. This maintains
+        existing behavior because nothing was calling PageOverlayController::detachViewOverlayLayers.
+
+        Now there are no callers of willDetachRootLayer, so remove it.
+
 2019-02-22  Andy Estes  <aestes@apple.com>
 
         [iOS] Break a reference cycle between PreviewLoader and ResourceLoader

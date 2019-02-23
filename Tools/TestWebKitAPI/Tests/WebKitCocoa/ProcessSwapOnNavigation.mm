@@ -5287,7 +5287,7 @@ static bool hasOverlay(CALayer *layer)
 {
     __block bool hasViewOverlay = false;
     traverseLayerTree(layer, ^(CALayer *layer) {
-        if ([layer.name isEqualToString:@"View overlay container"])
+        if ([layer.name containsString:@"View overlay container"])
             hasViewOverlay = true;
     });
     return hasViewOverlay;

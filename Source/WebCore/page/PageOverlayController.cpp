@@ -65,6 +65,19 @@ void PageOverlayController::createRootLayersIfNeeded()
     m_viewOverlayRootLayer->setName("View overlay container");
 }
 
+void PageOverlayController::installedPageOverlaysChanged()
+{
+    if (hasViewOverlays())
+        attachViewOverlayLayers();
+    else
+        detachViewOverlayLayers();
+
+    if (auto* frameView = m_page.mainFrame().view())
+        frameView->setNeedsCompositingConfigurationUpdate();
+
+    updateForceSynchronousScrollLayerPositionUpdates();
+}
+
 bool PageOverlayController::hasDocumentOverlays() const
 {
     for (const auto& overlay : m_pageOverlays) {
@@ -92,7 +105,6 @@ void PageOverlayController::attachViewOverlayLayers()
 void PageOverlayController::detachViewOverlayLayers()
 {
     m_page.chrome().client().attachViewOverlayGraphicsLayer(nullptr);
-    willDetachRootLayer();
 }
 
 GraphicsLayer* PageOverlayController::documentOverlayRootLayer() const
@@ -192,8 +204,6 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     auto& rawLayer = layer.get();
     m_overlayGraphicsLayers.set(&overlay, WTFMove(layer));
 
-    updateForceSynchronousScrollLayerPositionUpdates();
-
     overlay.setPage(&m_page);
 
     if (FrameView* frameView = m_page.mainFrame().view())
@@ -204,7 +214,7 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
     if (fadeMode == PageOverlay::FadeMode::Fade)
         overlay.startFadeInAnimation();
 
-    m_page.installedPageOverlaysChanged();
+    installedPageOverlaysChanged();
 }
 
 void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverlay::FadeMode fadeMode)
@@ -222,8 +232,7 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverl
     bool removed = m_pageOverlays.removeFirst(&overlay);
     ASSERT_UNUSED(removed, removed);
 
-    updateForceSynchronousScrollLayerPositionUpdates();
-    m_page.installedPageOverlaysChanged();
+    installedPageOverlaysChanged();
 }
 
 void PageOverlayController::updateForceSynchronousScrollLayerPositionUpdates()
@@ -270,14 +279,6 @@ GraphicsLayer& PageOverlayController::layerForOverlay(PageOverlay& overlay) cons
 {
     ASSERT(m_pageOverlays.contains(&overlay));
     return *m_overlayGraphicsLayers.get(&overlay);
-}
-
-void PageOverlayController::willDetachRootLayer()
-{
-    GraphicsLayer::unparentAndClear(m_documentOverlayRootLayer);
-    GraphicsLayer::unparentAndClear(m_viewOverlayRootLayer);
-
-    m_initialized = false;
 }
 
 void PageOverlayController::didChangeViewSize()

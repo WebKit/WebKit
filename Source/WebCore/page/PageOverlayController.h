@@ -47,9 +47,6 @@ public:
     bool hasDocumentOverlays() const;
     bool hasViewOverlays() const;
 
-    void attachViewOverlayLayers();
-    void detachViewOverlayLayers();
-
     GraphicsLayer& layerWithDocumentOverlays();
     GraphicsLayer& layerWithViewOverlays();
 
@@ -87,7 +84,9 @@ private:
     WEBCORE_EXPORT GraphicsLayer* documentOverlayRootLayer() const;
     WEBCORE_EXPORT GraphicsLayer* viewOverlayRootLayer() const;
 
-    void willDetachRootLayer();
+    void installedPageOverlaysChanged();
+    void attachViewOverlayLayers();
+    void detachViewOverlayLayers();
 
     void updateSettingsForLayer(GraphicsLayer&);
     void updateForceSynchronousScrollLayerPositionUpdates();
