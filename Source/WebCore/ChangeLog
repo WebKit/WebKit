@@ -1,3 +1,20 @@
+2019-02-22  Andy Estes  <aestes@apple.com>
+
+        [iOS] Break a reference cycle between PreviewLoader and ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=194964
+        <rdar://problem/48279441>
+
+        Reviewed by Alex Christensen.
+
+        When a document's QuickLook preview is loaded, a reference cycle is created between
+        PreviewLoader and ResourceLoader. Break the cycle by clearing m_previewLoader in
+        ResourceLoader::releaseResources().
+
+        Fixes leaks detected by `run-webkit-tests --leaks LayoutTests/quicklook`.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+
 2019-02-22  Sihui Liu  <sihui_liu@apple.com>
 
         Crash under IDBServer::IDBConnectionToClient::identifier() const

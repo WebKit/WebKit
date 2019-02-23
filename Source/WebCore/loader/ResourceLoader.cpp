@@ -113,6 +113,10 @@ void ResourceLoader::releaseResources()
 
     m_resourceData = nullptr;
     m_deferredRequest = ResourceRequest();
+
+#if USE(QUICK_LOOK)
+    m_previewLoader = nullptr;
+#endif
 }
 
 void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<void(bool)>&& completionHandler)
