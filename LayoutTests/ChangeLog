@@ -1,3 +1,15 @@
+2019-02-22  Dean Jackson  <dino@apple.com>
+
+        Rotation animations sometimes use the wrong origin (affects apple.com)
+        https://bugs.webkit.org/show_bug.cgi?id=194878
+        <rdar://problem/43908047>
+
+        Reviewed by Simon Fraser.
+
+        Forgot another expected results file.
+
+        * legacy-animation-engine/animations/additive-transform-animations-expected.html: Added.
+
 2019-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added in r241932 on iOS for now.
