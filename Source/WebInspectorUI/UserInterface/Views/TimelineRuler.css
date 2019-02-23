@@ -281,3 +281,9 @@ body[dir=ltr] .timeline-ruler > .shaded-area.right,
 body[dir=rtl] .timeline-ruler > .shaded-area.left {
     right: 0;
 }
+
+@media (prefers-color-scheme: dark) {
+    .timeline-ruler > .markers > .marker.dom-content-event {
+        color: hsl(240, 100%, 70%);
+    }
+}
