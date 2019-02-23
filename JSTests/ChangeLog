@@ -1,3 +1,15 @@
+2019-02-22  Robin Morisset  <rmorisset@apple.com>
+
+        DFGBytecodeParser should not declare that a node won't clobberExit if DFGFixupPhase can later declare it does clobberExit
+        https://bugs.webkit.org/show_bug.cgi?id=194953
+        <rdar://problem/47595253>
+
+        Reviewed by Saam Barati.
+
+        I could not make this work without the infinite loop, so I am using a watchdog to be able to use it as a regression test.
+
+        * stress/has-indexed-property-with-worsening-array-mode.js: Added.
+
 2019-02-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve ES6 Class instances in Heap Snapshot instances view
