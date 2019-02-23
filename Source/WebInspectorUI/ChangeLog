@@ -1,5 +1,32 @@
 2019-02-22  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: add UI for preventing auto-stop
+        https://bugs.webkit.org/show_bug.cgi?id=194956
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a checkbox to the navigation area of the Timelines tab that controls whether recordings
+        automatically stop (e.g. after "load" or a period of inactivity).
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype.get navigationItems):
+        (WI.TimelineRecordingContentView.prototype._handleAutoStopCheckboxCheckedDidChange): Added.
+        (WI.TimelineRecordingContentView.prototype._handleTimelinesAutoStopSettingChanged): Added.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.capturingStopped):
+        (WI.TimelineManager.prototype._stopAutoRecordingSoon):
+        (WI.TimelineManager.prototype._resetAutoRecordingMaxTimeTimeout):
+        (WI.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout):
+        (WI.TimelineManager.prototype._handleTimelinesAutoStopSettingChanged):
+
+        * UserInterface/Base/Setting.js:
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-02-22  Devin Rousso  <drousso@apple.com>
+
         REGRESSION(r?): Web Inspector: Popovers have inset shadows
         https://bugs.webkit.org/show_bug.cgi?id=192963
         <rdar://problem/46888679>

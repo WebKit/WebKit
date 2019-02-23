@@ -39,6 +39,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         WI.heapManager.addEventListener(WI.HeapManager.Event.GarbageCollected, this._garbageCollected, this);
         WI.memoryManager.addEventListener(WI.MemoryManager.Event.MemoryPressure, this._memoryPressure, this);
 
+        WI.settings.timelinesAutoStop.addEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
+
         this._enabledTimelineTypesSetting = new WI.Setting("enabled-instrument-types", WI.TimelineManager.defaultTimelineTypes());
 
         this._isCapturing = false;
@@ -304,15 +306,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         WI.DOMNode.removeEventListener(null, null, this);
 
-        if (this._stopCapturingTimeout) {
-            clearTimeout(this._stopCapturingTimeout);
-            this._stopCapturingTimeout = undefined;
-        }
-
-        if (this._deadTimeTimeout) {
-            clearTimeout(this._deadTimeTimeout);
-            this._deadTimeTimeout = undefined;
-        }
+        this.relaxAutoStop();
 
         this._isCapturing = false;
         this._isCapturingPageReload = false;
@@ -847,6 +841,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _stopAutoRecordingSoon()
     {
+        if (!WI.settings.timelinesAutoStop.value)
+            return;
+
         // Only auto stop when auto capturing.
         if (!this._isCapturing || !this._mainResourceForAutoCapturing)
             return;
@@ -858,6 +855,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _resetAutoRecordingMaxTimeTimeout()
     {
+        if (!WI.settings.timelinesAutoStop.value)
+            return;
+
         if (this._stopCapturingTimeout)
             clearTimeout(this._stopCapturingTimeout);
         this._stopCapturingTimeout = setTimeout(this._boundStopCapturing, WI.TimelineManager.MaximumAutoRecordDuration);
@@ -865,6 +865,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _resetAutoRecordingDeadTimeTimeout()
     {
+        if (!WI.settings.timelinesAutoStop.value)
+            return;
+
         // Only monitor dead time when auto capturing.
         if (!this._isCapturing || !this._mainResourceForAutoCapturing)
             return;
@@ -946,6 +949,17 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         this.activeRecording.addMemoryPressureEvent(event.data.memoryPressureEvent);
+    }
+
+    _handleTimelinesAutoStopSettingChanged(event)
+    {
+        if (!this._isCapturing)
+            return;
+
+        if (WI.settings.timelinesAutoStop.value)
+            this._resetAutoRecordingMaxTimeTimeout();
+        else
+            this.relaxAutoStop();
     }
 
     _scriptProfilerTypeToScriptTimelineRecordType(type)

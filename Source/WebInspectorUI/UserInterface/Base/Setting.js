@@ -150,6 +150,7 @@ WI.settings = {
     showShadowDOM: new WI.Setting("show-shadow-dom", false),
     showWhitespaceCharacters: new WI.Setting("show-whitespace-characters", false),
     tabSize: new WI.Setting("tab-size", 4),
+    timelinesAutoStop: new WI.Setting("timelines-auto-stop", true),
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental

@@ -56,6 +56,12 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._timelineContentBrowser.navigationBar.addNavigationItem(this._filterBarNavigationItem);
         this.addSubview(this._timelineContentBrowser);
 
+        this._autoStopCheckboxNavigationItem = new WI.CheckboxNavigationItem("auto-stop-recording", WI.UIString("Stop recording once page loads"), WI.settings.timelinesAutoStop.value);
+        this._autoStopCheckboxNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._autoStopCheckboxNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleAutoStopCheckboxCheckedDidChange, this);
+
+        WI.settings.timelinesAutoStop.addEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
+
         this._clearTimelineNavigationItem = new WI.ButtonNavigationItem("clear-timeline", WI.UIString("Clear Timeline (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearTimelineNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._clearTimelineNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
@@ -152,7 +158,11 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     get navigationItems()
     {
-        return [this._clearTimelineNavigationItem];
+        return [
+            this._autoStopCheckboxNavigationItem,
+            new WI.DividerNavigationItem,
+            this._clearTimelineNavigationItem,
+        ];
     }
 
     get handleCopyEvent()
@@ -534,6 +544,16 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._recording.removeEventListener(WI.TimelineRecording.Event.TimesUpdated, this._recordingTimesUpdated, this);
         this._waitingToResetCurrentTime = false;
+    }
+
+    _handleAutoStopCheckboxCheckedDidChange(event)
+    {
+        WI.settings.timelinesAutoStop.value = this._autoStopCheckboxNavigationItem.checked;
+    }
+
+    _handleTimelinesAutoStopSettingChanged(event)
+    {
+        this._autoStopCheckboxNavigationItem.checked = WI.settings.timelinesAutoStop.value;
     }
 
     _clearTimeline(event)

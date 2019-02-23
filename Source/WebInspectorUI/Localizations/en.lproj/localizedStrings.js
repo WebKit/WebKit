@@ -938,6 +938,7 @@ localizedStrings["Stop element selection (%s)"] = "Stop element selection (%s)";
 localizedStrings["Stop recording"] = "Stop recording";
 localizedStrings["Stop recording (%s)"] = "Stop recording (%s)";
 localizedStrings["Stop recording canvas actions"] = "Stop recording canvas actions";
+localizedStrings["Stop recording once page loads"] = "Stop recording once page loads";
 localizedStrings["Stopping the \u201C%s\u201D audit"] = "Stopping the \u201C%s\u201D audit";
 localizedStrings["Storage"] = "Storage";
 localizedStrings["Style Attribute"] = "Style Attribute";
