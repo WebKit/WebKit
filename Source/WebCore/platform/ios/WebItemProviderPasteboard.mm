@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebItemProviderPasteboard.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DATA_INTERACTION) || PLATFORM(IOSMAC)
 
 #import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
@@ -868,4 +868,4 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 @end
 
-#endif // ENABLE(DATA_INTERACTION)
+#endif // ENABLE(DATA_INTERACTION) || PLATFORM(IOSMAC)
