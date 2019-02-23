@@ -138,6 +138,7 @@ enum class AccessibilityRole {
     MenuItemRadio,
     MenuListPopup,
     MenuListOption,
+    Meter,
     Outline,
     Paragraph,
     PopUpButton,

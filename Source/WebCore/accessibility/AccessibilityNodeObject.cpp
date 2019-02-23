@@ -380,6 +380,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
     case AccessibilityRole::Splitter:
+    case AccessibilityRole::Meter:
         return false;
     case AccessibilityRole::DocumentMath:
 #if ENABLE(MATHML)
@@ -560,7 +561,7 @@ bool AccessibilityNodeObject::isInputImage() const
 
 bool AccessibilityNodeObject::isProgressIndicator() const
 {
-    return roleValue() == AccessibilityRole::ProgressIndicator;
+    return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter;
 }
 
 bool AccessibilityNodeObject::isSlider() const

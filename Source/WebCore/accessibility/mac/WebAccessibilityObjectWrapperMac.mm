@@ -1891,6 +1891,7 @@ static AccessibilityRoleMap createAccessibilityRoleMap()
         { AccessibilityRole::Toolbar, NSAccessibilityToolbarRole },
         { AccessibilityRole::BusyIndicator, NSAccessibilityBusyIndicatorRole },
         { AccessibilityRole::ProgressIndicator, NSAccessibilityProgressIndicatorRole },
+        { AccessibilityRole::Meter, NSAccessibilityLevelIndicatorRole },
         { AccessibilityRole::Window, NSAccessibilityWindowRole },
         { AccessibilityRole::Drawer, NSAccessibilityDrawerRole },
         { AccessibilityRole::SystemWide, NSAccessibilitySystemWideRole },

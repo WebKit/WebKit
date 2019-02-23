@@ -530,9 +530,9 @@ mtd
       AXRoleDescription: group
       
 meter
-      AXRole: AXProgressIndicator
+      AXRole: AXLevelIndicator
       AXSubrole: AXMeter
-      AXRoleDescription: progress indicator
+      AXRoleDescription: level indicator
       
 nav
       AXRole: AXGroup

@@ -334,6 +334,7 @@ bool AccessibilityObject::accessibleNameDerivesFromContent() const
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
     case AccessibilityRole::ProgressIndicator:
+    case AccessibilityRole::Meter:
     case AccessibilityRole::RadioGroup:
     case AccessibilityRole::ScrollBar:
     case AccessibilityRole::Slider:
@@ -947,6 +948,7 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
 bool AccessibilityObject::isRangeControl() const
 {
     switch (roleValue()) {
+    case AccessibilityRole::Meter:
     case AccessibilityRole::ProgressIndicator:
     case AccessibilityRole::Slider:
     case AccessibilityRole::ScrollBar:
@@ -2504,6 +2506,9 @@ String AccessibilityObject::computedRoleString() const
 
     if (role == AccessibilityRole::HorizontalRule)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Splitter));
+
+    if (role == AccessibilityRole::Meter)
+        return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::ProgressIndicator));
 
     if (role == AccessibilityRole::PopUpButton || role == AccessibilityRole::ToggleButton)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Button));

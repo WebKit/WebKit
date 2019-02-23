@@ -2432,6 +2432,7 @@ bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
     case AccessibilityRole::RadioGroup:
     case AccessibilityRole::Row:
     case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::Meter:
     case AccessibilityRole::ProgressIndicator:
     case AccessibilityRole::Toolbar:
     case AccessibilityRole::Outline:

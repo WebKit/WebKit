@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Meter1
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 6 blocks used (out of 8 total)
@@ -12,7 +12,7 @@ AXValueSettable: false
 
 
 Meter2
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75%
@@ -20,7 +20,7 @@ AXValueSettable: false
 
 
 Meter3
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 
@@ -28,7 +28,7 @@ AXValueSettable: false
 
 
 Meter4
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 12cm
@@ -36,7 +36,7 @@ AXValueSettable: false
 
 
 Meter5
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 2cm
@@ -44,7 +44,7 @@ AXValueSettable: false
 
 
 Meter6
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 12cm
@@ -52,7 +52,7 @@ AXValueSettable: false
 
 
 Meter7
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 2cm
@@ -60,7 +60,7 @@ AXValueSettable: false
 
 
 Meter8
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 out of 100
@@ -68,7 +68,7 @@ AXValueSettable: false
 
 
 Meter9
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 percent
@@ -76,7 +76,7 @@ AXValueSettable: false
 
 
 Meter10
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 percent
@@ -84,7 +84,7 @@ AXValueSettable: false
 
 
 Meter11
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 (100 total)
@@ -92,7 +92,7 @@ AXValueSettable: false
 
 
 Meter12
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 (out of 100 total)
@@ -100,7 +100,7 @@ AXValueSettable: false
 
 
 Meter13
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 75 (out of 100 total)
@@ -108,7 +108,7 @@ AXValueSettable: false
 
 
 Meter14
-AXRole: AXProgressIndicator
+AXRole: AXLevelIndicator
 AXTitle: 
 AXDescription: 
 AXValueDescription: 7 of 10

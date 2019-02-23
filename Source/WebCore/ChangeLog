@@ -1,3 +1,31 @@
+2019-02-23  chris fleizach  <cfleizach@apple.com>
+
+        AX: WebKit is incorrectly mapping the <meter> element to progressbar
+        https://bugs.webkit.org/show_bug.cgi?id=164051
+        <rdar://problem/29055615>
+
+        Reviewed by Joanmarie Diggs.
+
+        Add a specific role for meter and map that to the appropriate mac role. 
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren const):
+        (WebCore::AccessibilityNodeObject::isProgressIndicator const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::accessibleNameDerivesFromContent const):
+        (WebCore::AccessibilityObject::isRangeControl const):
+        (WebCore::AccessibilityObject::computedRoleString const):
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::roleValue const):
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::shouldFocusActiveDescendant const):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+
 2019-02-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in SWServerJobQueue::runNextJobSynchronously

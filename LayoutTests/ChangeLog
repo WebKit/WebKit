@@ -1,3 +1,15 @@
+2019-02-23  chris fleizach  <cfleizach@apple.com>
+
+        AX: WebKit is incorrectly mapping the <meter> element to progressbar
+        https://bugs.webkit.org/show_bug.cgi?id=164051
+        <rdar://problem/29055615>
+
+        Reviewed by Joanmarie Diggs.
+
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/meter-element-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2019-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a legacy animation test. The <!-- webkit-test-runner --> was inside the <style>.
