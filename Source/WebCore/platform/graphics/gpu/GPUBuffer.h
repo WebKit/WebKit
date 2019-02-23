@@ -27,6 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "DeferrableTask.h"
+#include "GPUBufferUsage.h"
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -50,17 +53,57 @@ class GPUBuffer : public RefCounted<GPUBuffer> {
 public:
     ~GPUBuffer();
 
-    static RefPtr<GPUBuffer> create(const GPUDevice&, GPUBufferDescriptor&&);
+    static RefPtr<GPUBuffer> tryCreate(const GPUDevice&, GPUBufferDescriptor&&);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
+    bool isVertex() const { return m_isVertex; }
+    bool isUniform() const { return m_isUniform; }
+    bool isStorage() const { return m_isStorage; }
+    bool isReadOnly() const { return m_isReadOnly; }
 
-    JSC::ArrayBuffer* mapping() const { return m_mapping.get(); }
+    using MappingCallback = WTF::Function<void(JSC::ArrayBuffer*)>;
+    void registerMappingCallback(MappingCallback&&, bool);
+    void unmap();
+    void destroy();
 
 private:
-    explicit GPUBuffer(PlatformBufferSmartPtr&&, RefPtr<JSC::ArrayBuffer>&&);
+    struct PendingMappingCallback : public RefCounted<PendingMappingCallback> {
+        static Ref<PendingMappingCallback> create(MappingCallback&& callback)
+        {
+            return adoptRef(*new PendingMappingCallback(WTFMove(callback)));
+        }
+
+        MappingCallback callback;
+
+    private:
+        PendingMappingCallback(MappingCallback&&);
+    };
+
+    GPUBuffer(PlatformBufferSmartPtr&&, const GPUBufferDescriptor&);
+
+    static RefPtr<GPUBuffer> tryCreateSharedBuffer(const GPUDevice&, const GPUBufferDescriptor&);
+    JSC::ArrayBuffer* stagingBufferForRead();
+    JSC::ArrayBuffer* stagingBufferForWrite();
+
+    bool isMappable() const { return m_isMapWrite || m_isMapRead; }
+    bool isMapWriteable() const { return m_isMapWrite && !m_pendingCallback; }
+    bool isMapReadable() const { return m_isMapRead && !m_pendingCallback; }
 
     PlatformBufferSmartPtr m_platformBuffer;
-    RefPtr<JSC::ArrayBuffer> m_mapping;
+
+    RefPtr<JSC::ArrayBuffer> m_stagingBuffer;
+    RefPtr<PendingMappingCallback> m_pendingCallback;
+    DeferrableTask<Timer> m_mappingCallbackTask;
+
+    unsigned long m_byteLength;
+    unsigned m_numScheduledCommandBuffers = 0;
+    bool m_isMapWrite;
+    bool m_isMapRead;
+    bool m_isDestroyed = false;
+    bool m_isVertex;
+    bool m_isUniform;
+    bool m_isStorage;
+    bool m_isReadOnly;
 };
 
 } // namespace WebCore

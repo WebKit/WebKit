@@ -35,7 +35,7 @@ using GPUBufferUsageFlags = unsigned long;
 
 class GPUBufferUsage : public RefCounted<GPUBufferUsage> {
 public:
-    enum class Flags : GPUBufferUsageFlags {
+    enum Flags : GPUBufferUsageFlags {
         None = 0,
         MapRead = 1,
         MapWrite = 2,

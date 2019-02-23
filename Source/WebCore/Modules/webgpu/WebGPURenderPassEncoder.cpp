@@ -49,19 +49,35 @@ WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&& crea
 
 void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
+#if !LOG_DISABLED
+    const char* const functionName = "GPURenderPassEncoder::setVertexBuffers()";
+#endif
     if (buffers.isEmpty() || buffers.size() != offsets.size()) {
-        LOG(WebGPU, "WebGPURenderPassEncoder::setVertexBuffers: Invalid number of buffers or offsets!");
+        LOG(WebGPU, "%s: Invalid number of buffers or offsets!", functionName);
         return;
     }
 
     if (startSlot + buffers.size() > maxVertexBuffers) {
-        LOG(WebGPU, "WebGPURenderPassEncoder::setVertexBuffers: Invalid startSlot %lu for %lu buffers!", startSlot, buffers.size());
+        LOG(WebGPU, "%s: Invalid startSlot %lu for %lu buffers!", functionName, startSlot, buffers.size());
         return;
     }
 
-    auto gpuBuffers = buffers.map([] (const auto& buffer) -> Ref<const GPUBuffer> {
-        return buffer->buffer();
-    });
+    Vector<Ref<const GPUBuffer>> gpuBuffers;
+    gpuBuffers.reserveCapacity(buffers.size());
+
+    for (const auto& buffer : buffers) {
+        if (!buffer || !buffer->buffer()) {
+            LOG(WebGPU, "%s: Invalid or destroyed buffer in list!", functionName);
+            return;
+        }
+
+        if (!buffer->buffer()->isVertex()) {
+            LOG(WebGPU, "%s: Buffer was not created with VERTEX usage!", functionName);
+            return;
+        }
+
+        gpuBuffers.uncheckedAppend(buffer->buffer().releaseNonNull());
+    }
 
     m_passEncoder->setVertexBuffers(startSlot, WTFMove(gpuBuffers), WTFMove(offsets));
 }

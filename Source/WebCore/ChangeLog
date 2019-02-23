@@ -1,3 +1,73 @@
+2019-02-23  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Buffer updates part 1: async mapping functions, unmap, and destroy
+        https://bugs.webkit.org/show_bug.cgi?id=194665
+
+        Reviewed by Dean Jackson.
+
+        Test: map-write-buffers.html. Other tests updated to match new API.
+
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp: Added.
+        (WebCore::validateBufferBindingType): Ensure buffer binding usages match the binding type.
+        (WebCore::WebGPUBindGroupDescriptor::asGPUBindGroupDescriptor const): Logic moved out from WebGPUDevice.cpp.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.h:
+        * Modules/webgpu/WebGPUBuffer.cpp: Added GPUBuffer functionality.
+        (WebCore::WebGPUBuffer::create):
+        (WebCore::WebGPUBuffer::WebGPUBuffer):
+        (WebCore::WebGPUBuffer::mapReadAsync):
+        (WebCore::WebGPUBuffer::mapWriteAsync):
+        (WebCore::WebGPUBuffer::unmap):
+        (WebCore::WebGPUBuffer::destroy):
+        (WebCore::WebGPUBuffer::rejectOrRegisterPromiseCallback): Register a mapping request on the GPUBuffer, if valid.
+        * Modules/webgpu/WebGPUBuffer.h:
+        (WebCore::WebGPUBuffer::buffer const):
+        (WebCore::WebGPUBuffer::mapping const): Deleted.
+        * Modules/webgpu/WebGPUBuffer.idl: Update to latest API and enable every function except setSubData.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::beginRenderPass): Renamed descriptor conversion method.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const): Update to non-nullable return type.
+        (WebCore::WebGPUDevice::createBindGroup const): Move descriptor validation logic to descriptor implementation.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp:
+        (WebCore::WebGPURenderPassDescriptor::asGPURenderPassDescriptor const): Renamed from validateAndConvertToGPUVersion.
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers): Add validation for submitted buffers.
+        * platform/graphics/gpu/GPUBuffer.cpp: Added.
+        (WebCore::GPUBuffer::PendingMappingCallback::PendingMappingCallback): New struct for retaining a reference to mapping callbacks.
+        * platform/graphics/gpu/GPUBuffer.h: Add functionality to retain callbacks and usage bits.
+        (WebCore::GPUBuffer::isVertex const):
+        (WebCore::GPUBuffer::isUniform const):
+        (WebCore::GPUBuffer::isStorage const):
+        (WebCore::GPUBuffer::isReadOnly const):
+        (WebCore::GPUBuffer::PendingMapPromise::create):
+        (WebCore::GPUBuffer::isMappable const):
+        (WebCore::GPUBuffer::isMapWriteable const):
+        (WebCore::GPUBuffer::isMapReadable const):
+        (WebCore::GPUBuffer::mapping const): Deleted.
+        * platform/graphics/gpu/GPUBufferUsage.h: enum class cannot be logical ORed together.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer const): Renamed from createBuffer. 
+        (WebCore::GPUDevice::createBuffer const): Deleted.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::tryCreateSharedBuffer): Attempt to create a MTLBuffer with shared memory.
+        (WebCore::GPUBuffer::tryCreate): No longer use Gigacage-allocated memory for MTLBuffer.
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::~GPUBuffer):
+        (WebCore::GPUBuffer::registerMappingCallback): Register the provided callback to be executed when the staging buffer can be safely exposed.
+        (WebCore::GPUBuffer::stagingBufferForRead): Prepare the arrayBuffer for reading and run the mapping callback.
+        (WebCore::GPUBuffer::stagingBufferForWrite): Ditto, but for writing.
+        (WebCore::GPUBuffer::unmap): If needed, copy the staging ArrayBuffer to the MTLBuffer. Unregister any mapping callback.
+        (WebCore::GPUBuffer::destroy): Stub implementation for now. Frees the MTLBuffer as soon as possible.
+        (WebCore::GPUBuffer::create): Deleted.
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder): Ensure only read-only GPUBuffers are used as read-only on the GPU.
+
+        Add symbols for new files:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-02-23  Keith Miller  <keith_miller@apple.com>
 
         Add new mac target numbers

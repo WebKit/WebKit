@@ -46,7 +46,7 @@ struct WebGPURenderPassDepthStencilAttachmentDescriptor : GPURenderPassDepthSten
 };
 
 struct WebGPURenderPassDescriptor {
-    Optional<GPURenderPassDescriptor> validateAndConvertToGPUVersion() const;
+    Optional<GPURenderPassDescriptor> asGPURenderPassDescriptor() const;
 
     Vector<WebGPURenderPassColorAttachmentDescriptor> colorAttachments;
     Optional<WebGPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;

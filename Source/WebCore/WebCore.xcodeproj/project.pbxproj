@@ -4255,6 +4255,7 @@
 		D05CED2A0A40BB2C00C5AF38 /* FormatBlockCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */; };
 		D06C0D8F0CFD11460065F43F /* RemoveFormatCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */; };
 		D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */; };
+		D084033C221CBF6900007205 /* GPUBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D084033A221CBF5400007205 /* GPUBuffer.cpp */; };
 		D0843A4B20FEBE3D00FE860E /* GraphicsContext3DManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D0843A4A20FEBE3D00FE860E /* GraphicsContext3DManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D086FE9809D53AAB005BC74D /* UnlinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D086FE9609D53AAB005BC74D /* UnlinkCommand.h */; };
 		D08B00E220A282490004BC0A /* WebGLCompressedTextureASTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */; };
@@ -14075,6 +14076,8 @@
 		D07DEAB80A36554A00CA30F8 /* InsertListCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InsertListCommand.h; sourceTree = "<group>"; };
 		D083D98421C48050008E8EFF /* GPUBindGroupLayoutDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayoutDescriptor.h; sourceTree = "<group>"; };
 		D083D98621C4813E008E8EFF /* WebGPUBindGroupLayoutDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebGPUBindGroupLayoutDescriptor.h; path = Modules/streams/WebGPUBindGroupLayoutDescriptor.h; sourceTree = SOURCE_ROOT; };
+		D084033A221CBF5400007205 /* GPUBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBuffer.cpp; sourceTree = "<group>"; };
+		D084033D221E186400007205 /* WebGPUBindGroupDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupDescriptor.cpp; sourceTree = "<group>"; };
 		D0843A4A20FEBE3D00FE860E /* GraphicsContext3DManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DManager.h; sourceTree = "<group>"; };
 		D0843A4C20FEC16500FE860E /* GraphicsContext3DManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DManager.cpp; sourceTree = "<group>"; };
 		D086FE9609D53AAB005BC74D /* UnlinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkCommand.h; sourceTree = "<group>"; };
@@ -18481,6 +18484,7 @@
 				D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */,
 				D0B8BB0121C46E78000C7681 /* GPUBindGroupLayoutBinding.h */,
 				D083D98421C48050008E8EFF /* GPUBindGroupLayoutDescriptor.h */,
+				D084033A221CBF5400007205 /* GPUBuffer.cpp */,
 				D0D8649221B760F2003C983C /* GPUBuffer.h */,
 				D0BE104A21E6872F00E42A89 /* GPUBufferBinding.h */,
 				D0D8648721B64CAA003C983C /* GPUBufferDescriptor.h */,
@@ -26107,6 +26111,7 @@
 				D0BE106221E6C0EB00E42A89 /* WebGPUBindGroup.idl */,
 				D0BE104F21E69F8300E42A89 /* WebGPUBindGroupBinding.h */,
 				D0BE105021E69F8300E42A89 /* WebGPUBindGroupBinding.idl */,
+				D084033D221E186400007205 /* WebGPUBindGroupDescriptor.cpp */,
 				D0BE105221E6AA0D00E42A89 /* WebGPUBindGroupDescriptor.h */,
 				D0BE105321E6AA0D00E42A89 /* WebGPUBindGroupDescriptor.idl */,
 				D003287A21C8645B00622AA6 /* WebGPUBindGroupLayout.cpp */,
@@ -32945,6 +32950,7 @@
 				51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */,
 				515BE1911D54F5FB00DD7C68 /* GamepadProvider.cpp in Sources */,
 				837964CF1F8DB69D00218EA0 /* GeolocationPositionIOS.mm in Sources */,
+				D084033C221CBF6900007205 /* GPUBuffer.cpp in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
 				7C3E510B18DF8F3500C112F7 /* HTMLConverter.mm in Sources */,
 				A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */,

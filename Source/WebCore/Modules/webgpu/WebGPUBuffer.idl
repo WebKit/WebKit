@@ -28,7 +28,10 @@
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
 ] interface WebGPUBuffer {
-    readonly attribute ArrayBuffer? mapping;
+    //void setSubData(u32 offset, ArrayBuffer data);
+
+    Promise<ArrayBuffer> mapReadAsync();
+    Promise<ArrayBuffer> mapWriteAsync();
     void unmap();
 
     void destroy();

@@ -62,7 +62,7 @@ public:
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     const GPUDevice& device() const { return m_device.get(); }
 
-    RefPtr<WebGPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
+    Ref<WebGPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
     Ref<WebGPUTexture> createTexture(GPUTextureDescriptor&&) const;
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;

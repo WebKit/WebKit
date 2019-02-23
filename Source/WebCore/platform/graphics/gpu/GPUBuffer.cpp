@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GPUBuffer.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBuffer.h"
-#include "GPUBufferUsage.h"
-#include "JSDOMPromiseDeferred.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace JSC {
-class ArrayBuffer;
-}
-
 namespace WebCore {
 
-struct GPUBufferDescriptor;
-
-class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
-public:
-    static Ref<WebGPUBuffer> create(RefPtr<GPUBuffer>&&);
-
-    RefPtr<const GPUBuffer> buffer() const { return m_buffer; }
-
-    using BufferMappingPromise = DOMPromiseDeferred<IDLInterface<JSC::ArrayBuffer*>>;
-    void mapReadAsync(BufferMappingPromise&&);
-    void mapWriteAsync(BufferMappingPromise&&);
-    void unmap();
-    void destroy();
-
-private:
-    explicit WebGPUBuffer(RefPtr<GPUBuffer>&&);
-
-    void rejectOrRegisterPromiseCallback(BufferMappingPromise&&, bool);
-
-    RefPtr<GPUBuffer> m_buffer;
-};
+GPUBuffer::PendingMappingCallback::PendingMappingCallback(MappingCallback&& pending)
+    : callback(WTFMove(pending))
+{
+}
 
 } // namespace WebCore
 

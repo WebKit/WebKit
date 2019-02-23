@@ -45,7 +45,7 @@ GPURenderPassDepthStencilAttachmentDescriptor::GPURenderPassDepthStencilAttachme
 {
 }
 
-Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::validateAndConvertToGPUVersion() const
+Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::asGPURenderPassDescriptor() const
 {
     // FIXME: Improve error checking as WebGPURenderPassDescriptor is added to spec.
     if (colorAttachments.isEmpty()) {

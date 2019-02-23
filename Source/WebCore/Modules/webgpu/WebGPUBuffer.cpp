@@ -28,16 +28,63 @@
 
 #if ENABLE(WEBGPU)
 
+#include "Logging.h"
+
 namespace WebCore {
 
-Ref<WebGPUBuffer> WebGPUBuffer::create(Ref<GPUBuffer>&& buffer)
+Ref<WebGPUBuffer> WebGPUBuffer::create(RefPtr<GPUBuffer>&& buffer)
 {
     return adoptRef(*new WebGPUBuffer(WTFMove(buffer)));
 }
 
-WebGPUBuffer::WebGPUBuffer(Ref<GPUBuffer>&& buffer)
+WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer)
     : m_buffer(WTFMove(buffer))
 {
+}
+
+void WebGPUBuffer::mapReadAsync(BufferMappingPromise&& promise)
+{
+    rejectOrRegisterPromiseCallback(WTFMove(promise), true);
+}
+
+void WebGPUBuffer::mapWriteAsync(BufferMappingPromise&& promise)
+{
+    rejectOrRegisterPromiseCallback(WTFMove(promise), false);
+}
+
+void WebGPUBuffer::unmap()
+{
+    if (m_buffer)
+        m_buffer->unmap();
+}
+
+void WebGPUBuffer::destroy()
+{
+    if (!m_buffer)
+        LOG(WebGPU, "GPUBuffer::destroy(): Invalid operation!");
+    else {
+        m_buffer->destroy();
+        // FIXME: Ensure that GPUBuffer is kept alive by resource bindings if still being used by GPU.
+        m_buffer = nullptr;
+    }
+}
+
+void WebGPUBuffer::rejectOrRegisterPromiseCallback(BufferMappingPromise&& promise, bool isRead)
+{
+    if (!m_buffer) {
+        LOG(WebGPU, "GPUBuffer::map%sAsync(): Invalid operation!", isRead ? "Read" : "Write");
+        promise.reject();
+        return;
+    }
+
+    m_buffer->registerMappingCallback([promise = WTFMove(promise)] (JSC::ArrayBuffer* arrayBuffer) mutable {
+        if (!arrayBuffer) {
+            promise.reject();
+            return;
+        }
+
+        promise.resolve(arrayBuffer);
+    }, isRead);
 }
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2019-02-23  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Buffer updates part 1: async mapping functions, unmap, and destroy
+        https://bugs.webkit.org/show_bug.cgi?id=194665
+
+        Reviewed by Dean Jackson.
+
+        Rewrite buffers.html -> map-write-buffers.html to test new functionality. Rewrite other affected
+        tests to use mapWriteAsync.
+
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/buffers-expected.txt: Renamed to map-write-buffers-expected.txt.
+        * webgpu/buffers.html: Renamed to map-write-buffers.html.
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/map-write-buffers-expected.txt: Renamed from buffers-expected.txt.
+        * webgpu/map-write-buffers.html: Renamed from buffers.html.
+        * webgpu/vertex-buffer-triangle-strip.html:
+
+        * platform/mac/TestExpectations: Skip all webgpu tests on macOS 10.12 bots.
+
 2019-02-23  chris fleizach  <cfleizach@apple.com>
 
         AX: WebKit is incorrectly mapping the <meter> element to progressbar

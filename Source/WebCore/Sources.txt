@@ -348,6 +348,7 @@ Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUBindGroup.cpp
+Modules/webgpu/WebGPUBindGroupDescriptor.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUBindGroupLayout.cpp
 Modules/webgpu/WebGPUBuffer.cpp

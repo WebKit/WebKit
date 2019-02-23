@@ -61,17 +61,17 @@ void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder
     }
 
     auto& bufferBinding = WTF::get<GPUBufferBinding>(resource);
-    auto buffer = bufferBinding.buffer->platformBuffer();
+    auto mtlBuffer = bufferBinding.buffer->platformBuffer();
 
-    if (!buffer) {
+    if (!mtlBuffer) {
         LOG(WebGPU, "%s: Invalid MTLBuffer in GPUBufferBinding!", functionName);
         return;
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    [argumentEncoder setBuffer:buffer offset:bufferBinding.offset atIndex:index];
-    useResource(buffer, MTLResourceUsageRead);
+    [argumentEncoder setBuffer:mtlBuffer offset:bufferBinding.offset atIndex:index];
+    useResource(mtlBuffer, bufferBinding.buffer->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

@@ -47,7 +47,7 @@ WebGPUCommandBuffer::WebGPUCommandBuffer(Ref<GPUCommandBuffer>&& buffer)
 
 RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURenderPassDescriptor&& descriptor)
 {
-    auto gpuDescriptor = descriptor.validateAndConvertToGPUVersion();
+    auto gpuDescriptor = descriptor.asGPURenderPassDescriptor();
     if (!gpuDescriptor)
         return nullptr;
 

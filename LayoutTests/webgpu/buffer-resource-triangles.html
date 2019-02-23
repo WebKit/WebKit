@@ -79,34 +79,33 @@ function createUniformBufferBindGroupLayout(bindNum, stage = WebGPUShaderStageBi
 
 const vertexSize = 4 * 4;
 const verticesBufferSize = vertexSize * 3;
+function createAndUploadVerticesBuffer(device, promises) {
+    const buffer = device.createBuffer({ size:verticesBufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE });
 
-// FIXME: Keep up to date with buffer upload decisions.
-function createVerticesBuffer(device) {
-    const buffer = device.createBuffer({ size:verticesBufferSize, usage: GPUBufferUsage.VERTEX });
+    const promise = buffer.mapWriteAsync().then(mapping => {
+        const mappedArray = new Float32Array(mapping);
+        mappedArray.set([
+            0, 1, 0, 1,
+            -1, -1, 0, 1,
+            1, -1, 0, 1
+        ]);
+        buffer.unmap();
+    });
 
-    const vertices = [
-        0, 1, 0, 1,
-        -1, -1, 0, 1,
-        1, -1, 0, 1
-    ];
-
-    const mappedArray = new Float32Array(buffer.mapping);
-    mappedArray.set(vertices);
-
+    promises.push(promise);
     return buffer;
 }
 
-function createFloat4Buffer(device, a, b) {
-    const buffer = device.createBuffer({ size: vertexSize, usage: GPUBufferUsage.UNIFORM });
-    
-    const arrayBuffer = buffer.mapping;
-    const floatArray = new Float32Array(arrayBuffer);
+function createFloat4Buffer(device, a, b, promises) {
+    const buffer = device.createBuffer({ size: vertexSize, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE });
 
-    floatArray[0] = a;
-    floatArray[1] = b;
-    floatArray[2] = 0;
-    floatArray[3] = 1;
+    const promise = buffer.mapWriteAsync().then(mapping => {
+        const mappedArray = new Float32Array(mapping);
+        mappedArray.set([a, b, 0, 1]);
+        buffer.unmap();
+    });
 
+    promises.push(promise);
     return buffer;
 }
 
@@ -126,16 +125,18 @@ async function test() {
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
     // Create vertex data WebGPUBuffers.
-    const verticesBuffer = createVerticesBuffer(device);
+    let bufferPromises = [];
 
-    const upperLeft = createFloat4Buffer(device, -1, 1);
-    const upperMiddle = createFloat4Buffer(device, 0, 1);
-    const upperRight = createFloat4Buffer(device, 1, 1);
-    const lowerLeft = createFloat4Buffer(device, -1, -1);
-    const lowerRight = createFloat4Buffer(device, 1, -1);
+    const verticesBuffer = createAndUploadVerticesBuffer(device, bufferPromises);
+
+    const upperLeft = createFloat4Buffer(device, -1, 1, bufferPromises);
+    const upperMiddle = createFloat4Buffer(device, 0, 1, bufferPromises);
+    const upperRight = createFloat4Buffer(device, 1, 1, bufferPromises);
+    const lowerLeft = createFloat4Buffer(device, -1, -1, bufferPromises);
+    const lowerRight = createFloat4Buffer(device, 1, -1, bufferPromises);
 
     // Color data buffer.
-    const green = createFloat4Buffer(device, 0, 1);
+    const green = createFloat4Buffer(device, 0, 1, bufferPromises);
 
     // Create vertex input state.
     const inputState = {
@@ -195,21 +196,23 @@ async function test() {
         bindings: [bgBindingUR, bgBindingUM, bgBindingLR]
     });
 
-    const commandBuffer = device.createCommandBuffer();
-    const passEncoder = beginBasicRenderPass(context, commandBuffer);
-    passEncoder.setPipeline(pipeline);
+    Promise.all(bufferPromises).then(() => {
+        const commandBuffer = device.createCommandBuffer();
+        const passEncoder = beginBasicRenderPass(context, commandBuffer);
+        passEncoder.setPipeline(pipeline);
 
-    // Vertex data for upper triangles.
-    passEncoder.setBindGroup(0, leftTriangleBG);
-    passEncoder.setBindGroup(1, rightTriangleBG);
-    // Lower triangle.
-    passEncoder.setVertexBuffers(0, [verticesBuffer], [0]);
-    passEncoder.draw(9, 1, 0, 0);
+        // Vertex data for upper triangles.
+        passEncoder.setBindGroup(0, leftTriangleBG);
+        passEncoder.setBindGroup(1, rightTriangleBG);
+        // Lower triangle.
+        passEncoder.setVertexBuffers(0, [verticesBuffer], [0]);
+        passEncoder.draw(9, 1, 0, 0);
 
-    const endCommandBuffer = passEncoder.endPass();
-    const queue = device.getQueue();
-    queue.submit([endCommandBuffer]);
-    context.present();
+        const endCommandBuffer = passEncoder.endPass();
+        const queue = device.getQueue();
+        queue.submit([endCommandBuffer]);
+        context.present();
+    });
 }
 
 test();

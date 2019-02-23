@@ -1,0 +1,6 @@
+
+PASS Map write, unmap, and destroy a GPUBuffer. 
+PASS Reject a map write on a buffer not created with MAP_WRITE usage. 
+PASS Reject a map write on a mapped GPUBuffer. 
+PASS Reject a pending map write if GPUBuffer is unmapped. 
+
