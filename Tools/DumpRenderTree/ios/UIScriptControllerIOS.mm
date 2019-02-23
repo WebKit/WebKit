@@ -337,6 +337,16 @@ JSObjectRef UIScriptController::rectForMenuAction(JSStringRef) const
     return nullptr;
 }
 
+JSObjectRef UIScriptController::menuRect() const
+{
+    return nullptr;
+}
+
+bool UIScriptController::isShowingMenu() const
+{
+    return false;
+}
+
 void UIScriptController::platformSetDidEndScrollingCallback()
 {
 }

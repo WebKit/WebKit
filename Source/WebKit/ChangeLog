@@ -1,3 +1,59 @@
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker
+        https://bugs.webkit.org/show_bug.cgi?id=194873
+        <rdar://problem/46701974>
+
+        Reviewed by Tim Horton.
+
+        On the topic of supporting web-based rich text editors on iOS, one problematic area has always been handling
+        conflicts between platform UI (i.e., the system callout menu) and in-page text editing controls. This issue
+        comes up in websites that don't use the "hidden contenteditable" approach to rich text editing, but also show
+        additional controls in a toolbar or contextual menu above the selection. In these cases, what often happens is
+        that system controls overlap controls in the page.
+
+        Luckily, the iOS callout menu (i.e. the private UICalloutBar) is capable of presenting with a list of "evasion
+        rects" to avoid; if the callout bar would normally intersect with one of these rects, then a different
+        orientation that does not intersect with one of these rects is chosen instead. Currently, the only rect added
+        here by UIKit when presenting the callout menu is the bounding rect of the on-screen keyboard, but after
+        <rdar://problem/48128337>, we now have a generalized mechanism for offering additional evasion rects before
+        UIKit presents the callout menu.
+
+        This patch adopts the mechanism introduced in <rdar://problem/48128337>, and introduces a heuristic for
+        determining the approximate location of controls in the page which might overlap the callout menu. This
+        heuristic works by hit-testing for clickable (but non-editable) nodes above the bounds of the selection, which
+        are additionally not hit-tested by advancing outwards from any of the other edges of the selection bounds.
+        Additionally, any hit-tested nodes whose bounding rects are very large (relative to the content view size) are
+        ignored (this deals with scenarios where the body or a large container element has a click handler). We then add
+        the bounding rects of each of the nodes that fit this criteria to the list of rects for UIKit to avoid when
+        presenting the system callout menu.
+
+        The result is that WebKit will, by default, avoid overlapping anything that looks like controls in the page when
+        showing a callout menu in editable content. In practice, this fixes overlapping controls on most websites that
+        roll their own context menu or toolbar in their rich text editor.
+
+        Test: editing/selection/ios/avoid-showing-callout-menu-over-controls.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        Drive-by: handle null completion handler arguments more gracefully, by raising an NSException and bailing before
+        attempting to invoke a nil block.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestEvasionRectsAboveSelection):
+
+        See above for more detail.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestEvasionRectsAboveSelection):
+
 2019-02-22  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed build fix: need a WebCore:: namespace on ScrollingEventResult.

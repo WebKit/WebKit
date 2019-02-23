@@ -1,5 +1,23 @@
 2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker
+        https://bugs.webkit.org/show_bug.cgi?id=194873
+        <rdar://problem/46701974>
+
+        Reviewed by Tim Horton.
+
+        Add a test to ensure that the we dodge clickable elements when showing the callout bar.
+
+        * editing/selection/ios/avoid-showing-callout-menu-over-controls-expected.txt: Added.
+        * editing/selection/ios/avoid-showing-callout-menu-over-controls.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForMenuToShow.return.new.Promise):
+        (window.UIHelper.waitForMenuToShow):
+        (window.UIHelper.menuRect):
+        (window.UIHelper):
+
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Input type "formatSetInlineTextDirection" is dispatched when changing paragraph-level text direction
         https://bugs.webkit.org/show_bug.cgi?id=194703
         <rdar://problem/48111775>

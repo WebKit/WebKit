@@ -3353,9 +3353,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 // The completion handler can pass nil if input does not match the actual text preceding the insertion point.
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler
 {
+    if (!completionHandler) {
+        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
+        return;
+    }
+
     if (!input || ![input length]) {
-        if (completionHandler)
-            completionHandler(nil);
+        completionHandler(nil);
         return;
     }
 
@@ -3373,8 +3377,47 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         view->_autocorrectionData.textFirstRect = firstRect;
         view->_autocorrectionData.textLastRect = lastRect;
 
-        if (completion)
-            completion(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+        completion(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+    });
+}
+
+- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler
+{
+    if (!completionHandler) {
+        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
+        return;
+    }
+
+    if ([self _shouldSuppressSelectionCommands] || _webView._editable) {
+        completionHandler(@[ ]);
+        return;
+    }
+
+    if (_focusedElementInformation.elementType != WebKit::InputType::ContentEditable && _focusedElementInformation.elementType != WebKit::InputType::TextArea) {
+        completionHandler(@[ ]);
+        return;
+    }
+
+    // Give the page some time to present custom editing UI before attempting to detect and evade it.
+    auto delayBeforeShowingCalloutBar = (0.25_s).nanoseconds();
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delayBeforeShowingCalloutBar), dispatch_get_main_queue(), [completion = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKContentView>(self)] () mutable {
+        if (!weakSelf) {
+            completion(@[ ]);
+            return;
+        }
+
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf->_page) {
+            completion(@[ ]);
+            return;
+        }
+
+        strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
+            auto rectsAsValues = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
+            for (auto& floatRect : rects)
+                [rectsAsValues addObject:[NSValue valueWithCGRect:floatRect]];
+            completion(rectsAsValues.get());
+        });
     });
 }
 
@@ -3537,8 +3580,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
-    if (!completionHandler)
+    if (!completionHandler) {
+        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
         return;
+    }
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     if ([self _disableAutomaticKeyboardUI]) {

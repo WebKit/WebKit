@@ -1,3 +1,34 @@
+2019-02-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Callout menu overlaps in-page controls when editing a comment in github.com's issue tracker
+        https://bugs.webkit.org/show_bug.cgi?id=194873
+        <rdar://problem/46701974>
+
+        Reviewed by Tim Horton.
+
+        Add a couple of UIScriptController methods to make callout menu testing on iOS easier (see below).
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::menuRect const):
+        (WTR::UIScriptController::isShowingMenu const):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::menuRect const):
+
+        Add a function to query the bounds of the callout menu in content coordinates.
+
+        (WTR::UIScriptController::isShowingMenu const):
+
+        Add a function to query whether the callout menu is shown (i.e., has finished its appearance animation).
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::rectForMenuAction const):
+        (WTR::UIScriptController::menuRect const):
+        (WTR::UIScriptController::isShowingMenu const):
+        (WTR::findViewInHierarchyOfType): Deleted.
+
 2019-02-22  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Unable to preview password-protected documents on iCloud.com

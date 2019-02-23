@@ -225,6 +225,8 @@ interface UIScriptController {
 
     attribute object didShowMenuCallback;
     attribute object didHideMenuCallback;
+    readonly attribute boolean isShowingMenu;
+    readonly attribute object menuRect;
     object rectForMenuAction(DOMString action);
 
     attribute object willBeginZoomingCallback;

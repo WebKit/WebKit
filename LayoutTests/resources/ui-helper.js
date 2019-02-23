@@ -665,4 +665,24 @@ window.UIHelper = class UIHelper {
         const script = "JSON.stringify([uiController.lastUndoLabel, uiController.firstRedoLabel])";
         return new Promise(resolve => testRunner.runUIScript(script, result => resolve(JSON.parse(result))));
     }
+
+    static waitForMenuToShow()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (!uiController.isShowingMenu)
+                        uiController.didShowMenuCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static menuRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.menuRect)", result => resolve(JSON.parse(result)));
+        });
+    }
 }

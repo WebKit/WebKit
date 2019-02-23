@@ -164,7 +164,9 @@ public:
     void setDidShowMenuCallback(JSValueRef);
     JSValueRef didShowMenuCallback() const;
 
+    bool isShowingMenu() const;
     JSObjectRef rectForMenuAction(JSStringRef action) const;
+    JSObjectRef menuRect() const;
 
     void setDidEndScrollingCallback(JSValueRef);
     JSValueRef didEndScrollingCallback() const;

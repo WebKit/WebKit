@@ -988,6 +988,7 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 #endif
 
 @interface UICalloutBar : UIView
++ (UICalloutBar *)activeCalloutBar;
 + (void)fadeSharedCalloutBar;
 @end
 

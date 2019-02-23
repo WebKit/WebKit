@@ -687,6 +687,7 @@ public:
     void cancelAutoscroll();
     void hardwareKeyboardAvailabilityChanged();
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
+    void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
 #if ENABLE(DATA_INTERACTION)
     void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);

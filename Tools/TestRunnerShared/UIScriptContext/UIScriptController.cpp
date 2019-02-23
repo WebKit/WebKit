@@ -532,9 +532,19 @@ void UIScriptController::platformSetDidHideMenuCallback()
 {
 }
 
+JSObjectRef UIScriptController::menuRect() const
+{
+    return nullptr;
+}
+
 JSObjectRef UIScriptController::rectForMenuAction(JSStringRef) const
 {
     return nullptr;
+}
+
+bool UIScriptController::isShowingMenu() const
+{
+    return false;
 }
 
 void UIScriptController::platformClearAllCallbacks()

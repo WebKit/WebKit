@@ -117,19 +117,6 @@ static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subv
     return stop;
 }
 
-static UIView *findViewInHierarchyOfType(UIView *view, Class viewClass)
-{
-    __block RetainPtr<UIView> foundView;
-    forEachViewInHierarchy(view, ^(UIView *subview, BOOL *stop) {
-        if (![subview isKindOfClass:viewClass])
-            return;
-
-        foundView = subview;
-        *stop = YES;
-    });
-    return foundView.autorelease();
-}
-
 static NSArray<UIView *> *findAllViewsInHierarchyOfType(UIView *view, Class viewClass)
 {
     __block RetainPtr<NSMutableArray> views = adoptNS([[NSMutableArray alloc] init]);
@@ -883,25 +870,21 @@ JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
 
     UIWindow *windowForButton = nil;
     UIButton *buttonForAction = nil;
-    for (UIWindow *window in UIApplication.sharedApplication.windows) {
-        if (![window isKindOfClass:UITextEffectsWindow.class])
+    UIView *calloutBar = UICalloutBar.activeCalloutBar;
+    if (!calloutBar.window)
+        return nullptr;
+
+    for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
+        NSString *buttonTitle = [button titleForState:UIControlStateNormal];
+        if (!buttonTitle.length)
             continue;
 
-        UIView *calloutBar = findViewInHierarchyOfType(window, UICalloutBar.class);
-        if (!calloutBar)
+        if (![buttonTitle isEqualToString:(__bridge NSString *)action.get()])
             continue;
 
-        for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
-            NSString *buttonTitle = [button titleForState:UIControlStateNormal];
-            if (!buttonTitle.length)
-                continue;
-
-            if (![buttonTitle isEqualToString:(__bridge NSString *)action.get()])
-                continue;
-
-            buttonForAction = button;
-            windowForButton = window;
-        }
+        buttonForAction = button;
+        windowForButton = calloutBar.window;
+        break;
     }
 
     if (!buttonForAction)
@@ -909,6 +892,21 @@ JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
 
     CGRect rectInRootViewCoordinates = [buttonForAction convertRect:buttonForAction.bounds toView:platformContentView()];
     return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
+}
+
+JSObjectRef UIScriptController::menuRect() const
+{
+    UIView *calloutBar = UICalloutBar.activeCalloutBar;
+    if (!calloutBar.window)
+        return nullptr;
+
+    CGRect rectInRootViewCoordinates = [calloutBar convertRect:calloutBar.bounds toView:platformContentView()];
+    return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
+}
+
+bool UIScriptController::isShowingMenu() const
+{
+    return TestController::singleton().mainWebView()->platformView().showingMenu;
 }
 
 void UIScriptController::platformSetDidEndScrollingCallback()

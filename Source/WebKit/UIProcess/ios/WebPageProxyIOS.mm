@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "Connection.h"
 #import "DataReference.h"
 #import "EditingRange.h"
 #import "GlobalFindInPageState.h"
@@ -1110,6 +1111,16 @@ void WebPageProxy::hardwareKeyboardAvailabilityChanged()
 {
     updateCurrentModifierState();
     m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(), m_pageID);
+}
+
+void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&& callback)
+{
+    if (!isValid()) {
+        callback({ });
+        return;
+    }
+
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::RequestEvasionRectsAboveSelection(), WTFMove(callback), m_pageID);
 }
 
 #if ENABLE(DATA_INTERACTION)
