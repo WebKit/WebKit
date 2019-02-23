@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.span-absolute {
+    position: absolute;
+    overflow: hidden;
+    height: 1px;
+}
+.lineheight{
+    line-height: 1.32;
+}
+</style>
+</head>
+<body id="body">
+<script src="../../resources/js-test-pre.js"></script>
+<div id="content">
+<div>
+    <a id="test0" href="https://www.apple.com">Learn more <span class="span-absolute">about Apple</span> <button>Click</button></a>
+</div>
+<div class="lineheight">
+    <a id="test1" href="https://www.apple.com">Learn more <span class="span-absolute">about Apple</span> <button>Click</button></a>
+</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that AXChildrenInNavigationOrder returns non-empty array from AXChildren.");
+
+    if (window.accessibilityController) {
+        var testElement0 = accessibilityController.accessibleElementById("test0");
+        var testElement1 = accessibilityController.accessibleElementById("test1");
+        var children0 = testElement0.uiElementArrayAttributeValue("AXChildren");
+        var children1 = testElement1.uiElementArrayAttributeValue("AXChildrenInNavigationOrder");
+        shouldBe("children0.length", "3");
+        shouldBe("children1.length", "3");
+        for (var i = 0; i < 3; i++) {
+            shouldBeTrue("children0[i].role == children1[i].role");
+        }
+
+        document.getElementById("content").style.visibility = 'hidden';
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

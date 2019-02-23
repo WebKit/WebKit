@@ -1,3 +1,17 @@
+2019-02-22  Eric Liang  <ericliang@apple.com>
+
+        AX: Treat AXChildrenInNavigationOrder as AXChildren before adding support for aria-flowto
+        https://bugs.webkit.org/show_bug.cgi?id=194923
+
+        Reviewed by Chris Fleizach.
+
+        Added AXChildrenInNavigationOrder attribute that returns the same array as from AXChildren. It prevents AppKit from reordering elements from the fallback AXChildren attribute.
+
+        Test: accessibility/mac/children-in-navigation-order-returns-children.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2019-02-22  Tim Horton  <timothy_horton@apple.com>
 
         ProcessSwap.PageOverlayLayerPersistence fails on iOS and in debug builds

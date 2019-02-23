@@ -1,3 +1,14 @@
+2019-02-22  Eric Liang  <ericliang@apple.com>
+
+        AX: Treat AXChildrenInNavigationOrder as AXChildren before adding support for aria-flowto
+        https://bugs.webkit.org/show_bug.cgi?id=194923
+
+        Reviewed by Chris Fleizach.
+
+        Added test to check AXChildrenInNavigationOrder returns non-empty array from AXChildren.
+        * accessibility/mac/children-in-navigation-order-returns-children-expected.txt: Added.
+        * accessibility/mac/children-in-navigation-order-returns-children.html: Added.
+
 2019-02-22  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [WinCairo] Enable wk1/wk2 suffix for platform search path.
