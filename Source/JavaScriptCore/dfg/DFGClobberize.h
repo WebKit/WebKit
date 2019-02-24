@@ -306,7 +306,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedInt32Properties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(Heap);
@@ -317,7 +317,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedDoubleProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(Heap);
@@ -328,7 +328,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedContiguousProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, node->child1(), node->child2()), LazyNode(node));
+                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             read(Heap);

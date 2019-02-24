@@ -6714,7 +6714,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(VirtualRegister(currentInstruction[2].u.operand));
             ArrayMode arrayMode = getArrayMode(arrayProfileFor<OpHasIndexedPropertyShape>(currentInstruction), Array::Read);
             Node* property = get(VirtualRegister(currentInstruction[3].u.operand));
-            Node* hasIterableProperty = addToGraph(HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)), base, property);
+            addVarArgChild(base);
+            addVarArgChild(property);
+            addVarArgChild(nullptr);
+            Node* hasIterableProperty = addToGraph(Node::VarArg, HasIndexedProperty, OpInfo(arrayMode.asWord()), OpInfo(static_cast<uint32_t>(PropertySlot::InternalMethodType::GetOwnProperty)));
             set(VirtualRegister(currentInstruction[1].u.operand), hasIterableProperty);
             NEXT_OPCODE(op_has_indexed_property);
         }
