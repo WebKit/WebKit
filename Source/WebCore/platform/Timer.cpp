@@ -262,6 +262,7 @@ TimerBase::~TimerBase()
 {
     ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(canAccessThreadLocalDataForThread(m_thread.get()));
     stop();
     ASSERT(!inHeap());
     if (m_heapItem) {
