@@ -26,9 +26,12 @@
 #include "config.h"
 #include "WebMemoryPressureHandler.h"
 
-#include "ViewSnapshotStore.h"
 #include "WebProcessPool.h"
 #include <wtf/MemoryPressureHandler.h>
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include "ViewSnapshotStore.h"
+#endif
 
 namespace WebKit {
 
@@ -36,7 +39,9 @@ void installMemoryPressureHandler()
 {
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous) {
+#if PLATFORM(COCOA) || PLATFORM(GTK)
         ViewSnapshotStore::singleton().discardSnapshotImages();
+#endif
 
         for (auto* processPool : WebProcessPool::allProcessPools())
             processPool->handleMemoryPressureWarning(critical);
