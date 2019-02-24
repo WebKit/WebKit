@@ -667,5 +667,5 @@ enum CompositingPolicy {
 
     void notifyResourceLoadObserver();
 
-    void setAlwaysAllowLocalWebarchive();
+    void setAlwaysAllowLocalWebarchive(boolean alwaysAllowLocalWebarchive);
 };

@@ -4693,12 +4693,12 @@ void Internals::notifyResourceLoadObserver()
     ResourceLoadObserver::shared().notifyObserver();
 }
 
-void Internals::setAlwaysAllowLocalWebarchive() const
+void Internals::setAlwaysAllowLocalWebarchive(bool alwaysAllowLocalWebarchive)
 {
-    auto* document = contextDocument();
-    if (!document)
+    auto* localFrame = frame();
+    if (!localFrame)
         return;
-    document->setAlwaysAllowLocalWebarchive();
+    localFrame->loader().setAlwaysAllowLocalWebarchive(alwaysAllowLocalWebarchive);
 }
 
 } // namespace WebCore

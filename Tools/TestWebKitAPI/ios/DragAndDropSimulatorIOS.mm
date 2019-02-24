@@ -325,6 +325,7 @@ static NSArray *dragAndDropEventNames()
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
+    self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
     if (configuration)
         return [self initWithWebView:[[[TestWKWebView alloc] initWithFrame:frame configuration:configuration] autorelease]];
 
@@ -688,6 +689,11 @@ static NSArray *dragAndDropEventNames()
 - (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment
 {
     [_removedAttachments addObject:attachment];
+}
+
+- (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo
+{
+    return self.dragDestinationAction;
 }
 
 #pragma mark - _WKInputDelegate

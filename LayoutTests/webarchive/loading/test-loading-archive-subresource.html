@@ -4,6 +4,8 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(false);
 
     function frameLoaded() {
         if (window.testRunner)

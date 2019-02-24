@@ -4,7 +4,8 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
-    
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive(true);
     window.location="resources/javascript-url-iframe-crash.webarchive";
 </script>
 </html>

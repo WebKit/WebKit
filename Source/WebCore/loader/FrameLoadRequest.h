@@ -90,6 +90,9 @@ public:
     bool isSystemPreview() const { return m_systemPreviewInfo.isSystemPreview; }
     const IntRect& systemPreviewRect() const { return m_systemPreviewInfo.systemPreviewRect; }
 
+    void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
+    bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -110,6 +113,7 @@ private:
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     bool m_isCrossOriginWindowOpenNavigation { false };
     SystemPreviewInfo m_systemPreviewInfo;
+    bool m_isRequestFromClientOrUserInput { false };
 };
 
 } // namespace WebCore

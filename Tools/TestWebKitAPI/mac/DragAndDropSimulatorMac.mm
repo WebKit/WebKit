@@ -103,6 +103,7 @@ static NSImage *defaultExternalDragImage()
     if (self = [super init]) {
         _webView = adoptNS([[DragAndDropTestWKWebView alloc] initWithFrame:frame configuration:configuration ?: [[[WKWebViewConfiguration alloc] init] autorelease] simulator:self]);
         [_webView setUIDelegate:self];
+        self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
     }
     return self;
 }
@@ -243,6 +244,11 @@ static NSImage *defaultExternalDragImage()
 - (void)setWillEndDraggingHandler:(dispatch_block_t)willEndDraggingHandler
 {
     _willEndDraggingHandler = makeBlockPtr(willEndDraggingHandler);
+}
+
+- (WKDragDestinationAction)_webView:(WKWebView *)webView dragDestinationActionMaskForDraggingInfo:(id)draggingInfo
+{
+    return self.dragDestinationAction;
 }
 
 @end
