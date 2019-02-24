@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -253,9 +253,7 @@ String TypeSet::toJSONString() const
     json.append('{');
 
     json.appendLiteral("\"displayTypeName\":");
-    json.append('"');
-    json.append(displayName());
-    json.append('"');
+    json.appendQuotedJSONString(displayName());
     json.append(',');
 
     json.appendLiteral("\"primitiveTypeNames\":");
@@ -442,9 +440,7 @@ String StructureShape::toJSONString() const
     json.append('{');
 
     json.appendLiteral("\"constructorName\":");
-    json.append('"');
-    json.append(m_constructorName);
-    json.append('"');
+    json.appendQuotedJSONString(m_constructorName);
     json.append(',');
 
     json.appendLiteral("\"isInDictionaryMode\":");
@@ -463,9 +459,7 @@ String StructureShape::toJSONString() const
         hasAnItem = true;
 
         String fieldName((*it).get());
-        json.append('"');
-        json.append(fieldName);
-        json.append('"');
+        json.appendQuotedJSONString(fieldName);
     }
     json.append(']');
     json.append(',');
@@ -479,9 +473,7 @@ String StructureShape::toJSONString() const
         hasAnItem = true;
 
         String fieldName((*it).get());
-        json.append('"');
-        json.append(fieldName);
-        json.append('"');
+        json.appendQuotedJSONString(fieldName);
     }
     json.append(']');
     json.append(',');
