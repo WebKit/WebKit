@@ -4872,7 +4872,7 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
     m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply)] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
-            reply(0, { });
+            reply(0, WTF::nullopt);
             return;
         }
 

@@ -1,3 +1,21 @@
+2019-02-23  Chris Dumez  <cdumez@apple.com>
+
+        Give DrawingAreas their own identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=194969
+        <rdar://problem/48154508>
+
+        Unreviewed, fix API test debug assertion failures after r241988.
+        We do not support sending an ObjectIdentifier that is 0 via IPC so update WebPageProxy::CreateNewPage
+        IPC to return an Optional<WebPageCreationParameters> instead of a WebPageCreationParameters. It returns
+        nullopt when there this no UIClient or the client did not create the page, instead of returning a
+        default-initialized WebPageCreationParameters.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+
 2019-02-23  Simon Fraser  <simon.fraser@apple.com>
 
         Remove remnants of iOS WK1 scrolling tree code

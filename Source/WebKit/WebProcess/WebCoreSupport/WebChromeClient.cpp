@@ -285,14 +285,15 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 
     uint64_t newPageID = 0;
-    WebPageCreationParameters parameters;
+    Optional<WebPageCreationParameters> parameters;
     if (!webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->pageID(), request.resourceRequest(), windowFeatures, navigationActionData), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page.pageID()))
         return nullptr;
 
     if (!newPageID)
         return nullptr;
+    ASSERT(parameters);
 
-    webProcess.createWebPage(newPageID, WTFMove(parameters));
+    webProcess.createWebPage(newPageID, WTFMove(*parameters));
     return webProcess.webPage(newPageID)->corePage();
 }
 
