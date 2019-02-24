@@ -1,3 +1,62 @@
+2019-02-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove remnants of iOS WK1 scrolling tree code
+        https://bugs.webkit.org/show_bug.cgi?id=194980
+
+        Reviewed by Sam Weinig.
+
+        Remove ScrollingTreeIOS and ScrollingCoordinatorIOS which were never instantiated,
+        to reduce maintenance costs and simplify.
+
+        Merge ScrollingTreeFrameScrollingNodeIOS into ScrollingTreeFrameScrollingNodeRemoteIOS
+        since that was the only concrete subclass, removing code which never applies to iOS WK2
+        (e.g. the synchronous scrolling code path).
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::handleWheelEvent):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::updateLayersAfterDelegatedScroll): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrollableAreaSize const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSize const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::horizontalSnapOffsets const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::verticalSnapOffsets const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::horizontalSnapOffsetRanges const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::verticalSnapOffsetRanges const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::currentHorizontalSnapPointIndex const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::currentVerticalSnapPointIndex const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::setCurrentHorizontalSnapPointIndex): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::setCurrentVerticalSnapPointIndex): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::useDarkAppearanceForScrollbars const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::lastCommittedScrollPosition const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::reachableContentsSize const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::parentRelativeScrollableRect const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrollOrigin const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::totalContentsSizeForRubberBand const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::setTotalContentsSizeForRubberBand): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::horizontalScrollElasticity const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::verticalScrollElasticity const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledHorizontalScrollbar const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::hasEnabledVerticalScrollbar const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::canHaveScrollbars const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::expectsWheelEventTestTrigger const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrollContainerLayer const): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::scrolledContentsLayer const): Deleted.
+        * page/scrolling/ios/ScrollingCoordinatorIOS.h: Removed.
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm: Removed.
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h: Removed.
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm: Removed.
+        * page/scrolling/ios/ScrollingTreeIOS.cpp: Removed.
+        * page/scrolling/ios/ScrollingTreeIOS.h: Removed.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+
 2019-02-23  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Buffer updates part 1: async mapping functions, unmap, and destroy

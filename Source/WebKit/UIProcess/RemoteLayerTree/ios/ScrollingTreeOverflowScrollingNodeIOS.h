@@ -53,8 +53,6 @@ private:
 
     void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
 
-    WebCore::ScrollingEventResult handleWheelEvent(const WebCore::PlatformWheelEvent&) override { return WebCore::ScrollingEventResult::DidNotHandleEvent; }
-
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 };
 

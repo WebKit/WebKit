@@ -126,7 +126,7 @@ public:
     bool isHandlingProgrammaticScroll();
     
     void setScrollPinningBehavior(ScrollPinningBehavior);
-    ScrollPinningBehavior scrollPinningBehavior();
+    WEBCORE_EXPORT ScrollPinningBehavior scrollPinningBehavior();
 
     WEBCORE_EXPORT bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 

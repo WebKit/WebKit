@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-#if !PLATFORM(COCOA) && !USE(COORDINATED_GRAPHICS)
+#if !PLATFORM(MAC) && !USE(COORDINATED_GRAPHICS)
 Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
     return adoptRef(*new ScrollingCoordinator(page));

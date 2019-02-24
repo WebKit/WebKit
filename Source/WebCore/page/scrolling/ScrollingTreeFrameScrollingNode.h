@@ -35,7 +35,7 @@ class PlatformWheelEvent;
 class ScrollingTree;
 class ScrollingStateScrollingNode;
 
-class ScrollingTreeFrameScrollingNode : public ScrollingTreeScrollingNode {
+class WEBCORE_EXPORT ScrollingTreeFrameScrollingNode : public ScrollingTreeScrollingNode {
 public:
     virtual ~ScrollingTreeFrameScrollingNode();
 
@@ -43,8 +43,6 @@ public:
     
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
     void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
-
-    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override = 0;
 
     void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
@@ -76,10 +74,10 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
 private:
-    WEBCORE_EXPORT LayoutPoint parentToLocalPoint(LayoutPoint) const final;
-    WEBCORE_EXPORT LayoutPoint localToContentsPoint(LayoutPoint) const final;
+    LayoutPoint parentToLocalPoint(LayoutPoint) const final;
+    LayoutPoint localToContentsPoint(LayoutPoint) const final;
 
-    WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;

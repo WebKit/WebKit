@@ -37,7 +37,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
-#include <WebCore/ScrollingTreeFrameScrollingNodeIOS.h>
 #else
 #include "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #endif

@@ -237,8 +237,7 @@ void ScrollingTreeFrameScrollingNodeMac::setScrollPosition(const FloatPoint& pos
     // FIXME: wrong if we're not the main frame.
     updateMainFramePinState(scrollPosition);
 
-    FloatPoint visibleContentOrigin = scrollPosition;
-    FloatRect newLayoutViewport = layoutViewportForScrollPosition(visibleContentOrigin, frameScaleFactor());
+    FloatRect newLayoutViewport = layoutViewportForScrollPosition(scrollPosition, frameScaleFactor());
     setLayoutViewport(newLayoutViewport);
     auto layoutViewportOrigin = newLayoutViewport.location();
 

@@ -122,6 +122,11 @@ void ScrollingTreeScrollingNode::updateLayersAfterAncestorChange(const Scrolling
         child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
 }
 
+ScrollingEventResult ScrollingTreeScrollingNode::handleWheelEvent(const PlatformWheelEvent&)
+{
+    return ScrollingEventResult::DidNotHandleEvent;
+}
+
 void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp)
 {
     FloatPoint newScrollPosition = scrollPosition;

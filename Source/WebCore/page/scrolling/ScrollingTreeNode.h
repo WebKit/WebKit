@@ -63,7 +63,7 @@ public:
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
     
-    bool isRootNode() const;
+    WEBCORE_EXPORT bool isRootNode() const;
 
     Vector<RefPtr<ScrollingTreeNode>>* children() { return m_children.get(); }
     const Vector<RefPtr<ScrollingTreeNode>>* children() const { return m_children.get(); }

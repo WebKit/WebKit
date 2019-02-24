@@ -149,10 +149,6 @@ page/scrolling/cocoa/ScrollingStateNode.mm
 page/scrolling/cocoa/ScrollingTreeFixedNode.mm
 page/scrolling/cocoa/ScrollingTreeStickyNode.mm
 
-page/scrolling/ios/ScrollingCoordinatorIOS.mm
-page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm
-page/scrolling/ios/ScrollingTreeIOS.cpp
-
 page/scrolling/mac/ScrollingCoordinatorMac.mm
 page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
 page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm

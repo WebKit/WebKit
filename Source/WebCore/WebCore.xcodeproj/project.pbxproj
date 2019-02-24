@@ -365,9 +365,6 @@
 		0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA24D78162DF91900A3F4C0 /* GraphicsLayerUpdater.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB6252F18DE1B1500A07C05 /* GeometryUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB6252D18DE1B1500A07C05 /* GeometryUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB8890F167D30160010CDA5 /* ScrollingStateStickyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FC4E40D187F82E10045882C /* ScrollingCoordinatorIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E407187F82E10045882C /* ScrollingCoordinatorIOS.h */; };
-		0FC4E410187F82E10045882C /* ScrollingTreeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E40A187F82E10045882C /* ScrollingTreeIOS.h */; };
-		0FC4E411187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4E40B187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF332B0F2B9A25004B6795 /* WebLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3080D117CF7E700A791F7 /* RenderFrameBase.h */; };
 		0FD308D6117D168500A791F7 /* RenderIFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD308D4117D168400A791F7 /* RenderIFrame.h */; };
@@ -5813,12 +5810,6 @@
 		0FB8890D167D30160010CDA5 /* ScrollingStateStickyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateStickyNode.h; sourceTree = "<group>"; };
 		0FC05168219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeMac.mm; sourceTree = "<group>"; };
 		0FC0516A219B5EBE0031C39E /* ScrollingTreeOverflowScrollingNodeMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollingNodeMac.h; sourceTree = "<group>"; };
-		0FC4E407187F82E10045882C /* ScrollingCoordinatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingCoordinatorIOS.h; sourceTree = "<group>"; };
-		0FC4E408187F82E10045882C /* ScrollingCoordinatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorIOS.mm; sourceTree = "<group>"; };
-		0FC4E409187F82E10045882C /* ScrollingTreeIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeIOS.cpp; sourceTree = "<group>"; };
-		0FC4E40A187F82E10045882C /* ScrollingTreeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeIOS.h; sourceTree = "<group>"; };
-		0FC4E40B187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeIOS.h; sourceTree = "<group>"; };
-		0FC4E40C187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeFrameScrollingNodeIOS.mm; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF332A0F2B9A25004B6795 /* WebLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebLayer.mm; sourceTree = "<group>"; };
 		0FCF332B0F2B9A25004B6795 /* WebLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLayer.h; sourceTree = "<group>"; };
@@ -16381,19 +16372,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		0FC4E406187F82D30045882C /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				0FC4E407187F82E10045882C /* ScrollingCoordinatorIOS.h */,
-				0FC4E408187F82E10045882C /* ScrollingCoordinatorIOS.mm */,
-				0FC4E40B187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h */,
-				0FC4E40C187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.mm */,
-				0FC4E409187F82E10045882C /* ScrollingTreeIOS.cpp */,
-				0FC4E40A187F82E10045882C /* ScrollingTreeIOS.h */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
 		0FE5FBC91C3DD5060007A2CA /* displaylists */ = {
 			isa = PBXGroup;
 			children = (
@@ -16944,7 +16922,6 @@
 			isa = PBXGroup;
 			children = (
 				93EF7D531954E98F00DFB71D /* cocoa */,
-				0FC4E406187F82D30045882C /* ios */,
 				1AF62EE214DA22A70041556C /* mac */,
 				0FFD4D5E18651FA300512F6E /* AsyncScrollingCoordinator.cpp */,
 				0FFD4D5F18651FA300512F6E /* AsyncScrollingCoordinator.h */,
@@ -31502,7 +31479,6 @@
 				1AA84F05143BA7BD0051D153 /* ScrollController.h in Headers */,
 				0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */,
 				1AF62EE814DA22A70041556C /* ScrollingCoordinator.h in Headers */,
-				0FC4E40D187F82E10045882C /* ScrollingCoordinatorIOS.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 				712DBA4921F8AD83008F36B2 /* ScrollingCoordinatorTypes.h in Headers */,
 				51C61B0B1DE536E7008A212D /* ScrollingMomentumCalculator.h in Headers */,
@@ -31520,9 +31496,7 @@
 				0F94B6472208FE3600157014 /* ScrollingTreeFixedNode.h in Headers */,
 				0FD41E6821F80C0E000C006D /* ScrollingTreeFrameHostingNode.h in Headers */,
 				0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */,
-				0FC4E411187F82E10045882C /* ScrollingTreeFrameScrollingNodeIOS.h in Headers */,
 				93C4A4151629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.h in Headers */,
-				0FC4E410187F82E10045882C /* ScrollingTreeIOS.h in Headers */,
 				0FE5806419327A6200DE32EB /* ScrollingTreeMac.h in Headers */,
 				1AAADDE414DC8C8F00AF64B3 /* ScrollingTreeNode.h in Headers */,
 				0FEA3E80191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h in Headers */,
