@@ -1,3 +1,15 @@
+2019-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Remove user agent quirk for washingtonpost.com
+        https://bugs.webkit.org/show_bug.cgi?id=194981
+
+        Reviewed by Žan Doberšek.
+
+        Remove user agent quirk for washingtonpost.com because we support JPEG 2000 now.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+
 2019-02-23  Simon Fraser  <simon.fraser@apple.com>
 
         Remove remnants of iOS WK1 scrolling tree code
