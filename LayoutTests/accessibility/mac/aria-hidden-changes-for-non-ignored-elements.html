@@ -25,7 +25,7 @@
     description("This tests that when aria-hidden is toggled, it will clear out the cached children for non-ignored elements that are descendants.");
 
     if (window.accessibilityController) {
-
+        jsTestIsAsync = true;
         document.getElementById("body").focus();
         var body = accessibilityController.focusedElement;
 
@@ -34,11 +34,16 @@
 
         // Toggle aria-hidden, and we should not be able to access the same elements anymore.
         document.getElementById("main").setAttribute("aria-hidden", "true");
-        shouldBe("body.childAtIndex(0).role", "'AXRole: AXCheckBox'");
+        setTimeout(function() {
+            shouldBe("body.childAtIndex(0).role", "'AXRole: AXCheckBox'");
 
-        // Toggle aria-hidden off again and we should again be able to access elements inside the tab panel.
-        document.getElementById("main").setAttribute("aria-hidden", "false");
-        shouldBe("body.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
+            // Toggle aria-hidden off again and we should again be able to access elements inside the tab panel.
+            document.getElementById("main").setAttribute("aria-hidden", "false");
+            setTimeout(function() {
+                shouldBe("body.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
+                finishJSTest();
+            }, 0);
+        }, 0);
 
     }
 
