@@ -325,7 +325,6 @@ static NSArray *dragAndDropEventNames()
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
 {
-    self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
     if (configuration)
         return [self initWithWebView:[[[TestWKWebView alloc] initWithFrame:frame configuration:configuration] autorelease]];
 
@@ -341,6 +340,7 @@ static NSArray *dragAndDropEventNames()
         _isDoneWaitingForInputSession = true;
         [_webView setUIDelegate:self];
         [_webView _setInputDelegate:self];
+        self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
     }
     return self;
 }
