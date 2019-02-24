@@ -1,3 +1,42 @@
+2019-02-20  Darin Adler  <darin@apple.com>
+
+        Finish removing String::format
+        https://bugs.webkit.org/show_bug.cgi?id=194893
+
+        Reviewed by Daniel Bates.
+
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified const): Use makeString and pad.
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString): Ditto.
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::convertToPercentageIfNeeded): Use makeString and FormattedNumber.
+
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw): Use makeString and pad.
+
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::cpuUsageString): Use makeString, FormattedNumber, and pad.
+        (WebCore::gcTimerString): Use String::number.
+
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::toStringForTime const): Use makeString and pad.
+        (WebCore::DateComponents::toString const): Ditto.
+
+        * platform/LocalizedStrings.cpp: Removed comment that mentioned String::format,
+        and that was also inaccurate.
+
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        Use makeString and pad.
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText): Ditto.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo): Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::formatMediaControlsTime const): Ditto.
+
 2019-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Remove user agent quirk for washingtonpost.com
