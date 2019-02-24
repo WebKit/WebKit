@@ -1,3 +1,13 @@
+2019-02-23  Robin Morisset  <rmorisset@apple.com>
+
+        Remove dead code: AdjacencyList::justOneChild()
+        https://bugs.webkit.org/show_bug.cgi?id=194965
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::justOneChild const): Deleted.
+
 2019-02-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wunused-param warning
