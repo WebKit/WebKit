@@ -1,5 +1,60 @@
 2019-02-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241963. rdar://problem/48350367
+
+    Regression(PSON) Unable to preview password-protected documents on iCloud.com
+    https://bugs.webkit.org/show_bug.cgi?id=194954
+    <rdar://problem/48127957>
+    
+    Reviewed by Alex Christensen.
+    
+    Source/WebKit:
+    
+    Make sure the ProvisionalPageProxy forwards to the WebPageProxy the QuickLook-related
+    IPC on iOS.
+    
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+    (WebKit::ProvisionalPageProxy::didReceiveMessage):
+    * UIProcess/ProvisionalPageProxy.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+    (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    (-[PSONNavigationDelegate _webViewDidRequestPasswordForQuickLookDocument:]):
+    (-[PSONNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]):
+    (-[PSONNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241963 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+            Regression(PSON) Unable to preview password-protected documents on iCloud.com
+            https://bugs.webkit.org/show_bug.cgi?id=194954
+            <rdar://problem/48127957>
+
+            Reviewed by Alex Christensen.
+
+            Make sure the ProvisionalPageProxy forwards to the WebPageProxy the QuickLook-related
+            IPC on iOS.
+
+            * UIProcess/ProvisionalPageProxy.cpp:
+            (WebKit::ProvisionalPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+            (WebKit::ProvisionalPageProxy::didReceiveMessage):
+            * UIProcess/ProvisionalPageProxy.h:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrame):
+            (WebKit::WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared):
+
+2019-02-24  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241950. rdar://problem/48317455
 
     REGRESSION(PSON) Scroll position is sometimes not restored on history navigation
