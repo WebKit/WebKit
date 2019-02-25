@@ -505,7 +505,7 @@ private:
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
     WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
-    void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&);
+    void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 
     void requestWebContentStatistics(StatisticsRequest&);
     void requestNetworkingStatistics(StatisticsRequest&);

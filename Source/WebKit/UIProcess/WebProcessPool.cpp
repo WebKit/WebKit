@@ -764,14 +764,8 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 {
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
     auto& process = processProxy.get();
-    initializeNewWebProcess(process, websiteDataStore);
+    initializeNewWebProcess(process, websiteDataStore, isPrewarmed);
     m_processes.append(WTFMove(processProxy));
-    if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
-        ASSERT(!m_prewarmedProcess);
-        m_prewarmedProcess = &process;
-        
-        m_prewarmedProcess->send(Messages::WebProcess::PrewarmGlobally(), 0);
-    }
 
     if (m_serviceWorkerProcessesTerminationTimer.isActive())
         m_serviceWorkerProcessesTerminationTimer.stop();
@@ -813,7 +807,7 @@ static void registerDisplayConfigurationCallback()
 }
 #endif
 
-void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
+void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore& websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
     auto initializationActivityToken = process.throttler().backgroundActivityToken();
     auto scopeExit = makeScopeExit([&process, initializationActivityToken] {
@@ -963,6 +957,12 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
 
     ASSERT(m_messagesToInjectedBundlePostedToEmptyContext.isEmpty());
+
+    if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
+        ASSERT(!m_prewarmedProcess);
+        m_prewarmedProcess = &process;
+        process.send(Messages::WebProcess::PrewarmGlobally(), 0);
+    }
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
