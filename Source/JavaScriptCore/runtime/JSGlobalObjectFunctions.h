@@ -55,6 +55,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(ExecState*);
 
 double jsToNumber(StringView);
 

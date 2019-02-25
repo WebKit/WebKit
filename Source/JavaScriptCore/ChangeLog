@@ -1,3 +1,57 @@
+2019-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Drop direct references to Intl constructors by rewriting Intl JS builtins in C++
+        https://bugs.webkit.org/show_bug.cgi?id=194976
+
+        Reviewed by Michael Saboff.
+
+        This patch paves the way to making IntlObject allocation lazy by removing direct references
+        to Intl constructors (Intl.Collator etc.) from builtin JS. To achieve that,
+
+        1. We implement String.prototype.toLocaleCompare and Number.prototype.toLocaleString in C++
+           instead of JS builtins. Since these functions end up calling ICU C++ runtime, writing them in
+           JS does not offer performance improvement.
+
+        2. We remove @DateTimeFormat constructor reference, and instead, exposing @dateTimeFormat function,
+           which returns formatted string directly. We still have JS builtins for DateTimeFormat things
+           because the initialization of its "options" JSObject involves many get_by_id / put_by_id things,
+           which are efficient in JS. But we avoid exposing @DateTimeFormat directly, so that Intl constructors
+           can be lazily allocated.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h:
+        * builtins/DatePrototype.js:
+        (toLocaleString):
+        (toLocaleDateString):
+        (toLocaleTimeString):
+        * builtins/NumberPrototype.js: Removed.
+        * builtins/StringPrototype.js:
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (globalPrivate.getDefaultCollator): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::defaultCollator):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncDateTimeFormat):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        (JSC::throwVMToThisNumberError):
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        (JSC::numberProtoFuncToLocaleString):
+        (JSC::numberProtoFuncValueOf):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::stringProtoFuncLocaleCompare):
+
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Change the InspectorOverlay to use native rather than canvas

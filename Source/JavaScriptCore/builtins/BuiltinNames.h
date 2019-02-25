@@ -126,13 +126,9 @@ namespace JSC {
     macro(asyncGeneratorQueueItemNext) \
     macro(asyncGeneratorQueueItemPrevious) \
     macro(generatorResumeMode) \
-    macro(Collator) \
-    macro(DateTimeFormat) \
-    macro(NumberFormat) \
-    macro(PluralRules) \
+    macro(dateTimeFormat) \
     macro(intlSubstituteValue) \
     macro(thisTimeValue) \
-    macro(thisNumberValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
     macro(isTypedArrayView) \

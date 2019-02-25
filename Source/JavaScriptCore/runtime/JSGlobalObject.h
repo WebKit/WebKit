@@ -83,6 +83,7 @@ class GlobalCodeBlock;
 class IndirectEvalExecutable;
 class InputCursor;
 class IntlObject;
+class IntlCollator;
 class JSArrayBuffer;
 class JSArrayBufferPrototype;
 class JSCallee;
@@ -276,6 +277,7 @@ public:
 
 #if ENABLE(INTL)
     WriteBarrier<IntlObject> m_intlObject;
+    WriteBarrier<IntlCollator> m_defaultCollator;
 #endif
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -587,6 +589,7 @@ public:
 
 #if ENABLE(INTL)
     IntlObject* intlObject() const { return m_intlObject.get(); }
+    IntlCollator* defaultCollator(ExecState*);
 #endif
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }

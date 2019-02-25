@@ -237,47 +237,6 @@ function replace(search, replace)
     let searchString = @toString(search);
     return thisString.@replaceUsingStringSearch(searchString, replace);
 }
-    
-@globalPrivate
-function getDefaultCollator()
-{
-    "use strict";
-
-    return @getDefaultCollator.collator || (@getDefaultCollator.collator = new @Collator());
-}
-    
-function localeCompare(that/*, locales, options */)
-{
-    "use strict";
-
-    // 13.1.1 String.prototype.localeCompare (that [, locales [, options ]]) (ECMA-402 2.0)
-    // http://ecma-international.org/publications/standards/Ecma-402.htm
-
-    // 1. Let O be RequireObjectCoercible(this value).
-    if (@isUndefinedOrNull(this))
-        @throwTypeError("String.prototype.localeCompare requires that |this| not be null or undefined");
-
-    // 2. Let S be ToString(O).
-    // 3. ReturnIfAbrupt(S).
-    var thisString = @toString(this);
-
-    // 4. Let That be ToString(that).
-    // 5. ReturnIfAbrupt(That).
-    var thatString = @toString(that);
-
-    // Avoid creating a new collator every time for defaults.
-    var locales = @argument(1);
-    var options = @argument(2);
-    if (locales === @undefined && options === @undefined)
-        return @getDefaultCollator().compare(thisString, thatString);
-
-    // 6. Let collator be Construct(%Collator%, «locales, options»).
-    // 7. ReturnIfAbrupt(collator).
-    var collator = new @Collator(locales, options);
-
-    // 8. Return CompareStrings(collator, S, That).
-    return collator.compare(thisString, thatString);
-}
 
 function search(regexp)
 {

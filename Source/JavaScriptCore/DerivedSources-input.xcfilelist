@@ -43,7 +43,6 @@ $(PROJECT_DIR)/builtins/MapIteratorPrototype.js
 $(PROJECT_DIR)/builtins/MapPrototype.js
 $(PROJECT_DIR)/builtins/ModuleLoader.js
 $(PROJECT_DIR)/builtins/NumberConstructor.js
-$(PROJECT_DIR)/builtins/NumberPrototype.js
 $(PROJECT_DIR)/builtins/ObjectConstructor.js
 $(PROJECT_DIR)/builtins/PromiseConstructor.js
 $(PROJECT_DIR)/builtins/PromiseOperations.js

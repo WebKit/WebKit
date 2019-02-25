@@ -2031,8 +2031,8 @@
 			dstPath = testapiScripts;
 			dstSubfolderSpec = 16;
 			files = (
-				52D13091221CE176009C836C /* foo.js in Copy Support Script */,
 				53C3D5E521ECE7720087FDFC /* basic.js in Copy Support Script */,
+				52D13091221CE176009C836C /* foo.js in Copy Support Script */,
 				FECB8B2A1D25CB5A006F2463 /* testapi-function-overrides.js in Copy Support Script */,
 				5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */,
 			);
@@ -4065,7 +4065,6 @@
 		A1587D6C1B4DC14100D69849 /* IntlDateTimeFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatPrototype.h; sourceTree = "<group>"; };
 		A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatConstructor.lut.h; sourceTree = "<group>"; };
 		A1587D741B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatPrototype.lut.h; sourceTree = "<group>"; };
-		A15DE5C51C0FBF8D0089133D /* NumberPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = NumberPrototype.js; sourceTree = "<group>"; };
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
@@ -8192,7 +8191,6 @@
 				7035587C1C418419004BD7BF /* MapPrototype.js */,
 				E30677971B8BC6F5003F87F0 /* ModuleLoader.js */,
 				A52704861D027C8800354C37 /* NumberConstructor.js */,
-				A15DE5C51C0FBF8D0089133D /* NumberPrototype.js */,
 				7CF9BC5C1B65D9B1009DB1EF /* ObjectConstructor.js */,
 				7CF9BC5E1B65D9B1009DB1EF /* PromiseConstructor.js */,
 				7CF9BC5D1B65D9B1009DB1EF /* PromiseOperations.js */,
@@ -9259,6 +9257,7 @@
 				5B70CFDE1DB69E6600EC23F9 /* JSAsyncFunction.h in Headers */,
 				8BC064891E1ABA6400B2B8CA /* JSAsyncGeneratorFunction.h in Headers */,
 				BC18C4180E16F5CD00B34460 /* JSBase.h in Headers */,
+				79872C48221BBAF3008C6969 /* JSBaseInternal.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
 				868921C21F9C0CB7001159F6 /* JSBigInt.h in Headers */,
 				86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */,
@@ -9765,7 +9764,6 @@
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
-				79872C48221BBAF3008C6969 /* JSBaseInternal.h in Headers */,
 				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
 				A7A8AF4217ADB5F3005AB174 /* Uint32Array.h in Headers */,
