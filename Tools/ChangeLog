@@ -1,3 +1,20 @@
+2019-02-25  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Add support for flatpak > 1.1.2
+        https://bugs.webkit.org/show_bug.cgi?id=194088
+
+        Flatpak 1.2 is now out so we need to support that
+        version now.
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (check_flatpak):
+        (FlatpakPackages.__init__):
+        (FlatpakPackages.__detect_packages):
+        (FlatpakPackages.__detect_packages.in):
+        (FlatpakRepos.update):
+
 2019-02-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Bump WPEBackend-fdo Jhbuild package to latest changes

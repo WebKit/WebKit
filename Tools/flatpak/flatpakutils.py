@@ -52,6 +52,8 @@ FLATPAK_REQ = [
     ("flatpak-builder", "0.10.0"),
 ]
 
+FLATPAK_VERSION = {}
+
 WPE_MANIFEST_MAP = {
     "qt": "org.webkit.WPEQT.yaml",
 }
@@ -110,7 +112,9 @@ def check_flatpak(verbose=True):
             return tuple(map(int, (version.split("."))))
 
         version = output.decode("utf-8").split(" ")[1].strip("\n")
-        if comparable_version(version) < comparable_version(required_version):
+        current = comparable_version(version)
+        FLATPAK_VERSION[app] = current
+        if current < comparable_version(required_version):
             Console.message("\n%s%s %s required but %s found."
                             " Please update and try again%s\n", Colors.FAIL,
                             app, required_version, version, Colors.ENDC)
@@ -260,22 +264,34 @@ class FlatpakPackages(FlatpakObject):
         self.apps = self.__detect_apps()
         self.packages = self.runtimes + self.apps
 
+
     def __detect_packages(self, *args):
         packs = []
-        package_defs = [rd
-                        for rd in self.flatpak("list", "-d", "--all", *args).split("\n")
-                        if rd]
-        for package_def in package_defs:
-            splited_packaged_def = package_def.split()
-            name, arch, branch = splited_packaged_def[0].split("/")
+        if FLATPAK_VERSION["flatpak"] < (1, 1, 2):
+            out = self.flatpak("list", "-d", *args)
+            package_defs = [line for line in out.split("\n") if line]
+            for package_def in package_defs:
+                splited_packaged_def = package_def.split()
+                name, arch, branch = splited_packaged_def[0].split("/")
 
-            # If installed from a file, the package is in no repo
-            repo_name = splited_packaged_def[1]
-            repo = self.repos.repos.get(repo_name)
+                # If installed from a file, the package is in no repo
+                repo_name = splited_packaged_def[1]
+                repo = self.repos.repos.get(repo_name)
 
-            packs.append(FlatpakPackage(name, branch, repo, arch))
+                packs.append(FlatpakPackage(name, branch, repo, arch))
+        else:
+            out = self.flatpak("list", "--columns=application,arch,branch,origin", *args)
+            package_defs = [line for line in out.split("\n") if line]
+            for package_def in package_defs:
+                name, arch, branch, origin = package_def.split("\t")
+
+                # If installed from a file, the package is in no repo
+                repo = self.repos.repos.get(origin)
+
+                packs.append(FlatpakPackage(name, branch, repo, arch))
 
         return packs
+
 
     def __detect_runtimes(self):
         return self.__detect_packages("--runtime")
@@ -297,36 +313,47 @@ class FlatpakRepos(FlatpakObject):
 
     def update(self):
         self.repos = {}
-        remotes = [row
-                   for row in self.flatpak("remote-list", "-d").split("\n")
-                   if row]
-        for repo in remotes:
-            for components in [repo.split(" "), repo.split("\t")]:
-                if len(components) == 1:
-                    components = repo.split("\t")
-                name = components[0]
-                desc = ""
-                url = None
-                for elem in components[1:]:
-                    if not elem:
-                        continue
-                    parsed_url = urlparse(elem)
-                    if parsed_url.scheme:
-                        url = elem
+        if FLATPAK_VERSION["flatpak"] < (1, 1, 2):
+            out = self.flatpak("remote-list", "-d")
+            remotes = [line for line in out.split("\n") if line]
+            for repo in remotes:
+                for components in [repo.split(" "), repo.split("\t")]:
+                    if len(components) == 1:
+                        components = repo.split("\t")
+                    name = components[0]
+                    desc = ""
+                    url = None
+                    for elem in components[1:]:
+                        if not elem:
+                            continue
+                        parsed_url = urlparse(elem)
+                        if parsed_url.scheme:
+                            url = elem
+                            break
+
+                        if desc:
+                            desc += " "
+                        desc += elem
+
+                    if url:
                         break
 
-                    if desc:
-                        desc += " "
-                    desc += elem
+                if not url:
+                    Console.message("No valid URI found for: %s", repo)
+                    continue
 
-                if url:
-                    break
+                self.repos[name] = FlatpakRepo(name, url, desc, repos=self)
+        else:
+            out = self.flatpak("remote-list", "--columns=name,title,url")
+            remotes = [line for line in out.split("\n") if line]
+            for remote in remotes:
+                name, title, url = remote.split("\t")
+                parsed_url = urlparse(url)
+                if not parsed_url.scheme:
+                    Console.message("No valid URI found for: %s", remote)
+                    continue
 
-            if not url:
-                Console.message("No valid URI found for: %s", repo)
-                continue
-
-            self.repos[name] = FlatpakRepo(name, url, desc, repos=self)
+                self.repos[name] = FlatpakRepo(name, url, title, repos=self)
 
         self.packages = FlatpakPackages(self)
 
