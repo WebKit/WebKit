@@ -1,3 +1,22 @@
+2019-02-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Clean up handling of WEBKIT_FORCE_COMPLEX_TEXT
+        https://bugs.webkit.org/show_bug.cgi?id=194614
+
+        Reviewed by Carlos Garcia Campos.
+
+        This environment variable is now enabled for WPE, not just for GTK.
+
+        It is now possible to use this environment variable to enable complex text, not just to
+        disable it.
+
+        WebProcessPool::setAlwaysUsesComplexTextCodePath is fixed to be respected even when this
+        environment variable is set, although WPE and GTK will never do so.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitialize):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2019-02-24  Zalan Bujtas  <zalan@apple.com>
 
         Introduce ContentChangeObserver class
