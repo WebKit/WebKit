@@ -28,13 +28,23 @@
 
 #include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
+#include "RemoteLayerTreeContext.h"
 #include <WebCore/PlatformScreen.h>
 
 namespace WebKit {
 using namespace WebCore;
 
+GraphicsLayerCARemote::GraphicsLayerCARemote(Type layerType, GraphicsLayerClient& client, RemoteLayerTreeContext& context)
+    : GraphicsLayerCA(layerType, client)
+    , m_context(&context)
+{
+    context.graphicsLayerDidEnterContext(*this);
+}
+
 GraphicsLayerCARemote::~GraphicsLayerCARemote()
 {
+    if (m_context)
+        m_context->graphicsLayerWillLeaveContext(*this);
 }
 
 bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filters)
@@ -44,7 +54,7 @@ bool GraphicsLayerCARemote::filtersCanBeComposited(const FilterOperations& filte
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
-    auto result = PlatformCALayerRemote::create(layerType, owner, m_context);
+    auto result = PlatformCALayerRemote::create(layerType, owner, *m_context);
 
     if (result->canHaveBackingStore())
         result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
@@ -54,17 +64,27 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALaye
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
-    return PlatformCALayerRemote::create(platformLayer, owner, m_context);
+    return PlatformCALayerRemote::create(platformLayer, owner, *m_context);
 }
 
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerForEmbeddedView(PlatformCALayer::LayerType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID, PlatformCALayerClient* owner)
 {
-    return PlatformCALayerRemote::createForEmbeddedView(layerType, embeddedViewID, owner, m_context);
+    return PlatformCALayerRemote::createForEmbeddedView(layerType, embeddedViewID, owner, *m_context);
 }
 
 Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
     return PlatformCAAnimationRemote::create(type, keyPath);
+}
+
+void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)
+{
+    if (m_context)
+        m_context->graphicsLayerWillLeaveContext(*this);
+
+    m_context = &context;
+
+    context.graphicsLayerDidEnterContext(*this);
 }
 
 } // namespace WebKit

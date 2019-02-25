@@ -195,6 +195,7 @@ public:
 
     void didCommit();
 
+    void moveToContext(RemoteLayerTreeContext&);
     void clearContext() { m_context = nullptr; }
     RemoteLayerTreeContext* context() const { return m_context; }
 

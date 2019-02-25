@@ -119,6 +119,7 @@ public:
         void notePropertiesChanged(OptionSet<LayerChange> changeFlags)
         {
             changedProperties.add(changeFlags);
+            everChangedProperties.add(changeFlags);
         }
 
         void resetChangedProperties()
@@ -127,6 +128,7 @@ public:
         }
 
         OptionSet<LayerChange> changedProperties;
+        OptionSet<LayerChange> everChangedProperties;
 
         String name;
         std::unique_ptr<WebCore::TransformationMatrix> transform;

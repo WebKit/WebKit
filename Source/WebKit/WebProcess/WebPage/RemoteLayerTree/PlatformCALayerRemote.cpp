@@ -51,7 +51,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(LayerType layerType, Pl
     else
         layer = adoptRef(new PlatformCALayerRemote(layerType, owner, context));
 
-    context.layerWasCreated(*layer, layerType);
+    context.layerDidEnterContext(*layer, layerType);
 
     return layer.releaseNonNull();
 }
@@ -64,7 +64,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(PlatformLayer *platform
 Ref<PlatformCALayerRemote> PlatformCALayerRemote::createForEmbeddedView(LayerType layerType, GraphicsLayer::EmbeddedViewID embeddedViewID, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     RefPtr<PlatformCALayerRemote> layer = adoptRef(new PlatformCALayerRemote(layerType, embeddedViewID, owner, context));
-    context.layerWasCreated(*layer, layerType);
+    context.layerDidEnterContext(*layer, layerType);
     return layer.releaseNonNull();
 }
 
@@ -72,7 +72,7 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemote::create(const PlatformCALayerRe
 {
     auto layer = adoptRef(*new PlatformCALayerRemote(other, owner, context));
 
-    context.layerWasCreated(layer.get(), other.layerType());
+    context.layerDidEnterContext(layer.get(), other.layerType());
 
     return layer;
 }
@@ -116,7 +116,19 @@ PlatformCALayerRemote::~PlatformCALayerRemote()
         downcast<PlatformCALayerRemote>(*layer).m_superlayer = nullptr;
 
     if (m_context)
-        m_context->layerWillBeDestroyed(*this);
+        m_context->layerWillLeaveContext(*this);
+}
+
+void PlatformCALayerRemote::moveToContext(RemoteLayerTreeContext& context)
+{
+    if (m_context)
+        m_context->layerWillLeaveContext(*this);
+
+    m_context = &context;
+
+    context.layerDidEnterContext(*this, layerType());
+
+    m_properties.notePropertiesChanged(m_properties.everChangedProperties);
 }
 
 void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents) const
