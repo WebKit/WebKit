@@ -1,3 +1,30 @@
+2019-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: IDBDatabase and IDBTransaction are leaked in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=194709
+
+        Reviewed by Geoffrey Garen.
+
+        When connection to IDB server is closed, IDBTransaction would abort without notifying IDBDatabase, so 
+        IDBDatabase didn't clear its reference to IDBTransaction which created a reference cycle. 
+ 
+        Also IDBTransaction didn't clear its reference to IDBRequest in this case and it led to another reference cycle
+        between IDBOpenDBRequest and IDBTransaction.
+
+        Test: storage/indexeddb/IDBObject-leak.html
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::connectionToServerLost):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::~IDBTransaction):
+        (WebCore::IDBTransaction::connectionClosedFromServer):
+        * Modules/indexeddb/IDBTransaction.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfIDBTransactions const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-02-25  Zalan Bujtas  <zalan@apple.com>
 
         Add missing stream parameter. Unreviewed.

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="resources/shared.js"></script>
+<script>
+description('This test verifies that IDBTransaction objects are freed.');
+
+jsTestIsAsync = true;
+
+function test() {
+    if (!window.internals || !internals.numberOfIDBTransactions) {
+        testFailed('This test requires access to the Internals object');
+        finishJSTest();
+        return;
+    }
+
+    if (sessionStorage.doneFirstLoad) {
+        gc();
+        shouldBeEqualToNumber("internals.numberOfIDBTransactions()", 0);
+        finishJSTest();
+        return;
+    }
+
+    var dbname = setDBNameFromPath() + Date();
+    var request =  window.indexedDB.open(dbname);
+    request.onupgradeneeded = function(evt) {
+        sessionStorage.doneFirstLoad = true;
+        if (!window.testRunner || !testRunner.terminateNetworkProcess) {
+            testFailed('This test requires access to the TestRunner object and terminateNetworkProcess() function');
+            finishJSTest();
+            return;
+        } 
+        testRunner.terminateNetworkProcess();
+        setTimeout((()=> {
+            location.reload();
+        }), 0);
+    }
+}
+
+test();
+</script>
