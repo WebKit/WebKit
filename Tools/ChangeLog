@@ -1,5 +1,62 @@
 2019-02-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241928. rdar://problem/48317429
+
+    Discard cached processes when clearing website data store
+    https://bugs.webkit.org/show_bug.cgi?id=194894
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    Clear the process cache when clearing the website data store so that there is no way to infer
+    which site the user had visited by observing for which sites WebContent processes had been cached.
+    
+    There is one sublty in WebsiteDataStore::removeData that we have to delay the clearing of
+    the web process cache until the next run loop because SuspendedPageProxy::~SuspendedPageProxy
+    invokes WebProcessProxy::maybeShutDown in the next run loop. We also have to disable the process
+    cache during this time as it would otherwise trigger the responsiveness check of WebContent process
+    can take arbitrarily long time.
+    
+    * UIProcess/API/Cocoa/WKProcessPool.mm:
+    (-[WKProcessPool _processCacheCapacity]): Added for testing.
+    * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+    * UIProcess/WebProcessCache.cpp:
+    (WebKit::WebProcessCache::addProcess): Avoid adding web processes to the cache while the suspended
+    pages are being cleared.
+    * UIProcess/WebProcessCache.h:
+    (WebKit::WebProcessCache::disabled const): Added.
+    (WebKit::WebProcessCache::setDisabled): Added.
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::handleMemoryPressureWarning):
+    (WebKit::WebProcessPool::clearSuspendedPages): Added.
+    * UIProcess/WebProcessPool.h:
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::removeData):
+    
+    Tools:
+    
+    Added a test case.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    (TestWebKitAPI.ProcessSwap.NumberOfCachedProcesses): Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241928 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Discard cached processes when clearing website data store
+            https://bugs.webkit.org/show_bug.cgi?id=194894
+
+            Reviewed by Chris Dumez.
+
+            Added a test case.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+            (TestWebKitAPI.ProcessSwap.NumberOfCachedProcesses): Added.
+
+2019-02-24  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241899. rdar://problem/48317463
 
     Crash under RemoteLayerTreePropertyApplier::applyProperties when reattaching to old process

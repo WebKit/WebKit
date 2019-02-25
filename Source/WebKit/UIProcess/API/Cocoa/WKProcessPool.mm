@@ -519,6 +519,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->maxSuspendedPageCount();
 }
 
+- (NSUInteger)_processCacheCapacity
+{
+    return _processPool->webProcessCache().capacity();
+}
+
 - (size_t)_serviceWorkerProcessCount
 {
 #if ENABLE(SERVICE_WORKER)
