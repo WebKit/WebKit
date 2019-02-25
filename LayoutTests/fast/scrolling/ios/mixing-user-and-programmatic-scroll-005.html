@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mixing user and programmatic scroll of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      function getFrameData(id)
+      {
+          var result = {};
+          var f = document.getElementById(id);
+          result.w = f.contentWindow.window;
+          var frameBox = f.getBoundingClientRect();
+          result.x = frameBox.left + frameBox.width / 2;
+          result.y = frameBox.top + frameBox.height / 2;
+          return result;
+      }
+
+      function waitPromise(delay)
+      {
+          return new Promise((resolve) => { setTimeout(resolve, delay); });
+      }
+
+      async function runTest() {
+          if (!window.testRunner || !testRunner.runUIScript)
+              return;
+
+          // This verifies mixing several user/programmatic scrolls in various directions.
+          d = getFrameData("programmaticYAndUserXAndProgrammaticXAndUserY");
+          await touchAndDragFromPointToPoint(d.x, d.y, d.x, d.y - 100);
+          await liftUpAtPoint(d.x, d.y - 100);
+          await waitPromise(1000); // Wait for scrolling to stabilize.
+          d.w.scrollBy(150, 0);
+          await touchAndDragFromPointToPoint(d.x, d.y, d.x - 100, d.y);
+          await liftUpAtPoint(d.x - 100, d.y);
+          await waitPromise(1000); // Wait for scrolling to stabilize.
+          d.w.scrollBy(0, 150);
+
+          testRunner.notifyDone();
+       }
+    </script>
+    <style>
+        iframe {
+            position: absolute;
+            background: linear-gradient(135deg, red, orange);
+            border: 0;
+            height: 100px;
+            width: 100px;
+            overflow: none;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green rectangle.</p>
+    <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
+        <iframe id="programmaticYAndUserXAndProgrammaticXAndUserY" style="left: 0px; top: 0px;" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 300px; height: 300px'>
+                <div style='left: 200px; top: 200px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+            </body>" onload="runTest()">
+        </iframe>
+    </div>
+</body>
+</html>

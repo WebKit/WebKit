@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mixing user and programmatic scroll of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      function getFrameData(id)
+      {
+          var result = {};
+          var f = document.getElementById(id);
+          result.w = f.contentWindow.window;
+          var frameBox = f.getBoundingClientRect();
+          result.x = frameBox.left + frameBox.width / 2;
+          result.y = frameBox.top + frameBox.height / 2;
+          return result;
+      }
+
+      function waitPromise(delay)
+      {
+          return new Promise((resolve) => { setTimeout(resolve, delay); });
+      }
+
+      async function runTest() {
+          if (!window.testRunner || !testRunner.runUIScript)
+              return;
+
+          // This verifies hit testing after user and programmatic scroll.
+          d = getFrameData("programmaticYAndUserXAndHitTesting");
+          d.w.scrollBy(0, 100);
+          await touchAndDragFromPointToPoint(d.x, d.y, d.x - 150, d.y);
+          await liftUpAtPoint(d.x - 150, d.y);
+          await waitPromise(1500); // Wait for scrolling to stabilize and for scrollbar to disappear.
+          await tapAtPoint(d.x, d.y);
+
+          testRunner.notifyDone();
+       }
+    </script>
+    <style>
+        iframe {
+            position: absolute;
+            background: linear-gradient(135deg, red, orange);
+            border: 0;
+            height: 100px;
+            width: 100px;
+            overflow: none;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green rectangle.</p>
+    <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
+        <iframe id="programmaticYAndUserXAndHitTesting" style="left: 0px; top: 0px;" scrolling="yes" srcdoc="
+            <body style='margin: 0; width: 200px; height: 200px'>
+                <div style='left: 100px; top: 100px; position: absolute; width: 100px; height: 100px; background: red;' onclick='this.style.background=&quot;green&quot;'></div>
+            </body>" onload="runTest()">
+        </iframe>
+    </div>
+</body>
+</html>

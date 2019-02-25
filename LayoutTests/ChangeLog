@@ -1,3 +1,27 @@
+2019-02-25  Frederic Wang  <fwang@igalia.com>
+
+        Add tests mixing programmatic and user frame scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=194900
+
+        This patch adds tests initially written for bug 182868 but eventually
+        fixed by bug 194886. They involve mixing user and programmatic
+        scrolling.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-001-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-001.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-002-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-002.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-003-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-003.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-004-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-004.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-005-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-005.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-006-expected.html: Added.
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-006.html: Added.
+
 2019-02-25  Truitt Savell  <tsavell@apple.com>
 
         fast/mediastream/MediaStream-video-element.html is flaky after r241821, marking as failure while waiting for fix.
