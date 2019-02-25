@@ -84,6 +84,10 @@
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #endif
 
+#if USE(EXTERNAL_HOLEPUNCH)
+#include "MediaPlayerPrivateHolePunch.h"
+#endif
+
 namespace WebCore {
 
 #if !RELEASE_LOG_DISABLED
@@ -253,6 +257,10 @@ static void buildMediaEnginesVector()
 #if USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
     if (DeprecatedGlobalSettings::isGStreamerEnabled())
         MediaPlayerPrivateGStreamerMSE::registerMediaEngine(addMediaEngine);
+#endif
+
+#if USE(EXTERNAL_HOLEPUNCH)
+    MediaPlayerPrivateHolePunch::registerMediaEngine(addMediaEngine);
 #endif
 
     haveMediaEnginesVector() = true;

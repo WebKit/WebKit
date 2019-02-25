@@ -5,6 +5,10 @@ include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
+if (USE_EXTERNAL_HOLEPUNCH)
+    include(platform/HolePunch.cmake)
+endif ()
+
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesWPE.txt"
 

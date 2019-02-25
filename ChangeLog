@@ -1,3 +1,17 @@
+2019-02-25  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Add support for holepunch using an external video player
+        https://bugs.webkit.org/show_bug.cgi?id=194899
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add EXTERNAL_HOLEPUNCH option to the WPE port. Add a manual test to check the
+        feature. Rename and update the test for GStreamer holepunch to avoid confusion.
+
+        * ManualTests/wpe/video-player-holepunch-external.html: Added.
+        * ManualTests/wpe/video-player-holepunch-gstreamer.html: Renamed from ManualTests/wpe/video-player-holepunch.html.
+        * Source/cmake/OptionsWPE.cmake:
+
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Change the InspectorOverlay to use native rather than canvas

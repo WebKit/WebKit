@@ -1,3 +1,38 @@
+2019-02-25  Miguel Gomez  <magomez@igalia.com>
+
+        [WPE] Add support for holepunch using an external video player
+        https://bugs.webkit.org/show_bug.cgi?id=194899
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the holepunch feature to allow playback using an external player. This creates
+        a new dummy MediaPlayerPrivateHolePunch that accepts only the type "video/holepunch", and
+        whose goal is to just draw a transparent rectangle in the position where the video should be.
+        This can be used to allow a player placed on a lower plane than the browser to become visible.
+
+        Added ManualTest wpe/video-player-holepunch-external.html to test the feature.
+
+        * PlatformWPE.cmake:
+        * platform/HolePunch.cmake: Added.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.cpp: Added.
+        (WebCore::MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch):
+        (WebCore::MediaPlayerPrivateHolePunch::~MediaPlayerPrivateHolePunch):
+        (WebCore::MediaPlayerPrivateHolePunch::platformLayer const):
+        (WebCore::MediaPlayerPrivateHolePunch::naturalSize const):
+        (WebCore::MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer):
+        (WebCore::MediaPlayerPrivateHolePunch::swapBuffersIfNeeded):
+        (WebCore::MediaPlayerPrivateHolePunch::proxy const):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateHolePunch::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateHolePunch::supportsType):
+        (WebCore::MediaPlayerPrivateHolePunch::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateHolePunch::notifyReadyState):
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h: Added.
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        (WebCore::TextureMapperPlatformLayerBuffer::paintToTextureMapper):
+
 2019-02-24  Zalan Bujtas  <zalan@apple.com>
 
         Introduce ContentChangeObserver class
