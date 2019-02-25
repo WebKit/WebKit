@@ -109,6 +109,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._processingSelectionChange = false;
         this._suppressNextSelectionDidChangeEvent = false;
 
+        this._virtualizedDebouncer = null;
         this._virtualizedVisibleTreeElements = null;
         this._virtualizedAttachedTreeElements = null;
         this._virtualizedScrollContainer = null;
@@ -725,6 +726,11 @@ WI.TreeOutline = class TreeOutline extends WI.Object
     {
         console.assert(!isNaN(treeItemHeight));
 
+        let boundUpdateVirtualizedElements = (focusedTreeElement) => {
+            this._updateVirtualizedElements(focusedTreeElement);
+        };
+
+        this._virtualizedDebouncer = new Debouncer(boundUpdateVirtualizedElements);
         this._virtualizedVisibleTreeElements = new Set;
         this._virtualizedAttachedTreeElements = new Set;
         this._virtualizedScrollContainer = scrollContainer;
@@ -732,104 +738,15 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedTopSpacer = document.createElement("div");
         this._virtualizedBottomSpacer = document.createElement("div");
 
-        let throttler = this.throttle(1000 / 16);
+        let throttler = new Throttler(boundUpdateVirtualizedElements, 1000 / 16);
         this._virtualizedScrollContainer.addEventListener("scroll", (event) => {
-            throttler.updateVirtualizedElements();
+            throttler.fire();
         });
     }
 
-    updateVirtualizedElements(focusedTreeElement)
+    get updateVirtualizedElementsDebouncer()
     {
-        if (!this.virtualized)
-            return;
-
-        function walk(parent, callback, count = 0) {
-            let shouldReturn = false;
-            for (let child of parent.children) {
-                if (!child.revealed(false))
-                    continue;
-
-                shouldReturn = callback(child, count);
-                if (shouldReturn)
-                    break;
-
-                ++count;
-                if (child.expanded) {
-                    let result = walk(child, callback, count);
-                    count = result.count;
-                    if (result.shouldReturn)
-                        break;
-                }
-            }
-            return {count, shouldReturn};
-        }
-
-        let {numberVisible, extraRows, firstItem, lastItem} = this._calculateVirtualizedValues();
-
-        let shouldScroll = false;
-        if (focusedTreeElement && focusedTreeElement.revealed(false)) {
-            let index = walk(this, (treeElement) => treeElement === focusedTreeElement).count;
-            if (index < firstItem) {
-                firstItem = index - extraRows;
-                lastItem = index + numberVisible + extraRows;
-            } else if (index > lastItem) {
-                firstItem = index - numberVisible - extraRows;
-                lastItem = index + extraRows;
-            }
-
-            // Only scroll if the `focusedTreeElement` is outside the visible items, not including
-            // the added buffer `extraRows`.
-            shouldScroll = (index < firstItem + extraRows) || (index > lastItem - extraRows);
-        }
-
-        console.assert(firstItem < lastItem);
-
-        let visibleTreeElements = new Set;
-        let treeElementsToAttach = new Set;
-        let treeElementsToDetach = new Set;
-        let totalItems = walk(this, (treeElement, count) => {
-            if (count >= firstItem && count <= lastItem) {
-                treeElementsToAttach.add(treeElement);
-                if (count >= firstItem + extraRows && count <= lastItem - extraRows)
-                    visibleTreeElements.add(treeElement);
-            } else if (treeElement.element.parentNode)
-                treeElementsToDetach.add(treeElement);
-
-            return false;
-        }).count;
-
-        // Redraw if we are about to scroll.
-        if (!shouldScroll) {
-            // Redraw if all of the previously centered `WI.TreeElement` are no longer centered.
-            if (visibleTreeElements.intersects(this._virtualizedVisibleTreeElements)) {
-                // Redraw if there is a `WI.TreeElement` that should be shown that isn't attached.
-                if (visibleTreeElements.isSubsetOf(this._virtualizedAttachedTreeElements))
-                    return;
-            }
-        }
-
-        this._virtualizedVisibleTreeElements = visibleTreeElements;
-        this._virtualizedAttachedTreeElements = treeElementsToAttach;
-
-        for (let treeElement of treeElementsToDetach)
-            treeElement.element.remove();
-
-        for (let treeElement of treeElementsToAttach) {
-            treeElement.parent._childrenListNode.appendChild(treeElement.element);
-            if (treeElement._childrenListNode)
-                treeElement.parent._childrenListNode.appendChild(treeElement._childrenListNode);
-        }
-
-        this._virtualizedTopSpacer.style.height = (Math.max(firstItem, 0) * this._virtualizedTreeItemHeight) + "px";
-        if (this.element.previousElementSibling !== this._virtualizedTopSpacer)
-            this.element.parentNode.insertBefore(this._virtualizedTopSpacer, this.element);
-
-        this._virtualizedBottomSpacer.style.height = (Math.max(totalItems - lastItem, 0) * this._virtualizedTreeItemHeight) + "px";
-        if (this.element.nextElementSibling !== this._virtualizedBottomSpacer)
-            this.element.parentNode.insertBefore(this._virtualizedBottomSpacer, this.element.nextElementSibling);
-
-        if (shouldScroll)
-            this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
+        return this._virtualizedDebouncer;
     }
 
     // SelectionController delegate
@@ -1054,6 +971,99 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             firstItem,
             lastItem,
         };
+    }
+
+    _updateVirtualizedElements(focusedTreeElement)
+    {
+        console.assert(this.virtualized);
+
+        function walk(parent, callback, count = 0) {
+            let shouldReturn = false;
+            for (let child of parent.children) {
+                if (!child.revealed(false))
+                    continue;
+
+                shouldReturn = callback(child, count);
+                if (shouldReturn)
+                    break;
+
+                ++count;
+                if (child.expanded) {
+                    let result = walk(child, callback, count);
+                    count = result.count;
+                    if (result.shouldReturn)
+                        break;
+                }
+            }
+            return {count, shouldReturn};
+        }
+
+        let {numberVisible, extraRows, firstItem, lastItem} = this._calculateVirtualizedValues();
+
+        let shouldScroll = false;
+        if (focusedTreeElement && focusedTreeElement.revealed(false)) {
+            let index = walk(this, (treeElement) => treeElement === focusedTreeElement).count;
+            if (index < firstItem) {
+                firstItem = index - extraRows;
+                lastItem = index + numberVisible + extraRows;
+            } else if (index > lastItem) {
+                firstItem = index - numberVisible - extraRows;
+                lastItem = index + extraRows;
+            }
+
+            // Only scroll if the `focusedTreeElement` is outside the visible items, not including
+            // the added buffer `extraRows`.
+            shouldScroll = (index < firstItem + extraRows) || (index > lastItem - extraRows);
+        }
+
+        console.assert(firstItem < lastItem);
+
+        let visibleTreeElements = new Set;
+        let treeElementsToAttach = new Set;
+        let treeElementsToDetach = new Set;
+        let totalItems = walk(this, (treeElement, count) => {
+            if (count >= firstItem && count <= lastItem) {
+                treeElementsToAttach.add(treeElement);
+                if (count >= firstItem + extraRows && count <= lastItem - extraRows)
+                    visibleTreeElements.add(treeElement);
+            } else if (treeElement.element.parentNode)
+                treeElementsToDetach.add(treeElement);
+
+            return false;
+        }).count;
+
+        // Redraw if we are about to scroll.
+        if (!shouldScroll) {
+            // Redraw if all of the previously centered `WI.TreeElement` are no longer centered.
+            if (visibleTreeElements.intersects(this._virtualizedVisibleTreeElements)) {
+                // Redraw if there is a `WI.TreeElement` that should be shown that isn't attached.
+                if (visibleTreeElements.isSubsetOf(this._virtualizedAttachedTreeElements))
+                    return;
+            }
+        }
+
+        this._virtualizedVisibleTreeElements = visibleTreeElements;
+        this._virtualizedAttachedTreeElements = treeElementsToAttach;
+
+        for (let treeElement of treeElementsToDetach)
+            treeElement.element.remove();
+
+        for (let treeElement of treeElementsToAttach) {
+            treeElement.parent._childrenListNode.appendChild(treeElement.element);
+            if (treeElement._childrenListNode)
+                treeElement.parent._childrenListNode.appendChild(treeElement._childrenListNode);
+        }
+
+        this._virtualizedTopSpacer.style.height = (Math.max(firstItem, 0) * this._virtualizedTreeItemHeight) + "px";
+        if (this.element.previousElementSibling !== this._virtualizedTopSpacer)
+            this.element.parentNode.insertBefore(this._virtualizedTopSpacer, this.element);
+
+        this._virtualizedBottomSpacer.style.height = (Math.max(totalItems - lastItem, 0) * this._virtualizedTreeItemHeight) + "px";
+        if (this.element.nextElementSibling !== this._virtualizedBottomSpacer)
+            this.element.parentNode.insertBefore(this._virtualizedBottomSpacer, this.element.nextElementSibling);
+
+        if (shouldScroll)
+            this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
     }
 
     _handleContextmenu(event)

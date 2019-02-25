@@ -31,7 +31,14 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         this.element.classList.add("navigation");
 
-        this.contentView.element.addEventListener("scroll", this.soon._updateContentOverflowShadowVisibility);
+        this._updateContentOverflowShadowVisibilityDebouncer = new Debouncer(() => {
+            this._updateContentOverflowShadowVisibility();
+        });
+        this._boundUpdateContentOverflowShadowVisibilitySoon = (event) => {
+            this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
+        };
+
+        this.contentView.element.addEventListener("scroll", this._boundUpdateContentOverflowShadowVisibilitySoon);
 
         this._contentTreeOutlineGroup = new WI.TreeOutlineGroup;
         this._contentTreeOutline = this.createContentTreeOutline();
@@ -49,8 +56,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             this._topOverflowShadowElement.classList.add(WI.NavigationSidebarPanel.OverflowShadowElementStyleClassName, "top");
         }
 
-        this._boundUpdateContentOverflowShadowVisibility = this.soon._updateContentOverflowShadowVisibility;
-        window.addEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
+        window.addEventListener("resize", this._boundUpdateContentOverflowShadowVisibilitySoon);
 
         this._filtersSetting = new WI.Setting(identifier + "-navigation-sidebar-filters", {});
         this._filterBar.filters = this._filtersSetting.value;
@@ -77,7 +83,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     closed()
     {
-        window.removeEventListener("resize", this._boundUpdateContentOverflowShadowVisibility);
+        window.removeEventListener("resize", this._boundUpdateContentOverflowShadowVisibilitySoon);
         WI.Frame.removeEventListener(null, null, this);
     }
 
@@ -273,7 +279,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         let emptyContentPlaceholderParentElement = treeOutline.element.parentNode;
         emptyContentPlaceholderParentElement.appendChild(emptyContentPlaceholderElement);
 
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilityDebouncer.force();
 
         return emptyContentPlaceholderElement;
     }
@@ -289,7 +295,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         emptyContentPlaceholderElement.remove();
         this._emptyContentPlaceholderElements.delete(treeOutline);
 
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilityDebouncer.force();
     }
 
     updateEmptyContentPlaceholder(message, treeOutline)
@@ -345,7 +351,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         }
 
         this._checkForEmptyFilterResults();
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilityDebouncer.force();
     }
 
     resetFilter()
@@ -468,7 +474,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     {
         super.shown();
 
-        this._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilityDebouncer.force();
     }
 
     // Protected
@@ -502,8 +508,6 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     {
         if (!this.visible)
             return;
-
-        this._updateContentOverflowShadowVisibility.cancelDebounce();
 
         let scrollHeight = this.contentView.element.scrollHeight;
         let offsetHeight = this.contentView.element.offsetHeight;
@@ -607,7 +611,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._checkForEmptyFilterResults();
 
         if (this.visible)
-            this.soon._updateContentOverflowShadowVisibility();
+            this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
 
         if (this.selected)
             this._checkElementsForPendingViewStateCookie([treeElement]);
@@ -615,7 +619,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     _treeElementDisclosureDidChange(event)
     {
-        this.soon._updateContentOverflowShadowVisibility();
+        this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
     }
 
     _checkForStaleResourcesIfNeeded()

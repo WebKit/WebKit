@@ -101,7 +101,7 @@ WI.BezierEditor = class BezierEditor extends WI.Object
             if (!isNaN(max))
                 this[key].max = max;
 
-            this[key].addEventListener("input", this.debounce(250)._handleNumberInputInput);
+            this[key].addEventListener("input", this._handleNumberInputInput.bind(this));
             this[key].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
         }
 

@@ -1943,7 +1943,7 @@ webkit.org/b/183188 imported/blink/svg/as-image/image-change-with-equal-sizes.ht
 
 webkit.org/b/183608 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Failure Pass ]
 
-webkit.org/b/183609 inspector/unit-tests/throttle.html [ Pass Failure ]
+webkit.org/b/183609 inspector/unit-tests/throttler.html [ Pass Failure ]
 
 webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
@@ -2031,7 +2031,7 @@ webkit.org/b/187587 imported/w3c/web-platform-tests/fetch/cross-origin-resource-
 
 webkit.org/b/187588 fast/forms/form-control-element-crash.html [ Timeout Pass ]
 
-webkit.org/b/187589 inspector/unit-tests/debounce.html [ Timeout Pass ]
+webkit.org/b/187589 inspector/unit-tests/debouncer.html [ Timeout Pass ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
 

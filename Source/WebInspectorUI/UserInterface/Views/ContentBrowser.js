@@ -91,6 +91,10 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         this._delegate = delegate || null;
 
         this._currentContentViewNavigationItems = [];
+
+        this._dispatchCurrentRepresentedObjectsDidChangeDebouncer = new Debouncer(() => {
+            this.dispatchEventToListeners(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange);
+        });
     }
 
     // Public
@@ -469,13 +473,6 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         }
     }
 
-    _dispatchCurrentRepresentedObjectsDidChangeEvent()
-    {
-        this._dispatchCurrentRepresentedObjectsDidChangeEvent.cancelDebounce();
-
-        this.dispatchEventToListeners(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange);
-    }
-
     _contentViewSelectionPathComponentDidChange(event)
     {
         if (event.target !== this.currentContentView)
@@ -492,7 +489,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
         this._navigationBar.needsLayout();
 
-        this.soon._dispatchCurrentRepresentedObjectsDidChangeEvent();
+        this._dispatchCurrentRepresentedObjectsDidChangeDebouncer.delayForTime(0);
     }
 
     _contentViewSupplementalRepresentedObjectsDidChange(event)
@@ -504,7 +501,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         if (event.target.parentContainer !== this._contentViewContainer)
             return;
 
-        this.soon._dispatchCurrentRepresentedObjectsDidChangeEvent();
+        this._dispatchCurrentRepresentedObjectsDidChangeDebouncer.delayForTime(0);
     }
 
     _currentContentViewDidChange(event)
@@ -522,7 +519,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
 
         this.dispatchEventToListeners(WI.ContentBrowser.Event.CurrentContentViewDidChange);
 
-        this._dispatchCurrentRepresentedObjectsDidChangeEvent();
+        this._dispatchCurrentRepresentedObjectsDidChangeDebouncer.force();
     }
 
     _contentViewNavigationItemsDidChange(event)

@@ -1,3 +1,92 @@
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: make debounce Proxy into its own class
+        https://bugs.webkit.org/show_bug.cgi?id=194721
+
+        Reviewed by Joseph Pecoraro.
+
+        The `debounce`/`throttle` functions leveraged a `Proxy` to intercept the function call and
+        replace it with a "delayed" version. The issue with this is that it set the identifier for
+        the timer on the function itself, which is shared across all instances of a given class.
+        When different instances call the same delayed function, they'd clobber eachother's attempts
+        to delay work.
+
+        * UserInterface/Base/Debouncer.js: Added.
+        (Debouncer):
+        (Debouncer.prototype.force):
+        (Debouncer.prototype.delayForTime):
+        (Debouncer.prototype.delayForFrame):
+        (Debouncer.prototype.delayForMicrotask):
+        (Debouncer.prototype.cancel):
+        (Debouncer.prototype._execute):
+        * UserInterface/Base/Throttler.js: Added.
+        (Throttler):
+        (Throttler.prototype.force):
+        (Throttler.prototype.fire):
+        (Throttler.prototype.cancel):
+        (Throttler.prototype._execute):
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Views/BezierEditor.js:
+        (WI.BezierEditor):
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser):
+        (WI.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        (WI.ContentBrowser.prototype._contentViewSupplementalRepresentedObjectsDidChange):
+        (WI.ContentBrowser.prototype._currentContentViewDidChange):
+        (WI.ContentBrowser.prototype._dispatchCurrentRepresentedObjectsDidChangeEvent): Deleted.
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater):
+        (WI.DOMTreeUpdater.prototype._nodeAttributeModified):
+        (WI.DOMTreeUpdater.prototype._nodeInserted):
+        (WI.DOMTreeUpdater.prototype._nodeRemoved):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel):
+        (WI.NavigationSidebarPanel.prototype.closed):
+        (WI.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+        (WI.NavigationSidebarPanel.prototype.hideEmptyContentPlaceholder):
+        (WI.NavigationSidebarPanel.prototype.updateFilter):
+        (WI.NavigationSidebarPanel.prototype.shown):
+        (WI.NavigationSidebarPanel.prototype._updateContentOverflowShadowVisibility):
+        (WI.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        (WI.NavigationSidebarPanel.prototype._treeElementDisclosureDidChange):
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.hidden):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype._refreshRelatedResourcesSection):
+        (WI.ResourceDetailsSidebarPanel.prototype._applyResourceEventListeners):
+        (WI.ResourceDetailsSidebarPanel):
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView):
+        * UserInterface/Views/SpringEditor.js:
+        (WI.SpringEditor.prototype._resetPreviewAnimation):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.set hidden):
+        (WI.TreeElement.prototype.didChange):
+        (WI.TreeElement.prototype._attach):
+        (WI.TreeElement.prototype._detach):
+        (WI.TreeElement.prototype.collapse):
+        (WI.TreeElement.prototype.expand):
+        (WI.TreeElement.prototype.reveal):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.registerScrollVirtualizer):
+        (WI.TreeOutline.prototype.get updateVirtualizedElementsDebouncer): Added.
+        (WI.TreeOutline.prototype._updateVirtualizedElements): Added.
+        (WI.TreeOutline.prototype.updateVirtualizedElements.walk): Deleted.
+        (WI.TreeOutline.prototype.updateVirtualizedElements): Deleted.
+        * UserInterface/Views/WebSocketContentView.js:
+        (WI.WebSocketContentView):
+        (WI.WebSocketContentView.prototype.shown):
+        (WI.WebSocketContentView.prototype._updateFramesSoon):
+        (WI.WebSocketContentView.prototype._updateFrames):
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * .eslintrc:
+
 2019-02-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Unreviewed, fix indentation.

@@ -1,3 +1,17 @@
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: make debounce Proxy into its own class
+        https://bugs.webkit.org/show_bug.cgi?id=194721
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/debouncer.html: Renamed from inspector/unit-tests/debounce.html:.
+        * inspector/unit-tests/debouncer-expected.txt: Renamed from inspector/unit-tests/debounce-expected.txt.
+        * inspector/unit-tests/throttler.html: Renamed from inspector/unit-tests/throttle.html:.
+        * inspector/unit-tests/throttler-expected.txt: Renamed from inspector/unit-tests/throttle-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-02-23  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Buffer updates part 1: async mapping functions, unmap, and destroy

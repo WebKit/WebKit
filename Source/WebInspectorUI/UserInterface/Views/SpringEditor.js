@@ -29,15 +29,19 @@ WI.SpringEditor = class SpringEditor extends WI.Object
     {
         super();
 
+        let boundResetPreviewAnimation = (event) => {
+            this._resetPreviewAnimation(event);
+        };
+
         this._element = document.createElement("div");
         this._element.classList.add("spring-editor");
 
         this._previewContainer = this._element.createChild("div", "spring-preview");
         this._previewContainer.title = WI.UIString("Restart animation");
-        this._previewContainer.addEventListener("mousedown", this._resetPreviewAnimation.bind(this));
+        this._previewContainer.addEventListener("mousedown", boundResetPreviewAnimation);
 
         this._previewElement = this._previewContainer.createChild("div");
-        this._previewElement.addEventListener("transitionend", this.debounce(500)._resetPreviewAnimation);
+        this._previewElement.addEventListener("transitionend", boundResetPreviewAnimation);
 
         this._timingContainer = this._element.createChild("div", "spring-timing");
 
@@ -213,7 +217,7 @@ WI.SpringEditor = class SpringEditor extends WI.Object
         if (!event)
             this._timingContainer.dataset.duration = "0";
 
-        this.debounce(500)._updatePreviewAnimation(event);
+        this._updatePreviewAnimation(event);
     }
 
     _updatePreviewAnimation(event)

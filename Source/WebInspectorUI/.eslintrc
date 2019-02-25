@@ -64,6 +64,7 @@
 
         // WebInspector
         "AsyncTestSuite": true,
+        "Debouncer": true,
         "Formatter": true,
         "FormatterContentBuilder": true,
         "FrontendTestHarness": true,
@@ -80,6 +81,7 @@
         "SyncTestSuite": true,
         "TestHarness": true,
         "TestSuite": true,
+        "Throttler": true,
 
         // Externals
         "CodeMirror": true,

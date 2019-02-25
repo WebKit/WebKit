@@ -31,6 +31,10 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 
         super(resource);
 
+        this._updateFramesDebouncer = new Debouncer(() => {
+            this._updateFrames();
+        });
+
         this._resource = resource;
         this._framesRendered = 0;
         this._lastRenderedReadyState = null;
@@ -81,7 +85,7 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 
     shown()
     {
-        this._updateFrames();
+        this._updateFramesDebouncer.force();
         this._resource.addEventListener(WI.WebSocketResource.Event.FrameAdded, this._updateFramesSoon, this);
         this._resource.addEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateFramesSoon, this);
     }
@@ -96,7 +100,7 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
 
     _updateFramesSoon()
     {
-        this.onNextFrame._updateFrames();
+        this._updateFramesDebouncer.delayForFrame();
     }
 
     _updateFrames()
@@ -119,8 +123,15 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
             this._lastRenderedReadyState = this._resource.readyState;
         }
 
-        if (shouldScrollToBottom)
-            this._dataGrid.onNextFrame.scrollToLastRow();
+        if (shouldScrollToBottom) {
+            if (!this._scrollToLastRowDebouncer) {
+                this._scrollToLastRowDebouncer = new Debouncer(() => {
+                    this._dataGrid.scrollToLastRow();
+                });
+            }
+
+            this._scrollToLastRowDebouncer.delayForFrame();
+        }
     }
 
     _addFrame(data, isOutgoing, opcode, time)

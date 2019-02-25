@@ -48,6 +48,10 @@ WI.DOMTreeUpdater = function(treeOutline)
 
     // Dummy "attribute" that is used to track textContent changes.
     this._textContentAttributeSymbol = Symbol("text-content-attribute");
+
+    this._updateModifiedNodesDebouncer = new Debouncer(() => {
+        this._updateModifiedNodes();
+    });
 };
 
 WI.DOMTreeUpdater.prototype = {
@@ -81,21 +85,21 @@ WI.DOMTreeUpdater.prototype = {
         this._recentlyModifiedNodes.add(node);
 
         if (this._treeOutline._visible)
-            this.onNextFrame._updateModifiedNodes();
+            this._updateModifiedNodesDebouncer.delayForFrame();
       },
 
     _nodeInserted: function(event)
     {
         this._recentlyInsertedNodes.set(event.data.node, {parent: event.data.parent});
         if (this._treeOutline._visible)
-            this.onNextFrame._updateModifiedNodes();
+            this._updateModifiedNodesDebouncer.delayForFrame();
     },
 
     _nodeRemoved: function(event)
     {
         this._recentlyDeletedNodes.set(event.data.node, {parent: event.data.parent});
         if (this._treeOutline._visible)
-            this.onNextFrame._updateModifiedNodes();
+            this._updateModifiedNodesDebouncer.delayForFrame();
     },
 
     _childNodeCountUpdated: function(event)

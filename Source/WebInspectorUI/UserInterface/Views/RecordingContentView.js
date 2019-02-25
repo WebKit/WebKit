@@ -35,7 +35,12 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._action = null;
         this._snapshots = [];
         this._initialContent = null;
-        this._throttler = this.throttle(200);
+        this._generateContentThrottler = new Throttler(() => {
+            if (this.representedObject.type === WI.Recording.Type.Canvas2D)
+                this._generateContentCanvas2D(this._index);
+            else if (this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer || this.representedObject.type === WI.Recording.Type.CanvasWebGL)
+                this._generateContentFromSnapshot(this._index);
+        }, 200);
 
         this.element.classList.add("recording", this.representedObject.type);
 
@@ -103,10 +108,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         this._updateSliderValue();
 
-        if (this.representedObject.type === WI.Recording.Type.Canvas2D)
-            this._throttler._generateContentCanvas2D(index);
-        else if (this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer || this.representedObject.type === WI.Recording.Type.CanvasWebGL)
-            this._throttler._generateContentFromSnapshot(index);
+        this._generateContentThrottler.fire();
 
         this._action = this.representedObject.actions[this._index];
 
@@ -131,8 +133,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         super.hidden();
 
-        this._generateContentCanvas2D.cancelThrottle();
-        this._generateContentFromSnapshot.cancelThrottle();
+        this._generateContentThrottler.cancel();
     }
 
     // Protected
