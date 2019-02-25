@@ -1,3 +1,41 @@
+2019-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Lazily create sentinel Map and Set buckets
+        https://bugs.webkit.org/show_bug.cgi?id=194975
+
+        Reviewed by Saam Barati.
+
+        If VM::canUseJIT() returns false, we can lazily initialize sentinel Map and Set buckets.
+        This patch adds getters to VM which lazily allocate these buckets. We eagerly initialize
+        them if VM::canUseJIT() returns true since they can be touched from DFG and FTL.
+
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        (JSC::BytecodeIntrinsicRegistry::sentinelMapBucketValue):
+        (JSC::BytecodeIntrinsicRegistry::sentinelSetBucketValue):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetMapBucketNext):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucketNext):
+        * runtime/MapConstructor.cpp:
+        (JSC::mapPrivateFuncMapBucketNext):
+        * runtime/SetConstructor.cpp:
+        (JSC::setPrivateFuncSetBucketNext):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::sentinelSetBucketSlow):
+        (JSC::VM::sentinelMapBucketSlow):
+        * runtime/VM.h:
+        (JSC::VM::sentinelSetBucket):
+        (JSC::VM::sentinelMapBucket):
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

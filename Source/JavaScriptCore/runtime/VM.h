@@ -539,8 +539,9 @@ public:
     Strong<Structure> executableToCodeBlockEdgeStructure;
 
     Strong<JSCell> emptyPropertyNameEnumerator;
-    Strong<JSCell> sentinelSetBucket;
-    Strong<JSCell> sentinelMapBucket;
+
+    Strong<JSCell> m_sentinelSetBucket;
+    Strong<JSCell> m_sentinelMapBucket;
 
     std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
     
@@ -561,6 +562,20 @@ public:
 
     AtomicStringTable* atomicStringTable() const { return m_atomicStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
+
+    JSCell* sentinelSetBucket()
+    {
+        if (LIKELY(m_sentinelSetBucket))
+            return m_sentinelSetBucket.get();
+        return sentinelSetBucketSlow();
+    }
+
+    JSCell* sentinelMapBucket()
+    {
+        if (LIKELY(m_sentinelMapBucket))
+            return m_sentinelMapBucket.get();
+        return sentinelMapBucketSlow();
+    }
 
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
 
@@ -889,6 +904,9 @@ private:
     VM(VMType, HeapType);
     static VM*& sharedInstanceInternal();
     void createNativeThunk();
+
+    JSCell* sentinelSetBucketSlow();
+    JSCell* sentinelMapBucketSlow();
 
     void updateStackLimits();
 

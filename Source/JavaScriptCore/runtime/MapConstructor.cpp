@@ -136,7 +136,7 @@ EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketNext(ExecState* exec)
             return JSValue::encode(bucket);
         bucket = bucket->next();
     }
-    return JSValue::encode(exec->vm().sentinelMapBucket.get());
+    return JSValue::encode(exec->vm().sentinelMapBucket());
 }
 
 EncodedJSValue JSC_HOST_CALL mapPrivateFuncMapBucketKey(ExecState* exec)
