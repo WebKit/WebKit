@@ -239,7 +239,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
 
         contentChangeObserver.setObservedContentChange(WKContentIndeterminateChange);
         contentChangeObserver.addObservedDOMTimer(*timer);
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: register this timer: (" << m_timeoutId << ") and observe when it fires.");
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: register this timer: (" << timer->m_timeoutId << ") and observe when it fires.");
     };
 
     startObservingThisTimerIfNeeded();

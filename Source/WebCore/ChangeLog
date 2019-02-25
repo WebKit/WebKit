@@ -1,3 +1,10 @@
+2019-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed build fix after r242032.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Incorrect use of String::foldCase for font family names
