@@ -1,5 +1,25 @@
 2019-02-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241948. rdar://problem/48317429
+
+    Unreviewed, disable API test added in r241928 on iOS.
+    
+    The cache is not enabled on devices with less than 3GB of RAM.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241948 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-22  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, disable API test added in r241928 on iOS.
+
+            The cache is not enabled on devices with less than 3GB of RAM.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2019-02-24  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241928. rdar://problem/48317429
 
     Discard cached processes when clearing website data store
