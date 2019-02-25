@@ -1581,6 +1581,14 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word
 
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
 
+webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
+
+webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
+
+webkit.org/b/182364 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Failure ]
+
+webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

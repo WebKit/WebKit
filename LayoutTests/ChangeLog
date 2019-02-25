@@ -1,3 +1,13 @@
+2019-02-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Adding a few failure expectations as well
+        as updating a couple of port-specific test baselines.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/css/apple-system-colors-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Change the InspectorOverlay to use native rather than canvas

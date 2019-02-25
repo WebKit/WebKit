@@ -42,7 +42,7 @@ FAIL org.w3.clearkey, requestMediaKeySystemAccess: WebM audio does not support A
 FAIL org.w3.clearkey, requestMediaKeySystemAccess: WebM video does not support AVC1/AAC ('video/webm; codecs="aac"','video/webm; codecs="avc1"','video/webm; codecs="vp8,aac"') should result in NotSupportedError assert_unreached: Unexpected requestMediaKeySystemAccess() success. Reached unreachable code
 PASS Leading space in contentType 
 PASS Space before ; in contentType 
-FAIL Trailing space in contentType promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Trailing space in contentType 
 PASS Space at start of codecs parameter 
 PASS Space at end of codecs parameter 
 PASS Video/ 
