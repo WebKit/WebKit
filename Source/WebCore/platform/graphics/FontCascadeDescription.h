@@ -59,7 +59,7 @@ public:
 
     static bool familyNamesAreEqual(const AtomicString&, const AtomicString&);
     static unsigned familyNameHash(const AtomicString&);
-    static String foldedFamilyName(const AtomicString&);
+    static String foldedFamilyName(const String&);
 
     unsigned effectiveFamilyCount() const;
     FontFamilySpecification effectiveFamilyAt(unsigned) const;

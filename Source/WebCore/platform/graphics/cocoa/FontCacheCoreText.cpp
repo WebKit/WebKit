@@ -887,7 +887,7 @@ public:
 
     const InstalledFontFamily& collectionForFamily(const String& familyName)
     {
-        auto folded = familyName.foldCase();
+        auto folded = FontCascadeDescription::foldedFamilyName(familyName);
         {
             std::lock_guard<Lock> locker(m_familyNameToFontDescriptorsLock);
             auto it = m_familyNameToFontDescriptors.find(folded);

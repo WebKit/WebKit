@@ -1,3 +1,33 @@
+2019-02-20  Darin Adler  <darin@apple.com>
+
+        Incorrect use of String::foldCase for font family names
+        https://bugs.webkit.org/show_bug.cgi?id=194895
+
+        Reviewed by Myles C. Maxfield.
+
+        * platform/graphics/FontCascadeDescription.cpp:
+        (WebCore::FontCascadeDescription::familiesEqualForTextAutoSizing): Use
+        familyNamesAreEqual instead of calling convertToASCIILowercase directly.
+        (WebCore::FontCascadeDescription::familyNamesAreEqual): Use AtomicString's
+        operator== when we want case sensitive family name comparisons. This is a special
+        case to accomodate CoreText, which uses "."-prefix names for internal fonts that
+        are treated case sensitively. (Ideally webpages would not use these fonts at all.)
+        (WebCore::FontCascadeDescription::familyNameHash): Use AtomicString's existingHash
+        when we want case sensitive family name hashing.
+        (WebCore::FontCascadeDescription::foldedFamilyName): Take a String instead of an
+        AtomicString so we can use this at an additional call site. Converting from an
+        AtomicString to a String if free and automatic at the existing call sites. Use
+        convertToASCIILowercase instead of foldCase for three reasons: 1) Other functions
+        here are folding only ASCII case by using ASCIICaseInsensitiveHash, and this one
+        must be consistent. 2) this is considerably faster, and 3) font family names don't
+        need arbitrary Unicode case folding, it's only A-Z that should be folded.
+        * platform/graphics/FontCascadeDescription.h: Take a String instead of AtomicString
+        in the foldedFamilyName function.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily): Instead of calling foldCase, use
+        FontCascadeDescription::foldedFamilyName to correctly fold font family names.
+
 2019-02-25  Charlie Turner  <cturner@igalia.com>
 
         [EME][GStreamer] Replace caps field loop with gst_structure_remove_fields
