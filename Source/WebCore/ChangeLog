@@ -1,3 +1,24 @@
+2019-02-25  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Batch player duration updates
+        https://bugs.webkit.org/show_bug.cgi?id=194220
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This saves up a ton of CPU cycles doing layout unnecessarily when all
+        the appended frames extend the duration of the movie, like in
+        YTTV 2018 59.DASHLatencyVP9.
+
+        This patch is an optimization that introduces no new behavior.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::consumeAppsinkAvailableSamples):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::blockDurationChanges):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::unblockDurationChanges):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2019-02-25  Miguel Gomez  <magomez@igalia.com>
 
         [WPE] Add support for holepunch using an external video player
