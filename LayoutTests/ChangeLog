@@ -1,3 +1,12 @@
+2019-02-25  Truitt Savell  <tsavell@apple.com>
+
+        fast/mediastream/MediaStream-video-element.html is flaky after r241821, marking as failure while waiting for fix.
+        https://bugs.webkit.org/show_bug.cgi?id=194916
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-02-25  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: IDBDatabase and IDBTransaction are leaked in layout tests
