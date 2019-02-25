@@ -1,3 +1,149 @@
+2019-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: [META] Merge Resources and Debugger into a single Sources tab
+        https://bugs.webkit.org/show_bug.cgi?id=183420
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js: Added.
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel):
+        (WI.SourcesNavigationSidebarPanel.prototype.get minimumWidth):
+        (WI.SourcesNavigationSidebarPanel.prototype.closed):
+        (WI.SourcesNavigationSidebarPanel.prototype.showDefaultContentView):
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject.isAncestor):
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject.getParent):
+        (WI.SourcesNavigationSidebarPanel.prototype.treeElementForRepresentedObject):
+        (WI.SourcesNavigationSidebarPanel.prototype.resetFilter):
+        (WI.SourcesNavigationSidebarPanel.prototype.hasCustomFilters):
+        (WI.SourcesNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WI.SourcesNavigationSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WI.SourcesNavigationSidebarPanel.prototype.willDismissPopover):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._updateMainFrameTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addTarget):
+        (WI.SourcesNavigationSidebarPanel.prototype._findCallStackTargetTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._updateCallStackTreeOutline):
+        (WI.SourcesNavigationSidebarPanel.prototype._addResource):
+        (WI.SourcesNavigationSidebarPanel.prototype._addResourcesRecursivelyForFrame):
+        (WI.SourcesNavigationSidebarPanel.prototype._addScript):
+        (WI.SourcesNavigationSidebarPanel.prototype._addWorkerTargetWithMainResource):
+        (WI.SourcesNavigationSidebarPanel.prototype._addDebuggerTreeElementForSourceCode):
+        (WI.SourcesNavigationSidebarPanel.prototype._insertDebuggerTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareBreakpointTreeElements):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeAllBreakpoints):
+        (WI.SourcesNavigationSidebarPanel.prototype._toggleAllBreakpoints):
+        (WI.SourcesNavigationSidebarPanel.prototype._breakpointsBeneathTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addIssue):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeDebuggerTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpointsForSourceCode):
+        (WI.SourcesNavigationSidebarPanel.prototype._addIssuesForSourceCode):
+        (WI.SourcesNavigationSidebarPanel.prototype._updateBreakpointsDisabledBanner):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReason):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonGotoArrow):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceTypeScopeBarSelectionChanged):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCreateBreakpointClicked):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleFrameMainResourceDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleResourceAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleMainFrameDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerBreakpointAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerBreakpointRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerBreakpointsEnabledDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerScriptAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerScriptRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerScriptsCleared):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerCallFramesDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerActiveCallFrameDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerWaitingToPause):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDOMBreakpointResolvedStateDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleConsoleIssueAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleConsoleCleared):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTimelineCapturingWillStart):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTimelineCapturingStopped):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCSSStyleSheetAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTargetAdded):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTargetRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleExtraDomainsActivated):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.sources > .content):
+        (.sidebar > .panel.navigation.sources > .navigation-bar):
+        (.sidebar > .panel.navigation.sources > .navigation-bar .debugger-breakpoints):
+        (.sidebar > .panel.navigation.sources > .navigation-bar .debugger-breakpoints.activated):
+        (.sidebar > .panel.navigation.sources > .navigation-bar .debugger-pause-resume):
+        (.sidebar > .panel.navigation.sources > .navigation-bar .debugger-pause-resume.activated):
+        (.sidebar > .panel.navigation.sources > .content > .warning-banner):
+        (.sidebar > .panel.navigation.sources > .content > .details-section):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.paused-reason.collapsed > .header > .options,):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.scripts:not(.collapsed)):
+        (.sidebar > .panel.navigation.sources > .content > .navigation-bar):
+        (.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread):
+        (.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread > .item.thread):
+        (@media (prefers-dark-interface) .sidebar > > .content > .panel.navigation.sources .warning-banner):
+
+        * UserInterface/Views/SourcesTabContentView.js: Added.
+        (WI.SourcesTabContentView):
+        (WI.SourcesTabContentView.tabInfo):
+        (WI.SourcesTabContentView.isTabAllowed):
+        (WI.SourcesTabContentView.prototype.get type):
+        (WI.SourcesTabContentView.prototype.get supportsSplitContentBrowser):
+        (WI.SourcesTabContentView.prototype.canShowRepresentedObject):
+        (WI.SourcesTabContentView.prototype.showDetailsSidebarPanels):
+        (WI.SourcesTabContentView.prototype.showScopeChainDetailsSidebarPanel):
+        (WI.SourcesTabContentView.prototype.revealAndSelectBreakpoint):
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.createContentTreeOutline):
+        (WI.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        (WI.NavigationSidebarPanel.prototype._checkOutlinesForPendingViewStateCookie):
+        Rework `createContentTreeOutline` to allow for additional symbols.
+        Add another symbol to ensure that the `WI.TreeOutline` is not used for cookie restoration.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showResources):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+        * UserInterface/Views/DefaultDashboardView.js:
+        (WI.DefaultDashboardView.prototype._resourcesItemWasClicked):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI.showSourcesTab): Added.
+        (WI.isShowingSourcesTab): Added.
+        (WI.tabContentViewClassForRepresentedObject):
+        (WI._debuggerDidPause):
+
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView.isTabAllowed):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WI.ResourcesTabContentView.isTabAllowed):
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Main.html:
+        * UserInterface/Images/Sources.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Change the InspectorOverlay to use native rather than canvas

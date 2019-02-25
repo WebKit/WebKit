@@ -159,7 +159,7 @@ WI.settings = {
     experimentalEnableCPUUsageEnhancements: new WI.Setting("experimental-cpu-usage", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
-    experimentalEnableAuditTab: new WI.Setting("experimental-enable-audit-tab", false),
+    experimentalEnableSourcesTab: new WI.Setting("experimental-enable-sources-tab", false),
 
     // DebugUI
     autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),

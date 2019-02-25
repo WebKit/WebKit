@@ -55,8 +55,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         this.addSubview(this._navigationBar);
 
-        const suppressFiltering = true;
-        this._canvasTreeOutline = this.createContentTreeOutline(suppressFiltering);
+        this._canvasTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
         this._canvasTreeOutline.element.classList.add("canvas");
 
         this._recordingNavigationBar = new WI.NavigationBar;

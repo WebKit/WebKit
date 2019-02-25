@@ -99,7 +99,11 @@ InspectorFrontendAPI = {
 
     showResources: function()
     {
-        WI.showResourcesTab();
+        if (WI.settings.experimentalEnableSourcesTab.value)
+            WI.showSourcesTab();
+        else
+            WI.showResourcesTab();
+
     },
 
     showTimelines: function()

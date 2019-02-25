@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DebuggerTabContentView = class DebuggerTabContentView extends WI.ContentBrowserTabContentView
+WI.SourcesTabContentView = class SourcesTabContentView extends WI.ContentBrowserTabContentView
 {
-    constructor(identifier)
+    constructor()
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.DebuggerTabContentView.tabInfo());
-        let detailsSidebarPanelConstructors = [WI.ScopeChainDetailsSidebarPanel, WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SourcesTabContentView.tabInfo());
+        const detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ScopeChainDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
+        super("sources", ["sources"], tabBarItem, WI.SourcesNavigationSidebarPanel, detailsSidebarPanelConstructors);
 
-        super(identifier || "debugger", "debugger", tabBarItem, WI.DebuggerSidebarPanel, detailsSidebarPanelConstructors);
+        this._showScopeChainDetailsSidebarPanel = false;
     }
 
     static tabInfo()
     {
         return {
-            image: "Images/Debugger.svg",
-            title: WI.UIString("Debugger"),
+            image: "Images/Sources.svg",
+            title: WI.UIString("Sources"),
         };
     }
 
     static isTabAllowed()
     {
-        return !WI.settings.experimentalEnableSourcesTab.value;
+        return !!WI.settings.experimentalEnableSourcesTab.value;
     }
 
     // Public
 
     get type()
     {
-        return WI.DebuggerTabContentView.Type;
+        return WI.SourcesTabContentView.Type;
     }
 
     get supportsSplitContentBrowser()
@@ -60,13 +61,15 @@ WI.DebuggerTabContentView = class DebuggerTabContentView extends WI.ContentBrows
 
     canShowRepresentedObject(representedObject)
     {
-        if (representedObject instanceof WI.Script)
-            return true;
-
-        if (!(representedObject instanceof WI.Resource))
-            return false;
-
-        return representedObject.type === WI.Resource.Type.Document || representedObject.type === WI.Resource.Type.Script;
+        return representedObject instanceof WI.Frame
+            || representedObject instanceof WI.FrameCollection
+            || representedObject instanceof WI.Resource
+            || representedObject instanceof WI.ResourceCollection
+            || representedObject instanceof WI.Script
+            || representedObject instanceof WI.ScriptCollection
+            || representedObject instanceof WI.CSSStyleSheet
+            || representedObject instanceof WI.CSSStyleSheetCollection
+            || super.canShowRepresentedObject(representedObject);
     }
 
     showDetailsSidebarPanels()
@@ -99,10 +102,10 @@ WI.DebuggerTabContentView = class DebuggerTabContentView extends WI.ContentBrows
     {
         console.assert(breakpoint instanceof WI.Breakpoint);
 
-        var treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(breakpoint);
+        let treeElement = this.navigationSidebarPanel.treeElementForRepresentedObject(breakpoint);
         if (treeElement)
             treeElement.revealAndSelect();
     }
 };
 
-WI.DebuggerTabContentView.Type = "debugger";
+WI.SourcesTabContentView.Type = "sources";

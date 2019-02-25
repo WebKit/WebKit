@@ -253,12 +253,12 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
     _createExperimentalSettingsView()
     {
-        if (!(window.CanvasAgent || window.NetworkAgent || window.LayerTreeAgent))
-            return;
-
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
         let initialValues = new Map;
+
+        experimentalSettingsView.addSetting(WI.UIString("Sources:"), WI.settings.experimentalEnableSourcesTab, WI.UIString("Enable Sources Tab"));
+        experimentalSettingsView.addSeparator();
 
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
@@ -276,6 +276,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         reloadInspectorButton.addEventListener("click", (event) => {
             // Force a copy so that WI.Setting sees it as a new value.
             let newTabs = WI._openTabsSetting.value.slice();
+            if (!initialValues.get(WI.settings.experimentalEnableSourcesTab) && WI.settings.experimentalEnableSourcesTab.value)
+                newTabs.push(WI.SourcesTabContentView.Type);
             if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)
                 newTabs.push(WI.LayersTabContentView.Type);
             WI._openTabsSetting.value = newTabs;
@@ -293,6 +295,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             });
         }
 
+        listenForChange(WI.settings.experimentalEnableSourcesTab);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);
         listenForChange(WI.settings.experimentalEnableCPUUsageEnhancements);

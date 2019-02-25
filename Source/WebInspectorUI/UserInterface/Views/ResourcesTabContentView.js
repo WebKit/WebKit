@@ -40,6 +40,11 @@ WI.ResourcesTabContentView = class ResourcesTabContentView extends WI.ContentBro
         };
     }
 
+    static isTabAllowed()
+    {
+        return !WI.settings.experimentalEnableSourcesTab.value;
+    }
+
     // Public
 
     get type()

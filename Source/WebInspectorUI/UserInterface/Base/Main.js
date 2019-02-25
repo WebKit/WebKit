@@ -515,6 +515,7 @@ WI.contentLoaded = function()
     let productionTabClasses = [
         WI.ElementsTabContentView,
         WI.NetworkTabContentView,
+        WI.SourcesTabContentView,
         WI.DebuggerTabContentView,
         WI.ResourcesTabContentView,
         WI.TimelineTabContentView,
@@ -1065,6 +1066,26 @@ WI.isShowingElementsTab = function()
     return this.tabBrowser.selectedTabContentView instanceof WI.ElementsTabContentView;
 };
 
+WI.showSourcesTab = function(options = {})
+{
+    let tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.SourcesTabContentView);
+    if (!tabContentView)
+        tabContentView = new WI.SourcesTabContentView;
+
+    if (options.breakpointToSelect instanceof WI.Breakpoint)
+        tabContentView.revealAndSelectBreakpoint(options.breakpointToSelect);
+
+    if (options.showScopeChainSidebar)
+        tabContentView.showScopeChainDetailsSidebarPanel();
+
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WI.isShowingSourcesTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WI.SourcesTabContentView;
+};
+
 WI.showDebuggerTab = function(options)
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.DebuggerTabContentView);
@@ -1221,23 +1242,35 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
     if (representedObject === this._consoleRepresentedObject)
         return WI.ConsoleTabContentView;
 
-    if (WI.debuggerManager.paused) {
-        if (representedObject instanceof WI.Script)
-            return WI.DebuggerTabContentView;
+    if (WI.settings.experimentalEnableSourcesTab.value) {
+        if (representedObject instanceof WI.Frame
+            || representedObject instanceof WI.FrameCollection
+            || representedObject instanceof WI.Resource
+            || representedObject instanceof WI.ResourceCollection
+            || representedObject instanceof WI.Script
+            || representedObject instanceof WI.ScriptCollection
+            || representedObject instanceof WI.CSSStyleSheet
+            || representedObject instanceof WI.CSSStyleSheetCollection)
+            return WI.SourcesTabContentView;
+    } else {
+        if (WI.debuggerManager.paused) {
+            if (representedObject instanceof WI.Script)
+                return WI.DebuggerTabContentView;
 
-        if (representedObject instanceof WI.Resource && (representedObject.type === WI.Resource.Type.Document || representedObject.type === WI.Resource.Type.Script))
-            return WI.DebuggerTabContentView;
+            if (representedObject instanceof WI.Resource && (representedObject.type === WI.Resource.Type.Document || representedObject.type === WI.Resource.Type.Script))
+                return WI.DebuggerTabContentView;
+        }
+
+        if (representedObject instanceof WI.Frame
+            || representedObject instanceof WI.FrameCollection
+            || representedObject instanceof WI.Resource
+            || representedObject instanceof WI.ResourceCollection
+            || representedObject instanceof WI.Script
+            || representedObject instanceof WI.ScriptCollection
+            || representedObject instanceof WI.CSSStyleSheet
+            || representedObject instanceof WI.CSSStyleSheetCollection)
+            return WI.ResourcesTabContentView;
     }
-
-    if (representedObject instanceof WI.Frame
-        || representedObject instanceof WI.FrameCollection
-        || representedObject instanceof WI.Resource
-        || representedObject instanceof WI.ResourceCollection
-        || representedObject instanceof WI.Script
-        || representedObject instanceof WI.ScriptCollection
-        || representedObject instanceof WI.CSSStyleSheet
-        || representedObject instanceof WI.CSSStyleSheetCollection)
-        return WI.ResourcesTabContentView;
 
     if (representedObject instanceof WI.DOMStorageObject || representedObject instanceof WI.CookieStorageObject ||
         representedObject instanceof WI.DatabaseTableObject || representedObject instanceof WI.DatabaseObject ||
@@ -1498,7 +1531,10 @@ WI._dragOver = function(event)
 
 WI._debuggerDidPause = function(event)
 {
-    this.showDebuggerTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
+    if (WI.settings.experimentalEnableSourcesTab.value)
+        WI.showSourcesTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
+    else
+        WI.showDebuggerTab({showScopeChainSidebar: WI.settings.showScopeChainOnPause.value});
 
     this._dashboardContainer.showDashboardViewForRepresentedObject(this._dashboards.debugger);
 

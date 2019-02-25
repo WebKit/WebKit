@@ -189,8 +189,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         this._scriptsSection = new WI.DetailsSection("scripts", WI.UIString("Sources"), [scriptsGroup]);
         this.contentView.element.appendChild(this._scriptsSection.element);
 
-        const suppressFiltering = true;
-        this._callStackTreeOutline = this.createContentTreeOutline(suppressFiltering);
+        this._callStackTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
         this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         this._callStackRow = new WI.DetailsSectionRow;
@@ -1074,8 +1073,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             if (!eventBreakpoint)
                 return false;
 
-            var suppressFiltering = true;
-            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
             var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
                 className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
@@ -1104,8 +1102,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         case WI.DebuggerManager.PauseReason.Breakpoint:
             console.assert(pauseData, "Expected breakpoint identifier, but found none.");
             if (pauseData && pauseData.breakpointId) {
-                const suppressFiltering = true;
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+                this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
                 this._pauseReasonTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
                 let breakpoint = WI.debuggerManager.breakpointForIdentifier(pauseData.breakpointId);
@@ -1154,8 +1151,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                 if (!domBreakpoint)
                     return;
 
-                const suppressFiltering = true;
-                this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+                this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
                 let type = WI.DOMBreakpointTreeElement.displayNameForType(domBreakpoint.type);
                 let domBreakpointTreeElement = new WI.DOMBreakpointTreeElement(domBreakpoint, {
@@ -1213,8 +1209,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             if (!eventBreakpoint)
                 return false;
 
-            var suppressFiltering = true;
-            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
             var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
                 className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
@@ -1264,8 +1259,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             if (!eventBreakpoint)
                 return false;
 
-            var suppressFiltering = true;
-            this._pauseReasonTreeOutline = this.createContentTreeOutline(suppressFiltering);
+            this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
             var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
                 className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
@@ -1288,7 +1282,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
                     let urlBreakpoint = WI.domDebuggerManager.urlBreakpointForURL(pauseData.breakpointURL);
                     console.assert(urlBreakpoint, "Expected URL breakpoint for URL.", pauseData.breakpointURL);
 
-                    this._pauseReasonTreeOutline = this.createContentTreeOutline(true);
+                    this._pauseReasonTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
 
                     let urlBreakpointTreeElement = new WI.URLBreakpointTreeElement(urlBreakpoint, {
                         className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,

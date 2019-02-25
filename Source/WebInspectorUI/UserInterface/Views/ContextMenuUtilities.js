@@ -116,14 +116,22 @@ WI.appendContextMenuItemsForURL = function(contextMenu, url, options = {})
     }
 
     if (WI.networkManager.resourceForURL(url)) {
-        if (!WI.isShowingResourcesTab()) {
-            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                showResourceWithOptions({ignoreNetworkTab: true, ignoreSearchTab: true});
-            });
+        if (WI.settings.experimentalEnableSourcesTab.value) {
+            if (!WI.isShowingSourcesTab()) {
+                contextMenu.appendItem(WI.UIString("Reveal in Sources Tab"), () => {
+                    showResourceWithOptions({preferredTabType: WI.SourcesTabContentView.Type});
+                });
+            }
+        } else {
+            if (!WI.isShowingResourcesTab()) {
+                contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
+                    showResourceWithOptions({preferredTabType: WI.ResourcesTabContentView.Type});
+                });
+            }
         }
         if (!WI.isShowingNetworkTab()) {
             contextMenu.appendItem(WI.UIString("Reveal in Network Tab"), () => {
-                showResourceWithOptions({ignoreResourcesTab: true, ignoreDebuggerTab: true, ignoreSearchTab: true});
+                showResourceWithOptions({preferredTabType: WI.NetworkTabContentView.Type});
             });
         }
     }

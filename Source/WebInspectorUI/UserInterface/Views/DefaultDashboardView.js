@@ -133,7 +133,10 @@ WI.DefaultDashboardView = class DefaultDashboardView extends WI.DashboardView
 
     _resourcesItemWasClicked()
     {
-        WI.showResourcesTab();
+        if (WI.settings.experimentalEnableSourcesTab.value)
+            WI.showSourcesTab();
+        else
+            WI.showResourcesTab();
     }
 
     _networkItemWasClicked()

@@ -129,7 +129,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._finalAttemptToRestoreViewStateTimeout = undefined;
     }
 
-    createContentTreeOutline(suppressFiltering)
+    createContentTreeOutline({ignoreCookieRestoration, suppressFiltering} = {})
     {
         let contentTreeOutline = new WI.TreeOutline;
         contentTreeOutline.allowsRepeatSelection = true;
@@ -145,6 +145,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             contentTreeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange, this);
         }
 
+        contentTreeOutline[WI.NavigationSidebarPanel.IgnoreCookieRestoration] = ignoreCookieRestoration;
         contentTreeOutline[WI.NavigationSidebarPanel.SuppressFilteringSymbol] = suppressFiltering;
 
         return contentTreeOutline;
@@ -613,7 +614,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         if (this.visible)
             this._updateContentOverflowShadowVisibilityDebouncer.delayForTime(0);
 
-        if (this.selected)
+        if (this.selected && !treeElement.treeOutline[WI.NavigationSidebarPanel.IgnoreCookieRestoration])
             this._checkElementsForPendingViewStateCookie([treeElement]);
     }
 
@@ -665,6 +666,9 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         var visibleTreeElements = [];
         this.contentTreeOutlines.forEach(function(outline) {
+            if (outline[WI.NavigationSidebarPanel.IgnoreCookieRestoration])
+                return;
+
             var currentTreeElement = outline.hasChildren ? outline.children[0] : null;
             while (currentTreeElement) {
                 visibleTreeElements.push(currentTreeElement);
@@ -672,7 +676,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
             }
         });
 
-        return this._checkElementsForPendingViewStateCookie(visibleTreeElements, matchTypeOnly);
+        this._checkElementsForPendingViewStateCookie(visibleTreeElements, matchTypeOnly);
     }
 
     _checkElementsForPendingViewStateCookie(treeElements, matchTypeOnly)
@@ -751,6 +755,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
     }
 };
 
+WI.NavigationSidebarPanel.IgnoreCookieRestoration = Symbol("ignore-cookie-restoration");
 WI.NavigationSidebarPanel.SuppressFilteringSymbol = Symbol("suppress-filtering");
 WI.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
