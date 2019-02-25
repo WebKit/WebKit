@@ -1,5 +1,79 @@
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: provide a way to make searches case sensitive or use a regular expression
+        https://bugs.webkit.org/show_bug.cgi?id=192527
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/SearchUtilities.js: Added.
+        (WI.SearchUtilities.get defaultSettings):
+        (WI.SearchUtilities.createSettings):
+        (WI.SearchUtilities.regExpForString):
+        (WI.SearchUtilities.createSettingsButton):
+        (WI.SearchUtilities.createSettingsButton.toggleActive):
+        * UserInterface/Views/Main.css:
+        (.search-settings): Added.
+        (.search-settings > .glyph): Added.
+        (.search-settings:active > .glyph): Added.
+        (.search-settings.active > .glyph): Added.
+        (.search-settings:active.active > .glyph): Added.
+        Create static utility class for handling settings related to searching/filtering.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Create default search settings that apply across WebInspector, unless a more specific
+        setting has been created that overrides it (e.g. the navigation sidebar or Search tab).
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel):
+        (WI.SearchSidebarPanel.prototype.performSearch.forEachMatch):
+        (WI.SearchSidebarPanel.prototype.performSearch.resourceCallback):
+        (WI.SearchSidebarPanel.prototype.performSearch.resourcesCallback):
+        (WI.SearchSidebarPanel.prototype.performSearch.searchScripts.scriptCallback):
+        (WI.SearchSidebarPanel.prototype.performSearch.searchScripts):
+        (WI.SearchSidebarPanel.prototype.performSearch.domSearchResults):
+        (WI.SearchSidebarPanel.prototype.performSearch.domCallback):
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar):
+        (.sidebar > .panel.navigation.search > .search-bar > input[type="search"]):
+        Add a (*) settings "gear" after each `<input type="search">` that shows a contextmenu with
+        checkboxes for each search setting. Any settings changed for each input take precedence over
+        the default settings, but will match the corresponding default setting if it's changed.
+
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WI.SearchResultTreeElement.truncateAndHighlightTitle):
+        Use the length of the found text, rather than the length of the query.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._highlightSearchResults):
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._updateFilter):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.performSearch):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/ResourceSecurityContentView.js:
+        (WI.ResourceSecurityContentView.prototype._perfomSearchOnKeyValuePairs):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch.searchResultCallback):
+        (WI.SourceCodeTextEditor.prototype.customPerformSearch):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.performSearch):
+        Use the default search settings when searching/filtering.
+
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]:placeholder-shown::-webkit-search-cancel-button): Added.
+        Drive-by: prevent the (x) from appearing when no text has been entered.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: make debounce Proxy into its own class
         https://bugs.webkit.org/show_bug.cgi?id=194721
 

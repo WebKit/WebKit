@@ -136,6 +136,8 @@ WI.settings = {
     indentUnit: new WI.Setting("indent-unit", 4),
     indentWithTabs: new WI.Setting("indent-with-tabs", false),
     resourceCachingDisabled: new WI.Setting("disable-resource-caching", false),
+    searchCaseSensitive: new WI.Setting("search-case-sensitive", false),
+    searchRegularExpression: new WI.Setting("search-regular-expression", false),
     selectedNetworkDetailContentViewIdentifier: new WI.Setting("network-detail-content-view-identifier", "preview"),
     sourceMapsEnabled: new WI.Setting("source-maps-enabled", true),
     showAllRequestsBreakpoint: new WI.Setting("show-all-requests-breakpoint", true),

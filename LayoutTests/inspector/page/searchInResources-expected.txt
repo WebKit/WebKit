@@ -10,12 +10,64 @@ FOUND: inspector/page/resources/search-worker.js (1)
 FOUND: inspector/page/resources/search-xhr.txt (2)
 FOUND: inspector/page/searchInResources.html (1)
 
+-- Running test case: SearchAllResources.CaseSensitive
+PASS: Should find results in multiple resources.
+FOUND: inspector/page/resources/search-script.js (1)
+FOUND: inspector/page/resources/search-stylesheet.css (1)
+FOUND: inspector/page/resources/search-worker.js (1)
+FOUND: inspector/page/resources/search-xhr.txt (2)
+
+-- Running test case: SearchAllResources.IsRegex
+PASS: Should find results in multiple resources.
+FOUND: inspector/page/resources/search-script.js (2)
+FOUND: inspector/page/resources/search-stylesheet.css (2)
+FOUND: inspector/page/resources/search-worker.js (2)
+FOUND: inspector/page/resources/search-xhr.txt (4)
+FOUND: inspector/page/searchInResources.html (1)
+
+-- Running test case: SearchAllResources.CaseSensitiveIsRegex
+PASS: Should find results in multiple resources.
+FOUND: inspector/page/resources/search-script.js (1)
+FOUND: inspector/page/resources/search-stylesheet.css (1)
+FOUND: inspector/page/resources/search-worker.js (1)
+FOUND: inspector/page/resources/search-xhr.txt (2)
+
 -- Running test case: SearchInScriptResource
-PASS: Should find previously mentioned number of matches.
+PASS: Should find 1 matches.
 MATCH: {"lineNumber":0,"lineContent":"// Script resource with the SEARCH-STRING.\n"}
 
+-- Running test case: SearchInScriptResource.CaseSensitive
+PASS: Should find 1 matches.
+MATCH: {"lineNumber":0,"lineContent":"// Script resource with the SEARCH-STRING.\n"}
+
+-- Running test case: SearchInScriptResource.IsRegex
+PASS: Should find 2 matches.
+MATCH: {"lineNumber":0,"lineContent":"// Script resource with the SEARCH-STRING.\n"}
+MATCH: {"lineNumber":2,"lineContent":"// Script resource with the OTHER-STRING.\n"}
+
+-- Running test case: SearchInScriptResource.CaseSensitiveIsRegex
+PASS: Should find 1 matches.
+MATCH: {"lineNumber":2,"lineContent":"// Script resource with the OTHER-STRING.\n"}
+
 -- Running test case: SearchInXHRResource
-PASS: Should find previously mentioned number of matches.
+PASS: Should find 2 matches.
 MATCH: {"lineNumber":0,"lineContent":"XHR Resource with the SEARCH-STRING.\n"}
 MATCH: {"lineNumber":1,"lineContent":"XHR Resource with the SEARCH-STRING again!\n"}
+
+-- Running test case: SearchInXHRResource.CaseSensitive
+PASS: Should find 2 matches.
+MATCH: {"lineNumber":0,"lineContent":"XHR Resource with the SEARCH-STRING.\n"}
+MATCH: {"lineNumber":1,"lineContent":"XHR Resource with the SEARCH-STRING again!\n"}
+
+-- Running test case: SearchInXHRResource.IsRegex
+PASS: Should find 4 matches.
+MATCH: {"lineNumber":0,"lineContent":"XHR Resource with the SEARCH-STRING.\n"}
+MATCH: {"lineNumber":1,"lineContent":"XHR Resource with the SEARCH-STRING again!\n"}
+MATCH: {"lineNumber":3,"lineContent":"XHR Resource with the OTHER-STRING.\n"}
+MATCH: {"lineNumber":4,"lineContent":"XHR Resource with the OTHER-STRING again!\n"}
+
+-- Running test case: SearchInXHRResource.CaseSensitiveIsRegex
+PASS: Should find 2 matches.
+MATCH: {"lineNumber":3,"lineContent":"XHR Resource with the OTHER-STRING.\n"}
+MATCH: {"lineNumber":4,"lineContent":"XHR Resource with the OTHER-STRING again!\n"}
 

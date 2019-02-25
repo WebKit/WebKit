@@ -29,6 +29,12 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
     {
         super("search", WI.UIString("Search"), true, true);
 
+        this._searchInputSettings = WI.SearchUtilities.createSettings("search-sidebar", {
+            handleChanged: (event) => {
+                this.focusSearchField(true);
+            },
+        });
+
         var searchElement = document.createElement("div");
         searchElement.classList.add("search-bar");
         this.element.appendChild(searchElement);
@@ -42,6 +48,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         this._inputElement.setAttribute("autosave", "inspector-search-autosave");
         this._inputElement.setAttribute("placeholder", WI.UIString("Search Resource Content"));
         searchElement.appendChild(this._inputElement);
+
+        searchElement.appendChild(WI.SearchUtilities.createSettingsButton(this._searchInputSettings));
 
         this._searchQuerySetting = new WI.Setting("search-sidebar-query", "");
         this._inputElement.value = this._searchQuerySetting.value;
@@ -89,13 +97,11 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         if (this._changedBanner)
             this._changedBanner.remove();
 
-        searchQuery = searchQuery.trim();
         if (!searchQuery.length)
             return;
 
-        // FIXME: Provide UI to toggle regex and case sensitive searches.
-        var isCaseSensitive = false;
-        var isRegex = false;
+        let isCaseSensitive = !!this._searchInputSettings.caseSensitive.value;
+        let isRegex = !!this._searchInputSettings.regularExpression.value;
 
         var updateEmptyContentPlaceholderTimeout = null;
 
@@ -130,7 +136,10 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         function forEachMatch(searchQuery, lineContent, callback)
         {
             var lineMatch;
-            var searchRegex = new RegExp(searchQuery.escapeForRegExp(), "gi");
+            let searchRegex = WI.SearchUtilities.regExpForString(searchQuery, {
+                caseSensitive: isCaseSensitive,
+                regularExpression: isRegex,
+            });
             while ((searchRegex.lastIndex < lineContent.length) && (lineMatch = searchRegex.exec(lineContent)))
                 callback(lineMatch, searchRegex.lastIndex);
         }
@@ -166,6 +175,9 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                         createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                     });
                 }
+
+                if (!resourceTreeElement.children.length)
+                    this.contentTreeOutline.removeChild(resourceTreeElement);
 
                 updateEmptyContentPlaceholder.call(this);
             }
@@ -219,6 +231,9 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                         createTreeElementForMatchObject.call(this, matchObject, scriptTreeElement);
                     });
                 }
+
+                if (!scriptTreeElement.children.length)
+                    this.contentTreeOutline.removeChild(scriptTreeElement);
 
                 updateEmptyContentPlaceholder.call(this);
             }
@@ -279,6 +294,9 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                         var matchObject = new WI.DOMSearchMatchObject(resource, domNode, domNodeTitle, domNodeTitle, new WI.TextRange(0, 0, 0, domNodeTitle.length));
                         createTreeElementForMatchObject.call(this, matchObject, resourceTreeElement);
                     }
+
+                    if (!resourceTreeElement.children.length)
+                        this.contentTreeOutline.removeChild(resourceTreeElement);
 
                     updateEmptyContentPlaceholder.call(this);
                 }

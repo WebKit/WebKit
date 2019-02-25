@@ -45,7 +45,8 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
         // Use the original location, since those line/column offsets match the line text in title.
         var textRange = sourceCodeTextRange.textRange;
 
-        var searchTermIndex = textRange.startColumn;
+        let searchTermIndex = textRange.startColumn;
+        let searchTermLength = textRange.endColumn - textRange.startColumn;
 
         // We should only have one line text ranges, so make sure that is the case.
         console.assert(textRange.startLine === textRange.endLine);
@@ -59,9 +60,7 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
         } else
             modifiedTitle = title;
 
-        modifiedTitle = modifiedTitle.truncateEnd(searchTermIndex + searchTerm.length + charactersToShowAfterSearchMatch);
-
-        console.assert(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length).toLowerCase() === searchTerm.toLowerCase());
+        modifiedTitle = modifiedTitle.truncateEnd(searchTermIndex + searchTermLength + charactersToShowAfterSearchMatch);
 
         var highlightedTitle = document.createDocumentFragment();
 
@@ -69,10 +68,10 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
 
         var highlightSpan = document.createElement("span");
         highlightSpan.className = "highlighted";
-        highlightSpan.append(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length));
+        highlightSpan.append(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTermLength));
         highlightedTitle.appendChild(highlightSpan);
 
-        highlightedTitle.append(modifiedTitle.substring(searchTermIndex + searchTerm.length));
+        highlightedTitle.append(modifiedTitle.substring(searchTermIndex + searchTermLength));
 
         return highlightedTitle;
     }

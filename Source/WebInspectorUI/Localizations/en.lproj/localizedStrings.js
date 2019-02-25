@@ -187,6 +187,10 @@ localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
 localizedStrings["Capture Screenshot"] = "Capture Screenshot";
 localizedStrings["Capturing"] = "Capturing";
+/* Context menu label for whether searches should be case sensitive. */
+localizedStrings["Case Sensitive @ Context Menu"] = "Case Sensitive";
+/* Settings tab checkbox label for whether searches should be case sensitive. */
+localizedStrings["Case Sensitive @ Settings"] = "Case Sensitive";
 localizedStrings["Catch Variables"] = "Catch Variables";
 localizedStrings["Categories"] = "Categories";
 localizedStrings["Certificate"] = "Certificate";
@@ -760,6 +764,10 @@ localizedStrings["Refresh all"] = "Refresh all";
 localizedStrings["Refresh watch expressions"] = "Refresh watch expressions";
 localizedStrings["Region announced in its entirety."] = "Region announced in its entirety.";
 localizedStrings["Regular Expression"] = "Regular Expression";
+/* Context menu label for whether searches should be treated as regular expressions. */
+localizedStrings["Regular Expression @ Context Menu"] = "Regular Expression";
+/* Settings tab checkbox label for whether searches should be treated as regular expressions. */
+localizedStrings["Regular Expression @ Settings"] = "Regular Expression";
 localizedStrings["Reload Web Inspector"] = "Reload Web Inspector";
 localizedStrings["Reload page (%s)\nReload page ignoring cache (%s)"] = "Reload page (%s)\nReload page ignoring cache (%s)";
 localizedStrings["Removals"] = "Removals";
@@ -834,6 +842,8 @@ localizedStrings["Scroll Into View"] = "Scroll Into View";
 localizedStrings["Search"] = "Search";
 localizedStrings["Search Again"] = "Search Again";
 localizedStrings["Search Resource Content"] = "Search Resource Content";
+/* Settings tab label for search related settings */
+localizedStrings["Search: @ Settings"] = "Search:";
 localizedStrings["Secure"] = "Secure";
 localizedStrings["Security"] = "Security";
 localizedStrings["Security Issue"] = "Security Issue";

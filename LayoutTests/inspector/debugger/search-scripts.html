@@ -7,41 +7,61 @@
 function performEvals()
 {
     // Find the line with the search term.
-    eval("// SEARCH" + "TEST: Eval 1\n//# sourceURL=eval1.js");
+    eval("// SEARCH" + "TEST: Eval 1\n// OTHER" + "TEST: Eval 1\n//# sourceURL=eval1.js");
     // If the search term shows up multiple times on a single line, the line is returned once.
-    eval("var SEARCH" + "TEST = \"SEARCH" + "TEST\";\n//# sourceURL=eval2.js");
+    eval("var SEARCH" + "TEST = \"SEARCH" + "TEST\";\nvar OTHER" + "TEST = \"OTHER" + "TEST\";\n//# sourceURL=eval2.js");
 };
 
 function test()
 {
-    function sanitizeScriptURL(url) {
-        return url.substring(url.indexOf("LayoutTests"));
-    }
-
     function chomp(line) {
         return line.replace(/\n$/, "");
     }
 
-    var scriptsCount = 0;
-    const expectedScriptsCount = 5;
+    function searchInContent(script, query, options = {}) {
+        return DebuggerAgent.searchInContent(script.id, query, options.caseSensitive, options.isRegex)
+        .then(({result}) => {
+            InspectorTest.log("");
+            InspectorTest.log("QUERY: " + query + " " + JSON.stringify(options));
+            InspectorTest.log("SCRIPT: " + sanitizeURL(script.sourceURL || script.url));
+            InspectorTest.log("RESULTS: " + result.length);
+            for (let item of result) {
+                InspectorTest.log("  LINE: " + item.lineNumber);
+                InspectorTest.log("  CONTENT: " + chomp(item.lineContent));
+            }
+        });
+    }
+
+    let scripts = new Map;
 
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
-        var script = event.data.script;
-        if (!/LayoutTests/.test(script.url) && !/eval\d\.js/.test(script.sourceURL))
+        let {script} = event.data;
+        let url = script.sourceURL || script.url;
+        if (!/LayoutTests/.test(url) && !/eval\d\.js/.test(url))
             return;
 
-        DebuggerAgent.searchInContent(script.id, "SEARCHTEST", false, false, function(error, results) {
-            InspectorTest.log("");
-            InspectorTest.log("SCRIPT: " + sanitizeScriptURL(script.sourceURL || script.url));
-            InspectorTest.log("RESULTS: " + results.length);
-            for (var result of results) {
-                InspectorTest.log("  LINE: " + result.lineNumber);
-                InspectorTest.log("  CONTENT: " + chomp(result.lineContent));
+        if (url.endsWith("inspector-test.js"))
+            return;
+
+        InspectorTest.log("Script added: " + sanitizeURL(url));
+
+        scripts.set(url, script);
+
+        if (url === "eval2.js") {
+            let promiseCallbacks = [];
+            for (let item of scripts.values()) {
+                for (let query of ["search" + "test", "SEARCH" + "test", "(search|OTHER)" + "TEST"]) {
+                    promiseCallbacks.push(() => searchInContent(item, query));
+                    promiseCallbacks.push(() => searchInContent(item, query, {caseSensitive: true}));
+                    promiseCallbacks.push(() => searchInContent(item, query, {isRegex: true}));
+                    promiseCallbacks.push(() => searchInContent(item, query, {caseSensitive: true, isRegex: true}));
+                }
             }
 
-            if (++scriptsCount === expectedScriptsCount)
+            Promise.chain(promiseCallbacks).then(() => {
                 InspectorTest.completeTest();
-        });
+            });
+        }
     });
 
     InspectorTest.addEventListener(FrontendTestHarness.Event.TestPageDidLoad, () => {
@@ -52,7 +72,7 @@ function test()
 }
 </script>
 </head>
-<body onload="runTest(); // SEARCHTEST: onload attribute string">
+<body onload="runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string">
     <p>Test <code>DebuggerAgent.searchInContent</code> to search script content.</p>
 </body>
 </html>

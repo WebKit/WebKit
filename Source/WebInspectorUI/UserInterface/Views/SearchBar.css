@@ -53,6 +53,10 @@
     background-color: white;
 }
 
+.search-bar > input[type="search"]:placeholder-shown::-webkit-search-cancel-button {
+    display: none;
+}
+
 @media (prefers-color-scheme: dark) {
     :matches(.search-bar, .filter-bar) > input[type="search"],
     .search-bar > input[type="search"]:not(:placeholder-shown) {

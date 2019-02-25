@@ -1707,7 +1707,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }
 
         var text = this.title.textContent;
-        var searchRegex = new RegExp(this._searchQuery.escapeForRegExp(), "gi");
+        let searchRegex = WI.SearchUtilities.regExpForString(this._searchQuery, WI.SearchUtilities.defaultSettings);
 
         var match = searchRegex.exec(text);
         var matchRanges = [];

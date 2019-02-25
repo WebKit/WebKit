@@ -1,28 +1,191 @@
 Test DebuggerAgent.searchInContent to search script content.
 
+Script added: inspector/debugger/search-scripts.html
+Script added: inspector/debugger/search-scripts.html
+Script added: eval1.js
+Script added: eval2.js
 
-SCRIPT: LayoutTests/http/tests/inspector/resources/inspector-test.js
-RESULTS: 0
-
-SCRIPT: LayoutTests/inspector/debugger/search-scripts.html
-RESULTS: 2
-  LINE: 1
-  CONTENT: // SEARCHTEST: Comment in inline <script>.
-  LINE: 28
-  CONTENT:         DebuggerAgent.searchInContent(script.id, "SEARCHTEST", false, false, function(error, results) {
-
-SCRIPT: LayoutTests/inspector/debugger/search-scripts.html
+QUERY: searchtest {}
+SCRIPT: inspector/debugger/search-scripts.html
 RESULTS: 1
   LINE: 1
-  CONTENT: runTest(); // SEARCHTEST: onload attribute string
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
 
+QUERY: searchtest {"caseSensitive":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: searchtest {"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
+
+QUERY: searchtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: SEARCHtest {}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
+
+QUERY: SEARCHtest {"caseSensitive":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: SEARCHtest {"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
+
+QUERY: SEARCHtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true,"isRegex":true}
+SCRIPT: inspector/debugger/search-scripts.html
+RESULTS: 1
+  LINE: 1
+  CONTENT: runTest(); // SEARCHTEST: onload attribute string // OTHERTEST: onload attribute string
+
+QUERY: searchtest {}
 SCRIPT: eval1.js
 RESULTS: 1
   LINE: 0
   CONTENT: // SEARCHTEST: Eval 1
 
+QUERY: searchtest {"caseSensitive":true}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: searchtest {"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: // SEARCHTEST: Eval 1
+
+QUERY: searchtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: SEARCHtest {}
+SCRIPT: eval1.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: // SEARCHTEST: Eval 1
+
+QUERY: SEARCHtest {"caseSensitive":true}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: SEARCHtest {"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: // SEARCHTEST: Eval 1
+
+QUERY: SEARCHtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true}
+SCRIPT: eval1.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 2
+  LINE: 0
+  CONTENT: // SEARCHTEST: Eval 1
+  LINE: 1
+  CONTENT: // OTHERTEST: Eval 1
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval1.js
+RESULTS: 1
+  LINE: 1
+  CONTENT: // OTHERTEST: Eval 1
+
+QUERY: searchtest {}
 SCRIPT: eval2.js
 RESULTS: 1
   LINE: 0
   CONTENT: var SEARCHTEST = "SEARCHTEST";
+
+QUERY: searchtest {"caseSensitive":true}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: searchtest {"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: var SEARCHTEST = "SEARCHTEST";
+
+QUERY: searchtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: SEARCHtest {}
+SCRIPT: eval2.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: var SEARCHTEST = "SEARCHTEST";
+
+QUERY: SEARCHtest {"caseSensitive":true}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: SEARCHtest {"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 1
+  LINE: 0
+  CONTENT: var SEARCHTEST = "SEARCHTEST";
+
+QUERY: SEARCHtest {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true}
+SCRIPT: eval2.js
+RESULTS: 0
+
+QUERY: (search|OTHER)TEST {"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 2
+  LINE: 0
+  CONTENT: var SEARCHTEST = "SEARCHTEST";
+  LINE: 1
+  CONTENT: var OTHERTEST = "OTHERTEST";
+
+QUERY: (search|OTHER)TEST {"caseSensitive":true,"isRegex":true}
+SCRIPT: eval2.js
+RESULTS: 1
+  LINE: 1
+  CONTENT: var OTHERTEST = "OTHERTEST";
 

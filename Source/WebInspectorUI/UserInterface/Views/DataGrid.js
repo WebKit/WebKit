@@ -1843,7 +1843,7 @@ WI.DataGrid = class DataGrid extends WI.View
         if (!this._rows.length)
             return;
 
-        this._textFilterRegex = simpleGlobStringToRegExp(this._filterText, "i");
+        this._textFilterRegex = WI.SearchUtilities.regExpForString(this._filterText, WI.SearchUtilities.defaultSettings);
 
         if (this._applyFilterToNodesTask && this._applyFilterToNodesTask.processing)
             this._applyFilterToNodesTask.cancel();

@@ -293,6 +293,33 @@ body[dir=rtl] .go-to-arrow {
     background-image: url(../Images/GoToArrow.svg#selected-active);
 }
 
+.search-settings {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    -webkit-appearance: none;
+}
+
+.search-settings > .glyph {
+    width: 16px;
+    height: 16px;
+    color: var(--glyph-color);
+}
+
+.search-settings:active > .glyph {
+    color: var(--glyph-color-pressed);
+}
+
+.search-settings.active > .glyph {
+    color: var(--glyph-color-active);
+}
+
+.search-settings:active.active > .glyph {
+    color: var(--glyph-color-active-pressed);
+}
+
 .hidden {
     display: none !important;
 }

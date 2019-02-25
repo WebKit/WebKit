@@ -26,8 +26,14 @@ function test()
 
     let suite = InspectorTest.createAsyncSuite("Page.searchInResources and Page.searchInResource");
 
-    let searchResults;
-    const searchString = "SEARCH-STRING";
+    const searchString = "SeArCh-StRiNg";
+    const searchStringCaseSensitive = searchString.toUpperCase();
+    const searchStringRegex = "(search|OTHER)-STRING";
+
+    let searchResults = null;
+    let searchResultsCaseSensitive = null;
+    let searchResultsIsRegex = null;
+    let searchResultsCaseSensitiveIsRegex = null;
 
     suite.addTestCase({
         name: "SearchAllResources",
@@ -45,6 +51,56 @@ function test()
     });
 
     suite.addTestCase({
+        name: "SearchAllResources.CaseSensitive",
+        description: "Able to find text results in different resources.",
+        test(resolve, reject) {
+            const caseSensitive = true;
+            PageAgent.searchInResources(searchStringCaseSensitive, caseSensitive, (error, results) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
+                searchResultsCaseSensitive = results.sort((a, b) => a.url.localeCompare(b.url));
+                for (let result of searchResultsCaseSensitive)
+                    InspectorTest.log(`FOUND: ${sanitizeURL(result.url)} (${result.matchesCount})`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchAllResources.IsRegex",
+        description: "Able to find text results in different resources.",
+        test(resolve, reject) {
+            const caseSensitive = undefined;
+            const isRegex = true;
+            PageAgent.searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
+                searchResultsIsRegex = results.sort((a, b) => a.url.localeCompare(b.url));
+                for (let result of searchResultsIsRegex)
+                    InspectorTest.log(`FOUND: ${sanitizeURL(result.url)} (${result.matchesCount})`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchAllResources.CaseSensitiveIsRegex",
+        description: "Able to find text results in different resources.",
+        test(resolve, reject) {
+            const caseSensitive = true;
+            const isRegex = true;
+            PageAgent.searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
+                searchResultsCaseSensitiveIsRegex = results.sort((a, b) => a.url.localeCompare(b.url));
+                for (let result of searchResultsCaseSensitiveIsRegex)
+                    InspectorTest.log(`FOUND: ${sanitizeURL(result.url)} (${result.matchesCount})`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
         name: "SearchInScriptResource",
         description: "Able to find text results in an individual Script resource.",
         test(resolve, reject) {
@@ -54,7 +110,66 @@ function test()
 
             PageAgent.searchInResource(result.frameId, result.url, searchString, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
-                InspectorTest.expectThat(matches.length === result.matchesCount, "Should find previously mentioned number of matches.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInScriptResource.CaseSensitive",
+        description: "Able to find text results in an individual Script resource.",
+        test(resolve, reject) {
+            let result = searchResultsCaseSensitive.find((result) => /search-script\.js$/.test(result.url));
+            if (!result)
+                reject();
+
+            const caseSensitive = true;
+            PageAgent.searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInScriptResource.IsRegex",
+        description: "Able to find text results in an individual Script resource.",
+        test(resolve, reject) {
+            let result = searchResultsIsRegex.find((result) => /search-script\.js$/.test(result.url));
+            if (!result)
+                reject();
+
+            const caseSensitive = undefined;
+            const isRegex = true;
+            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInScriptResource.CaseSensitiveIsRegex",
+        description: "Able to find text results in an individual Script resource.",
+        test(resolve, reject) {
+            let result = searchResultsCaseSensitiveIsRegex.find((result) => /search-script\.js$/.test(result.url));
+            if (!result)
+                reject();
+
+            const caseSensitive = true;
+            const isRegex = true;
+            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
                     InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
                 resolve();
@@ -75,7 +190,70 @@ function test()
 
             PageAgent.searchInResource(result.frameId, result.url, searchString, caseSensitive, isRegex, result.requestId, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
-                InspectorTest.expectThat(matches.length === result.matchesCount, "Should find previously mentioned number of matches.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInXHRResource.CaseSensitive",
+        description: "Able to find text results in an individual XHR resource.",
+        test(resolve, reject) {
+            let result = searchResultsCaseSensitive.find((result) => /search-xhr\.txt$/.test(result.url));
+            if (!result)
+                reject();
+
+            const isRegex = undefined;
+            const caseSensitive = true;
+
+            PageAgent.searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, isRegex, result.requestId, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInXHRResource.IsRegex",
+        description: "Able to find text results in an individual XHR resource.",
+        test(resolve, reject) {
+            let result = searchResultsIsRegex.find((result) => /search-xhr\.txt$/.test(result.url));
+            if (!result)
+                reject();
+
+            const isRegex = true;
+            const caseSensitive = undefined;
+
+            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
+                for (let match of matches)
+                    InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "SearchInXHRResource.CaseSensitiveIsRegex",
+        description: "Able to find text results in an individual XHR resource.",
+        test(resolve, reject) {
+            let result = searchResultsCaseSensitiveIsRegex.find((result) => /search-xhr\.txt$/.test(result.url));
+            if (!result)
+                reject();
+
+            const isRegex = true;
+            const caseSensitive = true;
+
+            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
+                InspectorTest.assert(!error, "Should not be a protocol error.");
+                InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
                     InspectorTest.log(`MATCH: ${JSON.stringify(match)}`);
                 resolve();
