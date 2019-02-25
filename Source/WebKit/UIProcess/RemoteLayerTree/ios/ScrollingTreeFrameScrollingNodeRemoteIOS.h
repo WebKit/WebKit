@@ -54,8 +54,8 @@ private:
     void updateChildNodesAfterScroll(const FloatPoint&);
 
     void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
-    void updateLayersAfterViewportChange(const WebCore::FloatRect& fixedPositionRect, double scale) override;
-    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta) override;
+    void updateLayersAfterViewportChange(const WebCore::FloatRect& layoutViewport, double scale) override;
+    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& layoutViewport, const WebCore::FloatSize& cumulativeDelta) override;
 
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 

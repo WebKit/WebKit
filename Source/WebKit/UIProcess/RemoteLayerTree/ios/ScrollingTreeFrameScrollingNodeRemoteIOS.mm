@@ -169,14 +169,14 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::updateChildNodesAfterScroll(const
         return;
 
 
-    FloatRect fixedPositionRect;
-    if (!parent())
-        fixedPositionRect = scrollingTree().fixedPositionRect();
+    FloatRect layoutViewport;
+    if (isRootNode())
+        layoutViewport = this->layoutViewport();
     else
-        fixedPositionRect = FloatRect(scrollPosition, scrollableAreaSize());
+        layoutViewport = FloatRect(scrollPosition, scrollableAreaSize()); // FIXME: We'll just use layoutViewport() once we correctly update it after a scroll.
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
+        child->updateLayersAfterAncestorChange(*this, layoutViewport, FloatSize());
 }
 
 void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
@@ -189,31 +189,31 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterDelegatedScroll(
     updateChildNodesAfterScroll(scrollPosition);
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double /*scale*/)
+void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterViewportChange(const FloatRect& layoutViewport, double /*scale*/)
 {
     // Note: we never currently have a m_counterScrollingLayer (which is used for background-attachment:fixed) on iOS.
-    [m_counterScrollingLayer setPosition:fixedPositionRect.location()];
+    [m_counterScrollingLayer setPosition:layoutViewport.location()];
 
     if (!m_children)
         return;
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, fixedPositionRect, FloatSize());
+        child->updateLayersAfterAncestorChange(*this, layoutViewport, FloatSize());
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
     if (m_scrollingNodeDelegate) {
-        m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
+        m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
         return;
     }
 
     if (!m_children)
         return;
 
-    FloatRect currFrameFixedPositionRect(scrollPosition(), scrollableAreaSize()); // FIXME: use up-to-date layout viewport.
+    FloatRect currFrameLayoutViewport(scrollPosition(), scrollableAreaSize()); // FIXME: use layoutViewport() once it's correctly updated.
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, currFrameFixedPositionRect, { });
+        child->updateLayersAfterAncestorChange(changedNode, currFrameLayoutViewport, { });
 }
 
 }

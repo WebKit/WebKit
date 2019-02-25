@@ -435,12 +435,12 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
-    WebCore::FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::Unconstrained);
-    scrollingCoordinator->viewportChangedViaDelegatedScrolling(scrollingCoordinator->rootScrollingNodeID(), fixedPositionRect, zoomScale);
+    WebCore::FloatRect layoutViewport = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::Unconstrained);
+    scrollingCoordinator->viewportChangedViaDelegatedScrolling(layoutViewport, zoomScale);
 
     drawingArea->updateDebugIndicator();
     
-    [self updateFixedClippingView:fixedPositionRect];
+    [self updateFixedClippingView:layoutViewport];
 
     if (wasStableState && !isStableState)
         [self _didExitStableState];

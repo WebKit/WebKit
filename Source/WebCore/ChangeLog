@@ -1,3 +1,40 @@
+2019-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Migrate from "fixedPositionRect" to "layoutViewport" in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=194984
+
+        Reviewed by Sam Weinig.
+
+        Rename "fixedPositionRect" to "layoutViewport" in scrolling tree code.
+
+        Remove ScrollingTree::fixedPositionRect() which was only used on iOS, to fetch the
+        current layout viewport rect. Instead, set the layout viewport on the root
+        node in ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling().
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling):
+        (WebCore::ScrollingTree::viewportChangedViaDelegatedScrolling): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp:
+        (WebCore::ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange):
+        * page/scrolling/ScrollingTreeFrameHostingNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::updateLayersAfterAncestorChange):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.h:
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition):
+
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Change the InspectorOverlay to use native rather than canvas

@@ -58,7 +58,7 @@ public:
     WebCore::TrackingType eventTrackingTypeForPoint(const AtomicString& eventName, WebCore::IntPoint) const;
 
     // Called externally when native views move around.
-    void viewportChangedViaDelegatedScrolling(WebCore::ScrollingNodeID, const WebCore::FloatRect& fixedPositionRect, double scale);
+    void viewportChangedViaDelegatedScrolling(const WebCore::FloatRect& layoutViewport, double scale);
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, unsigned horizontal, unsigned vertical);
 
@@ -83,7 +83,7 @@ public:
     bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::FloatRect customFixedPositionRect() const;
+    WebCore::FloatRect currentLayoutViewport() const;
     void scrollingTreeNodeWillStartPanGesture();
     void scrollingTreeNodeWillStartScroll();
     void scrollingTreeNodeDidEndScroll();

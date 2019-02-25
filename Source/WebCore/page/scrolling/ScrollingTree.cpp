@@ -122,13 +122,15 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     return ScrollingEventResult::DidNotHandleEvent;
 }
 
-void ScrollingTree::viewportChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const FloatRect& fixedPositionRect, double scale)
+void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatRect& layoutViewport, double scale)
 {
-    auto* node = nodeForID(nodeID);
-    if (!is<ScrollingTreeScrollingNode>(node))
-        return;
-
-    downcast<ScrollingTreeScrollingNode>(*node).updateLayersAfterViewportChange(fixedPositionRect, scale);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);
+    
+    if (m_rootNode) {
+        auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
+        frameScrollingNode.setLayoutViewport(layoutViewport);
+        frameScrollingNode.updateLayersAfterViewportChange(layoutViewport, scale);
+    }
 }
 
 void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteraction)

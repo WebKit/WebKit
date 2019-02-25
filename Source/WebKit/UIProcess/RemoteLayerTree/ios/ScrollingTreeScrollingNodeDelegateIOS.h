@@ -61,7 +61,7 @@ public:
     void resetScrollViewDelegate();
     void commitStateBeforeChildren(const WebCore::ScrollingStateScrollingNode&);
     void commitStateAfterChildren(const WebCore::ScrollingStateScrollingNode&);
-    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta);
+    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& layoutViewport, const WebCore::FloatSize& cumulativeDelta);
     WebCore::FloatPoint scrollPosition() const;
     void setScrollLayerPosition(const WebCore::FloatPoint&);
     void updateChildNodesAfterScroll(const WebCore::FloatPoint& scrollPosition);

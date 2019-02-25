@@ -42,9 +42,9 @@ public:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
-    void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*fixedPositionRect*/, const FloatSize& /*cumulativeDelta*/) override { }
+    void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*layoutViewport*/, const FloatSize& /*cumulativeDelta*/) override { }
 
-    void updateLayersAfterViewportChange(const FloatRect& fixedPositionRect, double scale) override = 0;
+    void updateLayersAfterViewportChange(const FloatRect& layoutViewport, double scale) override = 0;
     void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
 
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
@@ -54,7 +54,8 @@ public:
     FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
     FloatRect layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const;
 
-    FloatRect fixedPositionRect() { return FloatRect(lastCommittedScrollPosition(), scrollableAreaSize()); };
+    FloatRect layoutViewport() const { return m_layoutViewport; };
+    void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
 
@@ -64,9 +65,6 @@ protected:
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
     float topContentInset() const { return m_topContentInset; }
-
-    FloatRect layoutViewport() const { return m_layoutViewport; };
-    void setLayoutViewport(const FloatRect& r) { m_layoutViewport = r; };
 
     FloatPoint minLayoutViewportOrigin() const { return m_minLayoutViewportOrigin; }
     FloatPoint maxLayoutViewportOrigin() const { return m_maxLayoutViewportOrigin; }

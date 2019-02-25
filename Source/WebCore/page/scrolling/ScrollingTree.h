@@ -82,7 +82,7 @@ public:
 
     // Delegated scrolling/zooming has caused the viewport to change, so update viewport-constrained layers
     // (but don't cause scroll events to be fired).
-    WEBCORE_EXPORT virtual void viewportChangedViaDelegatedScrolling(ScrollingNodeID, const WebCore::FloatRect& fixedPositionRect, double scale);
+    WEBCORE_EXPORT virtual void mainFrameViewportChangedViaDelegatedScrolling(const WebCore::FloatRect& layoutViewport, double scale);
 
     // Delegated scrolling has scrolled a node. Update layer positions on descendant tree nodes,
     // and call scrollingTreeNodeDidScroll().
@@ -94,7 +94,6 @@ public:
     FloatPoint mainFrameScrollPosition();
     
 #if PLATFORM(IOS_FAMILY)
-    virtual FloatRect fixedPositionRect() = 0;
     virtual void scrollingTreeNodeWillStartPanGesture() { }
     virtual void scrollingTreeNodeWillStartScroll() { }
     virtual void scrollingTreeNodeDidEndScroll() { }

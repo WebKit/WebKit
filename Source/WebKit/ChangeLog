@@ -1,3 +1,45 @@
+2019-02-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Migrate from "fixedPositionRect" to "layoutViewport" in the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=194984
+
+        Reviewed by Sam Weinig.
+
+        Rename "fixedPositionRect" to "layoutViewport" in scrolling tree code.
+
+        Remove ScrollingTree::fixedPositionRect() which was only used on iOS, to fetch the
+        current layout viewport rect. Instead, set the layout viewport on the root
+        node in ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling().
+        
+        Add a WK2 Scrolling log channel.
+
+        * Platform/Logging.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::fixedPositionRect): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::currentLayoutViewport const):
+        (WebKit::RemoteScrollingCoordinatorProxy::customFixedPositionRect const): Deleted.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateChildNodesAfterScroll):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterViewportChange):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

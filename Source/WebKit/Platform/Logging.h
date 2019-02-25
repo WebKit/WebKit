@@ -75,6 +75,7 @@ extern "C" {
     M(Resize) \
     M(ResourceLoadStatistics) \
     M(ResourceLoadStatisticsDebug) \
+    M(Scrolling) \
     M(Selection) \
     M(ServiceWorker) \
     M(SessionState) \

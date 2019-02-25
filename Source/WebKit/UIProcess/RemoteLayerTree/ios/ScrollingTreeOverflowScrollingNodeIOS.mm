@@ -66,9 +66,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
     m_scrollingNodeDelegate->commitStateAfterChildren(downcast<ScrollingStateScrollingNode>(stateNode));
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
-    m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
+    m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
 }
 
 FloatPoint ScrollingTreeOverflowScrollingNodeIOS::scrollPosition() const

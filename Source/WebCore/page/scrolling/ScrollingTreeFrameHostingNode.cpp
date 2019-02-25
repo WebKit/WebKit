@@ -57,13 +57,13 @@ void ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingSta
         m_parentRelativeScrollableRect = frameHostingStateNode.parentRelativeScrollableRect();
 }
 
-void ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
     if (!m_children)
         return;
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta);
+        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
 }
 
 LayoutPoint ScrollingTreeFrameHostingNode::parentToLocalPoint(LayoutPoint point) const

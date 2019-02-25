@@ -93,10 +93,10 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
 
 
 
-void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
     UNUSED_PARAM(changedNode);
-    UNUSED_PARAM(fixedPositionRect);
+    UNUSED_PARAM(layoutViewport);
     UNUSED_PARAM(cumulativeDelta);
 }
 
@@ -116,7 +116,7 @@ void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& 
     ScrollingTreeOverflowScrollingNode::setScrollPosition(roundedPosition, clamp);
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& fixedPositionRect)
+void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& layoutViewport)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition " << scrollPosition);
 
@@ -125,7 +125,7 @@ void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPo
         return;
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, fixedPositionRect, { });
+        child->updateLayersAfterAncestorChange(*this, layoutViewport, { });
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)

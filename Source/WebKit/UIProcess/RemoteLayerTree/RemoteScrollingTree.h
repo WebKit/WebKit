@@ -64,7 +64,6 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    WebCore::FloatRect fixedPositionRect() override;
     void scrollingTreeNodeWillStartPanGesture() override;
     void scrollingTreeNodeWillStartScroll() override;
     void scrollingTreeNodeDidEndScroll() override;

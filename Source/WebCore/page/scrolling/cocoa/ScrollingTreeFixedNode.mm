@@ -70,12 +70,12 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 }
 }
 
-void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
     using namespace ScrollingTreeFixedNodeInternal;
-    FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(fixedPositionRect);
+    FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(layoutViewport);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from top " << (fixedPositionRect.y() - layerPosition.y()));
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << layoutViewport << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from top " << (layoutViewport.y() - layerPosition.y()));
 
     layerPosition -= cumulativeDelta;
 
@@ -99,7 +99,7 @@ void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTree
     FloatSize newDelta = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
 
     for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, newDelta);
+        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, newDelta);
 }
 
 void ScrollingTreeFixedNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

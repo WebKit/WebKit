@@ -78,11 +78,6 @@ void RemoteScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-WebCore::FloatRect RemoteScrollingTree::fixedPositionRect()
-{
-    return m_scrollingCoordinatorProxy.customFixedPositionRect();
-}
-
 void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture()
 {
     m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture();

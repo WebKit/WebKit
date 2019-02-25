@@ -269,7 +269,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
     }
 }
 
-void ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
+void ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
 {
     if (!scrollingNode().children())
         return;
@@ -277,7 +277,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange(cons
     FloatSize scrollDelta = lastCommittedScrollPosition() - scrollingNode().scrollPosition();
 
     for (auto& child : *scrollingNode().children())
-        child->updateLayersAfterAncestorChange(changedNode, fixedPositionRect, cumulativeDelta + scrollDelta);
+        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta + scrollDelta);
 }
 
 FloatPoint ScrollingTreeScrollingNodeDelegateIOS::scrollPosition() const
@@ -305,16 +305,15 @@ void ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll(const Fl
     if (!scrollingNode().children())
         return;
 
-    FloatRect fixedPositionRect;
+    FloatRect layoutViewport;
     auto* frameNode = scrollingNode().enclosingFrameNodeIncludingSelf();
-    if (frameNode && frameNode->nodeType() == ScrollingNodeType::Subframe)
-        fixedPositionRect = frameNode->fixedPositionRect();
-    else
-        fixedPositionRect = scrollingTree().fixedPositionRect();
-    FloatSize scrollDelta = lastCommittedScrollPosition() - scrollPosition;
+    if (frameNode)
+        layoutViewport = frameNode->layoutViewport();
+
+    auto scrollDelta = lastCommittedScrollPosition() - scrollPosition;
 
     for (auto& child : *scrollingNode().children())
-        child->updateLayersAfterAncestorChange(scrollingNode(), fixedPositionRect, scrollDelta);
+        child->updateLayersAfterAncestorChange(scrollingNode(), layoutViewport, scrollDelta);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart() const
