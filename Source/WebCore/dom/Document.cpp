@@ -258,6 +258,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
 #include "CSSFontSelector.h"
 #include "DeviceMotionClientIOS.h"
 #include "DeviceMotionController.h"
@@ -266,8 +267,6 @@
 #include "Geolocation.h"
 #include "Navigator.h"
 #include "NavigatorGeolocation.h"
-#include "WKContentObservation.h"
-#include "WKContentObservationInternal.h"
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -1812,9 +1811,12 @@ void Document::scheduleStyleRecalc()
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
 
 #if PLATFORM(IOS_FAMILY)
-    if (WKIsObservingStyleRecalcScheduling()) {
-        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
-        WKSetObservedContentChange(WKContentIndeterminateChange);
+    if (auto* page = this->page()) {
+        auto& contentChangeObserver = page->contentChangeObserver();
+        if (contentChangeObserver.isObservingStyleRecalcScheduling()) {
+            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
+            contentChangeObserver.setObservedContentChange(WKContentIndeterminateChange);
+        }
     }
 #endif
 
@@ -2048,11 +2050,15 @@ bool Document::updateStyleIfNeeded()
     }
 
 #if PLATFORM(IOS_FAMILY)
-    auto observingContentChange = WKShouldObserveNextStyleRecalc();
-    if (observingContentChange) {
-        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: start observing content change.");
-        WKSetShouldObserveNextStyleRecalc(false);
-        WKStartObservingContentChanges();
+    auto observingContentChange = false;
+    if (auto* page = this->page()) {
+        auto& contentChangeObserver = page->contentChangeObserver();
+        observingContentChange = contentChangeObserver.shouldObserveNextStyleRecalc();
+        if (observingContentChange) {
+            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: start observing content change.");
+            contentChangeObserver.setShouldObserveNextStyleRecalc(false);
+            contentChangeObserver.startObservingContentChanges();
+        }
     }
 #endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
@@ -2061,15 +2067,15 @@ bool Document::updateStyleIfNeeded()
     resolveStyle();
 
 #if PLATFORM(IOS_FAMILY)
-    if (observingContentChange) {
+    if (observingContentChange && page()) {
         LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: stop observing content change.");
-        WKStopObservingContentChanges();
+        auto& contentChangeObserver = page()->contentChangeObserver();
+        contentChangeObserver.stopObservingContentChanges();
 
-        auto inDeterminedState = WKObservedContentChange() == WKContentVisibilityChange || !WebThreadCountOfObservedDOMTimers();  
+        auto inDeterminedState = contentChangeObserver.observedContentChange() == WKContentVisibilityChange || !contentChangeObserver.countOfObservedDOMTimers();  
         if (inDeterminedState) {
             LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: notify the pending synthetic click handler.");
-            if (auto* page = this->page())
-                page->chrome().client().observedContentChange(*frame());
+            page()->chrome().client().observedContentChange(*frame());
         } else {
             LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: can't decided it yet.");
         }
@@ -2651,13 +2657,13 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (WebThreadCountOfObservedDOMTimers() > 0) {
-        LOG_WITH_STREAM(ContentObservation, stream << "Document::platformSuspendOrStopActiveDOMObjects: remove registered timers.");
-        if (auto* frame = this->frame()) {
-            if (auto* page = frame->page())
-                page->chrome().client().clearContentChangeObservers(*frame);
-        }
-    }
+    if (!page() || !frame())
+        return;
+    auto& page = *this->page();
+    if (!page.contentChangeObserver().countOfObservedDOMTimers())
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "Document::platformSuspendOrStopActiveDOMObjects: remove registered timers.");
+    page.chrome().client().clearContentChangeObservers(*frame());
 #endif
 }
 

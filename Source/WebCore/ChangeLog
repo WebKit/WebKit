@@ -1,3 +1,36 @@
+2019-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Introduce ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=194977
+        <rdar://problem/48338115>
+
+        Reviewed by Simon Fraser.
+
+        This patch is about piping through all the related WK* calls. 
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects):
+        * loader/FrameLoader.cpp:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clearTimeout):
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * page/Page.h:
+        (WebCore::Page::contentChangeObserver):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::CheckForVisibilityChange::CheckForVisibilityChange):
+        (WebCore::CheckForVisibilityChange::~CheckForVisibilityChange):
+
 2019-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate from "fixedPositionRect" to "layoutViewport" in the scrolling tree

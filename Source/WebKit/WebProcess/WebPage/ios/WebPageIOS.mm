@@ -57,6 +57,7 @@
 #import <WebCore/Autofill.h>
 #import <WebCore/AutofillElements.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/ContentChangeObserver.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
@@ -113,7 +114,6 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
-#import <WebCore/WKContentObservation.h>
 #import <WebCore/WebEvent.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
@@ -538,11 +538,12 @@ void WebPage::updateSelectionAppearance()
 void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
-    Frame& mainframe = m_page->mainFrame();
+    auto& mainframe = m_page->mainFrame();
+    auto& contentChangeObserver = m_page->contentChangeObserver();
 
     LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << nodeRespondingToClick << ") " << location);
-    WKStartObservingContentChanges();
-    WKStartObservingDOMTimerScheduling();
+    contentChangeObserver.startObservingContentChanges();
+    contentChangeObserver.startObservingDOMTimerScheduling();
 
     // FIXME: Pass caps lock state.
     bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
@@ -552,8 +553,8 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
-    WKStopObservingDOMTimerScheduling();
-    WKStopObservingContentChanges();
+    contentChangeObserver.stopObservingDOMTimerScheduling();
+    contentChangeObserver.stopObservingContentChanges();
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
@@ -562,7 +563,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     if (m_isClosed)
         return;
 
-    switch (WKObservedContentChange()) {
+    switch (contentChangeObserver.observedContentChange()) {
     case WKContentVisibilityChange:
         // The move event caused new contents to appear. Don't send the click event.
         LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
@@ -588,7 +589,7 @@ void WebPage::completePendingSyntheticClickForContentChangeObserver()
     if (!m_pendingSyntheticClickNode)
         return;
     // Only dispatch the click if the document didn't get changed by any timers started by the move event.
-    if (WKObservedContentChange() == WKContentNoChange) {
+    if (m_page->contentChangeObserver().observedContentChange() == WKContentNoChange) {
         LOG(ContentObservation, "No chage was observed -> click.");
         completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation, m_pendingSyntheticClickModifiers, WebCore::OneFingerTap);
     } else

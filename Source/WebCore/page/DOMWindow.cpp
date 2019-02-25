@@ -139,10 +139,8 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "WKContentObservation.h"
-#include "WKContentObservationInternal.h"
+#include "ContentChangeObserver.h"
 #endif
-
 
 namespace WebCore {
 using namespace Inspector;
@@ -1684,21 +1682,26 @@ ExceptionOr<int> DOMWindow::setTimeout(JSC::ExecState& state, std::unique_ptr<Sc
 void DOMWindow::clearTimeout(int timeoutId)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (auto* frame = this->frame()) {
-        Document* document = frame->document();
-        if (timeoutId > 0 && document) {
-            DOMTimer* timer = document->findTimeout(timeoutId);
-            if (timer && WebThreadContainsObservedDOMTimer(timer)) {
-                LOG_WITH_STREAM(ContentObservation, stream << "DOMWindow::clearTimeout: remove registered timer (" << timer << ")");
-                WebThreadRemoveObservedDOMTimer(timer);
-
-                if (!WebThreadCountOfObservedDOMTimers()) {
-                    if (Page* page = frame->page())
-                        page->chrome().client().observedContentChange(*frame);
-                }
-            }
-        }
-    }
+    auto handleObservedTimerCancelIfNeeded = [&] {
+        if (!frame() || !frame()->document() || !frame()->document()->page())
+            return;
+        if (timeoutId <= 0)
+            return;
+        auto& document = *frame()->document();
+        auto* timer = document.findTimeout(timeoutId);
+        if (!timer)
+            return;
+        auto& page = *document.page();
+        auto& contentChangeObserver = page.contentChangeObserver();
+        if (!contentChangeObserver.containsObservedDOMTimer(*timer))
+            return;
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMWindow::clearTimeout: remove registered timer (" << timer << ")");
+        contentChangeObserver.removeObservedDOMTimer(*timer);
+        if (contentChangeObserver.countOfObservedDOMTimers())
+            return;
+        page.chrome().client().observedContentChange(*frame());
+    };
+    handleObservedTimerCancelIfNeeded();
 #endif
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context)

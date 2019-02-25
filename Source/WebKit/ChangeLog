@@ -1,3 +1,15 @@
+2019-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Introduce ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=194977
+        <rdar://problem/48338115>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::completePendingSyntheticClickForContentChangeObserver):
+
 2019-02-24  Simon Fraser  <simon.fraser@apple.com>
 
         Migrate from "fixedPositionRect" to "layoutViewport" in the scrolling tree

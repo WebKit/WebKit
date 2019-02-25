@@ -1,3 +1,15 @@
+2019-02-24  Zalan Bujtas  <zalan@apple.com>
+
+        Introduce ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=194977
+        <rdar://problem/48338115>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::observedContentChange):
+        (WebChromeClientIOS::clearContentChangeObservers):
+
 2019-02-17  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed, rolling out r241620.

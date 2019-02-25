@@ -108,7 +108,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "WKContentObservation.h"
+#include "ContentChangeObserver.h"
 #endif
 
 namespace WebCore {
@@ -838,7 +838,7 @@ void Frame::willDetachPage()
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);
 
 #if PLATFORM(IOS_FAMILY)
-    if (WebThreadCountOfObservedDOMTimers() > 0 && m_page) {
+    if (page() && page()->contentChangeObserver().countOfObservedDOMTimers()) {
         LOG(ContentObservation, "Frame::willDetachPage: remove registered timers.");
         m_page->chrome().client().clearContentChangeObservers(*this);
     }

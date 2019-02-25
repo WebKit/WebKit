@@ -50,8 +50,7 @@
 #include <wtf/SystemTracing.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "WKContentObservation.h"
-#include "WKContentObservationInternal.h"
+#include "ContentChangeObserver.h"
 #endif
 
 namespace WebCore {
@@ -59,11 +58,12 @@ namespace WebCore {
 #if PLATFORM(IOS_FAMILY)
 class CheckForVisibilityChange {
 public:
-    CheckForVisibilityChange(const Element&);
+    CheckForVisibilityChange(const Element&, Page*);
     ~CheckForVisibilityChange();
 
 private:
     const Element& m_element;
+    Page* m_page { nullptr };
     DisplayType m_previousDisplay;
     Visibility m_previousVisibility;
     Visibility m_previousImplicitVisibility;
@@ -308,7 +308,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
 #if PLATFORM(IOS_FAMILY)
-    CheckForVisibilityChange checkForVisibilityChange(element);
+    CheckForVisibilityChange checkForVisibilityChange(element, m_document.page());
 #endif
 
     bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.hasDisplayContents());
@@ -667,17 +667,22 @@ static Visibility elementImplicitVisibility(const Element& element)
     return Visibility::Visible;
 }
 
-CheckForVisibilityChange::CheckForVisibilityChange(const Element& element)
+CheckForVisibilityChange::CheckForVisibilityChange(const Element& element, Page* page)
     : m_element(element)
+    , m_page(page)
     , m_previousDisplay(element.renderStyle() ? element.renderStyle()->display() : DisplayType::None)
     , m_previousVisibility(element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden)
-    , m_previousImplicitVisibility(WKObservingContentChanges() && WKObservedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : Visibility::Visible)
+    , m_previousImplicitVisibility(page && page->contentChangeObserver().isObservingContentChanges() && page->contentChangeObserver().observedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : Visibility::Visible)
 {
 }
 
 CheckForVisibilityChange::~CheckForVisibilityChange()
 {
-    if (!WKObservingContentChanges())
+    if (!m_page)
+        return;
+
+    auto& contentChangeObserver = m_page->contentChangeObserver();
+    if (!contentChangeObserver.isObservingContentChanges())
         return;
 
     auto* style = m_element.renderStyle();
@@ -696,7 +701,7 @@ CheckForVisibilityChange::~CheckForVisibilityChange()
         return;
     if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None) || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        WKSetObservedContentChange(WKContentVisibilityChange);
+        contentChangeObserver.setObservedContentChange(WKContentVisibilityChange);
 }
 #endif
 

@@ -44,9 +44,8 @@
 #if PLATFORM(IOS_FAMILY)
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContentChangeObserver.h"
 #include "Frame.h"
-#include "WKContentObservation.h"
-#include "WKContentObservationInternal.h"
 #endif
 
 namespace WebCore {
@@ -219,17 +218,6 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     // This reference will be released automatically when a one-shot timer fires, when the context
     // is destroyed, or if explicitly cancelled by removeById. 
     DOMTimer* timer = new DOMTimer(context, WTFMove(action), timeout, singleShot);
-#if PLATFORM(IOS_FAMILY)
-    if (WKIsObservingDOMTimerScheduling() && is<Document>(context)) {
-        bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
-        if (!didDeferTimeout && timeout <= 250_ms && singleShot) {
-            WKSetObservedContentChange(WKContentIndeterminateChange);
-            WebThreadAddObservedDOMTimer(timer);
-            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: registed this timer: (" << timer << ") and observe when it fires.");
-        }
-    }
-#endif
-
     timer->suspendIfNeeded();
     InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
 
@@ -237,6 +225,25 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, *timer);
 
+#if PLATFORM(IOS_FAMILY)
+    auto startObservingThisTimerIfNeeded = [&] {
+        if (!is<Document>(context))
+            return;
+        if (context.activeDOMObjectsAreSuspended())
+            return;
+        if (timeout > 250_ms || !singleShot)
+            return;
+        auto& contentChangeObserver = downcast<Document>(context).page()->contentChangeObserver();
+        if (!contentChangeObserver.isObservingDOMTimerScheduling())
+            return;
+
+        contentChangeObserver.setObservedContentChange(WKContentIndeterminateChange);
+        contentChangeObserver.addObservedDOMTimer(*timer);
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: register this timer: (" << m_timeoutId << ") and observe when it fires.");
+    };
+
+    startObservingThisTimerIfNeeded();
+#endif
     return timer->m_timeoutId;
 }
 
@@ -342,18 +349,23 @@ void DOMTimer::fired()
     context.removeTimeout(m_timeoutId);
 
 #if PLATFORM(IOS_FAMILY)
-    auto isObversingLastTimer = false;
+    auto isObservingLastTimer = false;
     auto shouldBeginObservingChanges = false;
-    if (is<Document>(context)) {
-        isObversingLastTimer = WebThreadCountOfObservedDOMTimers() == 1;
-        shouldBeginObservingChanges = WebThreadContainsObservedDOMTimer(this);
+    Page* page = nullptr;
+    if (is<Document>(context) && downcast<Document>(context).page()) {
+        page = downcast<Document>(context).page();
+        auto& contentChangeObserver = page->contentChangeObserver();
+        isObservingLastTimer = contentChangeObserver.countOfObservedDOMTimers() == 1;
+        shouldBeginObservingChanges = contentChangeObserver.containsObservedDOMTimer(*this);
     }
 
     if (shouldBeginObservingChanges) {
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << this << ") timer callback.");
-        WKStartObservingContentChanges();
-        WKStartObservingStyleRecalcScheduling();
-        WebThreadRemoveObservedDOMTimer(this);
+        ASSERT(page);
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << m_timeoutId << ") timer callback.");
+        auto& contentChangeObserver = page->contentChangeObserver();
+        contentChangeObserver.startObservingContentChanges();
+        contentChangeObserver.startObservingStyleRecalcScheduling();
+        contentChangeObserver.removeObservedDOMTimer(*this);
     }
 #endif
 
@@ -366,22 +378,22 @@ void DOMTimer::fired()
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldBeginObservingChanges) {
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << this << ") timer callback.");
-        WKStopObservingStyleRecalcScheduling();
-        WKStopObservingContentChanges();
+        ASSERT(page);
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << m_timeoutId << ") timer callback.");
+        auto& contentChangeObserver = page->contentChangeObserver();
+        contentChangeObserver.stopObservingStyleRecalcScheduling();
+        contentChangeObserver.stopObservingContentChanges();
 
-        auto observedContentChange = WKObservedContentChange();
+        auto observedContentChange = contentChangeObserver.observedContentChange();
         // Check if the timer callback triggered either a sync or async style update.
-        auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObversingLastTimer && observedContentChange == WKContentNoChange);  
+        auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObservingLastTimer && observedContentChange == WKContentNoChange);  
         if (inDeterminedState) {
-            LOG(ContentObservation, "DOMTimer::fired: in determined state.");
-            auto& document = downcast<Document>(context);
-            if (auto* page = document.page())
-                page->chrome().client().observedContentChange(*document.frame());
+            LOG_WITH_STREAM(ContentObservation, "DOMTimer::fired(" << m_timeoutId << "): in determined state.");
+            page->chrome().client().observedContentChange(*downcast<Document>(context).frame());
         } else if (observedContentChange == WKContentIndeterminateChange) {
             // An async style recalc has been scheduled. Let's observe it.
-            LOG(ContentObservation, "DOMTimer::fired: wait until next style recalc fires.");
-            WKSetShouldObserveNextStyleRecalc(true);
+            LOG_WITH_STREAM(ContentObservation, "DOMTimer::fired(" << m_timeoutId << "): wait until next style recalc fires.");
+            contentChangeObserver.setShouldObserveNextStyleRecalc(true);
         }
     }
 #endif

@@ -145,7 +145,6 @@
 #include "DocumentType.h"
 #include "ResourceLoader.h"
 #include "RuntimeApplicationChecks.h"
-#include "WKContentObservation.h"
 #endif
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - FrameLoader::" fmt, this, ##__VA_ARGS__)

@@ -66,6 +66,10 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -250,6 +254,9 @@ public:
 #endif
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
+#endif
+#if PLATFORM(IOS_FAMILY)
+    ContentChangeObserver& contentChangeObserver() { return m_contentChangeObserver; }
 #endif
     LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
     RTCController& rtcController() { return m_rtcController; }
@@ -808,6 +815,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_enclosedInScrollableAncestorView { false };
+    ContentChangeObserver m_contentChangeObserver;
 #endif
     
     bool m_useSystemAppearance { false };

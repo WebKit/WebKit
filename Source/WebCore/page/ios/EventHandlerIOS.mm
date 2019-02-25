@@ -32,6 +32,7 @@
 #import "AutoscrollController.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
+#import "ContentChangeObserver.h"
 #import "DataTransfer.h"
 #import "DragState.h"
 #import "FocusController.h"
@@ -490,18 +491,21 @@ void EventHandler::mouseMoved(WebEvent *event)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    auto& document = *m_frame.document();
+    // Ensure we start mouse move event dispatching on a clear tree.
+    document.updateStyleIfNeeded();
 
-    m_frame.document()->updateStyleIfNeeded();
+    auto& contentChangeObserver = document.page()->contentChangeObserver();
+    contentChangeObserver.startObservingContentChanges();
+    contentChangeObserver.startObservingDOMTimerScheduling();
 
-    WKStartObservingContentChanges();
-    WKStartObservingDOMTimerScheduling();
     CurrentEventScope scope(event);
     event.wasHandled = mouseMoved(currentPlatformMouseEvent());
-    
-    // FIXME: Why is this here?
-    m_frame.document()->updateStyleIfNeeded();
-    WKStopObservingDOMTimerScheduling();
-    WKStopObservingContentChanges();
+
+    // Run style recalc to be able to capture content changes as the result of the mouse move event.
+    document.updateStyleIfNeeded();
+    contentChangeObserver.stopObservingDOMTimerScheduling();
+    contentChangeObserver.stopObservingContentChanges();
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

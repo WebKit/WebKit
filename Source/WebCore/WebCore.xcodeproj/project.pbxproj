@@ -2065,6 +2065,7 @@
 		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		6FB11B5C21783FD000E2A574 /* TextUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB11B5921783FCF00E2A574 /* TextUtil.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FB5E212221F2447003989CF /* ContentChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FE198172178397C00446F08 /* InlineLineBreaker.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE198152178397C00446F08 /* InlineLineBreaker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6FE7CFA22177EEF2005B1573 /* InlineItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE7CFA02177EEF1005B1573 /* InlineItem.h */; };
 		6FE7CFA42177EF10005B1573 /* LayoutLineBreakBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6FE7CFA32177EF10005B1573 /* LayoutLineBreakBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9234,6 +9235,7 @@
 		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
 		6FB11B5921783FCF00E2A574 /* TextUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtil.h; sourceTree = "<group>"; };
 		6FB11B5B21783FCF00E2A574 /* TextUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtil.cpp; sourceTree = "<group>"; };
+		6FB5E212221F2447003989CF /* ContentChangeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentChangeObserver.h; sourceTree = "<group>"; };
 		6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6FE198132178397B00446F08 /* InlineLineBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBreaker.cpp; sourceTree = "<group>"; };
 		6FE198152178397C00446F08 /* InlineLineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBreaker.h; sourceTree = "<group>"; };
@@ -9241,6 +9243,7 @@
 		6FE7CFA02177EEF1005B1573 /* InlineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineItem.h; sourceTree = "<group>"; };
 		6FE7CFA32177EF10005B1573 /* LayoutLineBreakBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutLineBreakBox.h; sourceTree = "<group>"; };
 		6FE7CFA52177F069005B1573 /* LayoutLineBreakBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutLineBreakBox.cpp; sourceTree = "<group>"; };
+		6FE9F09222211035004C5082 /* ContentChangeObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentChangeObserver.mm; sourceTree = "<group>"; };
 		6FFDC43E212EFF1600A9CA91 /* FloatAvoider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatAvoider.cpp; sourceTree = "<group>"; };
 		6FFDC440212EFF1600A9CA91 /* FloatAvoider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatAvoider.h; sourceTree = "<group>"; };
 		709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchFailureKind.h; sourceTree = "<group>"; };
@@ -16585,6 +16588,8 @@
 		18A6CD6F0D8F2025001DC3CE /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				6FB5E212221F2447003989CF /* ContentChangeObserver.h */,
+				6FE9F09222211035004C5082 /* ContentChangeObserver.mm */,
 				FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */,
 				FED13D3B0CEA936A00D89466 /* FrameIOS.mm */,
 				225A16B30D5C11E900090295 /* WebEventRegion.h */,
@@ -28687,6 +28692,7 @@
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
+				6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */,
 				BC5EB9810E82072500B25965 /* ContentData.h in Headers */,
 				51B45D211AB8D1E200117CD2 /* ContentExtension.h in Headers */,
 				5CDFA6C81AA4F2DA00EA8746 /* ContentExtensionActions.h in Headers */,
