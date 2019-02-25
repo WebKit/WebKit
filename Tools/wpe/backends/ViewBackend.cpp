@@ -35,9 +35,7 @@ ViewBackend::ViewBackend(uint32_t width, uint32_t height)
     : m_width(width)
     , m_height(height)
 {
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
-    wpe_loader_init("libWPEBackend-fdo-0.1.so");
-#endif
+    wpe_loader_init("libWPEBackend-fdo-1.0.so");
 }
 
 ViewBackend::~ViewBackend()

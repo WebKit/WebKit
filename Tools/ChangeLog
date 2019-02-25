@@ -1,3 +1,28 @@
+2019-02-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Bump WPEBackend-fdo requirement to API version 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=195001
+
+        Reviewed by Carlos Garcia Campos.
+
+        API version 1.0 always includes the functionality previously guarded with
+        WPE_BACKEND_CHECK_VERSION(): remove the guards and always use the new functions
+        unconditionally.
+
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend): Remove usage of WPE_BACKEND_CHECK_VERSION().
+        * TestWebKitAPI/glib/WebKitGLib/wpe/WebViewTestWPE.cpp:
+        (WebViewTest::showInWindow): Ditto.
+        (WebViewTest::hideView): Ditto.
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend): Ditto.
+        * wpe/backends/ViewBackend.cpp:
+        (WPEToolingBackends::ViewBackend::ViewBackend): Use libWPEBackend-fdo-1.0 as library name.
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend): Remove usage of
+        WPE_BACKEND_CHECK_VERSION().
+        * wpe/jhbuild.modules: Build a version WPEBackend-fdo with the updated API version.
+
 2019-02-25  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Add support for flatpak > 1.1.2

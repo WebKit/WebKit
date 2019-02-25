@@ -1,3 +1,26 @@
+2019-02-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Bump WPEBackend-fdo requirement to API version 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=195001
+
+        Reviewed by Carlos Garcia Campos.
+
+        API version 1.0 always includes the functionality previously guarded with
+        WPE_BACKEND_CHECK_VERSION(): remove the guards and always use the new functions
+        unconditionally.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View): Remove usage of WPE_BACKEND_CHECK_VERSION().
+        (WKWPE::m_backend): Ditto.
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::WPEQtViewBackend): Use libWPEBackend-fdo-1.0 as
+        library name, remove call to wpe_fdo_initialize_for_egl_display().
+        (WPEQtViewBackend::create): Call wpe_fdo_initialize_for_egl_display()
+        here, to bail out early in case initialization fails.
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Remove usage of
+        WPE_BACKEND_CHECK_VERSION().
+
 2019-02-25  Per Arne Vollan  <pvollan@apple.com>
 
         A prewarmed Web process should have a process assertion.

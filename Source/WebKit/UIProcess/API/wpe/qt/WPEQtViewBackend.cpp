@@ -37,7 +37,7 @@ std::unique_ptr<WPEQtViewBackend> WPEQtViewBackend::create(const QSizeF& size, Q
 
     eglInitialize(eglDisplay, nullptr, nullptr);
 
-    if (!eglBindAPI(EGL_OPENGL_ES_API))
+    if (!eglBindAPI(EGL_OPENGL_ES_API) || !wpe_fdo_initialize_for_egl_display(eglDisplay))
         return nullptr;
 
     static const EGLint configAttributes[13] = {
@@ -74,11 +74,7 @@ WPEQtViewBackend::WPEQtViewBackend(const QSizeF& size, EGLDisplay display, EGLCo
     , m_view(view)
     , m_size(size)
 {
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(0, 2, 0)
-    wpe_loader_init("libWPEBackend-fdo-0.1.so");
-#endif
-
-    wpe_fdo_initialize_for_egl_display(m_eglDisplay);
+    wpe_loader_init("libWPEBackend-fdo-1.0.so");
 
     imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
@@ -128,9 +124,7 @@ WPEQtViewBackend::WPEQtViewBackend(const QSizeF& size, EGLDisplay display, EGLCo
 
     m_exportable = wpe_view_backend_exportable_fdo_egl_create(&exportableClient, this, m_size.width(), m_size.height());
 
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
     wpe_view_backend_add_activity_state(backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
-#endif
 
     m_surface.setFormat(context->format());
     m_surface.create();

@@ -45,9 +45,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     : m_client(std::make_unique<API::ViewClient>())
     , m_pageClient(std::make_unique<PageClientImpl>(*this))
     , m_size { 800, 600 }
-#if !defined(WPE_BACKEND_CHECK_VERSION) || !WPE_BACKEND_CHECK_VERSION(1, 1, 0)
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
-#endif
     , m_backend(backend)
 {
     ASSERT(m_backend);
@@ -87,7 +85,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             auto& view = *reinterpret_cast<View*>(data);
             view.frameDisplayed();
         },
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
         // activity_state_changed
         [](void* data, uint32_t state)
         {
@@ -103,9 +100,6 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 flags.add(WebCore::ActivityState::IsInWindow);
             view.setViewState(flags);
         },
-#else
-        nullptr,
-#endif
         // padding
         nullptr,
         nullptr,

@@ -202,7 +202,7 @@
       <dep package="glib"/>
     </dependencies>
     <branch repo="github.com" module="Igalia/wpebackend-fdo.git" checkoutdir="wpebackend-fdo"
-            tag="d7eeab26375b1f08c6a35dbe2d34f02197708a03"/>
+            tag="fa227dac7c6a133d62b35d7a6af0332582b64d4d"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

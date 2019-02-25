@@ -72,9 +72,7 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     if (!initialize())
         return;
 
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
     wpe_view_backend_add_activity_state(backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
-#endif
 
     if (!eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, m_eglContext))
         return;
