@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hit testing of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      function waitPromise(delay)
+      {
+          return new Promise((resolve) => { setTimeout(resolve, delay); });
+      }
+
+      async function runTest() {
+          if (!window.testRunner || !testRunner.runUIScript)
+              return;
+
+          // This verifies that a click event is consumed by an element inside the frame, after a user scroll.
+          var p = document.getElementById("clickElementInsideFrameAfterUserScroll").getBoundingClientRect();
+          await touchAndDragFromPointToPoint(p.left + 7, p.top + 7, p.left + 7, p.top - 150);
+          await liftUpAtPoint(p.left + 7, p.top - 150);
+          await waitPromise(1500); // Wait for scrolling to stabilize and for scrollbars to disappear.
+          await tapAtPoint(p.left + 7 + 10, p.bottom - 7);
+          await waitPromise(100);
+
+          testRunner.notifyDone();
+       }
+    </script>
+    <style>
+        iframe {
+            position: absolute;
+            height: 90px;
+            width: 90px;
+            overflow: none;
+            margin: 0;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green rectangle.</p>
+    <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
+      <iframe id="clickElementInsideFrameAfterUserScroll" style="left: 0px; top: 0px;" scrolling="yes" onclick="this.style.background='red'" srcdoc="
+          <body style='margin: 0; width: 200px; height: 200px; background: green;'>
+             <div style='position: absolute; width: 75px; height: 75px; background: red;'></div>
+              <div style='position: absolute; left: 0px; top: 150px; width: 50px; height: 50px; background: red;'
+                   onclick='this.style.background=&quot;green&quot;'></div>
+          </body>" onload="runTest()">
+      </iframe>
+    </div>
+</body>
+</html>

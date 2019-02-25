@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hit testing of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      async function runTest() {
+          if (!window.testRunner || !testRunner.runUIScript)
+              return;
+
+          // This verifies whether the iframe handles clicks inside its content box.
+          var p = document.getElementById("clickInContentBox").getBoundingClientRect();
+          await tapAtPoint(p.left + 7, p.top + 7);
+          testRunner.notifyDone();
+      }
+    </script>
+    <style>
+        iframe {
+            position: absolute;
+            height: 90px;
+            width: 90px;
+            overflow: none;
+            margin: 0;
+            border: 0;
+            padding: 5px;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green rectangle.</p>
+    <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
+      <iframe id="clickInContentBox" style="left: 0px; top: 0px;" scrolling="yes" onclick="this.style.background='red'" srcdoc="
+          <body style='margin: 0; width: 200px; height: 200px'>
+              <div style='position: absolute; width: 100px; height: 100px; background: red;'
+                   onclick='this.style.background=&quot;green&quot;'></div>
+          </body>" onload="runTest()">
+      </iframe>
+    </div>
+</body>
+</html>

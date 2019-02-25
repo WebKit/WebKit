@@ -1,3 +1,29 @@
+2019-02-25  Frederic Wang  <fwang@igalia.com>
+
+        Split iOS tests for hit testing in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=195003
+
+        This patch splits hit-testing-iframe.html into smaller tests to faciliate
+        debugging and handling of test expectations. It also adds a new test
+        for programmatic scrolling which was fixed after bug 194886.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/ios/hit-testing-iframe-001-expected.html: Copied from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-001.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe-002-expected.html: Copied from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-002.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe-003-expected.html: Copied from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-003.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe-004-expected.html: Copied from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-004.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe-005-expected.html: Copied from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-005.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe-006-expected.html: Renamed from LayoutTests/fast/scrolling/ios/hit-testing-iframe-expected.html.
+        * fast/scrolling/ios/hit-testing-iframe-006.html: Added.
+        * fast/scrolling/ios/hit-testing-iframe.html: Removed.
+        * platform/ios-wk2/TestExpectations: Set failure to the corresponding extracted test.
+
 2019-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <footer> HTML5 tag not reading as ARIA Landmark to VoiceOver
