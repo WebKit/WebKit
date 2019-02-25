@@ -26,10 +26,65 @@
 #import "ContentChangeObserver.h"
 
 #if PLATFORM(IOS_FAMILY)
+#import "Chrome.h"
+#import "ChromeClient.h"
 #import "DOMTimer.h"
+#import "Logging.h"
+#import "Page.h"
 #import "WKContentObservationInternal.h"
 
 namespace WebCore {
+
+ContentChangeObserver::ContentChangeObserver(Page& page)
+    : m_page(page)
+{
+}
+
+void ContentChangeObserver::registerDOMTimerForContentObservationIfNeeded(const DOMTimer& timer, Seconds timeout, bool singleShot)
+{
+    if (!m_page.mainFrame().document())
+        return;
+    if (m_page.mainFrame().document()->activeDOMObjectsAreSuspended())
+        return;
+    if (timeout > 250_ms || !singleShot)
+        return;
+    if (!isObservingDOMTimerScheduling())
+        return;
+    setObservedContentChange(WKContentIndeterminateChange);
+    addObservedDOMTimer(timer);
+    LOG_WITH_STREAM(ContentObservation, stream << "registerDOMTimerForContentObservationIfNeeded: registed this timer: (" << &timer << ") and observe when it fires.");
+}
+
+void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
+{
+    if (!containsObservedDOMTimer(timer))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
+    startObservingContentChanges();
+    startObservingStyleRecalcScheduling();
+}
+
+void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
+{
+    if (!containsObservedDOMTimer(timer))
+        return;
+    removeObservedDOMTimer(timer);
+    stopObservingStyleRecalcScheduling();
+    stopObservingContentChanges();
+    auto observedContentChange = this->observedContentChange();
+    // Check if the timer callback triggered either a sync or async style update.
+    auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (!countOfObservedDOMTimers() && observedContentChange == WKContentNoChange);  
+
+    LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
+    if (inDeterminedState) {
+        LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") in determined state.");
+        m_page.chrome().client().observedContentChange(m_page.mainFrame());
+    } else if (observedContentChange == WKContentIndeterminateChange) {
+        // An async style recalc has been scheduled. Let's observe it.
+        LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") wait until next style recalc fires.");
+        setShouldObserveNextStyleRecalc(true);
+    }
+}
 
 void ContentChangeObserver::startObservingContentChanges()
 {
@@ -38,12 +93,12 @@ void ContentChangeObserver::startObservingContentChanges()
 
 void ContentChangeObserver::stopObservingContentChanges()
 {
-    WKStopObservingContentChanges();   
+    WKStopObservingContentChanges();
 }
 
 bool ContentChangeObserver::isObservingContentChanges()
 {
-    return WKObservingContentChanges();   
+    return WKObservingContentChanges();
 }
 
 void ContentChangeObserver::startObservingDOMTimerScheduling()
@@ -106,19 +161,19 @@ void ContentChangeObserver::setObservedContentChange(WKContentChange change)
     WKSetObservedContentChange(change);
 }
 
-bool ContentChangeObserver::containsObservedDOMTimer(DOMTimer& timer)
+bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer)
 {
-    return WebThreadContainsObservedDOMTimer(&timer);
+    return WebThreadContainsObservedDOMTimer(const_cast<DOMTimer*>(&timer));
 }
 
-void ContentChangeObserver::addObservedDOMTimer(DOMTimer& timer)
+void ContentChangeObserver::addObservedDOMTimer(const DOMTimer& timer)
 {
-    WebThreadAddObservedDOMTimer(&timer);
+    WebThreadAddObservedDOMTimer(const_cast<DOMTimer*>(&timer));
 }
 
-void ContentChangeObserver::removeObservedDOMTimer(DOMTimer& timer)
+void ContentChangeObserver::removeObservedDOMTimer(const DOMTimer& timer)
 {
-    WebThreadRemoveObservedDOMTimer(&timer);
+    WebThreadRemoveObservedDOMTimer(const_cast<DOMTimer*>(&timer));
 }
 
 }

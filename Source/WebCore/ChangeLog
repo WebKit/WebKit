@@ -1,3 +1,30 @@
+2019-02-25  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move observing logic from DOMTimer to ContentChangeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=194987
+        <rdar://problem/48342910>
+
+        Reviewed by Tim Horton.
+
+        Content obvservation logic should all move to the ContentChangeObserver class.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::contentChangeObserver):
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::ContentChangeObserver):
+        (WebCore::ContentChangeObserver::registerDOMTimerForContentObservationIfNeeded):
+        (WebCore::ContentChangeObserver::startObservingDOMTimer):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimer):
+        (WebCore::ContentChangeObserver::containsObservedDOMTimer):
+        (WebCore::ContentChangeObserver::addObservedDOMTimer):
+        (WebCore::ContentChangeObserver::removeObservedDOMTimer):
+
 2019-02-25  John Wilander  <wilander@apple.com>
 
         Introduce and adopt new class RegistrableDomain for eTLD+1

@@ -32,10 +32,15 @@
 namespace WebCore {
 
 class DOMTimer;
+class Page;
 
 class ContentChangeObserver {
 public:
-    ContentChangeObserver() = default;
+    ContentChangeObserver(Page&);
+
+    void registerDOMTimerForContentObservationIfNeeded(const DOMTimer&, Seconds timeout, bool singleShot);
+    void startObservingDOMTimerExecute(const DOMTimer&);
+    void stopObservingDOMTimerExecute(const DOMTimer&);
 
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
@@ -43,10 +48,7 @@ public:
 
     WEBCORE_EXPORT void startObservingDOMTimerScheduling();
     WEBCORE_EXPORT void stopObservingDOMTimerScheduling();
-    bool isObservingDOMTimerScheduling();
 
-    WEBCORE_EXPORT void startObservingStyleRecalcScheduling();
-    WEBCORE_EXPORT void stopObservingStyleRecalcScheduling();
     bool isObservingStyleRecalcScheduling();
 
     void setShouldObserveNextStyleRecalc(bool);
@@ -55,11 +57,19 @@ public:
     void setObservedContentChange(WKContentChange);
     WEBCORE_EXPORT WKContentChange observedContentChange();
 
-    void addObservedDOMTimer(DOMTimer&);
-    void removeObservedDOMTimer(DOMTimer&);
-    bool containsObservedDOMTimer(DOMTimer&);
+    void removeObservedDOMTimer(const DOMTimer&);
+    bool containsObservedDOMTimer(const DOMTimer&);
     WEBCORE_EXPORT unsigned countOfObservedDOMTimers();
     WEBCORE_EXPORT void clearObservedDOMTimers();
+
+private:
+    void addObservedDOMTimer(const DOMTimer&);
+    bool isObservingDOMTimerScheduling();
+
+    void startObservingStyleRecalcScheduling();
+    void stopObservingStyleRecalcScheduling();
+
+    Page& m_page;
 };
 
 }

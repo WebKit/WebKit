@@ -42,10 +42,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "ContentChangeObserver.h"
-#include "Frame.h"
 #endif
 
 namespace WebCore {
@@ -224,25 +221,9 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, *timer);
-
 #if PLATFORM(IOS_FAMILY)
-    auto startObservingThisTimerIfNeeded = [&] {
-        if (!is<Document>(context))
-            return;
-        if (context.activeDOMObjectsAreSuspended())
-            return;
-        if (timeout > 250_ms || !singleShot)
-            return;
-        auto& contentChangeObserver = downcast<Document>(context).page()->contentChangeObserver();
-        if (!contentChangeObserver.isObservingDOMTimerScheduling())
-            return;
-
-        contentChangeObserver.setObservedContentChange(WKContentIndeterminateChange);
-        contentChangeObserver.addObservedDOMTimer(*timer);
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: register this timer: (" << timer->m_timeoutId << ") and observe when it fires.");
-    };
-
-    startObservingThisTimerIfNeeded();
+    if (is<Document>(context))
+        downcast<Document>(context).page()->contentChangeObserver().registerDOMTimerForContentObservationIfNeeded(*timer, timeout, singleShot);
 #endif
     return timer->m_timeoutId;
 }
@@ -348,54 +329,20 @@ void DOMTimer::fired()
 
     context.removeTimeout(m_timeoutId);
 
-#if PLATFORM(IOS_FAMILY)
-    auto isObservingLastTimer = false;
-    auto shouldBeginObservingChanges = false;
-    Page* page = nullptr;
-    if (is<Document>(context) && downcast<Document>(context).page()) {
-        page = downcast<Document>(context).page();
-        auto& contentChangeObserver = page->contentChangeObserver();
-        isObservingLastTimer = contentChangeObserver.countOfObservedDOMTimers() == 1;
-        shouldBeginObservingChanges = contentChangeObserver.containsObservedDOMTimer(*this);
-    }
-
-    if (shouldBeginObservingChanges) {
-        ASSERT(page);
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << m_timeoutId << ") timer callback.");
-        auto& contentChangeObserver = page->contentChangeObserver();
-        contentChangeObserver.startObservingContentChanges();
-        contentChangeObserver.startObservingStyleRecalcScheduling();
-        contentChangeObserver.removeObservedDOMTimer(*this);
-    }
-#endif
-
     // Keep track nested timer installs.
     NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context);
     if (nestedTimers)
         nestedTimers->startTracking();
 
-    m_action->execute(context);
-
 #if PLATFORM(IOS_FAMILY)
-    if (shouldBeginObservingChanges) {
-        ASSERT(page);
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << m_timeoutId << ") timer callback.");
-        auto& contentChangeObserver = page->contentChangeObserver();
-        contentChangeObserver.stopObservingStyleRecalcScheduling();
-        contentChangeObserver.stopObservingContentChanges();
-
-        auto observedContentChange = contentChangeObserver.observedContentChange();
-        // Check if the timer callback triggered either a sync or async style update.
-        auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObservingLastTimer && observedContentChange == WKContentNoChange);  
-        if (inDeterminedState) {
-            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired(" << m_timeoutId << "): in determined state.");
-            page->chrome().client().observedContentChange(*downcast<Document>(context).frame());
-        } else if (observedContentChange == WKContentIndeterminateChange) {
-            // An async style recalc has been scheduled. Let's observe it.
-            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired(" << m_timeoutId << "): wait until next style recalc fires.");
-            contentChangeObserver.setShouldObserveNextStyleRecalc(true);
-        }
-    }
+    Page* page = is<Document>(context) ? downcast<Document>(context).page() : nullptr;
+    if (page)
+        page->contentChangeObserver().startObservingDOMTimerExecute(*this);
+#endif
+    m_action->execute(context);
+#if PLATFORM(IOS_FAMILY)
+    if (page)
+        page->contentChangeObserver().stopObservingDOMTimerExecute(*this);
 #endif
 
     InspectorInstrumentation::didFireTimer(cookie);
