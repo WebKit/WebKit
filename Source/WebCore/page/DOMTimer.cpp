@@ -388,11 +388,11 @@ void DOMTimer::fired()
         // Check if the timer callback triggered either a sync or async style update.
         auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObservingLastTimer && observedContentChange == WKContentNoChange);  
         if (inDeterminedState) {
-            LOG_WITH_STREAM(ContentObservation, "DOMTimer::fired(" << m_timeoutId << "): in determined state.");
+            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired(" << m_timeoutId << "): in determined state.");
             page->chrome().client().observedContentChange(*downcast<Document>(context).frame());
         } else if (observedContentChange == WKContentIndeterminateChange) {
             // An async style recalc has been scheduled. Let's observe it.
-            LOG_WITH_STREAM(ContentObservation, "DOMTimer::fired(" << m_timeoutId << "): wait until next style recalc fires.");
+            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired(" << m_timeoutId << "): wait until next style recalc fires.");
             contentChangeObserver.setShouldObserveNextStyleRecalc(true);
         }
     }

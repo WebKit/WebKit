@@ -1,5 +1,12 @@
 2019-02-25  Zalan Bujtas  <zalan@apple.com>
 
+        Add missing stream parameter. Unreviewed.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+
+2019-02-25  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed build fix after r242032.
 
         * page/DOMTimer.cpp:
