@@ -1,3 +1,10 @@
+2019-02-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Unreviewed, fix indentation.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.markModified):
+
 2019-02-23  Keith Miller  <keith_miller@apple.com>
 
         Add new mac target numbers
