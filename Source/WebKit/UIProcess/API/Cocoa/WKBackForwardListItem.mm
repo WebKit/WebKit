@@ -71,6 +71,11 @@
     return nullptr;
 }
 
+- (CGPoint) _scrollPosition
+{
+    return CGPointMake(_item->pageState().mainFrameState.scrollPosition.x(), _item->pageState().mainFrameState.scrollPosition.y());
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
