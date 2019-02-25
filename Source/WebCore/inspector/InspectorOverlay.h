@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,23 +31,20 @@
 
 #include "Color.h"
 #include "FloatQuad.h"
-#include "LayoutRect.h"
-#include "NodeList.h"
+#include "FloatRect.h"
 #include "Timer.h"
-#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Deque.h>
-#include <wtf/JSONValues.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Color;
 class GraphicsContext;
 class InspectorClient;
-class IntRect;
 class Node;
+class NodeList;
 class Page;
 
 struct HighlightConfig {
@@ -106,60 +104,52 @@ public:
     void paint(GraphicsContext&);
     void getHighlight(Highlight&, CoordinateSystem) const;
 
-    void setPausedInDebuggerMessage(const String*);
-
     void hideHighlight();
     void highlightNodeList(RefPtr<NodeList>&&, const HighlightConfig&);
     void highlightNode(Node*, const HighlightConfig&);
     void highlightQuad(std::unique_ptr<FloatQuad>, const HighlightConfig&);
-    
-    void setShowingPaintRects(bool);
+
+    void setShowPaintRects(bool);
     void showPaintRect(const FloatRect&);
 
     void setShowRulers(bool);
-    
+
     Node* highlightedNode() const;
 
     void didSetSearchingForNode(bool enabled);
 
     void setIndicating(bool indicating);
 
-    RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildHighlightObjectForNode(Node*, HighlightType) const;
-    Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
-
-    void freePage();
 private:
+    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
+
     bool shouldShowOverlay() const;
-    void drawNodeHighlight();
-    void drawQuadHighlight();
-    void drawPausedInDebuggerMessage();
-    void drawPaintRects();
-    void drawRulers();
+
+    void drawNodeHighlight(GraphicsContext&, Node&);
+    void drawQuadHighlight(GraphicsContext&, const FloatQuad&);
+    void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
+    void drawBounds(GraphicsContext&, const FloatRect&);
+    void drawRulers(GraphicsContext&);
+
+    void drawElementTitle(GraphicsContext&, Node&, const FloatRect& bounds);
+
     void updatePaintRectsTimerFired();
-
-    Page* overlayPage();
-
-    void forcePaint();
-    void reset(const IntSize& viewportSize, const IntPoint& scrollOffset);
-    void evaluateInOverlay(const String& method);
-    void evaluateInOverlay(const String& method, const String& argument);
-    void evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument);
 
     Page& m_page;
     InspectorClient* m_client;
-    String m_pausedInDebuggerMessage;
+
     RefPtr<Node> m_highlightNode;
     RefPtr<NodeList> m_highlightNodeList;
     HighlightConfig m_nodeHighlightConfig;
+
     std::unique_ptr<FloatQuad> m_highlightQuad;
-    std::unique_ptr<Page> m_overlayPage;
     HighlightConfig m_quadHighlightConfig;
-    
-    using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
+
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
+
     bool m_indicating {false};
-    bool m_showingPaintRects {false};
+    bool m_showPaintRects {false};
     bool m_showRulers {false};
 };
 

@@ -1725,13 +1725,6 @@ endif
 
 # Inspector interfaces
 
-all : InspectorOverlayPage.h
-
-InspectorOverlayPage.h : InspectorOverlayPage.html InspectorOverlayPage.css InspectorOverlayPage.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html ./InspectorOverlayPage.combined.html
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
-	$(DELETE) InspectorOverlayPage.combined.html
-
 all : CommandLineAPIModuleSource.h
 
 CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js

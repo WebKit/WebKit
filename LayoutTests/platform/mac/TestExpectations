@@ -1062,7 +1062,6 @@ webkit.org/b/169119 [ Debug ] inspector/debugger/tail-deleted-frames-this-value.
 webkit.org/b/168387 [ Debug ] inspector/debugger/tail-recursion.html [ Pass Timeout ]
 webkit.org/b/170127 inspector/dom-debugger/dom-breakpoints.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/dom/getAccessibilityPropertiesForNode.html [ Pass Timeout ]
-webkit.org/b/148636 inspector/dom/highlight-shape-outside.html [ Pass Timeout ]
 webkit.org/b/154610 inspector/dom-debugger/node-removed.html [ Pass Timeout ]
 webkit.org/b/153039 [ Debug ] inspector/heap/garbageCollected.html [ Pass Timeout ]
 webkit.org/b/167408 [ Debug ] inspector/heap/gc.html [ Slow ]

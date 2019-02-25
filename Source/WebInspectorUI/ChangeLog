@@ -1,5 +1,36 @@
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Change the InspectorOverlay to use native rather than canvas
+        https://bugs.webkit.org/show_bug.cgi?id=105023
+        <rdar://problem/13443692>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.initializeTarget):
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/12.2/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-10.0.json:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-11.0.json:
+        * Versions/Inspector-iOS-11.3.json:
+        * Versions/Inspector-iOS-12.0.json:
+        * Versions/Inspector-iOS-12.2.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        * Versions/Inspector-iOS-9.3.json:
+        Remove `Debugger.setOverlayMessage` command as it hasn't been used and is no longer supported.
+
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: provide a way to make searches case sensitive or use a regular expression
         https://bugs.webkit.org/show_bug.cgi?id=192527
 

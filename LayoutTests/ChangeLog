@@ -1,5 +1,30 @@
 2019-02-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Change the InspectorOverlay to use native rather than canvas
+        https://bugs.webkit.org/show_bug.cgi?id=105023
+        <rdar://problem/13443692>
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/dom/shapes-test.js: Removed.
+        * inspector/dom/hideHighlight.html: Removed.
+        * inspector/dom/hideHighlight-expected.txt: Removed.
+        * inspector/dom/highlight-shape-outside.html: Removed.
+        * inspector/dom/highlight-shape-outside-expected.txt: Removed.
+        * inspector/dom/highlight-shape-outside-margin.html: Removed.
+        * inspector/dom/highlight-shape-outside-margin-expected.txt: Removed.
+        * inspector/dom/highlightFrame.html: Removed.
+        * inspector/dom/highlightFrame-expected.txt: Removed.
+        * inspector/dom/highlightNode.html: Removed.
+        * inspector/dom/highlightNode-expected.txt: Removed.
+        * inspector/dom/highlightNodeList.html: Removed.
+        * inspector/dom/highlightNodeList-expected.txt: Removed.
+        * inspector/dom/highlightSelector.html: Removed.
+        * inspector/dom/highlightSelector-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: provide a way to make searches case sensitive or use a regular expression
         https://bugs.webkit.org/show_bug.cgi?id=192527
         <rdar://problem/46800955>

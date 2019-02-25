@@ -857,10 +857,6 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
     }
 }
 
-void InspectorDebuggerAgent::setOverlayMessage(ErrorString&, const String*)
-{
-}
-
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
     if (m_scriptDebugServer.pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)

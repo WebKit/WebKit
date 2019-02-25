@@ -243,7 +243,6 @@ enum CompositingPolicy {
     DOMRect boundingBox(Element element);
 
     [MayThrowException] DOMRectList inspectorHighlightRects();
-    [MayThrowException] DOMString inspectorHighlightObject();
 
     [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);
     [MayThrowException] Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);

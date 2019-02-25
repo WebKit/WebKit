@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,58 +30,89 @@
 #include "config.h"
 #include "InspectorOverlay.h"
 
-#include "CacheStorageProvider.h"
-#include "DocumentLoader.h"
-#include "EditorClient.h"
+#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
+#include "DOMCSSNamespace.h"
+#include "DOMTokenList.h"
 #include "Element.h"
-#include "EmptyClients.h"
+#include "FloatPoint.h"
+#include "FloatSize.h"
+#include "FontCascade.h"
+#include "FontCascadeDescription.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "InspectorClient.h"
-#include "InspectorOverlayPage.h"
-#include "LibWebRTCProvider.h"
+#include "IntPoint.h"
+#include "IntRect.h"
+#include "IntSize.h"
 #include "Node.h"
+#include "NodeList.h"
 #include "Page.h"
-#include "PageConfiguration.h"
-#include "PolygonShape.h"
+#include "Path.h"
 #include "PseudoElement.h"
-#include "RTCController.h"
-#include "RectangleShape.h"
+#include "RenderBox.h"
 #include "RenderBoxModelObject.h"
-#include "RenderElement.h"
 #include "RenderInline.h"
-#include "RenderView.h"
-#include "ScriptController.h"
-#include "ScriptSourceCode.h"
+#include "RenderObject.h"
 #include "Settings.h"
-#include "SocketProvider.h"
-#include "StyledElement.h"
-#include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <wtf/JSONValues.h>
-
-#if PLATFORM(MAC)
-#include "LocalDefaultSystemAppearance.h"
-#endif
+#include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 using namespace Inspector;
 
+static constexpr float elementDataSpacing = 2;
+static constexpr float elementDataArrowSize = 7;
+static constexpr float elementDataBorderSize = 1;
+
+static constexpr float rulerSize = 15;
+static constexpr float rulerLabelSize = 13;
+static constexpr float rulerStepIncrement = 50;
+static constexpr float rulerStepLength = 8;
+static constexpr float rulerSubStepIncrement = 5;
+static constexpr float rulerSubStepLength = 5;
+
+static void truncateWithEllipsis(String& string, size_t length)
+{
+    const UChar ellipsisUChar[] = { 0x2026, 0 };
+
+    if (string.length() > length) {
+        string.truncate(length);
+        string.append(ellipsisUChar);
+    }
+}
+
+static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)
+{
+    return view->contentsToRootView(roundedIntPoint(point));
+}
+
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    quad.setP1(view->contentsToRootView(roundedIntPoint(quad.p1())));
-    quad.setP2(view->contentsToRootView(roundedIntPoint(quad.p2())));
-    quad.setP3(view->contentsToRootView(roundedIntPoint(quad.p3())));
-    quad.setP4(view->contentsToRootView(roundedIntPoint(quad.p4())));
+    quad.setP1(localPointToRootPoint(view, quad.p1()));
+    quad.setP2(localPointToRootPoint(view, quad.p2()));
+    quad.setP3(localPointToRootPoint(view, quad.p3()));
+    quad.setP4(localPointToRootPoint(view, quad.p4()));
 
     if (coordinateSystem == InspectorOverlay::CoordinateSystem::View)
         quad += toIntSize(mainView->scrollPosition());
 }
 
-static void contentsQuadToPage(const FrameView* mainView, const FrameView* view, FloatQuad& quad)
+static Element* effectiveElementForNode(Node& node)
 {
-    contentsQuadToCoordinateSystem(mainView, view, quad, InspectorOverlay::CoordinateSystem::View);
+    if (!is<Element>(node) || !node.document().frame())
+        return nullptr;
+
+    Element* element = nullptr;
+    if (is<PseudoElement>(node)) {
+        if (Element* hostElement = downcast<PseudoElement>(node).hostElement())
+            element = hostElement;
+    } else
+        element = &downcast<Element>(node);
+
+    return element;
 }
 
 static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig& highlightConfig, Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
@@ -166,6 +198,167 @@ static void buildQuadHighlight(const FloatQuad& quad, const HighlightConfig& hig
     highlight.quads.append(quad);
 }
 
+static Path quadToPath(const FloatQuad& quad, FloatRect& bounds)
+{
+    Path path;
+    path.moveTo(quad.p1());
+    path.addLineTo(quad.p2());
+    path.addLineTo(quad.p3());
+    path.addLineTo(quad.p4());
+    path.closeSubpath();
+
+    bounds.unite(path.boundingRect());
+
+    return path;
+}
+
+static void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, const FloatQuad& clipQuad, const Color& fillColor, FloatRect& bounds)
+{
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.setFillColor(fillColor);
+    context.setStrokeThickness(0);
+    context.fillPath(quadToPath(quad, bounds));
+
+    context.setCompositeOperation(CompositeDestinationOut);
+    context.setFillColor(Color::createUnchecked(255, 0, 0));
+    context.fillPath(quadToPath(clipQuad, bounds));
+}
+
+static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, const Color& fillColor, const Color& outlineColor, FloatRect& bounds)
+{
+    Path path = quadToPath(quad, bounds);
+
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.setStrokeThickness(2);
+
+    context.clipPath(path);
+
+    context.setFillColor(fillColor);
+    context.fillPath(path);
+
+    context.setStrokeColor(outlineColor);
+    context.strokePath(path);
+}
+
+static void drawFragmentHighlight(GraphicsContext& context, Node& node, const HighlightConfig& highlightConfig, FloatRect& bounds)
+{
+    Highlight highlight;
+    buildNodeHighlight(node, highlightConfig, highlight, InspectorOverlay::CoordinateSystem::Document);
+
+    FloatQuad marginQuad;
+    FloatQuad borderQuad;
+    FloatQuad paddingQuad;
+    FloatQuad contentQuad;
+
+    size_t size = highlight.quads.size();
+    if (size >= 1)
+        marginQuad = highlight.quads[0];
+    if (size >= 2)
+        borderQuad = highlight.quads[1];
+    if (size >= 3)
+        paddingQuad = highlight.quads[2];
+    if (size >= 4)
+        contentQuad = highlight.quads[3];
+
+    if (!marginQuad.isEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
+        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlight.marginColor, bounds);
+
+    if (!borderQuad.isEmpty() && borderQuad != paddingQuad && highlight.borderColor.isVisible())
+        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlight.borderColor, bounds);
+
+    if (!paddingQuad.isEmpty() && paddingQuad != contentQuad && highlight.paddingColor.isVisible())
+        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlight.paddingColor, bounds);
+
+    if (!contentQuad.isEmpty() && (highlight.contentColor.isVisible() || highlight.contentOutlineColor.isVisible()))
+        drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
+}
+
+static void drawShapeHighlight(GraphicsContext& context, Node& node, FloatRect& bounds)
+{
+    Element* element = effectiveElementForNode(node);
+    if (!element)
+        return;
+
+    RenderObject* renderer = element->renderer();
+    if (!renderer || !is<RenderBox>(renderer))
+        return;
+
+    const ShapeOutsideInfo* shapeOutsideInfo = downcast<RenderBox>(renderer)->shapeOutsideInfo();
+    if (!shapeOutsideInfo)
+        return;
+
+    const Color shapeHighlightColor(96, 82, 127, 204);
+
+    Frame* containingFrame = element->document().frame();
+    FrameView* containingView = containingFrame->view();
+    FrameView* mainView = containingFrame->page()->mainFrame().view();
+
+    Shape::DisplayPaths paths;
+    shapeOutsideInfo->computedShape().buildDisplayPaths(paths);
+
+    if (paths.shape.isEmpty()) {
+        LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
+        FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
+        contentsQuadToCoordinateSystem(mainView, containingView, shapeQuad, InspectorOverlay::CoordinateSystem::Document);
+        drawOutlinedQuad(context, shapeQuad, shapeHighlightColor, Color::transparent, bounds);
+        return;
+    }
+
+    const auto mapPoints = [&] (const Path& path) {
+        Path newPath;
+        path.apply([&] (const PathElement& pathElement) {
+            const auto localToRoot = [&] (size_t index) {
+                const FloatPoint& point = pathElement.points[index];
+                return localPointToRootPoint(containingView, renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));
+            };
+
+            switch (pathElement.type) {
+            case PathElementMoveToPoint:
+                newPath.moveTo(localToRoot(0));
+                break;
+
+            case PathElementAddLineToPoint:
+                newPath.addLineTo(localToRoot(0));
+                break;
+
+            case PathElementAddCurveToPoint:
+                newPath.addBezierCurveTo(localToRoot(0), localToRoot(1), localToRoot(2));
+                break;
+
+            case PathElementAddQuadCurveToPoint:
+                newPath.addQuadCurveTo(localToRoot(0), localToRoot(1));
+                break;
+
+            case PathElementCloseSubpath:
+                newPath.closeSubpath();
+                break;
+            }
+        });
+        return newPath;
+    };
+
+    if (paths.marginShape.length()) {
+        Path marginPath = mapPoints(paths.marginShape);
+        bounds.unite(marginPath.boundingRect());
+
+        GraphicsContextStateSaver stateSaver(context);
+
+        const Color shapeMarginHighlightColor(96, 82, 127, 153);
+        context.setFillColor(shapeMarginHighlightColor);
+        context.fillPath(marginPath);
+    }
+
+    Path shapePath = mapPoints(paths.shape);
+    bounds.unite(shapePath.boundingRect());
+
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.setFillColor(shapeHighlightColor);
+    context.fillPath(shapePath);
+}
+
 InspectorOverlay::InspectorOverlay(Page& page, InspectorClient* client)
     : m_page(page)
     , m_client(client)
@@ -180,19 +373,38 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-    Page* overlayPage = this->overlayPage();
-    if (!overlayPage)
-        return;
+    FloatSize viewportSize = m_page.mainFrame().view()->sizeForVisibleContent();
+
+    context.clearRect({ FloatPoint::zero(), viewportSize });
 
     GraphicsContextStateSaver stateSaver(context);
-    FrameView* view = overlayPage->mainFrame().view();
 
-#if PLATFORM(MAC)
-    LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
-#endif
+    if (m_indicating) {
+        GraphicsContextStateSaver stateSaver(context);
 
-    view->updateLayoutAndStyleIfNeededRecursive();
-    view->paint(context, IntRect(0, 0, view->width(), view->height()));
+        const Color indicatingColor(111, 168, 220, 168);
+        context.setFillColor(indicatingColor);
+        context.fillRect({ FloatPoint::zero(), viewportSize });
+    }
+
+    if (m_highlightQuad)
+        drawQuadHighlight(context, *m_highlightQuad);
+
+    if (m_highlightNodeList) {
+        for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
+            if (Node* node = m_highlightNodeList->item(i))
+                drawNodeHighlight(context, *node);
+        }
+    }
+
+    if (m_highlightNode)
+        drawNodeHighlight(context, *m_highlightNode);
+
+    if (!m_paintRects.isEmpty())
+        drawPaintRects(context, m_paintRects);
+
+    if (m_showRulers)
+        drawRulers(context);
 }
 
 void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
@@ -214,12 +426,6 @@ void InspectorOverlay::getHighlight(Highlight& highlight, InspectorOverlay::Coor
         highlight.type = HighlightType::NodeList;
     } else
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
-}
-
-void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
-{
-    m_pausedInDebuggerMessage = message ? *message : String();
-    update();
 }
 
 void InspectorOverlay::hideHighlight()
@@ -268,19 +474,17 @@ void InspectorOverlay::didSetSearchingForNode(bool enabled)
 
 void InspectorOverlay::setIndicating(bool indicating)
 {
-    m_indicating = indicating;
+    if (m_indicating == indicating)
+        return;
 
-    if (m_indicating)
-        evaluateInOverlay("showPageIndication"_s);
-    else
-        evaluateInOverlay("hidePageIndication"_s);
+    m_indicating = indicating;
 
     update();
 }
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
-    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showingPaintRects || m_showRulers || !m_pausedInDebuggerMessage.isNull();
+    return m_highlightNode || m_highlightNodeList || m_highlightQuad || m_indicating || m_showPaintRects || m_showRulers;
 }
 
 void InspectorOverlay::update()
@@ -294,107 +498,25 @@ void InspectorOverlay::update()
     if (!view)
         return;
 
-    Page* overlayPage = this->overlayPage();
-    if (overlayPage) {
-        FrameView* overlayView = overlayPage->mainFrame().view();
-        IntSize frameViewFullSize = view->sizeForVisibleContent(ScrollableArea::IncludeScrollbars);
-        overlayView->resize(frameViewFullSize);
-    }
-
-    // Clear canvas and paint things.
-    IntSize viewportSize = view->sizeForVisibleContent();
-    IntPoint scrollOffset = view->scrollPosition();
-    reset(viewportSize, scrollOffset);
-
-    // Include scrollbars to avoid masking them by the gutter.
-    drawNodeHighlight();
-    drawQuadHighlight();
-    drawPausedInDebuggerMessage();
-    drawPaintRects();
-
-    if (m_showRulers)
-        drawRulers();
-
-    // Position DOM elements.
-    if (overlayPage) {
-        overlayPage->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
-        FrameView* overlayView = overlayPage->mainFrame().view();
-        if (overlayView->needsLayout())
-            overlayView->layoutContext().layout();
-    }
-
-    forcePaint();
+    m_client->highlight();
 }
 
-static Ref<Inspector::Protocol::OverlayTypes::Point> buildObjectForPoint(const FloatPoint& point)
+void InspectorOverlay::setShowPaintRects(bool showPaintRects)
 {
-    return Inspector::Protocol::OverlayTypes::Point::create()
-        .setX(point.x())
-        .setY(point.y())
-        .release();
-}
-
-static Ref<Inspector::Protocol::OverlayTypes::Rect> buildObjectForRect(const FloatRect& rect)
-{
-    return Inspector::Protocol::OverlayTypes::Rect::create()
-        .setX(rect.x())
-        .setY(rect.y())
-        .setWidth(rect.width())
-        .setHeight(rect.height())
-        .release();
-}
-
-static Ref<Inspector::Protocol::OverlayTypes::Quad> buildArrayForQuad(const FloatQuad& quad)
-{
-    auto array = Inspector::Protocol::OverlayTypes::Quad::create();
-    array->addItem(buildObjectForPoint(quad.p1()));
-    array->addItem(buildObjectForPoint(quad.p2()));
-    array->addItem(buildObjectForPoint(quad.p3()));
-    array->addItem(buildObjectForPoint(quad.p4()));
-    return array;
-}
-
-static Ref<Inspector::Protocol::OverlayTypes::FragmentHighlightData> buildObjectForHighlight(const Highlight& highlight)
-{
-    auto arrayOfQuads = JSON::ArrayOf<Inspector::Protocol::OverlayTypes::Quad>::create();
-    for (auto& quad : highlight.quads)
-        arrayOfQuads->addItem(buildArrayForQuad(quad));
-
-    return Inspector::Protocol::OverlayTypes::FragmentHighlightData::create()
-        .setQuads(WTFMove(arrayOfQuads))
-        .setContentColor(highlight.contentColor.serialized())
-        .setContentOutlineColor(highlight.contentOutlineColor.serialized())
-        .setPaddingColor(highlight.paddingColor.serialized())
-        .setBorderColor(highlight.borderColor.serialized())
-        .setMarginColor(highlight.marginColor.serialized())
-        .release();
-}
-
-static Ref<Inspector::Protocol::OverlayTypes::Size> buildObjectForSize(const IntSize& size)
-{
-    return Inspector::Protocol::OverlayTypes::Size::create()
-        .setWidth(size.width())
-        .setHeight(size.height())
-        .release();
-}
-
-void InspectorOverlay::setShowingPaintRects(bool showingPaintRects)
-{
-    if (m_showingPaintRects == showingPaintRects)
+    if (m_showPaintRects == showPaintRects)
         return;
 
-    m_showingPaintRects = showingPaintRects;
-    if (!m_showingPaintRects) {
+    m_showPaintRects = showPaintRects;
+    if (!m_showPaintRects) {
         m_paintRects.clear();
         m_paintRectUpdateTimer.stop();
-        drawPaintRects();
-        forcePaint();
+        update();
     }
 }
 
 void InspectorOverlay::showPaintRect(const FloatRect& rect)
 {
-    if (!m_showingPaintRects)
+    if (!m_showPaintRects)
         return;
 
     IntRect rootRect = m_page.mainFrame().view()->contentsToRootView(enclosingIntRect(rect));
@@ -409,8 +531,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
         m_paintRectUpdateTimer.startRepeating(paintRectsUpdateInterval);
     }
 
-    drawPaintRects();
-    forcePaint();
+    update();
 }
 
 void InspectorOverlay::setShowRulers(bool showRulers)
@@ -435,390 +556,447 @@ void InspectorOverlay::updatePaintRectsTimerFired()
     if (m_paintRects.isEmpty())
         m_paintRectUpdateTimer.stop();
 
-    if (rectsChanged) {
-        drawPaintRects();
-        forcePaint();
-    }
+    if (rectsChanged)
+        update();
 }
 
-void InspectorOverlay::drawPaintRects()
+void InspectorOverlay::drawNodeHighlight(GraphicsContext& context, Node& node)
 {
-    auto arrayOfRects = JSON::ArrayOf<Inspector::Protocol::OverlayTypes::Rect>::create();
-    for (const auto& pair : m_paintRects)
-        arrayOfRects->addItem(buildObjectForRect(pair.second));
+    FloatRect bounds;
 
-    evaluateInOverlay("updatePaintRects"_s, WTFMove(arrayOfRects));
+    drawFragmentHighlight(context, node, m_nodeHighlightConfig, bounds);
+
+    if (m_nodeHighlightConfig.showInfo)
+        drawShapeHighlight(context, node, bounds);
+
+    if (m_showRulers)
+        drawBounds(context, bounds);
+
+    // Ensure that the title information is drawn after the bounds.
+    if (m_nodeHighlightConfig.showInfo)
+        drawElementTitle(context, node, bounds);
 }
 
-void InspectorOverlay::drawRulers()
+void InspectorOverlay::drawQuadHighlight(GraphicsContext& context, const FloatQuad& quad)
 {
-    evaluateInOverlay("drawRulers"_s);
-}
-
-static RefPtr<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>> buildArrayForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
-{
-    auto arrayOfFragments = JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>::create();
-
     Highlight highlight;
-    buildRendererHighlight(renderer, config, highlight, InspectorOverlay::CoordinateSystem::View);
-    arrayOfFragments->addItem(buildObjectForHighlight(highlight));
+    buildQuadHighlight(quad, m_quadHighlightConfig, highlight);
 
-    return WTFMove(arrayOfFragments);
-}
+    if (highlight.quads.size() >= 1) {
+        FloatRect bounds;
 
-static FloatPoint localPointToRoot(RenderObject* renderer, const FrameView* mainView, const FrameView* view, const FloatPoint& point)
-{
-    FloatPoint result = renderer->localToAbsolute(point);
-    result = view->contentsToRootView(roundedIntPoint(result));
-    result += toIntSize(mainView->scrollPosition());
-    return result;
-}
+        drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, bounds);
 
-struct PathApplyInfo {
-    FrameView* rootView;
-    FrameView* view;
-    Inspector::Protocol::OverlayTypes::DisplayPath* pathArray;
-    RenderObject* renderer;
-    const ShapeOutsideInfo* shapeOutsideInfo;
-};
-
-static void appendPathCommandAndPoints(PathApplyInfo& info, const String& command, const FloatPoint points[], unsigned length)
-{
-    FloatPoint point;
-    info.pathArray->addItem(command);
-    for (unsigned i = 0; i < length; i++) {
-        point = info.shapeOutsideInfo->shapeToRendererPoint(points[i]);
-        point = localPointToRoot(info.renderer, info.rootView, info.view, point);
-        info.pathArray->addItem(point.x());
-        info.pathArray->addItem(point.y());
+        if (m_showRulers)
+            drawBounds(context, bounds);
     }
 }
 
-static void appendPathSegment(PathApplyInfo& pathApplyInfo, const PathElement& pathElement)
+void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<TimeRectPair>& paintRects)
 {
-    FloatPoint point;
-    switch (pathElement.type) {
-    // The points member will contain 1 value.
-    case PathElementMoveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, "M"_s, pathElement.points, 1);
-        break;
-    // The points member will contain 1 value.
-    case PathElementAddLineToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, "L"_s, pathElement.points, 1);
-        break;
-    // The points member will contain 3 values.
-    case PathElementAddCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, "C"_s, pathElement.points, 3);
-        break;
-    // The points member will contain 2 values.
-    case PathElementAddQuadCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, "Q"_s, pathElement.points, 2);
-        break;
-    // The points member will contain no values.
-    case PathElementCloseSubpath:
-        appendPathCommandAndPoints(pathApplyInfo, "Z"_s, nullptr, 0);
-        break;
-    }
+    GraphicsContextStateSaver stateSaver(context);
+
+    const Color paintRectsColor(1.0f, 0.0f, 0.0f, 0.5f);
+    context.setFillColor(paintRectsColor);
+
+    for (const TimeRectPair& pair : paintRects)
+        context.fillRect(pair.second);
 }
 
-static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectForShapeOutside(Frame* containingFrame, RenderBox* renderer)
+void InspectorOverlay::drawBounds(GraphicsContext& context, const FloatRect& bounds)
 {
-    const ShapeOutsideInfo* shapeOutsideInfo = renderer->shapeOutsideInfo();
-    if (!shapeOutsideInfo)
-        return nullptr;
+    FrameView* pageView = m_page.mainFrame().view();
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
 
-    LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
-    FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
-    contentsQuadToPage(containingFrame->page()->mainFrame().view(), containingFrame->view(), shapeQuad);
+    Path path;
 
-    auto shapeObject = Inspector::Protocol::OverlayTypes::ShapeOutsideData::create()
-        .setBounds(buildArrayForQuad(shapeQuad))
-        .release();
+    if (bounds.y() > contentInset.height()) {
+        path.moveTo({ bounds.x(), bounds.y() });
+        path.addLineTo({ bounds.x(), contentInset.height() });
 
-    Shape::DisplayPaths paths;
-    shapeOutsideInfo->computedShape().buildDisplayPaths(paths);
+        path.moveTo({ bounds.maxX(), bounds.y() });
+        path.addLineTo({ bounds.maxX(), contentInset.height() });
+    }
 
-    if (paths.shape.length()) {
-        auto shapePath = Inspector::Protocol::OverlayTypes::DisplayPath::create();
-        PathApplyInfo info;
-        info.rootView = containingFrame->page()->mainFrame().view();
-        info.view = containingFrame->view();
-        info.pathArray = &shapePath.get();
-        info.renderer = renderer;
-        info.shapeOutsideInfo = shapeOutsideInfo;
+    if (bounds.maxY() < viewportSize.height()) {
+        path.moveTo({ bounds.x(), viewportSize.height() });
+        path.addLineTo({ bounds.x(), bounds.maxY() });
 
-        paths.shape.apply([&info](const PathElement& pathElement) {
-            appendPathSegment(info, pathElement);
-        });
+        path.moveTo({ bounds.maxX(), viewportSize.height() });
+        path.addLineTo({ bounds.maxX(), bounds.maxY() });
+    }
 
-        shapeObject->setShape(shapePath.copyRef());
+    if (bounds.x() > contentInset.width()) {
+        path.moveTo({ bounds.x(), bounds.y() });
+        path.addLineTo({ contentInset.width(), bounds.y() });
 
-        if (paths.marginShape.length()) {
-            auto marginShapePath = Inspector::Protocol::OverlayTypes::DisplayPath::create();
-            info.pathArray = &marginShapePath.get();
+        path.moveTo({ bounds.x(), bounds.maxY() });
+        path.addLineTo({ contentInset.width(), bounds.maxY() });
+    }
 
-            paths.marginShape.apply([&info](const PathElement& pathElement) {
-                appendPathSegment(info, pathElement);
-            });
+    if (bounds.maxX() < viewportSize.width()) {
+        path.moveTo({ bounds.maxX(), bounds.y() });
+        path.addLineTo({ viewportSize.width(), bounds.y() });
 
-            shapeObject->setMarginShape(marginShapePath.copyRef());
+        path.moveTo({ bounds.maxX(), bounds.maxY() });
+        path.addLineTo({ viewportSize.width(), bounds.maxY() });
+    }
+
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.setStrokeThickness(1);
+
+    const Color boundsColor(1.0f, 0.0f, 0.0f, 0.6f);
+    context.setStrokeColor(boundsColor);
+
+    context.strokePath(path);
+}
+
+void InspectorOverlay::drawRulers(GraphicsContext& context)
+{
+    const Color rulerBackgroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+    const Color lightRulerColor(0.0f, 0.0f, 0.0f, 0.2f);
+    const Color darkRulerColor(0.0f, 0.0f, 0.0f, 0.5f);
+
+    IntPoint scrollOffset;
+
+    FrameView* pageView = m_page.mainFrame().view();
+    if (!pageView->delegatesScrolling())
+        scrollOffset = pageView->visibleContentRect().location();
+
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
+    float pageScaleFactor = m_page.pageScaleFactor();
+    float pageZoomFactor = m_page.mainFrame().pageZoomFactor();
+
+    float pageFactor = pageZoomFactor * pageScaleFactor;
+    float scrollX = scrollOffset.x() * pageScaleFactor;
+    float scrollY = scrollOffset.y() * pageScaleFactor;
+
+    const auto zoom = [&] (float value) -> float {
+        return value * pageFactor;
+    };
+
+    const auto unzoom = [&] (float value) -> float {
+        return value / pageFactor;
+    };
+
+    const auto multipleBelow = [&] (float value, float step) -> float {
+        return value - std::fmod(value, step);
+    };
+
+    float width = viewportSize.width() / pageFactor;
+    float height = viewportSize.height() / pageFactor;
+    float minX = unzoom(scrollX);
+    float minY = unzoom(scrollY);
+    float maxX = minX + width;
+    float maxY = minY + height;
+
+    // Draw backgrounds.
+    {
+        GraphicsContextStateSaver backgroundStateSaver(context);
+
+        float offsetX = contentInset.width() + rulerSize;
+        float offsetY = contentInset.height() + rulerSize;
+
+        context.setFillColor(rulerBackgroundColor);
+        context.fillRect({ contentInset.width(), contentInset.height(), rulerSize, rulerSize });
+        context.fillRect({ offsetX, contentInset.height(), zoom(width) - offsetX, rulerSize });
+        context.fillRect({ contentInset.width(), offsetY, rulerSize, zoom(height) - offsetY });
+    }
+
+    // Draw lines.
+    {
+        GraphicsContextStateSaver lineStateSaver(context);
+
+        context.setFillColor(darkRulerColor);
+        context.setStrokeThickness(1);
+
+        // Draw horizontal ruler.
+        {
+            GraphicsContextStateSaver horizontalRulerStateSaver(context);
+
+            context.translate(contentInset.width() - scrollX + 0.5f, contentInset.height() - scrollY);
+
+            for (float x = multipleBelow(minX, rulerSubStepIncrement); x < maxX; x += rulerSubStepIncrement) {
+                if (!x && !scrollX)
+                    continue;
+
+                Path path;
+                path.moveTo({ zoom(x), scrollY });
+
+                if (std::fmod(x, rulerStepIncrement)) {
+                    context.setStrokeColor(lightRulerColor);
+                    path.addLineTo({ zoom(x), scrollY + rulerSubStepLength });
+                } else {
+                    context.setStrokeColor(darkRulerColor);
+                    path.addLineTo({ zoom(x), scrollY + (std::fmod(x, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength) });
+                }
+
+                context.strokePath(path);
+            }
+        }
+
+        // Draw vertical ruler.
+        {
+            GraphicsContextStateSaver veritcalRulerStateSaver(context);
+
+            context.translate(contentInset.width() - scrollX, contentInset.height() - scrollY + 0.5f);
+
+            for (float y = multipleBelow(minY, rulerSubStepIncrement); y < maxY; y += rulerSubStepIncrement) {
+                if (!y && !scrollY)
+                    continue;
+
+                Path path;
+                path.moveTo({ scrollX, zoom(y) });
+
+                if (std::fmod(y, rulerStepIncrement)) {
+                    context.setStrokeColor(lightRulerColor);
+                    path.addLineTo({ scrollX + rulerSubStepLength, zoom(y) });
+                } else {
+                    context.setStrokeColor(darkRulerColor);
+                    path.addLineTo({ scrollX + (std::fmod(y, rulerStepIncrement * 2) ? rulerSubStepLength : rulerStepLength), zoom(y) });
+                }
+
+                context.strokePath(path);
+            }
+        }
+
+        // Draw labels.
+        {
+            GraphicsContextStateSaver labelStateSaver(context);
+
+            FontCascadeDescription fontDescription;
+            fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
+            fontDescription.setComputedSize(10);
+
+            FontCascade font(WTFMove(fontDescription), 0, 0);
+            font.update(nullptr);
+
+            context.translate(contentInset.width() - scrollX, contentInset.height() - scrollY);
+
+            for (float x = multipleBelow(minX, rulerStepIncrement * 2); x < maxX; x += rulerStepIncrement * 2) {
+                if (!x && !scrollX)
+                    continue;
+
+                GraphicsContextStateSaver verticalLabelStateSaver(context);
+                context.translate(zoom(x) + 0.5f, scrollY);
+                context.drawText(font, TextRun(String::number(x)), { 2, rulerLabelSize });
+            }
+
+            for (float y = multipleBelow(minY, rulerStepIncrement * 2); y < maxY; y += rulerStepIncrement * 2) {
+                if (!y && !scrollY)
+                    continue;
+
+                GraphicsContextStateSaver horizontalLabelStateSaver(context);
+                context.translate(scrollX, zoom(y) + 0.5f);
+                context.rotate(-piOverTwoFloat);
+                context.drawText(font, TextRun(String::number(y)), { 2, rulerLabelSize });
+            }
         }
     }
-
-    return WTFMove(shapeObject);
 }
 
-static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElementData(Node* node, HighlightType)
+void InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, const FloatRect& bounds)
 {
-    if (!is<Element>(node) || !node->document().frame())
-        return nullptr;
+    if (bounds.isEmpty())
+        return;
 
-    Element* effectiveElement = downcast<Element>(node);
-    if (node->isPseudoElement()) {
-        Element* hostElement = downcast<PseudoElement>(*node).hostElement();
-        if (!hostElement)
-            return nullptr;
-        effectiveElement = hostElement;
-    }
+    Element* element = effectiveElementForNode(node);
+    if (!element)
+        return;
 
-    Element& element = *effectiveElement;
-    bool isXHTML = element.document().isXHTMLDocument();
-    auto elementData = Inspector::Protocol::OverlayTypes::ElementData::create()
-        .setTagName(isXHTML ? element.nodeName() : element.nodeName().convertToASCIILowercase())
-        .setIdValue(element.getIdAttribute())
-        .release();
-
-    if (element.hasClass() && is<StyledElement>(element)) {
-        auto classes = JSON::ArrayOf<String>::create();
-        HashSet<AtomicString> usedClassNames;
-        const SpaceSplitString& classNamesString = downcast<StyledElement>(element).classNames();
-        for (size_t i = 0; i < classNamesString.size(); ++i) {
-            const AtomicString& className = classNamesString[i];
-            if (usedClassNames.contains(className))
-                continue;
-
-            usedClassNames.add(className);
-            classes->addItem(className);
-        }
-        elementData->setClasses(WTFMove(classes));
-    }
-
-    if (node->isPseudoElement()) {
-        if (node->pseudoId() == PseudoId::Before)
-            elementData->setPseudoElement("before");
-        else if (node->pseudoId() == PseudoId::After)
-            elementData->setPseudoElement("after");
-    }
-
-    RenderElement* renderer = element.renderer();
+    RenderObject* renderer = element->renderer();
     if (!renderer)
-        return nullptr;
+        return;
 
-    Frame* containingFrame = node->document().frame();
-    FrameView* containingView = containingFrame->view();
-    IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
-    RenderBoxModelObject* modelObject = is<RenderBoxModelObject>(*renderer) ? downcast<RenderBoxModelObject>(renderer) : nullptr;
-    auto sizeObject = Inspector::Protocol::OverlayTypes::Size::create()
-        .setWidth(modelObject ? adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject) : boundingBox.width())
-        .setHeight(modelObject ? adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject) : boundingBox.height())
-        .release();
-    elementData->setSize(WTFMove(sizeObject));
+    const UChar multiplicationSignUChar[] = { 0x00D7, 0 };
 
-    if (is<RenderBox>(*renderer)) {
-        auto& renderBox = downcast<RenderBox>(*renderer);
-        if (RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> shapeObject = buildObjectForShapeOutside(containingFrame, &renderBox))
-            elementData->setShapeOutsideData(WTFMove(shapeObject));
+    String elementTagName = element->nodeName();
+    if (!element->document().isXHTMLDocument())
+        elementTagName = elementTagName.convertToASCIILowercase();
+
+    String elementIDValue;
+    if (element->hasID())
+        elementIDValue = makeString('#', DOMCSSNamespace::escape(element->getIdAttribute()));
+
+    String elementClassValue;
+    if (element->hasClass()) {
+        StringBuilder builder;
+        DOMTokenList& classList = element->classList();
+        for (size_t i = 0; i < classList.length(); ++i) {
+            builder.append('.');
+            builder.append(DOMCSSNamespace::escape(classList.item(i)));
+        }
+
+        elementClassValue = builder.toString();
+        truncateWithEllipsis(elementClassValue, 50);
+    }
+
+    String elementPseudoType;
+    if (element->isBeforePseudoElement())
+        elementPseudoType = "::before"_s;
+    else if (element->isAfterPseudoElement())
+        elementPseudoType = "::after"_s;
+
+    String elementWidth;
+    String elementHeight;
+    if (is<RenderBoxModelObject>(renderer)) {
+        RenderBoxModelObject* modelObject = downcast<RenderBoxModelObject>(renderer);
+        elementWidth = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetWidth()), *modelObject));
+        elementHeight = String::number(adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject));
+    } else {
+        FrameView* containingView = element->document().frame()->view();
+        IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
+        elementWidth = String::number(boundingBox.width());
+        elementHeight = String::number(boundingBox.height());
     }
 
     // Need to enable AX to get the computed role.
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
-    if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
-        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node))
-            elementData->setRole(axObject->computedRoleString());
+    String elementRole;
+    if (AXObjectCache* axObjectCache = element->document().axObjectCache()) {
+        if (AccessibilityObject* axObject = axObjectCache->getOrCreate(element))
+            elementRole = axObject->computedRoleString();
     }
 
-    return WTFMove(elementData);
-}
+    FontCascadeDescription fontDescription;
+    fontDescription.setFamilies({ "Menlo", m_page.settings().fixedFontFamily() });
+    fontDescription.setComputedSize(11);
 
-RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> InspectorOverlay::buildHighlightObjectForNode(Node* node, HighlightType type) const
-{
-    if (!node)
-        return nullptr;
+    FontCascade font(WTFMove(fontDescription), 0, 0);
+    font.update(nullptr);
 
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return nullptr;
+    int fontHeight = font.fontMetrics().height();
 
-    RefPtr<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::FragmentHighlightData>> arrayOfFragmentHighlights = buildArrayForRendererFragments(renderer, m_nodeHighlightConfig);
-    if (!arrayOfFragmentHighlights)
-        return nullptr;
+    float elementDataWidth;
+    float elementDataHeight = fontHeight;
+    bool hasSecondLine = !elementRole.isEmpty();
 
-    // The main view's scroll offset is shared across all quads.
-    FrameView* mainView = m_page.mainFrame().view();
+    {
+        String firstLine = makeString(elementTagName, elementIDValue, elementClassValue, elementPseudoType, ' ', elementWidth, "px", ' ', multiplicationSignUChar, ' ', elementHeight, "px");
+        String secondLine = makeString("Role ", elementRole);
 
-    auto nodeHighlightObject = Inspector::Protocol::OverlayTypes::NodeHighlightData::create()
-        .setScrollOffset(buildObjectForPoint(!mainView->delegatesScrolling() ? mainView->visibleContentRect().location() : FloatPoint()))
-        .setFragments(WTFMove(arrayOfFragmentHighlights))
-        .release();
+        float firstLineWidth = font.width(TextRun(firstLine));
+        float secondLineWidth = font.width(TextRun(secondLine));
 
-    if (m_nodeHighlightConfig.showInfo) {
-        if (RefPtr<Inspector::Protocol::OverlayTypes::ElementData> elementData = buildObjectForElementData(node, type))
-            nodeHighlightObject->setElementData(WTFMove(elementData));
+        elementDataWidth = std::fmax(firstLineWidth, secondLineWidth);
+        if (hasSecondLine)
+            elementDataHeight += fontHeight;
     }
 
-    return WTFMove(nodeHighlightObject);
-}
+    FrameView* pageView = m_page.mainFrame().view();
 
-Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> InspectorOverlay::buildObjectForHighlightedNodes() const
-{
-    auto highlights = JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>::create();
+    FloatSize viewportSize = pageView->sizeForVisibleContent();
+    viewportSize.expand(-elementDataSpacing, -elementDataSpacing);
 
-    if (m_highlightNode) {
-        if (RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> nodeHighlightData = buildHighlightObjectForNode(m_highlightNode.get(), HighlightType::Node))
-            highlights->addItem(WTFMove(nodeHighlightData));
-    } else if (m_highlightNodeList) {
-        for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
-            if (RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> nodeHighlightData = buildHighlightObjectForNode(m_highlightNodeList->item(i), HighlightType::NodeList))
-                highlights->addItem(WTFMove(nodeHighlightData));
-        }
+    FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
+    contentInset.expand(elementDataSpacing, elementDataSpacing);
+    if (m_showRulers)
+        contentInset.expand(rulerSize, rulerSize);
+
+    float anchorTop = bounds.y();
+    float anchorBottom = bounds.maxY();
+
+    bool renderArrowUp = false;
+    bool renderArrowDown = false;
+
+    float boxWidth = elementDataWidth + (elementDataSpacing * 2);
+    float boxHeight = elementDataArrowSize + elementDataHeight + (elementDataSpacing * 2);
+
+    float boxX = bounds.x();
+    if (boxX < contentInset.width()) {
+        boxX = contentInset.width();
+    } else if (boxX > viewportSize.width() - boxWidth)
+        boxX = viewportSize.width() - boxWidth;
+    else
+        boxX += elementDataSpacing;
+
+    float boxY;
+    if (anchorTop > viewportSize.height()) {
+        boxY = viewportSize.height() - boxHeight;
+        renderArrowDown = true;
+    } else if (anchorBottom < contentInset.height()) {
+        boxY = contentInset.height() + elementDataArrowSize;
+        renderArrowUp = true;
+    } else if (anchorTop - boxHeight - elementDataSpacing > contentInset.height()) {
+        boxY = anchorTop - boxHeight - elementDataSpacing;
+        renderArrowDown = true;
+    } else if (anchorBottom + boxHeight + elementDataSpacing < viewportSize.height()) {
+        boxY = anchorBottom + elementDataArrowSize + elementDataSpacing;
+        renderArrowUp = true;
+    } else {
+        boxY = contentInset.height();
+        renderArrowDown = true;
     }
 
-    return highlights;
-}
+    Path path;
+    path.moveTo({ boxX, boxY });
+    if (renderArrowUp) {
+        path.addLineTo({ boxX + (elementDataArrowSize * 2), boxY });
+        path.addLineTo({ boxX + (elementDataArrowSize * 3), boxY - elementDataArrowSize });
+        path.addLineTo({ boxX + (elementDataArrowSize * 4), boxY });
+    }
+    path.addLineTo({ boxX + elementDataWidth + (elementDataSpacing * 2), boxY });
+    path.addLineTo({ boxX + elementDataWidth + (elementDataSpacing * 2), boxY + elementDataHeight + (elementDataSpacing * 2) });
+    if (renderArrowDown) {
+        path.addLineTo({ boxX + (elementDataArrowSize * 4), boxY + elementDataHeight + (elementDataSpacing * 2) });
+        path.addLineTo({ boxX + (elementDataArrowSize * 3), boxY + elementDataHeight + (elementDataSpacing * 2) + elementDataArrowSize });
+        path.addLineTo({ boxX + (elementDataArrowSize * 2), boxY + elementDataHeight + (elementDataSpacing * 2) });
+    }
+    path.addLineTo({ boxX, boxY + elementDataHeight + (elementDataSpacing * 2) });
+    path.closeSubpath();
 
-void InspectorOverlay::drawNodeHighlight()
-{
-    if (m_highlightNode || m_highlightNodeList)
-        evaluateInOverlay("drawNodeHighlight", buildObjectForHighlightedNodes());
-}
+    GraphicsContextStateSaver stateSaver(context);
 
-void InspectorOverlay::drawQuadHighlight()
-{
-    if (!m_highlightQuad)
-        return;
+    context.translate(elementDataBorderSize / 2.0f, elementDataBorderSize / 2.0f);
 
-    Highlight highlight;
-    buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
-    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(highlight));
-}
+    const Color elementTitleBackgroundColor(255, 255, 194);
+    context.setFillColor(elementTitleBackgroundColor);
 
-void InspectorOverlay::drawPausedInDebuggerMessage()
-{
-    if (!m_pausedInDebuggerMessage.isNull())
-        evaluateInOverlay("drawPausedInDebuggerMessage", m_pausedInDebuggerMessage);
-}
+    context.fillPath(path);
 
-Page* InspectorOverlay::overlayPage()
-{
-#if PLATFORM(IOS_FAMILY)
-    return nullptr;
-#else
-    if (m_overlayPage)
-        return m_overlayPage.get();
+    context.setStrokeThickness(elementDataBorderSize);
 
-    auto pageConfiguration = pageConfigurationWithEmptyClients();
-    m_overlayPage = std::make_unique<Page>(WTFMove(pageConfiguration));
-    m_overlayPage->setDeviceScaleFactor(m_page.deviceScaleFactor());
+    const Color elementTitleBorderColor(128, 128, 128);
+    context.setStrokeColor(elementTitleBorderColor);
 
-    Settings& settings = m_page.settings();
-    Settings& overlaySettings = m_overlayPage->settings();
+    context.strokePath(path);
 
-    overlaySettings.setStandardFontFamily(settings.standardFontFamily());
-    overlaySettings.setSerifFontFamily(settings.serifFontFamily());
-    overlaySettings.setSansSerifFontFamily(settings.sansSerifFontFamily());
-    overlaySettings.setCursiveFontFamily(settings.cursiveFontFamily());
-    overlaySettings.setFantasyFontFamily(settings.fantasyFontFamily());
-    overlaySettings.setPictographFontFamily(settings.pictographFontFamily());
-    overlaySettings.setMinimumFontSize(settings.minimumFontSize());
-    overlaySettings.setMinimumLogicalFontSize(settings.minimumLogicalFontSize());
-    overlaySettings.setMediaEnabled(false);
-    overlaySettings.setScriptEnabled(true);
-    overlaySettings.setPluginsEnabled(false);
+    float textPositionX = boxX + elementDataSpacing;
+    float textPositionY = boxY - (elementDataSpacing / 2.0f) + fontHeight;
+    const auto drawText = [&] (const String& text, const Color& color) {
+        if (text.isEmpty())
+            return;
 
-    Frame& frame = m_overlayPage->mainFrame();
-    frame.setView(FrameView::create(frame));
-    frame.init();
-    FrameLoader& loader = frame.loader();
-    frame.view()->setCanHaveScrollbars(false);
-    frame.view()->setTransparent(true);
-    ASSERT(loader.activeDocumentLoader());
-    auto& writer = loader.activeDocumentLoader()->writer();
-    writer.setMIMEType("text/html");
-    writer.begin();
-    writer.insertDataSynchronously(String(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html)));
-    writer.end();
+        context.setFillColor(color);
+        textPositionX += context.drawText(font, TextRun(text), { textPositionX, textPositionY });
+    };
 
-#if OS(WINDOWS)
-    evaluateInOverlay("setPlatform", "windows");
-#elif OS(MAC_OS_X)
-    evaluateInOverlay("setPlatform", "mac");
-#elif OS(UNIX)
-    evaluateInOverlay("setPlatform", "linux");
-#endif
+    drawText(elementTagName, Color(136, 18, 128)); // Keep this in sync with XMLViewer.css (.tag)
+    drawText(elementIDValue, Color(26, 26, 166)); // Keep this in sync with XMLViewer.css (.attribute-value)
+    drawText(elementClassValue, Color(153, 69, 0)); // Keep this in sync with XMLViewer.css (.attribute-name)
+    drawText(elementPseudoType, Color(136, 18, 128)); // Keep this in sync with XMLViewer.css (.tag)
+    drawText(" "_s, Color::black);
+    drawText(elementWidth, Color::black);
+    drawText("px"_s, Color::darkGray);
+    drawText(" "_s, Color::darkGray);
+    drawText(multiplicationSignUChar, Color::darkGray);
+    drawText(" "_s, Color::darkGray);
+    drawText(elementHeight, Color::black);
+    drawText("px"_s, Color::darkGray);
 
-    return m_overlayPage.get();
-#endif
-}
+    if (hasSecondLine) {
+        textPositionX = boxX + elementDataSpacing;
+        textPositionY += fontHeight;
 
-void InspectorOverlay::forcePaint()
-{
-    // This overlay page is very weird and doesn't automatically paint. We have to force paints manually.
-    m_client->highlight();
-}
-
-void InspectorOverlay::reset(const IntSize& viewportSize, const IntPoint& scrollOffset)
-{
-    auto configObject = Inspector::Protocol::OverlayTypes::OverlayConfiguration::create()
-        .setDeviceScaleFactor(m_page.deviceScaleFactor())
-        .setViewportSize(buildObjectForSize(viewportSize))
-        .setPageScaleFactor(m_page.pageScaleFactor())
-        .setPageZoomFactor(m_page.mainFrame().pageZoomFactor())
-        .setScrollOffset(buildObjectForPoint(scrollOffset))
-        .setContentInset(buildObjectForSize(IntSize(0, m_page.mainFrame().view()->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset))))
-        .setShowRulers(m_showRulers)
-        .release();
-    evaluateInOverlay("reset", WTFMove(configObject));
-}
-
-static void evaluateCommandInOverlay(Page* page, Ref<JSON::Array>&& command)
-{
-    if (!page)
-        return;
-
-    page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
-}
-
-void InspectorOverlay::evaluateInOverlay(const String& method)
-{
-    Ref<JSON::Array> command = JSON::Array::create();
-    command->pushString(method);
-
-    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
-}
-
-void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
-{
-    Ref<JSON::Array> command = JSON::Array::create();
-    command->pushString(method);
-    command->pushString(argument);
-
-    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
-}
-
-void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<JSON::Value>&& argument)
-{
-    Ref<JSON::Array> command = JSON::Array::create();
-    command->pushString(method);
-    command->pushValue(WTFMove(argument));
-
-    evaluateCommandInOverlay(overlayPage(), WTFMove(command));
-}
-
-void InspectorOverlay::freePage()
-{
-    m_overlayPage = nullptr;
+        drawText("Role"_s, Color(170, 13, 145));
+        drawText(" "_s, Color::black);
+        drawText(elementRole, Color::black);
+    }
 }
 
 } // namespace WebCore

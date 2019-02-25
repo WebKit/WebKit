@@ -1096,7 +1096,6 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Inspector.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/LayerTree.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Network.json
-    ${JAVASCRIPTCORE_DIR}/inspector/protocol/OverlayTypes.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Page.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Recording.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json

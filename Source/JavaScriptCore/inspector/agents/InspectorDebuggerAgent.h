@@ -80,7 +80,6 @@ public:
     void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
     void setPauseOnAssertions(ErrorString&, bool enabled) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) final;
-    void setOverlayMessage(ErrorString&, const String*) override;
 
     bool isPaused() const;
     bool breakpointsActive() const;

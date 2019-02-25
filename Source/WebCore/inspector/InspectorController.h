@@ -44,12 +44,6 @@ class BackendDispatcher;
 class FrontendChannel;
 class FrontendRouter;
 class InspectorAgent;
-
-namespace Protocol {
-namespace OverlayTypes {
-class NodeHighlightData;
-}
-}
 }
 
 namespace WebCore {
@@ -102,8 +96,6 @@ public:
     Node* highlightedNode() const;
 
     WEBCORE_EXPORT void setIndicating(bool);
-
-    WEBCORE_EXPORT Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 
     WEBCORE_EXPORT void didComposite(Frame&);
 

@@ -1,0 +1,131 @@
+<style>
+p {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    margin: 0;
+}
+[id^="test"] {
+    position: relative;
+    pointer-events: none;
+
+    --content: 0;
+    --padding: 0;
+    --border: 0;
+    --margin: 0;
+
+    --content-color: rgba(246, 178, 107, 0.66);
+    --padding-color: rgba(255, 229, 153, 0.66);
+    --border-color: rgba(147, 196, 125, 0.66);
+    --margin-color: rgba(111, 168, 220, 0.66);
+}
+.expected {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+.expected > .margin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc((var(--border) * 2) + (var(--padding) * 2) + var(--content));
+    height: calc((var(--border) * 2) + (var(--padding) * 2) + var(--content));
+    border: var(--margin) solid var(--content-color);
+}
+.expected > .border {
+    position: absolute;
+    top: var(--margin);
+    left: var(--margin);
+    width: calc((var(--padding) * 2) + var(--content));
+    height: calc((var(--padding) * 2) + var(--content));
+    border: var(--border) solid var(--padding-color);
+}
+.expected > .padding {
+    position: absolute;
+    top: calc(var(--margin) + var(--border));
+    left: calc(var(--margin) + var(--border));
+    width: var(--content);
+    height: var(--content);
+    border: var(--padding) solid var(--border-color);
+}
+.expected > .content {
+    position: absolute;
+    top: calc(var(--margin) + var(--border) + var(--padding));
+    left: calc(var(--margin) + var(--border) + var(--padding));
+    width: var(--content);
+    height: var(--content);
+    background-color: var(--margin-color);
+}
+.actual {
+    display: inline-block;
+    pointer-events: all;
+    width: var(--content);
+    height: var(--content);
+    margin: var(--margin);
+    padding: var(--padding);
+    border: var(--border) solid transparent;
+}
+.clear {
+    clear: both;
+}
+
+#test1 {
+    --content: 10px;
+    --padding: 20px;
+    --border: 30px;
+    --margin: 40px;
+}
+
+#test2 {
+    --content: 100px;
+}
+#test2 > .expected > .content::after {
+    display: block;
+    width: 100%;
+    height: 100%;
+    content: "";
+    background-color: rgba(96, 82, 127, 0.8);
+    border-radius: 50%;
+}
+#test2 > .actual {
+    float: left;
+    shape-outside: ellipse(50%);
+}
+</style>
+<body>
+    <div id="test1">
+        <div class="expected" hidden>
+            <div class="margin"></div>
+            <div class="border"></div>
+            <div class="padding"></div>
+            <div class="content"></div>
+        </div>
+        <div class="actual"></div>
+        <div class="clear"></div>
+    </div>
+
+    <hr>
+
+    <div id="test2">
+        <div class="expected" hidden>
+            <div class="margin"></div>
+            <div class="border"></div>
+            <div class="padding"></div>
+            <div class="content"></div>
+        </div>
+        <div class="actual"></div>
+        <div class="clear"></div>
+    </div>
+
+    <p>Inspect this page and hover each test area in the Elements tab.  Click <button>Show Expected</button> to compare with the expected result.</p>
+    <script>
+let showingExpected = false;
+document.querySelector("button").addEventListener("click", (event) => {
+    showingExpected = !showingExpected;
+    for (let node of document.querySelectorAll(".expected"))
+        node.hidden = !showingExpected;
+});
+    </script>
+</body>

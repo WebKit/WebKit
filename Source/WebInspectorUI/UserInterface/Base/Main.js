@@ -621,6 +621,10 @@ WI.initializeTarget = function(target)
                 target.PageAgent.overrideSetting(setting, value);
         }
 
+        // COMPATIBILITY (iOS 11.3)
+        if (target.PageAgent.setShowRulers && WI.settings.showRulers.value)
+            target.PageAgent.setShowRulers(true);
+
         // COMPATIBILITY (iOS 8): Page.setShowPaintRects did not exist.
         if (target.PageAgent.setShowPaintRects && WI.settings.showPaintRects.value)
             target.PageAgent.setShowPaintRects(true);

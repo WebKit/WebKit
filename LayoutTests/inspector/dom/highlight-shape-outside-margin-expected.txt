@@ -1,7 +1,0 @@
-PASS: .inset
-PASS: .inset with shape-margin
-PASS: .circle
-PASS: .circle with shape-margin
-PASS: .svg
-PASS: .svg with shape-margin
-

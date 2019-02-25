@@ -324,6 +324,7 @@ void InspectorPageAgent::disable(ErrorString&)
 
     ErrorString unused;
     setShowPaintRects(unused, false);
+    setShowRulers(unused, false);
     overrideUserAgent(unused, nullptr);
     setEmulatedMedia(unused, emptyString());
     setForcedAppearance(unused, emptyString());
@@ -633,7 +634,7 @@ void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
     if (m_client->overridesShowPaintRects())
         return;
 
-    m_overlay->setShowingPaintRects(show);
+    m_overlay->setShowPaintRects(show);
 }
 
 void InspectorPageAgent::domContentEventFired()

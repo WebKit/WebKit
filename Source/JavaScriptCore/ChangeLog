@@ -1,3 +1,25 @@
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Change the InspectorOverlay to use native rather than canvas
+        https://bugs.webkit.org/show_bug.cgi?id=105023
+        <rdar://problem/13443692>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/OverlayTypes.json: Removed.
+        Now that the overlay is entirely generated in C++, we no longer need the special prototol
+        types for transferring data to a JavaScript context.
+
+        * inspector/protocol/Debugger.json:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setOverlayMessage): Deleted.
+        Remove `Debugger.setOverlayMessage` command as it hasn't been used and is no longer supported.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+
 2019-02-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Lazily create sentinel Map and Set buckets

@@ -38,7 +38,6 @@ namespace WebCore {
 class Document;
 class EventListener;
 class EventTarget;
-class InspectorOverlay;
 class InspectorPageAgent;
 class Page;
 class RegisteredEventListener;
@@ -48,7 +47,7 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageDebuggerAgent(PageAgentContext&, InspectorPageAgent*, InspectorOverlay*);
+    PageDebuggerAgent(PageAgentContext&, InspectorPageAgent*);
     virtual ~PageDebuggerAgent() = default;
 
     void didClearMainFrameWindowObject();
@@ -85,12 +84,10 @@ private:
     void breakpointActionLog(JSC::ExecState&, const String&) override;
 
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
-    void setOverlayMessage(ErrorString&, const String*) final;
 
     Page& m_page;
 
     InspectorPageAgent* m_pageAgent;
-    InspectorOverlay* m_overlay { nullptr };
 
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
     HashMap<const TimerBase*, int> m_postMessageTimers;

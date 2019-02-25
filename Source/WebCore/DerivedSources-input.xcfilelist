@@ -856,9 +856,6 @@ $(PROJECT_DIR)/inspector/CommandLineAPIModuleSource.js
 $(PROJECT_DIR)/inspector/InspectorAuditAccessibilityObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditDOMObject.idl
 $(PROJECT_DIR)/inspector/InspectorFrontendHost.idl
-$(PROJECT_DIR)/inspector/InspectorOverlayPage.css
-$(PROJECT_DIR)/inspector/InspectorOverlayPage.html
-$(PROJECT_DIR)/inspector/InspectorOverlayPage.js
 $(PROJECT_DIR)/loader/appcache/DOMApplicationCache.idl
 $(PROJECT_DIR)/make-hash-tools.pl
 $(PROJECT_DIR)/mathml/mathattrs.in

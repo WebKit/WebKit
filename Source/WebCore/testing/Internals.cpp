@@ -1543,15 +1543,6 @@ ExceptionOr<Ref<DOMRectList>> Internals::inspectorHighlightRects()
     return DOMRectList::create(highlight.quads);
 }
 
-ExceptionOr<String> Internals::inspectorHighlightObject()
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Exception { InvalidAccessError };
-
-    return document->page()->inspectorController().buildObjectForHighlightedNodes()->toJSONString();
-}
-
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
 {
     OptionSet<DocumentMarker::MarkerType> markerTypes;

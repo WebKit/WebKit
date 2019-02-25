@@ -1531,13 +1531,6 @@
                 { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
             ],
             "description": "Evaluates expression on a given call frame."
-        },
-        {
-            "name": "setOverlayMessage",
-            "parameters": [
-                { "name": "message", "type": "string", "optional": true, "description": "Overlay message to display when paused in debugger." }
-            ],
-            "description": "Sets overlay message."
         }
     ],
     "events": [

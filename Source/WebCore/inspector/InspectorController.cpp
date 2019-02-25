@@ -192,7 +192,7 @@ void InspectorController::createLazyAgents()
 
     auto pageContext = pageAgentContext();
 
-    auto debuggerAgent = std::make_unique<PageDebuggerAgent>(pageContext, m_pageAgent, m_overlay.get());
+    auto debuggerAgent = std::make_unique<PageDebuggerAgent>(pageContext, m_pageAgent);
     auto debuggerAgentPtr = debuggerAgent.get();
 
     m_agents.append(WTFMove(debuggerAgent));
@@ -303,7 +303,6 @@ void InspectorController::disconnectFrontend(FrontendChannel& frontendChannel)
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
 
         // Clean up inspector resources.
-        m_overlay->freePage();
         m_injectedScriptManager->discardInjectedScripts();
 
         // Unplug all instrumentations since they aren't needed now.
@@ -340,7 +339,6 @@ void InspectorController::disconnectAllFrontends()
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
     // Clean up inspector resources.
-    m_overlay->freePage();
     m_injectedScriptManager->disconnect();
 
     // Disconnect any remaining remote frontends.
@@ -392,11 +390,6 @@ void InspectorController::drawHighlight(GraphicsContext& context) const
 void InspectorController::getHighlight(Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem) const
 {
     m_overlay->getHighlight(highlight, coordinateSystem);
-}
-
-Ref<JSON::ArrayOf<Inspector::Protocol::OverlayTypes::NodeHighlightData>> InspectorController::buildObjectForHighlightedNodes() const
-{
-    return m_overlay->buildObjectForHighlightedNodes();
 }
 
 void InspectorController::inspect(Node* node)

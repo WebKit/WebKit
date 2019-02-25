@@ -286,13 +286,6 @@
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
                 { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
             ]
-        },
-        {
-            "name": "setOverlayMessage",
-            "description": "Sets overlay message.",
-            "parameters": [
-                { "name": "message", "type": "string", "optional": true, "description": "Overlay message to display when paused in debugger." }
-            ]
         }
     ],
     "events": [

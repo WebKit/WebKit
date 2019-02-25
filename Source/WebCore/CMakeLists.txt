@@ -1762,17 +1762,6 @@ set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/Pai
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-# Generate InspectorOverlayPage.h
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html
-    MAIN_DEPENDENCY inspector/InspectorOverlayPage.html
-    DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/inline-and-minify-stylesheets-and-scripts.py
-    DEPENDS inspector/InspectorOverlayPage.css inspector/InspectorOverlayPage.js
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/inline-and-minify-stylesheets-and-scripts.py ${WEBCORE_DIR}/inspector/InspectorOverlayPage.html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html
-    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl InspectorOverlayPage_html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.combined.html ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h
-    VERBATIM)
-list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorOverlayPage.h)
-
 
 # Generate CommandLineAPIModuleSource.h
 add_custom_command(

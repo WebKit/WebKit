@@ -225,7 +225,6 @@ public:
     Ref<DOMRect> boundingBox(Element&);
 
     ExceptionOr<Ref<DOMRectList>> inspectorHighlightRects();
-    ExceptionOr<String> inspectorHighlightObject();
 
     ExceptionOr<unsigned> markerCountForNode(Node&, const String&);
     ExceptionOr<RefPtr<Range>> markerRangeForNode(Node&, const String& markerType, unsigned index);

@@ -94,7 +94,6 @@ $(PROJECT_DIR)/inspector/protocol/Inspector.json
 $(PROJECT_DIR)/inspector/protocol/LayerTree.json
 $(PROJECT_DIR)/inspector/protocol/Memory.json
 $(PROJECT_DIR)/inspector/protocol/Network.json
-$(PROJECT_DIR)/inspector/protocol/OverlayTypes.json
 $(PROJECT_DIR)/inspector/protocol/Page.json
 $(PROJECT_DIR)/inspector/protocol/Recording.json
 $(PROJECT_DIR)/inspector/protocol/Runtime.json

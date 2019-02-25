@@ -332,13 +332,6 @@
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
             ],
             "description": "Evaluates expression on a given call frame."
-        },
-        {
-            "name": "setOverlayMessage",
-            "parameters": [
-                { "name": "message", "type": "string", "optional": true, "description": "Overlay message to display when paused in debugger." }
-            ],
-            "description": "Sets overlay message."
         }
     ],
     "events": [

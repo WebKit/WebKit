@@ -1,3 +1,94 @@
+2019-02-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Change the InspectorOverlay to use native rather than canvas
+        https://bugs.webkit.org/show_bug.cgi?id=105023
+        <rdar://problem/13443692>
+
+        Reviewed by Brian Burg.
+
+        Should be no change in observed functionality.
+
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::truncateWithEllipsis): Added.
+        (WebCore::localPointToRootPoint): Added.
+        (WebCore::contentsQuadToCoordinateSystem):
+        (WebCore::effectiveElementForNode): Added.
+        (WebCore::quadToPath): Added.
+        (WebCore::drawOutlinedQuadWithClip): Added.
+        (WebCore::drawOutlinedQuad): Added.
+        (WebCore::drawFragmentHighlight): Added.
+        (WebCore::drawShapeHighlight): Added.
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::setIndicating):
+        (WebCore::InspectorOverlay::shouldShowOverlay const):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::setShowPaintRects): Added.
+        (WebCore::InspectorOverlay::showPaintRect):
+        (WebCore::InspectorOverlay::updatePaintRectsTimerFired):
+        (WebCore::InspectorOverlay::drawNodeHighlight):
+        (WebCore::InspectorOverlay::drawQuadHighlight):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::InspectorOverlay::drawBounds): Added.
+        (WebCore::InspectorOverlay::drawRulers):
+        (WebCore::InspectorOverlay::drawElementTitle): Added.
+        (WebCore::contentsQuadToPage): Deleted.
+        (WebCore::InspectorOverlay::setPausedInDebuggerMessage): Deleted.
+        (WebCore::buildObjectForPoint): Deleted.
+        (WebCore::buildObjectForRect): Deleted.
+        (WebCore::buildArrayForQuad): Deleted.
+        (WebCore::buildObjectForHighlight): Deleted.
+        (WebCore::buildObjectForSize): Deleted.
+        (WebCore::InspectorOverlay::setShowingPaintRects): Deleted.
+        (WebCore::buildArrayForRendererFragments): Deleted.
+        (WebCore::localPointToRoot): Deleted.
+        (WebCore::appendPathCommandAndPoints): Deleted.
+        (WebCore::appendPathSegment): Deleted.
+        (WebCore::buildObjectForShapeOutside): Deleted.
+        (WebCore::buildObjectForElementData): Deleted.
+        (WebCore::InspectorOverlay::buildHighlightObjectForNode const): Deleted.
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNodes const): Deleted.
+        (WebCore::InspectorOverlay::drawPausedInDebuggerMessage): Deleted.
+        (WebCore::InspectorOverlay::overlayPage): Deleted.
+        (WebCore::InspectorOverlay::forcePaint): Deleted.
+        (WebCore::InspectorOverlay::reset): Deleted.
+        (WebCore::evaluateCommandInOverlay): Deleted.
+        (WebCore::InspectorOverlay::evaluateInOverlay): Deleted.
+        (WebCore::InspectorOverlay::freePage): Deleted.
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::setShowPaintRects):
+        Drive-by: rename `setShowingPaintRects` to better match the protocol.
+
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::setOverlayMessage): Deleted.
+        Remove `Debugger.setOverlayMessage` command as it hasn't been used and is no longer supported.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::createLazyAgents):
+        (WebCore::InspectorController::disconnectFrontend):
+        (WebCore::InspectorController::disconnectAllFrontends):
+        (WebCore::InspectorController::buildObjectForHighlightedNodes const): Deleted.
+
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::inspectorHighlightObject): Deleted.
+
+        * inspector/InspectorOverlayPage.css: Removed.
+        * inspector/InspectorOverlayPage.html: Removed.
+        * inspector/InspectorOverlayPage.js: Removed.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

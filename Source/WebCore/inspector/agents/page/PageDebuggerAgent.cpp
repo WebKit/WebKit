@@ -37,7 +37,6 @@
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "Frame.h"
-#include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
@@ -57,11 +56,10 @@ namespace WebCore {
 
 using namespace Inspector;
 
-PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
+PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAgent* pageAgent)
     : WebDebuggerAgent(context)
     , m_page(context.inspectedPage)
     , m_pageAgent(pageAgent)
-    , m_overlay(overlay)
 {
 }
 
@@ -133,11 +131,6 @@ InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString
         errorString = "Execution context with given id not found."_s;
 
     return injectedScript;
-}
-
-void PageDebuggerAgent::setOverlayMessage(ErrorString&, const String* message)
-{
-    m_overlay->setPausedInDebuggerMessage(message);
 }
 
 void PageDebuggerAgent::didClearMainFrameWindowObject()
