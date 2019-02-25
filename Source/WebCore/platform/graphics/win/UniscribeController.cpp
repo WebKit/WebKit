@@ -171,7 +171,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
             int itemStart = m_run.rtl() ? index + 1 : indexOfFontTransition;
             int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
             m_currentCharacter = baseCharacter + itemStart;
-            itemizeShapeAndPlace((isSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, fontData, glyphBuffer);
+            itemizeShapeAndPlace((isSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemStart, itemLength, fontData, glyphBuffer);
             indexOfFontTransition = index;
         }
     }
@@ -183,13 +183,13 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
         m_currentCharacter = baseCharacter + itemStart;
-        itemizeShapeAndPlace((nextIsSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemLength, nextFontData, glyphBuffer);
+        itemizeShapeAndPlace((nextIsSmallCaps ? smallCapsBuffer.data() : cp) + itemStart, itemStart, itemLength, nextFontData, glyphBuffer);
     }
 
     m_currentCharacter = baseCharacter + length;
 }
 
-void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const Font* fontData, GlyphBuffer* glyphBuffer)
+void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned stringOffset, unsigned length, const Font* fontData, GlyphBuffer* glyphBuffer)
 {
     // ScriptItemize (in Windows XP versions prior to SP2) can overflow by 1.  This is why there is an extra empty item
     // hanging out at the end of the array
@@ -208,12 +208,12 @@ void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length,
 
     if (m_run.rtl()) {
         for (int i = m_items.size() - 2; i >= 0; i--) {
-            if (!shapeAndPlaceItem(cp, i, fontData, glyphBuffer))
+            if (!shapeAndPlaceItem(cp, stringOffset, i, fontData, glyphBuffer))
                 return;
         }
     } else {
         for (unsigned i = 0; i < m_items.size() - 1; i++) {
-            if (!shapeAndPlaceItem(cp, i, fontData, glyphBuffer))
+            if (!shapeAndPlaceItem(cp, stringOffset, i, fontData, glyphBuffer))
                 return;
         }
     }
@@ -231,7 +231,7 @@ void UniscribeController::resetControlAndState()
     m_state.fOverrideDirection = m_run.directionalOverride();
 }
 
-bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const Font* fontData, GlyphBuffer* glyphBuffer)
+bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned stringOffset, unsigned i, const Font* fontData, GlyphBuffer* glyphBuffer)
 {
     // Determine the string for this item.
     const UChar* str = cp + m_items[i].iCharPos;
@@ -252,6 +252,14 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
 
     if (!shape(str, len, item, fontData, glyphs, clusters, visualAttributes))
         return true;
+
+    Vector<Optional<unsigned>> stringOffsets(glyphs.size());
+    for (unsigned i = 0; i < len; ++i) {
+        if (stringOffsets[clusters[i]])
+            stringOffsets[clusters[i]] = std::min(*stringOffsets[clusters[i]], i);
+        else
+            stringOffsets[clusters[i]] = i;
+    }
 
     // We now have a collection of glyphs.
     Vector<GOFFSET> offsets;
@@ -367,7 +375,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
             else
                 glyphBuffer->expandLastAdvance(origin);
             GlyphBufferAdvance glyphAdvance(-origin.width() + advance, -origin.height());
-            glyphBuffer->add(glyph, fontData, glyphAdvance);
+            glyphBuffer->add(glyph, fontData, glyphAdvance, stringOffsets[k].valueOr(0) + stringOffset);
         }
 
         FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
