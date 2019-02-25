@@ -127,7 +127,7 @@ public:
         m_ptrToOffsetMap.add(ptr, offset);
     }
 
-    WTF::Optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
+    Optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
     {
         auto it = m_ptrToOffsetMap.find(ptr);
         if (it == m_ptrToOffsetMap.end())
@@ -161,8 +161,8 @@ private:
         bool malloc(size_t size, ptrdiff_t& result)
         {
             size_t alignment = std::min(alignof(std::max_align_t), static_cast<size_t>(WTF::roundUpToPowerOfTwo(size)));
-            ptrdiff_t offset = WTF::roundUpToMultipleOf(alignment, m_offset);
-            size = WTF::roundUpToMultipleOf(alignment, size);
+            ptrdiff_t offset = roundUpToMultipleOf(alignment, m_offset);
+            size = roundUpToMultipleOf(alignment, size);
             if (static_cast<size_t>(offset + size) > m_capacity)
                 return false;
 
@@ -192,13 +192,13 @@ private:
 
     void allocateNewPage(size_t size = 0)
     {
-        static size_t minPageSize = WTF::pageSize();
+        static size_t minPageSize = pageSize();
         if (m_currentPage)
             m_baseOffset += m_currentPage->size();
         if (size < minPageSize)
             size = minPageSize;
         else
-            size = WTF::roundUpToMultipleOf(minPageSize, size);
+            size = roundUpToMultipleOf(minPageSize, size);
         m_pages.append(Page { size });
         m_currentPage = &m_pages.last();
     }
@@ -245,7 +245,7 @@ public:
         m_offsetToPtrMap.add(offset, ptr);
     }
 
-    WTF::Optional<void*> cachedPtrForOffset(ptrdiff_t offset)
+    Optional<void*> cachedPtrForOffset(ptrdiff_t offset)
     {
         auto it = m_offsetToPtrMap.find(offset);
         if (it == m_offsetToPtrMap.end())
@@ -377,7 +377,7 @@ public:
         if (m_isEmpty)
             return;
 
-        if (WTF::Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
+        if (Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
             this->m_offset = *offset - encoder.offsetOf(&this->m_offset);
             return;
         }
@@ -396,7 +396,7 @@ public:
         }
 
         ptrdiff_t bufferOffset = decoder.offsetOf(this->buffer());
-        if (WTF::Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
+        if (Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
             isNewAllocation = false;
             return reinterpret_cast<Source*>(*ptr);
         }
@@ -689,9 +689,9 @@ private:
 };
 
 template<typename T>
-class CachedOptional : public VariableLengthObject<WTF::Optional<SourceType<T>>> {
+class CachedOptional : public VariableLengthObject<Optional<SourceType<T>>> {
 public:
-    void encode(Encoder& encoder, const WTF::Optional<SourceType<T>>& source)
+    void encode(Encoder& encoder, const Optional<SourceType<T>>& source)
     {
         m_isEmpty = !source;
 
@@ -701,7 +701,7 @@ public:
         this->template allocate<T>(encoder)->encode(encoder, *source);
     }
 
-    WTF::Optional<SourceType<T>> decode(Decoder& decoder) const
+    Optional<SourceType<T>> decode(Decoder& decoder) const
     {
         if (m_isEmpty)
             return WTF::nullopt;
@@ -709,7 +709,7 @@ public:
         return { this->template buffer<T>()->decode(decoder) };
     }
 
-    void decode(Decoder& decoder, WTF::Optional<SourceType<T>>& dst) const
+    void decode(Decoder& decoder, Optional<SourceType<T>>& dst) const
     {
         dst = decode(decoder);
     }
