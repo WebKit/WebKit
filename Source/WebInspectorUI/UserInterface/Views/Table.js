@@ -619,10 +619,9 @@ WI.Table = class Table extends WI.View
                 row.classList.toggle("selected", true);
         }
 
-        if (selectedItems.size === 1) {
-            let rowIndex = this._indexForRepresentedObject(selectedItems.firstValue);
-            if (!this._isRowVisible(rowIndex))
-                this.revealRow(rowIndex);
+        if (this._selectionController.lastSelectedItem) {
+            let rowIndex = this._indexForRepresentedObject(this._selectionController.lastSelectedItem);
+            this.revealRow(rowIndex);
         }
 
         if (this._delegate.tableSelectionDidChange)

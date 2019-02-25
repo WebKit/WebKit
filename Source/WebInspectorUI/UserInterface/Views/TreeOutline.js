@@ -661,6 +661,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             this._itemWasSelectedByUser = true;
             handled = this._selectionController.handleKeyDown(event);
             this._itemWasSelectedByUser = false;
+
+            if (handled)
+                nextSelectedElement = this.selectedTreeElement;
         }
 
         if (nextSelectedElement) {

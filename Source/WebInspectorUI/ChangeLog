@@ -1,3 +1,17 @@
+2019-02-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION: TreeElement or Table row selected using the keyboard should always be revealed
+        https://bugs.webkit.org/show_bug.cgi?id=194918
+        <rdar://problem/48289314>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.selectionControllerSelectionDidChange):
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._treeKeyDown):
+
 2019-02-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: [META] Merge Resources and Debugger into a single Sources tab
