@@ -79,12 +79,13 @@ public:
     void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
     void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
     void connectionToClientClosed();
-
+    bool isClosed() { return m_isClosed; }
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     
     WeakPtr<IDBConnectionToClientDelegate> m_delegate;
     HashSet<UniqueIDBDatabaseConnection*> m_databaseConnections;
+    bool m_isClosed { false };
 };
 
 } // namespace IDBServer

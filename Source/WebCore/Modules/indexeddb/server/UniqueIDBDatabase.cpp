@@ -337,6 +337,12 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     invokeOperationAndTransactionTimer();
 }
 
+void UniqueIDBDatabase::clearStalePendingOpenDBRequests()
+{
+    while (!m_pendingOpenDBRequests.isEmpty() && m_pendingOpenDBRequests.first()->connection().isClosed())
+        m_pendingOpenDBRequests.removeFirst();
+}
+
 void UniqueIDBDatabase::handleDatabaseOperations()
 {
     ASSERT(isMainThread());
@@ -346,7 +352,9 @@ void UniqueIDBDatabase::handleDatabaseOperations()
     if (m_deleteBackingStoreInProgress)
         return;
 
-    if (m_versionChangeDatabaseConnection || m_versionChangeTransaction || m_currentOpenDBRequest) {
+    clearStalePendingOpenDBRequests();
+
+    if (m_versionChangeDatabaseConnection || m_versionChangeTransaction || (m_currentOpenDBRequest && !m_currentOpenDBRequest->connection().isClosed())) {
         // We can't start any new open-database operations right now, but we might be able to start handling a delete operation.
         if (!m_currentOpenDBRequest && !m_pendingOpenDBRequests.isEmpty() && m_pendingOpenDBRequests.first()->isDeleteRequest())
             m_currentOpenDBRequest = m_pendingOpenDBRequests.takeFirst();
@@ -358,8 +366,10 @@ void UniqueIDBDatabase::handleDatabaseOperations()
         return;
     }
 
-    if (m_pendingOpenDBRequests.isEmpty())
+    if (m_pendingOpenDBRequests.isEmpty()) {
+        m_currentOpenDBRequest = nullptr;
         return;
+    }
 
     m_currentOpenDBRequest = m_pendingOpenDBRequests.takeFirst();
     LOG(IndexedDB, "UniqueIDBDatabase::handleDatabaseOperations - Popped an operation, now there are %u pending", m_pendingOpenDBRequests.size());
@@ -1558,10 +1568,9 @@ void UniqueIDBDatabase::operationAndTransactionTimerFired()
 
     // The current operation might require multiple attempts to handle, so try to
     // make further progress on it now.
-    if (m_currentOpenDBRequest)
+    if (m_currentOpenDBRequest && !m_currentOpenDBRequest->connection().isClosed())
         handleCurrentOperation();
-
-    if (!m_currentOpenDBRequest)
+    else
         handleDatabaseOperations();
 
     bool hadDeferredTransactions = false;

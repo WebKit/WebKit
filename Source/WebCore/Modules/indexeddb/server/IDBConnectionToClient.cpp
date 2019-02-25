@@ -207,6 +207,7 @@ void IDBConnectionToClient::connectionToClientClosed()
             connection->connectionClosedFromClient();
     }
 
+    m_isClosed = true;
     m_databaseConnections.clear();
 }
 
