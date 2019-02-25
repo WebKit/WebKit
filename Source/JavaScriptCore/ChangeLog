@@ -1,5 +1,21 @@
 2019-02-25  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Avoid hashing CompactVariableEnvironment when decoding CompactVariableMap::Handle
+        https://bugs.webkit.org/show_bug.cgi?id=194937
+
+        Reviewed by Saam Barati.
+
+        Hashing the CompactVariableEnvironment is expensive and we could avoid it
+        when decoding multiple handles to the same environment. This is sound because
+        a pointer to the same CompactVariableEnvironment will hash the same.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::Decoder::handleForEnvironment const):
+        (JSC::Decoder::setHandleForEnvironment):
+        (JSC::CachedCompactVariableMapHandle::decode const):
+
+2019-02-25  Tadeu Zagallo  <tzagallo@apple.com>
+
         Remove unnecessary WTF:: prefixes in CachedTypes
         https://bugs.webkit.org/show_bug.cgi?id=194936
 

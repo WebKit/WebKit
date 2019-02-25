@@ -259,6 +259,19 @@ public:
         m_finalizers.append(finalizer);
     }
 
+    CompactVariableMap::Handle handleForEnvironment(CompactVariableEnvironment* environment) const
+    {
+        auto it = m_environmentToHandleMap.find(environment);
+        ASSERT(it != m_environmentToHandleMap.end());
+        return it->value;
+    }
+
+    void setHandleForEnvironment(CompactVariableEnvironment* environment, const CompactVariableMap::Handle& handle)
+    {
+        auto addResult = m_environmentToHandleMap.add(environment, handle);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+
 private:
     VM& m_vm;
     const uint8_t* m_baseAddress;
@@ -267,6 +280,7 @@ private:
 #endif
     HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
     Vector<std::function<void()>> m_finalizers;
+    HashMap<CompactVariableEnvironment*, CompactVariableMap::Handle> m_environmentToHandleMap;
 };
 
 template<typename T>
@@ -938,15 +952,16 @@ public:
     {
         bool isNewAllocation;
         CompactVariableEnvironment* environment = m_environment.decode(decoder, isNewAllocation);
+        if (!isNewAllocation)
+            return decoder.handleForEnvironment(environment);
         bool isNewEntry;
         CompactVariableMap::Handle handle = decoder.vm().m_compactVariableMap->get(environment, isNewEntry);
-        if (!isNewAllocation)
-            ASSERT(!isNewEntry);
-        else if (!isNewEntry) {
+        if (!isNewEntry) {
             decoder.addFinalizer([=] {
                 delete environment;
             });
         }
+        decoder.setHandleForEnvironment(environment, handle);
         return handle;
     }
 
