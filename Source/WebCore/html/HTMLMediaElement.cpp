@@ -73,8 +73,8 @@
 #include "PageGroup.h"
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
-#include "PublicSuffix.h"
 #include "Quirks.h"
+#include "RegistrableDomain.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
@@ -7662,13 +7662,11 @@ String HTMLMediaElement::mediaSessionTitle() const
     if (!title.isEmpty())
         title = decodeHostName(title);
 #endif
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (!title.isEmpty()) {
-        auto domain = topPrivatelyControlledDomain(title);
+        auto domain = RegistrableDomain { title };
         if (!domain.isEmpty())
-            title = domain;
+            title = domain.string();
     }
-#endif
 
     return title;
 }

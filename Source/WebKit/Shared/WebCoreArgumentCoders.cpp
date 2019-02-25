@@ -62,6 +62,7 @@
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/Region.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
@@ -2671,7 +2672,7 @@ bool ArgumentCoder<ExceptionDetails>::decode(IPC::Decoder& decoder, ExceptionDet
 
 void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCore::ResourceLoadStatistics& statistics)
 {
-    encoder << statistics.highLevelDomain;
+    encoder << statistics.registrableDomain;
     
     encoder << statistics.lastSeen.secondsSinceEpoch().value();
     
@@ -2715,9 +2716,12 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
 Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder)
 {
     ResourceLoadStatistics statistics;
-    if (!decoder.decode(statistics.highLevelDomain))
+    Optional<RegistrableDomain> registrableDomain;
+    decoder >> registrableDomain;
+    if (!registrableDomain)
         return WTF::nullopt;
-    
+    statistics.registrableDomain = *registrableDomain;
+
     double lastSeenTimeAsDouble;
     if (!decoder.decode(lastSeenTimeAsDouble))
         return WTF::nullopt;

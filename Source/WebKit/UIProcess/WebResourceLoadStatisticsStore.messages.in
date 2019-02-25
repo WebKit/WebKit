@@ -23,7 +23,7 @@
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
 messages -> WebResourceLoadStatisticsStore {
-    RequestStorageAccessUnderOpener(String domainReceivingUserInteraction, uint64_t openerPageID, String openerDomain)
+    RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainReceivingUserInteraction, uint64_t openerPageID, WebCore::RegistrableDomain openerDomain)
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> origins)
 }
 

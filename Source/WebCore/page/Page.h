@@ -32,6 +32,7 @@
 #include "Pagination.h"
 #include "RTCController.h"
 #include "Region.h"
+#include "RegistrableDomain.h"
 #include "ScrollTypes.h"
 #include "Supplementable.h"
 #include "Timer.h"
@@ -704,7 +705,7 @@ public:
 
 private:
     struct Navigation {
-        String domain;
+        RegistrableDomain domain;
         FrameLoadType type;
     };
     void logNavigation(const Navigation&);

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CredentialStorage.h"
+#include "RegistrableDomain.h"
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -141,12 +142,12 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, Optional<uint64_t> frameID, Optional<uint64_t> pageID) const;
-    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<String>&);
+    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<RegistrableDomain>&);
     WEBCORE_EXPORT void setAgeCapForClientSideCookies(Optional<Seconds>);
-    WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
-    WEBCORE_EXPORT bool hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) const;
+    WEBCORE_EXPORT void removePrevalentDomains(const Vector<RegistrableDomain>& domains);
+    WEBCORE_EXPORT bool hasStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) const;
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
-    WEBCORE_EXPORT void grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
+    WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
     WEBCORE_EXPORT void removeAllStorageAccess();
@@ -176,10 +177,10 @@ private:
     CredentialStorage m_credentialStorage;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
-    HashSet<String> m_topPrivatelyControlledDomainsToBlock;
-    HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
-    HashMap<uint64_t, HashMap<String, String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
+    bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
+    HashSet<RegistrableDomain> m_registrableDomainsToBlockCookieFor;
+    HashMap<uint64_t, HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
+    HashMap<uint64_t, HashMap<RegistrableDomain, RegistrableDomain>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
     Optional<Seconds> m_ageCapForClientSideCookies { };
 #endif

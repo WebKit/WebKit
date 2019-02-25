@@ -58,13 +58,13 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
     RemoveStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID);
-    LogUserInteraction(PAL::SessionID sessionID, String topLevelOrigin)
-    LogWebSocketLoading(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, WallTime lastSeen)
-    LogSubresourceLoading(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, WallTime lastSeen)
-    LogSubresourceRedirect(PAL::SessionID sessionID, String sourcePrimaryDomain, String targetPrimaryDomain)
+    LogUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain domain)
+    LogWebSocketLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
+    LogSubresourceLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
+    LogSubresourceRedirect(PAL::SessionID sessionID, WebCore::RegistrableDomain sourceDomain, WebCore::RegistrableDomain targetDomain)
     RequestResourceLoadStatisticsUpdate();
-    HasStorageAccess(PAL::SessionID sessionID, String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
-    RequestStorageAccess(PAL::SessionID sessionID, String subFrameHost, String topFrameHost, uint64_t frameID, uint64_t pageID, bool prompt) -> (bool accessGranted) Async
+    HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
+    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID, bool prompt) -> (bool accessGranted) Async
 #endif
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);

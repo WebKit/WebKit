@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "PublicSuffix.h"
+#include "RegistrableDomain.h"
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -60,11 +60,7 @@ public:
     struct Source {
         Source() = default;
         explicit Source(const String& host)
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-            : registrableDomain { topPrivatelyControlledDomain(host) }
-#else
-            : registrableDomain { emptyString() }
-#endif
+            : registrableDomain { host }
         {
         }
 
@@ -80,11 +76,7 @@ public:
 
         bool matches(const URL& url) const
         {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-            return registrableDomain == topPrivatelyControlledDomain(url.host().toString());
-#else
-            return registrableDomain == url.host().toString();
-#endif
+            return registrableDomain.matches(url);
         }
 
         bool isHashTableDeletedValue() const
@@ -105,7 +97,7 @@ public:
 
         void deleteValue()
         {
-            registrableDomain = String { WTF::HashTableDeletedValue };
+            registrableDomain = RegistrableDomain { WTF::HashTableDeletedValue };
         }
 
         bool isDeletedValue() const
@@ -113,7 +105,7 @@ public:
             return isHashTableDeletedValue();
         }
 
-        String registrableDomain;
+        RegistrableDomain registrableDomain;
     };
 
     struct SourceHash {
@@ -133,11 +125,7 @@ public:
     struct Destination {
         Destination() = default;
         explicit Destination(const String& host)
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-            : registrableDomain { topPrivatelyControlledDomain(host) }
-#else
-            : registrableDomain { emptyString() }
-#endif
+            : registrableDomain { RegistrableDomain { host } }
         {
         }
 
@@ -148,11 +136,7 @@ public:
 
         bool matches(const URL& url) const
         {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-            return registrableDomain == topPrivatelyControlledDomain(url.host().toString());
-#else
-            return registrableDomain == url.host().toString();
-#endif
+            return registrableDomain == RegistrableDomain { url };
         }
         
         bool isHashTableDeletedValue() const
@@ -173,7 +157,7 @@ public:
 
         void deleteValue()
         {
-            registrableDomain = String { WTF::HashTableDeletedValue };
+            registrableDomain = RegistrableDomain { WTF::HashTableDeletedValue };
         }
 
         bool isDeletedValue() const
@@ -181,7 +165,7 @@ public:
             return isHashTableDeletedValue();
         }
 
-        String registrableDomain;
+        RegistrableDomain registrableDomain;
     };
 
     struct DestinationHash {

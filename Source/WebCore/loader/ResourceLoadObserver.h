@@ -48,6 +48,7 @@ namespace WebCore {
 class Document;
 class Frame;
 class Page;
+class RegistrableDomain;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;
@@ -72,11 +73,11 @@ public:
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
-    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(const String&, uint64_t, const String&)>&&);
-    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const String&)>&&);
-    WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&&);
-    WEBCORE_EXPORT void setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&&);
-    WEBCORE_EXPORT void setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const String&, const String&)>&&);
+    WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(const RegistrableDomain&, uint64_t, const RegistrableDomain&)>&&);
+    WEBCORE_EXPORT void setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&&);
+    WEBCORE_EXPORT void setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
+    WEBCORE_EXPORT void setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&&);
+    WEBCORE_EXPORT void setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)>&&);
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
@@ -90,23 +91,23 @@ private:
     ResourceLoadObserver();
 
     bool shouldLog(bool usesEphemeralSession) const;
-    ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
 
     void scheduleNotificationIfNeeded();
     Vector<ResourceLoadStatistics> takeStatistics();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument);
+    void requestStorageAccessUnderOpener(const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument);
 #endif
 
-    HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
-    HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
+    HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
+    HashMap<RegistrableDomain, WTF::WallTime> m_lastReportedUserInteractionMap;
     Function<void(Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
-    Function<void(const String&, uint64_t, const String&)> m_requestStorageAccessUnderOpenerCallback;
-    Function<void(PAL::SessionID, const String&)> m_logUserInteractionNotificationCallback;
-    Function<void(PAL::SessionID, const String&, const String&, WallTime)> m_logWebSocketLoadingNotificationCallback;
-    Function<void(PAL::SessionID, const String&, const String&, WallTime)> m_logSubresourceLoadingNotificationCallback;
-    Function<void(PAL::SessionID, const String&, const String&)> m_logSubresourceRedirectNotificationCallback;
+    Function<void(const RegistrableDomain&, uint64_t, const RegistrableDomain&)> m_requestStorageAccessUnderOpenerCallback;
+    Function<void(PAL::SessionID, const RegistrableDomain&)> m_logUserInteractionNotificationCallback;
+    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logWebSocketLoadingNotificationCallback;
+    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)> m_logSubresourceLoadingNotificationCallback;
+    Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)> m_logSubresourceRedirectNotificationCallback;
 
     Timer m_notificationTimer;
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED

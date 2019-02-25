@@ -43,8 +43,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     LogTestingEvent(PAL::SessionID sessionID, String event)
     NotifyResourceLoadStatisticsProcessed()
-    NotifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished()
-    NotifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished()
+    NotifyWebsiteDataDeletionForRegistrableDomainsFinished()
+    NotifyWebsiteDataScanForRegistrableDomainsFinished()
     NotifyResourceLoadStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins)
     RequestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, String subFrameHost, String topFrameHost) -> (bool userDidGrantAccess) Async
 #endif

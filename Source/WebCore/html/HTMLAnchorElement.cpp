@@ -42,7 +42,7 @@
 #include "MouseEvent.h"
 #include "PingLoader.h"
 #include "PlatformMouseEvent.h"
-#include "PublicSuffix.h"
+#include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
 #include "RuntimeEnabledFeatures.h"
@@ -442,12 +442,7 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
     }
 
     auto documentDomain = document().domain();
-    auto adDestinationHost = adDestinationURL.host().toString();
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (topPrivatelyControlledDomain(documentDomain) == topPrivatelyControlledDomain(adDestinationHost)) {
-#else
-    if (documentDomain == adDestinationHost) {
-#endif
+    if (RegistrableDomain(documentDomain).matches(adDestinationURL)) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "addestination can not be the same site as the current website."_s);
         return WTF::nullopt;
     }

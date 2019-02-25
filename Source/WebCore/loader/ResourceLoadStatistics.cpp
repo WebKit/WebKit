@@ -94,7 +94,7 @@ static void encodeCanvasActivityRecord(KeyedEncoder& encoder, const String& labe
 
 void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 {
-    encoder.encodeString("PrevalentResourceOrigin", highLevelDomain);
+    encoder.encodeString("PrevalentResourceOrigin", registrableDomain.string());
     
     encoder.encodeDouble("lastSeen", lastSeen.secondsSinceEpoch().value());
     
@@ -202,9 +202,11 @@ static void decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& labe
 
 bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion)
 {
-    if (!decoder.decodeString("PrevalentResourceOrigin", highLevelDomain))
+    String registrableDomainAsString;
+    if (!decoder.decodeString("PrevalentResourceOrigin", registrableDomainAsString))
         return false;
-    
+    registrableDomain = RegistrableDomain(registrableDomainAsString);
+
     // User interaction
     if (!decoder.decodeBool("hadUserInteraction", hadUserInteraction))
         return false;
@@ -396,7 +398,7 @@ String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
     builder.appendLiteral("High level domain: ");
-    builder.append(highLevelDomain);
+    builder.append(registrableDomain.string());
     builder.append('\n');
     builder.appendLiteral("    lastSeen: ");
     builder.appendNumber(lastSeen.secondsSinceEpoch().value());
@@ -466,7 +468,7 @@ static void mergeHashSet(HashSet<T>& to, const HashSet<T>& from)
 
 void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 {
-    ASSERT(other.highLevelDomain == highLevelDomain);
+    ASSERT(other.registrableDomain == registrableDomain);
 
     if (lastSeen < other.lastSeen)
         lastSeen = other.lastSeen;
@@ -513,27 +515,6 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     navigatorFunctionsAccessed.add(other.navigatorFunctionsAccessed);
     screenFunctionsAccessed.add(other.screenFunctionsAccessed);
 #endif
-}
-
-String ResourceLoadStatistics::primaryDomain(const URL& url)
-{
-    return primaryDomain(url.host());
-}
-
-String ResourceLoadStatistics::primaryDomain(StringView host)
-{
-    if (host.isNull() || host.isEmpty())
-        return "nullOrigin"_s;
-
-    String hostString = host.toString();
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String primaryDomain = topPrivatelyControlledDomain(hostString);
-    // We will have an empty string here if there is no TLD. Use the host as a fallback.
-    if (!primaryDomain.isEmpty())
-        return primaryDomain;
-#endif
-
-    return hostString;
 }
 
 WallTime ResourceLoadStatistics::reduceTimeResolution(WallTime time)

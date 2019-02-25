@@ -52,6 +52,22 @@ class ResourceLoadStatisticsPersistentStorage;
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsMemoryStore : public CanMakeWeakPtr<ResourceLoadStatisticsMemoryStore> {
 public:
+    using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
+    using RegistrableDomain = WebCore::RegistrableDomain;
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubFrameDomain = WebCore::RegistrableDomain;
+    using SubResourceDomain = WebCore::RegistrableDomain;
+    using RedirectDomain = WebCore::RegistrableDomain;
+    using RedirectedFromDomain = WebCore::RegistrableDomain;
+    using RedirectedToDomain = WebCore::RegistrableDomain;
+    using NavigatedFromDomain = WebCore::RegistrableDomain;
+    using NavigatedToDomain = WebCore::RegistrableDomain;
+    using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
+    using OpenerDomain = WebCore::RegistrableDomain;
+    using OpenerPageID = uint64_t;
+    using PageID = uint64_t;
+    using FrameID = uint64_t;
+
     ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&);
     ~ResourceLoadStatisticsMemoryStore();
 
@@ -63,42 +79,42 @@ public:
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
 
-    void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
-    void processStatistics(const Function<void(const WebCore::ResourceLoadStatistics&)>&) const;
+    void mergeStatistics(Vector<ResourceLoadStatistics>&&);
+    void processStatistics(const Function<void(const ResourceLoadStatistics&)>&) const;
 
     void updateCookieBlocking(CompletionHandler<void()>&&);
-    void updateCookieBlockingForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
-    void clearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
+    void updateCookieBlockingForDomains(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
+    void clearBlockingStateForDomains(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
 
     void includeTodayAsOperatingDateIfNecessary();
     void processStatisticsAndDataRecords();
 
-    void requestStorageAccessUnderOpener(String&& primaryDomainInNeedOfStorageAccess, uint64_t openerPageID, String&& openerPrimaryDomain);
+    void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, OpenerPageID, OpenerDomain&&);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
 
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void cancelPendingStatisticsProcessingRequest();
 
-    bool isRegisteredAsSubresourceUnder(const String& subresourcePrimaryDomain, const String& topFramePrimaryDomain) const;
-    bool isRegisteredAsSubFrameUnder(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain) const;
-    bool isRegisteredAsRedirectingTo(const String& hostRedirectedFromPrimaryDomain, const String& hostRedirectedToPrimaryDomain) const;
+    bool isRegisteredAsSubresourceUnder(const SubResourceDomain&, const TopFrameDomain&) const;
+    bool isRegisteredAsSubFrameUnder(const SubFrameDomain&, const TopFrameDomain&) const;
+    bool isRegisteredAsRedirectingTo(const RedirectedFromDomain&, const RedirectedToDomain&) const;
 
-    void clearPrevalentResource(const String& primaryDomain);
+    void clearPrevalentResource(const RegistrableDomain&);
     String dumpResourceLoadStatistics() const;
-    bool isPrevalentResource(const String& primaryDomain) const;
-    bool isVeryPrevalentResource(const String& primaryDomain) const;
-    void setPrevalentResource(const String& primaryDomain);
-    void setVeryPrevalentResource(const String& primaryDomain);
+    bool isPrevalentResource(const RegistrableDomain&) const;
+    bool isVeryPrevalentResource(const RegistrableDomain&) const;
+    void setPrevalentResource(const RegistrableDomain&);
+    void setVeryPrevalentResource(const RegistrableDomain&);
 
-    void setGrandfathered(const String& primaryDomain, bool value);
-    bool isGrandfathered(const String& primaryDomain) const;
+    void setGrandfathered(const RegistrableDomain&, bool value);
+    bool isGrandfathered(const RegistrableDomain&) const;
 
-    void setSubframeUnderTopFrameOrigin(const String& primarySubFrameDomain, const String& primaryTopFrameDomain);
-    void setSubresourceUnderTopFrameOrigin(const String& primarySubresourceDomain, const String& primaryTopFrameDomain);
-    void setSubresourceUniqueRedirectTo(const String& primarySubresourceDomain, const String& primaryRedirectDomain);
-    void setSubresourceUniqueRedirectFrom(const String& primarySubresourceDomain, const String& primaryRedirectDomain);
-    void setTopFrameUniqueRedirectTo(const String& topFramePrimaryDomain, const String& primaryRedirectDomain);
-    void setTopFrameUniqueRedirectFrom(const String& topFramePrimaryDomain, const String& primaryRedirectDomain);
+    void setSubframeUnderTopFrameOrigin(const SubFrameDomain&, const TopFrameDomain&);
+    void setSubresourceUnderTopFrameOrigin(const SubResourceDomain&, const TopFrameDomain&);
+    void setSubresourceUniqueRedirectTo(const SubResourceDomain&, const RedirectDomain&);
+    void setSubresourceUniqueRedirectFrom(const SubResourceDomain&, const RedirectDomain&);
+    void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&);
+    void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&);
 
     void logTestingEvent(const String&);
 
@@ -116,48 +132,48 @@ public:
     void setGrandfatheringTime(Seconds);
     void setResourceLoadStatisticsDebugMode(bool);
     bool isDebugModeEnabled() const { return m_debugModeEnabled; };
-    void setPrevalentResourceForDebugMode(const String& domain);
+    void setPrevalentResourceForDebugMode(const RegistrableDomain&);
 
-    void hasStorageAccess(const String& subFramePrimaryDomain, const String& topFramePrimaryDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(String&& subFramePrimaryDomain, String&& topFramePrimaryDomain, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
-    void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
+    void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&);
 
-    void logFrameNavigation(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, const String& sourcePrimaryDomain, const String& targetHost, const String& mainFrameHost, bool isRedirect, bool isMainFrame);
-    void logUserInteraction(const String& primaryDomain);
-    void logSubresourceLoading(const String& targetPrimaryDomain, const String& mainFramePrimaryDomain, WallTime lastSeen);
-    void logSubresourceRedirect(const String& sourcePrimaryDomain, const String& targetPrimaryDomain);
+    void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame);
+    void logUserInteraction(const TopFrameDomain&);
+    void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen);
+    void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&);
 
-    void clearUserInteraction(const String& primaryDomain);
-    bool hasHadUserInteraction(const String& primaryDomain);
+    void clearUserInteraction(const RegistrableDomain&);
+    bool hasHadUserInteraction(const RegistrableDomain&);
 
-    void setLastSeen(const String& primaryDomain, Seconds);
+    void setLastSeen(const RegistrableDomain&, Seconds);
 
     void didCreateNetworkProcess();
 
     const WebResourceLoadStatisticsStore& store() const { return m_store; }
 
 private:
-    static bool shouldBlockAndKeepCookies(const WebCore::ResourceLoadStatistics&);
-    static bool shouldBlockAndPurgeCookies(const WebCore::ResourceLoadStatistics&);
-    static bool hasUserGrantedStorageAccessThroughPrompt(const WebCore::ResourceLoadStatistics&, const String& firstPartyPrimaryDomain);
-    bool hasHadUnexpiredRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
-    bool hasStatisticsExpired(const WebCore::ResourceLoadStatistics&) const;
-    bool wasAccessedAsFirstPartyDueToUserInteraction(const WebCore::ResourceLoadStatistics& current, const WebCore::ResourceLoadStatistics& updated) const;
-    void setPrevalentResource(WebCore::ResourceLoadStatistics&, ResourceLoadPrevalence);
-    unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const WebCore::ResourceLoadStatistics&, HashSet<String>& domainsThatHaveRedirectedTo, unsigned numberOfRecursiveCalls) const;
+    static bool shouldBlockAndKeepCookies(const ResourceLoadStatistics&);
+    static bool shouldBlockAndPurgeCookies(const ResourceLoadStatistics&);
+    static bool hasUserGrantedStorageAccessThroughPrompt(const ResourceLoadStatistics&, const RegistrableDomain&);
+    bool hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics&) const;
+    bool hasStatisticsExpired(const ResourceLoadStatistics&) const;
+    bool wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const;
+    void setPrevalentResource(ResourceLoadStatistics&, ResourceLoadPrevalence);
+    unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const ResourceLoadStatistics&, HashSet<RedirectedToDomain>&, unsigned numberOfRecursiveCalls) const;
     void setStorageAccessPromptsEnabled(bool enabled) { m_storageAccessPromptsEnabled  = enabled; }
     bool shouldRemoveDataRecords() const;
     void setDebugLogggingEnabled(bool enabled) { m_debugLoggingEnabled  = enabled; }
     void setDataRecordsBeingRemoved(bool);
     void scheduleStatisticsProcessingRequestIfNecessary();
-    void grantStorageAccessInternal(String&& subFrameHost, String&& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
-    void markAsPrevalentIfHasRedirectedToPrevalent(WebCore::ResourceLoadStatistics&);
-    bool isPrevalentDueToDebugMode(WebCore::ResourceLoadStatistics&);
-    Vector<String> ensurePrevalentResourcesForDebugMode();
+    void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<FrameID>, PageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
+    void markAsPrevalentIfHasRedirectedToPrevalent(ResourceLoadStatistics&);
+    bool isPrevalentDueToDebugMode(ResourceLoadStatistics&);
+    Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode();
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded();
-    WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
-    Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
+    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
+    Vector<RegistrableDomain> registrableDomainsToRemoveWebsiteDataFor();
     void setCacheMaxAgeCap(Seconds);
     void updateCacheMaxAgeCap();
     void setAgeCapForClientSideCookies(Seconds);
@@ -183,7 +199,7 @@ private:
     WebResourceLoadStatisticsStore& m_store;
     Ref<WorkQueue> m_workQueue;
     WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
-    HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
+    HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;
 #else
@@ -197,7 +213,8 @@ private:
     WallTime m_endOfGrandfatheringTimestamp;
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };
-    String m_debugManualPrevalentResource;
+    const RegistrableDomain m_debugStaticPrevalentResource { "3rdpartytestwebkit.org"_s };
+    RegistrableDomain m_debugManualPrevalentResource;
     bool m_storageAccessPromptsEnabled { false };
     bool m_dataRecordsBeingRemoved { false };
     MonotonicTime m_lastTimeDataRecordsWereRemoved;

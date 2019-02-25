@@ -177,8 +177,8 @@ public:
     static void notifyPageStatisticsAndDataRecordsProcessed();
     static void notifyPageStatisticsTelemetryFinished(API::Object* messageBody);
 
-    static void notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished();
-    static void notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished();
+    static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
+    static void notifyWebsiteDataScanForRegistrableDomainsFinished();
 #endif
 
     void enableSuddenTermination();

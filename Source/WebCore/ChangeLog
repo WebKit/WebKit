@@ -1,3 +1,124 @@
+2019-02-25  John Wilander  <wilander@apple.com>
+
+        Introduce and adopt new class RegistrableDomain for eTLD+1
+        https://bugs.webkit.org/show_bug.cgi?id=194791
+        <rdar://problem/48179240>
+
+        Reviewed by Alex Christensen, Fujii Hironori, and Brent Fulgham.
+
+        A new API test was added. Plenty of existing layout tests under
+        http/tests/resourceLoadStatistics/ and http/tests/storageAccess/ test the code.
+
+        This patch introduces and adopts a new class called WebCore::RegistrableDomain
+        which represents a domain's eTLD+1 (effective top level domain plus one) and is
+        the basis for the term "site," as in same-site. Other popular names include
+        high-level domain, primary domain, and top privately controlled/owned domain.
+        Effective top level domains are enumerated on the Public Suffix List
+        (https://publicsuffix.org).
+
+        This class just uses the full domain for when the Public Suffix List cannot help
+        finding the registrable domain and for WebKit ports that haven't enabled
+        PUBLIC_SUFFIX_LIST. It also uses the string "nullOrigin" as a representation
+        for the null or unique origin (this matches how these origins were handled
+        before).
+
+        The implementation is a wrapper around a String and the functions and class
+        members that now make use of this new class used to handle regular String
+        objects which didn't help much in terms of type safety or guarantees that the
+        string had already been converted to an eTLD+1.
+
+        We've at least two bad bugs in the Storage Access API because of confusion
+        between a URL's eTLD+1 and its host. The usage of WebCore::RegistrableDomain
+        will prohibit such bugs in the future.
+
+        Partitioning in WebKit also uses eTLD+1 to a large extent. I plan to adopt
+        WebCore::RegistrableDomain for partitioning in a later patch.
+
+        This patch also enhances parameter naming by:
+        - Removing parts that refer to "primary" as in primaryDomain.
+        - Replacing references to "TopPrivatelyControlledDomain" with "RegistrableDomain."
+        - Replacing references to "TopPrivatelyOwnedDomain" with "RegistrableDomain."
+        - Using the term "domain" consistently instead of e.g. "host."
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::hasRequestedPageSpecificStorageAccessWithUserInteraction):
+        (WebCore::Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction):
+        * dom/Document.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAdClickAttribution const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::url const):
+        (WebCore::AdClickAttribution::referrer const):
+        (WebCore::AdClickAttribution::toString const):
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::Source::Source):
+        (WebCore::AdClickAttribution::Source::matches const):
+        (WebCore::AdClickAttribution::Source::deleteValue):
+        (WebCore::AdClickAttribution::Destination::Destination):
+        (WebCore::AdClickAttribution::Destination::matches const):
+        (WebCore::AdClickAttribution::Destination::deleteValue):
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback):
+        (WebCore::ResourceLoadObserver::setLogUserInteractionNotificationCallback):
+        (WebCore::ResourceLoadObserver::setLogWebSocketLoadingNotificationCallback):
+        (WebCore::ResourceLoadObserver::setLogSubresourceLoadingNotificationCallback):
+        (WebCore::ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebCore::ResourceLoadObserver::logFontLoad):
+        (WebCore::ResourceLoadObserver::logCanvasRead):
+        (WebCore::ResourceLoadObserver::logCanvasWriteOrMeasure):
+        (WebCore::ResourceLoadObserver::logNavigatorAPIAccessed):
+        (WebCore::ResourceLoadObserver::logScreenAPIAccessed):
+        (WebCore::ResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain):
+        (WebCore::ResourceLoadObserver::statisticsForOrigin):
+        (WebCore::primaryDomain): Deleted.
+        (WebCore::ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        (WebCore::ResourceLoadStatistics::primaryDomain): Deleted.
+        * loader/ResourceLoadStatistics.h:
+        (WebCore::ResourceLoadStatistics::ResourceLoadStatistics):
+        * page/Page.cpp:
+        (WebCore::Page::logNavigation):
+        (WebCore::Page::mainFrameLoadStarted):
+        * page/Page.h:
+        * page/PerformanceMonitor.cpp:
+        (WebCore::reportPageOverPostLoadResourceThreshold):
+        * platform/RegistrableDomain.h: Added.
+        (WebCore::RegistrableDomain::RegistrableDomain):
+        (WebCore::RegistrableDomain::isEmpty const):
+        (WebCore::RegistrableDomain::string const):
+        (WebCore::RegistrableDomain::operator!= const):
+        (WebCore::RegistrableDomain::operator== const):
+        (WebCore::RegistrableDomain::matches const):
+        (WebCore::RegistrableDomain::isolatedCopy const):
+        (WebCore::RegistrableDomain::isHashTableDeletedValue const):
+        (WebCore::RegistrableDomain::hash const):
+        (WebCore::RegistrableDomain::RegistrableDomainHash::hash):
+        (WebCore::RegistrableDomain::RegistrableDomainHash::equal):
+        (WebCore::RegistrableDomain::encode const):
+        (WebCore::RegistrableDomain::decode):
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor):
+        (WebCore::NetworkStorageSession::removePrevalentDomains):
+        (WebCore::NetworkStorageSession::hasStorageAccess const):
+        (WebCore::NetworkStorageSession::getAllStorageAccessEntries const):
+        (WebCore::NetworkStorageSession::grantStorageAccess):
+        (WebCore::getPartitioningDomain): Deleted.
+        * platform/network/NetworkStorageSession.h:
+
 2019-02-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <footer> HTML5 tag not reading as ARIA Landmark to VoiceOver

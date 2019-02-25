@@ -83,38 +83,38 @@ messages -> NetworkProcess LegacyReceiver {
     PreconnectTo(URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ClearPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
-    ClearUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> () Async
+    ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
+    ClearUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     DumpResourceLoadStatistics(PAL::SessionID sessionID) -> (String dumpedStatistics) Async
     SetResourceLoadStatisticsEnabled(bool enabled)
-    UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock) -> () Async
-    IsGrandfathered(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isGrandfathered) Async
-    IsPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isPrevalent) Async
-    IsVeryPrevalentResource(PAL::SessionID sessionID, String targetPrimaryDomain) -> (bool isVeryPrevalent) Async
+    UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> domainsToBlock) -> () Async
+    IsGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain) -> (bool isGrandfathered) Async
+    IsPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain) -> (bool isPrevalent) Async
+    IsVeryPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain) -> (bool isVeryPrevalent) Async
     SetAgeCapForClientSideCookies(PAL::SessionID sessionID, Optional<Seconds> seconds) -> () Async
-    SetLastSeen(PAL::SessionID sessionID, String resourceDomain, Seconds seconds) -> () Async
-    SetPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
-    SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, String resourceDomain) -> () Async
-    HadUserInteraction(PAL::SessionID sessionID, String resourceDomain) -> (bool hadUserInteraction) Async
-    HasStorageAccessForFrame(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
-    HasStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
+    SetLastSeen(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, Seconds seconds) -> () Async
+    SetPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
+    SetPrevalentResourceForDebugMode(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
+    HadUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> (bool hadUserInteraction) Async
+    HasStorageAccessForFrame(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
+    HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
     GetAllStorageAccessEntries(PAL::SessionID sessionID) -> (Vector<String> domains) Async
-    GrantStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted) -> (bool accessGranted) Async
-    IsRegisteredAsRedirectingTo(PAL::SessionID sessionID, String redirectedFrom, String redirectedTo) -> (bool isRedirectingTo) Async
-    IsRegisteredAsSubFrameUnder(PAL::SessionID sessionID, String subframe, String topFrame) -> (bool isSubframeUnder) Async
-    IsRegisteredAsSubresourceUnder(PAL::SessionID sessionID, String subresource, String topFrame) -> (bool isSubresourceUnder) Async
-    LogFrameNavigation(PAL::SessionID sessionID, String targetPrimaryDomain, String mainFramePrimaryDomain, String sourcePrimaryDomain, String targetHost, String mainFrameHost, bool isRedirect, bool isMainFrame)
-    LogUserInteraction(PAL::SessionID sessionID, String targetPrimaryDomain) -> () Async
+    GrantStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted) -> (bool accessGranted) Async
+    IsRegisteredAsRedirectingTo(PAL::SessionID sessionID, WebCore::RegistrableDomain redirectedFromDomain, WebCore::RegistrableDomain redirectedToDomain) -> (bool isRedirectingTo) Async
+    IsRegisteredAsSubFrameUnder(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool isSubframeUnder) Async
+    IsRegisteredAsSubresourceUnder(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool isSubresourceUnder) Async
+    LogFrameNavigation(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain sourceDomain, bool isRedirect, bool isMainFrame)
+    LogUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain) -> () Async
     RemoveAllStorageAccess(PAL::SessionID sessionID) -> () Async
-    RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction)
-    RequestStorageAccess(PAL::SessionID sessionID, String resourceDomain, String firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled) -> (enum:uint8_t WebKit::StorageAccessStatus storageAccessStatus) Async
+    RemovePrevalentDomains(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> domainsWithInteraction)
+    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled) -> (enum:uint8_t WebKit::StorageAccessStatus storageAccessStatus) Async
     ResetParametersToDefaultValues(PAL::SessionID sessionID) -> () Async
     ScheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, enum:bool WebKit::ShouldGrandfatherStatistics shouldGrandfather) -> () Async
     ScheduleCookieBlockingUpdate(PAL::SessionID sessionID) -> () Async
     ScheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID) -> () Async
     SubmitTelemetry(PAL::SessionID sessionID) -> () Async
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds) -> () Async
-    SetGrandfathered(PAL::SessionID sessionID, String resourceDomain, bool isGrandfathered) -> () Async
+    SetGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, bool isGrandfathered) -> () Async
     SetGrandfatheringTime(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetMaxStatisticsEntries(PAL::SessionID sessionID, uint64_t maximumEntryCount) -> () Async
     SetMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID sessionID, Seconds seconds) -> () Async
@@ -123,14 +123,14 @@ messages -> NetworkProcess LegacyReceiver {
     SetNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value) -> () Async
     SetNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value) -> () Async
     SetResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode) -> () Async
-    SetVeryPrevalentResource(PAL::SessionID sessionID, String resourceDomain) -> () Async
-    SetSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, String subframe, String topFrame) -> () Async
-    SetSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, String subresource, String topFrame) -> () Async
-    SetSubresourceUniqueRedirectTo(PAL::SessionID sessionID, String subresource, String hostNameRedirectedTo) -> () Async
-    SetSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, String subresource, String hostNameRedirectedFrom) -> () Async
+    SetVeryPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
+    SetSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
+    SetSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
+    SetSubresourceUniqueRedirectTo(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain redirectedToDomain) -> () Async
+    SetSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain redirectedFromDomain) -> () Async
     SetTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds) -> () Async
-    SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedTo) -> () Async
-    SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, String topFrameHostName, String hostNameRedirectedFrom) -> () Async
+    SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedToDomain) -> () Async
+    SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedFromDomain) -> () Async
     ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID) -> () Async
 #endif
 

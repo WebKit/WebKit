@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
+#import <WebCore/RegistrableDomain.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -52,7 +53,7 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ItpDebugMode"]);
         auto* debugManualPrevalentResource = [[NSUserDefaults standardUserDefaults] stringForKey:@"ResourceLoadStatisticsManualPrevalentResource"];
         if (debugManualPrevalentResource)
-            setPrevalentResourceForDebugMode(debugManualPrevalentResource);
+            setPrevalentResourceForDebugMode(RegistrableDomain { debugManualPrevalentResource });
 
         Seconds cacheMaxAgeCapForPrevalentResources([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsCacheMaxAgeCap"]);
         if (cacheMaxAgeCapForPrevalentResources > 0_s && cacheMaxAgeCapForPrevalentResources <= 24_h * 365)

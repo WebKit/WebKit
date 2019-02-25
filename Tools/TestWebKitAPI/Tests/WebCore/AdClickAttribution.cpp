@@ -100,7 +100,7 @@ TEST(AdClickAttribution, InvalidCampaignId)
 
 TEST(AdClickAttribution, InvalidSourceHost)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkitorg"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source(""), AdClickAttribution::Destination("example.com"));
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -112,7 +112,7 @@ TEST(AdClickAttribution, InvalidSourceHost)
 
 TEST(AdClickAttribution, InvalidDestinationHost)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("examplecom"));
+    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination(""));
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();

@@ -416,12 +416,12 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataDeletionForRegistrableDomainsFinished")) {
         m_testRunner->statisticsDidModifyDataRecordsCallback();
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForTopPrivatelyControlledDomainsFinished")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "WebsiteDataScanForRegistrableDomainsFinished")) {
         m_testRunner->statisticsDidScanDataRecordsCallback();
         return;
     }

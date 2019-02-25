@@ -44,6 +44,7 @@
 #include "PlatformEvent.h"
 #include "ReferrerPolicy.h"
 #include "Region.h"
+#include "RegistrableDomain.h"
 #include "RenderPtr.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityPolicyViolationEvent.h"
@@ -1494,8 +1495,8 @@ public:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
-    void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain);
+    bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
+    void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
 #endif
 
     String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&);
@@ -2059,7 +2060,7 @@ private:
     HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
     
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    String m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
+    RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
 #endif
     
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;

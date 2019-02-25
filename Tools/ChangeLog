@@ -1,3 +1,24 @@
+2019-02-25  John Wilander  <wilander@apple.com>
+
+        Introduce and adopt new class RegistrableDomain for eTLD+1
+        https://bugs.webkit.org/show_bug.cgi?id=194791
+        <rdar://problem/48179240>
+
+        Reviewed by Alex Christensen, Fujii Hironori, and Brent Fulgham.
+
+        This patch adds an API test and replaces two instances of
+        "TopPrivatelyOwnedDomains" with "RegistrableDomains" in message names.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/AdClickAttribution.cpp:
+        (TestWebKitAPI::TEST):
+            Changed two strings to make sure the registrable domains are still considered
+            invalid and pass the test.
+        * TestWebKitAPI/Tests/WebCore/RegistrableDomain.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+
 2019-02-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Bump WPEBackend-fdo requirement to API version 1.0

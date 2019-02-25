@@ -33,6 +33,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
 #include "Page.h"
+#include "RegistrableDomain.h"
 #include "ResourceLoadStatistics.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -43,11 +44,6 @@
 #include <wtf/URL.h>
 
 namespace WebCore {
-
-template<typename T> static inline String primaryDomain(const T& value)
-{
-    return ResourceLoadStatistics::primaryDomain(value);
-}
 
 static const Seconds minimumNotificationInterval { 5_s };
 
@@ -63,31 +59,31 @@ void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<Re
     m_notificationCallback = WTFMove(notificationCallback);
 }
 
-void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, const String& openerDomain)>&& callback)
+void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain)>&& callback)
 {
     ASSERT(!m_requestStorageAccessUnderOpenerCallback);
     m_requestStorageAccessUnderOpenerCallback = WTFMove(callback);
 }
 
-void ResourceLoadObserver::setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const String&)>&& callback)
+void ResourceLoadObserver::setLogUserInteractionNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&)>&& callback)
 {
     ASSERT(!m_logUserInteractionNotificationCallback);
     m_logUserInteractionNotificationCallback = WTFMove(callback);
 }
 
-void ResourceLoadObserver::setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&& callback)
+void ResourceLoadObserver::setLogWebSocketLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&& callback)
 {
     ASSERT(!m_logWebSocketLoadingNotificationCallback);
     m_logWebSocketLoadingNotificationCallback = WTFMove(callback);
 }
 
-void ResourceLoadObserver::setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const String&, const String&, WallTime)>&& callback)
+void ResourceLoadObserver::setLogSubresourceLoadingNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&, WallTime)>&& callback)
 {
     ASSERT(!m_logSubresourceLoadingNotificationCallback);
     m_logSubresourceLoadingNotificationCallback = WTFMove(callback);
 }
 
-void ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const String&, const String&)>&& callback)
+void ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback(Function<void(PAL::SessionID, const RegistrableDomain&, const RegistrableDomain&)>&& callback)
 {
     ASSERT(!m_logSubresourceRedirectNotificationCallback);
     m_logSubresourceRedirectNotificationCallback = WTFMove(callback);
@@ -130,34 +126,34 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == mainFrameHost || (isRedirect && targetHost == sourceURL.host()))
         return;
 
-    auto targetPrimaryDomain = primaryDomain(targetURL);
-    auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
-    auto sourcePrimaryDomain = primaryDomain(sourceURL);
+    RegistrableDomain targetDomain { targetURL };
+    RegistrableDomain mainFrameDomain { mainFrameURL };
+    RegistrableDomain sourceDomain { sourceURL };
 
-    if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
+    if (targetDomain == mainFrameDomain || (isRedirect && targetDomain == sourceDomain))
         return;
 
     bool shouldCallNotificationCallback = false;
     {
-        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+        auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
         auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
         targetStatistics.lastSeen = lastSeen;
-        if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
+        if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFrameDomain.string()).isNewEntry)
             shouldCallNotificationCallback = true;
 
-        m_logSubresourceLoadingNotificationCallback(page->sessionID(), targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+        m_logSubresourceLoadingNotificationCallback(page->sessionID(), targetDomain, mainFrameDomain, lastSeen);
     }
 
     if (isRedirect) {
-        auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-        bool isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry;
-        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-        bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourcePrimaryDomain).isNewEntry;
+        auto& redirectingOriginStatistics = ensureResourceStatisticsForRegistrableDomain(sourceDomain);
+        bool isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetDomain.string()).isNewEntry;
+        auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
+        bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(sourceDomain.string()).isNewEntry;
 
         if (isNewRedirectToEntry || isNewRedirectFromEntry)
             shouldCallNotificationCallback = true;
 
-        m_logSubresourceRedirectNotificationCallback(page->sessionID(), sourcePrimaryDomain, targetPrimaryDomain);
+        m_logSubresourceRedirectNotificationCallback(page->sessionID(), sourceDomain, targetDomain);
     }
 
     if (shouldCallNotificationCallback)
@@ -175,20 +171,20 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
     if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == mainFrameHost)
         return;
     
-    auto targetPrimaryDomain = primaryDomain(targetURL);
-    auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
+    RegistrableDomain targetDomain { targetURL };
+    RegistrableDomain mainFrameDomain { mainFrameURL };
 
-    if (targetPrimaryDomain == mainFramePrimaryDomain)
+    if (targetDomain == mainFrameDomain)
         return;
 
     auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
 
-    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
     targetStatistics.lastSeen = lastSeen;
-    if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
+    if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFrameDomain.string()).isNewEntry)
         scheduleNotificationIfNeeded();
 
-    m_logWebSocketLoadingNotificationCallback(sessionID, targetPrimaryDomain, mainFramePrimaryDomain, lastSeen);
+    m_logWebSocketLoadingNotificationCallback(sessionID, targetDomain, mainFrameDomain, lastSeen);
 }
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
@@ -197,10 +193,10 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         return;
 
     auto& url = document.url();
-    if (url.protocolIsAbout() || url.isEmpty())
+    if (url.protocolIsAbout() || url.isLocalFile() || url.isEmpty())
         return;
 
-    auto domain = primaryDomain(url);
+    RegistrableDomain domain { url };
     auto newTime = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
     auto lastReportedUserInteraction = m_lastReportedUserInteractionMap.get(domain);
     if (newTime == lastReportedUserInteraction)
@@ -208,7 +204,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 
     m_lastReportedUserInteractionMap.set(domain, newTime);
 
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(domain);
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(domain);
     statistics.hadUserInteraction = true;
     statistics.lastSeen = newTime;
     statistics.mostRecentUserInteractionTime = newTime;
@@ -242,7 +238,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
             return s;
         };
         auto escapedURL = escapeForJSON(url.string());
-        auto escapedDomain = escapeForJSON(domain);
+        auto escapedDomain = escapeForJSON(domain.string());
 
         LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
         LOCAL_LOG(R"(  "domain" : "%{public}s",)", escapedDomain.utf8().data());
@@ -254,14 +250,14 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument)
+void ResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument)
 {
     auto openerUrl = openerDocument.url();
-    auto openerPrimaryDomain = primaryDomain(openerUrl);
-    if (domainInNeedOfStorageAccess != openerPrimaryDomain
+    RegistrableDomain openerDomain { openerUrl };
+    if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !equalIgnoringASCIICase(openerUrl.string(), WTF::blankURL())) {
-        m_requestStorageAccessUnderOpenerCallback(domainInNeedOfStorageAccess, openerPageID, openerPrimaryDomain);
+        m_requestStorageAccessUnderOpenerCallback(domainInNeedOfStorageAccess, openerPageID, openerDomain);
         // Remember user interaction-based requests since they don't need to be repeated.
         openerDocument.setHasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess);
     }
@@ -273,8 +269,8 @@ void ResourceLoadObserver::logFontLoad(const Document& document, const String& f
 #if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
-    auto registrableDomain = primaryDomain(document.url());
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    RegistrableDomain registrableDomain { document.url() };
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
     bool shouldCallNotificationCallback = false;
     if (!loadStatus) {
         if (statistics.fontsFailedToLoad.add(familyName).isNewEntry)
@@ -283,8 +279,8 @@ void ResourceLoadObserver::logFontLoad(const Document& document, const String& f
         if (statistics.fontsSuccessfullyLoaded.add(familyName).isNewEntry)
             shouldCallNotificationCallback = true;
     }
-    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
-    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain.string()).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -300,11 +296,11 @@ void ResourceLoadObserver::logCanvasRead(const Document& document)
 #if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
-    auto registrableDomain = primaryDomain(document.url());
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
-    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    RegistrableDomain registrableDomain { document.url() };
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
+    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
     statistics.canvasActivityRecord.wasDataRead = true;
-    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain.string()).isNewEntry)
         scheduleNotificationIfNeeded();
 #else
     UNUSED_PARAM(document);
@@ -316,13 +312,13 @@ void ResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, con
 #if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
-    auto registrableDomain = primaryDomain(document.url());
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    RegistrableDomain registrableDomain { document.url() };
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
     bool shouldCallNotificationCallback = false;
-    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
+    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
     if (statistics.canvasActivityRecord.recordWrittenOrMeasuredText(textWritten))
         shouldCallNotificationCallback = true;
-    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain.string()).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -337,15 +333,15 @@ void ResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, con
 #if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
-    auto registrableDomain = primaryDomain(document.url());
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    RegistrableDomain registrableDomain { document.url() };
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
     bool shouldCallNotificationCallback = false;
     if (!statistics.navigatorFunctionsAccessed.contains(functionName)) {
         statistics.navigatorFunctionsAccessed.add(functionName);
         shouldCallNotificationCallback = true;
     }
-    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
-    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain.string()).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -360,15 +356,15 @@ void ResourceLoadObserver::logScreenAPIAccessed(const Document& document, const 
 #if ENABLE(WEB_API_STATISTICS)
     if (!shouldLog(document.sessionID().isEphemeral()))
         return;
-    auto registrableDomain = primaryDomain(document.url());
-    auto& statistics = ensureResourceStatisticsForPrimaryDomain(registrableDomain);
+    RegistrableDomain registrableDomain { document.url() };
+    auto& statistics = ensureResourceStatisticsForRegistrableDomain(registrableDomain);
     bool shouldCallNotificationCallback = false;
     if (!statistics.screenFunctionsAccessed.contains(functionName)) {
         statistics.screenFunctionsAccessed.add(functionName);
         shouldCallNotificationCallback = true;
     }
-    auto mainFrameRegistrableDomain = primaryDomain(document.topDocument().url());
-    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain).isNewEntry)
+    RegistrableDomain mainFrameRegistrableDomain { document.topDocument().url() };
+    if (statistics.topFrameRegistrableDomainsWhichAccessedWebAPIs.add(mainFrameRegistrableDomain.string()).isNewEntry)
         shouldCallNotificationCallback = true;
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -378,10 +374,10 @@ void ResourceLoadObserver::logScreenAPIAccessed(const Document& document, const 
 #endif
 }
     
-ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
+ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain& domain)
 {
-    auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
-        return ResourceLoadStatistics(primaryDomain);
+    auto addResult = m_resourceStatisticsMap.ensure(domain, [&domain] {
+        return ResourceLoadStatistics(domain);
     });
     return addResult.iterator->value;
 }
@@ -407,7 +403,7 @@ void ResourceLoadObserver::notifyObserver()
 
 String ResourceLoadObserver::statisticsForOrigin(const String& origin)
 {
-    auto iter = m_resourceStatisticsMap.find(origin);
+    auto iter = m_resourceStatisticsMap.find(RegistrableDomain { origin });
     if (iter == m_resourceStatisticsMap.end())
         return emptyString();
 

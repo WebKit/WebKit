@@ -35,7 +35,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PerformanceLogging.h"
-#include "PublicSuffix.h"
+#include "RegistrableDomain.h"
 
 namespace WebCore {
 
@@ -148,16 +148,16 @@ static void reportPageOverPostLoadResourceThreshold(Page& page, ReportingReason 
     if (!document)
         return;
 
-    String domain = topPrivatelyControlledDomain(document->url().host().toString());
-    if (domain.isEmpty())
+    RegistrableDomain registrableDomain { document->url() };
+    if (registrableDomain.isEmpty())
         return;
 
     switch (reason) {
     case ReportingReason::HighCPUUsage:
-        page.diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainCausingEnergyDrainKey(), domain, ShouldSample::No);
+        page.diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainCausingEnergyDrainKey(), registrableDomain.string(), ShouldSample::No);
         break;
     case ReportingReason::HighMemoryUsage:
-        page.diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, ShouldSample::No);
+        page.diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(DiagnosticLoggingKeys::domainCausingJetsamKey(), registrableDomain.string(), ShouldSample::No);
         break;
     }
 #else

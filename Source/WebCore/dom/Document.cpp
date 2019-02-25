@@ -8464,14 +8464,14 @@ void Document::setHasFrameSpecificStorageAccess(bool value)
         m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
 }
 
-bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain)
+bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {
-    return m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction == primaryDomain;
+    return m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction == domain;
 }
 
-void Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction(const String& primaryDomain)
+void Document::setHasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {
-    m_primaryDomainRequestedPageSpecificStorageAccessWithUserInteraction = primaryDomain;
+    m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction = domain;
 }
 #endif
 

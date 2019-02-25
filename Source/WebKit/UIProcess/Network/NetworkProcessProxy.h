@@ -189,8 +189,8 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void logTestingEvent(PAL::SessionID, const String& event);
     void notifyResourceLoadStatisticsProcessed();
-    void notifyWebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished();
-    void notifyWebsiteDataScanForTopPrivatelyControlledDomainsFinished();
+    void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
+    void notifyWebsiteDataScanForRegistrableDomainsFinished();
     void notifyResourceLoadStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
 #endif
     void retrieveCacheStorageParameters(PAL::SessionID);
