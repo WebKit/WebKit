@@ -1965,6 +1965,8 @@ void RenderLayerCompositor::repaintCompositedLayers()
 
 void RenderLayerCompositor::recursiveRepaintLayer(RenderLayer& layer)
 {
+    layer.updateLayerListsIfNeeded();
+
     // FIXME: This method does not work correctly with transforms.
     if (layer.isComposited() && !layer.backing()->paintsIntoCompositedAncestor())
         layer.setBackingNeedsRepaint();
