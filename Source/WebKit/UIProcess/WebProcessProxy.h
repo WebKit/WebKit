@@ -283,6 +283,8 @@ private:
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(bool& shouldTerminate);
 
+    bool hasPageUsingSession(PAL::SessionID) const;
+
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote);
     void messagePortDisentangled(const WebCore::MessagePortIdentifier&);

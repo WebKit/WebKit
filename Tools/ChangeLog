@@ -1,3 +1,18 @@
+2019-02-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/48317433
+
+    2019-02-24  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(PSON): Google login page refreshes repeatedly in Reeder 3 app
+            <rdar://problem/47471222>
+
+            Reviewed by Alex Christensen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241736. rdar://problem/48243264

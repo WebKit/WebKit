@@ -1,3 +1,48 @@
+2019-02-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Apply patch. rdar://problem/48317433
+
+    2019-02-24  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(PSON): Google login page refreshes repeatedly in Reeder 3 app
+            <rdar://problem/47471222>
+
+            Reviewed by Alex Christensen.
+
+            When we process swap, we first call removeWebPage() on the previous process and then
+            call addExistingWebPage() on the new one. removeWebPage() would call
+            WebProcessPool::pageEndUsingWebsiteDataStore() and then addExistingWebPage() would
+            call WebProcessPool::pageBeginUsingWebsiteDataStore(). This was leading to loosing
+            session cookies because the call to WebProcessPool::pageEndUsingWebsiteDataStore()
+            would send an IPC to the Network process to destroy the session. The later call to
+            pageBeginUsingWebsiteDataStore() would re-construct the session but it would be too
+            late, previous cookies would be gone.
+
+            To address the issue, r238828 updated removeWebPage() / addExistingWebPage() so that
+            they no longer call pageBeginUsingWebsiteDataStore() / pageEndUsingWebsiteDataStore()
+            in case of a process swap. This partly fixed the issue. However, I failed to notice
+            that pageBeginUsingWebsiteDataStore() / pageEndUsingWebsiteDataStore() also send IPC
+            to the WebProcess to construct / destroy the session. We still want this IPC to
+            happen in case of a process-swap or the new process will not know about the session.
+
+            To address this issue, I moved the WebProcess IPC sending from
+            WebProcessPool::pageEndUsingWebsiteDataStore() / pageEndUsingWebsiteDataStore() to
+            WebProcessProxy::removeWebPage() / addExistingWebPage() so that it happens no matter
+            what. It is also clearer for the WebProcessProxy to send the IPC by itself.
+
+            This patch is only needed on the branch since Alex refactored the code in r239737
+            so that the WebSiteDataStore-related IPC to the WebProcess is no longer needed on
+            trunk.
+
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+            (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+            * UIProcess/WebProcessPool.h:
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::addExistingWebPage):
+            (WebKit::WebProcessProxy::removeWebPage):
+            (WebKit::WebProcessProxy::hasPageUsingSession const):
+
 2019-02-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241919. rdar://problem/48267027

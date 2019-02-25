@@ -465,6 +465,12 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID,
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
         m_processPool->pageBeginUsingWebsiteDataStore(webPage);
 
+    auto sessionID = webPage.sessionID();
+    if (sessionID.isEphemeral())
+        send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID)), 0);
+    else if (sessionID != PAL::SessionID::defaultSessionID())
+        send(Messages::WebProcess::AddWebsiteDataStore(webPage.websiteDataStore().parameters()), 0);
+
     m_pageMap.set(pageID, &webPage);
     globalPageMap().set(pageID, &webPage);
 
@@ -492,9 +498,22 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID, Ends
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
         m_processPool->pageEndUsingWebsiteDataStore(webPage);
 
+    auto sessionID = webPage.sessionID();
+    if (sessionID != PAL::SessionID::defaultSessionID() && !hasPageUsingSession(sessionID))
+        send(Messages::WebProcess::DestroySession(sessionID), 0);
+
     updateBackgroundResponsivenessTimer();
 
     maybeShutDown();
+}
+
+bool WebProcessProxy::hasPageUsingSession(PAL::SessionID sessionID) const
+{
+    for (auto& page : m_pageMap.values()) {
+        if (page->sessionID() == sessionID)
+            return true;
+    }
+    return false;
 }
 
 void WebProcessProxy::addVisitedLinkStore(VisitedLinkStore& store)

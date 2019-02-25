@@ -1213,12 +1213,10 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
         ASSERT(page.websiteDataStore().parameters().networkSessionParameters.sessionID == sessionID);
         if (m_networkProcess)
             m_networkProcess->addSession(makeRef(page.websiteDataStore()));
-        page.process().send(Messages::WebProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::privateSessionParameters(sessionID)), 0);
         page.websiteDataStore().clearPendingCookies();
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
         if (m_networkProcess)
             m_networkProcess->addSession(makeRef(page.websiteDataStore()));
-        page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
         page.websiteDataStore().clearPendingCookies();
     }
 
@@ -1249,7 +1247,6 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page)
         // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
         if (networkProcess())
             networkProcess()->removeSession(sessionID);
-        page.process().send(Messages::WebProcess::DestroySession(sessionID), 0);
     }
 }
 
