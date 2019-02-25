@@ -409,6 +409,9 @@
 		7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessPrivilege.cpp; sourceTree = "<group>"; };
 		7AFEC6AE1EB22AC600DADE36 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		7AFEC6B01EB22B5900DADE36 /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
+		7C137941222326C700D7A824 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
+		7C137942222326D500D7A824 /* ieee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ieee.h; sourceTree = "<group>"; };
+		7C137943222326D500D7A824 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7C3F72391D78811900674E26 /* Brigand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brigand.h; sourceTree = "<group>"; };
 		7C9692941F66306E00267A9E /* KeyValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyValuePair.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
@@ -509,13 +512,11 @@
 		A8A4728A151A825A004123FF /* diy-fp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "diy-fp.h"; sourceTree = "<group>"; };
 		A8A4728B151A825A004123FF /* double-conversion.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "double-conversion.cc"; sourceTree = "<group>"; };
 		A8A4728C151A825A004123FF /* double-conversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "double-conversion.h"; sourceTree = "<group>"; };
-		A8A4728D151A825A004123FF /* double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = double.h; sourceTree = "<group>"; };
 		A8A4728E151A825A004123FF /* fast-dtoa.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "fast-dtoa.cc"; sourceTree = "<group>"; };
 		A8A4728F151A825A004123FF /* fast-dtoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fast-dtoa.h"; sourceTree = "<group>"; };
 		A8A47290151A825A004123FF /* fixed-dtoa.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "fixed-dtoa.cc"; sourceTree = "<group>"; };
 		A8A47291151A825A004123FF /* fixed-dtoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "fixed-dtoa.h"; sourceTree = "<group>"; };
 		A8A47292151A825A004123FF /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		A8A47293151A825A004123FF /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		A8A47294151A825A004123FF /* strtod.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strtod.cc; sourceTree = "<group>"; };
 		A8A47295151A825A004123FF /* strtod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strtod.h; sourceTree = "<group>"; };
 		A8A47296151A825A004123FF /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
@@ -1212,9 +1213,10 @@
 		A8A47281151A825A004123FF /* dtoa */ = {
 			isa = PBXGroup;
 			children = (
+				7C137941222326C700D7A824 /* AUTHORS */,
 				A8A47288151A825A004123FF /* COPYING */,
 				A8A47292151A825A004123FF /* LICENSE */,
-				A8A47293151A825A004123FF /* README */,
+				7C137943222326D500D7A824 /* README.md */,
 				A8A47282151A825A004123FF /* bignum-dtoa.cc */,
 				A8A47283151A825A004123FF /* bignum-dtoa.h */,
 				A8A47284151A825A004123FF /* bignum.cc */,
@@ -1225,11 +1227,11 @@
 				A8A4728A151A825A004123FF /* diy-fp.h */,
 				A8A4728B151A825A004123FF /* double-conversion.cc */,
 				A8A4728C151A825A004123FF /* double-conversion.h */,
-				A8A4728D151A825A004123FF /* double.h */,
 				A8A4728E151A825A004123FF /* fast-dtoa.cc */,
 				A8A4728F151A825A004123FF /* fast-dtoa.h */,
 				A8A47290151A825A004123FF /* fixed-dtoa.cc */,
 				A8A47291151A825A004123FF /* fixed-dtoa.h */,
+				7C137942222326D500D7A824 /* ieee.h */,
 				A8A47294151A825A004123FF /* strtod.cc */,
 				A8A47295151A825A004123FF /* strtod.h */,
 				A8A47296151A825A004123FF /* utils.h */,

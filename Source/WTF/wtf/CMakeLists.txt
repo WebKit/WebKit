@@ -274,9 +274,9 @@ set(WTF_PUBLIC_HEADERS
     dtoa/cached-powers.h
     dtoa/diy-fp.h
     dtoa/double-conversion.h
-    dtoa/double.h
     dtoa/fast-dtoa.h
     dtoa/fixed-dtoa.h
+    dtoa/ieee.h
     dtoa/strtod.h
     dtoa/utils.h
 

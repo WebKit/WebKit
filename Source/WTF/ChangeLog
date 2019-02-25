@@ -1,3 +1,145 @@
+2019-02-25  Sam Weinig  <sam@webkit.org>
+
+        Update double-conversion to the latest version
+        https://bugs.webkit.org/show_bug.cgi?id=194994
+
+        Import the latest version of the double-conversion library based on
+        https://github.com/google/double-conversion/commit/990c44707c70832dc1ce1578048c2198bafd3307
+
+        In additon to importing the code, the following changes were applied (or re-applied) to maintain 
+        parity with what we had previously:
+             - Add #include "config.h" to each cpp file.
+             - Put everything inside the WTF namespace.
+             - Changed all in library includes to be of the form #include <wtf/dtoa/FILE.h>.
+             - Renamed double_conversion::Vector<> to double_conversion::BufferReference<>.
+             - Replaced duplicated functions with ASCIICType.h variants
+             - Made CachedPower table a constexpr.
+             - Exported (via WTF_EXPORT_PRIVATE) several functions in double-conversion.h.
+             - Made substantial changes to StringToDoubleConverter to avoid unnecessary overhead of 
+               parameterization, as we only ever want one configuration. Instead of constructing a
+               configured class and calling StringToDouble on it, StringToDouble is now a static
+               function. This allows a bunch of now dead code (hex support, octal support, etc.) to
+               be eliminated. As StringToDoubleConverter now supports single precision floats, some
+               additional templating of StringToIeee was added to avoid extra unnecessary branching.
+             - Added RemoveCharacters function to double_conversion::StringBuilder.
+
+        Reviewed by Darin Adler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/dtoa/AUTHORS: Added.
+        * wtf/dtoa/README: Removed.
+        * wtf/dtoa/README.md: Added.
+        * wtf/dtoa/bignum-dtoa.cc:
+        * wtf/dtoa/bignum-dtoa.h:
+        * wtf/dtoa/bignum.cc:
+        * wtf/dtoa/bignum.h:
+        (WTF::double_conversion::Bignum::Times10):
+        (WTF::double_conversion::Bignum::Equal):
+        (WTF::double_conversion::Bignum::LessEqual):
+        (WTF::double_conversion::Bignum::Less):
+        (WTF::double_conversion::Bignum::PlusEqual):
+        (WTF::double_conversion::Bignum::PlusLessEqual):
+        (WTF::double_conversion::Bignum::PlusLess):
+        (WTF::double_conversion::Bignum::EnsureCapacity):
+        (WTF::double_conversion::Bignum::BigitLength const):
+        * wtf/dtoa/cached-powers.cc:
+        * wtf/dtoa/cached-powers.h:
+        * wtf/dtoa/diy-fp.cc:
+        * wtf/dtoa/diy-fp.h:
+        (WTF::double_conversion::DiyFp::DiyFp):
+        (WTF::double_conversion::DiyFp::Subtract):
+        (WTF::double_conversion::DiyFp::Minus):
+        (WTF::double_conversion::DiyFp::Times):
+        (WTF::double_conversion::DiyFp::Normalize):
+        (WTF::double_conversion::DiyFp::f const):
+        (WTF::double_conversion::DiyFp::e const):
+        (WTF::double_conversion::DiyFp::set_f):
+        (WTF::double_conversion::DiyFp::set_e):
+        * wtf/dtoa/double-conversion.cc:
+        * wtf/dtoa/double-conversion.h:
+        (WTF::double_conversion::DoubleToStringConverter::DoubleToStringConverter):
+        (WTF::double_conversion::DoubleToStringConverter::ToShortest const):
+        (WTF::double_conversion::DoubleToStringConverter::ToShortestSingle const):
+        (WTF::double_conversion::StringToDoubleConverter::StringToDoubleConverter):
+        * wtf/dtoa/double.h: Removed.
+        * wtf/dtoa/fast-dtoa.cc:
+        * wtf/dtoa/fast-dtoa.h:
+        * wtf/dtoa/fixed-dtoa.cc:
+        * wtf/dtoa/fixed-dtoa.h:
+        * wtf/dtoa/ieee.h: Added.
+        (WTF::double_conversion::double_to_uint64):
+        (WTF::double_conversion::uint64_to_double):
+        (WTF::double_conversion::float_to_uint32):
+        (WTF::double_conversion::uint32_to_float):
+        (WTF::double_conversion::Double::Double):
+        (WTF::double_conversion::Double::AsDiyFp const):
+        (WTF::double_conversion::Double::AsNormalizedDiyFp const):
+        (WTF::double_conversion::Double::AsUint64 const):
+        (WTF::double_conversion::Double::NextDouble const):
+        (WTF::double_conversion::Double::PreviousDouble const):
+        (WTF::double_conversion::Double::Exponent const):
+        (WTF::double_conversion::Double::Significand const):
+        (WTF::double_conversion::Double::IsDenormal const):
+        (WTF::double_conversion::Double::IsSpecial const):
+        (WTF::double_conversion::Double::IsNan const):
+        (WTF::double_conversion::Double::IsInfinite const):
+        (WTF::double_conversion::Double::Sign const):
+        (WTF::double_conversion::Double::UpperBoundary const):
+        (WTF::double_conversion::Double::NormalizedBoundaries const):
+        (WTF::double_conversion::Double::LowerBoundaryIsCloser const):
+        (WTF::double_conversion::Double::value const):
+        (WTF::double_conversion::Double::SignificandSizeForOrderOfMagnitude):
+        (WTF::double_conversion::Double::Infinity):
+        (WTF::double_conversion::Double::NaN):
+        (WTF::double_conversion::Double::DiyFpToUint64):
+        (WTF::double_conversion::Single::Single):
+        (WTF::double_conversion::Single::AsDiyFp const):
+        (WTF::double_conversion::Single::AsUint32 const):
+        (WTF::double_conversion::Single::Exponent const):
+        (WTF::double_conversion::Single::Significand const):
+        (WTF::double_conversion::Single::IsDenormal const):
+        (WTF::double_conversion::Single::IsSpecial const):
+        (WTF::double_conversion::Single::IsNan const):
+        (WTF::double_conversion::Single::IsInfinite const):
+        (WTF::double_conversion::Single::Sign const):
+        (WTF::double_conversion::Single::NormalizedBoundaries const):
+        (WTF::double_conversion::Single::UpperBoundary const):
+        (WTF::double_conversion::Single::LowerBoundaryIsCloser const):
+        (WTF::double_conversion::Single::value const):
+        (WTF::double_conversion::Single::Infinity):
+        (WTF::double_conversion::Single::NaN):
+        * wtf/dtoa/strtod.cc:
+        * wtf/dtoa/strtod.h:
+        * wtf/dtoa/utils.h:
+        (abort_noreturn):
+        (WTF::double_conversion::Max):
+        (WTF::double_conversion::Min):
+        (WTF::double_conversion::StrLength):
+        (WTF::double_conversion::BufferReference::BufferReference):
+        (WTF::double_conversion::BufferReference::SubVector):
+        (WTF::double_conversion::BufferReference::length const):
+        (WTF::double_conversion::BufferReference::is_empty const):
+        (WTF::double_conversion::BufferReference::start const):
+        (WTF::double_conversion::BufferReference::operator[] const):
+        (WTF::double_conversion::BufferReference::first):
+        (WTF::double_conversion::BufferReference::last):
+        (WTF::double_conversion::StringBuilder::StringBuilder):
+        (WTF::double_conversion::StringBuilder::~StringBuilder):
+        (WTF::double_conversion::StringBuilder::size const):
+        (WTF::double_conversion::StringBuilder::position const):
+        (WTF::double_conversion::StringBuilder::Reset):
+        (WTF::double_conversion::StringBuilder::AddCharacter):
+        (WTF::double_conversion::StringBuilder::AddString):
+        (WTF::double_conversion::StringBuilder::AddSubstring):
+        (WTF::double_conversion::StringBuilder::AddPadding):
+        (WTF::double_conversion::StringBuilder::RemoveCharacters):
+        (WTF::double_conversion::StringBuilder::Finalize):
+        (WTF::double_conversion::StringBuilder::is_finalized const):
+        (WTF::double_conversion::BitCast):
+        (WTF::double_conversion::BufferReference::SubBufferReference): Deleted.
+        (WTF::double_conversion::StringBuilder::SetPosition): Deleted.
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Finish removing String::format
