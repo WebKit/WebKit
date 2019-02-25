@@ -201,8 +201,8 @@
       <dep package="libwpe"/>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="wpewebkit" module="wpebackend-fdo-1.1.0.tar.xz" version="1.1.0"
-            hash="sha256:f6c72130d16e50860cb83eb0f6e109c76f1826d2c6bee39025fb3651941761e7"/>
+    <branch repo="github.com" module="Igalia/wpebackend-fdo.git" checkoutdir="wpebackend-fdo"
+            tag="d7eeab26375b1f08c6a35dbe2d34f02197708a03"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

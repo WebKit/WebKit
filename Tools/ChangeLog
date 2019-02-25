@@ -1,3 +1,14 @@
+2019-02-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Bump WPEBackend-fdo Jhbuild package to latest changes
+        https://bugs.webkit.org/show_bug.cgi?id=194998
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wpe/jhbuild.modules: Bump the WPEBackend-fdo package, converting it
+        to a Git checkout and using the latest commit containing various fixes
+        and improvements.
+
 2019-02-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Remove user agent quirk for washingtonpost.com
