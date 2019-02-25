@@ -1,5 +1,17 @@
 2019-02-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Enable PSON
+        https://bugs.webkit.org/show_bug.cgi?id=194979
+
+        Reviewed by Žan Doberšek.
+
+        It is expected that this may introduce unexpected regressions, so it's appropriate to do
+        this at the start of a new release cycle.
+
+        * Shared/WebPreferencesDefaultValues.h:
+
+2019-02-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE][GTK] Clean up handling of WEBKIT_FORCE_COMPLEX_TEXT
         https://bugs.webkit.org/show_bug.cgi?id=194614
 
