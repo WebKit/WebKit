@@ -1,14 +1,23 @@
-footer
-content info
-This tests that a footer element has a different role description from a contentinfo
+This tests that a footer element and content info has the right role at the right time.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS footer.role is contentInfo.role
-PASS footer.subrole is contentInfo.subrole
-PASS footer.roleDescription is 'AXRoleDescription: footer'
-PASS contentInfo.roleDescription is 'AXRoleDescription: content information'
+PASS footer1.role is 'AXRole: AXGroup'
+PASS footer1.subrole is 'AXSubrole: AXLandmarkContentInfo'
+PASS footer1.roleDescription is 'AXRoleDescription: content information'
+PASS contentinfo.role is 'AXRole: AXGroup'
+PASS contentinfo.subrole is 'AXSubrole: AXLandmarkContentInfo'
+PASS contentinfo.roleDescription is 'AXRoleDescription: content information'
+PASS footer2.role is 'AXRole: AXGroup'
+PASS footer2.subrole is 'AXSubrole: AXFooter'
+PASS footer2.roleDescription is 'AXRoleDescription: footer'
+PASS footer3.role is 'AXRole: AXGroup'
+PASS footer3.subrole is 'AXSubrole: AXFooter'
+PASS footer3.roleDescription is 'AXRoleDescription: footer'
+PASS footer4.role is 'AXRole: AXGroup'
+PASS footer4.subrole is 'AXSubrole: AXFooter'
+PASS footer4.roleDescription is 'AXRoleDescription: footer'
 PASS successfullyParsed is true
 
 TEST COMPLETE

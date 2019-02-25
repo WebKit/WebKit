@@ -5,29 +5,69 @@
 </head>
 <body id="body">
 
-<footer>footer</footer>
-<div role="contentinfo">content info</div>
+<div id="content">
+
+<footer id="footer1">footer that is contentinfo</footer>
+
+<div role="contentinfo" id="contentinfo">content info</div>
+
+<main>
+  <footer id="footer2">footer that is not contentinfo</footer>
+</main>
+
+<blockquote>
+  <footer id="footer3">footer that is not contentinfo</footer>
+</blockquote>
+
+<fieldset>
+  <footer id="footer3">footer that is not contentinfo</footer>
+</fieldset>
+
+<details open>
+  <footer id="footer4">footer that is not contentinfo</footer>
+</details>
+
+</div>
+
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
 
-    description("This tests that a footer element has a different role description from a contentinfo");
+    description("This tests that a footer element and content info has the right role at the right time.");
 
     if (window.accessibilityController) {
 
-          // this text field should be required.
-          document.getElementById("body").focus();
-          var obj = accessibilityController.focusedElement;
+          // Scoped to body, becomes a content info.
+          var footer1 = accessibilityController.accessibleElementById("footer1");
+          var contentinfo = accessibilityController.accessibleElementById("contentinfo");
 
-          var footer = obj.childAtIndex(0);
-          var contentInfo = obj.childAtIndex(1);
+          // Scoped to other element types, not a content info.
+          var footer2 = accessibilityController.accessibleElementById("footer2");
+          var footer3 = accessibilityController.accessibleElementById("footer3");
+          var footer4 = accessibilityController.accessibleElementById("footer4");
          
-          shouldBe("footer.role", "contentInfo.role");
-          shouldBe("footer.subrole", "contentInfo.subrole");
-          shouldBe("footer.roleDescription", "'AXRoleDescription: footer'");
-          shouldBe("contentInfo.roleDescription", "'AXRoleDescription: content information'");
+          shouldBe("footer1.role", "'AXRole: AXGroup'");
+          shouldBe("footer1.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("footer1.roleDescription", "'AXRoleDescription: content information'");
 
+          shouldBe("contentinfo.role", "'AXRole: AXGroup'");
+          shouldBe("contentinfo.subrole", "'AXSubrole: AXLandmarkContentInfo'");
+          shouldBe("contentinfo.roleDescription", "'AXRoleDescription: content information'");
+
+          shouldBe("footer2.role", "'AXRole: AXGroup'");
+          shouldBe("footer2.subrole", "'AXSubrole: AXFooter'");
+          shouldBe("footer2.roleDescription", "'AXRoleDescription: footer'");
+
+          shouldBe("footer3.role", "'AXRole: AXGroup'");
+          shouldBe("footer3.subrole", "'AXSubrole: AXFooter'");
+          shouldBe("footer3.roleDescription", "'AXRoleDescription: footer'");
+
+          shouldBe("footer4.role", "'AXRole: AXGroup'");
+          shouldBe("footer4.subrole", "'AXSubrole: AXFooter'");
+          shouldBe("footer4.roleDescription", "'AXRoleDescription: footer'");
+
+          document.getElementById("content").style.visibility = "hidden";
     }
 
 </script>

@@ -1,3 +1,22 @@
+2019-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <footer> HTML5 tag not reading as ARIA Landmark to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=190138
+        <rdar://problem/44907695>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/footer-expected.txt:
+        * accessibility/mac/footer-roledescription-expected.txt:
+        * accessibility/mac/footer-roledescription.html:
+        * accessibility/mac/footer.html:
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2019-02-25  Frederic Wang  <fwang@igalia.com>
 
         Add tests mixing programmatic and user frame scrolling on iOS

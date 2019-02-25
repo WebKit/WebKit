@@ -132,7 +132,7 @@ legend
 footer
       AXRole: AXGroup
       AXSubrole: AXLandmarkContentInfo
-      AXRoleDescription: footer
+      AXRoleDescription: content information
       
 form
       AXRole: AXGroup

@@ -244,7 +244,8 @@ private:
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
-    
+    bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
+
     bool isSVGImage() const;
     void detachRemoteSVGRoot();
     enum CreationChoice { Create, Retrieve };

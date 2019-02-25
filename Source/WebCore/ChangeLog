@@ -1,3 +1,27 @@
+2019-02-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <footer> HTML5 tag not reading as ARIA Landmark to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=190138
+        <rdar://problem/44907695>
+
+        Reviewed by Joanmarie Diggs.
+
+        Make sure that footer elements use the right role depending on their context.
+        If scoped to body, they become contentinfo. Otherwise they are just delineated by
+        a footer subrole.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isLandmark const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityRenderObject::isDescendantOfElementType const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityIsLandmarkRole:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+
 2019-02-25  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: IDBDatabase and IDBTransaction are leaked in layout tests

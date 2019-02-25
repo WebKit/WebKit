@@ -17,7 +17,7 @@ PASS banner.description is 'AXLabel: banner'
 PASS banner.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS region.description is 'AXLabel: testregion, region'
 PASS region.childAtIndex(0).traits != nonLandmarkText.traits is true
-PASS footer.description is 'AXLabel: footer'
+PASS footer.description is 'AXLabel: content information'
 PASS footer.childAtIndex(0).traits != nonLandmarkText.traits is true
 PASS article.description is 'AXLabel: article'
 PASS article.childAtIndex(0).traits != nonLandmarkText.traits is true

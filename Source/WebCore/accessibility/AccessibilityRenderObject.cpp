@@ -1273,6 +1273,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     case AccessibilityRole::DescriptionListDetail:
     case AccessibilityRole::Details:
     case AccessibilityRole::DocumentArticle:
+    case AccessibilityRole::Footer:
     case AccessibilityRole::LandmarkRegion:
     case AccessibilityRole::ListItem:
     case AccessibilityRole::Time:
@@ -2628,6 +2629,15 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
     return nullptr;
 }
 
+bool AccessibilityRenderObject::isDescendantOfElementType(const HashSet<QualifiedName>& tagNames) const
+{
+    for (auto& ancestor : ancestorsOfType<RenderElement>(*m_renderer)) {
+        if (ancestor.element() && tagNames.contains(ancestor.element()->tagQName()))
+            return true;
+    }
+    return false;
+}
+
 bool AccessibilityRenderObject::isDescendantOfElementType(const QualifiedName& tagName) const
 {
     for (auto& ancestor : ancestorsOfType<RenderElement>(*m_renderer)) {
@@ -2853,10 +2863,16 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     // There should only be one banner/contentInfo per page. If header/footer are being used within an article or section
     // then it should not be exposed as whole page's banner/contentInfo
-    if (node && node->hasTagName(headerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
+    if (node && node->hasTagName(headerTag) && !isDescendantOfElementType({ articleTag, sectionTag }))
         return AccessibilityRole::LandmarkBanner;
-    if (node && node->hasTagName(footerTag) && !isDescendantOfElementType(articleTag) && !isDescendantOfElementType(sectionTag))
+
+    // http://webkit.org/b/190138 Footers should become contentInfo's if scoped to body (and consequently become a landmark).
+    // It should remain a footer if scoped to main, sectioning elements (article, section) or root sectioning element (blockquote, details, dialog, fieldset, figure, td).
+    if (node && node->hasTagName(footerTag)) {
+        if (!isDescendantOfElementType({ articleTag, sectionTag, mainTag, blockquoteTag, detailsTag, fieldsetTag, figureTag, tdTag }))
+            return AccessibilityRole::LandmarkContentInfo;
         return AccessibilityRole::Footer;
+    }
     
     // menu tags with toolbar type should have Toolbar role.
     if (node && node->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"))

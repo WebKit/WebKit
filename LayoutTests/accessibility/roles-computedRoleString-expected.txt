@@ -9,7 +9,7 @@ PASS: aside -> complementary.
 PASS: button -> button. 
 PASS: dfn -> definition. 
 PASS: dl -> . 
-PASS: footer -> . 
+PASS: footer -> contentinfo. 
 PASS: form -> form. 
 PASS: header -> banner. 
 PASS: h1 -> heading. 

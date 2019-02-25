@@ -66,7 +66,7 @@ note
         shouldBeTrue("region.childAtIndex(0).traits != nonLandmarkText.traits");
 
         var footer = accessibilityController.accessibleElementById("footer");
-        shouldBe("footer.description", "'AXLabel: footer'");
+        shouldBe("footer.description", "'AXLabel: content information'");
         shouldBeTrue("footer.childAtIndex(0).traits != nonLandmarkText.traits");
 
         var article = accessibilityController.accessibleElementById("article");

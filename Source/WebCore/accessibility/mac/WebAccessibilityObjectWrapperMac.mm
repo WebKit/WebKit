@@ -2058,7 +2058,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return NSAccessibilityContentSeparatorSubrole;
     if (role == AccessibilityRole::ToggleButton)
         return NSAccessibilityToggleSubrole;
-    
+    if (role == AccessibilityRole::Footer)
+        return @"AXFooter";
+
     if (is<AccessibilitySpinButtonPart>(*m_object)) {
         if (downcast<AccessibilitySpinButtonPart>(*m_object).isIncrementor())
             return NSAccessibilityIncrementArrowSubrole;
@@ -2090,8 +2092,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return @"AXLandmarkBanner";
     case AccessibilityRole::LandmarkComplementary:
         return @"AXLandmarkComplementary";
-    // Footer roles should appear as content info types.
-    case AccessibilityRole::Footer:
     case AccessibilityRole::LandmarkContentInfo:
         return @"AXLandmarkContentInfo";
     case AccessibilityRole::LandmarkMain:

@@ -1,9 +1,9 @@
 PASS accessibilityController.focusedElement.role is "AXRole: AXGroup"
+PASS accessibilityController.focusedElement.roleDescription is "AXRoleDescription: content information"
+PASS accessibilityController.focusedElement.role is "AXRole: AXGroup"
 PASS accessibilityController.focusedElement.roleDescription is "AXRoleDescription: footer"
 PASS accessibilityController.focusedElement.role is "AXRole: AXGroup"
-PASS accessibilityController.focusedElement.roleDescription is "AXRoleDescription: group"
-PASS accessibilityController.focusedElement.role is "AXRole: AXGroup"
-PASS accessibilityController.focusedElement.roleDescription is "AXRoleDescription: group"
+PASS accessibilityController.focusedElement.roleDescription is "AXRoleDescription: footer"
 PASS successfullyParsed is true
 
 TEST COMPLETE
