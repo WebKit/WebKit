@@ -1440,7 +1440,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     LOG(IndexedDB, "IDBTransaction::connectionClosedFromServer - %s", error.message().utf8().data());
 
     m_database->willAbortTransaction(*this);
-    transitionedToFinishing(IndexedDB::TransactionState::Aborting);
+    m_state = IndexedDB::TransactionState::Aborting;
 
     abortInProgressOperations(error);
 
@@ -1454,6 +1454,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     m_currentlyCompletingRequest = nullptr;
 
     connectionProxy().forgetActiveOperations(operations);
+    connectionProxy().forgetTransaction(*this);
 
     m_pendingTransactionOperationQueue.clear();
     m_abortQueue.clear();

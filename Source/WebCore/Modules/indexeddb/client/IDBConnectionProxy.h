@@ -122,6 +122,7 @@ public:
     void unregisterDatabaseConnection(IDBDatabase&);
 
     void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
+    void forgetTransaction(IDBTransaction&);
     void forgetActivityForCurrentThread();
 
 private:

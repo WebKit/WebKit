@@ -1,3 +1,29 @@
+2019-02-26  Sihui Liu  <sihui_liu@apple.com>
+
+        [Mac WK2] storage/indexeddb/IDBObject-leak.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=195036
+
+        Reviewed by Geoffrey Garen.
+
+        When connection to IDBServer is lost, IDBDatabase in web process should not only stop active transactions, but 
+        also transactions in committing process.
+
+        Also, TransactionOpration should clear its perform function when the operation is being completed, otherwise 
+        there is a reference cycle of TransactionOpration.
+
+        Covered by existing tests storage/indexeddb/IDBObject-leak.html.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::connectionToServerLost): notify committing transasctions that connection is lost.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::connectionClosedFromServer): notify IDBConnectionProxy that transaction ends.
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::forgetTransaction): clear finished transactions.
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::doComplete): clear perform function unconditionally when the 
+        operation is in completion process. 
+
 2019-02-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] clearContentChangeObservers should be internal to ContentChangeObserver class

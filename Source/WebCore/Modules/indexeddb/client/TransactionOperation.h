@@ -85,6 +85,9 @@ public:
     {
         ASSERT(m_originThread.ptr() == &Thread::current());
 
+        if (m_performFunction)
+            m_performFunction = { };
+
         // Due to race conditions between the server sending an "operation complete" message and the client
         // forcefully aborting an operation, it's unavoidable that this method might be called twice.
         // It's okay to handle that gracefully with an early return.
@@ -98,8 +101,6 @@ public:
         // so we need to do this trick to null it out without first destroying it.
         Function<void(const IDBResultData&)> oldCompleteFunction;
         std::swap(m_completeFunction, oldCompleteFunction);
-
-        m_performFunction = { };
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }

@@ -517,6 +517,15 @@ void IDBConnectionProxy::forgetActiveOperations(const Vector<RefPtr<TransactionO
         m_activeOperations.remove(operation->identifier());
 }
 
+void IDBConnectionProxy::forgetTransaction(IDBTransaction& transaction)
+{
+    Locker<Lock> locker(m_transactionMapLock);
+
+    m_pendingTransactions.remove(transaction.info().identifier());
+    m_committingTransactions.remove(transaction.info().identifier());
+    m_abortingTransactions.remove(transaction.info().identifier());
+}
+
 template<typename KeyType, typename ValueType>
 void removeItemsMatchingCurrentThread(HashMap<KeyType, ValueType>& map)
 {
