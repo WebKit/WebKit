@@ -53,6 +53,8 @@
 #include <cairo-gl.h>
 #endif
 
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 #if USE(OPENGL_ES)
@@ -100,14 +102,30 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
 #endif
-        EGL_RED_SIZE, 8,
-        EGL_GREEN_SIZE, 8,
-        EGL_BLUE_SIZE, 8,
+        EGL_RED_SIZE, 1,
+        EGL_GREEN_SIZE, 1,
+        EGL_BLUE_SIZE, 1,
+        EGL_ALPHA_SIZE, 1,
         EGL_STENCIL_SIZE, 8,
-        EGL_ALPHA_SIZE, 8,
         EGL_SURFACE_TYPE, EGL_NONE,
         EGL_NONE
     };
+
+    bool isRGB565 = false;
+    if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
+        if (!strcmp(environmentVariable, "RGB565")) {
+            isRGB565 = true;
+            // EGL_RED_SIZE
+            attributeList[3] = 5;
+            // EGL_GREEN_SIZE
+            attributeList[5] = 6;
+            // EGL_BLUE_SIZE
+            attributeList[7] = 5;
+            // EGL_ALPHA_SIZE
+            attributeList[9] = 0;
+        } else
+            WTFLogAlways("Unknown pixel layout %s, falling back to RGBA8888", environmentVariable);
+    }
 
     switch (surfaceType) {
     case GLContextEGL::PbufferSurface:
@@ -122,8 +140,32 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
         break;
     }
 
+    EGLint count;
+    if (!eglChooseConfig(display, attributeList, nullptr, 0, &count))
+        return false;
+
     EGLint numberConfigsReturned;
-    return eglChooseConfig(display, attributeList, config, 1, &numberConfigsReturned) && numberConfigsReturned;
+    Vector<EGLConfig> configs(count);
+    if (!eglChooseConfig(display, attributeList, isRGB565 ? reinterpret_cast<EGLConfig*>(configs.data()) : config, isRGB565 ? count : 1, &numberConfigsReturned) || !numberConfigsReturned)
+        return false;
+
+    if (!isRGB565)
+        return true;
+
+    auto index = configs.findMatching([&](EGLConfig value) {
+        EGLint redSize, greenSize, blueSize, alphaSize;
+        eglGetConfigAttrib(display, value, EGL_RED_SIZE, &redSize);
+        eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);
+        eglGetConfigAttrib(display, value, EGL_BLUE_SIZE, &blueSize);
+        eglGetConfigAttrib(display, value, EGL_ALPHA_SIZE, &alphaSize);
+        return (redSize == 5 && greenSize == 6 && blueSize == 5 && !alphaSize);
+    });
+
+    if (index != notFound) {
+        *config = configs[index];
+        return true;
+    }
+    return false;
 }
 
 std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)

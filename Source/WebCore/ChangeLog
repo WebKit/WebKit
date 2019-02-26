@@ -1,3 +1,21 @@
+2019-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        [EGL] Runtime support for RGB565 pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=194817
+
+        Reviewed by Carlos Garcia Campos.
+
+        Currently our graphics pipeline always relies on a ARGB8888 (32
+        bpp) pixel configuration. On some low-end (old) embedded platforms
+        the graphics driver is sometimes optimized for 16 bpp
+        configurations, such as RGB565. On those platforms the application
+        can now set the WEBKIT_EGL_PIXEL_LAYOUT environment variable to
+        "RGB565" to adjust to the best pixel configuration supported by
+        the screen and graphics driver.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::getEGLConfig):
+
 2019-02-26  Philippe Normand  <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add API for webview background color configuration
