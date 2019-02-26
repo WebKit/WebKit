@@ -204,6 +204,11 @@ else
     const LowestTag = constexpr JSValue::LowestTag
 end
 
+if JSVALUE64
+    const NumberOfStructureIDEntropyBits = constexpr StructureIDTable::s_numberOfEntropyBits
+    const StructureEntropyBitsShift = constexpr StructureIDTable::s_entropyBitsShiftForStructurePointer
+end
+
 const CallOpCodeSize = constexpr op_call_length
 
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
