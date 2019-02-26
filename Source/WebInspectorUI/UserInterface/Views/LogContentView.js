@@ -532,19 +532,23 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         if (!wrapper) {
             // No wrapper under the mouse, so look at the selection to try and find one.
-            if (!selection.isCollapsed) {
-                wrapper = selection.focusNode.parentNode.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
-                selection.removeAllRanges();
-            }
+            if (!selection.isCollapsed)
+                wrapper = selection.focusNode.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
 
-            if (!wrapper)
+            if (!wrapper) {
+                selection.removeAllRanges();
                 return;
+            }
         }
 
         if (!selection.isCollapsed)
             this._clearMessagesSelection();
 
         if (wrapper === this._mouseDownWrapper && !this._mouseMoveIsRowSelection)
+            return;
+
+        // Don't change the selection if the mouse has moved outside of the view (e.g. for faster scrolling).
+        if (!this.element.contains(event.target))
             return;
 
         selection.removeAllRanges();
@@ -657,6 +661,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         } else {
             message.classList.add(WI.LogContentView.SelectedStyleClassName);
             this._selectedMessages.push(message);
+            this._selectionRange = null;
         }
 
         if (!rangeSelection)

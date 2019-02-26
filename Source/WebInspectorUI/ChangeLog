@@ -1,3 +1,18 @@
+2019-02-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Console: dragging a selection outside the selected element clears the selection
+        https://bugs.webkit.org/show_bug.cgi?id=194660
+        <rdar://problem/46719239>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._mousemove):
+        Don't clear the selection if the target of the "mousemove" is outside of the view.
+
+        (WI.LogContentView.prototype._updateMessagesSelection):
+        Drive-by: clear the saved selected messages when we're just selecting a single message.
+
 2019-02-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename LineChart to AreaChart
