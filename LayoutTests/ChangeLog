@@ -1,3 +1,19 @@
+2019-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust initial scale zooming heuristics when changing view scale
+        https://bugs.webkit.org/show_bug.cgi?id=194995
+
+        Reviewed by Tim Horton.
+
+        Rebaseline and adjust an existing layout test.
+
+        * fast/viewport/ios/initial-scale-after-changing-view-scale-expected.txt:
+        * fast/viewport/ios/initial-scale-after-changing-view-scale.html:
+        * platform/ipad/fast/viewport/ios/initial-scale-after-changing-view-scale-expected.txt: Removed.
+
+        Removed an iPad-specific test expectation, since initial scale zooming behavior should be the same now at both
+        device dimensions.
+
 2019-02-25  Frederic Wang  <fwang@igalia.com>
 
         Split iOS tests for hit testing in iframes

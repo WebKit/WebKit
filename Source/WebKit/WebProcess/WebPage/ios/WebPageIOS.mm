@@ -2676,12 +2676,19 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
 {
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
-    ZoomToInitialScale shouldZoomToInitialScale = ZoomToInitialScale::No;
-    if (m_viewportConfiguration.layoutSizeScaleFactor() != scaleFactor && areEssentiallyEqualAsFloat(m_viewportConfiguration.initialScale(), pageScaleFactor()))
-        shouldZoomToInitialScale = ZoomToInitialScale::Yes;
+    auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
+    if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth))
+        return;
 
-    if (m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth))
-        viewportConfigurationChanged(shouldZoomToInitialScale);
+    auto zoomToInitialScale = ZoomToInitialScale::No;
+    auto newInitialScale = m_viewportConfiguration.initialScale();
+    auto currentPageScaleFactor = pageScaleFactor();
+    if (scaleFactor > previousLayoutSizeScaleFactor && newInitialScale > currentPageScaleFactor)
+        zoomToInitialScale = ZoomToInitialScale::Yes;
+    else if (scaleFactor < previousLayoutSizeScaleFactor && newInitialScale < currentPageScaleFactor)
+        zoomToInitialScale = ZoomToInitialScale::Yes;
+
+    viewportConfigurationChanged(zoomToInitialScale);
 }
 
 void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)

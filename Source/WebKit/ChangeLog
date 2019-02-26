@@ -1,3 +1,26 @@
+2019-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust initial scale zooming heuristics when changing view scale
+        https://bugs.webkit.org/show_bug.cgi?id=194995
+
+        Reviewed by Tim Horton.
+
+        Currently, we only zoom to the new initial scale iff we're exactly at initial scale before changing the view
+        scale. This was done so that if a user zoomed in really far and then increased the view scale, we wouldn't end
+        up zooming out as a result. However, this leads to confusing behavior in the case where the user has manually
+        changed the zoom scale to something close to (but not exactly) initial scale, and then attempts to zoom in
+        further using view scale. In this case, we'll end up keeping page scale the same, so it looks like nothing is
+        happening.
+
+        To fix this, we tweak our heuristics for determining whether to jump to initial scale; if the view scale is
+        increasing and the new initial scale is greater than the current scale, zoom to initial scale. Likewise, if the
+        view scale is decreasing and the new initial scale is less than the current scale, zoom to initial scale.
+
+        Test: fast/viewport/ios/initial-scale-after-changing-view-scale.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize):
+
 2019-02-25  John Wilander  <wilander@apple.com>
 
         Introduce and adopt new class RegistrableDomain for eTLD+1
