@@ -949,6 +949,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsDirectory;
     setResourceLoadStatisticsEnabled(parameters.enableResourceLoadStatistics);
 #endif
+
+#if HAVE(SESSION_CLEANUP)
+    activateSessionCleanup(*this);
+#endif
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa()
