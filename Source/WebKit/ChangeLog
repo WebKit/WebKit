@@ -1,3 +1,12 @@
+2019-02-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Sandbox should allow mach lookups related to media capturing
+        https://bugs.webkit.org/show_bug.cgi?id=194951
+
+        Reviewed by Eric Carlson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-02-26  Brent Fulgham  <bfulgham@apple.com>
 
         Update NetworkSession to use Session Cleanup when available
