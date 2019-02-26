@@ -5273,6 +5273,11 @@ TEST(ProcessSwap, GetUserMediaCaptureState)
 
     EXPECT_FALSE(isCapturing);
     EXPECT_FALSE(pid1 == pid2);
+
+    isCapturing = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&isCapturing);
+    isCapturing = false;
 }
 
 #if !PLATFORM(MAC)

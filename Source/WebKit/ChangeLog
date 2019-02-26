@@ -1,3 +1,16 @@
+2019-02-26  Youenn Fablet  <youenn@apple.com>
+
+        WebPageProxy should nullify m_userMediaPermissionRequestManager after resetting the media state
+        https://bugs.webkit.org/show_bug.cgi?id=195028
+        <rdar://problem/48243733>
+
+        Reviewed by Eric Carlson.
+
+        Covered by API test.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState):
+
 2019-02-26  Philippe Normand <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add API for webview background color configuration
