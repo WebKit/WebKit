@@ -1,3 +1,14 @@
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Simplify content observation API by removing explicit DOMTimer observation.
+        https://bugs.webkit.org/show_bug.cgi?id=195023
+        <rdar://problem/48381885>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2019-02-26  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Load HTTP body of 401 response when AuthenticationChange is cancelled.

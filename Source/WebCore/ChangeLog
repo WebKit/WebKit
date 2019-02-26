@@ -1,5 +1,23 @@
 2019-02-26  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Simplify content observation API by removing explicit DOMTimer observation.
+        https://bugs.webkit.org/show_bug.cgi?id=195023
+        <rdar://problem/48381885>
+
+        Reviewed by Tim Horton.
+
+        In the future we might decide that certain activities don't require DOMTimer observation, but that should
+        be internal to ContentChangeObserver.
+
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::startObservingContentChanges):
+        (WebCore::ContentChangeObserver::stopObservingContentChanges):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Move observing logic from Document::updateStyleIfNeeded to ContentChangeObserver
         https://bugs.webkit.org/show_bug.cgi?id=195032
         <rdar://problem/48388063>

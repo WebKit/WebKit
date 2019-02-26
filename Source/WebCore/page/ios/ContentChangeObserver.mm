@@ -122,11 +122,13 @@ void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
 
 void ContentChangeObserver::startObservingContentChanges()
 {
+    startObservingDOMTimerScheduling();
     WKStartObservingContentChanges();
 }
 
 void ContentChangeObserver::stopObservingContentChanges()
 {
+    stopObservingDOMTimerScheduling();
     WKStopObservingContentChanges();
 }
 

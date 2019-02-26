@@ -49,9 +49,6 @@ public:
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
 
-    WEBCORE_EXPORT void startObservingDOMTimerScheduling();
-    WEBCORE_EXPORT void stopObservingDOMTimerScheduling();
-
     bool isObservingStyleRecalcScheduling();
 
     void setShouldObserveNextStyleRecalc(bool);
@@ -77,6 +74,9 @@ public:
     };
 
 private:
+    void startObservingDOMTimerScheduling();
+    void stopObservingDOMTimerScheduling();
+
     void addObservedDOMTimer(const DOMTimer&);
     bool isObservingDOMTimerScheduling();
     void removeObservedDOMTimer(const DOMTimer&);

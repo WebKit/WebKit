@@ -543,7 +543,6 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
 
     LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << nodeRespondingToClick << ") " << location);
     contentChangeObserver.startObservingContentChanges();
-    contentChangeObserver.startObservingDOMTimerScheduling();
 
     // FIXME: Pass caps lock state.
     bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
@@ -553,7 +552,6 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
-    contentChangeObserver.stopObservingDOMTimerScheduling();
     contentChangeObserver.stopObservingContentChanges();
 
     m_pendingSyntheticClickNode = nullptr;

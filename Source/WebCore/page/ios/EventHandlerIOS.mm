@@ -497,14 +497,12 @@ void EventHandler::mouseMoved(WebEvent *event)
 
     auto& contentChangeObserver = document.page()->contentChangeObserver();
     contentChangeObserver.startObservingContentChanges();
-    contentChangeObserver.startObservingDOMTimerScheduling();
 
     CurrentEventScope scope(event);
     event.wasHandled = mouseMoved(currentPlatformMouseEvent());
 
     // Run style recalc to be able to capture content changes as the result of the mouse move event.
     document.updateStyleIfNeeded();
-    contentChangeObserver.stopObservingDOMTimerScheduling();
     contentChangeObserver.stopObservingContentChanges();
 
     END_BLOCK_OBJC_EXCEPTIONS;
