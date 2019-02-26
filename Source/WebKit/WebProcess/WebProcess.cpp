@@ -1521,12 +1521,14 @@ void WebProcess::cancelMarkAllLayersVolatile()
 
 void WebProcess::freezeAllLayerTrees()
 {
+    RELEASE_LOG(ProcessSuspension, "WebProcess %i is freezing all layer trees", getpid());
     for (auto& page : m_pageMap.values())
         page->freezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
 }
 
 void WebProcess::unfreezeAllLayerTrees()
 {
+    RELEASE_LOG(ProcessSuspension, "WebProcess %i is unfreezing all layer trees", getpid());
     for (auto& page : m_pageMap.values())
         page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
 }

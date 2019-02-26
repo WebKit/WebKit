@@ -2401,12 +2401,16 @@ const WebEvent* WebPage::currentEvent()
 
 void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Adding a reason %d to freeze layer tree; current reasons are %d",
+        this, m_pageID, static_cast<unsigned>(reason), m_LayerTreeFreezeReasons.toRaw());
     m_LayerTreeFreezeReasons.add(reason);
     updateDrawingAreaLayerTreeFreezeState();
 }
 
 void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - WebPage (PageID=%llu) - Removing a reason %d to freeze layer tree; current reasons are %d",
+        this, m_pageID, static_cast<unsigned>(reason), m_LayerTreeFreezeReasons.toRaw());
     m_LayerTreeFreezeReasons.remove(reason);
     updateDrawingAreaLayerTreeFreezeState();
 }
@@ -3132,6 +3136,15 @@ void WebPage::didStartPageTransition()
 void WebPage::didCompletePageTransition()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
+
+    if (m_LayerTreeFreezeReasons.contains(LayerTreeFreezeReason::ProcessSuspended)) {
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebPage (PageID=%llu) - LayerTreeFreezeReason::ProcessSuspended was set when removing LayerTreeFreezeReason::PageTransition; current reasons are %d",
+            this, m_pageID, m_LayerTreeFreezeReasons.toRaw());
+    }
+
+    // FIXME: In iOS, we sometimes never unset ProcessSuspended. See <rdar://problem/48154508>.
+    unfreezeLayerTree(LayerTreeFreezeReason::ProcessSuspended);
+    RELEASE_LOG_IF_ALLOWED("%p - WebPage - Did complete page transition", this);
 
     bool isInitialEmptyDocument = !m_mainFrame;
     if (!isInitialEmptyDocument)

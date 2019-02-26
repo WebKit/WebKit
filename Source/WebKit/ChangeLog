@@ -1,3 +1,24 @@
+2019-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] REGRESSION(r238490?): Safari sometimes shows blank page until a cross site navigation or re-opening the tab
+        https://bugs.webkit.org/show_bug.cgi?id=195037
+        <rdar://problem/48154508>
+
+        Reviewed by Antti Koivisto.
+
+        Restore the pre-r238490 behavior of WebPage::didCompletePageTransition clearing LayerTreeFreezeReason::ProcessSuspended
+        as this has been an issue when I was able to reproduce the issue locally.
+
+        Also added release logging to help diagnose the issue in the future.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        (WebKit::WebPage::didCompletePageTransition):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::freezeAllLayerTrees):
+        (WebKit::WebProcess::unfreezeAllLayerTrees):
+
 2019-02-26  Youenn Fablet  <youenn@apple.com>
 
         Create WebPageProxy::m_userMediaPermissionRequestManager only when needed
