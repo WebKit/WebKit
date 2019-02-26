@@ -1,3 +1,24 @@
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move CheckForVisibilityChange to ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=195035
+        <rdar://problem/48389123>
+
+        Reviewed by Tim Horton.
+
+        Visibility checking logic belongs to ContentChangeObserver.
+
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::elementImplicitVisibility):
+        (WebCore::ContentChangeObserver::StyleChange::StyleChange):
+        (WebCore::ContentChangeObserver::StyleChange::~StyleChange):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::elementImplicitVisibility): Deleted.
+        (WebCore::CheckForVisibilityChange::CheckForVisibilityChange): Deleted.
+        (WebCore::CheckForVisibilityChange::~CheckForVisibilityChange): Deleted.
+
 2019-02-26  Philippe Normand  <pnormand@igalia.com>
 
         [EGL] Runtime support for RGB565 pixel layout

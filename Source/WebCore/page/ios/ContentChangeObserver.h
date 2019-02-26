@@ -45,7 +45,6 @@ public:
 
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
-    bool isObservingContentChanges();
 
     WEBCORE_EXPORT void startObservingDOMTimerScheduling();
     WEBCORE_EXPORT void stopObservingDOMTimerScheduling();
@@ -61,6 +60,19 @@ public:
     WEBCORE_EXPORT unsigned countOfObservedDOMTimers();
     WEBCORE_EXPORT void clearObservedDOMTimers();
 
+    class StyleChange {
+    public:
+        StyleChange(const Element&, ContentChangeObserver&);
+        ~StyleChange();
+
+    private:
+        const Element& m_element;
+        ContentChangeObserver& m_contentChangeObserver;
+        DisplayType m_previousDisplay;
+        Visibility m_previousVisibility;
+        Visibility m_previousImplicitVisibility;
+    };
+
 private:
     void addObservedDOMTimer(const DOMTimer&);
     bool isObservingDOMTimerScheduling();
@@ -69,6 +81,8 @@ private:
 
     void startObservingStyleRecalcScheduling();
     void stopObservingStyleRecalcScheduling();
+
+    bool isObservingContentChanges();
 
     Page& m_page;
 };

@@ -55,21 +55,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(IOS_FAMILY)
-class CheckForVisibilityChange {
-public:
-    CheckForVisibilityChange(const Element&, Page*);
-    ~CheckForVisibilityChange();
-
-private:
-    const Element& m_element;
-    Page* m_page { nullptr };
-    DisplayType m_previousDisplay;
-    Visibility m_previousVisibility;
-    Visibility m_previousImplicitVisibility;
-};
-#endif // PLATFORM(IOS_FAMILY)
-
 RenderTreeUpdater::Parent::Parent(ContainerNode& root)
     : element(is<Document>(root) ? nullptr : downcast<Element>(&root))
     , renderTreePosition(RenderTreePosition(*root.renderer()))
@@ -308,7 +293,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
 #if PLATFORM(IOS_FAMILY)
-    CheckForVisibilityChange checkForVisibilityChange(element, m_document.page());
+    ContentChangeObserver::StyleChange checkForStyleChange(element, m_document.page()->contentChangeObserver());
 #endif
 
     bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.hasDisplayContents());
@@ -642,67 +627,5 @@ RenderView& RenderTreeUpdater::renderView()
 {
     return *m_document.renderView();
 }
-
-#if PLATFORM(IOS_FAMILY)
-static Visibility elementImplicitVisibility(const Element& element)
-{
-    auto* renderer = element.renderer();
-    if (!renderer)
-        return Visibility::Visible;
-
-    auto& style = renderer->style();
-
-    auto width = style.width();
-    auto height = style.height();
-    if ((width.isFixed() && width.value() <= 0) || (height.isFixed() && height.value() <= 0))
-        return Visibility::Hidden;
-
-    auto top = style.top();
-    auto left = style.left();
-    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
-        return Visibility::Hidden;
-
-    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
-        return Visibility::Hidden;
-    return Visibility::Visible;
-}
-
-CheckForVisibilityChange::CheckForVisibilityChange(const Element& element, Page* page)
-    : m_element(element)
-    , m_page(page)
-    , m_previousDisplay(element.renderStyle() ? element.renderStyle()->display() : DisplayType::None)
-    , m_previousVisibility(element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden)
-    , m_previousImplicitVisibility(page && page->contentChangeObserver().isObservingContentChanges() && page->contentChangeObserver().observedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : Visibility::Visible)
-{
-}
-
-CheckForVisibilityChange::~CheckForVisibilityChange()
-{
-    if (!m_page)
-        return;
-
-    auto& contentChangeObserver = m_page->contentChangeObserver();
-    if (!contentChangeObserver.isObservingContentChanges())
-        return;
-
-    auto* style = m_element.renderStyle();
-
-    auto qualifiesForVisibilityCheck = [&] {
-        if (!style)
-            return false;
-        if (m_element.isInUserAgentShadowTree())
-            return false;
-        if (!const_cast<Element&>(m_element).willRespondToMouseClickEvents())
-            return false;
-        return true;
-    };
-
-    if (!qualifiesForVisibilityCheck())
-        return;
-    if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None) || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
-        || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        contentChangeObserver.setObservedContentChange(WKContentVisibilityChange);
-}
-#endif
 
 }
