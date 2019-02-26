@@ -1,3 +1,20 @@
+2019-02-26  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Repeat string created from Array.prototype.join() take too much memory
+        https://bugs.webkit.org/show_bug.cgi?id=193912
+
+        Reviewed by Saam Barati.
+
+        Added a fast case in Array.prototype.join when the array is
+        uninitialized.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::canUseFastJoin):
+        (JSC::fastJoin):
+        * runtime/JSStringInlines.h:
+        (JSC::repeatCharacter): moved from StringPrototype.cpp
+        * runtime/StringPrototype.cpp:
+
 2019-02-25  Mark Lam  <mark.lam@apple.com>
 
         Add some randomness into the StructureID.
