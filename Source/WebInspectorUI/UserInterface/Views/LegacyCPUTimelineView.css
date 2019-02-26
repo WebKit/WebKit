@@ -63,7 +63,7 @@ body[dir=rtl] .timeline-view.legacy-cpu > .content > .details > .timeline-ruler 
     border-bottom: 1px solid var(--border-color);
 }
 
-.timeline-view.legacy-cpu .cpu-usage-view .line-chart > svg > path {
+.timeline-view.legacy-cpu .cpu-usage-view .area-chart > svg > path {
     stroke: var(--cpu-stroke-color);
     fill: var(--cpu-main-thread-fill-color);
 }

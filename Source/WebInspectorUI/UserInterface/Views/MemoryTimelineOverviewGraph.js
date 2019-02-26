@@ -39,7 +39,7 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
 
         this._didInitializeCategories = false;
 
-        this._chart = new WI.StackedLineChart;
+        this._chart = new WI.StackedAreaChart;
         this._chart.size = new WI.Size(0, this.height);
         this.addSubview(this._chart);
         this.element.appendChild(this._chart.element);

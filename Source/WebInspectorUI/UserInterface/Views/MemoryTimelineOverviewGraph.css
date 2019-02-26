@@ -71,26 +71,26 @@ body[dir=rtl] .timeline-overview-graph.memory .memory-pressure-event {
     background-color: var(--timeline-even-background-color);
 }
 
-body[dir=rtl] .timeline-overview-graph.memory > .stacked-line-chart {
+body[dir=rtl] .timeline-overview-graph.memory > .stacked-area-chart {
     transform: scaleX(-1);
 }
 
-.timeline-overview-graph.memory > .stacked-line-chart > svg > path.javascript {
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.javascript {
     stroke: var(--memory-javascript-stroke-color);
     fill: var(--memory-javascript-fill-color);
 }
 
-.timeline-overview-graph.memory > .stacked-line-chart > svg > path.images {
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.images {
     stroke: var(--memory-images-stroke-color);
     fill: var(--memory-images-fill-color);
 }
 
-.timeline-overview-graph.memory > .stacked-line-chart > svg > path.layers {
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.layers {
     stroke: var(--memory-layers-stroke-color);
     fill: var(--memory-layers-fill-color);
 }
 
-.timeline-overview-graph.memory > .stacked-line-chart > svg > path.page {
+.timeline-overview-graph.memory > .stacked-area-chart > svg > path.page {
     stroke: var(--memory-page-stroke-color);
     fill: var(--memory-page-fill-color);
 }

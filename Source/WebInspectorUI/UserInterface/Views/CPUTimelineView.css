@@ -183,7 +183,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     display: none;
 }
 
-.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers {
+.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers {
     position: absolute;
     top: 0;
     left: 0;
@@ -192,7 +192,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     pointer-events: none;
 }
 
-.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div {
     position: absolute;
     z-index: 10;
     width: 100%;
@@ -200,15 +200,15 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
 }
 
-body[dir=ltr] .timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+body[dir=ltr] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div {
     text-align: end;
 }
 
-body[dir=rtl] .timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div {
     transform: scaleX(-1);
 }
 
-.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div > .label {
+.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div > .label {
     padding: 2px;
     font-size: 8px;
     color: var(--text-color-secondary);

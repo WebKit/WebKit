@@ -49,7 +49,7 @@ WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
         this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
 
-        this._chart = new WI.StackedLineChart;
+        this._chart = new WI.StackedAreaChart;
         this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
         this.addSubview(this._chart);
         this._graphElement.appendChild(this._chart.element);

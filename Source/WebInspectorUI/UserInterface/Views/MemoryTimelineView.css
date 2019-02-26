@@ -151,25 +151,25 @@ body[dir=rtl] .timeline-view.memory > .content > .overview > .divider {
 }
 
 .timeline-view.memory .circle-chart > svg > path.javascript,
-.memory-category-view.javascript .line-chart > svg > path {
+.memory-category-view.javascript .area-chart > svg > path {
     stroke: var(--memory-javascript-stroke-color);
     fill: var(--memory-javascript-fill-color);
 }
 
 .timeline-view.memory .circle-chart > svg > path.images,
-.memory-category-view.images .line-chart > svg > path {
+.memory-category-view.images .area-chart > svg > path {
     stroke: var(--memory-images-stroke-color);
     fill: var(--memory-images-fill-color);
 }
 
 .timeline-view.memory .circle-chart > svg > path.layers,
-.memory-category-view.layers .line-chart > svg > path {
+.memory-category-view.layers .area-chart > svg > path {
     stroke: var(--memory-layers-stroke-color);
     fill: var(--memory-layers-fill-color);
 }
 
 .timeline-view.memory .circle-chart > svg > path.page,
-.memory-category-view.page .line-chart > svg > path {
+.memory-category-view.page .area-chart > svg > path {
     stroke: var(--memory-page-stroke-color);
     fill: var(--memory-page-fill-color);
 }

@@ -23,33 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// LineChart creates a single filled line chart.
+// StackedAreaChart creates a area chart stratified with sections.
 //
-// Initialize the chart with a size. You can then include a new point
-// in the line chart by providing an (x, y) point via `addPoint`.
+// Initialize the chart with a size.
+// To populate with data, first initialize the sections. The class names you
+// provide for the segments will allow you to style them. You can then include
+// a new set of (x, [y1, y2, y3]) points in the chart via `addPointSet`. The
+// order of `y` values must be in the same order as the sections.
 //
 // SVG:
 //
-// - There is a single path for line.
+// - There is a single path for each stratification.
+// - Each path extends all the way down to the bottom, they are layered such
+//   that the paths for lower sections overlap the paths for upper sections.
 //
-//  <div class="line-chart">
-//      <svg viewBox="0 0 800 75">
-//          <path d="..."/>
+//  <div class="stacked-area-chart">
+//      <svg viewBox="0 0 1000 100">
+//          <path class="section-class-name-2" d="..."/>
+//          <path class="section-class-name-1" d="..."/>
 //      </svg>
 //  </div>
 
-WI.LineChart = class LineChart extends WI.View
+WI.StackedAreaChart = class StackedAreaChart extends WI.View
 {
     constructor()
     {
         super();
 
-        this.element.classList.add("line-chart");
+        this.element.classList.add("stacked-area-chart");
 
         this._chartElement = this.element.appendChild(createSVGElement("svg"));
         this._chartElement.setAttribute("preserveAspectRatio", "none");
 
-        this._pathElement = this._chartElement.appendChild(createSVGElement("path"));
+        this._pathElements = [];
 
         this._points = [];
         this._size = null;
@@ -74,9 +80,25 @@ WI.LineChart = class LineChart extends WI.View
         this.needsLayout();
     }
 
-    addPoint(x, y)
+    initializeSections(sectionClassNames)
     {
-        this._points.push({x, y});
+        console.assert(!this._pathElements.length, "Should not initialize multiple times");
+
+        sectionClassNames.reverse();
+
+        for (let i = 0; i < sectionClassNames.length; ++i) {
+            let pathElement = this._chartElement.appendChild(createSVGElement("path"));
+            pathElement.classList.add(sectionClassNames[i]);
+            this._pathElements.push(pathElement);
+        }
+
+        this._pathElements.reverse();
+    }
+
+    addPointSet(x, ys)
+    {
+        console.assert(ys.length === this._pathElements.length);
+        this._points.push({x, ys});
     }
 
     clear()
@@ -97,15 +119,22 @@ WI.LineChart = class LineChart extends WI.View
             return;
 
         let pathComponents = [];
-        pathComponents.push(`M 0 ${this._size.height}`);
-        for (let point of this._points)
-            pathComponents.push(`L ${point.x} ${point.y}`);
+        let length = this._pathElements.length;
+
+        for (let i = 0; i < length; ++i)
+            pathComponents[i] = [`M 0 ${this._size.height}`];
+
+        for (let {x, ys} of this._points) {
+            for (let i = 0; i < length; ++i)
+                pathComponents[i].push(`L ${x} ${ys[i]}`);
+        }
 
         let lastX = this._points.length ? this._points.lastValue.x : 0;
-        pathComponents.push(`L ${lastX} ${this._size.height}`);
-        pathComponents.push("Z");
-
-        let pathString = pathComponents.join(" ");
-        this._pathElement.setAttribute("d", pathString);
+        for (let i = 0; i < length; ++i) {
+            pathComponents[i].push(`L ${lastX} ${this._size.height}`);
+            pathComponents[i].push("Z");
+            let pathString = pathComponents[i].join(" ");
+            this._pathElements[i].setAttribute("d", pathString);
+        }
     }
 };

@@ -50,7 +50,7 @@ WI.MemoryCategoryView = class MemoryCategoryView extends WI.View
         this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
 
-        this._chart = new WI.LineChart;
+        this._chart = new WI.AreaChart;
         this.addSubview(this._chart);
         this._graphElement.appendChild(this._chart.element);
     }

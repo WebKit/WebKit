@@ -57,8 +57,8 @@ body[dir=rtl] .cpu-usage-stacked-view > .graph {
 }
 
 .cpu-usage-stacked-view > .graph,
-.cpu-usage-stacked-view > .graph > .stacked-line-chart,
-.cpu-usage-stacked-view > .graph > .stacked-line-chart > svg {
+.cpu-usage-stacked-view > .graph > .stacked-area-chart,
+.cpu-usage-stacked-view > .graph > .stacked-area-chart > svg {
     width: 100%;
     height: 100%;
 }
