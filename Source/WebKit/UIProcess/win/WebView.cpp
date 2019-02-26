@@ -451,7 +451,8 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 static void drawPageBackground(HDC dc, const WebPageProxy* page, const RECT& rect)
 {
-    if (!page->drawsBackground())
+    auto& backgroundColor = page->backgroundColor();
+    if (!backgroundColor || backgroundColor.value().isVisible())
         return;
 
     ::FillRect(dc, &rect, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));

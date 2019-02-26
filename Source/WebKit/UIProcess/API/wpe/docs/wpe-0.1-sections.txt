@@ -247,6 +247,8 @@ webkit_web_view_restore_session_state
 webkit_web_view_get_main_resource
 webkit_web_view_add_frame_displayed_callback
 webkit_web_view_remove_frame_displayed_callback
+webkit_web_view_get_background_color
+webkit_web_view_set_background_color
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
@@ -305,6 +307,16 @@ webkit_web_view_backend_new
 
 <SUBSECTION Private>
 webkit_web_view_backend_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitColor</FILE>
+WEBKIT_TYPE_COLOR
+WebKitColor
+webkit_color_parse
+
+<SUBSECTION Private>
+webkit_color_get_type
 </SECTION>
 
 <SECTION>

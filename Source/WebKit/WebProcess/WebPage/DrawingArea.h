@@ -81,7 +81,6 @@ public:
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) = 0;
 
     // FIXME: These should be pure virtual.
-    virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
     virtual bool forceRepaintAsync(CallbackID) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }

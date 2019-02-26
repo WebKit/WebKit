@@ -57,7 +57,6 @@ private:
     void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) override;
     void sizeDidChange(const WebCore::IntSize&) override;
     void deviceOrPageScaleFactorChanged() override;
-    void pageBackgroundTransparencyChanged() override;
 
     void contentsSizeChanged(const WebCore::IntSize&) override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
@@ -143,8 +142,7 @@ private:
     enum class DiscardableSyncActions {
         UpdateSize = 1 << 1,
         UpdateViewport = 1 << 2,
-        UpdateScale = 1 << 3,
-        UpdateBackground = 1 << 4
+        UpdateScale = 1 << 3
     };
 
     CompositorClient m_compositorClient;

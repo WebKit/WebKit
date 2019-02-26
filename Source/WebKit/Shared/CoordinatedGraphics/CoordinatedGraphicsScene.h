@@ -72,7 +72,7 @@ public:
     virtual ~CoordinatedGraphicsScene();
 
     void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
-    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, const WebCore::Color& backgroundColor, bool drawsBackground, WebCore::TextureMapper::PaintFlags = 0);
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void detach();
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
@@ -81,9 +81,6 @@ public:
 
     bool isActive() const { return m_isActive; }
     void setActive(bool active) { m_isActive = active; }
-
-    void setViewBackgroundColor(const WebCore::Color& color) { m_viewBackgroundColor = color; }
-    WebCore::Color viewBackgroundColor() const { return m_viewBackgroundColor; }
 
 private:
     void commitSceneState(const WebCore::CoordinatedGraphicsState::NicosiaState&);
@@ -113,7 +110,6 @@ private:
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
     Nicosia::PlatformLayer::LayerID m_rootLayerID { 0 };
-    WebCore::Color m_viewBackgroundColor { WebCore::Color::white };
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
 };

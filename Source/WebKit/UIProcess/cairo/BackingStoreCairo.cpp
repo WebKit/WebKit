@@ -37,10 +37,6 @@
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 
-#if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#endif
-
 #if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <WebCore/BackingStoreBackendCairoX11.h>
 #include <WebCore/PlatformDisplayX11.h>
@@ -97,24 +93,6 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
-#if PLATFORM(GTK)
-        if (!m_webPageProxy.drawsBackground()) {
-            const WebCore::Color color = m_webPageProxy.backgroundColor();
-            if (color.isVisible()) {
-                // When the application sets the background color through m_webPageProxy.backgroundColor(), we update the surface in 2 steps.
-                //   1. Fill the surface by m_webPageProxy.backgroundColor().
-                //   2. Composite webpage's bitmap which has a transparent background.
-                // In step 1, we use CompositeCopy as m_webPageProxy.backgroundColor() may not be opaque.
-                // On the other hand, in step 2, bitmap should be composited by CompositeSourceOver
-                // because it should be blended with m_webPageProxy.backgroundColor().
-                graphicsContext.fillRect(srcRect, color);
-                graphicsContext.setCompositeOperation(WebCore::CompositeSourceOver);
-                bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
-                graphicsContext.setCompositeOperation(WebCore::CompositeCopy);
-                continue;
-            }
-        }
-#endif
         bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
     }
 }

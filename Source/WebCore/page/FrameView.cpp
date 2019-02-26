@@ -398,7 +398,10 @@ void FrameView::recalculateBaseBackgroundColor()
         return;
 
     m_usesDarkAppearance = usingDarkAppearance;
-    updateBackgroundRecursively(m_isTransparent);
+    Optional<Color> backgroundColor;
+    if (m_isTransparent)
+        backgroundColor = Color(Color::transparent);
+    updateBackgroundRecursively(backgroundColor);
 }
 #endif
 
@@ -2993,18 +2996,18 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
     setNeedsCompositingConfigurationUpdate();
 }
 
-void FrameView::updateBackgroundRecursively(bool transparent)
+void FrameView::updateBackgroundRecursively(const Optional<Color>& backgroundColor)
 {
 #if ENABLE(DARK_MODE_CSS) && PLATFORM(MAC)
-    Color backgroundColor = transparent ? Color::transparent : RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions());
+    Color baseBackgroundColor = backgroundColor.valueOr(RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions()));
 #else
-    Color backgroundColor = transparent ? Color::transparent : Color::white;
+    Color baseBackgroundColor = backgroundColor.valueOr(Color::white);
 #endif
 
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         if (FrameView* view = frame->view()) {
-            view->setTransparent(transparent);
-            view->setBaseBackgroundColor(backgroundColor);
+            view->setTransparent(!baseBackgroundColor.isVisible());
+            view->setBaseBackgroundColor(baseBackgroundColor);
             if (view->needsLayout())
                 view->layoutContext().scheduleLayout();
         }

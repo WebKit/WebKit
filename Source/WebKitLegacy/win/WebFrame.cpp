@@ -2089,7 +2089,10 @@ void WebFrame::updateBackground()
     if (!coreFrame || !coreFrame->view())
         return;
 
-    coreFrame->view()->updateBackgroundRecursively(webView()->transparent());
+    Optional<Color> backgroundColor;
+    if (webView()->transparent())
+        backgroundColor = Color(Color::transparent);
+    coreFrame->view()->updateBackgroundRecursively(backgroundColor);
 }
 
 // IWebFrame2

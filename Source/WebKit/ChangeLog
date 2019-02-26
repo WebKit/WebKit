@@ -1,3 +1,80 @@
+2019-02-26  Philippe Normand <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add API for webview background color configuration
+        https://bugs.webkit.org/show_bug.cgi?id=192305
+
+        Reviewed by Michael Catanzaro.
+
+        In the case of WPE we need to send the background color to the web process to be used as the background color of
+        the page. This patch adapts the GTK+ implementation to do the same, since it's a lot simpler. The patch also
+        removes the SetDrawsBackground message in favor of the new SetBackgroundColor message that receives an optional
+        color.
+
+        * PlatformWPE.cmake: Add new WPE API for WebKitColor boxed type.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext): Remove background rendering and opacity handling.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree): Remove drawsBakground and always clear the context with
+        transparent color.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const): Replace drawsBackground with backgroundColor.
+        (WebKit::WebPageCreationParameters::decode): Ditto.
+        * Shared/WebPageCreationParameters.h:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (webkit_web_view_set_background_color):
+        (webkit_web_view_get_background_color):
+        * UIProcess/API/wpe/WebKitColor.cpp: Added.
+        (webkit_color_copy):
+        (webkit_color_free):
+        (webkitColorToWebCoreColor):
+        (webkitColorFillFromWebCoreColor):
+        (webkit_color_parse):
+        * UIProcess/API/wpe/WebKitColor.h: Added.
+        * UIProcess/API/wpe/WebKitColorPrivate.h: Added.
+        * UIProcess/API/wpe/WebKitWebView.h: Implement webkit_web_view_set_background_color API.
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp: Ditto.
+        (webkit_web_view_set_background_color):
+        (webkit_web_view_get_background_color):
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt: Add new symbols.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDrawsBackground): Set a transparent background color when false is passed.
+        (WebKit::WebPageProxy::setBackgroundColor): Send background color to the WebProcess.
+        (WebKit::WebPageProxy::creationParameters): Replace drawsBackground with backgroundColor.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::drawsBackground const):
+        (WebKit::WebPageProxy::backgroundColor const):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate): Remove GTK+ code to handle background color.
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        * UIProcess/gtk/AcceleratedBackingStore.h: Make paint() pure virtual and remove the implementation.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        (WebKit::AcceleratedBackingStoreWayland::paint): Dot not call AcceleratedBackingStore::paint() now that is pure virtual.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::paint): Ditto.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Use background color as provided by the
+        UIProcess when creating the FrameView.
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::setIsDiscardable):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display): Remove special case for transparent background.
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setBackgroundColor): New API for background color configuration. Proxies to FrameView and DrawingArea.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::backgroundColor const): Read-only access to the current background color.
+        * WebProcess/WebPage/WebPage.messages.in: Replace SetDrawsBackground message with SetBackgroundColor.
+
 2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         scalableNativeWebpageParameters() is not preserved on new page navigation.

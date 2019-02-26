@@ -1714,7 +1714,10 @@ ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
     Document* document = contextDocument();
     if (!document || !document->view())
         return Exception { InvalidAccessError };
-    document->view()->updateBackgroundRecursively(transparent);
+    Optional<Color> backgroundColor;
+    if (transparent)
+        backgroundColor = Color(Color::transparent);
+    document->view()->updateBackgroundRecursively(backgroundColor);
     return { };
 }
 

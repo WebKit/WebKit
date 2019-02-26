@@ -172,6 +172,7 @@ UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
 
 UIProcess/API/wpe/PageClientImpl.cpp @no-unify
 UIProcess/API/wpe/ScrollGestureController.cpp @no-unify
+UIProcess/API/wpe/WebKitColor.cpp @no-unify
 UIProcess/API/wpe/WebKitScriptDialogWPE.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewBackend.cpp @no-unify
 UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify

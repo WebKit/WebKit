@@ -70,7 +70,6 @@ public:
     void setScaleFactor(float);
     void setScrollPosition(const WebCore::IntPoint&, float scale);
     void setViewportSize(const WebCore::IntSize&, float scale);
-    void setDrawsBackground(bool);
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
 
@@ -112,9 +111,7 @@ private:
         WebCore::IntSize viewportSize;
         WebCore::IntPoint scrollPosition;
         float scaleFactor { 1 };
-        bool drawsBackground { true };
         bool needsResize { false };
-
         Vector<WebCore::CoordinatedGraphicsState> states;
 
         bool clientRendersNextFrame { false };

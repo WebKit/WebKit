@@ -45,7 +45,7 @@ public:
     virtual ~AcceleratedBackingStore() = default;
 
     virtual void update(const LayerTreeContext&) { }
-    virtual bool paint(cairo_t*, const WebCore::IntRect&);
+    virtual bool paint(cairo_t*, const WebCore::IntRect&) = 0;
     virtual bool makeContextCurrent() { return false; }
 
 protected:

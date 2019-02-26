@@ -687,7 +687,8 @@ static void validate(WKWebViewConfiguration *configuration)
 
     _page = [_contentView page];
     [self _dispatchSetDeviceOrientation:deviceOrientation()];
-    _page->setDrawsBackground(self.opaque);
+    if (!self.opaque)
+        _page->setBackgroundColor(WebCore::Color(WebCore::Color::transparent));
 
     [_contentView layer].anchorPoint = CGPointZero;
     [_contentView setFrame:bounds];
@@ -2502,7 +2503,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_page)
         return;
 
-    _page->setDrawsBackground(opaque);
+    Optional<WebCore::Color> backgroundColor;
+    if (!opaque)
+        backgroundColor = WebCore::Color(WebCore::Color::transparent);
+    _page->setBackgroundColor(backgroundColor);
     [self _updateScrollViewBackground];
 }
 

@@ -65,7 +65,7 @@ void CoordinatedGraphicsScene::applyStateChanges(const Vector<CoordinatedGraphic
         commitSceneState(state.nicosia);
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, const Color& backgroundColor, bool drawsBackground, TextureMapper::PaintFlags PaintFlags)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
 {
     updateSceneState();
 
@@ -78,18 +78,8 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
-    if (drawsBackground) {
-        RGBA32 rgba = makeRGBA32FromFloats(backgroundColor.red(),
-            backgroundColor.green(), backgroundColor.blue(),
-            backgroundColor.alpha() * opacity);
-        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba), true);
-    } else
-        m_textureMapper->clearColor(m_viewBackgroundColor);
-
-    if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
-        currentRootLayer->setOpacity(opacity);
+    if (currentRootLayer->transform() != matrix)
         currentRootLayer->setTransform(matrix);
-    }
 
     currentRootLayer->paint();
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);

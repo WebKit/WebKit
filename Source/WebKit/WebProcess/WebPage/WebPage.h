@@ -501,8 +501,6 @@ public:
     
     void postInjectedBundleMessage(const String& messageName, const UserData&);
 
-    bool drawsBackground() const { return m_drawsBackground; }
-
     void setUnderlayColor(const WebCore::Color& color) { m_underlayColor = color; }
     WebCore::Color underlayColor() const { return m_underlayColor; }
 
@@ -1149,6 +1147,8 @@ public:
     bool requestDOMPasteAccess();
     WebCore::IntRect rectForElementAtInteractionLocation() const;
 
+    const Optional<WebCore::Color>& backgroundColor() const { return m_backgroundColor; }
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1285,7 +1285,7 @@ private:
     void setIndicating(bool);
 #endif
 
-    void setDrawsBackground(bool);
+    void setBackgroundColor(const Optional<WebCore::Color>&);
 
 #if PLATFORM(COCOA)
     void setTopContentInsetFenced(float, IPC::Attachment);
@@ -1784,7 +1784,7 @@ private:
     bool m_isSuspendedUnderLock { false };
 
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;
-    WebCore::Color m_backgroundColor { WebCore::Color::white };
+    Optional<WebCore::Color> m_backgroundColor { WebCore::Color::white };
 
     HashSet<unsigned> m_activeRenderingSuppressionTokens;
     unsigned m_maximumRenderingSuppressionToken { 0 };

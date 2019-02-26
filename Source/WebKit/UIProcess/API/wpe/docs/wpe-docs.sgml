@@ -55,6 +55,7 @@
     <xi:include href="xml/WebKitNetworkProxySettings.xml"/>
     <xi:include href="xml/WebKitAutomationSession.xml"/>
     <xi:include href="xml/WebKitApplicationInfo.xml"/>
+    <xi:include href="xml/WebKitColor.xml"/>
   </chapter>
 
   <chapter>

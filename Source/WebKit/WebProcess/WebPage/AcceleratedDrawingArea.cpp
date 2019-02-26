@@ -93,14 +93,6 @@ void AcceleratedDrawingArea::scroll(const IntRect& scrollRect, const IntSize& sc
         m_layerTreeHost->scrollNonCompositedContents(scrollRect);
 }
 
-void AcceleratedDrawingArea::pageBackgroundTransparencyChanged()
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->pageBackgroundTransparencyChanged();
-    else if (m_previousLayerTreeHost)
-        m_previousLayerTreeHost->pageBackgroundTransparencyChanged();
-}
-
 void AcceleratedDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 {
     if (m_layerTreeStateIsFrozen == isFrozen)

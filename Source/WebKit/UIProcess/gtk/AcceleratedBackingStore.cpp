@@ -59,26 +59,4 @@ AcceleratedBackingStore::AcceleratedBackingStore(WebPageProxy& webPage)
 {
 }
 
-bool AcceleratedBackingStore::paint(cairo_t* cr, const IntRect& clipRect)
-{
-    if (m_webPage.drawsBackground())
-        return true;
-
-    const WebCore::Color& color = m_webPage.backgroundColor();
-    if (!color.isOpaque()) {
-        cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-        cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-        cairo_fill(cr);
-    }
-
-    if (color.isVisible()) {
-        setSourceRGBAFromColor(cr, color);
-        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-        cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-        cairo_fill(cr);
-    }
-
-    return true;
-}
-
 } // namespace WebKit

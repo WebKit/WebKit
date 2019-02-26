@@ -1,3 +1,17 @@
+2019-02-26  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Add API for webview background color configuration
+        https://bugs.webkit.org/show_bug.cgi?id=192305
+
+        Reviewed by Michael Catanzaro.
+
+        * MiniBrowser/wpe/main.cpp:
+        (main): Add a new option to configure the webview background
+        color. Example: --bg-color=transparent.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewBackgroundColor): Enable background color API tests for WPE.
+        (beforeAll): Ditto.
+
 2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         scalableNativeWebpageParameters() is not preserved on new page navigation.

@@ -1,3 +1,23 @@
+2019-02-26  Philippe Normand  <pnormand@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add API for webview background color configuration
+        https://bugs.webkit.org/show_bug.cgi?id=192305
+
+        Reviewed by Michael Catanzaro.
+
+        Adapt the FrameView API to allow a default non-white background color.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::createView): Replace isTransparent argument with a background color one.
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::recalculateBaseBackgroundColor): Use Color::transparent if m_isTransparent is true.
+        (WebCore::FrameView::updateBackgroundRecursively): Allow the fallback background color to be non-white, this is
+        used only in non-dark-mode-css build configurations.
+        * page/FrameView.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setViewIsTransparent): Use Color::transparent if transparent is true.
+
 2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         scalableNativeWebpageParameters() is not preserved on new page navigation.

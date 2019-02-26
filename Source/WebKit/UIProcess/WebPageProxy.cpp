@@ -429,7 +429,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_waitsForPaintAfterViewDidMoveToWindow(m_configuration->waitsForPaintAfterViewDidMoveToWindow())
-    , m_drawsBackground(m_configuration->drawsBackground())
     , m_pageID(pageID)
     , m_controlledByAutomation(m_configuration->isControlledByAutomation())
 #if PLATFORM(COCOA)
@@ -447,6 +446,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "constructor: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
+
+    if (!m_configuration->drawsBackground())
+        m_backgroundColor = Color(Color::transparent);
 
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
@@ -1559,15 +1561,14 @@ void WebPageProxy::createInspectorTargets()
     m_inspectorController->createInspectorTarget(pageTargetId, Inspector::InspectorTargetType::Page);
 }
 
-void WebPageProxy::setDrawsBackground(bool drawsBackground)
+void WebPageProxy::setBackgroundColor(const Optional<Color>& color)
 {
-    if (m_drawsBackground == drawsBackground)
+    if (m_backgroundColor == color)
         return;
 
-    m_drawsBackground = drawsBackground;
-
+    m_backgroundColor = color;
     if (isValid())
-        m_process->send(Messages::WebPage::SetDrawsBackground(drawsBackground), m_pageID);
+        m_process->send(Messages::WebPage::SetBackgroundColor(color), m_pageID);
 }
 
 void WebPageProxy::setTopContentInset(float contentInset)
@@ -6863,7 +6864,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.drawingAreaIdentifier = drawingArea.identifier();
     parameters.store = preferencesStore();
     parameters.pageGroupData = m_pageGroup->data();
-    parameters.drawsBackground = m_drawsBackground;
     parameters.isEditable = m_isEditable;
     parameters.underlayColor = m_underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;
@@ -6967,6 +6967,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
     parameters.needsFontAttributes = m_needsFontAttributes;
+    parameters.backgroundColor = m_backgroundColor;
 
     process.addWebUserContentControllerProxy(m_userContentController, parameters);
 

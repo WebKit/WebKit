@@ -184,17 +184,6 @@ void ThreadedCoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
     m_compositor->setScaleFactor(m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
 }
 
-void ThreadedCoordinatedLayerTreeHost::pageBackgroundTransparencyChanged()
-{
-    if (m_isDiscardable) {
-        m_discardableSyncActions.add(DiscardableSyncActions::UpdateBackground);
-        return;
-    }
-
-    CoordinatedLayerTreeHost::pageBackgroundTransparencyChanged();
-    m_compositor->setDrawsBackground(m_webPage.drawsBackground());
-}
-
 void ThreadedCoordinatedLayerTreeHost::sizeDidChange(const IntSize& size)
 {
     if (m_isDiscardable) {
@@ -285,9 +274,6 @@ void ThreadedCoordinatedLayerTreeHost::setIsDiscardable(bool discardable)
 
     if (m_discardableSyncActions.isEmpty())
         return;
-
-    if (m_discardableSyncActions.contains(DiscardableSyncActions::UpdateBackground))
-        pageBackgroundTransparencyChanged();
 
     if (m_discardableSyncActions.contains(DiscardableSyncActions::UpdateSize)) {
         // Size changes already sets the scale factor and updates the viewport.

@@ -110,7 +110,6 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
         return false;
 
     cairo_save(cr);
-    AcceleratedBackingStore::paint(cr, clipRect);
 
 #if GTK_CHECK_VERSION(3, 16, 0)
     if (m_gdkGLContext) {
