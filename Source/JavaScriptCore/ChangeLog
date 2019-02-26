@@ -1,3 +1,46 @@
+2019-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make Intl fields lazily-allocated
+        https://bugs.webkit.org/show_bug.cgi?id=195022
+
+        Reviewed by Mark Lam.
+
+        This patch makes the following memory footprint optimization in IntlObject.
+
+        1. Make IntlObject fields including Intl.Collator lazily-allocated because we already removed direct references from JS builtins to these constructors (@Collator etc.).
+
+        2. Move LazyProperty<IntlObject, Structure> structures from IntlObject to JSGlobalObject. This makes sizeof(IntlObject) the same to the other ones of usual runtime Objects,
+           and drop one MarkedBlock.
+
+        * runtime/IntlCollatorConstructor.h:
+        * runtime/IntlDateTimeFormatConstructor.h:
+        * runtime/IntlNumberFormatConstructor.h:
+        * runtime/IntlObject.cpp:
+        (JSC::createCollatorConstructor):
+        (JSC::createNumberFormatConstructor):
+        (JSC::createDateTimeFormatConstructor):
+        (JSC::createPluralRulesConstructor):
+        (JSC::IntlObject::finishCreation):
+        (JSC::IntlObject::visitChildren): Deleted.
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRulesConstructor.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        (JSC::JSGlobalObject::defaultCollator):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::collatorStructure):
+        (JSC::JSGlobalObject::numberFormatStructure):
+        (JSC::JSGlobalObject::dateTimeFormatStructure):
+        (JSC::JSGlobalObject::pluralRulesStructure):
+        (JSC::JSGlobalObject::intlObject const): Deleted.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncDateTimeFormat):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToLocaleString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncLocaleCompare):
+
 2019-02-25  Tadeu Zagallo  <tzagallo@apple.com>
 
         Avoid hashing CompactVariableEnvironment when decoding CompactVariableMap::Handle

@@ -179,7 +179,14 @@
 
 #if ENABLE(INTL)
 #include "IntlCollator.h"
+#include "IntlCollatorPrototype.h"
+#include "IntlDateTimeFormat.h"
+#include "IntlDateTimeFormatPrototype.h"
+#include "IntlNumberFormat.h"
+#include "IntlNumberFormatPrototype.h"
 #include "IntlObject.h"
+#include "IntlPluralRules.h"
+#include "IntlPluralRulesPrototype.h"
 #include <unicode/ucol.h>
 #include <unicode/udat.h>
 #include <unicode/unum.h>
@@ -799,6 +806,31 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
 #if ENABLE(INTL)
+    m_collatorStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlCollatorPrototype* collatorPrototype = IntlCollatorPrototype::create(init.vm, globalObject, IntlCollatorPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlCollator::createStructure(init.vm, globalObject, collatorPrototype));
+        });
+    m_numberFormatStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlNumberFormatPrototype* numberFormatPrototype = IntlNumberFormatPrototype::create(init.vm, globalObject, IntlNumberFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlNumberFormat::createStructure(init.vm, globalObject, numberFormatPrototype));
+        });
+    m_dateTimeFormatStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlDateTimeFormatPrototype* dateTimeFormatPrototype = IntlDateTimeFormatPrototype::create(init.vm, globalObject, IntlDateTimeFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlDateTimeFormat::createStructure(init.vm, globalObject, dateTimeFormatPrototype));
+        });
+    m_pluralRulesStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlPluralRulesPrototype* pluralRulesPrototype = IntlPluralRulesPrototype::create(init.vm, globalObject, IntlPluralRulesPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlPluralRules::createStructure(init.vm, globalObject, pluralRulesPrototype));
+        });
+
     IntlObject* intl = IntlObject::create(vm, IntlObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Intl, intl, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_intlObject.set(vm, this, intl);
@@ -1568,6 +1600,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #if ENABLE(INTL)
     visitor.append(thisObject->m_intlObject);
     visitor.append(thisObject->m_defaultCollator);
+    thisObject->m_collatorStructure.visit(visitor);
+    thisObject->m_numberFormatStructure.visit(visitor);
+    thisObject->m_dateTimeFormatStructure.visit(visitor);
+    thisObject->m_pluralRulesStructure.visit(visitor);
 #endif
     visitor.append(thisObject->m_nullGetterFunction);
     visitor.append(thisObject->m_nullSetterFunction);
@@ -1874,7 +1910,7 @@ IntlCollator* JSGlobalObject::defaultCollator(ExecState* exec)
     if (m_defaultCollator)
         return m_defaultCollator.get();
 
-    IntlCollator* collator = IntlCollator::create(vm, intlObject()->collatorStructure());
+    IntlCollator* collator = IntlCollator::create(vm, collatorStructure());
     collator->initializeCollator(*exec, jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, nullptr);
     m_defaultCollator.set(vm, this, collator);

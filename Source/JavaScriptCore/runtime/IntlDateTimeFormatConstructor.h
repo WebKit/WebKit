@@ -46,7 +46,7 @@ public:
 
     DECLARE_INFO;
 
-    Structure* dateTimeFormatStructure(VM& vm) const { return globalObject(vm)->intlObject()->dateTimeFormatStructure(); }
+    Structure* dateTimeFormatStructure(VM& vm) const { return globalObject(vm)->dateTimeFormatStructure(); }
 
 protected:
     void finishCreation(VM&, IntlDateTimeFormatPrototype*);

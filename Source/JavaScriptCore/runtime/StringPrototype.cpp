@@ -1517,7 +1517,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
         collator = globalObject->defaultCollator(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else {
-        collator = IntlCollator::create(vm, globalObject->intlObject()->collatorStructure());
+        collator = IntlCollator::create(vm, globalObject->collatorStructure());
         collator->initializeCollator(*exec, locales, options);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
