@@ -54,8 +54,12 @@ WI.SearchUtilities = class SearchUtilities {
             return setting instanceof WI.Setting ? setting.value : !!setting;
         }
 
+        console.assert((typeof query === "string" && query) || query instanceof RegExp);
+
         if (!checkSetting(settings.regularExpression))
-            query = simpleGlobStringToRegExp(query);
+            query = simpleGlobStringToRegExp(String(query));
+
+        console.assert((typeof query === "string" && query) || query instanceof RegExp);
 
         let flags = "g";
         if (!checkSetting(settings.caseSensitive))
