@@ -87,8 +87,6 @@ private:
     WebCore::ResourceResponse m_response;
     unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
-    bool m_didChallengeEmptyCredentialForAuth { false };
-    bool m_didChallengeEmptyCredentialForProxyAuth { false };
     MonotonicTime m_startTime;
 };
 

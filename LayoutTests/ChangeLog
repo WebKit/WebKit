@@ -1,3 +1,16 @@
+2019-02-26  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Load HTTP body of 401 response when AuthenticationChange is cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=191652
+
+        Reviewed by Alex Christensen.
+
+        Added appropriate expected results for WebKit/WebKitLegacy of WinCairo port.
+
+        * platform/wincairo-wk1/http/tests/security/401-logout/401-logout-expected.txt: Added.
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/http/tests/security/401-logout/401-logout-expected.txt: Added.
+
 2019-02-26  Frederic Wang  <fwang@igalia.com>
 
         Split tests programmatic-scroll-iframe and scroll-iframe

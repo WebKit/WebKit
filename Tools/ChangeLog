@@ -1,3 +1,15 @@
+2019-02-26  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Load HTTP body of 401 response when AuthenticationChange is cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=191652
+
+        Reviewed by Alex Christensen.
+
+        Fix WinCairo MiniBrowser behavior of authentication dialog.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::didReceiveAuthenticationChallenge):
+
 2019-02-26  Youenn Fablet  <youenn@apple.com>
 
         WebPageProxy should nullify m_userMediaPermissionRequestManager after resetting the media state

@@ -1,0 +1,3 @@
+http://127.0.0.1:8000/security/401-logout/401-logout.php?uid=username - didReceiveAuthenticationChallenge - Responding with username:password
+http://127.0.0.1:8000/security/401-logout/401-logout.php?uid=username&logout=1 - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+PASS

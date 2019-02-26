@@ -930,7 +930,10 @@ http/tests/pointer-lock [ Skip ]
 http/tests/preconnect [ Skip ]
 http/tests/preload [ Skip ]
 http/tests/quicklook [ Skip ]
+
 http/tests/security [ Skip ]
+http/tests/security/401-logout/401-logout.php [ Pass ]
+
 http/tests/ssl [ Skip ]
 
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]

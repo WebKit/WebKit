@@ -1,3 +1,17 @@
+2019-02-26  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Load HTTP body of 401 response when AuthenticationChange is cancelled.
+        https://bugs.webkit.org/show_bug.cgi?id=191652
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/security/401-logout/401-logout.php
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+        (WebKit::NetworkDataTaskCurl::tryProxyAuthentication):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2019-02-26  Youenn Fablet  <youenn@apple.com>
 
         WebPageProxy should nullify m_userMediaPermissionRequestManager after resetting the media state

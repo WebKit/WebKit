@@ -289,5 +289,5 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
         return;
     }
 
-    WKAuthenticationDecisionListenerCancel(decisionListener);
+    WKAuthenticationDecisionListenerUseCredential(decisionListener, nullptr);
 }
