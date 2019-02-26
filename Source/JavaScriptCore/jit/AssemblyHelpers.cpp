@@ -389,7 +389,6 @@ void AssemblyHelpers::emitLoadStructure(VM& vm, RegisterID source, RegisterID de
     xorPtr(scratch2, dest);
 #else // not USE(JSVALUE64)
     UNUSED_PARAM(scratch);
-    UNUSED_PARAM(scratch2);
     UNUSED_PARAM(vm);
     loadPtr(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
 #endif // not USE(JSVALUE64)

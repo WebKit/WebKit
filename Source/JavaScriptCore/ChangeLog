@@ -1,5 +1,15 @@
 2019-02-26  Guillaume Emont  <guijemont@igalia.com>
 
+        [JSC] Fix compilation on 32-bit platforms after r242071
+        https://bugs.webkit.org/show_bug.cgi?id=195042
+
+        Reviewed by Carlos Garcia Campos.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+
+2019-02-26  Guillaume Emont  <guijemont@igalia.com>
+
         [JSC] Repeat string created from Array.prototype.join() take too much memory
         https://bugs.webkit.org/show_bug.cgi?id=193912
 
