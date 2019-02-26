@@ -430,29 +430,21 @@ void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* form
     va_end(args);
 }
 
-void WTFLog(WTFLogChannel* channel, const char* format, ...)
+static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list args)
 {
     if (channel->state == WTFLogChannelOff)
         return;
 
     if (channel->state == WTFLogChannelOn) {
-        va_list args;
-        va_start(args, format);
         vprintf_stderr_with_trailing_newline(format, args);
-        va_end(args);
         return;
     }
 
     ASSERT(channel->state == WTFLogChannelOnWithAccumulation);
 
-    va_list args;
-    va_start(args, format);
-
     ALLOW_NONLITERAL_FORMAT_BEGIN
     String loggingString = WTF::createWithFormatAndArguments(format, args);
     ALLOW_NONLITERAL_FORMAT_END
-
-    va_end(args);
 
     if (!loggingString.endsWith('\n'))
         loggingString.append('\n');
@@ -460,6 +452,16 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
     loggingAccumulator().accumulate(loggingString);
 
     logToStderr(loggingString.utf8().data());
+}
+
+void WTFLog(WTFLogChannel* channel, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    WTFLogVaList(channel, format, args);
+
+    va_end(args);
 }
 
 void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...)
@@ -471,7 +473,7 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     va_start(args, format);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
-    WTFLog(channel, format, args);
+    WTFLogVaList(channel, format, args);
     ALLOW_NONLITERAL_FORMAT_END
 
     va_end(args);

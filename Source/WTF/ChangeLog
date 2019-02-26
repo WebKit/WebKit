@@ -1,3 +1,21 @@
+2019-02-25  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Fix WTFLogVerbose variadic parameters forwarding
+        https://bugs.webkit.org/show_bug.cgi?id=194920
+
+        Reviewed by Alex Christensen.
+
+        WTFLogVerbose was passing the va_list to WTFLog but this function
+        also used variadic parameters and this is not allowed in C (that
+        part of the code is extern "C").
+
+        * wtf/Assertions.cpp:
+        (WTF::WTFLogVaList): Created to take a va_list argument instead of
+        variadic parameters.
+        (WTF::WTFLog): Kept with variadic parameters, which are
+        transformed to va_list and passed to WTFLogVaList.
+        (WTF::WTFLogVerbose): Use WTFLogVaList instead of WTFLog.
+
 2019-02-25  Sam Weinig  <sam@webkit.org>
 
         Update double-conversion to the latest version
