@@ -1,5 +1,45 @@
 2019-02-26  Frederic Wang  <fwang@igalia.com>
 
+        Split tests programmatic-scroll-iframe and scroll-iframe
+        https://bugs.webkit.org/show_bug.cgi?id=195050
+
+        This patch splits some iOS frame scrolling tests into separate tests in order to make debugging
+        and test expectations easier to manage.
+
+        Reviewed by Antti Koivisto.
+
+        * fast/scrolling/ios/programmatic-scroll-iframe-001-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-001.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-002-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-002.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-003-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-003.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-004-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-004.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-005-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-005.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-006-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-006.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-007-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-007.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-008-expected.html: Copied from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-008.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe-009-expected.html: Renamed from LayoutTests/fast/scrolling/ios/programmatic-scroll-iframe-expected.html.
+        * fast/scrolling/ios/programmatic-scroll-iframe-009.html: Added.
+        * fast/scrolling/ios/programmatic-scroll-iframe.html: Removed.
+        * fast/scrolling/ios/scroll-iframe-001-expected.html: Added.
+        * fast/scrolling/ios/scroll-iframe-001.html: Added.
+        * fast/scrolling/ios/scroll-iframe-002-expected.html: Added.
+        * fast/scrolling/ios/scroll-iframe-002.html: Added.
+        * fast/scrolling/ios/scroll-iframe-003-expected.html: Added.
+        * fast/scrolling/ios/scroll-iframe-003.html: Added.
+        * fast/scrolling/ios/scroll-iframe-004-expected.html: Added.
+        * fast/scrolling/ios/scroll-iframe-004.html: Added.
+        * fast/scrolling/ios/scroll-iframe-expected.html: Removed.
+        * fast/scrolling/ios/scroll-iframe.html: Removed.
+
+2019-02-26  Frederic Wang  <fwang@igalia.com>
+
         Synchronize MathML WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=195048
 

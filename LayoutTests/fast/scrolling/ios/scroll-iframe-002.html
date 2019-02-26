@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scrolling of iframe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script type="text/javascript">
+      if (window.testRunner)
+          testRunner.waitUntilDone();
+      if (window.internals)
+          internals.settings.setAsyncFrameScrollingEnabled(true);
+
+      function centerOf(id)
+      {
+          var frameBox = document.getElementById(id).getBoundingClientRect();
+          return { x: frameBox.left + frameBox.width / 2, y: frameBox.top + frameBox.height / 2 };
+      }
+
+      async function runTest() {
+         if (!window.testRunner || !testRunner.runUIScript)
+             return;
+
+         // This checks scrolling to the location of the green square.
+         var c = centerOf("maxScrollY");
+         await touchAndDragFromPointToPoint(c.x, c.y, c.x, c.y - 150);
+         await liftUpAtPoint(c.x, c.y - 150);
+ 
+         // Wait for scrolling to stabilize and for scrollbars to disappear.
+         setTimeout(() => {testRunner.notifyDone(); }, 1000);
+       }
+    </script>
+    <style>
+        iframe {
+            float: left;
+            background: linear-gradient(135deg, red, orange);
+            border: 0;
+            height: 100px;
+            width: 100px;
+        }
+    </style>
+  </head>
+  <body>
+    <p>This test passes if you see a green square.</p>
+    <iframe id="maxScrollY" scrolling="yes" srcdoc="
+        <body style='margin: 0; width: 200px; height: 200px'>
+            <div style='top: 100px; position: absolute; width: 100px; height: 100px; background: green;'></div>
+        </body>" onload="runTest()">
+    </iframe>
+  </body>
+</html>
