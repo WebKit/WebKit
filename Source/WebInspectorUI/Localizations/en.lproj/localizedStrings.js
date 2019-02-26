@@ -849,6 +849,7 @@ localizedStrings["Search Again"] = "Search Again";
 localizedStrings["Search Resource Content"] = "Search Resource Content";
 /* Settings tab label for search related settings */
 localizedStrings["Search: @ Settings"] = "Search:";
+localizedStrings["Searching %s"] = "Searching %s";
 localizedStrings["Secure"] = "Secure";
 localizedStrings["Security"] = "Security";
 localizedStrings["Security Issue"] = "Security Issue";

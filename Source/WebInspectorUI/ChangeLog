@@ -1,5 +1,26 @@
 2019-02-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: navigation sidebar says "No Search Results" when a slow search is in progress
+        https://bugs.webkit.org/show_bug.cgi?id=170631
+        <rdar://problem/29473874>
+
+        Reviewed by Joseph Pecoraro.
+
+        Keep a count of all the backend commands (increment when firing, decrement when a result is
+        sent back to the frontend). Once the count comes back to `0`, attempt to show the "No Results"
+        placeholder, since we will have finished searching at that point. Since commands can be called
+        as a result of other commands, using `Promise.all` isn't possible.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+        (WI.SearchSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholderSoon): Deleted.
+        (WI.SearchSidebarPanel.prototype.performSearch.updateEmptyContentPlaceholder): Deleted.
+        Drive-by: replace `bind` calls with arrow functions, and use for-of loops.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-02-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: if no auto-capture value is specified, don't force the input to have "0" as the value
         https://bugs.webkit.org/show_bug.cgi?id=194950
         <rdar://problem/48276798>
