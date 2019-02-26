@@ -1,3 +1,95 @@
+2019-02-25  Saam Barati  <sbarati@apple.com>
+
+        testb3 and testair should test O0/O1/O2
+        https://bugs.webkit.org/show_bug.cgi?id=194637
+
+        Reviewed by Mark Lam.
+
+        This patch makes it so that we run all tests in testair and testb3
+        in O0, O1, and O2. However, some tests are invalid for O0 and O1.
+        This patch makes it so we only run those tests in O2. These are
+        often tests that assert certain optimizations have occurred. There
+        are also a class of tests that rely on using patchpoints to stress 
+        the register allocator into only a single valid allocation. The
+        O0, and sometimes O1, register allocators are not always good enough
+        to allocate such programs. To make these valid allocators to use, we rely
+        on the FTL and Wasm to not emit such patchpoints.
+
+        * b3/air/testair.cpp:
+        (main):
+        * b3/testb3.cpp:
+        (JSC::B3::compileProc):
+        (JSC::B3::testAddLoadTwice):
+        (JSC::B3::testMulLoadTwice):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersGPArgs):
+        (JSC::B3::testSimplePatchpointWithOuputClobbersFPArgs):
+        (JSC::B3::testPatchpointWithEarlyClobber):
+        (JSC::B3::testSimpleCheck):
+        (JSC::B3::testCheckFalse):
+        (JSC::B3::testCheckTrue):
+        (JSC::B3::testCheckLessThan):
+        (JSC::B3::testCheckMegaCombo):
+        (JSC::B3::testCheckTrickyMegaCombo):
+        (JSC::B3::testCheckTwoMegaCombos):
+        (JSC::B3::testCheckTwoNonRedundantMegaCombos):
+        (JSC::B3::testCheckAddImm):
+        (JSC::B3::testCheckAddImmCommute):
+        (JSC::B3::testCheckAddImmSomeRegister):
+        (JSC::B3::testCheckAdd):
+        (JSC::B3::testCheckAdd64):
+        (JSC::B3::testCheckAddFold):
+        (JSC::B3::testCheckAddFoldFail):
+        (JSC::B3::testCheckAddSelfOverflow64):
+        (JSC::B3::testCheckAddSelfOverflow32):
+        (JSC::B3::testCheckSubImm):
+        (JSC::B3::testCheckSubBadImm):
+        (JSC::B3::testCheckSub):
+        (JSC::B3::testCheckSub64):
+        (JSC::B3::testCheckSubFold):
+        (JSC::B3::testCheckSubFoldFail):
+        (JSC::B3::testCheckNeg):
+        (JSC::B3::testCheckNeg64):
+        (JSC::B3::testCheckMul):
+        (JSC::B3::testCheckMulMemory):
+        (JSC::B3::testCheckMul2):
+        (JSC::B3::testCheckMul64):
+        (JSC::B3::testCheckMulFold):
+        (JSC::B3::testCheckMulFoldFail):
+        (JSC::B3::testCheckMul64SShr):
+        (JSC::B3::testLinearScanWithCalleeOnStack):
+        (JSC::B3::testCheckSelect):
+        (JSC::B3::testCheckSelectCheckSelect):
+        (JSC::B3::testCheckSelectAndCSE):
+        (JSC::B3::testLateRegister):
+        (JSC::B3::testReduceStrengthCheckBottomUseInAnotherBlock):
+        (JSC::B3::testSomeEarlyRegister):
+        (JSC::B3::testTerminalPatchpointThatNeedsToBeSpilled2):
+        (JSC::B3::testPinRegisters):
+        (JSC::B3::testX86LeaAddAddShlLeft):
+        (JSC::B3::testX86LeaAddAddShlRight):
+        (JSC::B3::testX86LeaAddAdd):
+        (JSC::B3::testX86LeaAddShlRight):
+        (JSC::B3::testX86LeaAddShlLeftScale1):
+        (JSC::B3::testX86LeaAddShlLeftScale2):
+        (JSC::B3::testX86LeaAddShlLeftScale4):
+        (JSC::B3::testX86LeaAddShlLeftScale8):
+        (JSC::B3::testLoadBaseIndexShift2):
+        (JSC::B3::testOptimizeMaterialization):
+        (JSC::B3::testLICMPure):
+        (JSC::B3::testLICMPureSideExits):
+        (JSC::B3::testLICMPureWritesPinned):
+        (JSC::B3::testLICMPureWrites):
+        (JSC::B3::testLICMReadsPinned):
+        (JSC::B3::testLICMReads):
+        (JSC::B3::testLICMPureNotBackwardsDominant):
+        (JSC::B3::testLICMPureNotBackwardsDominantFoiledByChild):
+        (JSC::B3::testLICMControlDependent):
+        (JSC::B3::testLICMControlDependentNotBackwardsDominant):
+        (JSC::B3::testLICMReadsWritesDifferentHeaps):
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::run):
+        (main):
+
 2019-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] stress/function-constructor-reading-from-global-lexical-environment.js fails in 32bit arch
