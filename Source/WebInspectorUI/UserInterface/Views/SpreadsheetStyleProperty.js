@@ -67,6 +67,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                     this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
             });
 
+            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, WI.KeyboardShortcut.Key.Slash, () => {
+                this._toggle();
+                this._select();
+            }, this._element);
+
             this._element.copyHandler = this;
         }
     }
@@ -156,9 +161,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._checkboxElement.tabIndex = -1;
             this._checkboxElement.addEventListener("click", (event) => {
                 event.stopPropagation();
-                let disabled = !this._checkboxElement.checked;
-                this._property.commentOut(disabled);
-                this.update();
+                this._toggle();
+                console.assert(this._checkboxElement.checked === this._property.enabled);
             });
         }
 
@@ -407,6 +411,20 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     }
 
     // Private
+
+    _toggle()
+    {
+        this._property.commentOut(this.property.enabled);
+        this.update();
+    }
+
+    _select()
+    {
+        if (this._delegate && this._delegate.spreadsheetStylePropertySelect) {
+            let index = parseInt(this._element.dataset.propertyIndex);
+            this._delegate.spreadsheetStylePropertySelect(index);
+        }
+    }
 
     _isEditable()
     {

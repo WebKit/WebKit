@@ -143,7 +143,6 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     commentOut(disabled)
     {
-        console.assert(this._enabled === disabled, "CSS property is already " + (disabled ? "disabled" : "enabled"));
         if (this._enabled === !disabled)
             return;
 
