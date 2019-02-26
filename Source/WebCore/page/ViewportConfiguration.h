@@ -102,8 +102,9 @@ public:
     bool avoidsUnsafeArea() const { return m_configuration.avoidsUnsafeArea; }
 
     // Matches a width=device-width, initial-scale=1 viewport.
-    WEBCORE_EXPORT static Parameters nativeWebpageParameters();
-    static Parameters scalableNativeWebpageParameters();
+    WEBCORE_EXPORT Parameters nativeWebpageParameters();
+    static Parameters nativeWebpageParametersWithoutShrinkToFit();
+    static Parameters nativeWebpageParametersWithShrinkToFit();
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();
     WEBCORE_EXPORT static Parameters imageDocumentParameters();

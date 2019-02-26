@@ -54,6 +54,15 @@ void UIScriptController::setMinimumEffectiveWidth(double effectiveWidth)
 #endif
 }
 
+void UIScriptController::setAllowsViewportShrinkToFit(bool allows)
+{
+#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+    TestController::singleton().mainWebView()->platformView()._allowsViewportShrinkToFit = allows;
+#else
+    UNUSED_PARAM(allows);
+#endif
+}
+
 void UIScriptController::resignFirstResponder()
 {
 #if WK_API_ENABLED

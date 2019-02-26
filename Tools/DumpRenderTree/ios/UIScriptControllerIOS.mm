@@ -94,6 +94,10 @@ void UIScriptController::setMinimumEffectiveWidth(double)
 {
 }
 
+void UIScriptController::setAllowsViewportShrinkToFit(bool)
+{
+}
+
 void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValueRef)
 {
 }

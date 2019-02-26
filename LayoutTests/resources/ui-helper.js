@@ -636,6 +636,14 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setMinimumEffectiveWidth(${effectiveWidth})`, resolve));
     }
 
+    static setAllowsViewportShrinkToFit(allows)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setAllowsViewportShrinkToFit(${allows})`, resolve));
+    }
+
     static setKeyboardInputModeIdentifier(identifier)
     {
         if (!this.isWebKit2())

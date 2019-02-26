@@ -1,3 +1,27 @@
+2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        scalableNativeWebpageParameters() is not preserved on new page navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=194892
+        <rdar://problem/47538280>
+
+        If a page's current default viewport configuration is scalableNativeWebpageParameters due to
+        the fact that m_canIgnoreScalingConstraints is true, loading a new page should preserve this
+        configuration until we derive the right values from viewport meta-tag.
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::canOverrideConfigurationParameters const): Use fixedNativeWebpageParameters().
+        (WebCore::ViewportConfiguration::updateDefaultConfiguration): Use nativeWebpageParameters.
+        (WebCore::ViewportConfiguration::nativeWebpageParameters): Return the appropriate default configuration
+            based on m_canIgnoreScalingConstraints and shouldIgnoreMinimumEffectiveDeviceWidth().
+        (WebCore::ViewportConfiguration::fixedNativeWebpageParameters): Renamed from nativeWebpageParameters()
+        (WebCore::ViewportConfiguration::scalableNativeWebpageParameters): Use fixedNativeWebpageParameters.
+        * page/ViewportConfiguration.h: Make nativeWebpageParameters() an instance method and change the old
+            static method to fixedNativeWebpageParameters which better reflects the actual behavior.
+
 2019-02-25  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Move observing logic from DOMWindow::clearTimeout to ContentChangeObserver

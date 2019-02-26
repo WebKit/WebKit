@@ -145,7 +145,7 @@ bool ViewportConfiguration::setDisabledAdaptations(const OptionSet<DisabledAdapt
 
 bool ViewportConfiguration::canOverrideConfigurationParameters() const
 {
-    return m_defaultConfiguration == ViewportConfiguration::nativeWebpageParameters() || m_defaultConfiguration == ViewportConfiguration::scalableNativeWebpageParameters();
+    return m_defaultConfiguration == ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit() || m_defaultConfiguration == ViewportConfiguration::nativeWebpageParametersWithShrinkToFit();
 }
 
 void ViewportConfiguration::updateDefaultConfiguration()
@@ -153,15 +153,7 @@ void ViewportConfiguration::updateDefaultConfiguration()
     if (!canOverrideConfigurationParameters())
         return;
 
-    if (m_canIgnoreScalingConstraints) {
-        m_defaultConfiguration = ViewportConfiguration::scalableNativeWebpageParameters();
-        return;
-    }
-
-    if (shouldIgnoreMinimumEffectiveDeviceWidth())
-        m_defaultConfiguration = ViewportConfiguration::nativeWebpageParameters();
-    else
-        m_defaultConfiguration = ViewportConfiguration::scalableNativeWebpageParameters();
+    m_defaultConfiguration = nativeWebpageParameters();
 }
 
 bool ViewportConfiguration::setViewportArguments(const ViewportArguments& viewportArguments)
@@ -335,6 +327,14 @@ bool ViewportConfiguration::allowsUserScalingIgnoringAlwaysScalable() const
 
 ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters()
 {
+    if (m_canIgnoreScalingConstraints || !shouldIgnoreMinimumEffectiveDeviceWidth())
+        return ViewportConfiguration::nativeWebpageParametersWithShrinkToFit();
+
+    return ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit();
+}
+
+ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit()
+{
     Parameters parameters;
     parameters.width = ViewportArguments::ValueDeviceWidth;
     parameters.widthIsSet = true;
@@ -348,9 +348,9 @@ ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters
     return parameters;
 }
 
-ViewportConfiguration::Parameters ViewportConfiguration::scalableNativeWebpageParameters()
+ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParametersWithShrinkToFit()
 {
-    Parameters parameters = ViewportConfiguration::nativeWebpageParameters();
+    Parameters parameters = ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit();
     parameters.allowsShrinkToFit = true;
     parameters.minimumScale = 0.25;
     return parameters;

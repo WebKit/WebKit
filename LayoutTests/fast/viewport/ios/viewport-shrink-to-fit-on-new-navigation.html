@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+
+<html>
+<head>
+     <script src="../../../resources/ui-helper.js"></script>
+     <script>
+     if (window.testRunner) {
+         testRunner.dumpAsText();
+         testRunner.waitUntilDone();
+     }
+
+     async function finishTest() {
+         const appendOutput = message => {
+             output.appendChild(document.createTextNode(message));
+             output.appendChild(document.createElement("br"));
+         };
+
+         appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
+         appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
+         appendOutput("");
+  
+         await UIHelper.setAllowsViewportShrinkToFit(false);
+         await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+
+         testRunner.notifyDone();
+     }
+     
+     async function setUp() {
+         await UIHelper.setAllowsViewportShrinkToFit(true);
+         await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+     }
+
+    window.addEventListener("pageshow", function(event) {
+        alert("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+        if (event.persisted)
+            setTimeout(finishTest, 0);
+        else
+            setUp();
+            
+    }, false);
+
+    // Force a back navigation back to this page.
+    window.addEventListener("load", function(event) {
+        setTimeout(function() {
+            window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            window.location.href = "resources/go-back.html";
+        }, 0);
+    }, false);    
+    </script>
+    
+    <style>
+        .wide {
+            height: 1px;
+            width: 1000px;
+            background-color: gray;
+        }
+    </style>
+</head>
+
+<body>
+<div class="wide"></div>
+<pre id="output"></pre>
+</body>
+</html>

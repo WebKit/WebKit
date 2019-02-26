@@ -236,6 +236,7 @@ interface UIScriptController {
 
     void setViewScale(double scale);
     void setMinimumEffectiveWidth(double effectiveWidth);
+    void setAllowsViewportShrinkToFit(boolean allows);
 
     void resignFirstResponder();
     readonly attribute boolean isPresentingModally;

@@ -1,0 +1,10 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+
+This page should go back.
+<script>
+  window.addEventListener("load", function() {
+    setTimeout(function() {
+      history.back();
+    }, 0);
+  }, false);
+</script>

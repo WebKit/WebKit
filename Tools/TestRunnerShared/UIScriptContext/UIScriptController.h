@@ -72,6 +72,7 @@ public:
     void zoomToScale(double scale, JSValueRef callback);
     void setViewScale(double);
     void setMinimumEffectiveWidth(double);
+    void setAllowsViewportShrinkToFit(bool);
 
     void resignFirstResponder();
 

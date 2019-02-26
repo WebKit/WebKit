@@ -1,3 +1,24 @@
+2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        scalableNativeWebpageParameters() is not preserved on new page navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=194892
+        <rdar://problem/47538280>
+
+        Reviewed by Wenson Hsieh.
+        
+        Allow UIScriptController to set WKWebView's _allowsViewportShrinkToFit property with a new `setAllowsViewportShrinkToFit` method.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setAllowsViewportShrinkToFit):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::allowsViewportShrinkToFit):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setAllowsViewportShrinkToFit):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptController::setAllowsViewportShrinkToFit):
+
 2019-02-25  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add model for handling multiple Buildbot instances

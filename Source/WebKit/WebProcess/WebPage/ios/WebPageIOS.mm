@@ -2906,7 +2906,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
 
     auto parametersForStandardFrame = [&] {
         if (m_page->settings().shouldIgnoreMetaViewport())
-            return ViewportConfiguration::nativeWebpageParameters();
+            return m_viewportConfiguration.nativeWebpageParameters();
 
         return ViewportConfiguration::webpageParameters();
     };

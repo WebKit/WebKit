@@ -1,3 +1,22 @@
+2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        scalableNativeWebpageParameters() is not preserved on new page navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=194892
+        <rdar://problem/47538280>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/viewport/ios/resources/go-back.html: Added.
+        * fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation-expected.txt: Added.
+        * fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html: Added.
+        * fast/viewport/ios/minimum-scale-after-changing-view-scale.html: When shouldIgnoreMetaViewport
+            setting is on, for pages don't have viewport meta-tag, the default configuration is now
+            changed to scalableNativeWebpageParameters(). The original test was under the assumption
+            that the default configuration is always fixedNativeWebpageParameters(). To keep the test
+            still valid, add a viewport meta-tag to it.
+        * resources/ui-helper.js:
+        (window.UIHelper.setAllowsViewportShrinkToFit):
+
 2019-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust initial scale zooming heuristics when changing view scale
