@@ -1,5 +1,27 @@
 2019-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] stress/function-constructor-reading-from-global-lexical-environment.js fails in 32bit arch
+        https://bugs.webkit.org/show_bug.cgi?id=195030
+        <rdar://problem/48385088>
+
+        Reviewed by Saam Barati.
+
+        While LLInt64 has checkTDZInGlobalPutToScopeIfNecessary for op_put_to_scope GlobalLexicalVar to check the value in the variable slot is not empty,
+        this check is missing in LLInt32_64. Previously, this check was subsumed accidentally by the WatchpointSet check in GlobalLexicalVar in `notifyWrite`:
+        because no "put" attempt succeeds here, the status WatchpointSet was ClearWatchpoint, we always go to the slow path, and we always throw the TDZ error
+        before configuring the WatchpointSet in the slow path. But after r241862, WatchpointSet is not used under non-JIT configuration. This skips WatchpointSet
+        check and LLInt32_64 starts failing tests because of lack of checkTDZInGlobalPutToScopeIfNecessary. This patch adds checkTDZInGlobalPutToScopeIfNecessary
+        in LLInt32_64 too. This patch fixes the following four failing tests.
+
+            stress/function-constructor-reading-from-global-lexical-environment.js.bytecode-cache
+            stress/function-constructor-reading-from-global-lexical-environment.js.default
+            stress/global-lexical-variable-tdz.js.bytecode-cache
+            stress/global-lexical-variable-tdz.js.default
+
+        * llint/LowLevelInterpreter32_64.asm:
+
+2019-02-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make Intl fields lazily-allocated
         https://bugs.webkit.org/show_bug.cgi?id=195022
 
