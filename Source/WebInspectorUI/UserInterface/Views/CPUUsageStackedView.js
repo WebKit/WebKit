@@ -23,33 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CPUUsageView = class CPUUsageView extends WI.View
+WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
 {
     constructor(displayName)
     {
         super();
 
-        this.element.classList.add("cpu-usage-view");
+        this.element.classList.add("cpu-usage-stacked-view");
 
         this._detailsElement = this.element.appendChild(document.createElement("div"));
         this._detailsElement.classList.add("details");
 
-        if (displayName) {
-            let detailsNameElement = this._detailsElement.appendChild(document.createElement("span"));
-            detailsNameElement.classList.add("name");
-            detailsNameElement.textContent = displayName;
-            this._detailsElement.appendChild(document.createElement("br"));
-        }
+        let detailsNameElement = this._detailsElement.appendChild(document.createElement("span"));
+        detailsNameElement.classList.add("name");
+        detailsNameElement.textContent = displayName;
 
+        this._detailsElement.appendChild(document.createElement("br"));
         this._detailsAverageElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
         this._detailsMaxElement = this._detailsElement.appendChild(document.createElement("span"));
+        this._detailsElement.appendChild(document.createElement("br"));
+        this._detailsMinElement = this._detailsElement.appendChild(document.createElement("span"));
         this._updateDetails(NaN, NaN);
 
         this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
 
-        this._chart = new WI.LineChart;
+        this._chart = new WI.StackedLineChart;
+        this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
         this.addSubview(this._chart);
         this._graphElement.appendChild(this._chart.element);
     }
@@ -61,20 +62,21 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
     clear()
     {
         this._cachedAverageSize = undefined;
+        this._cachedMinSize = undefined;
         this._cachedMaxSize = undefined;
         this._updateDetails(NaN, NaN);
 
         this._chart.clear();
+        this._chart.needsLayout();
     }
 
-    updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale, property)
+    updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale)
     {
         console.assert(size instanceof WI.Size);
         console.assert(min >= 0);
         console.assert(max >= 0);
         console.assert(min <= max);
         console.assert(min <= average && average <= max);
-        console.assert(property, "CPUUsageView needs a property of the dataPoints to graph");
 
         this._updateDetails(min, max, average);
 
@@ -91,37 +93,42 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
 
         // Extend the first data point to the start so it doesn't look like we originate at zero size.
         let firstX = 0;
-        let firstY = yScale(dataPoints[0][property]);
-        this._chart.addPoint(firstX, firstY);
+        let firstY1 = yScale(dataPoints[0].mainThreadUsage);
+        let firstY2 = yScale(dataPoints[0].mainThreadUsage + dataPoints[0].workerThreadUsage);
+        let firstY3 = yScale(dataPoints[0].usage);
+        this._chart.addPointSet(firstX, [firstY1, firstY2, firstY3]);
 
         // Points for data points.
         for (let dataPoint of dataPoints) {
             let x = xScale(dataPoint.time);
-            let y = yScale(dataPoint[property]);
-            this._chart.addPoint(x, y);
+            let y1 = yScale(dataPoint.mainThreadUsage);
+            let y2 = yScale(dataPoint.mainThreadUsage + dataPoint.workerThreadUsage);
+            let y3 = yScale(dataPoint.usage)
+            this._chart.addPointSet(x, [y1, y2, y3]);
         }
 
         // Extend the last data point to the end time.
         let lastDataPoint = dataPoints.lastValue;
         let lastX = Math.floor(xScale(visibleEndTime));
-        let lastY = yScale(lastDataPoint[property]);
-        this._chart.addPoint(lastX, lastY);
+        let lastY1 = yScale(lastDataPoint.mainThreadUsage);
+        let lastY2 = yScale(lastDataPoint.mainThreadUsage + lastDataPoint.workerThreadUsage);
+        let lastY3 = yScale(lastDataPoint.usage);
+        this._chart.addPointSet(lastX, [lastY1, lastY2, lastY3]);
     }
 
     // Private
 
     _updateDetails(minSize, maxSize, averageSize)
     {
-        if (this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
+        if (this._cachedMinSize === minSize && this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
             return;
 
         this._cachedAverageSize = averageSize;
+        this._cachedMinSize = minSize;
         this._cachedMaxSize = maxSize;
 
-        this._detailsAverageElement.hidden = !Number.isFinite(averageSize);
-        this._detailsMaxElement.hidden = !Number.isFinite(maxSize);
-
-        this._detailsAverageElement.textContent = WI.UIString("Average: %s").format(Number.isFinite(averageSize) ? Number.percentageString(averageSize / 100) : emDash);
+        this._detailsAverageElement.textContent = WI.UIString("Average: %s").format(Number.isFinite(maxSize) ? Number.percentageString(averageSize / 100) : emDash);
         this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.percentageString(maxSize / 100) : emDash);
+        this._detailsMinElement.textContent = WI.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.percentageString(minSize / 100) : emDash);
     }
 };

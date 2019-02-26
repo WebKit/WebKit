@@ -27,8 +27,12 @@ body .timeline-view.cpu {
     overflow: scroll;
 }
 
-.timeline-view.cpu > .content {
-    margin-top: 10px;
+.timeline-view.cpu > .content > .overview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .timeline-view.cpu > .content .subtitle {
@@ -63,12 +67,150 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     border-bottom: 1px solid var(--border-color);
 }
 
-.cpu-usage-view .line-chart > svg > path {
+.timeline-view.cpu > .content > .details > .subtitle.threads {
+    position: relative;
+    z-index: calc(var(--timeline-marker-z-index) + 1);
+    padding-top: 10px;
+    background-color: var(--background-color-content);
+}
+
+.timeline-view.cpu > .content > .overview > .chart {
+    width: 420px;
+    text-align: center;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .subtitle {
+    margin-bottom: 1em;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container {
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-view.cpu > .content > .overview .samples,
+.timeline-view.cpu > .content > .overview .legend .size {
+    margin: auto;
+    color: var(--text-color-secondary);
+}
+
+.timeline-view.cpu .legend {
+    -webkit-padding-start: 20px;
+    text-align: start;
+}
+
+.timeline-view.cpu .legend .row {
+    display: flex;
+}
+
+.timeline-view.cpu .legend .row + .row {
+    margin-top: 4px;
+}
+
+.timeline-view.cpu .legend .swatch {
+    width: 1em;
+    height: 1em;
+    margin-top: 1px;
+    -webkit-margin-end: 8px;
+}
+
+.timeline-view.cpu .legend > .row > .swatch.sample-type-idle {
+    border: 1px solid var(--cpu-idle-stroke-color);
+    background-color: var(--cpu-idle-fill-color);
+}
+
+.timeline-view.cpu .legend > .row > .swatch.sample-type-script {
+    border: 1px solid var(--cpu-script-stroke-color);
+    background-color: var(--cpu-script-fill-color);
+}
+
+.timeline-view.cpu .legend > .row > .swatch.sample-type-style {
+    border: 1px solid var(--cpu-style-stroke-color);
+    background-color: var(--cpu-style-fill-color);
+}
+
+.timeline-view.cpu .legend > .row > .swatch.sample-type-layout {
+    border: 1px solid var(--cpu-layout-stroke-color);
+    background-color: var(--cpu-layout-fill-color);
+}
+
+.timeline-view.cpu .legend > .row > .swatch.sample-type-paint {
+    border: 1px solid var(--cpu-paint-stroke-color);
+    background-color: var(--cpu-paint-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-idle {
+    stroke: var(--cpu-idle-stroke-color);
+    fill: var(--cpu-idle-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-script {
+    stroke: var(--cpu-script-stroke-color);
+    fill: var(--cpu-script-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-style {
+    stroke: var(--cpu-style-stroke-color);
+    fill: var(--cpu-style-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-layout {
+    stroke: var(--cpu-layout-stroke-color);
+    fill: var(--cpu-layout-fill-color);
+}
+
+.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-paint {
+    stroke: var(--cpu-paint-stroke-color);
+    fill: var(--cpu-paint-fill-color);
+}
+
+.timeline-view.cpu svg > path {
     stroke: var(--cpu-stroke-color);
     fill: var(--cpu-fill-color);
 }
 
-.timeline-view.cpu .legend > .row > .swatch.current {
-    border: 1px solid var(--cpu-max-comparison-stroke-color);
-    background: var(--cpu-max-comparison-fill-color);
+.timeline-view.cpu .main-thread svg > path,
+.timeline-view.cpu svg > path.main-thread-usage {
+    fill: var(--cpu-main-thread-fill-color);
+}
+
+.timeline-view.cpu .worker-thread svg > path,
+.timeline-view.cpu svg > path.worker-thread-usage {
+    fill: var(--cpu-worker-thread-fill-color);
+}
+
+.timeline-view.cpu .cpu-usage-view.empty {
+    display: none;
+}
+
+.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 1px;
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
+}
+
+body[dir=ltr] .timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+    text-align: end;
+}
+
+body[dir=rtl] .timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div {
+    transform: scaleX(-1);
+}
+
+.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div > .label {
+    padding: 2px;
+    font-size: 8px;
+    color: var(--text-color-secondary);
+    background-color: var(--background-color-content);
 }

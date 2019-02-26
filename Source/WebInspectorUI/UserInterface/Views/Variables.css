@@ -129,7 +129,20 @@
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
 
     --cpu-stroke-color: hsl(118, 33%, 42%);
-    --cpu-fill-color: hsl(118, 43%, 55%);
+    --cpu-fill-color: hsl(81, 80%, 50%);
+    --cpu-main-thread-fill-color: hsl(118, 43%, 55%);
+    --cpu-worker-thread-fill-color: hsl(45, 94.75%, 55%);
+
+    --cpu-idle-fill-color: hsl(220, 10%, 75%);
+    --cpu-idle-stroke-color: hsl(220, 10%, 55%);
+    --cpu-script-fill-color: hsl(269, 65%, 75%);
+    --cpu-script-stroke-color: hsl(269, 33%, 50%);
+    --cpu-style-fill-color: hsl(22, 60%, 70%);
+    --cpu-style-stroke-color: hsl(22, 40%, 50%);
+    --cpu-layout-fill-color: hsl(0, 65%, 75%);
+    --cpu-layout-stroke-color: hsl(0, 54%, 50%);
+    --cpu-paint-fill-color: hsl(76, 49%, 75%);
+    --cpu-paint-stroke-color: hsl(79, 45%, 50%);
 
     --network-header-color: hsl(204, 52%, 55%);
     --network-system-color: hsl(79, 32%, 50%);

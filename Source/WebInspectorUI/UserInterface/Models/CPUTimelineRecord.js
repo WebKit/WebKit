@@ -43,6 +43,7 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
         this._webkitThreadUsage = 0;
         this._workerThreadUsage = 0;
         this._unknownThreadUsage = 0;
+        this._workersData = null;
 
         for (let thread of threads) {
             if (thread.type === InspectorBackend.domains.CPUProfiler.ThreadInfoType.Main) {
@@ -52,10 +53,15 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
             }
 
             if (thread.type === InspectorBackend.domains.CPUProfiler.ThreadInfoType.WebKit) {
-                if (thread.targetId)
+                if (thread.targetId) {
+                    if (!this._workersData)
+                        this._workersData = [];
+                    this._workersData.push(thread);
                     this._workerThreadUsage += thread.usage;
-                else
-                    this._webkitThreadUsage += thread.usage;
+                    continue;
+                }
+
+                this._webkitThreadUsage += thread.usage;
                 continue;
             }
 
@@ -72,4 +78,5 @@ WI.CPUTimelineRecord = class CPUTimelineRecord extends WI.TimelineRecord
     get webkitThreadUsage() { return this._webkitThreadUsage; }
     get workerThreadUsage() { return this._workerThreadUsage; }
     get unknownThreadUsage() { return this._unknownThreadUsage; }
+    get workersData() { return this._workersData; }
 };

@@ -1,5 +1,147 @@
 2019-02-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Thread Breakdown
+        https://bugs.webkit.org/show_bug.cgi?id=194788
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and files.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        New colors for cpu threads / activity breakdown.
+
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord.prototype.get workers):
+        (WI.CPUTimelineRecord):
+        Distinguish the workers in a CPU timeline record.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph):
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect):
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.main-thread-usage):
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.worker-thread-usage):
+        (.timeline-overview-graph.cpu > .column-chart > svg > rect):
+        Stacked column chart for CPU in the overview graph.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .overview):
+        (.timeline-view.cpu > .content > .details > .subtitle.threads):
+        (.timeline-view.cpu > .content > .overview > .chart):
+        (.timeline-view.cpu > .content > .overview > .chart > .subtitle):
+        (.timeline-view.cpu > .content > .overview > .chart > .container):
+        (.timeline-view.cpu > .content > .overview .samples,):
+        (.timeline-view.cpu .legend):
+        (.timeline-view.cpu .legend .row):
+        (.timeline-view.cpu .legend .row + .row):
+        (.timeline-view.cpu .legend .swatch):
+        (.timeline-view.cpu .legend > .row > .swatch.sample-type-idle):
+        (.timeline-view.cpu .legend > .row > .swatch.sample-type-script):
+        (.timeline-view.cpu .legend > .row > .swatch.sample-type-style):
+        (.timeline-view.cpu .legend > .row > .swatch.sample-type-layout):
+        (.timeline-view.cpu .legend > .row > .swatch.sample-type-paint):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-idle):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-script):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-style):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-layout):
+        (.timeline-view.cpu .circle-chart > svg > path.segment.sample-type-paint):
+        (.timeline-view.cpu svg > path):
+        (.timeline-view.cpu .main-thread svg > path,):
+        (.timeline-view.cpu .worker-thread svg > path,):
+        (.timeline-view.cpu .cpu-usage-view.empty):
+        (.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers):
+        (.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div):
+        (.timeline-view.cpu :matches(.line-chart, .stacked-line-chart) .markers > div > .label):
+        (.timeline-view.cpu > .content): Deleted.
+        (.cpu-usage-view .line-chart > svg > path): Deleted.
+        (.timeline-view.cpu .legend > .row > .swatch.current): Deleted.
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView):
+        (WI.CPUTimelineView.displayNameForSampleType):
+        (WI.CPUTimelineView.prototype.shown):
+        (WI.CPUTimelineView.prototype.clear.clearUsageView):
+        (WI.CPUTimelineView.prototype.clear):
+        (WI.CPUTimelineView.prototype.initialLayout.createChartContainer):
+        (WI.CPUTimelineView.prototype.initialLayout.appendLegendRow):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype.layout.removeGreaterThan):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype.layout.layoutView):
+        (WI.CPUTimelineView.prototype.layout.yScale):
+        (WI.CPUTimelineView.prototype._computeSamplingData.markRecordEntries):
+        (WI.CPUTimelineView.prototype._computeSamplingData):
+        (WI.CPUTimelineView.prototype._removeWorkerThreadViews):
+        (WI.CPUTimelineView.prototype._clearBreakdownLegend):
+        (WI.CPUTimelineView.prototype.layout.xScale): Deleted.
+        Line charts and Circle Chart for threads and breakdowns.
+
+        * UserInterface/Views/CPUUsageStackedView.css:
+        (.cpu-usage-stacked-view):
+        (.cpu-usage-stacked-view > .details):
+        (body[dir=ltr] .cpu-usage-stacked-view > .details):
+        (body[dir=rtl] .cpu-usage-stacked-view > .details):
+        (.cpu-usage-stacked-view > .details > .name):
+        (body[dir=rtl] .cpu-usage-stacked-view > .graph):
+        (.cpu-usage-stacked-view > .graph):
+        (.cpu-usage-stacked-view > .graph,):
+        * UserInterface/Views/CPUUsageStackedView.js:
+        (WI.CPUUsageStackedView):
+        (WI.CPUUsageStackedView.prototype.get chart):
+        (WI.CPUUsageStackedView.prototype.clear):
+        (WI.CPUUsageStackedView.prototype.updateChart):
+        (WI.CPUUsageStackedView.prototype._updateDetails):
+        Same as CPUUsageView except Stacked for the total.
+
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view):
+        (.cpu-usage-view > .details):
+        (.cpu-usage-view > .details > .name):
+        (.cpu-usage-view > .graph):
+        * UserInterface/Views/CPUUsageView.js:
+        (WI.CPUUsageView):
+        (WI.CPUUsageView.prototype.get chart):
+        (WI.CPUUsageView.prototype.clear):
+        (WI.CPUUsageView.prototype.updateChart):
+        (WI.CPUUsageView.prototype._updateDetails):
+        Slight modifications for the new UI.
+
+        * UserInterface/Views/LegacyCPUTimelineView.css:
+        (.timeline-view.legacy-cpu .cpu-usage-view .line-chart > svg > path):
+        * UserInterface/Views/LegacyCPUTimelineView.js:
+        (WI.LegacyCPUTimelineView.prototype.layout):
+        Update API calls in the legacy view for minor changes.
+
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view > .details):
+        (.memory-category-view > .details > .name):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/MemoryTimelineView.css:
+        (body .timeline-view.memory):
+        (.timeline-view.memory): Deleted.
+        Improvements ported from the CPU timeline views.
+
+        * UserInterface/Views/StackedColumnChart.js: Added.
+        (WI.StackedColumnChart):
+        (WI.StackedColumnChart.prototype.get size):
+        (WI.StackedColumnChart.prototype.set size):
+        (WI.StackedColumnChart.prototype.initializeSections):
+        (WI.StackedColumnChart.prototype.addColumnSet):
+        (WI.StackedColumnChart.prototype.clear):
+        (WI.StackedColumnChart.prototype.layout):
+        A stacked column chart implementation.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype.removeUnparentedSubview):
+        Add a way to remove a subview that had its `element` moved
+        someplace other than a direct child of our element.
+
+2019-02-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Dark Mode: Network Overview Graph segments have distracting white box shadow
         https://bugs.webkit.org/show_bug.cgi?id=194966
 

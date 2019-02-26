@@ -57,11 +57,29 @@ body[dir=rtl] .timeline-overview-graph.cpu > .legend {
     background-color: var(--timeline-even-background-color);
 }
 
-body[dir=rtl] .timeline-overview-graph.cpu > .column-chart {
+body[dir=rtl] .timeline-overview-graph.cpu > .stacked-column-chart {
     transform: scaleX(-1);
 }
 
-.timeline-overview-graph.cpu > .column-chart > svg > rect {
+.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect {
     stroke: var(--cpu-stroke-color);
     fill: var(--cpu-fill-color);
+}
+
+.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.main-thread-usage {
+    fill: var(--cpu-main-thread-fill-color);
+}
+
+.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.worker-thread-usage {
+    fill: var(--cpu-worker-thread-fill-color);
+}
+
+/* LegacyCPUTimeline */
+.timeline-overview-graph.cpu > .column-chart > svg > rect {
+    stroke: var(--cpu-stroke-color);
+    fill: var(--cpu-main-thread-fill-color);
+}
+
+body[dir=rtl] .timeline-overview-graph.cpu > .column-chart {
+    transform: scaleX(-1);
 }

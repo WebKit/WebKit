@@ -210,8 +210,6 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
                 this._chart.addPointSet(x, pointSetForRecord(lastRecord));
             }
         }
-
-        this._chart.updateLayout();
     }
 
     // Private

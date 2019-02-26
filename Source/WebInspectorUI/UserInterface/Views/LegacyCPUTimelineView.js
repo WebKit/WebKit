@@ -57,6 +57,10 @@ WI.LegacyCPUTimelineView = class LegacyCPUTimelineView extends WI.TimelineView
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
     }
 
+    // Static
+
+    static get cpuUsageViewHeight() { return 150; }
+
     // Public
 
     shown()
@@ -95,6 +99,11 @@ WI.LegacyCPUTimelineView = class LegacyCPUTimelineView extends WI.TimelineView
 
     get showsFilterBar() { return false; }
 
+    initialLayout()
+    {
+        this.element.style.setProperty("--cpu-usage-view-height", LegacyCPUTimelineView.cpuUsageViewHeight + "px");
+    }
+
     layout()
     {
         if (this.layoutReason === WI.View.LayoutReason.Resize)
@@ -104,8 +113,6 @@ WI.LegacyCPUTimelineView = class LegacyCPUTimelineView extends WI.TimelineView
         this._timelineRuler.zeroTime = this.zeroTime;
         this._timelineRuler.startTime = this.startTime;
         this._timelineRuler.endTime = this.endTime;
-
-        const cpuUsageViewHeight = 75; // Keep this in sync with .legacy-cpu-usage-view
 
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
@@ -168,13 +175,13 @@ WI.LegacyCPUTimelineView = class LegacyCPUTimelineView extends WI.TimelineView
                 return (time - graphStartTime) / secondsPerPixel;
             }
 
-            let size = new WI.Size(xScale(graphEndTime), cpuUsageViewHeight);
+            let size = new WI.Size(xScale(graphEndTime), LegacyCPUTimelineView.cpuUsageViewHeight);
 
             function yScale(value) {
                 return size.height - (((value - graphMin) / graphMax) * size.height);
             }
 
-            view.updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale);
+            view.updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale, "size");
         }
 
         layoutView(this._cpuUsageView, {dataPoints, min, max, average});

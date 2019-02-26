@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.memory-category-view {
+.cpu-usage-stacked-view {
     display: flex;
     width: 100%;
-    height: 76px; /* Keep this in sync with memoryCategoryViewHeight + 1 (for border-bottom) */
+    height: calc(var(--cpu-usage-stacked-view-height) + 1px); /* +1 for border-bottom */
     border-bottom: 1px solid var(--border-color);
 }
 
-.memory-category-view > .details {
+.cpu-usage-stacked-view > .details {
     flex-shrink: 0;
     width: 150px;
     padding-top: 10px;
@@ -43,18 +43,22 @@
     -webkit-border-end: 1px solid var(--border-color);
 }
 
-.memory-category-view > .details > .name {
+.cpu-usage-stacked-view > .details > .name {
     color: var(--text-color);
     white-space: nowrap;
 }
 
-body[dir=rtl] .memory-category-view > .graph {
+body[dir=rtl] .cpu-usage-stacked-view > .graph {
     transform: scaleX(-1);
 }
 
-.memory-category-view > .graph,
-.memory-category-view > .graph > .line-chart,
-.memory-category-view > .graph > .line-chart > svg {
+.cpu-usage-stacked-view > .graph {
+    position: relative;
+}
+
+.cpu-usage-stacked-view > .graph,
+.cpu-usage-stacked-view > .graph > .stacked-line-chart,
+.cpu-usage-stacked-view > .graph > .stacked-line-chart > svg {
     width: 100%;
     height: 100%;
 }

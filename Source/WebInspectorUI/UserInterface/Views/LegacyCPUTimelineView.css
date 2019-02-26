@@ -65,5 +65,5 @@ body[dir=rtl] .timeline-view.legacy-cpu > .content > .details > .timeline-ruler 
 
 .timeline-view.legacy-cpu .cpu-usage-view .line-chart > svg > path {
     stroke: var(--cpu-stroke-color);
-    fill: var(--cpu-fill-color);
+    fill: var(--cpu-main-thread-fill-color);
 }
