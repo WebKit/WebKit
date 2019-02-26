@@ -1,5 +1,17 @@
 2019-02-26  Frederic Wang  <fwang@igalia.com>
 
+        Synchronize MathML WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=195048
+
+        This imports changes to the documentation and spec references for MathML.
+        It also imports a new test for href currently disabled due to bug 187039.
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Disable the new href test since testdriver.js is not supported.
+
+2019-02-26  Frederic Wang  <fwang@igalia.com>
+
         Export MathML fraction tests to WPT
         https://bugs.webkit.org/show_bug.cgi?id=194436
 
