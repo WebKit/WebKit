@@ -972,10 +972,6 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
-#if ENABLE(MEDIA_STREAM)
-    m_userMediaPermissionRequestManager = nullptr;
-#endif
-
     reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
 
     if (m_activePopupMenu)
@@ -4293,7 +4289,8 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
 void WebPageProxy::didChangeMainDocument(uint64_t frameID)
 {
 #if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().resetAccess(frameID);
+    if (m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager->resetAccess(frameID);
 #else
     UNUSED_PARAM(frameID);
 #endif
@@ -4302,7 +4299,8 @@ void WebPageProxy::didChangeMainDocument(uint64_t frameID)
 void WebPageProxy::viewIsBecomingVisible()
 {
 #if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().viewIsBecomingVisible();
+    if (m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager->viewIsBecomingVisible();
 #endif
 }
 
@@ -7139,7 +7137,8 @@ void WebPageProxy::beginMonitoringCaptureDevices()
 void WebPageProxy::clearUserMediaState()
 {
 #if ENABLE(MEDIA_STREAM)
-    userMediaPermissionRequestManager().clearCachedState();
+    if (m_userMediaPermissionRequestManager)
+        m_userMediaPermissionRequestManager->clearCachedState();
 #endif
 }
 
@@ -7869,7 +7868,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 #if ENABLE(MEDIA_STREAM)
     if (oldMediaCaptureState != newMediaCaptureState) {
         m_uiClient->mediaCaptureStateDidChange(m_mediaState);
-        userMediaPermissionRequestManager().captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
+        m_userMediaPermissionRequestManager->captureStateChanged(oldMediaCaptureState, newMediaCaptureState);
     }
 #endif
 

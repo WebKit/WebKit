@@ -1,3 +1,23 @@
+2019-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Create WebPageProxy::m_userMediaPermissionRequestManager only when needed
+        https://bugs.webkit.org/show_bug.cgi?id=195051
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, WebPageProxy::m_userMediaPermissionRequestManager was created
+        in some methods to reset its state when main document is changing, view is becoming visible...
+        This code is unnecessary if the page did not create it already using JS APIs such as getUserMedia/enumerateDevices/ondevicechange.
+        This patch skips processing in the other cases if WebPageProxy::m_userMediaPermissionRequestManager is null.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): No need to nullify it since it will be done in resetState shortly after.
+        (WebKit::WebPageProxy::didChangeMainDocument):
+        (WebKit::WebPageProxy::viewIsBecomingVisible):
+        (WebKit::WebPageProxy::clearUserMediaState):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange): m_userMediaPermissionRequestManager should not be null here
+        since there is or was some capturing done for the page.
+
 2019-02-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Simplify content observation API by removing explicit DOMTimer observation.
