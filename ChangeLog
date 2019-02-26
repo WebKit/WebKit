@@ -1,3 +1,14 @@
+2019-02-26  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Fix warnings on ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=195049
+
+        Reviewed by Mark Lam.
+
+        Disable warnings for changes to the ABI with GCC 7.1.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2019-02-25  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Bump WPEBackend-fdo requirement to API version 1.0

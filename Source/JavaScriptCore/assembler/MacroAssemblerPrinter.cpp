@@ -138,17 +138,17 @@ void printMemory(PrintStream& out, Context& context)
             return;
         }
         if (memory.numBytes == sizeof(int16_t)) {
-            auto p = reinterpret_cast<int16_t*>(ptr);
+            auto p = bitwise_cast<int16_t*>(ptr);
             out.printf("%p:<0x%04x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int32_t)) {
-            auto p = reinterpret_cast<int32_t*>(ptr);
+            auto p = bitwise_cast<int32_t*>(ptr);
             out.printf("%p:<0x%08x %d>", p, *p, *p);
             return;
         }
         if (memory.numBytes == sizeof(int64_t)) {
-            auto p = reinterpret_cast<int64_t*>(ptr);
+            auto p = bitwise_cast<int64_t*>(ptr);
             out.printf("%p:<0x%016" PRIx64 " %" PRId64 ">", p, *p, *p);
             return;
         }

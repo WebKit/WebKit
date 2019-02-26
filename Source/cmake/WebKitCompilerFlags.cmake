@@ -131,7 +131,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Qunused-arguments
                                          -Wno-maybe-uninitialized
                                          -Wno-noexcept-type
-                                         -Wno-parentheses-equality)
+                                         -Wno-parentheses-equality
+                                         -Wno-psabi)
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80947
     if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "8.0" AND NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")

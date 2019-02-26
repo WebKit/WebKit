@@ -246,6 +246,7 @@ static Vector<double> doubleOperands()
 }
 
 
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
 static Vector<float> floatOperands()
 {
     return Vector<float> {
@@ -263,6 +264,7 @@ static Vector<float> floatOperands()
         -std::numeric_limits<float>::infinity(),
     };
 }
+#endif
 
 static Vector<int32_t> int32Operands()
 {
@@ -779,7 +781,9 @@ void testProbeModifiesStackValues()
     CPUState originalState;
     void* originalSP { nullptr };
     void* newSP { nullptr };
+#if !CPU(MIPS)
     uintptr_t modifiedFlags { 0 };
+#endif
     size_t numberOfExtraEntriesToWrite { 10 }; // ARM64 requires that this be 2 word aligned.
 
 #if CPU(X86) || CPU(X86_64)

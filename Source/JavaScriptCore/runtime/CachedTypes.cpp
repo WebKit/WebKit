@@ -354,7 +354,7 @@ protected:
     template<typename T>
     const T* buffer() const
     {
-        return reinterpret_cast<const T*>(buffer());
+        return bitwise_cast<const T*>(buffer());
     }
 
     uint8_t* allocate(Encoder& encoder, size_t size)

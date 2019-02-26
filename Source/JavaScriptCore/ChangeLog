@@ -1,3 +1,24 @@
+2019-02-26  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Fix warnings on ARM and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=195049
+
+        Reviewed by Mark Lam.
+
+        Fix all warnings on ARM and MIPS.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printMemory):
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesStackValues):
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeFor):
+        * runtime/CachedTypes.cpp:
+        (JSC::VariableLengthObject::buffer const):
+        * runtime/JSBigInt.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::codeBlockFromArg):
+
 2019-02-26  Mark Lam  <mark.lam@apple.com>
 
         Misc cleanup in StructureIDTable after r242096.
