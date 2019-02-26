@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -198,8 +198,8 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         
 #if USE(JSVALUE64)
         // This detects the worst of the badness.
-        if (!heap()->structureIDTable().isValid(structureID))
-            die("GC scan found corrupt object: structureID is invalid!\n");
+        if (structureID >= heap()->structureIDTable().size())
+            die("GC scan found corrupt object: structureID is out of bounds!\n");
 #endif
     };
     

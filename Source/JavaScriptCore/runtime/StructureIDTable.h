@@ -82,8 +82,6 @@ inline StructureID decontaminate(StructureID id)
 
 #if USE(JSVALUE64)
 
-using EncodedStructureBits = uintptr_t;
-
 class StructureIDTable {
     friend class LLIntOffsetsExtractor;
 public:
@@ -91,7 +89,6 @@ public:
 
     void** base() { return reinterpret_cast<void**>(&m_table); }
 
-    bool isValid(StructureID);
     Structure* get(StructureID);
     void deallocateID(Structure*, StructureID);
     StructureID allocateID(Structure*);
@@ -107,14 +104,12 @@ private:
     union StructureOrOffset {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        EncodedStructureBits encodedStructureBits;
+        Structure* structure;
         StructureID offset;
     };
 
     StructureOrOffset* table() const { return m_table.get(); }
-    static Structure* decode(EncodedStructureBits, StructureID);
-    static EncodedStructureBits encode(Structure*, StructureID);
-
+    
     static constexpr size_t s_initialSize = 512;
 
     Vector<UniqueArray<StructureOrOffset>> m_oldTables;
@@ -128,65 +123,15 @@ private:
 
     WeakRandom m_weakRandom;
 
-    static constexpr StructureID s_unusedID = 0;
-
-public:
-    // 1. StructureID is encoded as:
-    //
-    //    ----------------------------------------------------------------
-    //    | 1 Nuke Bit | 24 StructureIDTable index bits | 7 entropy bits |
-    //    ----------------------------------------------------------------
-    //
-    //    The entropy bits are chosen at random and assigned when a StructureID
-    //    is allocated.
-    //
-    // 2. For each StructureID, the StructureIDTable stores encodedStructureBits
-    //    which are encoded from the structure pointer as such:
-    //
-    //    ----------------------------------------------------------------
-    //    | 7 entropy bits |                   57 structure pointer bits |
-    //    ----------------------------------------------------------------
-    //
-    //    The entropy bits here are the same 7 bits used in the encoding of the
-    //    StructureID for this structure entry in the StructureIDTable.
-
-    static constexpr uint32_t s_numberOfNukeBits = 1;
-    static constexpr uint32_t s_numberOfEntropyBits = 7;
-    static constexpr uint32_t s_entropyBitsShiftForStructurePointer = 64 - s_numberOfEntropyBits;
-
-    static constexpr uint32_t s_maximumNumberOfStructures = 1 << (32 - s_numberOfEntropyBits - s_numberOfNukeBits);
+    static const StructureID s_unusedID = unusedPointer;
 };
-
-ALWAYS_INLINE Structure* StructureIDTable::decode(EncodedStructureBits bits, StructureID structureID)
-{
-    return reinterpret_cast<Structure*>(bits ^ (static_cast<uintptr_t>(structureID) << s_entropyBitsShiftForStructurePointer));
-}
-
-ALWAYS_INLINE EncodedStructureBits StructureIDTable::encode(Structure* structure, StructureID structureID)
-{
-    return reinterpret_cast<EncodedStructureBits>(structure) ^ (static_cast<EncodedStructureBits>(structureID) << s_entropyBitsShiftForStructurePointer);
-}
 
 inline Structure* StructureIDTable::get(StructureID structureID)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(structureID);
     ASSERT_WITH_SECURITY_IMPLICATION(!isNuked(structureID));
-    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
-    ASSERT_WITH_SECURITY_IMPLICATION(structureIndex < m_capacity);
-    return decode(table()[structureIndex].encodedStructureBits, structureID);
-}
-
-inline bool StructureIDTable::isValid(StructureID structureID)
-{
-    if (!structureID)
-        return false;
-    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
-    if (structureIndex >= m_capacity)
-        return false;
-    Structure* structure = decode(table()[structureIndex].encodedStructureBits, structureID);
-    if (reinterpret_cast<uintptr_t>(structure) >> s_entropyBitsShiftForStructurePointer)
-        return false;
-    return true;
+    ASSERT_WITH_SECURITY_IMPLICATION(structureID < m_capacity);
+    return table()[structureID].structure;
 }
 
 #else // not USE(JSVALUE64)

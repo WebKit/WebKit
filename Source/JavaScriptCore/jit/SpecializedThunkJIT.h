@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,15 @@ namespace JSC {
         {
             loadCellArgument(argument, dst);
             m_failures.append(branchIfNotString(dst));
+        }
+        
+        void loadArgumentWithSpecificClass(const ClassInfo* classInfo, int argument, RegisterID dst, RegisterID scratch)
+        {
+            loadCellArgument(argument, dst);
+            emitLoadStructure(*vm(), dst, scratch, dst);
+            appendFailure(branchPtr(NotEqual, Address(scratch, Structure::classInfoOffset()), TrustedImmPtr(PoisonedClassInfoPtr(classInfo).bits())));
+            // We have to reload the argument since emitLoadStructure clobbered it.
+            loadCellArgument(argument, dst);
         }
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)

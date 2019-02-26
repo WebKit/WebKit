@@ -1,3 +1,15 @@
+2019-02-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r242071.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Add some randomness into the StructureID."
+        https://bugs.webkit.org/show_bug.cgi?id=194989
+        https://trac.webkit.org/changeset/242071
+
 2019-02-26  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Fix compilation on 32-bit platforms after r242071
