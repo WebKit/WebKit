@@ -1,5 +1,27 @@
 2019-02-26  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: if no auto-capture value is specified, don't force the input to have "0" as the value
+        https://bugs.webkit.org/show_bug.cgi?id=194950
+        <rdar://problem/48276798>
+
+        Reviewed by Joseph Pecoraro.
+
+        Create a getter/setter for the value of the auto-capture frame count <input> so that all
+        code follows the same path.
+
+        If the <input> currently has no content and the frame count is 0, only set the placeholder.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype._setRecordingAutoCaptureFrameCount):
+        (WI.CanvasOverviewContentView.prototype._updateRecordingAutoCaptureCheckboxLabel):
+        (WI.CanvasOverviewContentView.prototype.get _recordingAutoCaptureFrameCountInputElementValue): Added.
+        (WI.CanvasOverviewContentView.prototype.set _recordingAutoCaptureFrameCountInputElementValue): Added.
+        (WI.CanvasOverviewContentView.prototype._updateRecordingAutoCaptureInputElementSize):
+        (WI.CanvasOverviewContentView.prototype._handleCanvasRecordingAutoCaptureFrameCountChanged):
+
+2019-02-26  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Console: dragging a selection outside the selected element clears the selection
         https://bugs.webkit.org/show_bug.cgi?id=194660
         <rdar://problem/46719239>
