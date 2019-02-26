@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Response served by service worker is an error
 Test for `Resource.ResponseSource.ServiceWorker`.
 
 

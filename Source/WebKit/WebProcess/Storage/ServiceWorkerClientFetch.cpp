@@ -34,7 +34,6 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
-#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/SharedBuffer.h>
@@ -78,41 +77,12 @@ void ServiceWorkerClientFetch::start()
     m_connection->startFetch(m_identifier, m_serviceWorkerRegistrationIdentifier, request, options, referrer);
 }
 
-// https://fetch.spec.whatwg.org/#http-fetch step 3.3
-Optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const ResourceResponse& response)
-{
-    // FIXME: make a better error reporting.
-    if (response.type() == ResourceResponse::Type::Error)
-        return ResourceError { ResourceError::Type::General };
-
-    auto& options = m_loader->options();
-    if (options.mode != FetchOptions::Mode::NoCors && response.tainting() == ResourceResponse::Tainting::Opaque)
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is opaque"_s, ResourceError::Type::AccessControl };
-
-    // Navigate mode induces manual redirect.
-    if (options.redirect != FetchOptions::Redirect::Manual && options.mode != FetchOptions::Mode::Navigate && response.tainting() == ResourceResponse::Tainting::Opaqueredirect)
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is opaque redirect"_s, ResourceError::Type::AccessControl };
-
-    if ((options.redirect != FetchOptions::Redirect::Follow || options.mode == FetchOptions::Mode::Navigate) && response.isRedirected())
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker has redirections"_s, ResourceError::Type::AccessControl };
-
-    return WTF::nullopt;
-}
-
 void ServiceWorkerClientFetch::didReceiveRedirectResponse(ResourceResponse&& response)
 {
     callOnMainThread([this, protectedThis = makeRef(*this), response = WTFMove(response)]() mutable {
         if (!m_loader)
             return;
 
-        if (auto error = validateResponse(response)) {
-            m_loader->didFail(error.value());
-            ASSERT(!m_loader);
-            if (auto callback = WTFMove(m_callback))
-                callback(Result::Succeeded);
-
-            return;
-        }
         response.setSource(ResourceResponse::Source::ServiceWorker);
 
         m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [this, protectedThis = protectedThis.copyRef()](ResourceRequest&& request) {
@@ -133,32 +103,10 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response, b
         if (!m_loader)
             return;
 
-        if (auto error = validateResponse(response)) {
-            m_loader->didFail(error.value());
-            ASSERT(!m_loader);
-            if (auto callback = WTFMove(m_callback))
-                callback(Result::Succeeded);
-
-            return;
-        }
-        response.setSource(ResourceResponse::Source::ServiceWorker);
-        ASSERT(!response.isRedirection() || !response.httpHeaderFields().contains(HTTPHeaderName::Location));
-
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
 
-        // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
-        // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
-        if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
-            if (response.mimeType() == defaultMIMEType()) {
-                response.setMimeType("text/html"_s);
-                response.setTextEncodingName("UTF-8"_s);
-            }
-        }
-
-        // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
-        if (response.url().isNull())
-            response.setURL(m_loader->request().url());
+        ASSERT(!response.isRedirection() || !response.httpHeaderFields().contains(HTTPHeaderName::Location));
 
         if (!needsContinueDidReceiveResponseMessage) {
             m_loader->didReceiveResponse(response, [] { });
@@ -213,7 +161,8 @@ void ServiceWorkerClientFetch::didFail(ResourceError&& error)
 
         auto* document = m_loader->frame() ? m_loader->frame()->document() : nullptr;
         if (document) {
-            document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
+            if (m_loader->options().destination != FetchOptions::Destination::EmptyString || error.isGeneral())
+                document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, error.localizedDescription());
             if (m_loader->options().destination != FetchOptions::Destination::EmptyString)
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cannot load ", error.failingURL().string(), "."));
         }

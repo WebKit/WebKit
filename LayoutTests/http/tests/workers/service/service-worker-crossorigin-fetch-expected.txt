@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load http://localhost:8080/resources/square100.png.fromserviceworker due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is an error
 
 
 PASS Testing unintercepted fetch with preflight, fetch should fail 

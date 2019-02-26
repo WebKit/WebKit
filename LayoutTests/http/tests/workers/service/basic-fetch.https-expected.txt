@@ -1,5 +1,7 @@
+CONSOLE MESSAGE: Response served by service worker is an error
 CONSOLE MESSAGE: Fetch event was canceled
 CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:8443/workers/service/resources/test5.
+CONSOLE MESSAGE: Response served by service worker is an error
 
 test1 url: https://127.0.0.1:8443/workers/service/resources/test1
 test1 status code: 200

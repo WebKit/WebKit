@@ -1,3 +1,20 @@
+2019-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Move service worker response validation from the service worker client to the service worker itself
+        https://bugs.webkit.org/show_bug.cgi?id=194716
+
+        Reviewed by Geoffrey Garen.
+
+        Added response validation at service worker side.
+
+        No change of behavior except for now logging validation error messages in the console.
+        Covered by rebased tests.
+
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::validateResponse):
+        (WebCore::ServiceWorkerFetch::processResponse):
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+
 2019-02-26  Sihui Liu  <sihui_liu@apple.com>
 
         [Mac WK2] storage/indexeddb/IDBObject-leak.html is flaky

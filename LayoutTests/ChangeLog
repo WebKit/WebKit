@@ -1,3 +1,16 @@
+2019-02-26  Youenn Fablet  <youenn@apple.com>
+
+        Move service worker response validation from the service worker client to the service worker itself
+        https://bugs.webkit.org/show_bug.cgi?id=194716
+
+        Reviewed by Geoffrey Garen.
+
+        Rebased tests as we now report to the console log any service worker response validation erorr.
+
+        * http/tests/inspector/network/resource-response-service-worker-expected.txt:
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+        * http/tests/workers/service/service-worker-crossorigin-fetch-expected.txt:
+
 2019-02-26  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Load HTTP body of 401 response when AuthenticationChange is cancelled.
