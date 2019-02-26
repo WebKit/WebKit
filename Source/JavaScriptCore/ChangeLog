@@ -1,5 +1,23 @@
 2019-02-26  Mark Lam  <mark.lam@apple.com>
 
+        Misc cleanup in StructureIDTable after r242096.
+        https://bugs.webkit.org/show_bug.cgi?id=195063
+
+        Reviewed by Saam Barati.
+
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::allocateID):
+        - RELEASE_ASSERT that the StructureID allocation will succeed.
+
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::decode):
+        (JSC::StructureIDTable::encode):
+        - Add back a comment that Yusuke requested but was lost when the patch was rolled
+          out and relanded.
+        - Applied bitwise_casts that Saam requested.
+
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
         Gardening: 32-bit build fix after r242096.
         https://bugs.webkit.org/show_bug.cgi?id=194989
 
