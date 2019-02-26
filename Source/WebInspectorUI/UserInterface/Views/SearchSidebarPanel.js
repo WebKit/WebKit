@@ -100,17 +100,29 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
         if (!searchQuery.length)
             return;
 
+        let createSearchingPlaceholder = () => {
+            let searchingPlaceholder = WI.createMessageTextView("");
+            String.format(WI.UIString("Searching %s"), [(new WI.IndeterminateProgressSpinner).element], String.standardFormatters, searchingPlaceholder, (a, b) => {
+                a.append(b);
+                return a;
+            });
+            this.updateEmptyContentPlaceholder(searchingPlaceholder);
+        };
+
+        if (!WI.targetsAvailable()) {
+            createSearchingPlaceholder();
+            WI.whenTargetsAvailable().then(() => {
+                if (this._searchQuerySetting.value === searchQuery)
+                    this.performSearch(searchQuery);
+            });
+            return;
+        }
+
         let promiseCount = 0;
         let countPromise = async (promise, callback) => {
             ++promiseCount;
-            if (promiseCount === 1) {
-                let searchingPlaceholder = WI.createMessageTextView("");
-                String.format(WI.UIString("Searching %s"), [(new WI.IndeterminateProgressSpinner).element], String.standardFormatters, searchingPlaceholder, (a, b) => {
-                    a.append(b);
-                    return a;
-                });
-                this.updateEmptyContentPlaceholder(searchingPlaceholder);
-            }
+            if (promiseCount === 1)
+                createSearchingPlaceholder();
 
             let value = await promise;
 

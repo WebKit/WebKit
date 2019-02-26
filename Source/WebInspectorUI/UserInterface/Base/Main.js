@@ -632,6 +632,11 @@ WI.initializeTarget = function(target)
     }
 };
 
+WI.targetsAvailable = function()
+{
+    return this._targetsAvailablePromise.settled;
+};
+
 WI.whenTargetsAvailable = function()
 {
     return this._targetsAvailablePromise.promise;
