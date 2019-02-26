@@ -1,18 +1,17 @@
-→
-→
-
-→
-→
-
-→
-→
-
-→
-→
-
 
 PASS StretchStackBottomShiftDown 
 PASS StretchStackGapBelowMin 
 PASS StretchStackTopShiftUp 
 PASS StretchStackGapAboveMin 
+→
+→
+
+→
+→
+
+→
+→
+
+→
+→
 

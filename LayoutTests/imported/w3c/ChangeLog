@@ -1,3 +1,96 @@
+2019-02-26  Frederic Wang  <fwang@igalia.com>
+
+        Export MathML fraction tests to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=194436
+
+        This is just an import of the current MathML WPT tests. It includes fraction tests from
+        WebKit that were exported in [1]. Some test results have whitespace change, due to [2].
+
+        [1] https://github.com/web-platform-tests/wpt/pull/15301
+        [2] https://github.com/web-platform-tests/wpt/commit/e2dd57c3f273468b3c6a087978c531dcd00933de
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * resources/resource-files.json:
+        * web-platform-tests/mathml/META.yml: Added.
+        * web-platform-tests/mathml/OWNERS: Removed.
+        * web-platform-tests/mathml/README.md:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-bar-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-001-notref.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-002-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-color-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-002.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003-notref.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-003.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-mrow-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-numalign-denomalign-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-numalign-denomalign-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-visibility-001-expected.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/frac-visibility-001.html: Added.
+        * web-platform-tests/mathml/presentation-markup/fractions/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/mo-axis-height-1.html:
+        * web-platform-tests/mathml/presentation-markup/operators/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/radicals/root-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/radicals/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-4.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-5.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/subsup-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-1.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-2.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-3.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/scripts/underover-parameters-4.html:
+        * web-platform-tests/mathml/presentation-markup/scripts/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-1.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/space-2.html:
+        * web-platform-tests/mathml/presentation-markup/spaces/w3c-import.log:
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/tables/table-axis-height.html:
+        * web-platform-tests/mathml/presentation-markup/tables/w3c-import.log:
+        * web-platform-tests/mathml/relations/css-styling/display-1.html:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/displaystyle-1.html:
+        * web-platform-tests/mathml/relations/css-styling/lengths-3-expected.txt:
+        * web-platform-tests/mathml/relations/css-styling/lengths-3.html:
+        * web-platform-tests/mathml/relations/css-styling/w3c-import.log:
+        * web-platform-tests/mathml/relations/html5-tree/class-2.html:
+        * web-platform-tests/mathml/relations/html5-tree/display-1-expected.txt:
+        * web-platform-tests/mathml/relations/html5-tree/display-1.html:
+        * web-platform-tests/mathml/relations/html5-tree/href-click-1.html:
+        * web-platform-tests/mathml/relations/html5-tree/href-click-2.html:
+        * web-platform-tests/mathml/relations/html5-tree/unique-identifier-2.html:
+        * web-platform-tests/mathml/relations/html5-tree/w3c-import.log:
+        * web-platform-tests/mathml/relations/text-and-math/w3c-import.log:
+        * web-platform-tests/mathml/tools/utils/w3c-import.log:
+        * web-platform-tests/mathml/tools/w3c-import.log:
+        * web-platform-tests/mathml/w3c-import.log:
+
 2019-02-21  Rob Buis  <rbuis@igalia.com>
 
         Update MIME type parser

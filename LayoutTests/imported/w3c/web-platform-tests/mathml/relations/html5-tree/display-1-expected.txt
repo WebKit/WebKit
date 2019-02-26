@@ -1,7 +1,6 @@
- 
- 
- 
 
 PASS Test display math 
 PASS Test inline math 
-
+ 
+ 
+ 

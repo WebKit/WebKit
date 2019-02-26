@@ -1,3 +1,44 @@
+2019-02-26  Frederic Wang  <fwang@igalia.com>
+
+        Export MathML fraction tests to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=194436
+
+        We removed some fraction tests that have equivalent WPT tests.
+        Some of them were actually exported from WebKit to WPT in [1]
+        We also move tests for crashes/asserts/hangs to the top mathml/ directory.
+
+        [1] https://github.com/web-platform-tests/wpt/pull/15301
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * mathml/fractions-invalid-expected.html: Moved to parent directory.
+        * mathml/fractions-invalid.html: Ditto.
+        * mathml/mfrac-nested-expected.txt: Ditto.
+        * mathml/mfrac-nested.html:  Ditto.
+        * mathml/presentation/fractions-box-expected.html: Removed. This is better tested by WPT
+        tests frac-parameters-1.html, frac-parameters-2.html, frac-1.html.
+        * mathml/presentation/fractions-box.html: Removed. Ditto.
+        * mathml/presentation/fractions-color-expected-mismatch.html: Removed. This is exported as
+        frac-color-001.html.
+        * mathml/presentation/fractions-color.html: Removed. Ditto.
+        * mathml/presentation/fractions-linethickness-expected.html: Removed. Covered by WPT tests
+        frac-linethickness-*.html.
+        * mathml/presentation/fractions-linethickness.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness1-expected-mismatch.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness1.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness2-expected.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness2.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness3-expected-mismatch.html: Removed. Ditto.
+        * mathml/presentation/mfrac-linethickness3.html: Removed. Ditto.
+        * mathml/presentation/fractions-mrow-expected.html: Removed. Exported as frac-mrow-001.html.
+        * mathml/presentation/fractions-mrow.html: Removed. Ditto.
+        * mathml/presentation/fractions-numalign-denomalign-expected.html: Removed. Exported as
+        frac-numalign-denomalign-001.html.
+        * mathml/presentation/fractions-numalign-denomalign.html: Removed. Ditto.
+        * mathml/presentation/fractions-vertical-alignment-expected.html: Removed. This is better
+        tests by WPT tests frac-parameters-1.html, frac-parameters-2.html, frac-1.html.
+        * mathml/presentation/fractions-vertical-alignment.html: Removed. Ditto.
+
 2019-02-25  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         scalableNativeWebpageParameters() is not preserved on new page navigation.

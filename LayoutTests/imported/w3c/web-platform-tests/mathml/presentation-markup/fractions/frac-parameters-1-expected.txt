@@ -10,3 +10,12 @@ PASS NumeratorGapMin
 PASS NumeratorShiftDown 
 PASS FractionRuleThickness 
 
+
+
+
+
+
+
+
+
+
