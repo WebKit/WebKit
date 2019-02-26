@@ -1,3 +1,18 @@
+2019-02-25  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Remove BuilderMapping table
+        https://bugs.webkit.org/show_bug.cgi?id=194961
+
+        Reviewed by Stephanie Lewis.
+
+        Store builder name directly in build table, instead of having a separate
+        table for it.
+
+        * BuildSlaveSupport/ews-app/ews/models/__init__.py:
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        * BuildSlaveSupport/ews-app/ews/models/buildermapping.py: Removed.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+
 2019-02-25  John Wilander  <wilander@apple.com>
 
         Introduce and adopt new class RegistrableDomain for eTLD+1

@@ -26,7 +26,6 @@ import logging
 
 from django.db import models
 from ews.config import ERR_UNEXPECTED, SUCCESS
-from ews.models.buildermapping import BuilderMapping
 from ews.models.patch import Patch
 import ews.common.util as util
 
@@ -36,7 +35,9 @@ _log = logging.getLogger(__name__)
 class Build(models.Model):
     patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
     build_id = models.IntegerField(primary_key=True)
-    builder = models.ForeignKey(BuilderMapping, on_delete=models.DO_NOTHING)
+    builder_id = models.IntegerField()
+    builder_name = models.TextField()
+    builder_display_name = models.TextField()
     number = models.IntegerField()
     result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
