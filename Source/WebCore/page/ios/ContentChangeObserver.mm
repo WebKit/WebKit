@@ -40,7 +40,7 @@ ContentChangeObserver::ContentChangeObserver(Page& page)
 {
 }
 
-void ContentChangeObserver::registerDOMTimerForContentObservationIfNeeded(const DOMTimer& timer, Seconds timeout, bool singleShot)
+void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
 {
     if (!m_page.mainFrame().document())
         return;
@@ -52,7 +52,7 @@ void ContentChangeObserver::registerDOMTimerForContentObservationIfNeeded(const 
         return;
     setObservedContentChange(WKContentIndeterminateChange);
     addObservedDOMTimer(timer);
-    LOG_WITH_STREAM(ContentObservation, stream << "registerDOMTimerForContentObservationIfNeeded: registed this timer: (" << &timer << ") and observe when it fires.");
+    LOG_WITH_STREAM(ContentObservation, stream << "didInstallDOMTimer: register this timer: (" << &timer << ") and observe when it fires.");
 }
 
 void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
@@ -84,6 +84,14 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") wait until next style recalc fires.");
         setShouldObserveNextStyleRecalc(true);
     }
+}
+
+void ContentChangeObserver::didScheduleStyleRecalc()
+{
+    if (!isObservingStyleRecalcScheduling())
+        return;
+    LOG(ContentObservation, "didScheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
+    setObservedContentChange(WKContentIndeterminateChange);
 }
 
 void ContentChangeObserver::startObservingStyleResolve()

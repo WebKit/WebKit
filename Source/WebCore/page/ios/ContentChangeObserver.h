@@ -38,23 +38,18 @@ class ContentChangeObserver {
 public:
     ContentChangeObserver(Page&);
 
-    void registerDOMTimerForContentObservationIfNeeded(const DOMTimer&, Seconds timeout, bool singleShot);
+    void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void removeDOMTimer(const DOMTimer&);
     void startObservingDOMTimerExecute(const DOMTimer&);
     void stopObservingDOMTimerExecute(const DOMTimer&);
 
+    void didScheduleStyleRecalc();
     void startObservingStyleResolve();
     void stopObservingStyleResolve();
 
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
 
-    bool isObservingStyleRecalcScheduling();
-
-    void setShouldObserveNextStyleRecalc(bool);
-    bool shouldObserveNextStyleRecalc();
-
-    void setObservedContentChange(WKContentChange);
     WEBCORE_EXPORT WKContentChange observedContentChange();
 
     WEBCORE_EXPORT unsigned countOfObservedDOMTimers();
@@ -85,7 +80,13 @@ private:
     void startObservingStyleRecalcScheduling();
     void stopObservingStyleRecalcScheduling();
 
+    void setShouldObserveNextStyleRecalc(bool);
+    bool shouldObserveNextStyleRecalc();
+
     bool isObservingContentChanges();
+    bool isObservingStyleRecalcScheduling();
+
+    void setObservedContentChange(WKContentChange);
 
     Page& m_page;
 };

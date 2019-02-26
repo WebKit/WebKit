@@ -1,3 +1,23 @@
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move style recalc schedule observation logic to ContentChangeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=195062
+        <rdar://problem/48409258>
+
+        Reviewed by Tim Horton.
+
+        Also rename registerDOMTimerForContentObservationIfNeeded to be consistent with the did* naming style.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::didScheduleStyleRecalc):
+        (WebCore::ContentChangeObserver::registerDOMTimerForContentObservationIfNeeded): Deleted.
+
 2019-02-26  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Regression(PSON) Scroll position is no longer restored when navigating back to reddit.com

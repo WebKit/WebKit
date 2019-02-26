@@ -1809,17 +1809,6 @@ void Document::scheduleStyleRecalc()
         return;
 
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
-
-#if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page()) {
-        auto& contentChangeObserver = page->contentChangeObserver();
-        if (contentChangeObserver.isObservingStyleRecalcScheduling()) {
-            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
-            contentChangeObserver.setObservedContentChange(WKContentIndeterminateChange);
-        }
-    }
-#endif
-
     auto shouldThrottleStyleRecalc = [&] {
         if (!view() || !view()->isVisuallyNonEmpty())
             return false;
@@ -1832,6 +1821,10 @@ void Document::scheduleStyleRecalc()
         return;
 
     m_styleRecalcTimer.startOneShot(0_s);
+#if PLATFORM(IOS_FAMILY)
+    if (auto* page = this->page())
+        page->contentChangeObserver().didScheduleStyleRecalc();
+#endif
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);
 }

@@ -223,7 +223,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
         nestedTimers->add(timer->m_timeoutId, *timer);
 #if PLATFORM(IOS_FAMILY)
     if (is<Document>(context))
-        downcast<Document>(context).page()->contentChangeObserver().registerDOMTimerForContentObservationIfNeeded(*timer, timeout, singleShot);
+        downcast<Document>(context).page()->contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
 #endif
     return timer->m_timeoutId;
 }
