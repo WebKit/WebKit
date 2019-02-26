@@ -86,6 +86,17 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
     }
 }
 
+void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
+{
+    if (!containsObservedDOMTimer(timer))
+        return;
+    removeObservedDOMTimer(timer);
+    LOG_WITH_STREAM(ContentObservation, stream << "removeDOMTimer: remove registered timer (" << &timer << ")");
+    if (countOfObservedDOMTimers())
+        return;
+    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+}
+
 void ContentChangeObserver::startObservingContentChanges()
 {
     WKStartObservingContentChanges();

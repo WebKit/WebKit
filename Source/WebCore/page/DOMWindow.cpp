@@ -1688,18 +1688,8 @@ void DOMWindow::clearTimeout(int timeoutId)
         if (timeoutId <= 0)
             return;
         auto& document = *frame()->document();
-        auto* timer = document.findTimeout(timeoutId);
-        if (!timer)
-            return;
-        auto& page = *document.page();
-        auto& contentChangeObserver = page.contentChangeObserver();
-        if (!contentChangeObserver.containsObservedDOMTimer(*timer))
-            return;
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMWindow::clearTimeout: remove registered timer (" << timer << ")");
-        contentChangeObserver.removeObservedDOMTimer(*timer);
-        if (contentChangeObserver.countOfObservedDOMTimers())
-            return;
-        page.chrome().client().observedContentChange(*frame());
+        if (auto* timer = document.findTimeout(timeoutId))
+            document.page()->contentChangeObserver().removeDOMTimer(*timer);
     };
     handleObservedTimerCancelIfNeeded();
 #endif

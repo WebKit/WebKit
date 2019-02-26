@@ -39,6 +39,7 @@ public:
     ContentChangeObserver(Page&);
 
     void registerDOMTimerForContentObservationIfNeeded(const DOMTimer&, Seconds timeout, bool singleShot);
+    void removeDOMTimer(const DOMTimer&);
     void startObservingDOMTimerExecute(const DOMTimer&);
     void stopObservingDOMTimerExecute(const DOMTimer&);
 
@@ -57,14 +58,14 @@ public:
     void setObservedContentChange(WKContentChange);
     WEBCORE_EXPORT WKContentChange observedContentChange();
 
-    void removeObservedDOMTimer(const DOMTimer&);
-    bool containsObservedDOMTimer(const DOMTimer&);
     WEBCORE_EXPORT unsigned countOfObservedDOMTimers();
     WEBCORE_EXPORT void clearObservedDOMTimers();
 
 private:
     void addObservedDOMTimer(const DOMTimer&);
     bool isObservingDOMTimerScheduling();
+    void removeObservedDOMTimer(const DOMTimer&);
+    bool containsObservedDOMTimer(const DOMTimer&);
 
     void startObservingStyleRecalcScheduling();
     void stopObservingStyleRecalcScheduling();

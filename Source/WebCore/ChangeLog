@@ -1,5 +1,23 @@
 2019-02-25  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Move observing logic from DOMWindow::clearTimeout to ContentChangeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=194988
+        <rdar://problem/48343040>
+
+        Reviewed by Tim Horton.
+
+        ContentChangeObserver::removeDOMTimer takes care of the canceled timer removal.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clearTimeout):
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::startObservingDOMTimer):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimer):
+        (WebCore::ContentChangeObserver::removeDOMTimer):
+
+2019-02-25  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Move observing logic from DOMTimer to ContentChangeObserver
         https://bugs.webkit.org/show_bug.cgi?id=194987
         <rdar://problem/48342910>
