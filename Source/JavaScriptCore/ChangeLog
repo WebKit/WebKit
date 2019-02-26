@@ -1,3 +1,80 @@
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] Add some randomness into the StructureID.
+        https://bugs.webkit.org/show_bug.cgi?id=194989
+        <rdar://problem/47975563>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. On 64-bit, the StructureID will now be encoded as:
+
+            ----------------------------------------------------------------
+            | 1 Nuke Bit | 24 StructureIDTable index bits | 7 entropy bits |
+            ----------------------------------------------------------------
+
+           The entropy bits are chosen at random and assigned when a StructureID is
+           allocated.
+
+        2. Instead of Structure pointers, the StructureIDTable will now contain
+           encodedStructureBits, which is encoded as such:
+
+            ----------------------------------------------------------------
+            | 7 entropy bits |                   57 structure pointer bits |
+            ----------------------------------------------------------------
+
+           The entropy bits here are the same 7 bits used in the encoding of the
+           StructureID for this structure entry in the StructureIDTable.
+
+        3. Retrieval of the structure pointer given a StructureID is now computed as
+           follows:
+
+                index = structureID >> 7; // with arithmetic shift.
+                encodedStructureBits = structureIDTable[index];
+                structure = encodedStructureBits ^ (structureID << 57);
+
+            We use an arithmetic shift for the right shift because that will preserve
+            the nuke bit in the high bit of the index if the StructureID was not
+            decontaminated before use as expected.
+
+        4. Remove unused function loadArgumentWithSpecificClass() in SpecializedThunkJIT.
+
+        5. Define StructureIDTable::m_size to be the number of allocated StructureIDs
+           instead of always being the same as m_capacity.
+
+        6. Change StructureIDTable::s_unusedID's value to 0.
+
+           Its previous value of unusedPointer i.e. 0xd1e7beef, does not make sense for
+           StructureID on 64-bit.  Also, there was never any code that initializes unused
+           IDs to the s_unusedID.  The only meaningful value for s_unusedID is 0, which
+           is the ID we'll get when the freelist is empty, prompting a resize of the
+           structureIDTable.
+
+        This patch appears to be perf neutral on JetStream 2 run via the cli on a
+        11" MacBook Air, 13" MacBook Pro, iPhone 6S, and iPhone XR.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::loadStructure):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        * jit/AssemblyHelpers.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::StructureIDTable):
+        (JSC::StructureIDTable::makeFreeListFromRange):
+        (JSC::StructureIDTable::resize):
+        (JSC::StructureIDTable::allocateID):
+        (JSC::StructureIDTable::deallocateID):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::decode):
+        (JSC::StructureIDTable::encode):
+        (JSC::StructureIDTable::get):
+        (JSC::StructureIDTable::isValid):
+
 2019-02-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242071.

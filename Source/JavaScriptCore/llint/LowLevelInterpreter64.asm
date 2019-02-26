@@ -530,16 +530,20 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
         end)
 end
 
-macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scratch2)
     loadp CodeBlock[cfr], scratch
+    move structureIDThenStructure, scratch2
     loadp CodeBlock::m_vm[scratch], scratch
+    rshifti NumberOfStructureIDEntropyBits, scratch2
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
-    loadp [scratch, structureIDThenStructure, PtrSize], structureIDThenStructure
+    loadp [scratch, scratch2, PtrSize], scratch2
+    lshiftp StructureEntropyBitsShift, structureIDThenStructure
+    xorp scratch2, structureIDThenStructure
 end
 
-macro loadStructureWithScratch(cell, structure, scratch)
+macro loadStructureWithScratch(cell, structure, scratch, scratch2)
     loadi JSCell::m_structureID[cell], structure
-    structureIDToStructureWithScratch(structure, scratch)
+    structureIDToStructureWithScratch(structure, scratch, scratch2)
 end
 
 # Entrypoints into the interpreter.
@@ -694,7 +698,7 @@ llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, 
     loadq [cfr, t0, 8], t0
     btqnz t0, tagMask, .opToThisSlow
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    loadStructureWithScratch(t0, t1, t2)
+    loadStructureWithScratch(t0, t1, t2, t3)
     metadata(t2, t3)
     loadp OpToThis::Metadata::m_cachedStructure[t2], t2
     bpneq t1, t2, .opToThisSlow
@@ -764,7 +768,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         move 0, t0
         jmp .done
     .masqueradesAsUndefined:
-        loadStructureWithScratch(t0, t2, t1)
+        loadStructureWithScratch(t0, t2, t1, t3)
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
         cpeq Structure::m_globalObject[t2], t0, t0
@@ -1182,7 +1186,7 @@ llintOpWithReturn(op_is_undefined, OpIsUndefined, macro (size, get, dispatch, re
     move ValueFalse, t1
     return(t1)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1)
+    loadStructureWithScratch(t0, t3, t1, t2)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
@@ -1353,7 +1357,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp OpPutById::Metadata::m_structureChain[t5], t3
     btpz t3, .opPutByIdTransitionDirect
 
-    structureIDToStructureWithScratch(t2, t1)
+    structureIDToStructureWithScratch(t2, t1, t3)
 
     # reload the StructureChain since we used t3 as a scratch above
     loadp OpPutById::Metadata::m_structureChain[t5], t3
@@ -1691,7 +1695,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         assertNotConstant(size, t0)
         loadq [cfr, t0, 8], t0
         btqnz t0, tagMask, .immediate
-        loadStructureWithScratch(t0, t2, t1)
+        loadStructureWithScratch(t0, t2, t1, t3)
         cellHandler(t2, JSCell::m_flags[t0], .target)
         dispatch()
 
@@ -2214,7 +2218,7 @@ end)
 macro loadWithStructureCheck(opcodeStruct, get, slowPath)
     get(m_scope, t0)
     loadq [cfr, t0, 8], t0
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     loadp %opcodeStruct%::Metadata::m_structure[t5], t1
     bpneq t2, t1, slowPath
 end
