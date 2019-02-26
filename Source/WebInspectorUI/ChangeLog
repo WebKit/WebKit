@@ -1,3 +1,36 @@
+2019-02-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: hovering a node inside an object preview should highlight it
+        https://bugs.webkit.org/show_bug.cgi?id=194862
+        <rdar://problem/48246433>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FormattedValue.js:
+        (WI.FormattedValue.createElementForNodePreview):
+        When provided a way to access the `WI.RemoteObject` for the given preview, add various mouse
+        event listeners that highlight the corresponding DOM node.
+
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WI.ObjectPreviewView):
+        (WI.ObjectPreviewView.prototype._initTitleElement):
+        (WI.ObjectPreviewView.prototype._appendPropertyPreviews):
+        (WI.ObjectPreviewView.prototype._appendValuePreview):
+        Implement various ways of getting the `WI.RemoteObject` for a given preview.
+         - When the preview is for the actual `WI.RemoteObject`, simply return it
+         - If the preview is a property of the main object, get the `WI.RemoteObject` for that property
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WI.ObjectTreePropertyTreeElement.prototype._createTitlePropertyStyle):
+        Pass the `WI.RemoteObject` to the preview so that it can utilize it.
+
+        * UserInterface/Controllers/ConsoleManager.js:
+        (WI.ConsoleManager):
+        (WI.ConsoleManager.prototype.releaseRemoteObjectWithConsoleClear): Added.
+        (WI.ConsoleManager.prototype.messagesCleared): Added.
+
 2019-02-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage Timeline - Thread Breakdown

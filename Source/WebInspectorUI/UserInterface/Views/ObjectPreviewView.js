@@ -25,12 +25,14 @@
 
 WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
 {
-    constructor(preview, mode)
+    constructor(object, preview, mode)
     {
+        console.assert(!object || object instanceof WI.RemoteObject);
         console.assert(preview instanceof WI.ObjectPreview);
 
         super();
 
+        this._object = object || null;
         this._preview = preview;
         this._mode = mode || WI.ObjectPreviewView.Mode.Full;
 
@@ -110,7 +112,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
         if (this._preview.subtype === "regexp" || this._preview.subtype === "null")
             this._titleElement.appendChild(WI.FormattedValue.createElementForObjectPreview(this._preview));
         else if (this._preview.subtype === "node")
-            this._titleElement.appendChild(WI.FormattedValue.createElementForNodePreview(this._preview));
+            this._titleElement.appendChild(WI.FormattedValue.createElementForNodePreview(this._preview, {remoteObjectAccessor: (callback) => callback(this._object)}));
         else
             this._titleElement.textContent = this._preview.description || "";
     }
@@ -210,8 +212,8 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
 
         var numberAdded = 0;
         var limit = this._numberOfPropertiesToShowInMode();
-        for (var i = 0; i < preview.propertyPreviews.length && numberAdded < limit; ++i) {
-            var property = preview.propertyPreviews[i];
+        for (let i = 0; i < preview.propertyPreviews.length && numberAdded < limit; ++i) {
+            let property = preview.propertyPreviews[i];
 
             // FIXME: Better handle getter/setter accessors. Should we show getters in previews?
             if (property.type === "accessor")
@@ -225,7 +227,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
                 element.append(", ");
 
             if (!isArray || property.name != i) {
-                var nameElement = element.appendChild(document.createElement("span"));
+                let nameElement = element.appendChild(document.createElement("span"));
                 nameElement.className = "name";
                 nameElement.textContent = property.name;
                 element.append(": ");
@@ -233,9 +235,20 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
 
             if (property.valuePreview)
                 this._appendPreview(element, property.valuePreview);
-            else if (property.subtype === "node")
-                element.appendChild(WI.FormattedValue.createElementForNodePreview(property));
-            else
+            else if (property.subtype === "node") {
+                let options = {};
+                if (preview === this._preview && this._object) {
+                    options.remoteObjectAccessor = (callback) => {
+                        this._object.getProperty(property.name, (error, remoteObject, wasThrown) => {
+                            if (!error && remoteObject && !wasThrown) {
+                                WI.consoleManager.releaseRemoteObjectWithConsoleClear(remoteObject);
+                                callback(remoteObject);
+                            }
+                        });
+                    };
+                }
+                element.appendChild(WI.FormattedValue.createElementForNodePreview(property, options));
+            } else
                 element.appendChild(WI.FormattedValue.createElementForPropertyPreview(property));
         }
 
@@ -258,7 +271,10 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
     _appendValuePreview(element, preview)
     {
         if (preview.subtype === "node") {
-            element.appendChild(WI.FormattedValue.createElementForNodePreview(preview));
+            let options = {};
+            if (preview === this._preview && this._object)
+                options.remoteObjectAccessor = (callback) => callback(this._object);
+            element.appendChild(WI.FormattedValue.createElementForNodePreview(preview, options));
             return false;
         }
 

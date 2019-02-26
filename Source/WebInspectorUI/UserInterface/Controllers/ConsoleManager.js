@@ -34,6 +34,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         this._clearMessagesRequested = false;
         this._isNewPageOrReload = false;
+        this._remoteObjectsToRelease = null;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
@@ -77,6 +78,13 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         return issues;
     }
 
+    releaseRemoteObjectWithConsoleClear(remoteObject)
+    {
+        if (!this._remoteObjectsToRelease)
+            this._remoteObjectsToRelease = new Set;
+        this._remoteObjectsToRelease.add(remoteObject);
+    }
+
     messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
         // Called from WI.ConsoleObserver.
@@ -101,6 +109,12 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
     messagesCleared()
     {
         // Called from WI.ConsoleObserver.
+
+        if (this._remoteObjectsToRelease) {
+            for (let remoteObject of this._remoteObjectsToRelease)
+                remoteObject.release();
+            this._remoteObjectsToRelease = null;
+        }
 
         WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
 

@@ -114,11 +114,43 @@ WI.FormattedValue.createElementForError = function(object)
     return span;
 };
 
-WI.FormattedValue.createElementForNodePreview = function(preview)
+WI.FormattedValue.createElementForNodePreview = function(preview, {remoteObjectAccessor} = {})
 {
     var value = preview.value || preview.description;
     var span = document.createElement("span");
     span.className = "formatted-node-preview syntax-highlighted";
+
+    if (remoteObjectAccessor) {
+        let domNode = null;
+
+        span.addEventListener("mouseenter", (event) => {
+            if (domNode) {
+                WI.domManager.highlightDOMNode(domNode.id, "all");
+                return;
+            }
+
+            remoteObjectAccessor((remoteObject) => {
+                remoteObject.pushNodeToFrontend((nodeId) => {
+                    domNode = WI.domManager.nodeForId(nodeId);
+                    if (domNode)
+                        WI.domManager.highlightDOMNode(domNode.id, "all");
+                });
+            });
+        });
+
+        span.addEventListener("mouseleave", (event) => {
+            WI.domManager.hideDOMNodeHighlight();
+        });
+
+        span.addEventListener("contextmenu", (event) => {
+            if (!domNode)
+                return;
+
+            let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+            WI.appendContextMenuItemsForDOMNode(contextMenu, domNode);
+        });
+    }
 
     // Comment node preview.
     if (value.startsWith("<!--")) {
@@ -246,7 +278,8 @@ WI.FormattedValue.createObjectPreviewOrFormattedValueForObjectPreview = function
     if (objectPreview.type === "function")
         return WI.FormattedValue.createElementForFunctionWithName(objectPreview.description);
 
-    return new WI.ObjectPreviewView(objectPreview, previewViewMode).element;
+    const object = null;
+    return new WI.ObjectPreviewView(object, objectPreview, previewViewMode).element;
 };
 
 WI.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject = function(object, previewViewMode)
@@ -258,7 +291,7 @@ WI.FormattedValue.createObjectPreviewOrFormattedValueForRemoteObject = function(
         return WI.FormattedValue.createElementForError(object);
 
     if (object.preview)
-        return new WI.ObjectPreviewView(object.preview, previewViewMode);
+        return new WI.ObjectPreviewView(object, object.preview, previewViewMode);
 
     return WI.FormattedValue.createElementForRemoteObject(object);
 };

@@ -157,7 +157,7 @@ WI.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement extends W
         var resolvedValue = this.resolvedValue();
         if (resolvedValue) {
             if (resolvedValue.preview) {
-                this._previewView = new WI.ObjectPreviewView(resolvedValue.preview);
+                this._previewView = new WI.ObjectPreviewView(resolvedValue, resolvedValue.preview);
                 valueOrGetterElement = this._previewView.element;
             } else {
                 this._loadPreviewLazilyIfNeeded();
