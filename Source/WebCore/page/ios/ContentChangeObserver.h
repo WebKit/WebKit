@@ -43,6 +43,9 @@ public:
     void startObservingDOMTimerExecute(const DOMTimer&);
     void stopObservingDOMTimerExecute(const DOMTimer&);
 
+    void startObservingStyleResolve();
+    void stopObservingStyleResolve();
+
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
 

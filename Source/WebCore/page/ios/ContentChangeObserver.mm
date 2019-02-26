@@ -86,6 +86,29 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
     }
 }
 
+void ContentChangeObserver::startObservingStyleResolve()
+{
+    if (!shouldObserveNextStyleRecalc())
+        return;
+    LOG(ContentObservation, "startObservingStyleResolve: start observing style resolve.");
+    startObservingContentChanges();
+}
+
+void ContentChangeObserver::stopObservingStyleResolve()
+{
+    if (!shouldObserveNextStyleRecalc())
+        return;
+    LOG(ContentObservation, "stopObservingStyleResolve: stop observing style resolve");
+    setShouldObserveNextStyleRecalc(false);
+    auto inDeterminedState = observedContentChange() == WKContentVisibilityChange || !countOfObservedDOMTimers();
+    if (!inDeterminedState) {
+        LOG(ContentObservation, "stopObservingStyleResolve: can't decided it yet.");
+        return;
+    }
+    LOG(ContentObservation, "stopObservingStyleResolve: notify the pending synthetic click handler.");
+    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+}
+
 void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))

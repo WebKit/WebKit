@@ -2050,16 +2050,8 @@ bool Document::updateStyleIfNeeded()
     }
 
 #if PLATFORM(IOS_FAMILY)
-    auto observingContentChange = false;
-    if (auto* page = this->page()) {
-        auto& contentChangeObserver = page->contentChangeObserver();
-        observingContentChange = contentChangeObserver.shouldObserveNextStyleRecalc();
-        if (observingContentChange) {
-            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: start observing content change.");
-            contentChangeObserver.setShouldObserveNextStyleRecalc(false);
-            contentChangeObserver.startObservingContentChanges();
-        }
-    }
+    if (auto* page = this->page())
+        page->contentChangeObserver().startObservingStyleResolve();
 #endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
@@ -2067,19 +2059,8 @@ bool Document::updateStyleIfNeeded()
     resolveStyle();
 
 #if PLATFORM(IOS_FAMILY)
-    if (observingContentChange && page()) {
-        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: stop observing content change.");
-        auto& contentChangeObserver = page()->contentChangeObserver();
-        contentChangeObserver.stopObservingContentChanges();
-
-        auto inDeterminedState = contentChangeObserver.observedContentChange() == WKContentVisibilityChange || !contentChangeObserver.countOfObservedDOMTimers();  
-        if (inDeterminedState) {
-            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: notify the pending synthetic click handler.");
-            page()->chrome().client().observedContentChange(*frame());
-        } else {
-            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: can't decided it yet.");
-        }
-    }
+    if (auto* page = this->page())
+        page->contentChangeObserver().stopObservingStyleResolve();
 #endif
     return true;
 }
