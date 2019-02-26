@@ -197,11 +197,11 @@ Object.defineProperty(Node.prototype, "enclosingNodeOrSelfWithNodeNameInArray",
 {
     value(nodeNames)
     {
-        let upperCaseNodeNames = nodeNames.map((name) => name.toUpperCase());
+        let lowerCaseNodeNames = nodeNames.map((name) => name.toLowerCase());
 
         for (let node = this; node; node = node.parentElement) {
-            for (let nodeName of upperCaseNodeNames) {
-                if (node.nodeName === nodeName)
+            for (let nodeName of lowerCaseNodeNames) {
+                if (node.nodeName.toLowerCase() === nodeName)
                     return node;
             }
         }

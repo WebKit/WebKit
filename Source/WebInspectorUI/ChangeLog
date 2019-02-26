@@ -1,3 +1,77 @@
+2019-02-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline - Main Thread Indicator
+        https://bugs.webkit.org/show_bug.cgi?id=194972
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Main.html:
+        * UserInterface/Base/Utilities.js:
+        (value):
+        The existing enclosingNode doesn't work for SVG because its names
+        are lowercase. Add a simplified version for the svg case.
+
+        * UserInterface/Views/RangeChart.js: Added.
+        (WI.RangeChart):
+        (WI.RangeChart.prototype.get size):
+        (WI.RangeChart.prototype.set size):
+        (WI.RangeChart.prototype.addRange):
+        (WI.RangeChart.prototype.clear):
+        (WI.RangeChart.prototype.layout):
+        A new chart that draws rects for given ranges.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype.recordsOverlappingTimeRange):
+        Helper to specifically get records touching a range. Useful
+        for when we have a single pixel spanning (startTime -> endTime)
+        and we want to find records in that pixel.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart rect):
+        (.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-script):
+        (.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-style):
+        (.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-layout):
+        (.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-paint):
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.get indicatorViewHeight):
+        (WI.CPUTimelineView.prototype.clear):
+        (WI.CPUTimelineView.prototype.get scrollableElements):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype._graphPositionForMouseEvent):
+        (WI.CPUTimelineView.prototype._handleIndicatorClick):
+        (WI.CPUTimelineView.prototype._attemptSelectIndicatatorTimelineRecord):
+        (WI.CPUTimelineView.prototype._selectTimelineRecord):
+        Place the Main Thread Indicator view beneath the big graph.
+        Clicking inside it selects records in the Timeline Overview.
+
+        * UserInterface/Views/CPUUsageIndicatorView.css: Added.
+        (.cpu-usage-indicator-view):
+        (.cpu-usage-indicator-view > .details):
+        (body[dir=ltr] .cpu-usage-indicator-view > .details):
+        (body[dir=rtl] .cpu-usage-indicator-view > .details):
+        (body[dir=rtl] .cpu-usage-indicator-view > .graph):
+        (.cpu-usage-indicator-view > .graph):
+        (.cpu-usage-indicator-view > .graph,):
+        * UserInterface/Views/CPUUsageIndicatorView.js: Added.
+        (WI.CPUUsageIndicatorView):
+        (WI.CPUUsageIndicatorView.prototype.get chart):
+        (WI.CPUUsageIndicatorView.prototype.clear):
+        (WI.CPUUsageIndicatorView.prototype.updateChart):
+        Converts the CPU samples data into a RangeChart. It works to coalesce
+        many samples of the same type into a single range to reduce total ranges.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._recordSelected):
+        (WI.TimelineRecordingContentView.prototype._recordWasSelected):
+        (WI.TimelineRecordingContentView.prototype._selectRecordInTimelineOverview):
+        (WI.TimelineRecordingContentView.prototype._selectRecordInTimelineView):
+        * UserInterface/Views/TimelineView.js:
+        Add a path for a TimelineView to dispatch a record selected event and cause
+        have the TimelineRecordingContentView react to it by updating the timeline
+        overview and relevent timeline view.
+
 2019-02-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: navigation sidebar says "No Search Results" when a slow search is in progress

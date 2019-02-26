@@ -93,6 +93,14 @@ WI.Timeline = class Timeline extends WI.Object
         this.dispatchEventToListeners(WI.Timeline.Event.Refreshed);
     }
 
+    recordsOverlappingTimeRange(startTime, endTime)
+    {
+        let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.endTime);
+        let upperIndex = this._records.upperBound(endTime, (time, record) => time - record.startTime);
+
+        return this._records.slice(lowerIndex, upperIndex);
+    }
+
     recordsInTimeRange(startTime, endTime, includeRecordBeforeStart)
     {
         let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.startTime);

@@ -335,5 +335,6 @@ WI.TimelineView = class TimelineView extends WI.ContentView
 };
 
 WI.TimelineView.Event = {
-    RecordWasFiltered: "record-was-filtered"
+    RecordWasFiltered: "timeline-view-record-was-filtered",
+    RecordWasSelected: "timeline-view-record-was-selected",
 };

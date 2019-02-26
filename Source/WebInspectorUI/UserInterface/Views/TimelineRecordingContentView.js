@@ -96,7 +96,8 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         WI.ContentView.addEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WI.ContentView.addEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
 
-        WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasFiltered, this._recordWasFiltered, this);
+        WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasFiltered, this._handleTimelineViewRecordFiltered, this);
+        WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasSelected, this._handleTimelineViewRecordSelected, this);
 
         WI.notifications.addEventListener(WI.Notification.VisibilityStateDidChange, this._inspectorVisibilityStateChanged, this);
 
@@ -700,15 +701,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         let {record} = event.data;
 
-        for (let timelineView of this._timelineViewMap.values()) {
-            let recordMatchesTimeline = record && timelineView.representedObject.type === record.type;
-
-            if (recordMatchesTimeline && timelineView !== this.currentTimelineView)
-                this.showTimelineViewForTimeline(timelineView.representedObject);
-
-            if (!record || recordMatchesTimeline)
-                timelineView.selectRecord(record);
-        }
+        this._selectRecordInTimelineView(record);
     }
 
     _timelineSelected()
@@ -804,7 +797,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this.currentTimelineView.updateFilter(this._filterBarNavigationItem.filterBar.filters);
     }
 
-    _recordWasFiltered(event)
+    _handleTimelineViewRecordFiltered(event)
     {
         if (event.target !== this.currentTimelineView)
             return;
@@ -818,6 +811,39 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         let record = event.data.record;
         let filtered = event.data.filtered;
         this._timelineOverview.recordWasFiltered(timeline, record, filtered);
+    }
+
+    _handleTimelineViewRecordSelected(event)
+    {
+        if (!this.visible)
+            return;
+
+        let {record} = event.data;
+
+        this._selectRecordInTimelineOverview(record);
+        this._selectRecordInTimelineView(record);
+    }
+
+    _selectRecordInTimelineOverview(record)
+    {
+        let timeline = this._recording.timelineForRecordType(record.type);
+        if (!timeline)
+            return;
+
+        this._timelineOverview.selectRecord(timeline, record);
+    }
+
+    _selectRecordInTimelineView(record)
+    {
+        for (let timelineView of this._timelineViewMap.values()) {
+            let recordMatchesTimeline = record && timelineView.representedObject.type === record.type;
+
+            if (recordMatchesTimeline && timelineView !== this.currentTimelineView)
+                this.showTimelineViewForTimeline(timelineView.representedObject);
+
+            if (!record || recordMatchesTimeline)
+                timelineView.selectRecord(record);
+        }
     }
 
     _updateProgressView()

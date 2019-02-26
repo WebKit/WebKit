@@ -214,3 +214,27 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
     color: var(--text-color-secondary);
     background-color: var(--background-color-content);
 }
+
+.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart rect {
+    stroke-opacity: 0.25;
+}
+
+.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-script {
+    stroke: var(--cpu-script-stroke-color);
+    fill: var(--cpu-script-fill-color);
+}
+
+.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-style {
+    stroke: var(--cpu-style-stroke-color);
+    fill: var(--cpu-style-fill-color);
+}
+
+.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-layout {
+    stroke: var(--cpu-layout-stroke-color);
+    fill: var(--cpu-layout-fill-color);
+}
+
+.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-paint {
+    stroke: var(--cpu-paint-stroke-color);
+    fill: var(--cpu-paint-fill-color);
+}

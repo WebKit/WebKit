@@ -57,6 +57,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     static get cpuUsageViewHeight() { return 150; }
     static get threadCPUUsageViewHeight() { return 65; }
+    static get indicatorViewHeight() { return 15; }
 
     // Public
 
@@ -104,21 +105,24 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         clearUsageView(this._unknownThreadUsageView);
 
         this._removeWorkerThreadViews();
-    }
 
-    get scrollableElements()
-    {
-        return [this.element];
+        this._mainThreadWorkIndicatorView.clear();
     }
 
     // Protected
 
     get showsFilterBar() { return false; }
 
+    get scrollableElements()
+    {
+        return [this.element];
+    }
+
     initialLayout()
     {
         this.element.style.setProperty("--cpu-usage-stacked-view-height", CPUTimelineView.cpuUsageViewHeight + "px");
         this.element.style.setProperty("--cpu-usage-view-height", CPUTimelineView.threadCPUUsageViewHeight + "px");
+        this.element.style.setProperty("--cpu-usage-indicator-view-height", CPUTimelineView.indicatorViewHeight + "px");
 
         let contentElement = this.element.appendChild(document.createElement("div"));
         contentElement.classList.add("content");
@@ -196,6 +200,12 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._cpuUsageView = new WI.CPUUsageStackedView(WI.UIString("Total"));
         this.addSubview(this._cpuUsageView);
         this._detailsContainerElement.appendChild(this._cpuUsageView.element);
+
+        this._mainThreadWorkIndicatorView = new WI.CPUUsageIndicatorView;
+        this.addSubview(this._mainThreadWorkIndicatorView);
+        this._detailsContainerElement.appendChild(this._mainThreadWorkIndicatorView.element);
+
+        this._mainThreadWorkIndicatorView.chart.element.addEventListener("click", this._handleIndicatorClick.bind(this));
 
         let threadsSubtitleElement = detailsContainerElement.appendChild(document.createElement("div"));
         threadsSubtitleElement.classList.add("subtitle", "threads");
@@ -515,6 +525,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
             layoutView(workerView, "usage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints: workerData.dataPoints, min: workerData.min, max: workerData.max, average: workerData.average});
         }
+
+        function xScaleIndicatorRange(sampleIndex) {
+            return (sampleIndex / 1000) / secondsPerPixel;
+        }
+
+        let graphWidth = (graphEndTime - graphStartTime) / secondsPerPixel;
+        let size = new WI.Size(graphWidth, CPUTimelineView.indicatorViewHeight);
+        this._mainThreadWorkIndicatorView.updateChart(samplingData.samples, size, visibleEndTime, xScaleIndicatorRange);
     }
 
     // Private
@@ -698,6 +716,115 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         if (cpuTimelineRecord.startTime >= this.startTime && cpuTimelineRecord.endTime <= this.endTime)
             this.needsLayout();
+    }
+
+    _graphPositionForMouseEvent(event)
+    {
+        let svgElement = event.target.enclosingNodeOrSelfWithNodeName("svg");
+        if (!svgElement)
+            return NaN;
+
+        let svgRect = svgElement.getBoundingClientRect();
+        let position = event.pageX - svgRect.left;
+
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+            return svgRect.width - position;
+        return position;
+    }
+
+    _handleIndicatorClick(event)
+    {
+        let clickPosition = this._graphPositionForMouseEvent(event);
+        if (isNaN(clickPosition))
+            return;
+
+        let secondsPerPixel = this._timelineRuler.secondsPerPixel;
+        let graphClickTime = clickPosition * secondsPerPixel;
+        let graphStartTime = this.startTime;
+
+        let clickStartTime = graphStartTime + graphClickTime;
+        let clickEndTime = clickStartTime + secondsPerPixel;
+
+        // Try at the exact clicked pixel.
+        if (event.target.localName === "rect") {
+            if (this._attemptSelectIndicatatorTimelineRecord(clickStartTime, clickEndTime))
+                return;
+            console.assert(false, "If the user clicked on a rect there should have been a record in this pixel range");
+        }
+
+        // Spiral out 4 pixels each side to try and select a nearby record.
+        for (let i = 1, delta = 0; i <= 4; ++i) {
+            delta += secondsPerPixel;
+            if (this._attemptSelectIndicatatorTimelineRecord(clickStartTime - delta, clickStartTime))
+                return;
+            if (this._attemptSelectIndicatatorTimelineRecord(clickEndTime, clickEndTime + delta))
+                return;
+        }
+    }
+
+    _attemptSelectIndicatatorTimelineRecord(startTime, endTime)
+    {
+        let layoutTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Layout);
+        let layoutRecords = layoutTimeline ? layoutTimeline.recordsOverlappingTimeRange(startTime, endTime) : [];
+        layoutRecords = layoutRecords.filter((record) => {
+            switch (record.eventType) {
+            case WI.LayoutTimelineRecord.EventType.RecalculateStyles:
+            case WI.LayoutTimelineRecord.EventType.ForcedLayout:
+            case WI.LayoutTimelineRecord.EventType.Layout:
+            case WI.LayoutTimelineRecord.EventType.Paint:
+            case WI.LayoutTimelineRecord.EventType.Composite:
+                return true;
+            case WI.LayoutTimelineRecord.EventType.InvalidateStyles:
+            case WI.LayoutTimelineRecord.EventType.InvalidateLayout:
+                return false;
+            default:
+                console.error("Unhandled LayoutTimelineRecord.EventType", record.eventType);
+                return false;
+            }
+        });
+
+        if (layoutRecords.length) {
+            this._selectTimelineRecord(layoutRecords[0]);
+            return true;
+        }
+
+        let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
+        let scriptRecords = scriptTimeline ? scriptTimeline.recordsOverlappingTimeRange(startTime, endTime) : [];
+        scriptRecords = scriptRecords.filter((record) => {
+            switch (record.eventType) {
+            case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:
+            case WI.ScriptTimelineRecord.EventType.APIScriptEvaluated:
+            case WI.ScriptTimelineRecord.EventType.ObserverCallback:
+            case WI.ScriptTimelineRecord.EventType.EventDispatched:
+            case WI.ScriptTimelineRecord.EventType.MicrotaskDispatched:
+            case WI.ScriptTimelineRecord.EventType.TimerFired:
+            case WI.ScriptTimelineRecord.EventType.AnimationFrameFired:
+                return true;
+            case WI.ScriptTimelineRecord.EventType.AnimationFrameRequested:
+            case WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
+            case WI.ScriptTimelineRecord.EventType.TimerInstalled:
+            case WI.ScriptTimelineRecord.EventType.TimerRemoved:
+            case WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
+            case WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
+            case WI.ScriptTimelineRecord.EventType.GarbageCollected:
+                return false;
+            default:
+                console.error("Unhandled ScriptTimelineRecord.EventType", record.eventType);
+                return false;
+            }
+        });
+
+        if (scriptRecords.length) {
+            this._selectTimelineRecord(scriptRecords[0]);
+            return true;
+        }
+
+        return false;
+    }
+
+    _selectTimelineRecord(record)
+    {
+        this.dispatchEventToListeners(WI.TimelineView.Event.RecordWasSelected, {record});
     }
 };
 
