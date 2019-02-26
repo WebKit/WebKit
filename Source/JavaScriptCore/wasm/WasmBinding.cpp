@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,8 +78,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
 
     // Tail call into the callee WebAssembly function.
     jit.loadPtr(scratch, scratch);
-    if (Options::usePoisoning())
-        jit.xorPtr(JIT::TrustedImmPtr(g_JITCodePoison), scratch);
     jit.jump(scratch, WasmEntryPtrTag);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);

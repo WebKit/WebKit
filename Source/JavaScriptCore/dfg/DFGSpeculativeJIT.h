@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1236,9 +1236,9 @@ public:
         BasicBlock* target;
     };
     
-    void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch, GPRReg scratch2);
+    void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchImm(Node*, SwitchData*);
-    void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch, GPRReg scratch2);
+    void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchChar(Node*, SwitchData*);
     void emitBinarySwitchStringRecurse(
         SwitchData*, const Vector<StringSwitchCase>&, unsigned numChecked,

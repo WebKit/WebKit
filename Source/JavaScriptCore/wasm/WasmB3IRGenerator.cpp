@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1128,8 +1128,6 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         // https://bugs.webkit.org/show_bug.cgi?id=170375
         Value* jumpDestination = isEmbedderBlock->appendNew<MemoryValue>(m_proc,
             Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfWasmToEmbedderStub(functionIndex)));
-        if (Options::usePoisoning())
-            jumpDestination = isEmbedderBlock->appendNew<Value>(m_proc, BitXor, origin(), jumpDestination, isEmbedderBlock->appendNew<Const64Value>(m_proc, origin(), g_JITCodePoison));
 
         Value* embedderCallResult = wasmCallingConvention().setupCall(m_proc, isEmbedderBlock, origin(), args, toB3Type(returnType),
             [=] (PatchpointValue* patchpoint) {
@@ -1308,8 +1306,6 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
     ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
             safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation())));
-    if (Options::usePoisoning())
-        calleeCode = m_currentBlock->appendNew<Value>(m_proc, BitXor, origin(), calleeCode, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), g_JITCodePoison));
 
     Type returnType = signature.returnType();
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, origin(), args, toB3Type(returnType),
