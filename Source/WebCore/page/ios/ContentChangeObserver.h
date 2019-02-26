@@ -47,13 +47,13 @@ public:
     void startObservingStyleResolve();
     void stopObservingStyleResolve();
 
+    void didSuspendActiveDOMObjects();
+    void willDetachPage();
+
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
 
     WEBCORE_EXPORT WKContentChange observedContentChange();
-
-    WEBCORE_EXPORT unsigned countOfObservedDOMTimers();
-    WEBCORE_EXPORT void clearObservedDOMTimers();
 
     class StyleChange {
     public:
@@ -87,6 +87,11 @@ private:
     bool isObservingStyleRecalcScheduling();
 
     void setObservedContentChange(WKContentChange);
+
+    unsigned countOfObservedDOMTimers();
+    void clearObservedDOMTimers();
+
+    void clearTimersAndReportContentChange();
 
     Page& m_page;
 };

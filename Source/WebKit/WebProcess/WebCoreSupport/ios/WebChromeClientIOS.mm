@@ -68,11 +68,6 @@ void WebChromeClient::observedContentChange(WebCore::Frame&)
     m_page.completePendingSyntheticClickForContentChangeObserver();
 }
 
-void WebChromeClient::clearContentChangeObservers(WebCore::Frame&)
-{
-    notImplemented();
-}
-
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
 {
     m_page.didChangeSelection();

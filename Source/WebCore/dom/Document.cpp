@@ -2631,13 +2631,8 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (!page() || !frame())
-        return;
-    auto& page = *this->page();
-    if (!page.contentChangeObserver().countOfObservedDOMTimers())
-        return;
-    LOG_WITH_STREAM(ContentObservation, stream << "Document::platformSuspendOrStopActiveDOMObjects: remove registered timers.");
-    page.chrome().client().clearContentChangeObservers(*frame());
+    if (auto* page = this->page())
+        page->contentChangeObserver().didSuspendActiveDOMObjects();
 #endif
 }
 

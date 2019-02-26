@@ -128,6 +128,25 @@ void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
     m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
 
+void ContentChangeObserver::clearTimersAndReportContentChange()
+{
+    if (!countOfObservedDOMTimers())
+        return;
+    LOG(ContentObservation, "clearTimersAndReportContentChange: remove registered timers and report content change.");
+    clearObservedDOMTimers();
+    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+}
+
+void ContentChangeObserver::didSuspendActiveDOMObjects()
+{
+    clearTimersAndReportContentChange();
+}
+
+void ContentChangeObserver::willDetachPage()
+{
+    clearTimersAndReportContentChange();
+}
+
 void ContentChangeObserver::startObservingContentChanges()
 {
     startObservingDOMTimerScheduling();

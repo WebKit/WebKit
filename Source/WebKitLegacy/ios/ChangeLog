@@ -1,3 +1,15 @@
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] clearContentChangeObservers should be internal to ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=195066
+        <rdar://problem/48411682>
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::clearContentChangeObservers): Deleted.
+
 2019-02-24  Zalan Bujtas  <zalan@apple.com>
 
         Introduce ContentChangeObserver class

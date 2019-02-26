@@ -166,7 +166,6 @@ class EmptyChromeClient : public ChromeClient {
     void didReceiveMobileDocType(bool) final { }
     void setNeedsScrollNotifications(Frame&, bool) final { }
     void observedContentChange(Frame&) final { }
-    void clearContentChangeObservers(Frame&) final { }
     void notifyRevealedSelectionByScrollingFrame(Frame&) final { }
     void didLayout(LayoutType) final { }
     void didStartOverflowScroll() final { }

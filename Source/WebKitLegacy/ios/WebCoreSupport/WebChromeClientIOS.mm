@@ -189,18 +189,6 @@ void WebChromeClientIOS::observedContentChange(WebCore::Frame& frame)
     [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:frame.page()->contentChangeObserver().observedContentChange() forFrame:kit(&frame)];
 }
 
-void WebChromeClientIOS::clearContentChangeObservers(WebCore::Frame& frame)
-{
-    if (!frame.page())
-        return;
-    auto& contentChangeObserver = frame.page()->contentChangeObserver();
-    ASSERT(contentChangeObserver.countOfObservedDOMTimers());
-    if (!contentChangeObserver.countOfObservedDOMTimers())
-        return;
-    contentChangeObserver.clearObservedDOMTimers();
-    observedContentChange(frame);
-}
-
 static inline NSString *nameForViewportFitValue(ViewportFit value)
 {
     switch (value) {
