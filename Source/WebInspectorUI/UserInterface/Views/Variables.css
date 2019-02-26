@@ -114,6 +114,9 @@
     --timeline-record-z-index: 8;
     --timeline-selection-z-index: 16;
 
+    --timeline-odd-background-color: var(--background-color-content);
+    --timeline-even-background-color: hsl(0, 0%, 96%);
+
     --memory-javascript-fill-color: hsl(269, 65%, 75%);
     --memory-javascript-stroke-color: hsl(269, 33%, 50%);
     --memory-images-fill-color: hsl(0, 65%, 75%);
@@ -278,6 +281,8 @@ body.window-inactive * {
         --search-highlight-background-color: hsla(53, 83%, 53%, 0.2);
         --search-highlight-background-color-active: hsl(60, 100%, 50%);
         --search-highlight-underline-color: hsla(60, 100%, 50%, 0.5);
+
+        --timeline-even-background-color: hsl(0, 0%, 25%);
 
         /* Invert colors yet preserve the hue */
         --filter-invert: invert(100%) hue-rotate(180deg);

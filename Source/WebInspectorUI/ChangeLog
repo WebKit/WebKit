@@ -1,3 +1,28 @@
+2019-02-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Dark Mode: Network Overview Graph segments have distracting white box shadow
+        https://bugs.webkit.org/show_bug.cgi?id=194966
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Variables.css:
+        (@media (prefers-color-scheme: dark)):
+        Make global timeline even/odd colors where odd is the default content background
+        color and even is slightly different. These were used in multiple places.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .legend):
+        (.timeline-overview-graph.cpu:nth-child(even) > .legend):
+        (@media (prefers-color-scheme: dark)): Deleted.
+        * UserInterface/Views/MemoryTimelineOverviewGraph.css:
+        (.timeline-overview-graph.memory > .legend):
+        (.timeline-overview-graph.memory:nth-child(even) > .legend):
+        (@media (prefers-color-scheme: dark)): Deleted.
+        * UserInterface/Views/NetworkTimelineOverviewGraph.css:
+        (.timeline-overview-graph.network > .graph-row > .timeline-record-bar > .segment:not(.inactive)):
+        (.timeline-overview-graph.network:nth-child(even) > .graph-row > .timeline-record-bar > .segment:not(.inactive)):
+        Use the variable colors now and eliminate dark mode blocks.
+
 2019-02-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Command-/ should toggle edited property

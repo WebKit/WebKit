@@ -37,9 +37,9 @@
 }
 
 .timeline-overview-graph.network > .graph-row > .timeline-record-bar > .segment:not(.inactive) {
-    box-shadow: white 1px 0 0;
+    box-shadow: var(--timeline-odd-background-color) 1px 0 0;
 }
 
 .timeline-overview-graph.network:nth-child(even) > .graph-row > .timeline-record-bar > .segment:not(.inactive) {
-    box-shadow: hsl(0, 0%, 96%) 1px 0 0;
+    box-shadow: var(--timeline-even-background-color) 1px 0 0;
 }

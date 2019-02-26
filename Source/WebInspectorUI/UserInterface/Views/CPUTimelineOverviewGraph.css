@@ -39,7 +39,7 @@ body .timeline-overview > .graphs-container > .timeline-overview-graph.cpu {
     padding: 2px;
     font-size: 8px;
     color: hsl(0, 0%, 50%);
-    background-color: white;
+    background-color: var(--timeline-odd-background-color);
     pointer-events: none;
 
     --cpu-timeline-overview-graph-legend-offset-end: 0;
@@ -54,17 +54,7 @@ body[dir=rtl] .timeline-overview-graph.cpu > .legend {
 }
 
 .timeline-overview-graph.cpu:nth-child(even) > .legend {
-    background-color: hsl(0, 0%, 96%);
-}
-
-@media (prefers-color-scheme: dark) {
-    .timeline-overview-graph.cpu > .legend {
-        background-color: hsl(0, 0%, 21%);
-    }
-
-    .timeline-overview-graph.cpu:nth-child(even) > .legend {
-        background-color: hsl(0, 0%, 25%);
-    }
+    background-color: var(--timeline-even-background-color);
 }
 
 body[dir=rtl] .timeline-overview-graph.cpu > .column-chart {
