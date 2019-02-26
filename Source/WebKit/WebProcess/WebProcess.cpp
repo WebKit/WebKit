@@ -301,7 +301,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
             auto maintainPageCache = m_isSuspending && hasPageRequiringPageCacheWhileSuspended() ? WebCore::MaintainPageCache::Yes : WebCore::MaintainPageCache::No;
-            WebCore::releaseMemory(critical, synchronous, maintainPageCache);
+            auto maintainMemoryCache = m_isSuspending && m_hasSuspendedPageProxy ? WebCore::MaintainMemoryCache::Yes : WebCore::MaintainMemoryCache::No;
+            WebCore::releaseMemory(critical, synchronous, maintainPageCache, maintainMemoryCache);
         });
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200) || PLATFORM(GTK) || PLATFORM(WPE)
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
@@ -479,6 +480,12 @@ bool WebProcess::areAllPagesSuspended() const
             return false;
     }
     return true;
+}
+
+void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
+{
+    ASSERT(m_hasSuspendedPageProxy != hasSuspendedPageProxy);
+    m_hasSuspendedPageProxy = hasSuspendedPageProxy;
 }
 
 void WebProcess::setIsInProcessCache(bool isInProcessCache)

@@ -1,3 +1,34 @@
+2019-02-26  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Regression(PSON) Scroll position is no longer restored when navigating back to reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=195054
+        <rdar://problem/48330549>
+
+        Reviewed by Geoff Garen.
+
+        We attempt to restore the scroll position twice, on first layout and then on load completion.
+        Before PSON, the scroll position would fail to get restored on first layout but would succeed
+        on load completion because the view is tall enough by then. With PSON however, we would
+        fail to restore the scroll position on load completion because the view would not be tall
+        enough yet by this point. The reason is that the dynamic resources would not be in the memory cache
+        and would then get reloaded abd finish loading *after* the load event.
+
+        To address the issue, we now make sure to not purge the memory cache on process suspension on
+        iOS if there is currently a SuspendedPageProxy in the UIProcess for this process.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::incrementSuspendedPageCount):
+        (WebKit::WebProcessProxy::decrementSuspendedPageCount):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setHasSuspendedPageProxy):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-02-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] REGRESSION(r238490?): Safari sometimes shows blank page until a cross site navigation or re-opening the tab

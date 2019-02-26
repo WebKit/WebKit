@@ -106,6 +106,9 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
+    void incrementSuspendedPageCount();
+    void decrementSuspendedPageCount();
+
     WebProcessPool& processPool() const { ASSERT(m_processPool); return *m_processPool.get(); }
 
     String registrableDomain() const { return m_registrableDomain.valueOr(String()); }
@@ -426,6 +429,7 @@ private:
     HashMap<uint64_t, Function<void()>> m_messageBatchDeliveryCompletionHandlers;
     HashMap<uint64_t, CompletionHandler<void(WebCore::MessagePortChannelProvider::HasActivity)>> m_localPortActivityCompletionHandlers;
 
+    unsigned m_suspendedPageCount { 0 };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
 
