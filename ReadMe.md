@@ -88,7 +88,7 @@ Without this step, you will see the error message: "`target specifies product ty
 Run the following command to build a debug build with debugging symbols and assertions for iOS:
 
 ```
-Tools/Scripts/build-webkit --debug --ios-simulator.
+Tools/Scripts/build-webkit --debug --ios-simulator
 ```
 
 ### Building the GTK+ Port
