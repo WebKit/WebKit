@@ -439,7 +439,6 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
         auto& window = *static_cast<WindowViewBackend*>(data);
         wpe_view_backend_dispatch_set_size(window.backend(), width, height);
 
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
         bool isFocused = false;
         void* p;
         wl_array_for_each(p, states)
@@ -462,19 +461,12 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
             wpe_view_backend_add_activity_state(window.backend(), wpe_view_activity_state_focused);
         else
             wpe_view_backend_remove_activity_state(window.backend(), wpe_view_activity_state_focused);
-#else
-        (void)states;
-#endif
     },
     // close
     [](void* data, struct zxdg_toplevel_v6*)
     {
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
         auto& window = *static_cast<WindowViewBackend*>(data);
         wpe_view_backend_remove_activity_state(window.backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused | wpe_view_activity_state_in_window);
-#else
-        (void)data;
-#endif
     },
 };
 
@@ -525,9 +517,7 @@ WindowViewBackend::WindowViewBackend(uint32_t width, uint32_t height)
             zxdg_toplevel_v6_add_listener(m_xdgToplevel, &s_xdgToplevelListener, this);
             zxdg_toplevel_v6_set_title(m_xdgToplevel, "WPE");
             wl_surface_commit(m_surface);
-#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
             wpe_view_backend_add_activity_state(backend(), wpe_view_activity_state_visible | wpe_view_activity_state_in_window);
-#endif
         }
     }
 
