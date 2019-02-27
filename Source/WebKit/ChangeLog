@@ -1,5 +1,42 @@
 2019-02-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r242089. rdar://problem/48429668
+
+    WebPageProxy should nullify m_userMediaPermissionRequestManager after resetting the media state
+    https://bugs.webkit.org/show_bug.cgi?id=195028
+    <rdar://problem/48243733>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    Covered by API test.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::resetState):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242089 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-26  Youenn Fablet  <youenn@apple.com>
+
+            WebPageProxy should nullify m_userMediaPermissionRequestManager after resetting the media state
+            https://bugs.webkit.org/show_bug.cgi?id=195028
+            <rdar://problem/48243733>
+
+            Reviewed by Eric Carlson.
+
+            Covered by API test.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetState):
+
+2019-02-27  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r242098. rdar://problem/48429674
 
     [iOS] REGRESSION(r238490?): Safari sometimes shows blank page until a cross site navigation or re-opening the tab
