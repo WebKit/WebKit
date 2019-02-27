@@ -353,6 +353,10 @@ private:
 
     void resetDOMWindowProperties();
 
+#if ENABLE(DEVICE_ORIENTATION)
+    void failedToRegisterDeviceMotionEventListener();
+#endif
+
     bool isSameSecurityOriginAsMainFrame() const;
 
 #if ENABLE(GAMEPAD)
