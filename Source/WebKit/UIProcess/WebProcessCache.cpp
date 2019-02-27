@@ -49,9 +49,9 @@ bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<
     ASSERT(!registrableDomain.isEmpty());
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
-    ASSERT(!process->processPool().hasSuspendedPageFor(process));
+    ASSERT(!process->suspendedPageCount());
 
-    if (!capacity() || m_isDisabled)
+    if (!capacity())
         return false;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
@@ -83,9 +83,9 @@ bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcess
 {
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
-    ASSERT(!process->processPool().hasSuspendedPageFor(process));
+    ASSERT(!process->suspendedPageCount());
 
-    if (!capacity() || m_isDisabled)
+    if (!capacity())
         return false;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
@@ -126,7 +126,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const String& registrableDo
 
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
-    ASSERT(!process->processPool().hasSuspendedPageFor(process));
+    ASSERT(!process->suspendedPageCount());
 
     return WTFMove(process);
 }
@@ -199,7 +199,7 @@ WebProcessCache::CachedProcess::~CachedProcess()
 
     ASSERT(!m_process->pageCount());
     ASSERT(!m_process->provisionalPageCount());
-    ASSERT(!m_process->processPool().hasSuspendedPageFor(*m_process));
+    ASSERT(!m_process->suspendedPageCount());
 
     m_process->setIsInProcessCache(false);
     m_process->shutDown();

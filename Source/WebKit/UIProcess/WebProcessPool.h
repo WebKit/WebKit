@@ -465,10 +465,11 @@ public:
     void closeFailedSuspendedPagesForPage(WebPageProxy&);
     std::unique_ptr<SuspendedPageProxy> takeSuspendedPage(SuspendedPageProxy&);
     void removeSuspendedPage(SuspendedPageProxy&);
-    bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy* = nullptr) const;
+    bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy&) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
     RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&);
-    void clearSuspendedPages();
+
+    void clearSuspendedPages(AllowProcessCaching);
 
     void didReachGoodTimeToPrewarm();
 

@@ -90,6 +90,8 @@ typedef RefCounter<BackgroundWebProcessCounterType> BackgroundWebProcessCounter;
 typedef BackgroundWebProcessCounter::Token BackgroundWebProcessToken;
 #endif
 
+enum class AllowProcessCaching { No, Yes };
+
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
@@ -106,6 +108,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
+    unsigned suspendedPageCount() const { return m_suspendedPageCount; }
     void incrementSuspendedPageCount();
     void decrementSuspendedPageCount();
 
@@ -255,7 +258,7 @@ public:
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.
     void shutDown();
-    void maybeShutDown();
+    void maybeShutDown(AllowProcessCaching = AllowProcessCaching::Yes);
 
     void didStartProvisionalLoadForMainFrame(const URL&);
 

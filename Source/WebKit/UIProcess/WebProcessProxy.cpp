@@ -842,12 +842,12 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
     return true;
 }
 
-void WebProcessProxy::maybeShutDown()
+void WebProcessProxy::maybeShutDown(AllowProcessCaching allowProcessCaching)
 {
     if (state() == State::Terminated || !canTerminateAuxiliaryProcess())
         return;
 
-    if (canBeAddedToWebProcessCache() && processPool().webProcessCache().addProcessIfPossible(registrableDomain(), *this))
+    if (allowProcessCaching == AllowProcessCaching::Yes && canBeAddedToWebProcessCache() && processPool().webProcessCache().addProcessIfPossible(registrableDomain(), *this))
         return;
 
     shutDown();
@@ -855,7 +855,7 @@ void WebProcessProxy::maybeShutDown()
 
 bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
-    if (!m_pageMap.isEmpty() || m_processPool->hasSuspendedPageFor(*this) || !m_provisionalPages.isEmpty() || m_isInProcessCache)
+    if (!m_pageMap.isEmpty() || m_suspendedPageCount || !m_provisionalPages.isEmpty() || m_isInProcessCache)
         return false;
 
     if (!m_processPool->shouldTerminate(this))

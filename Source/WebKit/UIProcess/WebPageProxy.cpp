@@ -2790,7 +2790,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
         // In the case where the destination WebProcess has a SuspendedPageProxy for this WebPage, we should have thrown
         // it away to support WebProcess re-use.
-        ASSERT(destinationSuspendedPage || !process().processPool().hasSuspendedPageFor(processForNavigation, this));
+        ASSERT(destinationSuspendedPage || !process().processPool().hasSuspendedPageFor(processForNavigation, *this));
 
         auto suspendedPage = destinationSuspendedPage ? process().processPool().takeSuspendedPage(*destinationSuspendedPage) : nullptr;
         if (suspendedPage && suspendedPage->failedToSuspend())

@@ -1334,13 +1334,13 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
 {
     RELEASE_LOG(PerformanceLogging, "%p - WebProcessPool::handleMemoryPressureWarning", this);
 
+
+    clearSuspendedPages(AllowProcessCaching::No);
     m_webProcessCache->clear();
 
     if (m_prewarmedProcess)
         m_prewarmedProcess->shutDown();
     ASSERT(!m_prewarmedProcess);
-
-    clearSuspendedPages();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -2345,16 +2345,23 @@ void WebProcessPool::removeSuspendedPage(SuspendedPageProxy& suspendedPage)
         m_suspendedPages.remove(it);
 }
 
-bool WebProcessPool::hasSuspendedPageFor(WebProcessProxy& process, WebPageProxy* page) const
+bool WebProcessPool::hasSuspendedPageFor(WebProcessProxy& process, WebPageProxy& page) const
 {
-    return m_suspendedPages.findIf([&process, page](auto& suspendedPage) {
-        return &suspendedPage->process() == &process && (!page || &suspendedPage->page() == page);
+    return m_suspendedPages.findIf([&process, &page](auto& suspendedPage) {
+        return &suspendedPage->process() == &process && &suspendedPage->page() == &page;
     }) != m_suspendedPages.end();
 }
 
-void WebProcessPool::clearSuspendedPages()
+void WebProcessPool::clearSuspendedPages(AllowProcessCaching allowProcessCaching)
 {
+    HashSet<RefPtr<WebProcessProxy>> processes;
+    for (auto& suspendedPage : m_suspendedPages)
+        processes.add(&suspendedPage->process());
+
     m_suspendedPages.clear();
+
+    for (auto& process : processes)
+        process->maybeShutDown(allowProcessCaching);
 }
 
 void WebProcessPool::addMockMediaDevice(const MockMediaDevice& device)

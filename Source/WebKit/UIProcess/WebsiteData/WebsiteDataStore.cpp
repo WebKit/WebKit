@@ -758,13 +758,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (webProcessAccessType != ProcessAccessType::None) {
         for (auto& processPool : processPools()) {
-            processPool->webProcessCache().setIsDisabled(true);
-            processPool->clearSuspendedPages();
-            // FIXME: We need to delay the clearing of the process cache because ~SuspendedPageProxy() calls maybeShutDown asynchronously.
-            RunLoop::main().dispatch([pool = makeRef(*processPool)] {
-                pool->webProcessCache().clear();
-                pool->webProcessCache().setIsDisabled(false);
-            });
+            processPool->clearSuspendedPages(AllowProcessCaching::No);
+            processPool->webProcessCache().clear();
         }
 
         for (auto& process : processes()) {
