@@ -156,6 +156,8 @@ WI.Popover = class Popover extends WI.Object
         window.removeEventListener("resize", this, true);
         window.removeEventListener("keypress", this, true);
 
+        this._prefersDarkColorSchemeMediaQueryList.removeListener(this._boundUpdate);
+
         WI.quickConsole.keyboardShortcutDisabled = false;
 
         this._element.classList.add(WI.Popover.FadeOutClassName);
@@ -577,6 +579,13 @@ WI.Popover = class Popover extends WI.Object
             window.addEventListener("scroll", this, true);
             window.addEventListener("resize", this, true);
             window.addEventListener("keypress", this, true);
+
+            if (!this._boundUpdate)
+                this._boundUpdate = this._update.bind(this);
+
+            if (!this._prefersDarkColorSchemeMediaQueryList)
+                this._prefersDarkColorSchemeMediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
+            this._prefersDarkColorSchemeMediaQueryList.addListener(this._boundUpdate);
 
             WI.quickConsole.keyboardShortcutDisabled = true;
         }
