@@ -1,3 +1,22 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        scrolling/ios/hit-testing-iframe* tests need to hide the tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=195099
+
+        Reviewed by Frederic Wang.
+
+        These tests were failing because the ref test captured the tap highlight, so hide
+        it with -webkit-tap-highlight-color: transparent;
+
+        * fast/scrolling/ios/hit-testing-iframe-001.html:
+        * fast/scrolling/ios/hit-testing-iframe-002.html:
+        * fast/scrolling/ios/hit-testing-iframe-003.html:
+        * fast/scrolling/ios/hit-testing-iframe-004.html:
+        * fast/scrolling/ios/hit-testing-iframe-005.html:
+        * fast/scrolling/ios/hit-testing-iframe-006.html:
+        * fast/scrolling/ios/mixing-user-and-programmatic-scroll-006.html:
+        * platform/ios-wk2/TestExpectations: hit-testing-iframe-006.html passes now.
+
 2019-02-27  Ulrich Pflueger  <up@nanocosmos.de>
 
         [MSE] SourceBuffer sample time increment vs. last frame duration check is broken
