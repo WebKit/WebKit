@@ -6637,10 +6637,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_geolocationPermissionRequestManager.invalidateRequests();
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-    m_userMediaPermissionRequestManager = nullptr;
-#endif
-
     m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
@@ -6716,7 +6712,11 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
         editCommand->invalidate();
 
     m_activePopupMenu = nullptr;
+
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
+#if ENABLE(MEDIA_STREAM)
+    m_userMediaPermissionRequestManager = nullptr;
+#endif
 
 #if ENABLE(POINTER_LOCK)
     requestPointerUnlock();
