@@ -1,3 +1,15 @@
+2019-02-26  Zalan Bujtas  <zalan@apple.com>
+
+        Do not try to observe the timer when Page is nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=195076
+
+        Reviewed by Tim Horton.
+
+        Covered by fast/dom/Window/timer-null-script-execution-context.html.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+
 2019-02-20  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Media elements will restart network buffering just before suspending
