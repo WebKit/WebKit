@@ -214,7 +214,6 @@ MOCK: update_status: %(name)s Checked relevance of patch
             'jsc-ews',
             'jsc-mips-ews',
             'jsc-armv7-ews',
-            'mac-32bit-ews',
             'mac-debug-ews',
             'mac-ews',
             'mac-wk2-ews',

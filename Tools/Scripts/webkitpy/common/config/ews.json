@@ -42,11 +42,6 @@
         "style": "debug",
         "runTests": true
     },
-    "Mac 32-bit EWS": {
-        "port": "mac",
-        "name": "mac-32bit-ews",
-        "architecture": "i386"
-    },
     "JSC EWS": {
         "port": "mac",
         "name": "jsc-ews",
