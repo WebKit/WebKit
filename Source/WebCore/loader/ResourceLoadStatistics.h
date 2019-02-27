@@ -73,19 +73,19 @@ struct ResourceLoadStatistics {
     bool grandfathered { false };
 
     // Storage access
-    HashSet<String> storageAccessUnderTopFrameOrigins;
+    HashSet<RegistrableDomain> storageAccessUnderTopFrameDomains;
 
     // Top frame stats
-    HashCountedSet<String> topFrameUniqueRedirectsTo;
-    HashCountedSet<String> topFrameUniqueRedirectsFrom;
+    HashSet<RegistrableDomain> topFrameUniqueRedirectsTo;
+    HashSet<RegistrableDomain> topFrameUniqueRedirectsFrom;
 
     // Subframe stats
-    HashCountedSet<String> subframeUnderTopFrameOrigins;
+    HashSet<RegistrableDomain> subframeUnderTopFrameDomains;
     
     // Subresource stats
-    HashCountedSet<String> subresourceUnderTopFrameOrigins;
-    HashCountedSet<String> subresourceUniqueRedirectsTo;
-    HashCountedSet<String> subresourceUniqueRedirectsFrom;
+    HashSet<RegistrableDomain> subresourceUnderTopFrameDomains;
+    HashSet<RegistrableDomain> subresourceUniqueRedirectsTo;
+    HashSet<RegistrableDomain> subresourceUniqueRedirectsFrom;
 
     // Prevalent resource stats
     bool isPrevalentResource { false };

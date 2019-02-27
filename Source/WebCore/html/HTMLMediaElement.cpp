@@ -7663,7 +7663,7 @@ String HTMLMediaElement::mediaSessionTitle() const
         title = decodeHostName(title);
 #endif
     if (!title.isEmpty()) {
-        auto domain = RegistrableDomain { title };
+        auto domain = RegistrableDomain { m_currentSrc };
         if (!domain.isEmpty())
             title = domain.string();
     }

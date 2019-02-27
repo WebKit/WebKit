@@ -628,7 +628,7 @@ public:
     String userVisibleString(const DOMURL&);
     void setShowAllPlugins(bool);
 
-    String resourceLoadStatisticsForOrigin(const String& origin);
+    String resourceLoadStatisticsForURL(const DOMURL&);
     void setResourceLoadStatisticsEnabled(bool);
     void setUserGrantsStorageAccess(bool);
 

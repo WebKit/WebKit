@@ -109,8 +109,8 @@ public:
     void setGrandfathered(const RegistrableDomain&, bool value);
     bool isGrandfathered(const RegistrableDomain&) const;
 
-    void setSubframeUnderTopFrameOrigin(const SubFrameDomain&, const TopFrameDomain&);
-    void setSubresourceUnderTopFrameOrigin(const SubResourceDomain&, const TopFrameDomain&);
+    void setSubframeUnderTopFrameDomain(const SubFrameDomain&, const TopFrameDomain&);
+    void setSubresourceUnderTopFrameDomain(const SubResourceDomain&, const TopFrameDomain&);
     void setSubresourceUniqueRedirectTo(const SubResourceDomain&, const RedirectDomain&);
     void setSubresourceUniqueRedirectFrom(const SubResourceDomain&, const RedirectDomain&);
     void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&);
@@ -213,7 +213,7 @@ private:
     WallTime m_endOfGrandfatheringTimestamp;
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };
-    const RegistrableDomain m_debugStaticPrevalentResource { "3rdpartytestwebkit.org"_s };
+    const RegistrableDomain m_debugStaticPrevalentResource { URL { URL(), "https://3rdpartytestwebkit.org"_s } };
     RegistrableDomain m_debugManualPrevalentResource;
     bool m_storageAccessPromptsEnabled { false };
     bool m_dataRecordsBeingRemoved { false };

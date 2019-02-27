@@ -1,3 +1,15 @@
+2019-02-27  John Wilander  <wilander@apple.com>
+
+        Adopt WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics and WebKit::NetworkProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=195071
+        <rdar://problem/48417690>
+
+        Reviewed by Alex Christensen and Brent Fulgham.
+
+        * http/tests/navigation/resources/redirect-updates-history-item-done-statistics.html:
+            Changed from window.internals.resourceLoadStatisticsForOrigin() to
+            window.internals.resourceLoadStatisticsForURL() and now submit a URL.
+
 2019-02-27  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Buffer updates part 2: setSubData, GPU/CPU synchronization

@@ -83,6 +83,7 @@
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/PointerID.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/TextChecking.h>
@@ -1394,7 +1395,7 @@ public:
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void requestStorageAccessConfirm(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&&);
 #endif
 
     static WebPageProxy* nonEphemeralWebPageProxy();

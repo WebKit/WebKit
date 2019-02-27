@@ -50,19 +50,6 @@ public:
             m_registrableDomain = hostString;
     }
 
-    explicit RegistrableDomain(const String& domain)
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-        : m_registrableDomain { topPrivatelyControlledDomain(domain) }
-#else
-        : m_registrableDomain { domain }
-#endif
-    {
-        if (domain.isEmpty())
-            m_registrableDomain = "nullOrigin"_s;
-        else if (m_registrableDomain.isEmpty())
-            m_registrableDomain = domain;
-    }
-
     bool isEmpty() const { return m_registrableDomain.isEmpty() || m_registrableDomain == "nullOrigin"_s; }
     const String& string() const { return m_registrableDomain; }
 
@@ -91,11 +78,35 @@ public:
         static bool equal(const RegistrableDomain& a, const RegistrableDomain& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = false;
     };
+
+    static RegistrableDomain uncheckedCreateFromRegistrableDomainString(const String& domain)
+    {
+        return RegistrableDomain { domain };
+    }
     
+    static RegistrableDomain uncheckedCreateFromHost(const String& host)
+    {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+        auto registrableDomain = topPrivatelyControlledDomain(host);
+        if (registrableDomain.isEmpty())
+            return uncheckedCreateFromRegistrableDomainString(host);
+        return RegistrableDomain { registrableDomain };
+#else
+        return uncheckedCreateFromRegistrableDomainString(host);
+#endif
+    }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<RegistrableDomain> decode(Decoder&);
-    
+
+protected:
+
 private:
+    explicit RegistrableDomain(const String& domain)
+        : m_registrableDomain { domain.isEmpty() ? "nullOrigin"_s : domain }
+    {
+    }
+
     String m_registrableDomain;
 };
 

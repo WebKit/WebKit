@@ -36,6 +36,7 @@
 #include "ProcessThrottlerClient.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/RegistrableDomain.h>
 #include <memory>
 #include <wtf/Deque.h>
 
@@ -67,6 +68,21 @@ struct WebsiteData;
 
 class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
 public:
+    using RegistrableDomain = WebCore::RegistrableDomain;
+    using TopFrameDomain = WebCore::RegistrableDomain;
+    using SubFrameDomain = WebCore::RegistrableDomain;
+    using SubResourceDomain = WebCore::RegistrableDomain;
+    using RedirectDomain = WebCore::RegistrableDomain;
+    using RedirectedFromDomain = WebCore::RegistrableDomain;
+    using RedirectedToDomain = WebCore::RegistrableDomain;
+    using NavigatedFromDomain = WebCore::RegistrableDomain;
+    using NavigatedToDomain = WebCore::RegistrableDomain;
+    using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
+    using OpenerDomain = WebCore::RegistrableDomain;
+    using OpenerPageID = uint64_t;
+    using PageID = uint64_t;
+    using FrameID = uint64_t;
+
     explicit NetworkProcessProxy(WebProcessPool&);
     ~NetworkProcessProxy();
 
@@ -79,41 +95,41 @@ public:
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebKit::WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, CompletionHandler<void()>&&);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    void clearPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void clearUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
+    void clearPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
+    void clearUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(PAL::SessionID, CompletionHandler<void(String)>&&);
-    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
-    void hasHadUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void isGrandfathered(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void isPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsRedirectingTo(PAL::SessionID, const String& redirectedFrom, const String& redirectedTo, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubFrameUnder(PAL::SessionID, const String& subFrame, const String& topFrame, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubresourceUnder(PAL::SessionID, const String& subresource, const String& topFrame, CompletionHandler<void(bool)>&&);
-    void isVeryPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void(bool)>&&);
-    void logUserInteraction(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
+    void updatePrevalentDomainsToBlockCookiesFor(PAL::SessionID, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
+    void hasHadUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void isGrandfathered(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void isPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsRedirectingTo(PAL::SessionID, const RedirectedFromDomain&, const RedirectedToDomain&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubFrameUnder(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubresourceUnder(PAL::SessionID, const SubResourceDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
+    void isVeryPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void(bool)>&&);
+    void logUserInteraction(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID, CompletionHandler<void()>&&);
-    void setLastSeen(PAL::SessionID, const String& resourceDomain, Seconds, CompletionHandler<void()>&&);
+    void setLastSeen(PAL::SessionID, const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setAgeCapForClientSideCookies(PAL::SessionID, Optional<Seconds>, CompletionHandler<void()>&&);
     void setCacheMaxAgeCap(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
-    void setGrandfathered(PAL::SessionID, const String& resourceDomain, bool isGrandfathered, CompletionHandler<void()>&&);
+    void setGrandfathered(PAL::SessionID, const RegistrableDomain&, bool isGrandfathered, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID, bool, CompletionHandler<void()>&&);
     void setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID, bool, CompletionHandler<void()>&&);
-    void setSubframeUnderTopFrameOrigin(PAL::SessionID, const String& subframe, const String& topFrame, CompletionHandler<void()>&&);
-    void setSubresourceUnderTopFrameOrigin(PAL::SessionID, const String& subresource, const String& topFrame, CompletionHandler<void()>&&);
-    void setSubresourceUniqueRedirectTo(PAL::SessionID, const String& subresource, const String& hostNameRedirectedTo, CompletionHandler<void()>&&);
-    void setSubresourceUniqueRedirectFrom(PAL::SessionID, const String& subresource, const String& hostNameRedirectedFrom, CompletionHandler<void()>&&);
+    void setSubframeUnderTopFrameDomain(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void()>&&);
+    void setSubresourceUnderTopFrameDomain(PAL::SessionID, const SubResourceDomain&, const TopFrameDomain&, CompletionHandler<void()>&&);
+    void setSubresourceUniqueRedirectTo(PAL::SessionID, const SubResourceDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
+    void setSubresourceUniqueRedirectFrom(PAL::SessionID, const SubResourceDomain&, const RedirectedFromDomain&, CompletionHandler<void()>&&);
     void setTimeToLiveUserInteraction(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
-    void setTopFrameUniqueRedirectTo(PAL::SessionID, const String& topFrameHostName, const String& hostNameRedirectedTo, CompletionHandler<void()>&&);
-    void setTopFrameUniqueRedirectFrom(PAL::SessionID, const String& topFrameHostName, const String& hostNameRedirectedFrom, CompletionHandler<void()>&&);
-    void setPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void setPrevalentResourceForDebugMode(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void setVeryPrevalentResource(PAL::SessionID, const String& resourceDomain, CompletionHandler<void()>&&);
-    void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
+    void setTopFrameUniqueRedirectTo(PAL::SessionID, const TopFrameDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
+    void setTopFrameUniqueRedirectFrom(PAL::SessionID, const TopFrameDomain&, const RedirectedFromDomain&, CompletionHandler<void()>&&);
+    void setPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
+    void setPrevalentResourceForDebugMode(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
+    void setVeryPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
+    void hasStorageAccessForFrame(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
     void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
-    void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
-    void hasStorageAccess(PAL::SessionID, const String& subFrameHost, const String& topFrameHost, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
-    void requestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, const String& subFrameHost, const String& topFrameHost, CompletionHandler<void(bool)>&&);
+    void grantStorageAccess(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
+    void hasStorageAccess(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccessConfirm(PageID, FrameID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(PAL::SessionID, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);

@@ -789,11 +789,11 @@ void NetworkProcess::setNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessi
     }
 }
 
-void NetworkProcess::setSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setSubframeUnderTopFrameDomain(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->setSubframeUnderTopFrameOrigin(subFrameDomain, topFrameDomain, WTFMove(completionHandler));
+            resourceLoadStatistics->setSubframeUnderTopFrameDomain(subFrameDomain, topFrameDomain, WTFMove(completionHandler));
         else
             completionHandler();
     } else {
@@ -828,11 +828,11 @@ void NetworkProcess::isRegisteredAsSubFrameUnder(PAL::SessionID sessionID, const
     }
 }
 
-void NetworkProcess::setSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, const RegistrableDomain& subresourceDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::setSubresourceUnderTopFrameDomain(PAL::SessionID sessionID, const RegistrableDomain& subresourceDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->setSubresourceUnderTopFrameOrigin(subresourceDomain, topFrameDomain, WTFMove(completionHandler));
+            resourceLoadStatistics->setSubresourceUnderTopFrameDomain(subresourceDomain, topFrameDomain, WTFMove(completionHandler));
         else
             completionHandler();
     } else {
@@ -1436,19 +1436,19 @@ static Vector<WebsiteData::Entry> filterForRegistrableDomains(const Vector<Regis
 {
     Vector<WebsiteData::Entry> result;
     for (const auto& value : foundValues) {
-        if (registrableDomains.contains(RegistrableDomain { value.origin.host }))
+        if (registrableDomains.contains(RegistrableDomain::uncheckedCreateFromHost(value.origin.host)))
             result.append(value);
     }
     
     return result;
 }
 
-void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
+void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
+        explicit CallbackAggregator(CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
         {
         }
@@ -1456,25 +1456,25 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
         ~CallbackAggregator()
         {
             RunLoop::main().dispatch([completionHandler = WTFMove(m_completionHandler), websiteData = WTFMove(m_websiteData)] () mutable {
-                HashSet<String> origins;
+                HashSet<RegistrableDomain> domains;
                 for (const auto& hostnameWithCookies : websiteData.hostNamesWithCookies)
-                    origins.add(hostnameWithCookies);
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithCookies));
 
                 for (const auto& hostnameWithHSTS : websiteData.hostNamesWithHSTSCache)
-                    origins.add(hostnameWithHSTS);
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithHSTS));
 
                 for (const auto& entry : websiteData.entries)
-                    origins.add(entry.origin.host);
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
 
-                completionHandler(origins);
+                completionHandler(domains);
             });
         }
         
-        CompletionHandler<void(const HashSet<String>&)> m_completionHandler;
+        CompletionHandler<void(const HashSet<RegistrableDomain>&)> m_completionHandler;
         WebsiteData m_websiteData;
     };
     
-    auto callbackAggregator = adoptRef(*new CallbackAggregator([this, completionHandler = WTFMove(completionHandler), shouldNotifyPage] (const HashSet<String>& domainsWithData) mutable {
+    auto callbackAggregator = adoptRef(*new CallbackAggregator([this, completionHandler = WTFMove(completionHandler), shouldNotifyPage] (const HashSet<RegistrableDomain>& domainsWithData) mutable {
         if (shouldNotifyPage)
             parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyWebsiteDataDeletionForRegistrableDomainsFinished(), 0);
         
@@ -1533,7 +1533,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
             RunLoop::main().dispatch([this, sessionID, domains = crossThreadCopy(domains), callbackAggregator = callbackAggregator.copyRef(), securityOrigins = indexedDatabaseOrigins(path)] {
                 Vector<SecurityOriginData> entriesToDelete;
                 for (const auto& securityOrigin : securityOrigins) {
-                    if (!domains.contains(RegistrableDomain { securityOrigin.host }))
+                    if (!domains.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
                         continue;
 
                     entriesToDelete.append(securityOrigin);
@@ -1551,7 +1551,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
     if (!path.isEmpty() && websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations)) {
         swServerForSession(sessionID).getOriginsWithRegistrations([this, sessionID, domains, callbackAggregator = callbackAggregator.copyRef()](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& securityOrigin : securityOrigins) {
-                if (!domains.contains(RegistrableDomain { securityOrigin.host }))
+                if (!domains.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
                     continue;
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::ServiceWorkerRegistrations, 0 });
                 swServerForSession(sessionID).clear(securityOrigin, [callbackAggregator = callbackAggregator.copyRef()] { });
@@ -1565,7 +1565,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
 
             Vector<SecurityOriginData> entriesToDelete;
             for (auto& entry : entries) {
-                if (!domains.contains(RegistrableDomain { entry.origin.host }))
+                if (!domains.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host)))
                     continue;
                 entriesToDelete.append(entry.origin);
                 callbackAggregator->m_websiteData.entries.append(entry);
@@ -1590,13 +1590,13 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
             RunLoop::main().dispatch([completionHandler = WTFMove(m_completionHandler), websiteData = WTFMove(m_websiteData)] () mutable {
                 HashSet<RegistrableDomain> domains;
                 for (const auto& hostnameWithCookies : websiteData.hostNamesWithCookies)
-                    domains.add(RegistrableDomain { hostnameWithCookies });
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithCookies));
 
                 for (const auto& hostnameWithHSTS : websiteData.hostNamesWithHSTSCache)
-                    domains.add(RegistrableDomain { hostnameWithHSTS });
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithHSTS));
 
                 for (const auto& entry : websiteData.entries)
-                    domains.add(RegistrableDomain { entry.origin.host });
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
 
                 completionHandler(WTFMove(domains));
             });

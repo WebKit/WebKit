@@ -59,8 +59,13 @@ public:
 
     struct Source {
         Source() = default;
-        explicit Source(const String& host)
-            : registrableDomain { host }
+        explicit Source(const URL& url)
+            : registrableDomain { url }
+        {
+        }
+
+        explicit Source(const RegistrableDomain& domain)
+            : registrableDomain { domain }
         {
         }
 
@@ -124,8 +129,13 @@ public:
 
     struct Destination {
         Destination() = default;
-        explicit Destination(const String& host)
-            : registrableDomain { RegistrableDomain { host } }
+        explicit Destination(const URL& url)
+            : registrableDomain { RegistrableDomain { url } }
+        {
+        }
+
+        explicit Destination(const RegistrableDomain& domain)
+            : registrableDomain { domain }
         {
         }
 
@@ -257,12 +267,12 @@ Optional<AdClickAttribution> AdClickAttribution::decode(Decoder& decoder)
     if (!campaignId)
         return WTF::nullopt;
     
-    Optional<String> sourceRegistrableDomain;
+    Optional<RegistrableDomain> sourceRegistrableDomain;
     decoder >> sourceRegistrableDomain;
     if (!sourceRegistrableDomain)
         return WTF::nullopt;
     
-    Optional<String> destinationRegistrableDomain;
+    Optional<RegistrableDomain> destinationRegistrableDomain;
     decoder >> destinationRegistrableDomain;
     if (!destinationRegistrableDomain)
         return WTF::nullopt;

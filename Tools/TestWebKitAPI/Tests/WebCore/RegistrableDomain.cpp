@@ -36,19 +36,19 @@ TEST(RegistrableDomain, StringVsURL)
 {
     URL webkitURL { URL(), "https://webkit.org" };
     RegistrableDomain webkitDomainFromURL { webkitURL };
-    RegistrableDomain webkitDomainFromString { "webkit.org" };
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org");
 
     ASSERT_EQ(webkitDomainFromURL, webkitDomainFromString);
 
     URL localhostURL { URL(), "https://localhost:8000" };
     RegistrableDomain localhostDomainFromURL { localhostURL };
-    RegistrableDomain localhostDomainFromString { "localhost" };
-    
+    auto localhostDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("localhost");
+
     ASSERT_EQ(localhostDomainFromURL, localhostDomainFromString);
 
     URL fileURL { URL(), "file:///some/file" };
     RegistrableDomain fileDomainFromURL { fileURL };
-    RegistrableDomain fileDomainFromString { "" };
+    auto fileDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("");
     
     ASSERT_EQ(fileDomainFromURL, fileDomainFromString);
 }

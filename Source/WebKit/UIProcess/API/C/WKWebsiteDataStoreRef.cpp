@@ -258,14 +258,14 @@ void WKWebsiteDataStoreIsStatisticsGrandfathered(WKWebsiteDataStoreRef dataStore
 void WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameHost)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().setSubframeUnderTopFrameOrigin(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameHost)->string()), [] { });
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setSubframeUnderTopFrameDomain(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameHost)->string()), [] { });
 #endif
 }
 
 void WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, WKStringRef topFrameHost)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().setSubresourceUnderTopFrameOrigin(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameHost)->string()), [] { });
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setSubresourceUnderTopFrameDomain(URL(URL(), WebKit::toImpl(host)->string()), URL(URL(), WebKit::toImpl(topFrameHost)->string()), [] { });
 #endif
 }
 

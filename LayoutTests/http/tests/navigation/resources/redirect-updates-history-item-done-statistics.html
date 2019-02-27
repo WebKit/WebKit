@@ -6,7 +6,7 @@ onload = function() {
     if (window.testRunner) {
         testRunner.notifyDone();
         log("Dumping Resource Load Statistics:");
-        log(window.internals.resourceLoadStatisticsForOrigin("127.0.0.1"));
+        log(window.internals.resourceLoadStatisticsForURL(new URL("http://127.0.0.1")));
     }
 }
 </script>

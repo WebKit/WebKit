@@ -305,7 +305,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessGranted(const Registrab
                 else
                     completionHandler(false);
             };
-            m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, subFrameDomain.string(), topFrameDomain.string()), WTFMove(requestConfirmationCompletionHandler));
+            m_networkSession->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageAccessConfirm(pageID, frameID, subFrameDomain, topFrameDomain), WTFMove(requestConfirmationCompletionHandler));
             }
             return;
         case StorageAccessStatus::HasAccess:
@@ -683,24 +683,24 @@ void WebResourceLoadStatisticsStore::isGrandfathered(const RegistrableDomain& do
     });
 }
 
-void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameDomain(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     postTask([this, completionHandler = WTFMove(completionHandler), subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy()]() mutable {
         if (m_memoryStore)
-            m_memoryStore->setSubframeUnderTopFrameOrigin(subFrameDomain, topFrameDomain);
+            m_memoryStore->setSubframeUnderTopFrameDomain(subFrameDomain, topFrameDomain);
         postTaskReply(WTFMove(completionHandler));
     });
 }
 
-void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const RegistrableDomain& subresourceDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
+void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameDomain(const RegistrableDomain& subresourceDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     postTask([this, completionHandler = WTFMove(completionHandler), subresourceDomain = subresourceDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy()]() mutable {
         if (m_memoryStore)
-            m_memoryStore->setSubresourceUnderTopFrameOrigin(subresourceDomain, topFrameDomain);
+            m_memoryStore->setSubresourceUnderTopFrameDomain(subresourceDomain, topFrameDomain);
         postTaskReply(WTFMove(completionHandler));
     });
 }
@@ -950,7 +950,7 @@ void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
         m_networkSession->notifyResourceLoadStatisticsProcessed();
 }
 
-void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<String>&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     

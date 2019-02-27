@@ -70,8 +70,8 @@ static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const
             statistic.dataRecordsRemoved,
             statistic.hadUserInteraction,
             daysSinceUserInteraction,
-            statistic.subframeUnderTopFrameOrigins.size(),
-            statistic.subresourceUnderTopFrameOrigins.size(),
+            statistic.subframeUnderTopFrameDomains.size(),
+            statistic.subresourceUnderTopFrameDomains.size(),
             statistic.subresourceUniqueRedirectsTo.size(),
             statistic.timesAccessedAsFirstPartyDueToUserInteraction,
             statistic.timesAccessedAsFirstPartyDueToStorageAccessAPI

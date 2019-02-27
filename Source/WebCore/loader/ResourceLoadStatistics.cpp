@@ -37,32 +37,16 @@ namespace WebCore {
 
 static Seconds timestampResolution { 5_s };
 
-typedef WTF::HashMap<String, unsigned, StringHash, HashTraits<String>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
+typedef WTF::HashMap<RegistrableDomain, unsigned, RegistrableDomain::RegistrableDomainHash, HashTraits<RegistrableDomain>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
 
-static void encodeHashCountedSet(KeyedEncoder& encoder, const String& label, const HashCountedSet<String>& hashCountedSet)
-{
-    if (hashCountedSet.isEmpty())
-        return;
-
-    encoder.encodeObjects(label, hashCountedSet.begin(), hashCountedSet.end(), [](KeyedEncoder& encoderInner, const ResourceLoadStatisticsValue& origin) {
-        encoderInner.encodeString("origin", origin.key);
-        encoderInner.encodeUInt32("count", origin.value);
-    });
-}
-
-static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const String& key, const HashSet<String>& hashSet)
+static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const String& key, const HashSet<RegistrableDomain>& hashSet)
 {
     if (hashSet.isEmpty())
         return;
     
-    encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [&key](KeyedEncoder& encoderInner, const String& origin) {
-        encoderInner.encodeString(key, origin);
+    encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [&key](KeyedEncoder& encoderInner, const RegistrableDomain& domain) {
+        encoderInner.encodeString(key, domain.string());
     });
-}
-
-static void encodeOriginHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
-{
-    encodeHashSet(encoder, label, "origin", hashSet);
 }
 
 template<typename T>
@@ -94,37 +78,37 @@ static void encodeCanvasActivityRecord(KeyedEncoder& encoder, const String& labe
 
 void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 {
-    encoder.encodeString("PrevalentResourceOrigin", registrableDomain.string());
-    
-    encoder.encodeDouble("lastSeen", lastSeen.secondsSinceEpoch().value());
-    
+    encoder.encodeString("PrevalentResourceDomain"_s, registrableDomain.string());
+
+    encoder.encodeDouble("lastSeen"_s, lastSeen.secondsSinceEpoch().value());
+
     // User interaction
-    encoder.encodeBool("hadUserInteraction", hadUserInteraction);
-    encoder.encodeDouble("mostRecentUserInteraction", mostRecentUserInteractionTime.secondsSinceEpoch().value());
-    encoder.encodeBool("grandfathered", grandfathered);
+    encoder.encodeBool("hadUserInteraction"_s, hadUserInteraction);
+    encoder.encodeDouble("mostRecentUserInteraction"_s, mostRecentUserInteractionTime.secondsSinceEpoch().value());
+    encoder.encodeBool("grandfathered"_s, grandfathered);
 
     // Storage access
-    encodeOriginHashSet(encoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+    encodeHashSet(encoder, "storageAccessUnderTopFrameDomains"_s, "domain"_s, storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    encodeHashCountedSet(encoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
-    encodeHashCountedSet(encoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    encodeHashSet(encoder, "topFrameUniqueRedirectsTo"_s, "domain"_s, topFrameUniqueRedirectsTo);
+    encodeHashSet(encoder, "topFrameUniqueRedirectsFrom"_s, "domain"_s, topFrameUniqueRedirectsFrom);
 
     // Subframe stats
-    encodeHashCountedSet(encoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
+    encodeHashSet(encoder, "subframeUnderTopFrameDomains"_s, "domain"_s, subframeUnderTopFrameDomains);
     
     // Subresource stats
-    encodeHashCountedSet(encoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
-    encodeHashCountedSet(encoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
-    encodeHashCountedSet(encoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
+    encodeHashSet(encoder, "subresourceUnderTopFrameDomains"_s, "domain"_s, subresourceUnderTopFrameDomains);
+    encodeHashSet(encoder, "subresourceUniqueRedirectsTo"_s, "domain"_s, subresourceUniqueRedirectsTo);
+    encodeHashSet(encoder, "subresourceUniqueRedirectsFrom"_s, "domain"_s, subresourceUniqueRedirectsFrom);
 
     // Prevalent Resource
-    encoder.encodeBool("isPrevalentResource", isPrevalentResource);
-    encoder.encodeBool("isVeryPrevalentResource", isVeryPrevalentResource);
-    encoder.encodeUInt32("dataRecordsRemoved", dataRecordsRemoved);
+    encoder.encodeBool("isPrevalentResource"_s, isPrevalentResource);
+    encoder.encodeBool("isVeryPrevalentResource"_s, isVeryPrevalentResource);
+    encoder.encodeUInt32("dataRecordsRemoved"_s, dataRecordsRemoved);
 
-    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction);
-    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI);
+    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction"_s, timesAccessedAsFirstPartyDueToUserInteraction);
+    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI"_s, timesAccessedAsFirstPartyDueToStorageAccessAPI);
 
 #if ENABLE(WEB_API_STATISTICS)
     encodeFontHashSet(encoder, "fontsFailedToLoad", fontsFailedToLoad);
@@ -136,37 +120,32 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 #endif
 }
 
-static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
+static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<RegistrableDomain>& hashCountedSet)
 {
     Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& origin) {
-        if (!decoderInner.decodeString("origin", origin))
+    decoder.decodeObjects(label, ignore, [&hashCountedSet](KeyedDecoder& decoderInner, String& domain) {
+        if (!decoderInner.decodeString("origin", domain))
             return false;
         
         unsigned count;
         if (!decoderInner.decodeUInt32("count", count))
             return false;
 
-        hashCountedSet.add(origin, count);
+        hashCountedSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(domain), count);
         return true;
     });
 }
 
-static void decodeHashSet(KeyedDecoder& decoder, const String& label, const String& key, HashSet<String>& hashSet)
+static void decodeHashSet(KeyedDecoder& decoder, const String& label, const String& key, HashSet<RegistrableDomain>& hashSet)
 {
     Vector<String> ignore;
-    decoder.decodeObjects(label, ignore, [&hashSet, &key](KeyedDecoder& decoderInner, String& origin) {
-        if (!decoderInner.decodeString(key, origin))
+    decoder.decodeObjects(label, ignore, [&hashSet, &key](KeyedDecoder& decoderInner, String& domain) {
+        if (!decoderInner.decodeString(key, domain))
             return false;
         
-        hashSet.add(origin);
+        hashSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(domain));
         return true;
     });
-}
-
-static void decodeOriginHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
-{
-    decodeHashSet(decoder, label, "origin", hashSet);
 }
 
 template<typename T>
@@ -203,32 +182,74 @@ static void decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& labe
 bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion)
 {
     String registrableDomainAsString;
-    if (!decoder.decodeString("PrevalentResourceOrigin", registrableDomainAsString))
-        return false;
-    registrableDomain = RegistrableDomain(registrableDomainAsString);
+    if (modelVersion >= 15) {
+        if (!decoder.decodeString("PrevalentResourceDomain", registrableDomainAsString))
+            return false;
+    } else {
+        if (!decoder.decodeString("PrevalentResourceOrigin", registrableDomainAsString))
+            return false;
+    }
+    registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(registrableDomainAsString);
 
     // User interaction
     if (!decoder.decodeBool("hadUserInteraction", hadUserInteraction))
         return false;
 
     // Storage access
-    decodeOriginHashSet(decoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+    if (modelVersion >= 15)
+        decodeHashSet(decoder, "storageAccessUnderTopFrameDomains", "domain", storageAccessUnderTopFrameDomains);
+    else
+        decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", "origin", storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    if (modelVersion >= 11) {
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    if (modelVersion >= 15) {
+        decodeHashSet(decoder, "topFrameUniqueRedirectsTo", "domain", topFrameUniqueRedirectsTo);
+        decodeHashSet(decoder, "topFrameUniqueRedirectsFrom", "domain", topFrameUniqueRedirectsFrom);
+    } else if (modelVersion >= 11) {
+        HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsToCounted;
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsToCounted);
+        for (auto& domain : topFrameUniqueRedirectsToCounted.values())
+            topFrameUniqueRedirectsTo.add(domain);
+        
+        HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsFromCounted;
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFromCounted);
+        for (auto& domain : topFrameUniqueRedirectsFromCounted.values())
+            topFrameUniqueRedirectsFrom.add(domain);
     }
 
     // Subframe stats
-    if (modelVersion >= 14)
-        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
+    if (modelVersion >= 15)
+        decodeHashSet(decoder, "subframeUnderTopFrameDomains", "domain", subframeUnderTopFrameDomains);
+    else if (modelVersion >= 14) {
+        HashCountedSet<RegistrableDomain> subframeUnderTopFrameDomainsCounted;
+        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameDomainsCounted);
+        for (auto& domain : subframeUnderTopFrameDomainsCounted.values())
+            subframeUnderTopFrameDomains.add(domain);
+    }
 
     // Subresource stats
-    decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
-    decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
-    if (modelVersion >= 11)
-        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
+    if (modelVersion >= 15) {
+        decodeHashSet(decoder, "subresourceUnderTopFrameDomains", "domain", subresourceUnderTopFrameDomains);
+        decodeHashSet(decoder, "subresourceUniqueRedirectsTo", "domain", subresourceUniqueRedirectsTo);
+        decodeHashSet(decoder, "subresourceUniqueRedirectsFrom", "domain", subresourceUniqueRedirectsFrom);
+    } else {
+        HashCountedSet<RegistrableDomain> subresourceUnderTopFrameDomainsCounted;
+        decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameDomainsCounted);
+        for (auto& domain : subresourceUnderTopFrameDomainsCounted.values())
+            subresourceUnderTopFrameDomains.add(domain);
+
+        HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsToCounted;
+        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsToCounted);
+        for (auto& domain : subresourceUniqueRedirectsToCounted.values())
+            subresourceUniqueRedirectsTo.add(domain);
+        if (modelVersion >= 11) {
+            HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsFromCounted;
+            decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFromCounted);
+            for (auto& domain : subresourceUniqueRedirectsFromCounted.values())
+                subresourceUniqueRedirectsFrom.add(domain);
+        }
+    }
+
 
     // Prevalent Resource
     if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
@@ -290,25 +311,7 @@ static void appendBoolean(StringBuilder& builder, const String& label, bool flag
     builder.append(flag ? "Yes" : "No");
 }
 
-static void appendHashCountedSet(StringBuilder& builder, const String& label, const HashCountedSet<String>& hashCountedSet)
-{
-    if (hashCountedSet.isEmpty())
-        return;
-
-    builder.appendLiteral("    ");
-    builder.append(label);
-    builder.appendLiteral(":\n");
-
-    for (auto& entry : hashCountedSet) {
-        builder.appendLiteral("        ");
-        builder.append(entry.key);
-        builder.appendLiteral(": ");
-        builder.appendNumber(entry.value);
-        builder.append('\n');
-    }
-}
-
-static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<String>& hashSet)
+static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<RegistrableDomain>& hashSet)
 {
     if (hashSet.isEmpty())
         return;
@@ -319,7 +322,7 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
     
     for (auto& entry : hashSet) {
         builder.appendLiteral("        ");
-        builder.append(entry);
+        builder.append(entry.string());
         builder.append('\n');
     }
 }
@@ -397,7 +400,7 @@ static void appendScreenAPIOptionSet(StringBuilder& builder, const OptionSet<Res
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
-    builder.appendLiteral("High level domain: ");
+    builder.appendLiteral("Registrable domain: ");
     builder.append(registrableDomain.string());
     builder.append('\n');
     builder.appendLiteral("    lastSeen: ");
@@ -414,19 +417,19 @@ String ResourceLoadStatistics::toString() const
     builder.append('\n');
 
     // Storage access
-    appendHashSet(builder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+    appendHashSet(builder, "storageAccessUnderTopFrameDomains", storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    appendHashCountedSet(builder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
-    appendHashCountedSet(builder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    appendHashSet(builder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
+    appendHashSet(builder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
 
     // Subframe stats
-    appendHashCountedSet(builder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
+    appendHashSet(builder, "subframeUnderTopFrameDomains", subframeUnderTopFrameDomains);
     
     // Subresource stats
-    appendHashCountedSet(builder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameOrigins);
-    appendHashCountedSet(builder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
-    appendHashCountedSet(builder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
+    appendHashSet(builder, "subresourceUnderTopFrameDomains", subresourceUnderTopFrameDomains);
+    appendHashSet(builder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
+    appendHashSet(builder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
 
     // Prevalent Resource
     appendBoolean(builder, "isPrevalentResource", isPrevalentResource);
@@ -488,19 +491,19 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     grandfathered |= other.grandfathered;
 
     // Storage access
-    mergeHashSet(storageAccessUnderTopFrameOrigins, other.storageAccessUnderTopFrameOrigins);
+    mergeHashSet(storageAccessUnderTopFrameDomains, other.storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    mergeHashCountedSet(topFrameUniqueRedirectsTo, other.topFrameUniqueRedirectsTo);
-    mergeHashCountedSet(topFrameUniqueRedirectsFrom, other.topFrameUniqueRedirectsFrom);
+    mergeHashSet(topFrameUniqueRedirectsTo, other.topFrameUniqueRedirectsTo);
+    mergeHashSet(topFrameUniqueRedirectsFrom, other.topFrameUniqueRedirectsFrom);
 
     // Subframe stats
-    mergeHashCountedSet(subframeUnderTopFrameOrigins, other.subframeUnderTopFrameOrigins);
+    mergeHashSet(subframeUnderTopFrameDomains, other.subframeUnderTopFrameDomains);
     
     // Subresource stats
-    mergeHashCountedSet(subresourceUnderTopFrameOrigins, other.subresourceUnderTopFrameOrigins);
-    mergeHashCountedSet(subresourceUniqueRedirectsTo, other.subresourceUniqueRedirectsTo);
-    mergeHashCountedSet(subresourceUniqueRedirectsFrom, other.subresourceUniqueRedirectsFrom);
+    mergeHashSet(subresourceUnderTopFrameDomains, other.subresourceUnderTopFrameDomains);
+    mergeHashSet(subresourceUniqueRedirectsTo, other.subresourceUniqueRedirectsTo);
+    mergeHashSet(subresourceUniqueRedirectsFrom, other.subresourceUniqueRedirectsFrom);
 
     // Prevalent resource stats
     isPrevalentResource |= other.isPrevalentResource;
@@ -510,7 +513,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 #if ENABLE(WEB_API_STATISTICS)
     mergeHashSet(fontsFailedToLoad, other.fontsFailedToLoad);
     mergeHashSet(fontsSuccessfullyLoaded, other.fontsSuccessfullyLoaded);
-    mergeHashCountedSet(topFrameRegistrableDomainsWhichAccessedWebAPIs, other.topFrameRegistrableDomainsWhichAccessedWebAPIs);
+    mergeHashSet(topFrameRegistrableDomainsWhichAccessedWebAPIs, other.topFrameRegistrableDomainsWhichAccessedWebAPIs);
     canvasActivityRecord.mergeWith(other.canvasActivityRecord);
     navigatorFunctionsAccessed.add(other.navigatorFunctionsAccessed);
     screenFunctionsAccessed.add(other.screenFunctionsAccessed);

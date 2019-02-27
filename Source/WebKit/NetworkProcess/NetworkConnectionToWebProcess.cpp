@@ -63,7 +63,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-using RegistrableDomain = WebCore::RegistrableDomain;
 
 Ref<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(NetworkProcess& networkProcess, IPC::Connection::Identifier connectionIdentifier)
 {

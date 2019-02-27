@@ -620,7 +620,7 @@ enum CompositingPolicy {
     [Conditional=STREAMS_API, CallWith=ExecState] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
     [Conditional=STREAMS_API, CallWith=ExecState] boolean isReadableStreamDisturbed(any stream);
 
-    DOMString resourceLoadStatisticsForOrigin(DOMString domain);
+    DOMString resourceLoadStatisticsForURL(DOMURL url);
     void setResourceLoadStatisticsEnabled(boolean enable);
     [EnabledBySetting=StorageAccessAPI] void setUserGrantsStorageAccess(boolean value);
 

@@ -36,11 +36,15 @@ namespace TestWebKitAPI {
 constexpr uint32_t min6BitValue { 0 };
 constexpr uint32_t max6BitValue { 63 };
 
+const URL webKitURL { { }, "https://webkit.org"_s };
+const URL exampleURL { { }, "https://example.com"_s };
+const URL emptyURL { };
+
 // Positive test cases.
 
 TEST(AdClickAttribution, ValidMinValues)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(min6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(min6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion(min6BitValue, AdClickAttribution::Priority(min6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -52,7 +56,7 @@ TEST(AdClickAttribution, ValidMinValues)
 
 TEST(AdClickAttribution, ValidMidValues)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign((uint32_t)12), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign((uint32_t)12), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion((uint32_t)44, AdClickAttribution::Priority((uint32_t)22)));
 
     auto attributionURL = attribution.url();
@@ -64,7 +68,7 @@ TEST(AdClickAttribution, ValidMidValues)
 
 TEST(AdClickAttribution, ValidMaxValues)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -76,7 +80,7 @@ TEST(AdClickAttribution, ValidMaxValues)
 
 TEST(AdClickAttribution, EarliestTimeToSendAttributionMinimumDelay)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     auto now = WallTime::now();
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
     auto earliestTimeToSend = attribution.earliestTimeToSend();
@@ -88,7 +92,7 @@ TEST(AdClickAttribution, EarliestTimeToSendAttributionMinimumDelay)
 
 TEST(AdClickAttribution, InvalidCampaignId)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -100,7 +104,7 @@ TEST(AdClickAttribution, InvalidCampaignId)
 
 TEST(AdClickAttribution, InvalidSourceHost)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source(""), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { emptyURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -112,7 +116,7 @@ TEST(AdClickAttribution, InvalidSourceHost)
 
 TEST(AdClickAttribution, InvalidDestinationHost)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination(""));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue + 1), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { emptyURL } };
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -124,7 +128,7 @@ TEST(AdClickAttribution, InvalidDestinationHost)
 
 TEST(AdClickAttribution, InvalidConversionData)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion((max6BitValue + 1), AdClickAttribution::Priority(max6BitValue)));
 
     auto attributionURL = attribution.url();
@@ -136,7 +140,7 @@ TEST(AdClickAttribution, InvalidConversionData)
 
 TEST(AdClickAttribution, InvalidPriority)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
     attribution.setConversion(AdClickAttribution::Conversion(max6BitValue, AdClickAttribution::Priority(max6BitValue + 1)));
 
     auto attributionURL = attribution.url();
@@ -148,7 +152,7 @@ TEST(AdClickAttribution, InvalidPriority)
 
 TEST(AdClickAttribution, InvalidMissingConversion)
 {
-    AdClickAttribution attribution(AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source("webkit.org"), AdClickAttribution::Destination("example.com"));
+    AdClickAttribution attribution { AdClickAttribution::Campaign(max6BitValue), AdClickAttribution::Source { webKitURL }, AdClickAttribution::Destination { exampleURL } };
 
     auto attributionURL = attribution.url();
     auto referrerURL = attribution.referrer();

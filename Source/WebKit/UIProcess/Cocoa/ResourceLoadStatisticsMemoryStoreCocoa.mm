@@ -29,6 +29,7 @@
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 
 #import <WebCore/RegistrableDomain.h>
+#import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -51,9 +52,18 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
             setGrandfatheringTime(grandfatheringTime);
 
         setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ItpDebugMode"]);
-        auto* debugManualPrevalentResource = [[NSUserDefaults standardUserDefaults] stringForKey:@"ResourceLoadStatisticsManualPrevalentResource"];
-        if (debugManualPrevalentResource)
-            setPrevalentResourceForDebugMode(RegistrableDomain { debugManualPrevalentResource });
+        auto* debugManualPrevalentResource = [[NSUserDefaults standardUserDefaults] stringForKey:@"ItpManualPrevalentResource"];
+        if (debugManualPrevalentResource) {
+            URL url { URL(), debugManualPrevalentResource };
+            if (!url.isValid()) {
+                StringBuilder builder;
+                builder.appendLiteral("http://");
+                builder.append(debugManualPrevalentResource);
+                url = { URL(), builder.toString() };
+            }
+            if (url.isValid())
+                setPrevalentResourceForDebugMode(RegistrableDomain { url });
+        }
 
         Seconds cacheMaxAgeCapForPrevalentResources([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsCacheMaxAgeCap"]);
         if (cacheMaxAgeCapForPrevalentResources > 0_s && cacheMaxAgeCapForPrevalentResources <= 24_h * 365)

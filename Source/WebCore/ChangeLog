@@ -1,3 +1,74 @@
+2019-02-27  John Wilander  <wilander@apple.com>
+
+        Adopt WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics and WebKit::NetworkProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=195071
+        <rdar://problem/48417690>
+
+        Reviewed by Alex Christensen and Brent Fulgham.
+
+        No new tests. This patch maintains functionality covered by plenty of layout
+        tests under http/tests/resourceLoadStatistics/ and http/tests/storageAccess.
+
+        This patch adopts WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics
+        and makes the necessary infrastructure changes to support that.
+
+        The previous HashCountedSets in WebCore::ResourceLoadStatistics are now just
+        HashSets since we never used the counts for anything. This change simplified
+        encoding and decoding for IPC and will eventually simplify encoding and
+        decoding in loader/ResourceLoadStatistics.cpp when we obsolete statistics
+        model version 14 and below.
+
+        The patch also makes WebCore::RegistrableDomain's String constructor private.
+        A new create function WebCore::RegistrableDomain::uncheckedCreateFromString()
+        is introduced to better signal to users that creating a registrable domain
+        object with a string may create an object that doesn't match a registrable
+        domain in a valid HTTP-family URL. This change (private String constructor)
+        motivated a change in WebCore::AdClickAttribution where the Source and
+        Destination structs now take a URL as parameter instead of a String.
+
+        Finally, this patch harmonizes parameter and variable naming, going from
+        "origin" to "domain" and "mainFrame" to "topFrame."
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAdClickAttribution const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaSessionTitle const):
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::Source::Source):
+        (WebCore::AdClickAttribution::Source::deletedValue):
+        (WebCore::AdClickAttribution::Destination::Destination):
+        (WebCore::AdClickAttribution::Destination::deletedValue):
+        (WebCore::AdClickAttribution::decode):
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::statisticsForURL):
+        (WebCore::ResourceLoadObserver::statisticsForOrigin): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashSet):
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::decodeHashCountedSet):
+        (WebCore::decodeHashSet):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::appendHashSet):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        (WebCore::encodeHashCountedSet): Deleted.
+        (WebCore::encodeOriginHashSet): Deleted.
+        (WebCore::decodeOriginHashSet): Deleted.
+        (WebCore::appendHashCountedSet): Deleted.
+        * loader/ResourceLoadStatistics.h:
+        * platform/RegistrableDomain.h:
+        (WebCore::RegistrableDomain::uncheckedCreateFromString):
+        (WebCore::RegistrableDomain::RegistrableDomain):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resourceLoadStatisticsForURL):
+        (WebCore::Internals::resourceLoadStatisticsForOrigin): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-02-27  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Buffer updates part 2: setSubData, GPU/CPU synchronization

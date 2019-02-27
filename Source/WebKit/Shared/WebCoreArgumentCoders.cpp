@@ -2682,17 +2682,17 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     encoder << statistics.grandfathered;
 
     // Storage access
-    encoder << statistics.storageAccessUnderTopFrameOrigins;
+    encoder << statistics.storageAccessUnderTopFrameDomains;
 
     // Top frame stats
     encoder << statistics.topFrameUniqueRedirectsTo;
     encoder << statistics.topFrameUniqueRedirectsFrom;
 
     // Subframe stats
-    encoder << statistics.subframeUnderTopFrameOrigins;
+    encoder << statistics.subframeUnderTopFrameDomains;
     
     // Subresource stats
-    encoder << statistics.subresourceUnderTopFrameOrigins;
+    encoder << statistics.subresourceUnderTopFrameDomains;
     encoder << statistics.subresourceUniqueRedirectsTo;
     encoder << statistics.subresourceUniqueRedirectsFrom;
 
@@ -2720,7 +2720,7 @@ Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(D
     decoder >> registrableDomain;
     if (!registrableDomain)
         return WTF::nullopt;
-    statistics.registrableDomain = *registrableDomain;
+    statistics.registrableDomain = WTFMove(*registrableDomain);
 
     double lastSeenTimeAsDouble;
     if (!decoder.decode(lastSeenTimeAsDouble))
@@ -2740,30 +2740,51 @@ Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(D
         return WTF::nullopt;
 
     // Storage access
-    if (!decoder.decode(statistics.storageAccessUnderTopFrameOrigins))
+    Optional<HashSet<RegistrableDomain>> storageAccessUnderTopFrameDomains;
+    decoder >> storageAccessUnderTopFrameDomains;
+    if (!storageAccessUnderTopFrameDomains)
         return WTF::nullopt;
+    statistics.storageAccessUnderTopFrameDomains = WTFMove(*storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    if (!decoder.decode(statistics.topFrameUniqueRedirectsTo))
-        return WTF::nullopt;    
-
-    if (!decoder.decode(statistics.topFrameUniqueRedirectsFrom))
+    Optional<HashSet<RegistrableDomain>> topFrameUniqueRedirectsTo;
+    decoder >> topFrameUniqueRedirectsTo;
+    if (!topFrameUniqueRedirectsTo)
         return WTF::nullopt;
+    statistics.topFrameUniqueRedirectsTo = WTFMove(*topFrameUniqueRedirectsTo);
+
+    Optional<HashSet<RegistrableDomain>> topFrameUniqueRedirectsFrom;
+    decoder >> topFrameUniqueRedirectsFrom;
+    if (!topFrameUniqueRedirectsFrom)
+        return WTF::nullopt;
+    statistics.topFrameUniqueRedirectsFrom = WTFMove(*topFrameUniqueRedirectsFrom);
 
     // Subframe stats
-    if (!decoder.decode(statistics.subframeUnderTopFrameOrigins))
+    Optional<HashSet<RegistrableDomain>> subframeUnderTopFrameDomains;
+    decoder >> subframeUnderTopFrameDomains;
+    if (!subframeUnderTopFrameDomains)
         return WTF::nullopt;
-    
-    // Subresource stats
-    if (!decoder.decode(statistics.subresourceUnderTopFrameOrigins))
-        return WTF::nullopt;
+    statistics.subframeUnderTopFrameDomains = WTFMove(*subframeUnderTopFrameDomains);
 
-    if (!decoder.decode(statistics.subresourceUniqueRedirectsTo))
+    // Subresource stats
+    Optional<HashSet<RegistrableDomain>> subresourceUnderTopFrameDomains;
+    decoder >> subresourceUnderTopFrameDomains;
+    if (!subresourceUnderTopFrameDomains)
         return WTF::nullopt;
-    
-    if (!decoder.decode(statistics.subresourceUniqueRedirectsFrom))
+    statistics.subresourceUnderTopFrameDomains = WTFMove(*subresourceUnderTopFrameDomains);
+
+    Optional<HashSet<RegistrableDomain>> subresourceUniqueRedirectsTo;
+    decoder >> subresourceUniqueRedirectsTo;
+    if (!subresourceUniqueRedirectsTo)
         return WTF::nullopt;
-    
+    statistics.subresourceUniqueRedirectsTo = WTFMove(*subresourceUniqueRedirectsTo);
+
+    Optional<HashSet<RegistrableDomain>> subresourceUniqueRedirectsFrom;
+    decoder >> subresourceUniqueRedirectsFrom;
+    if (!subresourceUniqueRedirectsFrom)
+        return WTF::nullopt;
+    statistics.subresourceUniqueRedirectsFrom = WTFMove(*subresourceUniqueRedirectsFrom);
+
     // Prevalent Resource
     if (!decoder.decode(statistics.isPrevalentResource))
         return WTF::nullopt;

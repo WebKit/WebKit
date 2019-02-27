@@ -148,8 +148,8 @@ public:
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
     void setPruneEntriesDownTo(size_t, CompletionHandler<void()>&&);
-    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&&);
-    void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame, CompletionHandler<void()>&&);
+    void setSubframeUnderTopFrameDomain(const URL& subframe, const URL& topFrame, CompletionHandler<void()>&&);
+    void setSubresourceUnderTopFrameDomain(const URL& subresource, const URL& topFrame, CompletionHandler<void()>&&);
     void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo, CompletionHandler<void()>&&);
     void setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom, CompletionHandler<void()>&&);
     void setTimeToLiveUserInteraction(Seconds, CompletionHandler<void()>&&);
@@ -166,7 +166,7 @@ public:
     void hasStorageAccess(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(const String& subFrameHost, const String& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
-    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame);
+    void setSubframeUnderTopFrameDomain(const URL& subframe, const URL& topFrame);
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);

@@ -4343,9 +4343,9 @@ JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSVal
 
 #endif
 
-String Internals::resourceLoadStatisticsForOrigin(const String& origin)
+String Internals::resourceLoadStatisticsForURL(const DOMURL& url)
 {
-    return ResourceLoadObserver::shared().statisticsForOrigin(origin);
+    return ResourceLoadObserver::shared().statisticsForURL(url.href());
 }
 
 void Internals::setResourceLoadStatisticsEnabled(bool enable)

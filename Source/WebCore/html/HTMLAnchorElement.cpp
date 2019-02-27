@@ -441,13 +441,13 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
         return WTF::nullopt;
     }
 
-    auto documentDomain = document().domain();
-    if (RegistrableDomain(documentDomain).matches(adDestinationURL)) {
+    RegistrableDomain documentRegistrableDomain { document().url() };
+    if (documentRegistrableDomain.matches(adDestinationURL)) {
         document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "addestination can not be the same site as the current website."_s);
         return WTF::nullopt;
     }
 
-    return AdClickAttribution { Campaign(adCampaignID.value()), Source(document().domain()), Destination(adDestinationURL.host().toString()) };
+    return AdClickAttribution { Campaign(adCampaignID.value()), Source(documentRegistrableDomain), Destination(adDestinationURL) };
 }
 
 void HTMLAnchorElement::handleClick(Event& event)

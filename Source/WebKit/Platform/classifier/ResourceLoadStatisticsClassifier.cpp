@@ -43,27 +43,27 @@ ResourceLoadPrevalence ResourceLoadStatisticsClassifier::calculateResourcePreval
 {
     ASSERT(currentPrevalence != VeryHigh);
 
-    auto subresourceUnderTopFrameOriginsCount = resourceStatistic.subresourceUnderTopFrameOrigins.size();
+    auto subresourceUnderTopFrameDomainsCount = resourceStatistic.subresourceUnderTopFrameDomains.size();
     auto subresourceUniqueRedirectsToCount = resourceStatistic.subresourceUniqueRedirectsTo.size();
-    auto subframeUnderTopFrameOriginsCount = resourceStatistic.subframeUnderTopFrameOrigins.size();
+    auto subframeUnderTopFrameDomainsCount = resourceStatistic.subframeUnderTopFrameDomains.size();
     auto topFrameUniqueRedirectsToCount = resourceStatistic.topFrameUniqueRedirectsTo.size();
     
-    if (!subresourceUnderTopFrameOriginsCount
+    if (!subresourceUnderTopFrameDomainsCount
         && !subresourceUniqueRedirectsToCount
-        && !subframeUnderTopFrameOriginsCount
+        && !subframeUnderTopFrameDomainsCount
         && !topFrameUniqueRedirectsToCount) {
         return Low;
     }
 
-    if (vectorLength(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount) > featureVectorLengthThresholdVeryHigh)
+    if (vectorLength(subresourceUnderTopFrameDomainsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameDomainsCount) > featureVectorLengthThresholdVeryHigh)
         return VeryHigh;
 
     if (currentPrevalence == High
-        || subresourceUnderTopFrameOriginsCount > featureVectorLengthThresholdHigh
+        || subresourceUnderTopFrameDomainsCount > featureVectorLengthThresholdHigh
         || subresourceUniqueRedirectsToCount > featureVectorLengthThresholdHigh
-        || subframeUnderTopFrameOriginsCount > featureVectorLengthThresholdHigh
+        || subframeUnderTopFrameDomainsCount > featureVectorLengthThresholdHigh
         || topFrameUniqueRedirectsToCount > featureVectorLengthThresholdHigh
-        || classify(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount))
+        || classify(subresourceUnderTopFrameDomainsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameDomainsCount))
         return High;
 
     return Low;

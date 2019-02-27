@@ -70,7 +70,7 @@ public:
     void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI);
     void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI);
 
-    WEBCORE_EXPORT String statisticsForOrigin(const String&);
+    WEBCORE_EXPORT String statisticsForURL(const URL&);
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
     WEBCORE_EXPORT void setRequestStorageAccessUnderOpenerCallback(Function<void(const RegistrableDomain&, uint64_t, const RegistrableDomain&)>&&);

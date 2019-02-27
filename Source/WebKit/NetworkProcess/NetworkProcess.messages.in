@@ -124,8 +124,8 @@ messages -> NetworkProcess LegacyReceiver {
     SetNotifyPagesWhenTelemetryWasCaptured(PAL::SessionID sessionID, bool value) -> () Async
     SetResourceLoadStatisticsDebugMode(PAL::SessionID sessionID, bool debugMode) -> () Async
     SetVeryPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
-    SetSubframeUnderTopFrameOrigin(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
-    SetSubresourceUnderTopFrameOrigin(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
+    SetSubframeUnderTopFrameDomain(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
+    SetSubresourceUnderTopFrameDomain(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain topFrameDomain) -> () Async
     SetSubresourceUniqueRedirectTo(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain redirectedToDomain) -> () Async
     SetSubresourceUniqueRedirectFrom(PAL::SessionID sessionID, WebCore::RegistrableDomain subresourceDomain, WebCore::RegistrableDomain redirectedFromDomain) -> () Async
     SetTimeToLiveUserInteraction(PAL::SessionID sessionID, Seconds seconds) -> () Async
