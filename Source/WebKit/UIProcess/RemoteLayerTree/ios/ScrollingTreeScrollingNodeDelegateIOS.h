@@ -54,17 +54,17 @@ public:
     void scrollWillStart() const;
     void scrollDidEnd() const;
     void scrollViewWillStartPanGesture() const;
-    void scrollViewDidScroll(const WebCore::FloatPoint& scrollPosition, bool inUserInteraction) const;
+    void scrollViewDidScroll(const WebCore::FloatPoint& scrollPosition, bool inUserInteraction);
+
     void currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical) const;
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
     void resetScrollViewDelegate();
     void commitStateBeforeChildren(const WebCore::ScrollingStateScrollingNode&);
     void commitStateAfterChildren(const WebCore::ScrollingStateScrollingNode&);
-    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& layoutViewport, const WebCore::FloatSize& cumulativeDelta);
-    WebCore::FloatPoint scrollPosition() const;
-    void setScrollLayerPosition(const WebCore::FloatPoint&);
-    void updateChildNodesAfterScroll(const WebCore::FloatPoint& scrollPosition);
+
+    void repositionScrollingLayers();
+
 #if ENABLE(POINTER_EVENTS)
     Optional<TouchActionData> touchActionData() const;
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*);

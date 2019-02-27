@@ -187,7 +187,6 @@ using namespace WebCore;
 
 ScrollingTreeScrollingNodeDelegateIOS::ScrollingTreeScrollingNodeDelegateIOS(ScrollingTreeScrollingNode& scrollingNode)
     : ScrollingTreeScrollingNodeDelegate(scrollingNode)
-    , m_updatingFromStateNode(false)
 {
 }
 
@@ -269,51 +268,15 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
     }
 }
 
-void ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
+void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
-    if (!scrollingNode().children())
-        return;
+    auto scrollPosition = scrollingNode().currentScrollPosition();
 
-    FloatSize scrollDelta = lastCommittedScrollPosition() - scrollingNode().scrollPosition();
-
-    for (auto& child : *scrollingNode().children())
-        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta + scrollDelta);
-}
-
-FloatPoint ScrollingTreeScrollingNodeDelegateIOS::scrollPosition() const
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
-    ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
-    return [scrollView contentOffset];
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
-void ScrollingTreeScrollingNodeDelegateIOS::setScrollLayerPosition(const FloatPoint& scrollPosition)
-{
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
     ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
     [scrollView setContentOffset:scrollPosition];
     END_BLOCK_OBJC_EXCEPTIONS
-
-    updateChildNodesAfterScroll(scrollPosition);
-}
-
-void ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
-{
-    if (!scrollingNode().children())
-        return;
-
-    FloatRect layoutViewport;
-    auto* frameNode = scrollingNode().enclosingFrameNodeIncludingSelf();
-    if (frameNode)
-        layoutViewport = frameNode->layoutViewport();
-
-    auto scrollDelta = lastCommittedScrollPosition() - scrollPosition;
-
-    for (auto& child : *scrollingNode().children())
-        child->updateLayersAfterAncestorChange(scrollingNode(), layoutViewport, scrollDelta);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart() const
@@ -331,12 +294,12 @@ void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() cons
     scrollingTree().scrollingTreeNodeWillStartPanGesture();
 }
 
-void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteraction) const
+void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteraction)
 {
     if (m_updatingFromStateNode)
         return;
 
-    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNode().scrollingNodeID(), scrollPosition, inUserInteraction);
+    scrollingNode().wasScrolledByDelegatedScrolling(scrollPosition);
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical) const

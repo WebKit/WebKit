@@ -82,11 +82,12 @@ static bool newGestureIsStarting(const PlatformWheelEvent& wheelEvent)
 
 bool ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis)
 {
+    auto scrollPosition = currentScrollPosition();
     switch (axis) {
     case ScrollEventAxis::Vertical:
-        return (wheelEvent.deltaY() > 0 && scrollPosition().y() <= minimumScrollPosition().y()) || (wheelEvent.deltaY() < 0 && scrollPosition().y() >= maximumScrollPosition().y());
+        return (wheelEvent.deltaY() > 0 && scrollPosition.y() <= minimumScrollPosition().y()) || (wheelEvent.deltaY() < 0 && scrollPosition.y() >= maximumScrollPosition().y());
     case ScrollEventAxis::Horizontal:
-        return (wheelEvent.deltaX() > 0 && scrollPosition().x() <= minimumScrollPosition().x()) || (wheelEvent.deltaX() < 0 && scrollPosition().x() >= maximumScrollPosition().x());
+        return (wheelEvent.deltaX() > 0 && scrollPosition.x() <= minimumScrollPosition().x()) || (wheelEvent.deltaX() < 0 && scrollPosition.x() >= maximumScrollPosition().x());
     }
 
     ASSERT_NOT_REACHED();
@@ -132,16 +133,17 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
 IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount()
 {
     IntSize stretch;
+    auto scrollPosition = currentScrollPosition();
 
-    if (scrollPosition().y() < minimumScrollPosition().y())
-        stretch.setHeight(scrollPosition().y() - minimumScrollPosition().y());
-    else if (scrollPosition().y() > maximumScrollPosition().y())
-        stretch.setHeight(scrollPosition().y() - maximumScrollPosition().y());
+    if (scrollPosition.y() < minimumScrollPosition().y())
+        stretch.setHeight(scrollPosition.y() - minimumScrollPosition().y());
+    else if (scrollPosition.y() > maximumScrollPosition().y())
+        stretch.setHeight(scrollPosition.y() - maximumScrollPosition().y());
 
-    if (scrollPosition().x() < minimumScrollPosition().x())
-        stretch.setWidth(scrollPosition().x() - minimumScrollPosition().x());
-    else if (scrollPosition().x() > maximumScrollPosition().x())
-        stretch.setWidth(scrollPosition().x() - maximumScrollPosition().x());
+    if (scrollPosition.x() < minimumScrollPosition().x())
+        stretch.setWidth(scrollPosition.x() - minimumScrollPosition().x());
+    else if (scrollPosition.x() > maximumScrollPosition().x())
+        stretch.setWidth(scrollPosition.x() - maximumScrollPosition().x());
 
     if (scrollingNode().isRootNode()) {
         if (stretch.isZero())
@@ -156,22 +158,23 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount()
 bool ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection(const FloatSize& delta)
 {
     FloatSize limitDelta;
+    auto scrollPosition = currentScrollPosition();
 
     if (fabsf(delta.height()) >= fabsf(delta.width())) {
         if (delta.height() < 0) {
             // We are trying to scroll up. Make sure we are not pinned to the top.
-            limitDelta.setHeight(scrollPosition().y() - minimumScrollPosition().y());
+            limitDelta.setHeight(scrollPosition.y() - minimumScrollPosition().y());
         } else {
             // We are trying to scroll down. Make sure we are not pinned to the bottom.
-            limitDelta.setHeight(maximumScrollPosition().y() - scrollPosition().y());
+            limitDelta.setHeight(maximumScrollPosition().y() - scrollPosition.y());
         }
     } else if (delta.width()) {
         if (delta.width() < 0) {
             // We are trying to scroll left. Make sure we are not pinned to the left.
-            limitDelta.setWidth(scrollPosition().x() - minimumScrollPosition().x());
+            limitDelta.setWidth(scrollPosition.x() - minimumScrollPosition().x());
         } else {
             // We are trying to scroll right. Make sure we are not pinned to the right.
-            limitDelta.setWidth(maximumScrollPosition().x() - scrollPosition().x());
+            limitDelta.setWidth(maximumScrollPosition().x() - scrollPosition.x());
         }
     }
 
@@ -216,27 +219,27 @@ void ScrollingTreeScrollingNodeDelegateMac::stopSnapRubberbandTimer()
 
 void ScrollingTreeScrollingNodeDelegateMac::adjustScrollPositionToBoundsIfNecessary()
 {
-    FloatPoint currentScrollPosition = scrollPosition();
-    FloatPoint constrainedPosition = currentScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
-    immediateScrollBy(constrainedPosition - currentScrollPosition);
+    FloatPoint scrollPosition = currentScrollPosition();
+    FloatPoint constrainedPosition = scrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    immediateScrollBy(constrainedPosition - scrollPosition);
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
 FloatPoint ScrollingTreeScrollingNodeDelegateMac::scrollOffset() const
 {
-    return scrollPosition();
+    return currentScrollPosition();
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
 {
-    const FloatPoint& currentPosition = scrollPosition();
+    const FloatPoint& scrollPosition = currentScrollPosition();
     FloatPoint change;
     if (axis == ScrollEventAxis::Horizontal)
-        change = FloatPoint(currentPosition.x() + delta, currentPosition.y());
+        change = FloatPoint(scrollPosition.x() + delta, scrollPosition.y());
     else
-        change = FloatPoint(currentPosition.x(), currentPosition.y() + delta);
+        change = FloatPoint(scrollPosition.x(), scrollPosition.y() + delta);
 
-    immediateScrollBy(change - currentPosition);
+    immediateScrollBy(change - scrollPosition);
 }
 
 float ScrollingTreeScrollingNodeDelegateMac::pageScaleFactor() const

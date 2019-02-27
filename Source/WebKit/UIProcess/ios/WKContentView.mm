@@ -436,7 +436,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
     WebCore::FloatRect layoutViewport = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), _page->unobscuredContentRectRespectingInputViewBounds(), _page->customFixedPositionRect(), zoomScale, WebCore::FrameView::LayoutViewportConstraint::Unconstrained);
-    scrollingCoordinator->viewportChangedViaDelegatedScrolling(layoutViewport, zoomScale);
+    scrollingCoordinator->viewportChangedViaDelegatedScrolling(_page->unobscuredContentRect().location(), layoutViewport, zoomScale);
 
     drawingArea->updateDebugIndicator();
     

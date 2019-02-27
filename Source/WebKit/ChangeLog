@@ -1,3 +1,87 @@
+2019-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Have a single notion of scroll position in the scrolling tree and derive layoutViewport from it
+        https://bugs.webkit.org/show_bug.cgi?id=194973
+
+        Reviewed by Antti Koivisto.
+
+        This patch cleans up how the scrolling tree responds to scrolls.
+
+        First, ScrollingTreeScrollingNode::m_currentScrollPosition is "truth" for scrolling thread/
+        UI process scroll position.
+
+        On macOS where handleWheelEvent on the scrolling thread changes scroll position, the
+        bottleneck is ScrollingTreeScrollingNode::scrollTo() which sets the new scroll position,
+        update the visual viewport (for frame scrolls) updates the scrolledContentsLayer position,
+        updates related layers on this node (counter-scrolling layers etc), and then tells the
+        scrolling tree, which recurses through descendant nodes so they can adjust their layer
+        positions.
+
+        On iOS, the bottleneck is ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(),
+        which does the above other than setting scrolledContentsLayer (since we're reacting to
+        layer state changes, not producing them).
+
+        updateLayersAfterAncestorChange() is renamed to relatedNodeScrollPositionDidChange(), and
+        ScrollingTree does the tree walk so classes don't have to implement
+        updateLayersAfterAncestorChange() just to talk children. The ScrollingTree tree walk knows
+        how to get the correct layoutViewport and to stop at frame boundaries (layer updates never
+        need to cross frame boundaries).
+
+        We preserve 'cumulativeDelta'; it's necessary for things like fixed inside overflow:scroll,
+        since the fixed state was computed with the "layout" scroll position, so we have to account
+        for the scroll delta since the last committed position. It's possible we could improve this
+        in future.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::currentLayoutViewport const):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::repositionScrollingLayers):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::scrollPosition const): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::setScrollPosition): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::setScrollLayerPosition): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateChildNodesAfterScroll): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterDelegatedScroll): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterViewportChange): Deleted.
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange): Deleted.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange): Deleted.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollPosition const): Deleted.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition): Deleted.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterDelegatedScroll): Deleted.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::ScrollingTreeScrollingNodeDelegateIOS):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollPosition const): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::setScrollLayerPosition): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll): Deleted.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll const): Deleted.
+        * UIProcess/RemoteLayerTree/mac/ScrollerPairMac.mm:
+        (WebKit::ScrollerPairMac::updateValues):
+        (WebKit::ScrollerPairMac::valuesForOrientation):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::setScrollLayerPosition): Deleted.
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:contentInsets:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+
 2019-02-27  Alex Christensen  <achristensen@webkit.org>
 
         Silence log after r242122

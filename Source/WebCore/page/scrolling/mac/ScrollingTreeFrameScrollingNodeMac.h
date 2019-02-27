@@ -53,21 +53,21 @@ protected:
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-    FloatPoint scrollPosition() const override;
-    void setScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges) override;
-
-    void updateLayersAfterViewportChange(const FloatRect& layoutViewport, double scale) override;
-
-    void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) override;
+    WEBCORE_EXPORT void repositionRelatedLayers() override;
 
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;
 
-    void updateMainFramePinState(const FloatPoint& scrollPosition);
+    void updateMainFramePinState();
 
     unsigned exposedUnfilledArea() const;
 
 private:
+    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp) const override;
+
+    void currentScrollPositionChanged() override;
+    void repositionScrollingLayers() override;
+
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_insetClipLayer;
@@ -76,8 +76,7 @@ private:
     RetainPtr<CALayer> m_footerLayer;
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
-    FloatPoint m_probableMainThreadScrollPosition;
-    
+
     ScrollingTreeScrollingNodeDelegateMac m_delegate;
     
     bool m_lastScrollHadUnfilledPixels { false };

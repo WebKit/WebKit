@@ -35,7 +35,7 @@
   <body>
     <p>This test passes if you see a green rectangle.</p>
     <div style="position: absolute; top: 3em; width: 100px; height: 100px; background: green;">
-      <iframe id="clickInContentBox" style="left: 0px; top: 0px;" scrolling="yes" onclick="this.style.background='red'" srcdoc="
+      <iframe id="clickInContentBox" style="left: 0px; top: 0px; -webkit-tap-highlight-color: transparent;" scrolling="yes" onclick="this.style.background='red'" srcdoc="
           <body style='margin: 0; width: 200px; height: 200px;'>
               <div style='position: absolute; width: 100px; height: 100px; background: red; -webkit-tap-highlight-color: transparent;'
                    onclick='this.style.background=&quot;green&quot;'></div>

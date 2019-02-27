@@ -46,7 +46,7 @@ protected:
     WEBCORE_EXPORT const FloatSize& reachableContentsSize();
     WEBCORE_EXPORT const IntPoint& scrollOrigin() const;
 
-    FloatPoint scrollPosition() const { return m_scrollingNode.scrollPosition(); }
+    FloatPoint currentScrollPosition() const { return m_scrollingNode.currentScrollPosition(); }
     FloatPoint minimumScrollPosition() const { return m_scrollingNode.minimumScrollPosition(); }
     FloatPoint maximumScrollPosition() const { return m_scrollingNode.maximumScrollPosition(); }
 

@@ -46,9 +46,7 @@ ScrollingTreeOverflowScrollingNodeMac::ScrollingTreeOverflowScrollingNodeMac(Scr
 {
 }
 
-ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac()
-{
-}
+ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac() = default;
 
 void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
@@ -91,46 +89,16 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
     return ScrollingEventResult::DidHandleEvent;
 }
 
-
-
-void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
+FloatPoint ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp) const
 {
-    UNUSED_PARAM(changedNode);
-    UNUSED_PARAM(layoutViewport);
-    UNUSED_PARAM(cumulativeDelta);
+    FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));
+    return ScrollingTreeOverflowScrollingNode::adjustedScrollPosition(scrollPosition, clamp);
 }
 
-FloatPoint ScrollingTreeOverflowScrollingNodeMac::scrollPosition() const
+void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 {
-    return -scrolledContentsLayer().position;
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::setScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollPosition " << scrollPosition << " from " << this->scrollPosition() << " (min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << ")");
-
-    // Scroll deltas can be non-integral with some input devices, so scrollPosition may not be integral.
-    // FIXME: when we support half-pixel scroll positions on Retina displays, this will need to round to half pixels.
-    FloatPoint roundedPosition(roundf(scrollPosition.x()), roundf(scrollPosition.y()));
-
-    ScrollingTreeOverflowScrollingNode::setScrollPosition(roundedPosition, clamp);
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& layoutViewport)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition " << scrollPosition);
-
+    auto scrollPosition = currentScrollPosition();
     scrolledContentsLayer().position = -scrollPosition;
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, layoutViewport, { });
-}
-
-void ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
-{
-    UNUSED_PARAM(scrollPosition);
 }
 
 } // namespace WebCore

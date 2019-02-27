@@ -113,28 +113,9 @@ void ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
         scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), scrollingStateNode.requestedScrollPosition(), scrollingStateNode.requestedScrollPositionRepresentsProgrammaticScroll());
 }
 
-void ScrollingTreeScrollingNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
-{
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
-}
-
 ScrollingEventResult ScrollingTreeScrollingNode::handleWheelEvent(const PlatformWheelEvent&)
 {
     return ScrollingEventResult::DidNotHandleEvent;
-}
-
-void ScrollingTreeScrollingNode::setScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp)
-{
-    FloatPoint newScrollPosition = scrollPosition;
-    if (clamp == ScrollPositionClamp::ToContentEdges)
-        newScrollPosition = clampScrollPosition(scrollPosition);
-
-    setScrollLayerPosition(scrollPosition, { });
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, WTF::nullopt);
 }
 
 FloatPoint ScrollingTreeScrollingNode::clampScrollPosition(const FloatPoint& scrollPosition) const
@@ -144,7 +125,7 @@ FloatPoint ScrollingTreeScrollingNode::clampScrollPosition(const FloatPoint& scr
 
 FloatPoint ScrollingTreeScrollingNode::minimumScrollPosition() const
 {
-    return FloatPoint();
+    return { };
 }
 
 FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
@@ -155,15 +136,56 @@ FloatPoint ScrollingTreeScrollingNode::maximumScrollPosition() const
 
 bool ScrollingTreeScrollingNode::scrollLimitReached(const PlatformWheelEvent& wheelEvent) const
 {
-    FloatPoint oldScrollPosition = scrollPosition();
+    FloatPoint oldScrollPosition = currentScrollPosition();
     FloatPoint newScrollPosition = oldScrollPosition + FloatSize(wheelEvent.deltaX(), -wheelEvent.deltaY());
     newScrollPosition = newScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     return newScrollPosition == oldScrollPosition;
 }
 
+FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollPositionClamp clamp) const
+{
+    if (clamp == ScrollPositionClamp::ToContentEdges)
+        return clampScrollPosition(scrollPosition);
+
+    return scrollPosition;
+}
+
 void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollPositionClamp clamp)
 {
-    setScrollPosition(scrollPosition() + delta, clamp);
+    scrollTo(currentScrollPosition() + delta, clamp);
+}
+
+void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollPositionClamp clamp)
+{
+    if (position == m_currentScrollPosition)
+        return;
+
+    m_currentScrollPosition = adjustedScrollPosition(position, clamp);
+    updateViewportForCurrentScrollPosition();
+    currentScrollPositionChanged();
+}
+
+void ScrollingTreeScrollingNode::currentScrollPositionChanged()
+{
+    repositionScrollingLayers();
+    repositionRelatedLayers();
+
+    scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
+    scrollingTree().scrollingTreeNodeDidScroll(*this);
+}
+
+void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
+{
+    if (position == m_currentScrollPosition)
+        return;
+
+    m_currentScrollPosition = adjustedScrollPosition(position, ScrollPositionClamp::None);
+    updateViewportForCurrentScrollPosition(overrideLayoutViewport);
+
+    repositionRelatedLayers();
+
+    scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
+    scrollingTree().scrollingTreeNodeDidScroll(*this);
 }
 
 LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) const
@@ -173,7 +195,7 @@ LayoutPoint ScrollingTreeScrollingNode::parentToLocalPoint(LayoutPoint point) co
 
 LayoutPoint ScrollingTreeScrollingNode::localToContentsPoint(LayoutPoint point) const
 {
-    return point + LayoutPoint(scrollPosition());
+    return point + LayoutPoint(currentScrollPosition());
 }
 
 ScrollingTreeScrollingNode* ScrollingTreeScrollingNode::scrollingNodeForPoint(LayoutPoint parentPoint) const

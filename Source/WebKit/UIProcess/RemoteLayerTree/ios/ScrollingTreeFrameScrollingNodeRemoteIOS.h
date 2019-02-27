@@ -47,15 +47,8 @@ private:
     FloatPoint minimumScrollPosition() const override;
     FloatPoint maximumScrollPosition() const override;
 
-    WebCore::FloatPoint scrollPosition() const override;
-    void setScrollPosition(const WebCore::FloatPoint&, WebCore::ScrollPositionClamp = WebCore::ScrollPositionClamp::ToContentEdges) override;
-    void setScrollLayerPosition(const WebCore::FloatPoint&, const WebCore::FloatRect& layoutViewport) override;
-
-    void updateChildNodesAfterScroll(const FloatPoint&);
-
-    void updateLayersAfterDelegatedScroll(const WebCore::FloatPoint& scrollPosition) override;
-    void updateLayersAfterViewportChange(const WebCore::FloatRect& layoutViewport, double scale) override;
-    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& layoutViewport, const WebCore::FloatSize& cumulativeDelta) override;
+    void repositionScrollingLayers() override;
+    void repositionRelatedLayers() override;
 
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 

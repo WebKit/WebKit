@@ -63,9 +63,9 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const S
     m_scrollerPair->updateValues();
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::setScrollLayerPosition(const FloatPoint& position, const FloatRect& layoutViewport)
+void ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers()
 {
-    ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition(position, layoutViewport);
+    ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers();
 
     m_scrollerPair->updateValues();
 }

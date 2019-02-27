@@ -57,15 +57,6 @@ void ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingSta
         m_parentRelativeScrollableRect = frameHostingStateNode.parentRelativeScrollableRect();
 }
 
-void ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
-{
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
-}
-
 LayoutPoint ScrollingTreeFrameHostingNode::parentToLocalPoint(LayoutPoint point) const
 {
     return point - toLayoutSize(parentRelativeScrollableRect().location());

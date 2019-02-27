@@ -42,6 +42,7 @@ class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 
 class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
+    friend class ScrollingTree;
 public:
     virtual ~ScrollingTreeNode();
 
@@ -58,8 +59,6 @@ public:
     virtual void commitStateBeforeChildren(const ScrollingStateNode&) = 0;
     virtual void commitStateAfterChildren(const ScrollingStateNode&) { }
 
-    virtual void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta) = 0;
-
     ScrollingTreeNode* parent() const { return m_parent; }
     void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
     
@@ -72,6 +71,7 @@ public:
     void removeChild(ScrollingTreeNode&);
 
     WEBCORE_EXPORT ScrollingTreeFrameScrollingNode* enclosingFrameNodeIncludingSelf();
+    WEBCORE_EXPORT ScrollingTreeScrollingNode* enclosingScrollingNodeIncludingSelf();
 
     WEBCORE_EXPORT void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
@@ -83,9 +83,11 @@ protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingTree& scrollingTree() const { return m_scrollingTree; }
 
-    std::unique_ptr<Vector<RefPtr<ScrollingTreeNode>>> m_children;
+    WEBCORE_EXPORT virtual void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta);
 
     WEBCORE_EXPORT virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
+
+    std::unique_ptr<Vector<RefPtr<ScrollingTreeNode>>> m_children;
 
 private:
     ScrollingTree& m_scrollingTree;

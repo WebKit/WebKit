@@ -43,6 +43,7 @@ class WEBCORE_EXPORT ScrollingTreeScrollingNode : public ScrollingTreeNode {
 #if PLATFORM(MAC)
     friend class ScrollingTreeScrollingNodeDelegateMac;
 #endif
+    friend class ScrollingTree;
 
 public:
     virtual ~ScrollingTreeScrollingNode();
@@ -50,17 +51,17 @@ public:
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
 
-    void updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta) override;
-
     virtual ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&);
-    virtual void setScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
 
+    FloatPoint currentScrollPosition() const { return m_currentScrollPosition; }
+    FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
+
+    // These are imperative; they adjust the scrolling layers.
+    void scrollTo(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
     void scrollBy(const FloatSize&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
 
-    virtual void updateLayersAfterViewportChange(const FloatRect& layoutViewport, double scale) = 0;
-    virtual void updateLayersAfterDelegatedScroll(const FloatPoint&) { }
-
-    virtual FloatPoint scrollPosition() const = 0;
+    void wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport = { });
+    
     const FloatSize& scrollableAreaSize() const { return m_scrollableAreaSize; }
     const FloatSize& totalContentsSize() const { return m_totalContentsSize; }
 
@@ -87,10 +88,15 @@ protected:
     virtual FloatPoint maximumScrollPosition() const;
 
     FloatPoint clampScrollPosition(const FloatPoint&) const;
+    
+    virtual FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges) const;
 
-    virtual void setScrollLayerPosition(const FloatPoint&, const FloatRect& layoutViewport) = 0;
+    virtual void currentScrollPositionChanged();
+    WEBCORE_EXPORT virtual void updateViewportForCurrentScrollPosition(Optional<FloatRect> = { }) { }
 
-    FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
+    WEBCORE_EXPORT virtual void repositionScrollingLayers() { }
+    WEBCORE_EXPORT virtual void repositionRelatedLayers() { }
+
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
@@ -128,6 +134,7 @@ private:
     FloatSize m_reachableContentsSize;
     FloatPoint m_lastCommittedScrollPosition;
     LayoutRect m_parentRelativeScrollableRect;
+    FloatPoint m_currentScrollPosition;
     IntPoint m_scrollOrigin;
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapOffsetsInfo<float> m_snapOffsetsInfo;

@@ -103,6 +103,14 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
     return layoutViewport;
 }
 
+void ScrollingTreeFrameScrollingNode::updateViewportForCurrentScrollPosition(Optional<FloatRect> overrideLayoutViewport)
+{
+    if (overrideLayoutViewport)
+        setLayoutViewport(overrideLayoutViewport.value());
+    else
+        setLayoutViewport(layoutViewportForScrollPosition(currentScrollPosition(), frameScaleFactor()));
+}
+
 FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const
 {
     return toFloatSize(scrollPosition) - FloatSize(0, headerHeight() + topContentInset());
@@ -115,7 +123,7 @@ LayoutPoint ScrollingTreeFrameScrollingNode::parentToLocalPoint(LayoutPoint poin
 
 LayoutPoint ScrollingTreeFrameScrollingNode::localToContentsPoint(LayoutPoint point) const
 {
-    auto scrolledPoint = point + LayoutPoint(scrollPosition());
+    auto scrolledPoint = point + LayoutPoint(currentScrollPosition());
     return scrolledPoint.scaled(1 / frameScaleFactor());
 }
 

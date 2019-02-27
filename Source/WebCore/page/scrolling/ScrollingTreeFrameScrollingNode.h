@@ -41,12 +41,6 @@ public:
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     
-    // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
-    void updateLayersAfterAncestorChange(const ScrollingTreeNode& /*changedNode*/, const FloatRect& /*layoutViewport*/, const FloatSize& /*cumulativeDelta*/) override { }
-
-    void updateLayersAfterViewportChange(const FloatRect& layoutViewport, double scale) override = 0;
-    void updateLayersAfterDelegatedScroll(const FloatPoint&) override { }
-
     SynchronousScrollingReasons synchronousScrollingReasons() const { return m_synchronousScrollingReasons; }
     bool shouldUpdateScrollLayerPositionSynchronously() const { return m_synchronousScrollingReasons; }
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
@@ -74,6 +68,8 @@ protected:
 private:
     LayoutPoint parentToLocalPoint(LayoutPoint) const final;
     LayoutPoint localToContentsPoint(LayoutPoint) const final;
+
+    WEBCORE_EXPORT void updateViewportForCurrentScrollPosition(Optional<FloatRect>) override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 

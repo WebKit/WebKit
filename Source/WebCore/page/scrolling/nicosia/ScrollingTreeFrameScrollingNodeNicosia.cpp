@@ -49,16 +49,7 @@ ScrollingEventResult ScrollingTreeFrameScrollingNodeNicosia::handleWheelEvent(co
     return ScrollingEventResult::DidNotHandleEvent;
 }
 
-FloatPoint ScrollingTreeFrameScrollingNodeNicosia::scrollPosition() const
-{
-    return { };
-}
-
-void ScrollingTreeFrameScrollingNodeNicosia::setScrollLayerPosition(const FloatPoint&, const FloatRect&)
-{
-}
-
-void ScrollingTreeFrameScrollingNodeNicosia::updateLayersAfterViewportChange(const FloatRect&, double)
+void ScrollingTreeFrameScrollingNodeNicosia::repositionScrollingLayers()
 {
 }
 

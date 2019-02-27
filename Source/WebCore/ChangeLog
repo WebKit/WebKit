@@ -1,3 +1,161 @@
+2019-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Have a single notion of scroll position in the scrolling tree and derive layoutViewport from it
+        https://bugs.webkit.org/show_bug.cgi?id=194973
+
+        Reviewed by Antti Koivisto.
+
+        This patch cleans up how the scrolling tree responds to scrolls.
+
+        First, ScrollingTreeScrollingNode::m_currentScrollPosition is "truth" for scrolling thread/
+        UI process scroll position.
+
+        On macOS where handleWheelEvent on the scrolling thread changes scroll position, the
+        bottleneck is ScrollingTreeScrollingNode::scrollTo() which sets the new scroll position,
+        update the visual viewport (for frame scrolls) updates the scrolledContentsLayer position,
+        updates related layers on this node (counter-scrolling layers etc), and then tells the
+        scrolling tree, which recurses through descendant nodes so they can adjust their layer
+        positions.
+
+        On iOS, the bottleneck is ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(),
+        which does the above other than setting scrolledContentsLayer (since we're reacting to
+        layer state changes, not producing them).
+
+        updateLayersAfterAncestorChange() is renamed to relatedNodeScrollPositionDidChange(), and
+        ScrollingTree does the tree walk so classes don't have to implement
+        updateLayersAfterAncestorChange() just to talk children. The ScrollingTree tree walk knows
+        how to get the correct layoutViewport and to stop at frame boundaries (layer updates never
+        need to cross frame boundaries).
+
+        We preserve 'cumulativeDelta'; it's necessary for things like fixed inside overflow:scroll,
+        since the fixed state was computed with the "layout" scroll position, so we have to account
+        for the scroll delta since the last committed position. It's possible we could improve this
+        in future.
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling):
+        (WebCore::ScrollingTree::notifyRelatedNodesAfterScrollPositionChange):
+        (WebCore::ScrollingTree::notifyRelatedNodesRecursive):
+        (WebCore::ScrollingTree::mainFrameLayoutViewport):
+        (WebCore::ScrollingTree::scrollPositionChangedViaDelegatedScrolling): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp:
+        (WebCore::ScrollingTreeFrameHostingNode::updateLayersAfterAncestorChange): Deleted.
+        * page/scrolling/ScrollingTreeFrameHostingNode.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::updateViewportForCurrentScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNode::localToContentsPoint const):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeNode.cpp:
+        (WebCore::ScrollingTreeNode::relatedNodeScrollPositionDidChange):
+        (WebCore::ScrollingTreeNode::enclosingScrollingNodeIncludingSelf):
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::minimumScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNode::scrollLimitReached const):
+        (WebCore::ScrollingTreeScrollingNode::adjustedScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNode::scrollBy):
+        (WebCore::ScrollingTreeScrollingNode::scrollTo):
+        (WebCore::ScrollingTreeScrollingNode::currentScrollPositionChanged):
+        (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+        (WebCore::ScrollingTreeScrollingNode::localToContentsPoint const):
+        (WebCore::ScrollingTreeScrollingNode::updateLayersAfterAncestorChange): Deleted.
+        (WebCore::ScrollingTreeScrollingNode::setScrollPosition): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.h:
+        (WebCore::ScrollingTreeScrollingNodeDelegate::currentScrollPosition const):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollPosition const): Deleted.
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange):
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange): Deleted.
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.h:
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange):
+        (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange): Deleted.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::adjustedScrollPosition const):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea const):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollPosition const): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollLayerPosition): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateLayersAfterViewportChange): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        (): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::adjustedScrollPosition const):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac): Deleted.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterAncestorChange): Deleted.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::scrollPosition const): Deleted.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollPosition): Deleted.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::setScrollLayerPosition): Deleted.
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::updateLayersAfterDelegatedScroll): Deleted.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isAlreadyPinnedInDirectionOfGesture):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stretchAmount):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::pinnedInDirection):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollOffset const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis):
+
+2019-02-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Have a single notion of scroll position in the scrolling tree and derive layoutViewport from it
+        https://bugs.webkit.org/show_bug.cgi?id=194973
+
+        Reviewed by Antti Koivisto.
+
+        The "master" value for the scroll position of a ScrollingTreeScrollingNode is now its m_scrollPosition member;
+        layout viewports and layer positions will be set from this. This allows scrollPosition() to no longer be virtual
+        and require different code for each scrolling node subclass, and adds a choke point that we can use to update
+        the layout viewport.
+        
+        We can remove m_probableMainThreadScrollPosition on ScrollingTreeFrameScrollingNodeMac because this was really just
+        an alias for the scroll position.
+
+        Add some isRootNode() checks for things that should only affect the main frame.
+
+        * page/scrolling/ScrollingTree.h: Remove fixedPositionRect() which was unused, and is a per-frame thing so makes
+        no sense here.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::didChangeScrollPosition):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewport const):
+        (WebCore::ScrollingTreeFrameScrollingNode::setLayoutViewport):
+        (WebCore::ScrollingTreeFrameScrollingNode::fixedPositionRect): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::setScrollPosition):
+        (WebCore::ScrollingTreeScrollingNode::setScrollPositionInternal):
+        (WebCore::ScrollingTreeScrollingNode::didChangeScrollPosition):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::scrollPosition const):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::fixedPositionRect): Deleted.
+        * page/scrolling/ios/ScrollingTreeIOS.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateAfterChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPosition):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::updateMainFramePinState):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::scrollPosition const): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::scrollPosition const): Deleted.
+
 2019-02-27  Ulrich Pflueger  <up@nanocosmos.de>
 
         [MSE] SourceBuffer sample time increment vs. last frame duration check is broken

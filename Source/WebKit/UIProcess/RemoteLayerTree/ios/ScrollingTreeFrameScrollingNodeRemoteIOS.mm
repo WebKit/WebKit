@@ -82,7 +82,7 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren(const Sc
 
     // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
     if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
-        setScrollPosition(scrollingStateNode.requestedScrollPosition());
+        scrollTo(scrollingStateNode.requestedScrollPosition());
 
     if (m_scrollingNodeDelegate)
         m_scrollingNodeDelegate->commitStateAfterChildren(downcast<ScrollingStateScrollingNode>(stateNode));
@@ -109,111 +109,35 @@ FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::maximumScrollPosition() con
     return position;
 }
 
-FloatPoint ScrollingTreeFrameScrollingNodeRemoteIOS::scrollPosition() const
-{
-    if (m_scrollingNodeDelegate)
-        return m_scrollingNodeDelegate->scrollPosition();
-
-    return -scrolledContentsLayer().position;
-}
-
-void ScrollingTreeFrameScrollingNodeRemoteIOS::setScrollPosition(const FloatPoint& position, ScrollPositionClamp clamp)
-{
-    auto scrollPosition = position;
-    if (clamp == ScrollPositionClamp::ToContentEdges)
-        scrollPosition = clampScrollPosition(scrollPosition);
-
-    FloatRect newLayoutViewport = layoutViewportForScrollPosition(scrollPosition, frameScaleFactor());
-    setLayoutViewport(newLayoutViewport);
-    auto layoutViewportOrigin = newLayoutViewport.location();
-
-    setScrollLayerPosition(scrollPosition, layoutViewport());
-    scrollingTree().scrollingTreeNodeDidScroll(scrollingNodeID(), scrollPosition, layoutViewportOrigin);
-}
-
-void ScrollingTreeFrameScrollingNodeRemoteIOS::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect& layoutViewport)
+void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionScrollingLayers()
 {
     if (m_scrollingNodeDelegate) {
-        m_scrollingNodeDelegate->setScrollLayerPosition(scrollPosition);
+        m_scrollingNodeDelegate->repositionScrollingLayers();
         return;
     }
 
+    auto scrollPosition = currentScrollPosition();
+    // FIXME: This is always wrong on iOS. Maybe assert that we always have a delegate.
     [scrolledContentsLayer() setPosition:-scrollPosition];
-    updateChildNodesAfterScroll(scrollPosition);
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
+void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers()
 {
-    ScrollBehaviorForFixedElements behaviorForFixed = scrollBehaviorForFixedElements();
-    FloatRect viewportRect(scrollPosition, scrollableAreaSize());
-    FloatPoint scrollPositionForFixedChildren = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), LayoutPoint(scrollPosition), scrollOrigin(), frameScaleFactor(), fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight());
+    auto layoutViewport = this->layoutViewport();
 
-    [m_counterScrollingLayer setPosition:scrollPositionForFixedChildren];
+    [m_counterScrollingLayer setPosition:layoutViewport.location()];
 
+    // FIXME: I don' think we never have headers and footers on iOS.
     if (m_headerLayer || m_footerLayer) {
         // Generally the banners should have the same horizontal-position computation as a fixed element. However,
         // the banners are not affected by the frameScaleFactor(), so if there is currently a non-1 frameScaleFactor()
         // then we should recompute scrollPositionForFixedChildren for the banner with a scale factor of 1.
-        float horizontalScrollOffsetForBanner = scrollPositionForFixedChildren.x();
-        if (frameScaleFactor() != 1)
-            horizontalScrollOffsetForBanner = FrameView::scrollPositionForFixedPosition(enclosingLayoutRect(viewportRect), LayoutSize(totalContentsSize()), LayoutPoint(scrollPosition), scrollOrigin(), 1, fixedElementsLayoutRelativeToFrame(), behaviorForFixed, headerHeight(), footerHeight()).x();
-
         if (m_headerLayer)
-            [m_headerLayer setPosition:FloatPoint(horizontalScrollOffsetForBanner, 0)];
+            [m_headerLayer setPosition:FloatPoint(layoutViewport.x(), 0)];
 
         if (m_footerLayer)
-            [m_footerLayer setPosition:FloatPoint(horizontalScrollOffsetForBanner, totalContentsSize().height() - footerHeight())];
+            [m_footerLayer setPosition:FloatPoint(layoutViewport.x(), totalContentsSize().height() - footerHeight())];
     }
-    
-    if (!m_children)
-        return;
-
-
-    FloatRect layoutViewport;
-    if (isRootNode())
-        layoutViewport = this->layoutViewport();
-    else
-        layoutViewport = FloatRect(scrollPosition, scrollableAreaSize()); // FIXME: We'll just use layoutViewport() once we correctly update it after a scroll.
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, layoutViewport, FloatSize());
-}
-
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
-{
-    if (m_scrollingNodeDelegate) {
-        m_scrollingNodeDelegate->updateChildNodesAfterScroll(scrollPosition);
-        return;
-    }
-
-    updateChildNodesAfterScroll(scrollPosition);
-}
-
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterViewportChange(const FloatRect& layoutViewport, double /*scale*/)
-{
-    // Note: we never currently have a m_counterScrollingLayer (which is used for background-attachment:fixed) on iOS.
-    [m_counterScrollingLayer setPosition:layoutViewport.location()];
-
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, layoutViewport, FloatSize());
-}
-
-void ScrollingTreeFrameScrollingNodeRemoteIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
-{
-    if (m_scrollingNodeDelegate) {
-        m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
-        return;
-    }
-
-    if (!m_children)
-        return;
-
-    FloatRect currFrameLayoutViewport(scrollPosition(), scrollableAreaSize()); // FIXME: use layoutViewport() once it's correctly updated.
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, currFrameLayoutViewport, { });
 }
 
 }

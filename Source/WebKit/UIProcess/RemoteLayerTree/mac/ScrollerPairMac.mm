@@ -175,7 +175,7 @@ bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 
 void ScrollerPairMac::updateValues()
 {
-    auto position = m_scrollingNode.scrollPosition();
+    auto position = m_scrollingNode.currentScrollPosition();
 
     if (position != m_lastScrollPosition) {
         if (m_lastScrollPosition) {
@@ -205,11 +205,11 @@ ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollerMac::Orien
     float totalSize;
     float visibleSize;
     if (orientation == ScrollerMac:: Orientation::Vertical) {
-        position = m_scrollingNode.scrollPosition().y();
+        position = m_scrollingNode.currentScrollPosition().y();
         totalSize = m_scrollingNode.totalContentsSize().height();
         visibleSize = m_scrollingNode.scrollableAreaSize().height();
     } else {
-        position = m_scrollingNode.scrollPosition().x();
+        position = m_scrollingNode.currentScrollPosition().x();
         totalSize = m_scrollingNode.totalContentsSize().width();
         visibleSize = m_scrollingNode.scrollableAreaSize().width();
     }

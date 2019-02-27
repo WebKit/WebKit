@@ -173,9 +173,9 @@ TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(const At
     return m_scrollingTree->eventTrackingTypeForPoint(eventName, p);
 }
 
-void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const FloatRect& layoutViewport, double scale)
+void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double scale)
 {
-    m_scrollingTree->mainFrameViewportChangedViaDelegatedScrolling(layoutViewport, scale);
+    m_scrollingTree->mainFrameViewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
 }
 
 void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)

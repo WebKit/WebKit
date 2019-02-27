@@ -1075,6 +1075,7 @@ webkit.org/b/156620 legacy-animation-engine/fast/animation/request-animation-fra
 webkit.org/b/153049 perf/array-binary-search.html [ Pass Failure Timeout ]
 
 fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure ]
+webkit.org/b/195108 fast/scrolling/ios/hit-testing-iframe-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 

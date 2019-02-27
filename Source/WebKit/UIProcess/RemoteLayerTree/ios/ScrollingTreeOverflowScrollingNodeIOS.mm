@@ -66,24 +66,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
     m_scrollingNodeDelegate->commitStateAfterChildren(downcast<ScrollingStateScrollingNode>(stateNode));
 }
 
-void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
+void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()
 {
-    m_scrollingNodeDelegate->updateLayersAfterAncestorChange(changedNode, layoutViewport, cumulativeDelta);
-}
-
-FloatPoint ScrollingTreeOverflowScrollingNodeIOS::scrollPosition() const
-{
-    return m_scrollingNodeDelegate->scrollPosition();
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPoint& scrollPosition, const FloatRect&)
-{
-    m_scrollingNodeDelegate->setScrollLayerPosition(scrollPosition);
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
-{
-    m_scrollingNodeDelegate->updateChildNodesAfterScroll(scrollPosition);
+    m_scrollingNodeDelegate->repositionScrollingLayers();
 }
 
 } // namespace WebKit

@@ -35,6 +35,7 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeNode.h"
+#include "ScrollingTreeOverflowScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/SetForScope.h>
 #include <wtf/text/TextStream.h>
@@ -122,28 +123,15 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     return ScrollingEventResult::DidNotHandleEvent;
 }
 
-void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatRect& layoutViewport, double scale)
+void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoint& scrollPosition, const FloatRect& layoutViewport, double)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::viewportChangedViaDelegatedScrolling - layoutViewport " << layoutViewport);
     
-    if (m_rootNode) {
-        auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
-        frameScrollingNode.setLayoutViewport(layoutViewport);
-        frameScrollingNode.updateLayersAfterViewportChange(layoutViewport, scale);
-    }
-}
-
-void ScrollingTree::scrollPositionChangedViaDelegatedScrolling(ScrollingNodeID nodeID, const WebCore::FloatPoint& scrollPosition, bool inUserInteraction)
-{
-    auto* node = nodeForID(nodeID);
-    if (!is<ScrollingTreeScrollingNode>(node))
+    if (!m_rootNode)
         return;
 
-    // Update descendant nodes
-    downcast<ScrollingTreeScrollingNode>(*node).updateLayersAfterDelegatedScroll(scrollPosition);
-
-    // Update GraphicsLayers and scroll state.
-    scrollingTreeNodeDidScroll(nodeID, scrollPosition, WTF::nullopt, inUserInteraction ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::Set);
+    auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
+    frameScrollingNode.wasScrolledByDelegatedScrolling(scrollPosition, layoutViewport);
 }
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
@@ -261,6 +249,39 @@ ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const
     return m_nodeMap.get(nodeID);
 }
 
+void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScrollingNode& changedNode)
+{
+    FloatSize deltaFromLastCommittedScrollPosition;
+    FloatRect currentFrameLayoutViewport;
+    if (is<ScrollingTreeFrameScrollingNode>(changedNode))
+        currentFrameLayoutViewport = downcast<ScrollingTreeFrameScrollingNode>(changedNode).layoutViewport();
+    else if (is<ScrollingTreeOverflowScrollingNode>(changedNode)) {
+        deltaFromLastCommittedScrollPosition = changedNode.lastCommittedScrollPosition() - changedNode.currentScrollPosition();
+
+        if (auto* frameScrollingNode = changedNode.enclosingFrameNodeIncludingSelf())
+            currentFrameLayoutViewport = frameScrollingNode->layoutViewport();
+    }
+
+    notifyRelatedNodesRecursive(changedNode, changedNode, currentFrameLayoutViewport, deltaFromLastCommittedScrollPosition);
+}
+
+void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+{
+    currNode.relatedNodeScrollPositionDidChange(changedNode, layoutViewport, cumulativeDelta);
+
+    if (!currNode.children())
+        return;
+    
+    auto deltaForChildren = cumulativeDelta;
+    for (auto& child : *currNode.children()) {
+        // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.
+        if (is<ScrollingTreeFrameScrollingNode>(child))
+            continue;
+
+        notifyRelatedNodesRecursive(changedNode, *child, layoutViewport, deltaForChildren);
+    }
+}
+
 void ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled(bool enabled)
 {
     LockHolder lock(m_mutex);
@@ -281,6 +302,15 @@ FloatPoint ScrollingTree::mainFrameScrollPosition()
 {
     LockHolder lock(m_mutex);
     return m_mainFrameScrollPosition;
+}
+
+FloatRect ScrollingTree::mainFrameLayoutViewport()
+{
+    if (!m_rootNode)
+        return { };
+
+    auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
+    return frameScrollingNode.layoutViewport();
 }
 
 void ScrollingTree::setMainFrameScrollPosition(FloatPoint position)

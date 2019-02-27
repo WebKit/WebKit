@@ -72,40 +72,29 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 }
 }
 
-void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& layoutViewport, const FloatSize& cumulativeDelta)
+void ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
     using namespace ScrollingTreeStickyNodeInternal;
-    bool adjustStickyLayer = false;
     FloatRect constrainingRect;
 
-    if (is<ScrollingTreeOverflowScrollingNode>(*parent())) {
-        constrainingRect = FloatRect(downcast<ScrollingTreeOverflowScrollingNode>(*parent()).scrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
-        adjustStickyLayer = true;
-    } else if (is<ScrollingTreeFrameScrollingNode>(*parent())) {
+    auto* enclosingScrollingNode = enclosingScrollingNodeIncludingSelf();
+    if (is<ScrollingTreeOverflowScrollingNode>(enclosingScrollingNode))
+        constrainingRect = FloatRect(downcast<ScrollingTreeOverflowScrollingNode>(*enclosingScrollingNode).currentScrollPosition(), m_constraints.constrainingRectAtLastLayout().size());
+    else if (is<ScrollingTreeFrameScrollingNode>(enclosingScrollingNode))
         constrainingRect = layoutViewport;
-        adjustStickyLayer = true;
-    }
-
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << layoutViewport << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " adjustStickyLayer " << adjustStickyLayer);
-
-    FloatSize deltaForDescendants = cumulativeDelta;
-
-    if (adjustStickyLayer) {
-        FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
-
-        CGRect layerBounds = [m_layer bounds];
-        CGPoint anchorPoint = [m_layer anchorPoint];
-        CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-        [m_layer setPosition:newPosition];
-
-        deltaForDescendants = layerPosition - m_constraints.layerPositionAtLastLayout() + cumulativeDelta;
-    }
-
-    if (!m_children)
+    else
         return;
 
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(changedNode, layoutViewport, deltaForDescendants);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: new viewport " << layoutViewport << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout());
+
+    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
+
+    CGRect layerBounds = [m_layer bounds];
+    CGPoint anchorPoint = [m_layer anchorPoint];
+    CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
+    [m_layer setPosition:newPosition];
+
+    cumulativeDelta += layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
 void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

@@ -43,11 +43,7 @@ private:
 
     ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
 
-    FloatPoint scrollPosition() const override;
-
-    void setScrollLayerPosition(const FloatPoint&, const FloatRect&) override;
-
-    void updateLayersAfterViewportChange(const FloatRect&, double) override;
+    void repositionScrollingLayers() override;
 };
 
 } // namespace WebCore
