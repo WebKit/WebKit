@@ -26,9 +26,9 @@ messages -> StorageManager {
     CreateSessionStorageMap(uint64_t storageMapID, uint64_t storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) WantsConnection
     DestroyStorageMap(uint64_t storageMapID) WantsConnection
 
-    GetValues(uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) Delayed WantsConnection
+    GetValues(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t storageMapSeed) -> (HashMap<String, String> values) Delayed WantsConnection
 
-    SetItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
-    RemoveItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
-    Clear(uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String urlString) WantsConnection
+    SetItem(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String value, String urlString) WantsConnection
+    RemoveItem(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String key, String urlString) WantsConnection
+    Clear(struct WebCore::SecurityOriginData securityOriginData, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, String urlString) WantsConnection
 }

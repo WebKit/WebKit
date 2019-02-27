@@ -48,8 +48,6 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue,
     : m_queue(WTFMove(queue))
     , m_localStorageDirectory(localStorageDirectory.isolatedCopy())
 {
-    ASSERT(!m_localStorageDirectory.isEmpty());
-
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
 

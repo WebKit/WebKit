@@ -27,6 +27,8 @@
 
 #include "Connection.h"
 #include "LocalStorageDatabaseTracker.h"
+#include <WebCore/SecurityOriginData.h>
+#include <WebCore/StorageMap.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -81,10 +83,10 @@ private:
     void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, WebCore::SecurityOriginData&&);
     void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
-    void getValues(IPC::Connection&, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&&);
-    void setItem(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
-    void removeItem(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
-    void clear(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
+    void getValues(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t storageMapSeed, CompletionHandler<void(const HashMap<String, String>&)>&&);
+    void setItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void removeItem(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
+    void clear(IPC::Connection&, WebCore::SecurityOriginData&&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
     class StorageArea;
     StorageArea* findStorageArea(IPC::Connection&, uint64_t) const;
@@ -106,6 +108,9 @@ private:
     HashMap<uint64_t, RefPtr<SessionStorageNamespace>> m_sessionStorageNamespaces;
 
     HashMap<std::pair<IPC::Connection::UniqueID, uint64_t>, RefPtr<StorageArea>> m_storageAreasByConnection;
+
+    HashMap<WebCore::SecurityOriginData, Ref<WebCore::StorageMap>> m_ephemeralStorage;
+    bool m_isEphemeral { false };
 };
 
 } // namespace WebKit

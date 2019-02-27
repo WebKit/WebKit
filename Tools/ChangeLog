@@ -1,3 +1,13 @@
+2019-02-26  Alex Christensen  <achristensen@webkit.org>
+
+        Move ephemeral local storage from WebProcess to UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=195074
+        <rdar://problem/47937975>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-20  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Media elements will restart network buffering just before suspending
