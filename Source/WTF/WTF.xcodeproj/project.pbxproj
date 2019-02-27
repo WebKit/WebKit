@@ -168,7 +168,6 @@
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */; };
-		FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE85416C1FBE285B008DA5DA /* Poisoned.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 /* End PBXBuildFile section */
@@ -678,12 +677,9 @@
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE05FAE61FDB214300093230 /* DumbPtrTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbPtrTraits.h; sourceTree = "<group>"; };
 		FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFAssertions.cpp; sourceTree = "<group>"; };
-		FE05FB041FE8453200093230 /* PoisonedUniquePtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoisonedUniquePtr.h; sourceTree = "<group>"; };
 		FE7497E4208FFCAA0003565B /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FE7497ED209163060003565B /* MetaAllocatorPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorPtr.h; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
-		FE85416C1FBE285B008DA5DA /* Poisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poisoned.cpp; sourceTree = "<group>"; };
-		FE85416D1FBE285C008DA5DA /* Poisoned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poisoned.h; sourceTree = "<group>"; };
 		FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForbidHeapAllocation.h; sourceTree = "<group>"; };
 		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
 		FEB6B035201BE0B600B958C1 /* PointerPreparations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerPreparations.h; sourceTree = "<group>"; };
@@ -1072,9 +1068,6 @@
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,
 				0FF860941BCCBD740045127F /* PointerComparison.h */,
 				FEB6B035201BE0B600B958C1 /* PointerPreparations.h */,
-				FE85416C1FBE285B008DA5DA /* Poisoned.cpp */,
-				FE85416D1FBE285C008DA5DA /* Poisoned.h */,
-				FE05FB041FE8453200093230 /* PoisonedUniquePtr.h */,
 				0F9D335D165DBA73005AD387 /* PrintStream.cpp */,
 				0F9D335E165DBA73005AD387 /* PrintStream.h */,
 				53EC253C1E95AD30000831B9 /* PriorityQueue.h */,
@@ -1577,7 +1570,6 @@
 				51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */,
 				51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */,
 				51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */,
-				FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,
 				7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */,
 				143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */,

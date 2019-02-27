@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 #include "config.h"
 
 #include <wtf/Bag.h>
-#include <wtf/Poisoned.h>
-#include <wtf/PoisonedUniquePtr.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 
@@ -35,24 +33,15 @@ namespace WTF {
 
 namespace {
 struct DummyStruct { };
-uintptr_t dummyPoison = 0;
 }
 
 static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
-static_assert(sizeof(PoisonedBag<Poison<dummyPoison>, DummyStruct>) == sizeof(void*), "");
 
 static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRef<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRefPtr<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
-
-static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, int[]>) == sizeof(int*), "");
-static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, DummyStruct[]>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
-static_assert(sizeof(PoisonedRefCountedArray<Poison<dummyPoison>, DummyStruct>) == sizeof(void*), "");
     
 } // namespace WTF
 

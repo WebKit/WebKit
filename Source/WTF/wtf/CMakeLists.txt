@@ -165,8 +165,6 @@ set(WTF_PUBLIC_HEADERS
     PlatformRegisters.h
     PointerComparison.h
     PointerPreparations.h
-    Poisoned.h
-    PoisonedUniquePtr.h
     PrintStream.h
     PriorityQueue.h
     ProcessID.h
@@ -383,7 +381,6 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
-    Poisoned.cpp
     PrintStream.cpp
     ProcessPrivilege.cpp
     RAMSize.cpp

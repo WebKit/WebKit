@@ -937,12 +937,6 @@
 		F6B7BE9717469B96008A3445 /* associate-form-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6B7BE9617469B7E008A3445 /* associate-form-controls.html */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
-		FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */; };
-		FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */; };
-		FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEE1FE0643D00093230 /* Poisoned.cpp */; };
-		FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */; };
-		FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */; };
-		FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2307,13 +2301,7 @@
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
-		FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedRefPtr.cpp; sourceTree = "<group>"; };
-		FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedRef.cpp; sourceTree = "<group>"; };
-		FE05FAEE1FE0643D00093230 /* Poisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poisoned.cpp; sourceTree = "<group>"; };
-		FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtr.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
-		FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtrForTriviallyDestructibleArrays.cpp; sourceTree = "<group>"; };
-		FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3268,12 +3256,6 @@
 				1AFDE6541953B2C000C48FFA /* Optional.cpp */,
 				CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */,
 				0FE447971B76F1E3009498EB /* ParkingLot.cpp */,
-				FE05FAEE1FE0643D00093230 /* Poisoned.cpp */,
-				FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */,
-				FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */,
-				FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */,
-				FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */,
-				FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */,
 				53EC253F1E96BC80000831B9 /* PriorityQueue.cpp */,
 				0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */,
 				93A427AA180DA26400CD24D7 /* Ref.cpp */,
@@ -3883,12 +3865,6 @@
 				1A77BAA31D9AFFFC005FC568 /* OptionSet.cpp in Sources */,
 				7C83DF021D0A590C00FEBCF3 /* OSObjectPtr.cpp in Sources */,
 				7C83DF591D0A590C00FEBCF3 /* ParkingLot.cpp in Sources */,
-				FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */,
-				FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */,
-				FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */,
-				FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */,
-				FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */,
-				FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */,
 				53EC25411E96FD87000831B9 /* PriorityQueue.cpp in Sources */,
 				7C83DF131D0A590C00FEBCF3 /* RedBlackTree.cpp in Sources */,
 				7C83DF141D0A590C00FEBCF3 /* Ref.cpp in Sources */,

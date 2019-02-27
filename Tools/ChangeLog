@@ -1,3 +1,19 @@
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Remove remaining poisoning code.
+        https://bugs.webkit.org/show_bug.cgi?id=194138
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/PoisonedRef.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/PoisonedRefPtr.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp: Removed.
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp: Removed.
+
 2019-02-26  Alex Christensen  <achristensen@webkit.org>
 
         Move ephemeral local storage from WebProcess to UIProcess

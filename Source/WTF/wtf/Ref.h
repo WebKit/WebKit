@@ -267,14 +267,8 @@ inline bool is(const Ref<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-template<typename Poison, typename T> struct PoisonedPtrTraits;
-
-template<typename Poison, typename T>
-using PoisonedRef = Ref<T, PoisonedPtrTraits<Poison, T>>;
-
 } // namespace WTF
 
-using WTF::PoisonedRef;
 using WTF::Ref;
 using WTF::adoptRef;
 using WTF::makeRef;
