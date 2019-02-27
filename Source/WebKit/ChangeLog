@@ -1,3 +1,50 @@
+2019-02-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r242098. rdar://problem/48429674
+
+    [iOS] REGRESSION(r238490?): Safari sometimes shows blank page until a cross site navigation or re-opening the tab
+    https://bugs.webkit.org/show_bug.cgi?id=195037
+    <rdar://problem/48154508>
+    
+    Reviewed by Antti Koivisto.
+    
+    Restore the pre-r238490 behavior of WebPage::didCompletePageTransition clearing LayerTreeFreezeReason::ProcessSuspended
+    as this has been an issue when I was able to reproduce the issue locally.
+    
+    Also added release logging to help diagnose the issue in the future.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::freezeLayerTree):
+    (WebKit::WebPage::unfreezeLayerTree):
+    (WebKit::WebPage::didCompletePageTransition):
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::freezeAllLayerTrees):
+    (WebKit::WebProcess::unfreezeAllLayerTrees):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242098 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+            [iOS] REGRESSION(r238490?): Safari sometimes shows blank page until a cross site navigation or re-opening the tab
+            https://bugs.webkit.org/show_bug.cgi?id=195037
+            <rdar://problem/48154508>
+
+            Reviewed by Antti Koivisto.
+
+            Restore the pre-r238490 behavior of WebPage::didCompletePageTransition clearing LayerTreeFreezeReason::ProcessSuspended
+            as this has been an issue when I was able to reproduce the issue locally.
+
+            Also added release logging to help diagnose the issue in the future.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::freezeLayerTree):
+            (WebKit::WebPage::unfreezeLayerTree):
+            (WebKit::WebPage::didCompletePageTransition):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::freezeAllLayerTrees):
+            (WebKit::WebProcess::unfreezeAllLayerTrees):
+
 2019-02-24  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r241963. rdar://problem/48350367
