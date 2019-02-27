@@ -154,7 +154,7 @@ static inline bool needsSignalQuirk(ScriptExecutionContext& context)
         return false;
 
     auto host = document.topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "leetcode.com") || equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
+    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
 }
 
 static inline Optional<Exception> processInvalidSignal(ScriptExecutionContext& context)

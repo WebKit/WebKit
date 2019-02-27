@@ -1,3 +1,15 @@
+2019-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Remove LeetCode FetchRequest quirk
+        https://bugs.webkit.org/show_bug.cgi?id=195100
+
+        Reviewed by Alex Christensen.
+
+        Covered by manual testing.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::needsSignalQuirk):
+
 2019-02-27  Chris Dumez  <cdumez@apple.com>
 
         Unable to log into chase.com on iPad when DeviceMotionEvent API is disabled
