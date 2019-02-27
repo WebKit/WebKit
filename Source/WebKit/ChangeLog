@@ -1,3 +1,47 @@
+2019-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web pages shouldn't be able to present a keyboard after the web view resigns first responder
+        https://bugs.webkit.org/show_bug.cgi?id=195118
+        <rdar://problem/43411940>
+
+        Reviewed by Tim Horton.
+
+        It's currently possible for websites to redirect focus into an editable element on the page by programmatically
+        requesting focus within the "blur" event handler. This is because our current heuristics:
+
+        (1) Allow programmatic focus to show the keyboard when an element is already focused; this is meant to handle
+            the case where the page moves focus between different elements on the page.
+        (2) And also allow programmatic focus to show the keyboard when changing activity state; this is meant to handle
+            the case where a focused element should show the keyboard when first responder is restored on a web view
+            (e.g. in the case where a modal view controller is dismissed, and the web view regains first responder once
+            again).
+
+        In both of these scenarios, we actually only want the keyboard to appear if the web view itself is either
+        becoming the first responder, or is already the first responder. Importantly, when blurring the focused element
+        by calling -[WKWebViewe resignFirstResponder] (as is the case when dismissing the keyboard by tapping 'Done' or
+        focusing other platform UI), we don't want to allow the page to show the keyboard due to element focus.
+
+        To fix this issue, we enforce that we're either becoming the first responder or already are the first responder
+        before showing the keyboard due to activity state change or focused element change.
+
+        Test: fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView textInputTraits]):
+
+        Quick drive-by tweak: rename _isBlurringFocusedNode to _isBlurringFocusedElement, to match the rest of the
+        terminology used in WebKit.
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        Make our heuristics for determining whether to show the keyboard a tiny bit easier to follow, by moving the
+        logic into a lambda function and using early returns. See above for more details.
+
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView focusedFormControllerDidUpdateSuggestions:]):
+
 2019-02-27  John Wilander  <wilander@apple.com>
 
         Adopt WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics and WebKit::NetworkProcessProxy

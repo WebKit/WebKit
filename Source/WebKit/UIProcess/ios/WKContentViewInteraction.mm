@@ -761,7 +761,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _showDebugTapHighlightsForFastClicking = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitShowFastClickDebugTapHighlights"];
     _needsDeferredEndScrollingSelectionUpdate = NO;
     _isChangingFocus = NO;
-    _isBlurringFocusedNode = NO;
+    _isBlurringFocusedElement = NO;
 
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
@@ -4100,7 +4100,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     // Do not change traits when dismissing the keyboard.
-    if (_isBlurringFocusedNode)
+    if (_isBlurringFocusedElement)
         return _traits.get();
 #endif
 
@@ -4802,7 +4802,6 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithFocusedElementInformation:information isUserInitiated:userIsInteracting userObject:userObject]);
 
-    BOOL shouldShowKeyboard = NO;
     _WKFocusStartsInputSessionPolicy startInputSessionPolicy = _WKFocusStartsInputSessionPolicyAuto;
 
     if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)]) {
@@ -4826,31 +4825,44 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     else
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
 
-    switch (startInputSessionPolicy) {
-    case _WKFocusStartsInputSessionPolicyAuto:
-        // The default behavior is to allow node assistance if the user is interacting.
-        // We also allow node assistance if the keyboard already is showing, unless we're in extra zoom mode.
-        shouldShowKeyboard = userIsInteracting
-#if PLATFORM(WATCHOS)
-            || (_isChangingFocus && ![_focusedFormControlView isHidden])
-#else
-            || _isChangingFocus
-            || [UIKeyboard isInHardwareKeyboardMode]
-#endif
+    BOOL shouldShowKeyboard = [&] {
+        switch (startInputSessionPolicy) {
+        case _WKFocusStartsInputSessionPolicyAuto:
+            // The default behavior is to allow node assistance if the user is interacting.
+            // We also allow node assistance if the keyboard already is showing, unless we're in extra zoom mode.
+            if (userIsInteracting)
+                return YES;
+
 #if ENABLE(DRAG_SUPPORT)
-            || _dragDropInteractionState.isPerformingDrop()
+            if (_dragDropInteractionState.isPerformingDrop())
+                return YES;
 #endif
-            || changingActivityState;
-        break;
-    case _WKFocusStartsInputSessionPolicyAllow:
-        shouldShowKeyboard = YES;
-        break;
-    case _WKFocusStartsInputSessionPolicyDisallow:
-        shouldShowKeyboard = NO;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+
+            if (self.isFirstResponder || _becomingFirstResponder) {
+                if (changingActivityState)
+                    return YES;
+
+#if PLATFORM(WATCHOS)
+                if (_isChangingFocus && ![_focusedFormControlView isHidden])
+                    return YES;
+#else
+                if (_isChangingFocus)
+                    return YES;
+
+                if (UIKeyboard.isInHardwareKeyboardMode)
+                    return YES;
+#endif
+            }
+            return NO;
+        case _WKFocusStartsInputSessionPolicyAllow:
+            return YES;
+        case _WKFocusStartsInputSessionPolicyDisallow:
+            return NO;
+        default:
+            ASSERT_NOT_REACHED();
+            return NO;
+        }
+    }();
 
     if (blurPreviousNode)
         [self _elementDidBlur];
@@ -4946,7 +4958,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
 - (void)_elementDidBlur
 {
-    SetForScope<BOOL> isBlurringFocusedNodeForScope { _isBlurringFocusedNode, YES };
+    SetForScope<BOOL> isBlurringFocusedElementForScope { _isBlurringFocusedElement, YES };
 
 #if HAVE(PENCILKIT)
     [_drawingCoordinator uninstallInkPicker];
@@ -5303,7 +5315,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
 - (void)focusedFormControllerDidUpdateSuggestions:(WKFocusedFormControlView *)view
 {
-    if (_isBlurringFocusedNode || ![_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
+    if (_isBlurringFocusedElement || ![_presentedFullScreenInputViewController isKindOfClass:[WKTextInputListViewController class]])
         return;
 
     [(WKTextInputListViewController *)_presentedFullScreenInputViewController reloadTextSuggestions];

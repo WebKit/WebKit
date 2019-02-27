@@ -313,7 +313,7 @@ struct WKAutoCorrectionData {
     BOOL _resigningFirstResponder;
     BOOL _needsDeferredEndScrollingSelectionUpdate;
     BOOL _isChangingFocus;
-    BOOL _isBlurringFocusedNode;
+    BOOL _isBlurringFocusedElement;
 
     BOOL _focusRequiresStrongPasswordAssistance;
 

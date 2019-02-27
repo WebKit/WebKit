@@ -1,3 +1,18 @@
+2019-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web pages shouldn't be able to present a keyboard after the web view resigns first responder
+        https://bugs.webkit.org/show_bug.cgi?id=195118
+        <rdar://problem/43411940>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that after resigning first responder (e.g. tapping 'Done' on the keyboard, or focusing a
+        native input field elsewhere in the app), the page cannot force the keyboard to appear by focusing an input
+        field.
+
+        * fast/events/ios/do-not-show-keyboard-when-focusing-after-blur-expected.txt: Added.
+        * fast/events/ios/do-not-show-keyboard-when-focusing-after-blur.html: Added.
+
 2019-02-27  John Wilander  <wilander@apple.com>
 
         Adopt WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics and WebKit::NetworkProcessProxy

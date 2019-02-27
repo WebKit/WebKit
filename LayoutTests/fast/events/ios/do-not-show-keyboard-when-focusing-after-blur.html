@@ -1,0 +1,50 @@
+<html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+    input {
+        font-size: 18px;
+        border: black 2px solid;
+        border-radius: 4px;
+        padding: 1em;
+        width: 100%;
+    }
+
+    body {
+        margin: 0;
+    }
+    </style>
+</head>
+<body>
+<div><input type="text"></div>
+<div id="description"></div>
+</body>
+<script>
+jsTestIsAsync = true;
+
+field = document.querySelector("input");
+field.addEventListener("blur", () => {
+    field.focus();
+    setTimeout(() => field.focus(), 0);
+});
+
+addEventListener("load", async () => {
+    description("Verifies that an input field cannot force the web view to become first responder after the web view resigns first responder using platform API. To manually test, focus the text field and hit the 'Done' button on the keyboard; the keyboard should not pop back up.");
+
+    await UIHelper.activateAndWaitForInputSessionAt(160, 30);
+    await UIHelper.resignFirstResponder();
+    await UIHelper.waitForKeyboardToHide();
+    inputBounds = await UIHelper.inputViewBounds();
+    screenHeight = screen.height;
+
+    // Verify that the keyboard is positioned off-screen.
+    shouldBeGreaterThanOrEqual("inputBounds.top", "screenHeight");
+    shouldBe("inputBounds.height", "0");
+    shouldBe("document.activeElement", "field");
+    finishJSTest();
+});
+</script>
+</html>
+
