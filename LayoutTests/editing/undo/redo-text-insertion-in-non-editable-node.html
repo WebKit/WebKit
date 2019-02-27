@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="editor" contenteditable></div>
+</body>
+<script>
+description("This test verifies that redoing text insertion in a non-editable element is a no-op.");
+editor.focus();
+
+document.execCommand("InsertText", true, "Hello");
+const textNode = editor.firstChild;
+shouldBeEqualToString("textNode.data", "Hello");
+
+document.execCommand("Undo");
+editor.setAttribute("contenteditable", "false");
+document.execCommand("Redo");
+
+shouldBeEqualToString("textNode.data", "");
+</script>
+</html>

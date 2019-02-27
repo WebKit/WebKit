@@ -1,3 +1,26 @@
+2019-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove conditional compile guard for InsertIntoTextNodeCommand::doReapply
+        https://bugs.webkit.org/show_bug.cgi?id=195067
+        <rdar://problem/44812080>
+
+        Reviewed by Tim Horton.
+
+        This iOS-specific override was introduced to fix <rdar://problem/7114425>, in which the last typed character
+        would be revealed when redoing text input on iOS inside a password field. The associated change fixed this bug
+        by overriding doReapply on iOS to only insert text (instead of additionally handling password echo); however, it
+        really makes sense to skip password echo when redoing on all platforms, so we can just remove the platform-
+        specific guards around this logic.
+
+        Doing this allows us to add the `hasEditableStyle()` check on iOS when redoing text insertion, which results in
+        a very subtle behavior change covered by the new layout test below.
+
+        Test: editing/undo/redo-text-insertion-in-non-editable-node.html
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doReapply):
+        * editing/InsertIntoTextNodeCommand.h:
+
 2019-02-26  Keith Miller  <keith_miller@apple.com>
 
         Code quality cleanup in NeverDestroyed

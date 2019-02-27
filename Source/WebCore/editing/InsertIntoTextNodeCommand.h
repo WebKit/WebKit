@@ -46,9 +46,7 @@ protected:
 private:
     void doApply() override;
     void doUnapply() override;
-#if PLATFORM(IOS_FAMILY)
     void doReapply() override;
-#endif
     
 #ifndef NDEBUG
     void getNodesInCommand(HashSet<Node*>&) override;
