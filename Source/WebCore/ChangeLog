@@ -1,3 +1,33 @@
+2019-02-27  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move DOM timer handling from global to ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=195070
+        <rdar://problem/48417650>
+
+        Reviewed by Tim Horton.
+
+        Add DOM timer list to ContentChangeObserver and move the related code over from WK functions.
+
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::startObservingDOMTimerScheduling):
+        (WebCore::ContentChangeObserver::countOfObservedDOMTimers):
+        (WebCore::ContentChangeObserver::clearObservedDOMTimers):
+        (WebCore::ContentChangeObserver::setObservedContentChange):
+        (WebCore::ContentChangeObserver::containsObservedDOMTimer):
+        (WebCore::ContentChangeObserver::addObservedDOMTimer):
+        (WebCore::ContentChangeObserver::removeObservedDOMTimer):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKStartObservingDOMTimerScheduling):
+        (WKSetObservedContentChange):
+        (WebThreadGetObservedDOMTimers): Deleted.
+        (WebThreadCountOfObservedDOMTimers): Deleted.
+        (WebThreadClearObservedDOMTimers): Deleted.
+        (WebThreadContainsObservedDOMTimer): Deleted.
+        (WebThreadAddObservedDOMTimer): Deleted.
+        (WebThreadRemoveObservedDOMTimer): Deleted.
+        * platform/ios/wak/WKContentObservation.h:
+
 2019-02-27  Justin Fan  <justin_fan@apple.com>
         Fix build errors after Web GPU buffer updates changed some IDL fields from unsigned long to unsigned long long.
 

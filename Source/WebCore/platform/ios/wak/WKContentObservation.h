@@ -55,9 +55,6 @@ WEBCORE_EXPORT bool WKShouldObserveNextStyleRecalc(void);
 
 WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
 
-WEBCORE_EXPORT int WebThreadCountOfObservedDOMTimers(void);
-WEBCORE_EXPORT void WebThreadClearObservedDOMTimers(void);
-
 #ifdef __cplusplus
 }
 #endif

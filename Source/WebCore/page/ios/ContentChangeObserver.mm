@@ -60,7 +60,7 @@ void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
-    startObservingContentChanges();
+    WKStartObservingContentChanges();
     startObservingStyleRecalcScheduling();
 }
 
@@ -99,7 +99,7 @@ void ContentChangeObserver::startObservingStyleResolve()
     if (!shouldObserveNextStyleRecalc())
         return;
     LOG(ContentObservation, "startObservingStyleResolve: start observing style resolve.");
-    startObservingContentChanges();
+    WKStartObservingContentChanges();
 }
 
 void ContentChangeObserver::stopObservingStyleResolve()
@@ -167,6 +167,7 @@ bool ContentChangeObserver::isObservingContentChanges()
 void ContentChangeObserver::startObservingDOMTimerScheduling()
 {
     WKStartObservingDOMTimerScheduling();
+    clearObservedDOMTimers();
 }
 
 void ContentChangeObserver::stopObservingDOMTimerScheduling()
@@ -211,12 +212,12 @@ WKContentChange ContentChangeObserver::observedContentChange()
 
 unsigned ContentChangeObserver::countOfObservedDOMTimers()
 {
-    return WebThreadCountOfObservedDOMTimers();
+    return m_DOMTimerList.size();
 }
 
 void ContentChangeObserver::clearObservedDOMTimers()
 {
-    WebThreadClearObservedDOMTimers();
+    m_DOMTimerList.clear();
 }
 
 void ContentChangeObserver::setObservedContentChange(WKContentChange change)
@@ -226,17 +227,23 @@ void ContentChangeObserver::setObservedContentChange(WKContentChange change)
 
 bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer)
 {
-    return WebThreadContainsObservedDOMTimer(const_cast<DOMTimer*>(&timer));
+    return m_DOMTimerList.contains(&timer);
 }
 
 void ContentChangeObserver::addObservedDOMTimer(const DOMTimer& timer)
 {
-    WebThreadAddObservedDOMTimer(const_cast<DOMTimer*>(&timer));
+    ASSERT(isObservingDOMTimerScheduling());
+    if (observedContentChange() == WKContentVisibilityChange)
+        return;
+    m_DOMTimerList.add(&timer);
 }
 
 void ContentChangeObserver::removeObservedDOMTimer(const DOMTimer& timer)
 {
-    WebThreadRemoveObservedDOMTimer(const_cast<DOMTimer*>(&timer));
+    m_DOMTimerList.remove(&timer);
+    // Force reset the content change flag when the last observed content modifier is removed. We should not be in indeterminate state anymore.
+    if (!countOfObservedDOMTimers() && observedContentChange() == WKContentIndeterminateChange)
+        setObservedContentChange(WKContentNoChange);
 }
 
 static Visibility elementImplicitVisibility(const Element& element)

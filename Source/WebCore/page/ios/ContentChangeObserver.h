@@ -94,6 +94,7 @@ private:
     void clearTimersAndReportContentChange();
 
     Page& m_page;
+    HashSet<const DOMTimer*> m_DOMTimerList;
 };
 
 }
