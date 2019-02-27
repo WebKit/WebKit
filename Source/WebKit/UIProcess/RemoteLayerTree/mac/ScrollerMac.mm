@@ -203,7 +203,10 @@ enum class FeatureToAnimate {
     if (!_scroller)
         return [NSAppearance currentAppearance];
 
-    return [NSAppearance appearanceNamed:_scroller->pair().useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
+    // The base system does not support dark Aqua, so we might get a null result.
+    if (auto *appearance = [NSAppearance appearanceNamed:_scroller->pair().useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
+        return appearance;
+    return [NSAppearance currentAppearance];
 }
 #endif
 

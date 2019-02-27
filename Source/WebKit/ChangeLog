@@ -1,3 +1,14 @@
+2019-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION: WebKit content crash in Base System (because NSAppearance is NULL).
+        https://bugs.webkit.org/show_bug.cgi?id=195086
+        rdar://problem/48419124
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/RemoteLayerTree/mac/ScrollerMac.mm:
+        (-[WKScrollerImpDelegate effectiveAppearanceForScrollerImp:]): Always return a valid NSAppearance.
+
 2019-02-26  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Add mechanism to clear suspended pages while bypassing the WebProcess cache

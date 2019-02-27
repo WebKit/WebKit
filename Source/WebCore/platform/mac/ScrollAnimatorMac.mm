@@ -536,8 +536,11 @@ enum FeatureToAnimate {
         return [NSAppearance currentAppearance];
 
     // Keep this in sync with FrameView::paintScrollCorner.
+    // The base system does not support dark Aqua, so we might get a null result.
     bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearanceForScrollbars();
-    return [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
+    if (auto *appearance = [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
+        return appearance;
+    return [NSAppearance currentAppearance];
 }
 #endif
 
