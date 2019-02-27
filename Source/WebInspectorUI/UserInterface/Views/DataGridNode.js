@@ -650,7 +650,7 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         if (!this.hasChildren)
             return false;
 
-        let cell = event.target.enclosingNodeOrSelfWithNodeName("td");
+        let cell = event.target.closest("td");
         if (!cell || !cell.classList.contains("disclosure"))
             return false;
 

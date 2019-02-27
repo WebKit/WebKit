@@ -911,7 +911,7 @@ WI.updateVisibilityState = function(visible)
 
 WI.handlePossibleLinkClick = function(event, frame, options = {})
 {
-    let anchorElement = event.target.enclosingNodeOrSelfWithNodeName("a");
+    let anchorElement = event.target.closest("a");
     if (!anchorElement || !anchorElement.href)
         return false;
 
@@ -2337,7 +2337,7 @@ WI._focusConsolePrompt = function(event)
 WI._focusedContentBrowser = function()
 {
     if (this.currentFocusElement) {
-        let contentBrowserElement = this.currentFocusElement.enclosingNodeOrSelfWithClass("content-browser");
+        let contentBrowserElement = this.currentFocusElement.closest(".content-browser");
         if (contentBrowserElement && contentBrowserElement.__view && contentBrowserElement.__view instanceof WI.ContentBrowser)
             return contentBrowserElement.__view;
     }

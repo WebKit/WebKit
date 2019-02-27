@@ -1299,7 +1299,7 @@ WI.Table = class Table extends WI.View
 
     _handleMouseDown(event)
     {
-        let cell = event.target.enclosingNodeOrSelfWithClass("cell");
+        let cell = event.target.closest(".cell");
         if (!cell)
             return;
 
@@ -1323,7 +1323,7 @@ WI.Table = class Table extends WI.View
 
     _handleContextMenu(event)
     {
-        let cell = event.target.enclosingNodeOrSelfWithClass("cell");
+        let cell = event.target.closest(".cell");
         if (!cell)
             return;
 

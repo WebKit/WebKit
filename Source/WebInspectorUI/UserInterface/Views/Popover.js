@@ -171,7 +171,7 @@ WI.Popover = class Popover extends WI.Object
         switch (event.type) {
         case "mousedown":
         case "scroll":
-            if (!this._element.contains(event.target) && !event.target.enclosingNodeOrSelfWithClass(WI.Popover.IgnoreAutoDismissClassName)
+            if (!this._element.contains(event.target) && !event.target.closest("." + WI.Popover.IgnoreAutoDismissClassName)
                 && !event[WI.Popover.EventPreventDismissSymbol]) {
                 this.dismiss();
             }

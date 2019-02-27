@@ -472,7 +472,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this._mouseup(event);
 
         // We don't want to show the custom menu for links in the console.
-        if (event.target.enclosingNodeOrSelfWithNodeName("a"))
+        if (event.target.closest("a"))
             return;
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
@@ -509,7 +509,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             return;
         }
 
-        this._mouseDownWrapper = event.target.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
+        this._mouseDownWrapper = event.target.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
         this._mouseDownShiftKey = event.shiftKey;
         this._mouseDownCommandKey = event.metaKey;
         this._mouseMoveIsRowSelection = false;
@@ -520,7 +520,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _targetInMessageCanBeSelected(target, message)
     {
-        if (target.enclosingNodeOrSelfWithNodeName("a"))
+        if (target.closest("a"))
             return false;
         return true;
     }
@@ -528,12 +528,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     _mousemove(event)
     {
         var selection = window.getSelection();
-        var wrapper = event.target.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
+        var wrapper = event.target.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
 
         if (!wrapper) {
             // No wrapper under the mouse, so look at the selection to try and find one.
             if (!selection.isCollapsed)
-                wrapper = selection.focusNode.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
+                wrapper = selection.focusNode.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
 
             if (!wrapper) {
                 selection.removeAllRanges();
@@ -570,7 +570,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         window.removeEventListener("mouseup", this);
 
         var selection = window.getSelection();
-        var wrapper = event.target.enclosingNodeOrSelfWithClass(WI.LogContentView.ItemWrapperStyleClassName);
+        var wrapper = event.target.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
 
         if (wrapper && (selection.isCollapsed || event.shiftKey)) {
             selection.removeAllRanges();
@@ -598,7 +598,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _ondragstart(event)
     {
-        if (event.target.enclosingNodeOrSelfWithClass(WI.DOMTreeOutline.StyleClassName)) {
+        if (event.target.closest("." + WI.DOMTreeOutline.StyleClassName)) {
             event.stopPropagation();
             event.preventDefault();
         }

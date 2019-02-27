@@ -720,7 +720,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     _graphPositionForMouseEvent(event)
     {
-        let svgElement = event.target.enclosingNodeOrSelfWithNodeName("svg");
+        let svgElement = event.target.closest("svg");
         if (!svgElement)
             return NaN;
 

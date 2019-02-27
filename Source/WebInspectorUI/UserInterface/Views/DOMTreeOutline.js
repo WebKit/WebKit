@@ -244,10 +244,10 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
     populateContextMenu(contextMenu, event, treeElement)
     {
-        let tag = event.target.enclosingNodeOrSelfWithClass("html-tag");
-        let textNode = event.target.enclosingNodeOrSelfWithClass("html-text-node");
-        let commentNode = event.target.enclosingNodeOrSelfWithClass("html-comment");
-        let pseudoElement = event.target.enclosingNodeOrSelfWithClass("html-pseudo-element");
+        let tag = event.target.closest(".html-tag");
+        let textNode = event.target.closest(".html-text-node");
+        let commentNode = event.target.closest(".html-comment");
+        let pseudoElement = event.target.closest(".html-pseudo-element");
 
         let subMenus = {
             add: new WI.ContextSubMenuItem(contextMenu, WI.UIString("Add")),

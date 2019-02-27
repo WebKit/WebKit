@@ -574,7 +574,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     treeElementFromNode(node)
     {
-        var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
+        var listNode = node.closest("ol, li");
         if (listNode)
             return listNode.parentTreeElement || listNode.treeElement;
         return null;

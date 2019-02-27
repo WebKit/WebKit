@@ -68,7 +68,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
     {
         var selectedItemElement = this._selectedItemElement;
         if (selectedItemElement)
-            selectedItemElement.classList.remove(WI.CompletionSuggestionsView.SelectedItemStyleClassName);
+            selectedItemElement.classList.remove("selected");
 
         this._selectedIndex = index;
 
@@ -76,7 +76,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         if (!selectedItemElement)
             return;
 
-        selectedItemElement.classList.add(WI.CompletionSuggestionsView.SelectedItemStyleClassName);
+        selectedItemElement.classList.add("selected");
         selectedItemElement.scrollIntoViewIfNeeded(false);
     }
 
@@ -192,10 +192,9 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
 
         for (var i = 0; i < completions.length; ++i) {
             var itemElement = document.createElement("div");
-            itemElement.className = WI.CompletionSuggestionsView.ItemElementStyleClassName;
+            itemElement.classList.add("item");
+            itemElement.classList.toggle("selected", i === this._selectedIndex);
             itemElement.textContent = completions[i];
-            if (i === this._selectedIndex)
-                itemElement.classList.add(WI.CompletionSuggestionsView.SelectedItemStyleClassName);
             this._containerElement.appendChild(itemElement);
 
             if (this._delegate && typeof this._delegate.completionSuggestionsViewCustomizeCompletionElement === "function")
@@ -238,7 +237,7 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         if (event.button !== 0)
             return;
 
-        var itemElement = event.target.enclosingNodeOrSelfWithClass(WI.CompletionSuggestionsView.ItemElementStyleClassName);
+        let itemElement = event.target.closest(".item");
         console.assert(itemElement);
         if (!itemElement)
             return;
@@ -256,6 +255,3 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._moveIntervalIdentifier = null;
     }
 };
-
-WI.CompletionSuggestionsView.ItemElementStyleClassName = "item";
-WI.CompletionSuggestionsView.SelectedItemStyleClassName = "selected";

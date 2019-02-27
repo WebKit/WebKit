@@ -89,9 +89,9 @@ WI.ConsoleGroup = class ConsoleGroup extends WI.Object
 
     _titleClicked(event)
     {
-        var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title");
+        var groupTitleElement = event.target.closest(".console-group-title");
         if (groupTitleElement) {
-            var groupElement = groupTitleElement.enclosingNodeOrSelfWithClass("console-group");
+            var groupElement = groupTitleElement.closest(".console-group");
             if (groupElement)
                 if (groupElement.classList.contains("collapsed"))
                     groupElement.classList.remove("collapsed");

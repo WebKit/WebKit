@@ -524,7 +524,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _startEditing(target)
     {
-        var element = target.enclosingNodeOrSelfWithNodeName("td");
+        var element = target.closest("td");
         if (!element)
             return;
 
@@ -605,7 +605,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _editingCancelled(element)
     {
-        console.assert(this._editingNode.element === element.enclosingNodeOrSelfWithNodeName("tr"));
+        console.assert(this._editingNode.element === element.closest("tr"));
 
         this._editingNode.refresh();
 
@@ -1438,20 +1438,20 @@ WI.DataGrid = class DataGrid extends WI.View
 
     dataGridNodeFromNode(target)
     {
-        var rowElement = target.enclosingNodeOrSelfWithNodeName("tr");
+        var rowElement = target.closest("tr");
         return rowElement && rowElement._dataGridNode;
     }
 
     dataGridNodeFromPoint(x, y)
     {
         var node = this._dataTableElement.ownerDocument.elementFromPoint(x, y);
-        var rowElement = node.enclosingNodeOrSelfWithNodeName("tr");
+        var rowElement = node.closest("tr");
         return rowElement && rowElement._dataGridNode;
     }
 
     _headerCellClicked(event)
     {
-        let cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        let cell = event.target.closest("th");
         if (!cell || !cell.columnIdentifier || !cell.classList.contains(WI.DataGrid.SortableColumnStyleClassName))
             return;
 
@@ -1461,7 +1461,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _mouseoverColumnCollapser(event)
     {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        var cell = event.target.closest("th");
         if (!cell || !cell.collapsesGroup)
             return;
 
@@ -1470,7 +1470,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _mouseoutColumnCollapser(event)
     {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        var cell = event.target.closest("th");
         if (!cell || !cell.collapsesGroup)
             return;
 
@@ -1479,7 +1479,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _clickInColumnCollapser(event)
     {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("th");
+        var cell = event.target.closest("th");
         if (!cell || !cell.collapsesGroup)
             return;
 
@@ -1578,7 +1578,7 @@ WI.DataGrid = class DataGrid extends WI.View
         if (this._hasCopyableData())
             contextMenu.appendItem(WI.UIString("Copy Table"), this._copyTable.bind(this));
 
-        let headerCellElement = event.target.enclosingNodeOrSelfWithNodeName("th");
+        let headerCellElement = event.target.closest("th");
         if (!headerCellElement)
             return;
 
@@ -1647,7 +1647,7 @@ WI.DataGrid = class DataGrid extends WI.View
                     if (gridNode === this.placeholderNode)
                         contextMenu.appendItem(WI.UIString("Add New"), this._startEditing.bind(this, event.target));
                     else {
-                        let element = event.target.enclosingNodeOrSelfWithNodeName("td");
+                        let element = event.target.closest("td");
                         let columnIdentifier = element.__columnIdentifier;
                         let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
                         contextMenu.appendItem(WI.UIString("Edit \u201C%s\u201D").format(columnTitle), this._startEditing.bind(this, event.target));

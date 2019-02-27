@@ -1,5 +1,74 @@
 2019-02-27  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Use Element.closest for internal code
+        https://bugs.webkit.org/show_bug.cgi?id=173747
+
+        Reviewed by Joseph Pecoraro.
+
+        Replace usage of added utility functions on the `Node` prototype with the built-in
+        `Element.prototype.closest` as it's more flexible and is capable of doing the same thing.
+
+        * UserInterface/Base/Utilities.js:
+        (Node.prototype.enclosingNodeOrSelfWithClass): Deleted.
+        (Node.prototype.enclosingNodeOrSelfWithNodeNameInArray): Deleted.
+        (Node.prototype.enclosingNodeOrSelfWithNodeName): Deleted.
+        * UserInterface/Base/Main.js:
+        (WI.handlePossibleLinkClick):
+        (WI._focusedContentBrowser):
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype._graphPositionForMouseEvent):
+        * UserInterface/Views/CompletionSuggestionsView.js:
+        (WI.CompletionSuggestionsView.prototype.set selectedIndex):
+        (WI.CompletionSuggestionsView.prototype.update):
+        (WI.CompletionSuggestionsView.prototype._itemClicked):
+        * UserInterface/Views/ConsoleGroup.js:
+        (WI.ConsoleGroup.prototype._titleClicked):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype._mouseWasClicked):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._startEditingTarget):
+        (WI.DOMTreeElement.prototype._populateTagContextMenu):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype._startEditing):
+        (WI.DataGrid.prototype._editingCancelled):
+        (WI.DataGrid.prototype.dataGridNodeFromNode):
+        (WI.DataGrid.prototype.dataGridNodeFromPoint):
+        (WI.DataGrid.prototype._headerCellClicked):
+        (WI.DataGrid.prototype._mouseoverColumnCollapser):
+        (WI.DataGrid.prototype._mouseoutColumnCollapser):
+        (WI.DataGrid.prototype._clickInColumnCollapser):
+        (WI.DataGrid.prototype._contextMenuInHeader):
+        (WI.DataGrid.prototype._contextMenuInDataTable):
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.isEventWithinDisclosureTriangle):
+        * UserInterface/Views/LegacyTabBar.js:
+        (WI.LegacyTabBar.prototype._handleMouseDown):
+        (WI.LegacyTabBar.prototype._handleClick):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._handleContextMenuEvent):
+        (WI.LogContentView.prototype._mousedown):
+        (WI.LogContentView.prototype._targetInMessageCanBeSelected):
+        (WI.LogContentView.prototype._mousemove):
+        (WI.LogContentView.prototype._mouseup):
+        (WI.LogContentView.prototype._ondragstart):
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype._mouseDown):
+        (WI.NavigationBar.prototype._mouseMoved):
+        * UserInterface/Views/Popover.js:
+        (WI.Popover.prototype.handleEvent):
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype._handleMouseDown):
+        (WI.TabBar.prototype._handleClick):
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype._handleMouseDown):
+        (WI.Table.prototype._handleContextMenu):
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.treeElementFromNode):
+
+2019-02-27  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r242118): Debugger: event breakpoints have no icon
         https://bugs.webkit.org/show_bug.cgi?id=195119
 
