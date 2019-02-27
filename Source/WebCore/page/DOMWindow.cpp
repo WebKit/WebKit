@@ -47,6 +47,8 @@
 #include "DOMURL.h"
 #include "DOMWindowExtension.h"
 #include "DeviceMotionController.h"
+#include "DeviceMotionData.h"
+#include "DeviceMotionEvent.h"
 #include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -1876,11 +1878,35 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
             }
         }
 #endif // PLATFORM(IOS_FAMILY)
-    }
+    } else if (eventType == eventNames().devicemotionEvent)
+        failedToRegisterDeviceMotionEventListener();
 #endif // ENABLE(DEVICE_ORIENTATION)
 
     return true;
 }
+
+#if ENABLE(DEVICE_ORIENTATION)
+
+void DOMWindow::failedToRegisterDeviceMotionEventListener()
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!isSameSecurityOriginAsMainFrame() || !isSecureContext())
+        return;
+
+    // FIXME: This is a quirk for chase.com on iPad (<rdar://problem/48423023>).
+    if (toRegistrableDomain(document()->url()) == "chase.com") {
+        // Fire a fake DeviceMotionEvent with acceleration data to unblock the site's login flow.
+        document()->postTask([](auto& context) {
+            if (auto* window = downcast<Document>(context).domWindow()) {
+                auto acceleration = DeviceMotionData::Acceleration::create();
+                window->dispatchEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, DeviceMotionData::create(acceleration.copyRef(), acceleration.copyRef(), DeviceMotionData::RotationRate::create(), WTF::nullopt).ptr()));
+            }
+        });
+    }
+#endif // PLATFORM(IOS_FAMILY)
+}
+
+#endif // ENABLE(DEVICE_ORIENTATION)
 
 #if PLATFORM(IOS_FAMILY)
 

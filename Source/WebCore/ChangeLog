@@ -1,3 +1,23 @@
+2019-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Unable to log into chase.com on iPad when DeviceMotionEvent API is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=195101
+        <rdar://problem/48423023>
+
+        Reviewed by Geoffrey Garen.
+
+        Add site-specific quirk for chase.com on iOS where we fire a dummy DeviceMotionEvent if the page
+        tries to register a "devicemotion" event listener and fails because the API is disabled. This is
+        needed to unblock the site and proceed with the login flow.
+
+        Unfortunately, document()->settings().needsSiteSpecificQuirks() is false on iOS so I could not
+        guard the quirk behind this flag.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::failedToRegisterDeviceMotionEventListener):
+        * page/DOMWindow.h:
+
 2019-02-27  Antoine Quint  <graouts@apple.com>
 
         Support Pointer Events on macOS
