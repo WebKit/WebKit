@@ -1,5 +1,37 @@
 2019-02-27  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Dark Mode: unreadable text in bezier curve editor numeric input fields
+        https://bugs.webkit.org/show_bug.cgi?id=195018
+        <rdar://problem/48378541>
+
+        Reviewed by Matt Baker.
+
+        Simplify some styles using `-webkit-*` properties instead of `[dir=ltr]`/`[dir=rtl]` selectors.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor):
+        (.bezier-editor > .bezier-preview):
+        (.bezier-editor > .bezier-preview-timing):
+        (.bezier-editor > .bezier-container .linear-curve):
+        (.bezier-editor > .bezier-container .bezier-curve):
+        (.bezier-editor > .bezier-container .control-line):
+        (.bezier-editor > .bezier-container .control-handle):
+        (.bezier-editor > .number-input-container):
+        (.bezier-editor > .number-input-container > input):
+        (body[dir=ltr] .bezier-editor > .bezier-preview-timing): Deleted.
+        (body[dir=rtl] .bezier-editor > .bezier-preview-timing): Deleted.
+        (body[dir=ltr] .bezier-editor > .number-input-container > input): Deleted.
+        (body[dir=rtl] .bezier-editor > .number-input-container > input): Deleted.
+        (@media (prefers-color-scheme: dark)): Deleted.
+        Remove all custom styling on any <input>s, as they look fine with their default styling.
+
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor > .spring-preview):
+        (.spring-editor > .spring-preview > div):
+        (.spring-editor > .spring-timing > div):
+
+2019-02-27  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: popover colors don't change when transitioning to/from dark mode
         https://bugs.webkit.org/show_bug.cgi?id=195113
         <rdar://problem/48444188>
