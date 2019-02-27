@@ -107,17 +107,17 @@ class TestFreshnessPage extends PageWithHeading {
     {
         const element = ComponentBase.createElement;
         const tableBodyElement = [];
-        const tableHeadElements = [element('th',  {class: 'table-corner'}, 'Platform \\ Test')];
+        const tableHeadElements = [element('th',  {class: 'table-corner row-head'}, 'Platform \\ Test')];
 
         for (const metric of metrics)
-            tableHeadElements.push(element('th', {class: 'diagonal-header'}, element('div', metric.test().fullName())));
+            tableHeadElements.push(element('th', {class: 'diagonal-head'}, element('div', metric.test().fullName())));
 
         this._indicatorByConfiguration = new Map;
         for (const platform of platforms) {
             const indicatorByMetric = new Map;
             this._indicatorByConfiguration.set(platform, indicatorByMetric);
             tableBodyElement.push(element('tr',
-                [element('th', platform.label()), ...metrics.map((metric) => this._constructTableCell(platform, metric, indicatorByMetric))]));
+                [element('th', {class: 'row-head'}, platform.label()), ...metrics.map((metric) => this._constructTableCell(platform, metric, indicatorByMetric))]));
         }
 
         this.renderReplace(this.content('test-health'), [element('thead', tableHeadElements), element('tbody', tableBodyElement)]);
@@ -157,24 +157,36 @@ class TestFreshnessPage extends PageWithHeading {
             #test-health {
                 font-size: 1rem;
             }
+            #test-health thead {
+                display: block;
+                align: right;
+            }
             #test-health th.table-corner {
                 text-align: right;
                 vertical-align: bottom;
+            }
+            #test-health .row-head {
+                min-width: 15.5rem;
             }
             #test-health th {
                 text-align: left;
                 border-bottom: 0.1rem solid #ccc;
                 font-weight: normal;
             }
-            #test-health th.diagonal-header {
+            #test-health th.diagonal-head {
                 white-space: nowrap;
                 height: 16rem;
                 border-bottom: 0rem;
             }
-            #test-health th.diagonal-header > div {
+            #test-health th.diagonal-head > div {
                 transform: translate(1rem, 7rem) rotate(315deg);
                 width: 2rem;
                 border: 0rem;
+            }
+            #test-health tbody {
+                display: block;
+                overflow: auto;
+                height: 75vh;
             }
             #test-health td.status-cell {
                 margin: 0;
