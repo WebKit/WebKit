@@ -31,21 +31,37 @@
     width: 24px;
 }
 
-.navigation-bar .item.radio.button.text-only:hover {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color-hover);
+.navigation-bar .item.radio.button.text-only {
+    position: relative;
+    padding: 2px 9px 4px;
+    border: none;
+    z-index: 0;
 }
 
-.navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color);
+.navigation-bar .item.radio.button.text-only::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    opacity: var(--glyph-opacity);
+    z-index: -1;
 }
 
-.navigation-bar .item.radio.button.text-only:active {
+.navigation-bar .item.radio.button.text-only:matches(.selected, :hover) {
     color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color-active);
 }
 
-.navigation-bar .item.radio.button.text-only.selected:active {
-    background-color: var(--selected-background-color-active);
+.navigation-bar .item.radio.button.text-only:matches(.selected, :hover)::before {
+    background-color: var(--glyph-color-active);
+}
+
+.navigation-bar .item.radio.button.text-only:not(.selected):hover::before {
+    opacity: 0.5;
+}
+
+.navigation-bar .item.radio.button.text-only.selected:active::before {
+    filter: brightness(0.8);
 }

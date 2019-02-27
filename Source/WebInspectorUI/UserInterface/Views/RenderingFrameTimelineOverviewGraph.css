@@ -53,7 +53,7 @@
     height: 3px;
     top: -5px;
 
-    background: linear-gradient(to right, hsl(210, 100%, 49%), hsl(210, 100%, 49%)) no-repeat 1px 0;
+    background: linear-gradient(to right, var(--glyph-color-active), var(--glyph-color-active)) no-repeat 1px 0;
 
     pointer-events: none;
 }

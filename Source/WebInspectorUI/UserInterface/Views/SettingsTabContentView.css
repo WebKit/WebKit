@@ -45,6 +45,10 @@
     background-color: inherit;
 }
 
+.content-view.settings .navigation-bar .item.radio.button.text-only:before {
+    display: none;
+}
+
 .content-view.settings .navigation-bar .item.radio.button.text-only.selected {
     color: var(--selected-background-color)
 }

@@ -50,7 +50,7 @@
 }
 
 .timeline-record-frame.selected {
-    background: linear-gradient(to right, hsl(210, 98%, 96%), hsl(210, 98%, 96%)) no-repeat 1px -1px;
+    background: linear-gradient(to right, var(--selected-text-background-color), var(--selected-text-background-color)) no-repeat 1px -1px;
 }
 
 body.window-inactive .timeline-record-frame.selected {

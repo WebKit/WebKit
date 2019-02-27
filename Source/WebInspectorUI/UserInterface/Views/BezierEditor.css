@@ -49,7 +49,7 @@ body[dir=rtl] .bezier-editor {
 .bezier-editor > .bezier-preview > div {
     width: 20px;
     height: 20px;
-    background-color: var(--selected-background-color);
+    background-color: var(--glyph-color-active);
     border-radius: 50%;
 }
 
@@ -168,14 +168,14 @@ body[dir=rtl] .bezier-editor > .number-input-container > input {
     }
 
     .bezier-editor > .bezier-preview > div {
-        background-color: var(--selected-background-color-active);
+        background-color: var(--glyph-color-active);
     }
 
     .bezier-editor > .bezier-container .control-handle {
-        fill: var(--selected-background-color-active);
+        fill: var(--glyph-color-active);
     }
 
     .bezier-editor > .bezier-container .control-line {
-        stroke: var(--selected-background-color-active);
+        stroke: var(--glyph-color-active);
     }
 }

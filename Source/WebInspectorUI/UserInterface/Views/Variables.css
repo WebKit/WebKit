@@ -57,12 +57,14 @@
     --selected-background-color-active: hsl(218, 85%, 52%);
     --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
     --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
+    --selected-text-background-color: hsl(210, 98%, 93%);
 
     --glyph-color: hsl(0, 0%, 30%);
     --glyph-color-pressed: hsl(0, 0%, 15%);
     --glyph-color-disabled: hsla(0, 0%, 30%, 0.55);
     --glyph-color-active: hsl(212, 92%, 54%);
     --glyph-color-active-pressed: hsl(218, 85%, 52%);
+    --glyph-opacity: 1;
 
     --border-color: hsl(0, 0%, 70%);
     --border-color-dark: hsl(0, 0%, 57%);
@@ -90,15 +92,6 @@
     --error-text-color: hsl(0, 86%, 47%);
 
     --value-changed-highlight: hsla(83, 100%, 48%, 0.4);
-
-    --breakpoint-fill-color: hsl(212, 45%, 54%);
-    --breakpoint-stroke-color: hsl(212, 45%, 48%);
-    --breakpoint-disabled-fill-color: hsl(212, 40%, 84%);
-    --breakpoint-disabled-stroke-color: hsl(212, 40%, 78%);
-    --breakpoint-unresolved-fill-color: hsl(0, 0%, 60%);
-    --breakpoint-unresolved-stroke-color: hsl(0, 0%, 54%);
-    --breakpoint-unresolved-disabled-fill-color: hsl(0, 0%, 84%);
-    --breakpoint-unresolved-disabled-stroke-color: hsl(0, 0%, 78%);
 
     --syntax-highlight-number-color: hsl(248, 100%, 40%);
     --syntax-highlight-boolean-color: hsl(309, 85%, 35%);
@@ -175,9 +168,9 @@ body.window-inactive {
     /* FIXME: Use CSS4 color blend functions once they're available. */
     --selected-background-color: hsla(212, 92%, 54%, 0.5);
 
-    --glyph-color-active: hsla(212, 92%, 54%, 0.5);
     --glyph-color: hsla(0, 0%, 30%, 0.65);
     --glyph-color-disabled: hsla(0, 0%, 30%, 0.35);
+    --glyph-opacity: 0.6;
 }
 
 body.window-inactive * {
@@ -227,6 +220,7 @@ body.window-inactive * {
         --selected-background-color-active: hsl(218, 85%, 62%);
         --selected-background-color-hover: hsla(212, 92%, 54%, 0.5);
         --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
+        --selected-text-background-color: hsl(230, 51%, 36%);
 
         --glyph-color: hsl(0, 0%, 80%);
         --glyph-color-pressed: hsl(0, 0%, 100%);
@@ -309,7 +303,6 @@ body.window-inactive * {
     body.window-inactive {
         --selected-background-color: hsla(212, 92%, 64%, 0.5);
 
-        --glyph-color-active: var(--selected-background-color);
         --glyph-color: hsl(0, 0%, 52%);
         --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
     }
@@ -322,4 +315,13 @@ body.window-inactive * {
         --border-color: hsl(0, 0%, 33%);
         --border-color-dark: hsl(0, 0%, 37%); /* non-semantic variable names */
     }
+}
+
+body.mac-platform:not(.sierra, .high-sierra) {
+    --selected-foreground-color: -apple-system-alternate-selected-text;
+    --selected-background-color: -apple-system-selected-content-background;
+    --selected-text-background-color: -apple-system-selected-text-background;
+
+    --glyph-color-active: -apple-system-control-accent;
+    --glyph-color-active-pressed: -apple-system-control-accent;
 }

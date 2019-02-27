@@ -61,33 +61,21 @@ body[dir=rtl] .content-view.dom-tree .tree-outline.dom li .status-image {
 
 .content-view.dom-tree .tree-outline.dom li .status-image.breakpoint {
     width: 15px;
-    fill: var(--breakpoint-fill-color);
-    stroke: var(--breakpoint-stroke-color);
-    stroke-width: 1px;
+    fill: var(--glyph-color-active);
 }
 
 body:not(.window-inactive) .content-view.dom-tree .tree-outline.dom:focus li.selected .status-image.breakpoint {
     stroke: white;
 }
 
-.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled {
-    fill: var(--breakpoint-disabled-fill-color);
-    stroke: var(--breakpoint-disabled-stroke-color);
-}
-
+.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled,
 .content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint {
-    fill: var(--breakpoint-unresolved-fill-color);
-    stroke: var(--breakpoint-unresolved-stroke-color);
-}
-
-.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint.disabled {
-    fill: var(--breakpoint-unresolved-disabled-fill-color);
-    stroke: var(--breakpoint-unresolved-disabled-stroke-color);
+    filter: grayscale();
 }
 
 .content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.subtree {
     fill: none;
-    opacity: 0.6;
+    stroke: var(--glyph-color-active);
 }
 
 .content-view.dom-tree .tree-outline.dom li.expanded .status-image.breakpoint.subtree {

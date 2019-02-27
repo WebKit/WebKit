@@ -58,7 +58,7 @@
     pointer-events: none;
 }
 
-.quick-console > .console-prompt::before {
+.quick-console > .console-prompt > .glyph {
     position: relative;
     z-index: 1;
 
@@ -70,7 +70,7 @@
     width: 12px;
     height: 12px;
 
-    content: url(../Images/UserInputPrompt.svg);
+    fill: var(--glyph-color-active);
 }
 
 .quick-console > .console-prompt > .CodeMirror {

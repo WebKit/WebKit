@@ -59,9 +59,12 @@
     background-color: inherit;
 }
 
+.network .network-detail .navigation-bar .item.radio.button.text-only:before {
+    display: none;
+}
+
 .network .network-detail .navigation-bar .item.radio.button.text-only.selected {
-    color: var(--selected-background-color);
-    background-color: white;
+    color: var(--glyph-color-active);
 }
 
 .network-detail > .content-browser {
@@ -79,10 +82,5 @@
 
     .network-detail .item.close > .glyph {
         background-color: hsla(0, 0%, 100%, 0.2);
-    }
-
-    .network .network-detail .navigation-bar .item.radio.button.text-only.selected {
-        background-color: unset;
-        color: var(--glyph-color-active);
     }
 }

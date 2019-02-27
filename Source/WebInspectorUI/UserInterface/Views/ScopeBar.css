@@ -29,16 +29,47 @@
 }
 
 .scope-bar > li {
+    position: relative;
+    z-index: 0;
     display: inline-block;
     margin: 0 2px;
-    padding: 1px 8px 3px;
+    padding: 2px 9px 4px;
     font-size: 11px;
     line-height: 11px;
     color: hsl(0, 0%, 18%);
-    background-color: transparent;
-    border: 1px solid transparent;
-    border-radius: 3px;
     text-align: center;
+}
+
+.scope-bar > li::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    opacity: var(--glyph-opacity);
+    z-index: -1;
+}
+
+.scope-bar.default-item-selected > li.multiple.selected::before {
+    display: none;
+}
+
+.scope-bar > li:matches(.selected, :hover) {
+    color: var(--selected-foreground-color);
+}
+
+.scope-bar > li:matches(.selected, :hover)::before {
+    background-color: var(--glyph-color-active);
+}
+
+.scope-bar > li:not(.selected):hover::before {
+    opacity: 0.5;
+}
+
+.scope-bar > li.selected:active::before {
+    filter: brightness(0.6);
 }
 
 .scope-bar > li.multiple {
@@ -95,25 +126,6 @@ body[dir=rtl] .scope-bar > li.multiple > .arrows {
 
 .scope-bar > li:matches(.selected, :active) {
     transition-duration: 75ms;
-}
-
-.scope-bar > li:hover {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color-hover);
-}
-
-.scope-bar > li.selected {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color);
-}
-
-.scope-bar > li:active {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color-active);
-}
-
-.scope-bar > li.selected:active {
-    background-color: var(--selected-background-color-active);
 }
 
 @media (prefers-color-scheme: dark) {

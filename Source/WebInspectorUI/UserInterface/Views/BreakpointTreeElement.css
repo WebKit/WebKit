@@ -24,14 +24,17 @@
  */
 
 .item.breakpoint .status > .status-image {
-    width: 21px;
+    width: 23px;
     height: 12px;
-    content: url(../Images/BreakpointInactiveButton.svg);
-    margin-top: 3px;
+    margin-top: 2px;
+
+    fill: var(--glyph-color-active);
+    stroke: hsla(0, 0%, 10%, 0.3);
+    filter: grayscale();
 }
 
 .item.breakpoint .status > .status-image.resolved {
-    content: url(../Images/BreakpointButton.svg);
+    filter: none;
 }
 
 .item.breakpoint .status > .status-image.auto-continue {

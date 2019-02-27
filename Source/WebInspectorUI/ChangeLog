@@ -1,3 +1,145 @@
+2019-02-26  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Use system accent color throughout UI
+        https://bugs.webkit.org/show_bug.cgi?id=193507
+        <rdar://problem/47327971>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Breakpoint.png: Removed.
+        * UserInterface/Images/Breakpoint.svg: Added.
+        * UserInterface/Images/Breakpoint@2x.png: Removed.
+        * UserInterface/Images/BreakpointInactive.png: Removed.
+        * UserInterface/Images/BreakpointInactive@2x.png: Removed.
+        Replace breakpoint pixel art with an SVG image that can be styled in CSS.
+
+        * UserInterface/Images/CSSVariable.svg:
+        * UserInterface/Images/CubicBezier.svg:
+        * UserInterface/Images/UserInputPrompt.svg:
+        Remove fill color since it is now styled in CSS.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor > .bezier-preview > div):
+        (@media (prefers-color-scheme: dark)):
+        (.bezier-editor > .bezier-container .control-handle):
+        (.bezier-editor > .bezier-container .control-line):
+        Use system accent color for control handles.
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image):
+        (.item.breakpoint .status > .status-image.resolved):
+        Use system accent color for breakpoint fill, with a dark outline
+        to match Xcode and make the button stand out against the selection.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype._updateStatus):
+
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button > .glyph):
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WI.ConsolePrompt):
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        * UserInterface/Views/DOMTreeContentView.css:
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled,):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.subtree):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled): Deleted.
+        (.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint): Deleted.
+        (.content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint.disabled): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li.selected .selection-area):
+        (.tree-outline.dom li.elements-drag-over .selection-area):
+        (.tree-outline.dom:focus li:matches(.selected, .hovered) .selection-area):
+        (.tree-outline.dom li.hovered:not(.selected) .selection-area):
+        (.tree-outline.dom li.pseudo-class-enabled > .selection-area::before):
+        Use the system accent color for the "pseudo-class enabled" marker.
+        (@media (prefers-color-scheme: dark)):
+        (.tree-outline.dom:focus li.selected .selection-area): Deleted.
+        Use --selected-background-color for selection and hover styles, which is
+        set to the system highlight color if available.
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch:matches(.bezier, .spring, .variable)):
+        (.inline-swatch:matches(.bezier, .spring)): Deleted.
+        (.inline-swatch.variable): Deleted.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+
+        * UserInterface/Views/NetworkDetailView.css:
+        (.network .network-detail .navigation-bar .item.radio.button.text-only:before):
+        (.network .network-detail .navigation-bar .item.radio.button.text-only.selected):
+        (@media (prefers-color-scheme: dark)):
+        (.network-detail .item.close > .glyph):
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .console-prompt > .glyph):
+        (.quick-console > .console-prompt::before): Deleted.
+
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only):
+        (.navigation-bar .item.radio.button.text-only::before):
+        (.navigation-bar .item.radio.button.text-only:matches(.selected, :hover)):
+        (.navigation-bar .item.radio.button.text-only:matches(.selected, :hover)::before):
+        (.navigation-bar .item.radio.button.text-only:not(.selected):hover::before):
+        (.navigation-bar .item.radio.button.text-only.selected:active::before):
+        (.navigation-bar .item.radio.button.text-only:hover): Deleted.
+        (.navigation-bar .item.radio.button.text-only.selected): Deleted.
+        (.navigation-bar .item.radio.button.text-only:active): Deleted.
+        (.navigation-bar .item.radio.button.text-only.selected:active): Deleted.
+        Use system accent color for selection and hover styles. Since it isn't
+        yet possible to derive new colors from the accent color in CSS, fake it
+        with a ::before pseudo-element that can have have `filter` or `opacity`
+        effects applied to it without altering the button text color.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .frame-marker):
+        Use system accent color for selected frame marker.
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li):
+        (.scope-bar > li::before):
+        (.scope-bar.default-item-selected > li.multiple.selected::before):
+        (.scope-bar > li:matches(.selected, :hover)):
+        (.scope-bar > li:matches(.selected, :hover)::before):
+        (.scope-bar > li:not(.selected):hover::before):
+        (.scope-bar > li.selected:active::before):
+        (.scope-bar > li:hover): Deleted.
+        (.scope-bar > li.selected): Deleted.
+        (.scope-bar > li:active): Deleted.
+        (.scope-bar > li.selected:active): Deleted.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings .navigation-bar .item.radio.button.text-only:before):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .breakpoint-resolved .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .has-breakpoint.multiple-breakpoints .CodeMirror-linenumber::before):
+        (@keyframes text-editor-highlight-fadeout):
+        (@keyframes text-editor-hovered-expression-highlight-fadeout):
+        Replace breakpoint pixel art with a solid color (the system accent
+        color) clipped to the shape of a breakpoint.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame.selected):
+
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (body.window-inactive):
+        (@media (prefers-color-scheme: dark)):
+        (body.mac-platform:not(.sierra, .high-sierra)):
+        Add custom property overrides for system colors where supported.
+
 2019-02-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Search: no results when opening to Search tab

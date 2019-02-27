@@ -32,7 +32,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         this._type = type;
 
-        this._swatchElement = document.createElement("span");
+        if (this._type === WI.InlineSwatch.Type.Bezier || this._type === WI.InlineSwatch.Type.Spring)
+            this._swatchElement = WI.ImageUtilities.useSVGSymbol("Images/CubicBezier.svg");
+        else if (this._type === WI.InlineSwatch.Type.Variable)
+            this._swatchElement = WI.ImageUtilities.useSVGSymbol("Images/CSSVariable.svg");
+        else
+            this._swatchElement = document.createElement("span");
+
         this._swatchElement.classList.add("inline-swatch", this._type.split("-").lastValue);
 
         this._boundSwatchElementClicked = null;

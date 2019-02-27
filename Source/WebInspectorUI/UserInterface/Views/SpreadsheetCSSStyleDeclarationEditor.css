@@ -31,8 +31,8 @@
     color: var(--text-color-tertiary);
     -webkit-user-select: text;
 
-    --background-color-selected: hsl(210, 98%, 93%);
-    --border-color-selected: hsl(225, 91%, 70%);
+    --background-color-selected: var(--selected-text-background-color);
+    --border-color-selected: var(--selected-background-color);
 }
 
 .spreadsheet-style-declaration-editor .property {
@@ -189,11 +189,6 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
 }
 
 @media (prefers-color-scheme: dark) {
-    .spreadsheet-style-declaration-editor {
-        --background-color-selected: hsl(230, 51%, 36%);
-        --border-color-selected: hsl(216, 98%, 67%);
-    }
-
     .spreadsheet-style-declaration-editor :matches(.name, .value).editing {
         outline-color: var(--background-color-secondary) !important;
     }

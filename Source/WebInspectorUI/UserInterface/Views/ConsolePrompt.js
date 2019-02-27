@@ -33,6 +33,8 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
 
         this.element.classList.add("console-prompt", WI.SyntaxHighlightedStyleClassName);
 
+        this.element.appendChild(WI.ImageUtilities.useSVGSymbol("Images/UserInputPrompt.svg", "glyph"));
+
         this._delegate = delegate || null;
 
         this._codeMirror = WI.CodeMirrorEditor.create(this.element, {

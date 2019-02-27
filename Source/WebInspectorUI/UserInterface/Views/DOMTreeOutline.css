@@ -53,10 +53,6 @@
     --sublist-border-width-start: 9px;
 }
 
-.tree-outline.dom li.hovered:not(.selected) .selection-area {
-    background-color: hsla(209, 100%, 49%, 0.1);
-}
-
 .tree-outline.dom li .selection-area {
     position: absolute;
     left: 0;
@@ -66,16 +62,20 @@
 }
 
 .tree-outline.dom li.selected .selection-area {
-    background-color: hsl(0, 0%, 83%);
+    background-color: var(--selected-background-color-unfocused);
 }
 
 .tree-outline.dom li.elements-drag-over .selection-area {
     margin-top: -2px;
-    border-top: 2px solid hsl(209, 100%, 49%);
+    border-top: 2px solid var(--selected-background-color);
 }
 
-.tree-outline.dom:focus li.selected .selection-area {
-    background-color: hsl(209, 100%, 49%);
+.tree-outline.dom:focus li:matches(.selected, .hovered) .selection-area {
+    background-color: var(--selected-background-color);
+}
+
+.tree-outline.dom li.hovered:not(.selected) .selection-area {
+    opacity: 0.3;
 }
 
 .tree-outline.dom li.last-selected > span::after {
@@ -155,7 +155,7 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
     width: 5px;
     height: 5px;
     content: "";
-    background-color: var(--selected-background-color);
+    background-color: var(--glyph-color-active);
     border-radius: 50%;
 }
 
@@ -313,18 +313,6 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 }
 
 @media (prefers-color-scheme: dark) {
-    .tree-outline.dom li.elements-drag-over .selection-area {
-        border-top-color: var(--selected-background-color);
-    }
-
-    .tree-outline.dom li.selected .selection-area {
-        background-color: var(--background-color-selected);
-    }
-
-    .tree-outline.dom:focus li.selected .selection-area {
-        background-color: var(--selected-background-color);
-    }
-
     .tree-outline.dom .shadow {
         color: var(--text-color);
     }

@@ -46,12 +46,8 @@
     background-repeat: no-repeat;
 }
 
-.inline-swatch:matches(.bezier, .spring) {
-    content: url(../Images/CubicBezier.svg);
-}
-
-.inline-swatch.variable {
-    content: url(../Images/CSSVariable.svg);
+.inline-swatch:matches(.bezier, .spring, .variable) {
+    color: var(--glyph-color-active);
 }
 
 .inline-swatch:matches(.bezier, .spring, .variable) {

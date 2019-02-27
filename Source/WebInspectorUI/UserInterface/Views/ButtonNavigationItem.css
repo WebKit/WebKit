@@ -54,6 +54,7 @@
 
 .navigation-bar .item.button > .glyph {
     color: var(--glyph-color);
+    opacity: var(--glyph-opacity);
 }
 
 .navigation-bar .item.button:not(.disabled):active > .glyph {

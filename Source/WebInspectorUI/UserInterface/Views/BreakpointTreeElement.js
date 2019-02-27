@@ -48,8 +48,9 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetAdded);
         this._listenerSet.register(WI.debuggerManager, WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetRemoved);
 
-        this.status = document.createElement("img");
+        this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
         this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
+
         this._listenerSet.register(this.status, "mousedown", this._statusImageElementMouseDown);
         this._listenerSet.register(this.status, "click", this._statusImageElementClicked);
 
@@ -158,20 +159,9 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         if (!this.status)
             return;
 
-        if (this._breakpoint.disabled)
-            this.status.classList.add(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
-        else
-            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName);
-
-        if (this._breakpoint.autoContinue)
-            this.status.classList.add(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
-        else
-            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName);
-
-        if (this._breakpoint.resolved && WI.debuggerManager.breakpointsEnabled)
-            this.status.classList.add(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
-        else
-            this.status.classList.remove(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName);
+        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName, this._breakpoint.disabled);
+        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageAutoContinueStyleClassName, this._breakpoint.autoContinue);
+        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName, this._breakpoint.resolved && WI.debuggerManager.breakpointsEnabled);
     }
 
     _addProbeSet(probeSet)

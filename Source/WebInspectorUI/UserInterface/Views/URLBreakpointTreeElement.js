@@ -43,7 +43,7 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
 
         super(["breakpoint", "url", className], title, subtitle, breakpoint);
 
-        this.status = document.createElement("img");
+        this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
         this.status.classList.add("status-image", "resolved");
 
         this.tooltipHandledSeparately = true;
