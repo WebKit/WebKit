@@ -1149,6 +1149,9 @@ public:
 
     const Optional<WebCore::Color>& backgroundColor() const { return m_backgroundColor; }
 
+    void suspendAllMediaBuffering();
+    void resumeAllMediaBuffering();
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 

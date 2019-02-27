@@ -437,6 +437,22 @@ void PlatformMediaSessionManager::resumeAllMediaPlaybackForDocument(const Docume
     });
 }
 
+void PlatformMediaSessionManager::suspendAllMediaBufferingForDocument(const Document& document)
+{
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (session.client().hostingDocument() == &document)
+            session.suspendBuffering();
+    });
+}
+
+void PlatformMediaSessionManager::resumeAllMediaBufferingForDocument(const Document& document)
+{
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (session.client().hostingDocument() == &document)
+            session.resumeBuffering();
+    });
+}
+
 void PlatformMediaSessionManager::forEachSession(const Function<void(PlatformMediaSession&, size_t)>& predicate) const
 {
     ++m_iteratingOverSessions;

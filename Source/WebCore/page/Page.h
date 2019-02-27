@@ -619,7 +619,10 @@ public:
     WEBCORE_EXPORT void stopAllMediaPlayback();
     WEBCORE_EXPORT void suspendAllMediaPlayback();
     WEBCORE_EXPORT void resumeAllMediaPlayback();
-    bool mediaPlaybackIsSuspended() { return m_mediaPlaybackIsSuspended; }
+    bool mediaPlaybackIsSuspended() const { return m_mediaPlaybackIsSuspended; }
+    WEBCORE_EXPORT void suspendAllMediaBuffering();
+    WEBCORE_EXPORT void resumeAllMediaBuffering();
+    bool mediaBufferingIsSuspended() const { return m_mediaBufferingIsSuspended; }
 
 #if ENABLE(MEDIA_SESSION)
     WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
@@ -973,6 +976,7 @@ private:
 
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };
+    bool m_mediaBufferingIsSuspended { false };
 };
 
 inline PageGroup& Page::group()

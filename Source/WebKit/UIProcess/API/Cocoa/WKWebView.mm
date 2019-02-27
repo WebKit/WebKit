@@ -7150,6 +7150,18 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     return nil;
 }
 
+- (void)_processWillSuspendImminentlyForTesting
+{
+    if (_page)
+        _page->process().sendProcessWillSuspendImminently();
+}
+
+- (void)_processDidResumeForTesting
+{
+    if (_page)
+        _page->process().sendProcessDidResume();
+}
+
 - (void)_denyNextUserMediaRequest
 {
 #if ENABLE(MEDIA_STREAM)
