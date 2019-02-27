@@ -1,3 +1,14 @@
+2019-02-27  Chris Dumez  <cdumez@apple.com>
+
+        [HTTPSUpgrade] Use open source database until the feature is ready
+        https://bugs.webkit.org/show_bug.cgi?id=195069
+        <rdar://problem/47838224>
+
+        Reviewed by Geoffrey Garen.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+
 2019-02-27  Antoine Quint  <graouts@apple.com>
 
         Support Pointer Events on macOS

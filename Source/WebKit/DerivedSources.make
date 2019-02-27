@@ -316,7 +316,10 @@ $(WEB_PREFERENCES_COMBINED_INPUT_FILE) : $(WEB_PREFERENCES_INPUT_FILES)
 $(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
 	$(RUBY) $< --input $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
 
-VPATH += $(WebKit2)/Shared/HTTPSUpgrade/
+# FIXME: We should switch to the internal HTTPSUpgradeList.txt once the feature is ready.
+# VPATH += $(WebKit2)/Shared/HTTPSUpgrade/
+VPATH := $(WebKit2)/Shared/HTTPSUpgrade/ $(VPATH)
+
 all : HTTPSUpgradeList.db
 HTTPSUpgradeList.db : HTTPSUpgradeList.txt $(WebKit2)/Scripts/generate-https-upgrade-database.sh
 	sh $(WebKit2)/Scripts/generate-https-upgrade-database.sh $< $@
