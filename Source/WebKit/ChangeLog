@@ -1,3 +1,21 @@
+2019-02-27  Keith Rollin  <krollin@apple.com>
+
+        Fix Xcode project UUIDs for TextCheckerCompletion.cpp and TextCheckerCompletion.h
+        https://bugs.webkit.org/show_bug.cgi?id=195109
+        <rdar://problem/48442272>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In r144436, TextCheckerCompletion.cpp and TextCheckerCompletion.h were
+        added to WebKit2.xcodeproj with invalid UUIDs (they included Q's and
+        Z's in hexadecimal strings). While these UUIDs haven't caused any
+        problems in practice over the last six years, they are indeed invalid,
+        and were discovered via an Xcode-project processing tool that did not
+        anticipate their format. Fix this by removing the files from the
+        project and re-adding them.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-02-27  Youenn Fablet  <youenn@apple.com>
 
         Remove UserMediaProcessManager processState map
