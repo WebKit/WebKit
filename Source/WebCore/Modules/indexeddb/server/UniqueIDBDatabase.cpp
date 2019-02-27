@@ -226,6 +226,7 @@ void UniqueIDBDatabase::performCurrentDeleteOperation()
             didDeleteBackingStore(0);
         else {
             m_deleteBackingStoreInProgress = true;
+            notifyServerAboutClose(CloseState::Start);
             postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::deleteBackingStore, m_identifier));
         }
     }
@@ -278,6 +279,7 @@ void UniqueIDBDatabase::scheduleShutdownForClose()
     RELEASE_ASSERT(!m_owningPointerForClose);
     m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
 
+    notifyServerAboutClose(CloseState::Start);
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownForClose));
 }
 
@@ -305,6 +307,7 @@ void UniqueIDBDatabase::didShutdownForClose()
 {
     ASSERT(m_databaseReplyQueue.isEmpty());
     m_databaseReplyQueue.kill();
+    notifyServerAboutClose(CloseState::Done);
 }
 
 void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
@@ -340,6 +343,7 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
 
     if (m_hardClosedForUserDelete)
         return;
+    notifyServerAboutClose(CloseState::Done);
 
     invokeOperationAndTransactionTimer();
 }
@@ -1891,6 +1895,7 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     if (m_owningPointerForClose)
         return;
 
+    notifyServerAboutClose(CloseState::Start);
     // Otherwise, this database is still potentially active.
     // So we'll have it own itself and then perform a clean unconditional delete on the background thread.
     m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
@@ -1964,6 +1969,19 @@ void UniqueIDBDatabase::setQuota(uint64_t quota)
 {
     if (m_backingStore)
         m_backingStore->setQuota(quota);
+}
+
+void UniqueIDBDatabase::notifyServerAboutClose(CloseState state)
+{
+    ASSERT(isMainThread());
+#if PLATFORM(IOS_FAMILY)
+    if (state == CloseState::Start) 
+        m_server.closeDatabase(this);
+    else
+        m_server.didCloseDatabase(this);
+#else
+    UNUSED_PARAM(state);
+#endif
 }
 
 } // namespace IDBServer

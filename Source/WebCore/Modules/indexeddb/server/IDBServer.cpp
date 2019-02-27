@@ -42,26 +42,30 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<IDBServer> IDBServer::create(IDBBackingStoreTemporaryFileHandler& fileHandler)
+Ref<IDBServer> IDBServer::create(IDBBackingStoreTemporaryFileHandler& fileHandler, WTF::Function<void(bool)>&& isClosingDatabaseCallback)
 {
-    return adoptRef(*new IDBServer(fileHandler));
+    return adoptRef(*new IDBServer(fileHandler, WTFMove(isClosingDatabaseCallback)));
 }
 
-Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
+Ref<IDBServer> IDBServer::create(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler, WTF::Function<void(bool)>&& isClosingDatabaseCallback)
 {
-    return adoptRef(*new IDBServer(databaseDirectoryPath, fileHandler));
+    return adoptRef(*new IDBServer(databaseDirectoryPath, fileHandler, WTFMove(isClosingDatabaseCallback)));
 }
 
-IDBServer::IDBServer(IDBBackingStoreTemporaryFileHandler& fileHandler)
+IDBServer::IDBServer(IDBBackingStoreTemporaryFileHandler& fileHandler, WTF::Function<void(bool)>&& isClosingDatabaseCallback)
     : CrossThreadTaskHandler("IndexedDatabase Server")
     , m_backingStoreTemporaryFileHandler(fileHandler)
+    , m_isClosingDatabaseCallback(WTFMove(isClosingDatabaseCallback))
+    , m_isClosingDatabaseHysteresis([&](PAL::HysteresisState state) { m_isClosingDatabaseCallback(state == PAL::HysteresisState::Started); })
 {
 }
 
-IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
+IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler, WTF::Function<void(bool)>&& isClosingDatabaseCallback)
     : CrossThreadTaskHandler("IndexedDatabase Server")
     , m_databaseDirectoryPath(databaseDirectoryPath)
     , m_backingStoreTemporaryFileHandler(fileHandler)
+    , m_isClosingDatabaseCallback(WTFMove(isClosingDatabaseCallback))
+    , m_isClosingDatabaseHysteresis([&](PAL::HysteresisState state) { m_isClosingDatabaseCallback(state == PAL::HysteresisState::Started); })
 {
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
 }
@@ -650,6 +654,29 @@ void IDBServer::setPerOriginQuota(uint64_t quota)
 
     for (auto& database : m_uniqueIDBDatabaseMap.values())
         database->setQuota(quota);
+}
+
+void IDBServer::closeDatabase(UniqueIDBDatabase* database)
+{
+    ASSERT(isMainThread());
+    if (m_databaseDirectoryPath.isEmpty())
+        return;
+
+    auto addResult = m_uniqueIDBDatabasesInClose.add(database);
+    if (addResult.isNewEntry && m_uniqueIDBDatabasesInClose.size() == 1)
+        m_isClosingDatabaseHysteresis.start();
+}
+
+void IDBServer::didCloseDatabase(UniqueIDBDatabase* database)
+{
+    ASSERT(isMainThread());
+    if (m_databaseDirectoryPath.isEmpty())
+        return;
+
+    if (m_uniqueIDBDatabasesInClose.remove(database)) {
+        if (m_uniqueIDBDatabasesInClose.isEmpty())
+            m_isClosingDatabaseHysteresis.stop();
+    }
 }
 
 } // namespace IDBServer

@@ -1,3 +1,32 @@
+2019-02-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Network Process is put to suspended when holding locked IndexedDB files
+        https://bugs.webkit.org/show_bug.cgi?id=195024
+        <rdar://problem/45194169>
+
+        Reviewed by Geoffrey Garen.
+
+        We found network process was suspended when IDBDatabase was being closed in the background database thread, 
+        holding locks to its database file. To avoid starvation or deadlock, we need to keep network process alive by 
+        taking background assertion in UI process until the closes are done and locks are released.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::create):
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        (WebCore::IDBServer::IDBServer::closeDatabase):
+        (WebCore::IDBServer::IDBServer::didCloseDatabase):
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::create):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentDeleteOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyServerAboutClose):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2019-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         Have a single notion of scroll position in the scrolling tree and derive layoutViewport from it

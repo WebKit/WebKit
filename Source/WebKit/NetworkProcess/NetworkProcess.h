@@ -389,6 +389,7 @@ private:
     void syncAllCookies();
     void didSyncAllCookies();
 
+    void notifyHoldingLockedFiles(bool isIDBDatabaseHoldingLockedFiles);
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);

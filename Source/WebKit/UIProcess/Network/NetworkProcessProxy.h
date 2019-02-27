@@ -136,7 +136,8 @@ public:
     void sendProcessDidTransitionToBackground();
 
     void setIsHoldingLockedFiles(bool);
-    
+    void setIsIDBDatabaseHoldingLockedFiles(bool);
+
     void syncAllCookies();
     void didSyncAllCookies();
 
@@ -230,6 +231,7 @@ private:
 #endif
     ProcessThrottler m_throttler;
     ProcessThrottler::BackgroundActivityToken m_tokenForHoldingLockedFiles;
+    ProcessThrottler::BackgroundActivityToken m_tokenForIDBDatabaseHoldingLockedFiles;
     ProcessThrottler::BackgroundActivityToken m_syncAllCookiesToken;
     
     unsigned m_syncAllCookiesCounter { 0 };

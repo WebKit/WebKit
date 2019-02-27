@@ -1984,7 +1984,9 @@ IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
     // If there's not, then where did this PAL::SessionID come from?
     ASSERT(!path.isEmpty());
     
-    addResult.iterator->value = IDBServer::IDBServer::create(path, *this);
+    addResult.iterator->value = IDBServer::IDBServer::create(path, *this, [this](bool isHoldingLockedFiles) {
+        notifyHoldingLockedFiles(isHoldingLockedFiles);
+    });
     addResult.iterator->value->setPerOriginQuota(m_idbPerOriginQuota);
     return *addResult.iterator->value;
 }
@@ -2320,6 +2322,11 @@ void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, Completio
         return session->clearAdClickAttribution(WTFMove(completionHandler));
     
     completionHandler();
+}
+
+void NetworkProcess::notifyHoldingLockedFiles(bool isIDBDatabaseHoldingLockedFiles)
+{
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsIDBDatabaseHoldingLockedFiles(isIDBDatabaseHoldingLockedFiles), 0);
 }
 
 } // namespace WebKit

@@ -33,6 +33,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     ProcessReadyToSuspend()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
+    SetIsIDBDatabaseHoldingLockedFiles(bool isIDBDatabaseHoldingLockedFiles)
 
     # Diagnostic messages logging
     LogDiagnosticMessage(uint64_t pageID, String message, String description, enum:bool WebCore::ShouldSample shouldSample)

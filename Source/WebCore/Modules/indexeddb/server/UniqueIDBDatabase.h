@@ -121,6 +121,8 @@ public:
 
     void setQuota(uint64_t);
 private:
+    enum class CloseState { Start, Done };
+
     void handleDatabaseOperations();
     void handleCurrentOperation();
     void performCurrentOpenOperation();
@@ -224,6 +226,8 @@ private:
 
     void maybeFinishHardClose();
     bool isDoneWithHardClose();
+
+    void notifyServerAboutClose(CloseState);
 
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;

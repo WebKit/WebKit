@@ -269,6 +269,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 #endif
 
     m_tokenForHoldingLockedFiles = nullptr;
+    m_tokenForIDBDatabaseHoldingLockedFiles = nullptr;
     
     m_syncAllCookiesToken = nullptr;
     m_syncAllCookiesCounter = 0;
@@ -978,6 +979,19 @@ void NetworkProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     if (!m_tokenForHoldingLockedFiles) {
         RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files");
         m_tokenForHoldingLockedFiles = m_throttler.backgroundActivityToken();
+    }
+}
+
+void NetworkProcessProxy::setIsIDBDatabaseHoldingLockedFiles(bool isIDBDatabaseHoldingLockedFiles)
+{
+    if (!isIDBDatabaseHoldingLockedFiles) {
+        RELEASE_LOG(ProcessSuspension, "UIProcess is releasing a background assertion because the Network process is no longer holding locked files for IDBDatabase");
+        m_tokenForIDBDatabaseHoldingLockedFiles = nullptr;
+        return;
+    }
+    if (!m_tokenForIDBDatabaseHoldingLockedFiles) {
+        RELEASE_LOG(ProcessSuspension, "UIProcess is taking a background assertion because the Network process is holding locked files for IDBDatabase");
+        m_tokenForIDBDatabaseHoldingLockedFiles = m_throttler.backgroundActivityToken();
     }
 }
 
