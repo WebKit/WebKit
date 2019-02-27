@@ -1,3 +1,72 @@
+2019-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Remove UserMediaProcessManager processState map
+        https://bugs.webkit.org/show_bug.cgi?id=195056
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, the WebProcessProxy->ProcessState map was storing the list of manager proxies and process state.
+        To improve on this model, this patch does the following:
+        - Move the process state to WebProcessProxy.
+        - Remove the map and replace it by a set of all manager proxies.
+
+        This simplifies the handling.
+        On WebProcess side, instead of storing the sandbox extensions in each WebPage, we handle them in WebProcess directly.
+        This mirrors what is being done in UIProcess and reduces the risk of inconsistencies between the two, the risk being that capture would fail.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::forEach):
+        (WebKit::UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureStateChanged):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::muteCaptureMediaStreamsExceptIn):
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        (WebKit::UserMediaProcessManager::setCaptureEnabled):
+        (WebKit::UserMediaProcessManager::captureDevicesChanged):
+        (WebKit::ProcessState::ProcessState): Deleted.
+        (WebKit::ProcessState::hasVideoExtension const): Deleted.
+        (WebKit::ProcessState::grantVideoExtension): Deleted.
+        (WebKit::ProcessState::revokeVideoExtension): Deleted.
+        (WebKit::ProcessState::hasAudioExtension const): Deleted.
+        (WebKit::ProcessState::grantAudioExtension): Deleted.
+        (WebKit::ProcessState::revokeAudioExtension): Deleted.
+        (WebKit::stateMap): Deleted.
+        (WebKit::processState): Deleted.
+        (WebKit::ProcessState::addRequestManager): Deleted.
+        (WebKit::ProcessState::removeRequestManager): Deleted.
+        (WebKit::UserMediaProcessManager::addUserMediaPermissionRequestManagerProxy): Deleted.
+        (WebKit::UserMediaProcessManager::removeUserMediaPermissionRequestManagerProxy): Deleted.
+        (WebKit::UserMediaProcessManager::startedCaptureSession): Deleted.
+        * UIProcess/UserMediaProcessManager.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::mediaCaptureSandboxExtensions const):
+        (WebKit::WebProcessProxy::hasVideoCaptureExtension const):
+        (WebKit::WebProcessProxy::grantVideoCaptureExtension):
+        (WebKit::WebProcessProxy::revokeVideoCaptureExtension):
+        (WebKit::WebProcessProxy::hasAudioCaptureExtension const):
+        (WebKit::WebProcessProxy::grantAudioCaptureExtension):
+        (WebKit::WebProcessProxy::revokeAudioCaptureExtension):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::clear): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::grantUserMediaDeviceSandboxExtensions): Deleted.
+        (WebKit::WebPage::revokeUserMediaDeviceSandboxExtensions): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::grantUserMediaDeviceSandboxExtensions):
+        (WebKit::WebProcess::revokeUserMediaDeviceSandboxExtensions):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-02-27  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Disable permissive call logging in sandbox

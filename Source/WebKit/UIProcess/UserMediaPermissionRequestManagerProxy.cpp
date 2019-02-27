@@ -51,20 +51,35 @@ static uint64_t generateRequestID()
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+static HashSet<UserMediaPermissionRequestManagerProxy*>& proxies()
+{
+    static NeverDestroyed<HashSet<UserMediaPermissionRequestManagerProxy*>> set;
+    return set;
+}
+
+void UserMediaPermissionRequestManagerProxy::forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>& function)
+{
+    for (auto* proxy : proxies())
+        function(*proxy);
+}
+#endif
+
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
     , m_rejectionTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
     , m_watchdogTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::watchdogTimerFired)
 {
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().addUserMediaPermissionRequestManagerProxy(*this);
+    proxies().add(this);
 #endif
 }
 
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().removeUserMediaPermissionRequestManagerProxy(*this);
+    UserMediaProcessManager::singleton().endedCaptureSession(*this);
+    proxies().remove(this);
 #endif
     invalidatePendingRequests();
 }
@@ -592,8 +607,6 @@ void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::
 
     if ((wasCapturingAudio && !isCapturingAudio) || (wasCapturingVideo && !isCapturingVideo))
         UserMediaProcessManager::singleton().endedCaptureSession(*this);
-    if ((!wasCapturingAudio && isCapturingAudio) || (!wasCapturingVideo && isCapturingVideo))
-        UserMediaProcessManager::singleton().startedCaptureSession(*this);
 
     if (m_captureState == (newState & activeCaptureMask))
         return;

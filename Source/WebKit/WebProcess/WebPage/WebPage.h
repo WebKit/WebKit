@@ -1396,11 +1396,6 @@ private:
     void didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<WebCore::CaptureDevice>& devices, String&& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 #endif
 
-#if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
-    void grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&);
-    void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
-#endif
-
 #if ENABLE(WEB_RTC)
     void disableICECandidateFiltering();
     void enableICECandidateFiltering();

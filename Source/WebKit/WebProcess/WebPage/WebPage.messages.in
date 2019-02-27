@@ -346,10 +346,6 @@ messages -> WebPage LegacyReceiver {
     UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
     DidCompleteMediaDeviceEnumeration(uint64_t userMediaID, Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
     CaptureDevicesChanged()
-#if ENABLE(SANDBOX_EXTENSIONS)
-    GrantUserMediaDeviceSandboxExtensions(WebKit::MediaDeviceSandboxExtensions sandboxExtensions)
-    RevokeUserMediaDeviceSandboxExtensions(Vector<String> sandboxExtensionIDs)
-#endif
 #endif
 
 #if ENABLE(WEB_RTC)

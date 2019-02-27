@@ -27,6 +27,9 @@
 
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
+#if ENABLE(MEDIA_STREAM)
+#include "MediaDeviceSandboxExtensions.h"
+#endif
 #include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
@@ -374,6 +377,11 @@ private:
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String& persistentId);
     void resetMockMediaDevices();
+#if ENABLE(SANDBOX_EXTENSIONS)
+    void grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&);
+    void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
+#endif
+
 #endif
 
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
@@ -486,6 +494,10 @@ private:
 #endif
     bool m_hasSuspendedPageProxy { false };
     bool m_isSuspending { false };
+
+#if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
+    HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
+#endif
 };
 
 } // namespace WebKit

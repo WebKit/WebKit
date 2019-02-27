@@ -269,6 +269,24 @@ public:
     void sendProcessDidResume() override;
     void didSetAssertionState(AssertionState) override;
 
+#if PLATFORM(COCOA)
+    enum SandboxExtensionType : uint32_t {
+        None = 0,
+        Video = 1 << 0,
+        Audio = 1 << 1
+    };
+
+    typedef uint32_t MediaCaptureSandboxExtensions;
+
+    bool hasVideoCaptureExtension() const { return m_mediaCaptureSandboxExtensions & Video; }
+    void grantVideoCaptureExtension() { m_mediaCaptureSandboxExtensions |= Video; }
+    void revokeVideoCaptureExtension() { m_mediaCaptureSandboxExtensions &= ~Video; }
+
+    bool hasAudioCaptureExtension() const { return m_mediaCaptureSandboxExtensions & Audio; }
+    void grantAudioCaptureExtension() { m_mediaCaptureSandboxExtensions |= Audio; }
+    void revokeAudioCaptureExtension() { m_mediaCaptureSandboxExtensions &= ~Audio; }
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
@@ -438,6 +456,10 @@ private:
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
+#endif
+
+#if PLATFORM(COCOA)
+    MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
 #endif
 };
 

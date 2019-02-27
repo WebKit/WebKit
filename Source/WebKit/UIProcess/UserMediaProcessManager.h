@@ -35,13 +35,9 @@ public:
 
     UserMediaProcessManager();
 
-    void addUserMediaPermissionRequestManagerProxy(UserMediaPermissionRequestManagerProxy&);
-    void removeUserMediaPermissionRequestManagerProxy(UserMediaPermissionRequestManagerProxy&);
-
     bool willCreateMediaStream(UserMediaPermissionRequestManagerProxy&, bool withAudio, bool withVideo);
     void muteCaptureMediaStreamsExceptIn(WebPageProxy&);
 
-    void startedCaptureSession(UserMediaPermissionRequestManagerProxy&);
     void endedCaptureSession(UserMediaPermissionRequestManagerProxy&);
 
     void setCaptureEnabled(bool);

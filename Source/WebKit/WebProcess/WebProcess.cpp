@@ -1812,6 +1812,30 @@ void WebProcess::resetMockMediaDevices()
 {
     MockRealtimeMediaSourceCenter::resetDevices();
 }
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&& extensions)
+{
+    for (size_t i = 0; i < extensions.size(); i++) {
+        const auto& extension = extensions[i];
+        extension.second->consume();
+        RELEASE_LOG(WebRTC, "UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions - granted extension %s", extension.first.utf8().data());
+        m_mediaCaptureSandboxExtensions.add(extension.first, extension.second.copyRef());
+    }
+}
+
+void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
+{
+    for (const auto& extensionID : extensionIDs) {
+        auto extension = m_mediaCaptureSandboxExtensions.take(extensionID);
+        ASSERT(extension);
+        if (extension) {
+            extension->revoke();
+            RELEASE_LOG(WebRTC, "UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions - revoked extension %s", extensionID.utf8().data());
+        }
+    }
+}
+#endif
 #endif
 
 #if ENABLE(VIDEO)

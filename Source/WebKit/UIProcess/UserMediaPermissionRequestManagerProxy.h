@@ -47,6 +47,10 @@ public:
 
     WebPageProxy& page() const { return m_page; }
 
+#if ENABLE(MEDIA_STREAM)
+    static void forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
+#endif
+
     void invalidatePendingRequests();
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&&  userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, WebCore::MediaStreamRequest&&);

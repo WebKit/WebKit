@@ -145,6 +145,11 @@ messages -> WebProcess LegacyReceiver {
     ClearMockMediaDevices();
     RemoveMockMediaDevice(String persistentId);
     ResetMockMediaDevices();
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+    GrantUserMediaDeviceSandboxExtensions(WebKit::MediaDeviceSandboxExtensions sandboxExtensions)
+    RevokeUserMediaDeviceSandboxExtensions(Vector<String> sandboxExtensionIDs)
+#endif
 #endif
 
     ClearCurrentModifierStateForTesting()
