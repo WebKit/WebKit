@@ -4134,7 +4134,7 @@ void Document::invalidateRenderingDependentRegions(AnnotationsAction annotations
     setTouchEventRegionsNeedUpdate();
 #endif
 
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
     if (auto* page = this->page()) {
         if (auto* frameView = view()) {
             if (auto* scrollingCoordinator = page->scrollingCoordinator())
@@ -4526,7 +4526,7 @@ void Document::nodeWillBeRemoved(Node& node)
     if (is<Text>(node))
         m_markers->removeMarkers(node);
 
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
     if (m_touchActionElements && is<Element>(node))
         m_touchActionElements->remove(&downcast<Element>(node));
 #endif
@@ -8668,7 +8668,7 @@ void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWo
 }
 #endif
 
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
 void Document::updateTouchActionElements(Element& element, const RenderStyle& style)
 {
     bool changed = false;
@@ -8680,7 +8680,6 @@ void Document::updateTouchActionElements(Element& element, const RenderStyle& st
     } else if (m_touchActionElements)
         changed |= m_touchActionElements->remove(&element);
 
-#if PLATFORM(IOS_FAMILY)
     if (!changed)
         return;
 
@@ -8692,7 +8691,6 @@ void Document::updateTouchActionElements(Element& element, const RenderStyle& st
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
     }
-#endif
 }
 #endif
 

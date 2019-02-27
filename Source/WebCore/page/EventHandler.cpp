@@ -2467,10 +2467,10 @@ MouseEventWithHitTestResults EventHandler::prepareMouseEvent(const HitTestReques
     return m_frame.document()->prepareMouseEvent(request, documentPointForWindowPoint(m_frame, mouseEvent.position()), mouseEvent);
 }
 
-static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicString& eventName)
+static bool hierarchyHasCapturingEventListeners(Element* element, const AtomicString& pointerEventName, const AtomicString& compatibilityMouseEventName)
 {
     for (ContainerNode* curr = element; curr; curr = curr->parentInComposedTree()) {
-        if (curr->hasCapturingEventListeners(eventName))
+        if (curr->hasCapturingEventListeners(pointerEventName) || curr->hasCapturingEventListeners(compatibilityMouseEventName))
             return true;
     }
     return false;
@@ -2540,8 +2540,8 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             // mouseenter and mouseleave events are only dispatched if there is a capturing eventhandler on an ancestor
             // or a normal eventhandler on the element itself (they don't bubble).
             // This optimization is necessary since these events can cause O(n^2) capturing event-handler checks.
-            bool hasCapturingMouseEnterListener = hierarchyHasCapturingEventListeners(m_elementUnderMouse.get(), eventNames().mouseenterEvent);
-            bool hasCapturingMouseLeaveListener = hierarchyHasCapturingEventListeners(m_lastElementUnderMouse.get(), eventNames().mouseleaveEvent);
+            bool hasCapturingMouseEnterListener = hierarchyHasCapturingEventListeners(m_elementUnderMouse.get(), eventNames().pointerenterEvent, eventNames().mouseenterEvent);
+            bool hasCapturingMouseLeaveListener = hierarchyHasCapturingEventListeners(m_lastElementUnderMouse.get(), eventNames().pointerleaveEvent, eventNames().mouseleaveEvent);
 
             Vector<Ref<Element>, 32> leftElementsChain;
             for (Element* element = m_lastElementUnderMouse.get(); element; element = element->parentElementInComposedTree())
@@ -2565,7 +2565,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
                 m_lastElementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames().mouseoutEvent, 0, m_elementUnderMouse.get());
 
             for (auto& chain : leftElementsChain) {
-                if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames().mouseleaveEvent))
+                if (hasCapturingMouseLeaveListener || chain->hasEventListeners(eventNames().pointerleaveEvent) || chain->hasEventListeners(eventNames().mouseleaveEvent))
                     chain->dispatchMouseEvent(platformMouseEvent, eventNames().mouseleaveEvent, 0, m_elementUnderMouse.get());
             }
 
@@ -2573,7 +2573,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
                 m_elementUnderMouse->dispatchMouseEvent(platformMouseEvent, eventNames().mouseoverEvent, 0, m_lastElementUnderMouse.get());
 
             for (auto& chain : enteredElementsChain) {
-                if (hasCapturingMouseEnterListener || chain->hasEventListeners(eventNames().mouseenterEvent))
+                if (hasCapturingMouseEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent) || chain->hasEventListeners(eventNames().mouseenterEvent))
                     chain->dispatchMouseEvent(platformMouseEvent, eventNames().mouseenterEvent, 0, m_lastElementUnderMouse.get());
             }
         }

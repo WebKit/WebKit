@@ -1,0 +1,3 @@
+
+PASS Testing that "pointerover" and "pointerenter" are dispatched when entering an element's bounds and that "pointerout" and "pointerleave" are dispatched when leaving an element's bounds. 
+

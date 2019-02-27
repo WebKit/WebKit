@@ -35,11 +35,20 @@
 #include "Page.h"
 #include "PointerEvent.h"
 
+#if ENABLE(POINTER_LOCK)
+#include "PointerLockController.h"
+#endif
+
 namespace WebCore {
 
 PointerCaptureController::PointerCaptureController(Page& page)
     : m_page(page)
 {
+#if !ENABLE(TOUCH_EVENTS)
+    CapturingData capturingData;
+    capturingData.pointerType = PointerEvent::mousePointerType();
+    m_activePointerIdsToCapturingData.set(PointerEvent::defaultMousePointerIdentifier(), capturingData);
+#endif
 }
 
 ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturingTarget, PointerID pointerId)
@@ -104,11 +113,7 @@ bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, Point
     // invoked, and false otherwise.
 
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
-    if (iterator == m_activePointerIdsToCapturingData.end())
-        return false;
-
-    auto& capturingData = iterator->value;
-    return capturingData.pendingTargetOverride == capturingTarget || capturingData.targetOverride == capturingTarget;
+    return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.pendingTargetOverride == capturingTarget;
 }
 
 void PointerCaptureController::pointerLockWasApplied()
@@ -174,6 +179,21 @@ std::pair<bool, bool> PointerCaptureController::dispatchEventForTouchAtIndex(Eve
     return { defaultPrevented, defaultHandled };
 }
 #endif
+
+void PointerCaptureController::dispatchEvent(PointerEvent& event, EventTarget* target)
+{
+    auto iterator = m_activePointerIdsToCapturingData.find(event.pointerId());
+    if (iterator != m_activePointerIdsToCapturingData.end()) {
+        auto& capturingData = iterator->value;
+        if (capturingData.pendingTargetOverride && capturingData.targetOverride)
+            capturingData.targetOverride->dispatchEvent(event);
+    }
+
+    if (target && !event.target())
+        target->dispatchEvent(event);
+
+    pointerEventWasDispatched(event);
+}
 
 void PointerCaptureController::pointerEventWillBeDispatched(const PointerEvent& event, EventTarget* target)
 {

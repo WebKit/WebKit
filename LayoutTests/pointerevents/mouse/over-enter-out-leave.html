@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ x: "100px", y: "100px", width: "100px", height: "100px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerover", "pointerenter", "pointerout", "pointerleave"]);
+
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseMoveTo(150, 150);
+    eventSender.mouseMoveTo(250, 250);
+
+    eventTracker.assertMatchesEvents([
+        { type: "pointerover", x: 150, y: 150, isPrimary: true },
+        { type: "pointerenter", x: 150, y: 150, isPrimary: true },
+        { type: "pointerout", x: 250, y: 250, isPrimary: true },
+        { type: "pointerleave", x: 250, y: 250, isPrimary: true },
+    ]);
+    test.done();
+}, `Testing that "pointerover" and "pointerenter" are dispatched when entering an element's bounds and that "pointerout" and "pointerleave" are dispatched when leaving an element's bounds.`);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test({ x: "100px", y: "100px", width: "100px", height: "100px" }, (target, test) => {
+    const eventTracker = new EventTracker(target, ["pointermove", "gotpointercapture", "lostpointercapture"]);
+
+    // Start with the mouse outside of the target.
+    eventSender.mouseMoveTo(50, 50);
+
+    // Move it over the target, this yields a "pointermove" event.
+    eventSender.mouseMoveTo(150, 150);
+    eventTracker.assertMatchesEvents([
+        { type: "pointermove", x: 150, y: 150 }
+    ]);
+    eventTracker.clear();
+
+    // Press the mouse and move it outside the target and release it, this does not yield a "pointermove" event since there is no capture.
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(250, 250);
+    eventSender.mouseUp();
+
+    // Now, move the mouse over the target again.
+    eventSender.mouseMoveTo(150, 150);
+    eventTracker.assertMatchesEvents([
+        { type: "pointermove", x: 150, y: 150 }
+    ]);
+    eventTracker.clear();
+
+    // And press the mouse button again, but set the capture while handling the "pointerdown" event.
+    let pointerId;
+    target.addEventListener("pointerdown", event => {
+        pointerId = event.pointerId;
+        assert_false(target.hasPointerCapture(pointerId), "The target does not have pointer capture by default.");
+        target.setPointerCapture(pointerId);
+        assert_true(target.hasPointerCapture(pointerId), "The target has pointer capture after calling setPointerCapture().");
+    });
+    eventSender.mouseDown();
+    eventTracker.assertMatchesEvents([
+        { type: "gotpointercapture" }
+    ]);
+    eventTracker.clear();
+
+    // Move the mouse oustide the target again, this time this yields a "pointermove" event since the target has pointer capture.
+    eventSender.mouseMoveTo(250, 250);
+    eventTracker.assertMatchesEvents([
+        { type: "pointermove", x: 250, y: 250 }
+    ]);
+    eventTracker.clear();
+
+    // Finally, release capture and mouse the mouse again, this should not yield a "pointermove" event.
+    target.releasePointerCapture(pointerId);
+    assert_false(target.hasPointerCapture(pointerId), "The target no longer has pointer capture after calling releasePointerCapture().");
+    eventSender.mouseMoveTo(240, 240);
+    eventTracker.assertMatchesEvents([
+        { type: "lostpointercapture" }
+    ]);
+
+    test.done();
+}, `Testing that setting pointer capture on an element dispatches pointermove events to that element even when the pointer is outside of its bounds.`);
+
+</script>
+</body>
+</html>

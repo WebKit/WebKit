@@ -1,0 +1,3 @@
+
+PASS Testing that setting pointer capture on an element dispatches pointermove events to that element even when the pointer is outside of its bounds. 
+

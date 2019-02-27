@@ -649,6 +649,7 @@ public:
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitPointerEventsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitVisualViewportAPIEnabledPreferenceKey,
@@ -3146,6 +3147,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebAnimationsEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitWebAnimationsEnabledPreferenceKey];
+}
+
+- (BOOL)pointerEventsEnabled
+{
+    return [self _boolValueForKey:WebKitPointerEventsEnabledPreferenceKey];
+}
+
+- (void)setPointerEventsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPointerEventsEnabledPreferenceKey];
 }
 
 - (BOOL)fetchAPIKeepAliveEnabled

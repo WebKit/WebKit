@@ -1,3 +1,26 @@
+2019-02-27  Antoine Quint  <graouts@apple.com>
+
+        Support Pointer Events on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=195008
+        <rdar://problem/47454419>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-wk1/TestExpectations: Mark select tests as failures due to webkit.org/b/195008.
+        * platform/mac/TestExpectations: Enable the new mouse-based tests.
+        * pointerevents/mouse/over-enter-out-leave-expected.txt: Added.
+        * pointerevents/mouse/over-enter-out-leave.html: Added.
+        * pointerevents/mouse/pointer-capture-expected.txt: Added.
+        * pointerevents/mouse/pointer-capture.html: Added.
+        * pointerevents/mouse/pointer-event-basic-properties-expected.txt: Added.
+        * pointerevents/mouse/pointer-event-basic-properties.html: Added.
+        * pointerevents/mouse/pointer-events-before-mouse-events-expected.txt: Added.
+        * pointerevents/mouse/pointer-events-before-mouse-events.html: Added.
+        * pointerevents/mouse/pointerdown-prevent-default-expected.txt: Added.
+        * pointerevents/mouse/pointerdown-prevent-default.html: Added.
+        * pointerevents/utils.js:
+        (prototype.clear):
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         scrolling/ios/hit-testing-iframe* tests need to hide the tap highlight

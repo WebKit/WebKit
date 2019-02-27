@@ -3152,6 +3152,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     RuntimeEnabledFeatures::sharedFeatures().setWebAnimationsEnabled([preferences webAnimationsEnabled]);
 
+#if ENABLE(POINTER_EVENTS)
+    RuntimeEnabledFeatures::sharedFeatures().setPointerEventsEnabled([preferences pointerEventsEnabled]);
+#endif
+
 #if ENABLE(INTERSECTION_OBSERVER)
     RuntimeEnabledFeatures::sharedFeatures().setIntersectionObserverEnabled(preferences.intersectionObserverEnabled);
 #endif

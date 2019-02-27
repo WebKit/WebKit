@@ -561,6 +561,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebAnimationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsEnabled;
 
+- (void)setPointerEventsEnabled:(BOOL)flag;
+- (BOOL)pointerEventsEnabled;
+
 - (void)setFetchAPIKeepAliveEnabled:(BOOL)flag;
 - (BOOL)fetchAPIKeepAliveEnabled;
 

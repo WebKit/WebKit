@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+
+    target.addEventListener("pointerdown", event => {
+        assert_equals(event.pointerId, 1, "The pointer's identifier is 1.");
+        assert_equals(event.pointerType, "mouse", "The pointer type is 'mouse'.");
+        assert_true(event.isPrimary, "The pointer is the primary pointer.");
+    });
+
+    test.done();
+}, `Testing the basic properties of a pointer event triggered by a mouse.`);
+
+</script>
+</body>
+</html>

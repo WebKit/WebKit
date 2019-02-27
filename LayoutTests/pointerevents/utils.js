@@ -44,6 +44,11 @@ class EventTracker
             target.addEventListener(eventName, this);
     }
 
+    clear()
+    {
+        this.events = [];
+    }
+
     handleEvent(event)
     {
         if (event instanceof PointerEvent)

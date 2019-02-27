@@ -1254,7 +1254,7 @@ public:
     bool hasTouchEventHandlers() const { return false; }
     bool touchEventTargetsContain(Node&) const { return false; }
 #endif
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
     void updateTouchActionElements(Element&, const RenderStyle&);
     const HashSet<RefPtr<Element>>* touchActionElements() const { return m_touchActionElements.get(); }
 #endif
@@ -1850,7 +1850,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
-#if ENABLE(POINTER_EVENTS)
+#if PLATFORM(IOS_FAMILY) && ENABLE(POINTER_EVENTS)
     std::unique_ptr<HashSet<RefPtr<Element>>> m_touchActionElements;
 #endif
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;

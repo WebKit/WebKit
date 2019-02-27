@@ -1,3 +1,50 @@
+2019-02-27  Antoine Quint  <graouts@apple.com>
+
+        Support Pointer Events on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=195008
+        <rdar://problem/47454419>
+
+        Reviewed by Dean Jackson.
+
+        We now dispatch relevant pointer events as we prepare to dispatch mouse events. In most cases, this means we dispatch
+        a pointer event of the same type, with "mouse" being substituted by "pointer", and with the same properties with the
+        exception that if preventDefault() is called for a "pointerdown" event, the matching "mousedown" will not be dispatched,
+        and the same behavior also extends to "pointerup".
+
+        Tests: pointerevents/mouse/over-enter-out-leave.html
+               pointerevents/mouse/pointer-capture.html
+               pointerevents/mouse/pointer-event-basic-properties.html
+               pointerevents/mouse/pointer-events-before-mouse-events.html
+               pointerevents/mouse/pointerdown-prevent-default.html
+
+        * Configurations/FeatureDefines.xcconfig:
+        * dom/Document.cpp: All of the touch-action related members and functions should be iOS-specific since the touch-action
+        property does not have any effect on macOS.
+        (WebCore::Document::invalidateRenderingDependentRegions):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::Document::updateTouchActionElements):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent): Dispatch a pointer event matching the mouse event that is about to be dispatched.
+        If preventDefault() is called in the event handler for either "pointerdown" or "pointerup", do not proceed with dispatching
+        the mouse event.
+        * dom/PointerEvent.cpp:
+        (WebCore::pointerEventType):
+        (WebCore::PointerEvent::create):
+        * dom/PointerEvent.h:
+        * page/EventHandler.cpp: Check both the pointer and mouse events to see if we need to dispatch "enter" and "leave" events.
+        (WebCore::hierarchyHasCapturingEventListeners):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        * page/PointerCaptureController.cpp: Fix a build error which only happened on macOS.
+        (WebCore::PointerCaptureController::PointerCaptureController): Create the CapturingData for the unique mouse pointer.
+        (WebCore::PointerCaptureController::hasPointerCapture): The code did not match the spec cited in the comment, only the
+        pending target override needs to be considered to determine whether a given element has pointer capture enabled.
+        (WebCore::PointerCaptureController::dispatchEvent): Dispatch the provided pointer event, accounting for pointer capture if
+        it is set.
+        * page/PointerLockController.cpp: Fix a build error which only happened on macOS.
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement): Code related to touch-action is only relevant to iOS.
+
 2019-02-27  Sihui Liu  <sihui_liu@apple.com>
 
         Network Process is put to suspended when holding locked IndexedDB files

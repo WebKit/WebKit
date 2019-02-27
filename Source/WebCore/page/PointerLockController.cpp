@@ -38,6 +38,10 @@
 #include "UserGestureIndicator.h"
 #include "VoidCallback.h"
 
+#if ENABLE(POINTER_EVENTS)
+#include "PointerCaptureController.h"
+#endif
+
 namespace WebCore {
 
 PointerLockController::PointerLockController(Page& page)

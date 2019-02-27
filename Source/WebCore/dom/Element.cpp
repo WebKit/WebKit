@@ -79,6 +79,7 @@
 #include "NodeRenderStyle.h"
 #include "PlatformWheelEvent.h"
 #include "PointerCaptureController.h"
+#include "PointerEvent.h"
 #include "PointerLockController.h"
 #include "RenderFragmentContainer.h"
 #include "RenderLayer.h"
@@ -288,9 +289,26 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
     if (mouseEvent->type().isEmpty())
         return true; // Shouldn't happen.
 
+    bool didNotSwallowEvent = true;
+
+#if ENABLE(POINTER_EVENTS)
+    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
+        if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
+            if (auto* page = document().page())
+                page->pointerCaptureController().dispatchEvent(*pointerEvent, this);
+            if (pointerEvent->defaultPrevented() || pointerEvent->defaultHandled()) {
+                didNotSwallowEvent = false;
+                if (pointerEvent->type() == eventNames().pointerdownEvent || pointerEvent->type() == eventNames().pointerupEvent)
+                    return false;
+            }
+        }
+    }
+#endif
+
     ASSERT(!mouseEvent->target() || mouseEvent->target() != relatedTarget);
     dispatchEvent(mouseEvent);
-    bool didNotSwallowEvent = !mouseEvent->defaultPrevented() && !mouseEvent->defaultHandled();
+    if (mouseEvent->defaultPrevented() || mouseEvent->defaultHandled())
+        didNotSwallowEvent = false;
 
     if (mouseEvent->type() == eventNames().clickEvent && mouseEvent->detail() == 2) {
         // Special case: If it's a double click event, we also send the dblclick event. This is not part

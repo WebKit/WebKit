@@ -28,6 +28,8 @@
 
 #if ENABLE(POINTER_EVENTS)
 
+#import "EventNames.h"
+
 namespace WebCore {
 
 const String& PointerEvent::mousePointerType()
@@ -48,6 +50,27 @@ const String& PointerEvent::touchPointerType()
     return touchType;
 }
 
+static AtomicString pointerEventType(const AtomicString& mouseEventType)
+{
+    auto& names = eventNames();
+    if (mouseEventType == names.mousedownEvent)
+        return names.pointerdownEvent;
+    if (mouseEventType == names.mouseoverEvent)
+        return names.pointeroverEvent;
+    if (mouseEventType == names.mouseenterEvent)
+        return names.pointerenterEvent;
+    if (mouseEventType == names.mousemoveEvent)
+        return names.pointermoveEvent;
+    if (mouseEventType == names.mouseleaveEvent)
+        return names.pointerleaveEvent;
+    if (mouseEventType == names.mouseoutEvent)
+        return names.pointeroutEvent;
+    if (mouseEventType == names.mouseupEvent)
+        return names.pointerupEvent;
+
+    return nullAtom();
+}
+
 PointerEvent::PointerEvent() = default;
 
 PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
@@ -63,6 +86,37 @@ PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
     , m_pointerType(initializer.pointerType)
     , m_isPrimary(initializer.isPrimary)
 {
+}
+
+RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
+{
+    auto type = pointerEventType(mouseEvent.type());
+    if (type.isEmpty())
+        return nullptr;
+
+    auto isEnterOrLeave = type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent;
+
+    PointerEvent::Init init;
+    init.bubbles = !isEnterOrLeave;
+    init.cancelable = !isEnterOrLeave;
+    init.composed = !isEnterOrLeave;
+    init.view = mouseEvent.view();
+    init.ctrlKey = mouseEvent.ctrlKey();
+    init.shiftKey = mouseEvent.shiftKey();
+    init.altKey = mouseEvent.altKey();
+    init.metaKey = mouseEvent.metaKey();
+    init.modifierAltGraph = mouseEvent.altGraphKey();
+    init.modifierCapsLock = mouseEvent.capsLockKey();
+    init.screenX = mouseEvent.screenX();
+    init.screenY = mouseEvent.screenY();
+    init.clientX = mouseEvent.clientX();
+    init.clientY = mouseEvent.clientY();
+    init.button = mouseEvent.button();
+    init.buttons = mouseEvent.buttons();
+    init.relatedTarget = mouseEvent.relatedTarget();
+    init.isPrimary = true;
+
+    return PointerEvent::create(type, WTFMove(init));
 }
 
 PointerEvent::~PointerEvent() = default;
