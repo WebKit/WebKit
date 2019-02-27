@@ -1,3 +1,18 @@
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+        wasmToJS() should purify incoming NaNs.
+        https://bugs.webkit.org/show_bug.cgi?id=194807
+        <rdar://problem/48189132>
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSCJSValue.h:
+        (JSC::jsNumber):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2019-02-26  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Fix warnings on ARM and MIPS

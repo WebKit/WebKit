@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@ struct IntegralTypedArrayAdaptor {
 
     static JSValue toJSValue(Type value)
     {
+        static_assert(!std::is_floating_point<Type>::value, "");
         return jsNumber(value);
     }
     
