@@ -1,5 +1,31 @@
 2019-02-27  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Move style recalc handling from global to ContentChangeObserver class
+        https://bugs.webkit.org/show_bug.cgi?id=195087
+
+        Reviewed by Simon Fraser.
+
+        Add m_observingNextStyleRecalc/m_observingStyleRecalcScheduling to ContentChangeObserver and move the related code over from WK functions.
+
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::startObservingStyleRecalcScheduling):
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalcScheduling):
+        (WebCore::ContentChangeObserver::isObservingStyleRecalcScheduling):
+        (WebCore::ContentChangeObserver::setShouldObserveNextStyleRecalc):
+        (WebCore::ContentChangeObserver::shouldObserveNextStyleRecalc):
+        (WebCore::ContentChangeObserver::setObservedContentChange):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKSetObservedContentChange):
+        (WKStartObservingStyleRecalcScheduling): Deleted.
+        (WKStopObservingStyleRecalcScheduling): Deleted.
+        (WKIsObservingStyleRecalcScheduling): Deleted.
+        (WKSetShouldObserveNextStyleRecalc): Deleted.
+        (WKShouldObserveNextStyleRecalc): Deleted.
+        * platform/ios/wak/WKContentObservation.h:
+
+2019-02-27  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Move DOM timer handling from global to ContentChangeObserver class
         https://bugs.webkit.org/show_bug.cgi?id=195070
         <rdar://problem/48417650>

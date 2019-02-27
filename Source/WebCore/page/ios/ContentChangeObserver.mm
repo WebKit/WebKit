@@ -182,27 +182,27 @@ bool ContentChangeObserver::isObservingDOMTimerScheduling()
 
 void ContentChangeObserver::startObservingStyleRecalcScheduling()
 {
-    WKStartObservingStyleRecalcScheduling();
+    m_observingStyleRecalcScheduling = true;
 }
 
 void ContentChangeObserver::stopObservingStyleRecalcScheduling()
 {
-    WKStopObservingStyleRecalcScheduling();
+    m_observingStyleRecalcScheduling = false;
 }
 
 bool ContentChangeObserver::isObservingStyleRecalcScheduling()
 {
-    return WKIsObservingStyleRecalcScheduling();
+    return m_observingStyleRecalcScheduling;
 }
 
 void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool observe)
 {
-    WKSetShouldObserveNextStyleRecalc(observe);
+    m_observingNextStyleRecalc = observe;
 }
 
 bool ContentChangeObserver::shouldObserveNextStyleRecalc()
 {
-    return WKShouldObserveNextStyleRecalc();
+    return m_observingNextStyleRecalc;
 }
 
 WKContentChange ContentChangeObserver::observedContentChange()

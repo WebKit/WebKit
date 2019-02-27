@@ -46,13 +46,6 @@ WEBCORE_EXPORT void WKStartObservingDOMTimerScheduling(void);
 WEBCORE_EXPORT void WKStopObservingDOMTimerScheduling(void);
 WEBCORE_EXPORT bool WKIsObservingDOMTimerScheduling(void);
 
-WEBCORE_EXPORT void WKStartObservingStyleRecalcScheduling(void);
-WEBCORE_EXPORT void WKStopObservingStyleRecalcScheduling(void);
-WEBCORE_EXPORT bool WKIsObservingStyleRecalcScheduling(void);
-
-WEBCORE_EXPORT void WKSetShouldObserveNextStyleRecalc(bool);
-WEBCORE_EXPORT bool WKShouldObserveNextStyleRecalc(void);
-
 WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
 
 #ifdef __cplusplus
