@@ -76,8 +76,6 @@ private:
     
     void finishCreation(VM&, NativeExecutable*, int length);
 
-    // FIXME: Consider poisoning these pointers.
-    // https://bugs.webkit.org/show_bug.cgi?id=182713
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;
     WriteBarrier<JSArray> m_boundArgs;

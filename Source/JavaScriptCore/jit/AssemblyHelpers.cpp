@@ -1002,41 +1002,6 @@ void AssemblyHelpers::emitPreparePreciseIndexMask32(GPRReg index, GPRReg length,
     rshiftPtr(TrustedImm32(preciseIndexMaskShift<void*>()), result);
 }
 
-void AssemblyHelpers::emitDynamicPoison(GPRReg base, GPRReg poisonValue)
-{
-#if CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
-    lshiftPtr(TrustedImm32(40), poisonValue);
-    addPtr(poisonValue, base);
-#else
-    UNUSED_PARAM(base);
-    UNUSED_PARAM(poisonValue);
-#endif
-}
-
-void AssemblyHelpers::emitDynamicPoisonOnLoadedType(GPRReg base, GPRReg actualType, JSType expectedType)
-{
-#if CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
-    xor32(TrustedImm32(expectedType), actualType);
-    emitDynamicPoison(base, actualType);
-#else
-    UNUSED_PARAM(base);
-    UNUSED_PARAM(actualType);
-    UNUSED_PARAM(expectedType);
-#endif
-}
-
-void AssemblyHelpers::emitDynamicPoisonOnType(GPRReg base, GPRReg scratch, JSType expectedType)
-{
-#if CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
-    load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
-    emitDynamicPoisonOnLoadedType(base, scratch, expectedType);
-#else
-    UNUSED_PARAM(base);
-    UNUSED_PARAM(scratch);
-    UNUSED_PARAM(expectedType);
-#endif
-}
-
 } // namespace JSC
 
 #endif // ENABLE(JIT)

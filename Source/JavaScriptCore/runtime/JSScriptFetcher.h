@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "JSCPoison.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "ScriptFetcher.h"
@@ -74,7 +73,7 @@ private:
     {
     }
 
-    PoisonedRefPtr<JSScriptFetcherPoison, ScriptFetcher> m_fetcher;
+    RefPtr<ScriptFetcher> m_fetcher;
 };
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CallLinkInfo.h"
-#include "JSCPoison.h"
 #include "JSCast.h"
 #include "PromiseDeferredTimer.h"
 #include "Structure.h"
@@ -36,7 +35,6 @@
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include <wtf/Bag.h>
-#include <wtf/PoisonedUniquePtr.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
@@ -90,7 +88,7 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    PoisonedRef<JSWebAssemblyCodeBlockPoison, Wasm::CodeBlock> m_codeBlock;
+    Ref<Wasm::CodeBlock> m_codeBlock;
     Vector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToJSExitStubs;
     Bag<CallLinkInfo> m_callLinkInfos;
     String m_errorMessage;

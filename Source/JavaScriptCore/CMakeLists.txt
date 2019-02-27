@@ -830,7 +830,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCInlines.h
     runtime/JSCJSValue.h
     runtime/JSCJSValueInlines.h
-    runtime/JSCPoison.h
     runtime/JSCPtrTag.h
     runtime/JSCallee.h
     runtime/JSCast.h

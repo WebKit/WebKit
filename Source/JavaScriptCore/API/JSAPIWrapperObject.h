@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,7 @@
 #define JSAPIWrapperObject_h
 
 #include "JSBase.h"
-#include "JSCPoison.h"
 #include "JSDestructibleObject.h"
-#include <wtf/Poisoned.h>
 
 #if JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
 
@@ -42,14 +40,14 @@ public:
     void finishCreation(VM&);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
     
-    void* wrappedObject() { return m_wrappedObject.unpoisoned(); }
+    void* wrappedObject() { return m_wrappedObject; }
     void setWrappedObject(void*);
 
 protected:
     JSAPIWrapperObject(VM&, Structure*);
 
 private:
-    Poisoned<JSAPIWrapperObjectPoison, void*> m_wrappedObject;
+    void* m_wrappedObject { nullptr };
 };
 
 } // namespace JSC

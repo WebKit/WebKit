@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,9 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::T
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsFunctions = MallocPtr<PoisonedBarrier<JSObject>>::malloc((sizeof(PoisonedBarrier<JSObject>) * Checked<size_t>(allocatedLength())).unsafeGet());
+    m_jsFunctions = MallocPtr<WriteBarrier<JSObject>>::malloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(allocatedLength())).unsafeGet());
     for (uint32_t i = 0; i < allocatedLength(); ++i)
-        new(&m_jsFunctions.get()[i]) PoisonedBarrier<JSObject>();
+        new(&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
 }
 
 void JSWebAssemblyTable::finishCreation(VM& vm)
@@ -104,10 +104,10 @@ bool JSWebAssemblyTable::grow(uint32_t delta)
     size_t newLength = grew.value();
     if (newLength > m_table->allocatedLength(oldLength))
         // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-        m_jsFunctions.realloc((sizeof(PoisonedBarrier<JSObject>) * Checked<size_t>(m_table->allocatedLength(newLength))).unsafeGet());
+        m_jsFunctions.realloc((sizeof(WriteBarrier<JSObject>) * Checked<size_t>(m_table->allocatedLength(newLength))).unsafeGet());
 
     for (size_t i = oldLength; i < m_table->allocatedLength(newLength); ++i)
-        new (&m_jsFunctions.get()[i]) PoisonedBarrier<JSObject>();
+        new (&m_jsFunctions.get()[i]) WriteBarrier<JSObject>();
 
     return true;
 }
@@ -121,7 +121,7 @@ JSObject* JSWebAssemblyTable::getFunction(uint32_t index)
 void JSWebAssemblyTable::clearFunction(uint32_t index)
 {
     m_table->clearFunction(index);
-    m_jsFunctions.get()[index & m_table->mask()] = PoisonedBarrier<JSObject>();
+    m_jsFunctions.get()[index & m_table->mask()] = WriteBarrier<JSObject>();
 }
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction* function)

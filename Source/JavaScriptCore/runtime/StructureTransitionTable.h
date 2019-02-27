@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IndexingType.h"
-#include "JSCPoison.h"
 #include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -187,8 +186,6 @@ public:
 
 private:
     friend class SingleSlotTransitionWeakOwner;
-    using PoisonedTransitionMapPtr = Poisoned<StructureTransitionTablePoison, TransitionMap*>;
-    using PoisonedWeakImplPtr = Poisoned<StructureTransitionTablePoison, WeakImpl*>;
 
     bool isUsingSingleSlot() const
     {
@@ -198,13 +195,13 @@ private:
     TransitionMap* map() const
     {
         ASSERT(!isUsingSingleSlot());
-        return PoisonedTransitionMapPtr(AlreadyPoisoned, m_data).unpoisoned();
+        return bitwise_cast<TransitionMap*>(m_data);
     }
 
     WeakImpl* weakImpl() const
     {
         ASSERT(isUsingSingleSlot());
-        return PoisonedWeakImplPtr(AlreadyPoisoned, m_data & ~UsingSingleSlotFlag).unpoisoned();
+        return bitwise_cast<WeakImpl*>(m_data & ~UsingSingleSlotFlag);
     }
 
     void setMap(TransitionMap* map)
@@ -215,7 +212,7 @@ private:
             WeakSet::deallocate(impl);
 
         // This implicitly clears the flag that indicates we're using a single transition
-        m_data = PoisonedTransitionMapPtr(map).bits();
+        m_data = bitwise_cast<intptr_t>(map);
 
         ASSERT(!isUsingSingleSlot());
     }

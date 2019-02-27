@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,14 +109,6 @@ public:
         ASSERT(graph.m_plan.weakReferences().contains(cell));
 
         return constIntPtr(bitwise_cast<intptr_t>(cell));
-    }
-
-    template<typename Key>
-    LValue weakPoisonedPointer(DFG::Graph& graph, JSCell* cell)
-    {
-        ASSERT(graph.m_plan.weakReferences().contains(cell));
-
-        return constIntPtr(bitwise_cast<intptr_t>(cell) ^ Key::key());
     }
 
     LValue weakPointer(DFG::FrozenValue* value)

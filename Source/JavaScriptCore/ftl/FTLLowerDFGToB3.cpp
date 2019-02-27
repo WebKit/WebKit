@@ -3141,10 +3141,7 @@ private:
     {
         LValue cell = lowCell(m_node->child1());
         speculateFunction(m_node->child1(), cell);
-        setJSValue(
-            m_out.bitXor(
-                m_out.loadPtr(cell, m_heaps.JSFunction_executable),
-                m_out.constIntPtr(JSFunctionPoison::key())));
+        setJSValue(m_out.loadPtr(cell, m_heaps.JSFunction_executable));
     }
     
     void compileArrayify()
@@ -3843,9 +3840,7 @@ private:
             
         case Array::ScopedArguments: {
             LValue arguments = lowCell(m_node->child1());
-            LValue storage = m_out.bitXor(
-                m_out.loadPtr(arguments, m_heaps.ScopedArguments_storage),
-                m_out.constIntPtr(ScopedArgumentsPoison::key()));
+            LValue storage = m_out.loadPtr(arguments, m_heaps.ScopedArguments_storage);
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.notZero32(m_out.load8ZeroExt32(storage, m_heaps.ScopedArguments_Storage_overrodeThings)));
@@ -4047,8 +4042,6 @@ private:
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             
             LValue storage = m_out.loadPtr(base, m_heaps.ScopedArguments_storage);
-            storage = m_out.bitXor(storage, m_out.constIntPtr(ScopedArgumentsPoison::key()));
-            
             LValue totalLength = m_out.load32NonNegative(
                 storage, m_heaps.ScopedArguments_Storage_totalLength);
             speculate(
@@ -4056,8 +4049,6 @@ private:
                 m_out.aboveOrEqual(index, totalLength));
             
             LValue table = m_out.loadPtr(base, m_heaps.ScopedArguments_table);
-            table = m_out.bitXor(table, m_out.constIntPtr(ScopedArgumentsPoison::key()));
-            
             LValue namedLength = m_out.load32(table, m_heaps.ScopedArgumentsTable_length);
             
             LBasicBlock namedCase = m_out.newBlock();
@@ -4070,8 +4061,6 @@ private:
             LBasicBlock lastNext = m_out.appendTo(namedCase, overflowCase);
             
             LValue scope = m_out.loadPtr(base, m_heaps.ScopedArguments_scope);
-            scope = m_out.bitXor(scope, m_out.constIntPtr(ScopedArgumentsPoison::key()));
-            
             LValue arguments = m_out.loadPtr(table, m_heaps.ScopedArgumentsTable_arguments);
             
             TypedPointer address = m_out.baseIndex(
@@ -5323,7 +5312,7 @@ private:
         // We don't need memory barriers since we just fast-created the function, so it
         // must be young.
         m_out.storePtr(scope, fastObject, m_heaps.JSFunction_scope);
-        m_out.storePtr(weakPoisonedPointer<JSFunctionPoison>(executable), fastObject, m_heaps.JSFunction_executable);
+        m_out.storePtr(weakPointer(executable), fastObject, m_heaps.JSFunction_executable);
         m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.JSFunction_rareData);
         
         mutatorFence();
@@ -16385,32 +16374,6 @@ private:
         return preciseIndexMask64(value, m_out.zeroExt(index, Int64), m_out.zeroExt(limit, Int64));
     }
     
-    LValue dynamicPoison(LValue value, LValue poison)
-    {
-        return m_out.add(
-            value,
-            m_out.shl(
-                m_out.zeroExt(poison, pointerType()),
-                m_out.constInt32(40)));
-    }
-    
-    LValue dynamicPoisonOnLoadedType(LValue value, LValue actualType, JSType expectedType)
-    {
-        return dynamicPoison(
-            value,
-            m_out.bitXor(
-                m_out.opaque(actualType),
-                m_out.constInt32(expectedType)));
-    }
-    
-    LValue dynamicPoisonOnType(LValue value, JSType expectedType)
-    {
-        return dynamicPoisonOnLoadedType(
-            value,
-            m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType),
-            expectedType);
-    }
-
     template<typename... Args>
     LValue vmCall(LType type, LValue function, Args&&... args)
     {
@@ -16956,13 +16919,6 @@ private:
     {
         addWeakReference(pointer);
         return m_out.weakPointer(m_graph, pointer);
-    }
-    
-    template<typename Key>
-    LValue weakPoisonedPointer(JSCell* pointer)
-    {
-        addWeakReference(pointer);
-        return m_out.weakPoisonedPointer<Key>(m_graph, pointer);
     }
 
     LValue frozenPointer(FrozenValue* value)

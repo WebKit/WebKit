@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ExecutableBase.h"
-#include "JSCPoison.h"
 
 namespace JSC {
 
@@ -49,8 +48,8 @@ public:
 
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
-    TaggedNativeFunction function() { return m_function.unpoisoned(); }
-    TaggedNativeFunction constructor() { return m_constructor.unpoisoned(); }
+    TaggedNativeFunction function() { return m_function; }
+    TaggedNativeFunction constructor() { return m_constructor; }
         
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
     {
@@ -81,13 +80,10 @@ protected:
     void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
 
 private:
-    friend class ExecutableBase;
-    using PoisonedTaggedNativeFunction = Poisoned<NativeCodePoison, TaggedNativeFunction>;
-
     NativeExecutable(VM&, TaggedNativeFunction, TaggedNativeFunction constructor);
 
-    PoisonedTaggedNativeFunction m_function;
-    PoisonedTaggedNativeFunction m_constructor;
+    TaggedNativeFunction m_function;
+    TaggedNativeFunction m_constructor;
 
     String m_name;
 };

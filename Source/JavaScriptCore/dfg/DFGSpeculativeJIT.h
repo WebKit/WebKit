@@ -149,13 +149,6 @@ public:
             return TrustedImmPtr(bitwise_cast<size_t>(cell));
         }
 
-        template<typename Key>
-        static TrustedImmPtr weakPoisonedPointer(Graph& graph, JSCell* cell)
-        {     
-            graph.m_plan.weakReferences().addLazily(cell);
-            return TrustedImmPtr(bitwise_cast<size_t>(cell) ^ Key::key());
-        }
-
         operator MacroAssembler::TrustedImmPtr() const { return m_value; }
         operator MacroAssembler::TrustedImm() const { return m_value; }
 

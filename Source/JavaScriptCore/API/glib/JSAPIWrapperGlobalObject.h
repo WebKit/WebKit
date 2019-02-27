@@ -27,7 +27,6 @@
 
 #include "JSBase.h"
 #include "JSCGLibWrapperObject.h"
-#include "JSCPoison.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {
