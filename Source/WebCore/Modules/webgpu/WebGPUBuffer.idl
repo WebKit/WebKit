@@ -22,13 +22,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
+
+typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
 ] interface WebGPUBuffer {
-    //void setSubData(u32 offset, ArrayBuffer data);
+    void setSubData(u64 offset, ArrayBuffer data);
 
     Promise<ArrayBuffer> mapReadAsync();
     Promise<ArrayBuffer> mapWriteAsync();

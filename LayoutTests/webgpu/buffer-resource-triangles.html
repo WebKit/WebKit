@@ -7,6 +7,9 @@
 <canvas width="400" height="400"></canvas>
 <script src="js/webgpu-functions.js"></script>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 const shaderCode = `
 #include <metal_stdlib>
     
@@ -79,20 +82,15 @@ function createUniformBufferBindGroupLayout(bindNum, stage = WebGPUShaderStageBi
 
 const vertexSize = 4 * 4;
 const verticesBufferSize = vertexSize * 3;
-function createAndUploadVerticesBuffer(device, promises) {
-    const buffer = device.createBuffer({ size:verticesBufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE });
+function createAndUploadVerticesBuffer(device) {
+    const buffer = device.createBuffer({ size:verticesBufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    const arrayBuffer = new Float32Array([
+        0, 1, 0, 1,
+        -1, -1, 0, 1,
+        1, -1, 0, 1
+    ]).buffer;
 
-    const promise = buffer.mapWriteAsync().then(mapping => {
-        const mappedArray = new Float32Array(mapping);
-        mappedArray.set([
-            0, 1, 0, 1,
-            -1, -1, 0, 1,
-            1, -1, 0, 1
-        ]);
-        buffer.unmap();
-    });
-
-    promises.push(promise);
+    buffer.setSubData(0, arrayBuffer);
     return buffer;
 }
 
@@ -125,10 +123,9 @@ async function test() {
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
     // Create vertex data WebGPUBuffers.
+    const verticesBuffer = createAndUploadVerticesBuffer(device);
+
     let bufferPromises = [];
-
-    const verticesBuffer = createAndUploadVerticesBuffer(device, bufferPromises);
-
     const upperLeft = createFloat4Buffer(device, -1, 1, bufferPromises);
     const upperMiddle = createFloat4Buffer(device, 0, 1, bufferPromises);
     const upperRight = createFloat4Buffer(device, 1, 1, bufferPromises);
@@ -212,6 +209,9 @@ async function test() {
         const queue = device.getQueue();
         queue.submit([endCommandBuffer]);
         context.present();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     });
 }
 

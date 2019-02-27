@@ -30,11 +30,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_PROTOCOL(MTLCommandBuffer);
 
 namespace WebCore {
 
+class GPUBuffer;
 class GPUDevice;
 
 using PlatformCommandBuffer = MTLCommandBuffer;
@@ -45,11 +47,15 @@ public:
     static RefPtr<GPUCommandBuffer> create(GPUDevice&);
 
     PlatformCommandBuffer* platformCommandBuffer() const { return m_platformCommandBuffer.get(); }
+    const Vector<Ref<GPUBuffer>>& usedBuffers() const { return m_usedBuffers; }
+
+    void useBuffer(Ref<GPUBuffer>&& buffer) { m_usedBuffers.append(WTFMove(buffer)); }
 
 private:
     GPUCommandBuffer(PlatformCommandBufferSmartPtr&&);
 
     PlatformCommandBufferSmartPtr m_platformCommandBuffer;
+    Vector<Ref<GPUBuffer>> m_usedBuffers;
 };
 
 } // namespace WebCore

@@ -7,6 +7,9 @@
 <canvas width="400" height="400"></canvas>
 <script src="js/webgpu-functions.js"></script>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 const shaderCode = `
 #include <metal_stdlib>
     
@@ -44,23 +47,18 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 }
 `
 
-async function createVertexBuffer(device) {
+function createVertexBuffer(device) {
     const bufferSize = 4 * 4 * 4;
-    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE });
+    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    const arrayBuffer = new Float32Array([
+        // float4 xyzw
+        -1, 1, 0, 1,
+        -1, -1, 0, 1,
+        1, 1, 0, 1,
+        1, -1, 0, 1
+    ]).buffer;
     
-    let floatArray = new Float32Array(buffer.mapping);
-    await buffer.mapWriteAsync().then(mapping => {
-        let mappedArray = new Float32Array(mapping);
-        mappedArray.set([
-            // float4 xyzw
-            -1, 1, 0, 1,
-            -1, -1, 0, 1,
-            1, 1, 0, 1,
-            1, -1, 0, 1
-        ]);
-        buffer.unmap();
-    });
-
+    buffer.setSubData(0, arrayBuffer);
     return buffer;
 }
 
@@ -87,7 +85,7 @@ async function test() {
     const context = createBasicContext(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
-    const vertexBuffer =  await createVertexBuffer(device);
+    const vertexBuffer = createVertexBuffer(device);
     const inputStateDescriptor = createInputStateDescriptor();
     const depthStateDescriptor = createBasicDepthStateDescriptor();
     const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor, depthStateDescriptor);
@@ -119,6 +117,9 @@ async function test() {
 
     device.getQueue().submit([commandBuffer]);
     context.present();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 test();

@@ -7,6 +7,9 @@
 <canvas width="400" height="400"></canvas>
 <script src="js/webgpu-functions.js"></script>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 const shaderCode = `
 #include <metal_stdlib>
     
@@ -38,21 +41,21 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 }
 `
 
-async function createVertexBuffer(device) {
+function createVertexBuffer(device) {
     const bufferSize = 4 * 5 * 4;
-    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.MAP_WRITE });
-    
-    await buffer.mapWriteAsync().then(mapping => {
-        let mappedArray = new Float32Array(mapping);
-        mappedArray.set([
-            // float4 xyzw, float g
-            -1, 1, 0, 1, 1,
-            -1, -1, 0, 1, 1,
-            1, 1, 0, 1, 1,
-            1, -1, 0, 1, 1
-        ]);
-        buffer.unmap();
-    });
+    const buffer = device.createBuffer({ size: bufferSize, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    const vertexArrayBuffer0 = new Float32Array([
+        // float4 xyzw, float g
+        -1, 1, 0, 1, 1,
+        -1, -1, 0, 1, 1
+    ]).buffer;
+    const vertexArrayBuffer1 = new Float32Array([
+        1, 1, 0, 1, 1,
+        1, -1, 0, 1, 1
+    ]).buffer;
+
+    buffer.setSubData(0, vertexArrayBuffer0);
+    buffer.setSubData(4 * 5 * 2, vertexArrayBuffer1);
 
     return buffer;
 }
@@ -85,16 +88,19 @@ async function test() {
     const context = createBasicContext(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
-    const vertexBuffer = await createVertexBuffer(device);
+    const vertexBuffer = createVertexBuffer(device);
     const inputStateDescriptor = createInputStateDescriptor();
     const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
     const commandBuffer = device.createCommandBuffer();
     const passEncoder = beginBasicRenderPass(context, commandBuffer);
     const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline, vertexBuffer);
     const queue = device.getQueue();
-
     queue.submit([endCommandBuffer]);
+    vertexBuffer.destroy();
     context.present();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 test();

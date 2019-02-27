@@ -62,7 +62,7 @@ void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<R
         return;
     }
 
-    Vector<Ref<const GPUBuffer>> gpuBuffers;
+    Vector<Ref<GPUBuffer>> gpuBuffers;
     gpuBuffers.reserveCapacity(buffers.size());
 
     for (const auto& buffer : buffers) {

@@ -34,18 +34,51 @@
 #import <JavaScriptCore/ArrayBuffer.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CheckedArithmetic.h>
+#import <wtf/MainThread.h>
 
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUBuffer::tryCreateSharedBuffer(const GPUDevice& device, const GPUBufferDescriptor& descriptor)
+static const auto readOnlyMask = GPUBufferUsage::Index | GPUBufferUsage::Vertex | GPUBufferUsage::Uniform | GPUBufferUsage::TransferSrc;
+
+
+bool GPUBuffer::validateBufferCreate(const GPUDevice& device, const GPUBufferDescriptor& descriptor)
 {
-    ASSERT(device.platformDevice());
+    if (!device.platformDevice()) {
+        LOG(WebGPU, "GPUBuffer::create(): Invalid GPUDevice!");
+        return false;
+    }
+
+    if ((descriptor.usage & GPUBufferUsage::MapWrite) && (descriptor.usage & GPUBufferUsage::MapRead)) {
+        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
+        return false;
+    }
+
+    if ((descriptor.usage & readOnlyMask) && (descriptor.usage & GPUBufferUsage::Storage)) {
+        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both STORAGE and a read-only usage!");
+        return false;
+    }
+
+    return true;
+}
+
+RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescriptor&& descriptor)
+{
+    if (!validateBufferCreate(device.get(), descriptor))
+        return nullptr;
+
+    // FIXME: Metal best practices: Read-only one-time-use data less than 4 KB should not allocate a MTLBuffer and be used in [MTLCommandEncoder set*Bytes] calls instead.
+
+    MTLResourceOptions resourceOptions = MTLResourceCPUCacheModeDefaultCache;
+
+    // Mappable buffers use shared storage allocation.
+    resourceOptions |= (descriptor.usage & (GPUBufferUsage::MapWrite | GPUBufferUsage::MapRead)) ? MTLResourceStorageModeShared : MTLResourceStorageModePrivate;
 
     RetainPtr<MTLBuffer> mtlBuffer;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    mtlBuffer = adoptNS([device.platformDevice() newBufferWithLength:descriptor.size options: MTLResourceCPUCacheModeDefaultCache]);
+    mtlBuffer = adoptNS([device->platformDevice() newBufferWithLength:descriptor.size options:resourceOptions]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -54,52 +87,115 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreateSharedBuffer(const GPUDevice& device, cons
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor, WTFMove(device)));
 }
 
-static const auto readOnlyMask = GPUBufferUsage::Index | GPUBufferUsage::Vertex | GPUBufferUsage::Uniform | GPUBufferUsage::TransferSrc;
-
-RefPtr<GPUBuffer> GPUBuffer::tryCreate(const GPUDevice& device, GPUBufferDescriptor&& descriptor)
-{
-    if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUBuffer::create(): Invalid GPUDevice!");
-        return nullptr;
-    }
-
-    if ((descriptor.usage & GPUBufferUsage::MapWrite) && (descriptor.usage & GPUBufferUsage::MapRead)) {
-        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
-        return nullptr;
-    }
-
-    if ((descriptor.usage & readOnlyMask) && (descriptor.usage & GPUBufferUsage::Storage)) {
-        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both STORAGE and a read-only usage!");
-        return nullptr;
-    }
-
-    // Mappable buffers need (default) shared storage allocation.
-    if (descriptor.usage & (GPUBufferUsage::MapWrite | GPUBufferUsage::MapRead))
-        return tryCreateSharedBuffer(device, descriptor);
-
-    LOG(WebGPU, "GPUBuffer::create(): Support for non-mapped buffers not implemented!");
-    return nullptr;
-}
-
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, const GPUBufferDescriptor& descriptor)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, const GPUBufferDescriptor& descriptor, Ref<GPUDevice>&& device)
     : m_platformBuffer(WTFMove(buffer))
+    , m_device(WTFMove(device))
     , m_byteLength(descriptor.size)
-    , m_isMapWrite(descriptor.usage & GPUBufferUsage::MapWrite)
-    , m_isMapRead(descriptor.usage & GPUBufferUsage::MapRead)
-    , m_isVertex(descriptor.usage & GPUBufferUsage::Vertex)
-    , m_isUniform(descriptor.usage & GPUBufferUsage::Uniform)
-    , m_isStorage(descriptor.usage & GPUBufferUsage::Storage)
-    , m_isReadOnly(descriptor.usage & readOnlyMask)
+    , m_usage(static_cast<GPUBufferUsage::Flags>(descriptor.usage))
 {
 }
 
 GPUBuffer::~GPUBuffer()
 {
-    unmap();
+    destroy();
 }
+
+bool GPUBuffer::isReadOnly() const
+{
+    return m_usage & readOnlyMask;
+}
+
+GPUBuffer::State GPUBuffer::state() const
+{
+    if (!m_platformBuffer)
+        return State::Destroyed;
+    if (m_mappingCallback)
+        return State::Mapped;
+
+    return State::Unmapped;
+}
+
+void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
+{
+    if (!isTransferDst() || state() != State::Unmapped) {
+        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
+        return;
+    }
+    auto subDataLength = checkedSum<unsigned long>(data.byteLength(), offset);
+    if (subDataLength.hasOverflowed() || subDataLength.unsafeGet() > m_byteLength) {
+        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid offset or data size!");
+        return;
+    }
+
+    // FIXME: Add alignment checks once specified.
+
+    if (m_subDataBuffers.isEmpty()) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        m_subDataBuffers.append(adoptNS([m_platformBuffer.get().device newBufferWithLength:m_byteLength options:MTLResourceCPUCacheModeDefaultCache]));
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
+
+    __block auto stagingMtlBuffer = m_subDataBuffers.takeLast();
+
+    if (!stagingMtlBuffer || stagingMtlBuffer.get().length < data.byteLength()) {
+        LOG(WebGPU, "GPUBuffer::setSubData(): Unable to get staging buffer for provided data!");
+        return;
+    }
+
+    memcpy(stagingMtlBuffer.get().contents, data.data(), data.byteLength());
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    auto commandBuffer = retainPtr([m_device->getQueue()->platformQueue() commandBuffer]);
+    auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
+
+    [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:offset size:stagingMtlBuffer.get().length];
+    [blitEncoder endEncoding];
+
+    if (isMappable())
+        commandBufferCommitted(commandBuffer.get());
+
+    auto protectedThis = makeRefPtr(this);
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
+        protectedThis->reuseSubDataBuffer(WTFMove(stagingMtlBuffer));
+    }];
+    [commandBuffer commit];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+#if USE(METAL)
+void GPUBuffer::commandBufferCommitted(MTLCommandBuffer *commandBuffer)
+{
+    ++m_numScheduledCommandBuffers;
+
+    auto protectedThis = makeRefPtr(this);
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
+        protectedThis->commandBufferCompleted();
+    }];
+}
+
+void GPUBuffer::commandBufferCompleted()
+{
+    ASSERT(m_numScheduledCommandBuffers);
+
+    if (m_numScheduledCommandBuffers == 1 && state() == State::Mapped) {
+        callOnMainThread([this, protectedThis = makeRef(*this)] () {
+            runMappingCallback();
+        });
+    }
+
+    --m_numScheduledCommandBuffers;
+}
+
+void GPUBuffer::reuseSubDataBuffer(RetainPtr<MTLBuffer>&& buffer)
+{
+    m_subDataBuffers.append(WTFMove(buffer));
+}
+#endif // USE(METAL)
 
 void GPUBuffer::registerMappingCallback(MappingCallback&& callback, bool isRead)
 {
@@ -115,19 +211,23 @@ void GPUBuffer::registerMappingCallback(MappingCallback&& callback, bool isRead)
         return;
     }
 
-    ASSERT(!m_pendingCallback && !m_mappingCallbackTask.hasPendingTask());
+    ASSERT(!m_mappingCallback && !m_mappingCallbackTask.hasPendingTask());
 
     // An existing callback means this buffer is in the mapped state.
-    m_pendingCallback = PendingMappingCallback::create(WTFMove(callback));
+    m_mappingCallback = PendingMappingCallback::create(WTFMove(callback));
 
     // If GPU is not using this buffer, run the callback ASAP.
     if (!m_numScheduledCommandBuffers) {
         m_mappingCallbackTask.scheduleTask([this, protectedThis = makeRef(*this)] () mutable {
-            ASSERT(m_pendingCallback);
-
-            m_pendingCallback->callback(m_isMapRead ? stagingBufferForRead() : stagingBufferForWrite());
+            runMappingCallback();
         });
     }
+}
+
+void GPUBuffer::runMappingCallback()
+{
+    if (m_mappingCallback)
+        m_mappingCallback->callback(isMapRead() ? stagingBufferForRead() : stagingBufferForWrite());
 }
 
 JSC::ArrayBuffer* GPUBuffer::stagingBufferForRead()
@@ -153,28 +253,25 @@ void GPUBuffer::unmap()
         return;
     }
 
-    if (m_stagingBuffer && m_isMapWrite) {
+    if (m_stagingBuffer && isMapWrite()) {
+        ASSERT(m_platformBuffer);
         memcpy(m_platformBuffer.get().contents, m_stagingBuffer->data(), m_byteLength);
         m_stagingBuffer = nullptr;
     }
 
-    if (m_pendingCallback) {
+    if (m_mappingCallback) {
         m_mappingCallbackTask.cancelTask();
-        m_pendingCallback->callback(nullptr);
-        m_pendingCallback = nullptr;
+        m_mappingCallback->callback(nullptr);
+        m_mappingCallback = nullptr;
     }
 }
 
 void GPUBuffer::destroy()
 {
-    if (isMappable())
+    if (state() == State::Mapped)
         unmap();
 
-    m_isDestroyed = true;
-
-    // FIXME: If GPU is still using the MTLBuffer, it will be released after all relevant commands have executed.
-    if (!m_numScheduledCommandBuffers)
-        m_platformBuffer = nullptr;
+    m_platformBuffer = nullptr;
 }
 
 } // namespace WebCore

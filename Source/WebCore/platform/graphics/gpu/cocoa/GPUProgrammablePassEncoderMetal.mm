@@ -61,7 +61,8 @@ void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder
     }
 
     auto& bufferBinding = WTF::get<GPUBufferBinding>(resource);
-    auto mtlBuffer = bufferBinding.buffer->platformBuffer();
+    auto& bufferRef = bufferBinding.buffer;
+    auto mtlBuffer = bufferRef->platformBuffer();
 
     if (!mtlBuffer) {
         LOG(WebGPU, "%s: Invalid MTLBuffer in GPUBufferBinding!", functionName);
@@ -71,12 +72,14 @@ void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     [argumentEncoder setBuffer:mtlBuffer offset:bufferBinding.offset atIndex:index];
-    useResource(mtlBuffer, bufferBinding.buffer->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
+    useResource(mtlBuffer, bufferRef->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
 
     END_BLOCK_OBJC_EXCEPTIONS;
+
+    m_commandBuffer->useBuffer(bufferRef.copyRef());
 }
 
-void GPUProgrammablePassEncoder::setBindGroup(unsigned long index, const GPUBindGroup& bindGroup)
+void GPUProgrammablePassEncoder::setBindGroup(unsigned long index, GPUBindGroup& bindGroup)
 {
     const char* const functionName = "GPUProgrammablePassEncoder::setBindGroup()";
 #if LOG_DISABLED

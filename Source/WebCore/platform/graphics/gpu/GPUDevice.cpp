@@ -44,9 +44,9 @@
 
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(GPUBufferDescriptor&& descriptor) const
+RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(GPUBufferDescriptor&& descriptor)
 {
-    return GPUBuffer::tryCreate(*this, WTFMove(descriptor));
+    return GPUBuffer::tryCreate(makeRef(*this), WTFMove(descriptor));
 }
 
 RefPtr<GPUTexture> GPUDevice::tryCreateTexture(GPUTextureDescriptor&& descriptor) const

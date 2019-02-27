@@ -45,7 +45,7 @@ Ref<WebGPUCommandBuffer> WebGPUProgrammablePassEncoder::endPass()
     return m_commandBuffer.copyRef();
 }
 
-void WebGPUProgrammablePassEncoder::setBindGroup(unsigned long index, const WebGPUBindGroup& bindGroup) const
+void WebGPUProgrammablePassEncoder::setBindGroup(unsigned long index, WebGPUBindGroup& bindGroup) const
 {
     // Maximum number of bind groups supported in Web GPU.
     if (index >= 4) {

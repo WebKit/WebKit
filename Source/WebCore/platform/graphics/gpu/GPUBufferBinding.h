@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct GPUBufferBinding {
-    Ref<const GPUBuffer> buffer;
+    Ref<GPUBuffer> buffer;
     unsigned long offset;
     unsigned long size;
 };

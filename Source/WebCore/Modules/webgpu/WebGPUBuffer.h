@@ -45,9 +45,10 @@ class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
 public:
     static Ref<WebGPUBuffer> create(RefPtr<GPUBuffer>&&);
 
-    RefPtr<const GPUBuffer> buffer() const { return m_buffer; }
+    RefPtr<GPUBuffer> buffer() const { return m_buffer; }
 
-    using BufferMappingPromise = DOMPromiseDeferred<IDLInterface<JSC::ArrayBuffer*>>;
+    void setSubData(unsigned long, const JSC::ArrayBuffer&);
+    using BufferMappingPromise = DOMPromiseDeferred<IDLInterface<JSC::ArrayBuffer>>;
     void mapReadAsync(BufferMappingPromise&&);
     void mapWriteAsync(BufferMappingPromise&&);
     void unmap();

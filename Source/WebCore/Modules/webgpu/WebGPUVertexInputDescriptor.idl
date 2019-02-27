@@ -25,6 +25,7 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
+typedef unsigned long long u64;
 typedef u32 WebGPUInputStepModeEnum;
 
 [
@@ -32,6 +33,6 @@ typedef u32 WebGPUInputStepModeEnum;
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUVertexInputDescriptor {
     u32 inputSlot;
-    u32 stride;
+    u64 stride;
     WebGPUInputStepModeEnum stepMode;
 };

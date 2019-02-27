@@ -37,10 +37,10 @@
     // Commands allowed outside of "passes"
         void copyBufferToBuffer(
         WebGPUBuffer src,
-        u32 srcOffset,
+        u64 srcOffset,
         WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+        u64 dstOffset,
+        u64 size);
 
     void copyBufferToTexture(
         WebGPUBufferCopyView source,

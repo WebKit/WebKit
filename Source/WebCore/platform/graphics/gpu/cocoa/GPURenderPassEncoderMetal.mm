@@ -113,9 +113,9 @@ static bool populateMtlDepthStencilAttachment(MTLRenderPassDepthAttachmentDescri
     return true;
 }
 
-RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer& buffer, GPURenderPassDescriptor&& descriptor)
+RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::tryCreate(Ref<GPUCommandBuffer>&& buffer, GPURenderPassDescriptor&& descriptor)
 {
-    const char* const functionName = "GPURenderPassEncoder::create()";
+    const char* const functionName = "GPURenderPassEncoder::tryCreate()";
 
     RetainPtr<MTLRenderPassDescriptor> mtlDescriptor;
 
@@ -137,11 +137,11 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer
         && !populateMtlDepthStencilAttachment(mtlDescriptor.get().depthAttachment, *descriptor.depthStencilAttachment, functionName))
         return nullptr;
 
-    PlatformRenderPassEncoderSmartPtr mtlEncoder;
+    RetainPtr<MTLRenderCommandEncoder> mtlEncoder;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    mtlEncoder = retainPtr([buffer.platformCommandBuffer() renderCommandEncoderWithDescriptor:mtlDescriptor.get()]);
+    mtlEncoder = retainPtr([buffer->platformCommandBuffer() renderCommandEncoderWithDescriptor:mtlDescriptor.get()]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -150,11 +150,12 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer
         return nullptr;
     }
 
-    return adoptRef(new GPURenderPassEncoder(WTFMove(mtlEncoder)));
+    return adoptRef(new GPURenderPassEncoder(WTFMove(buffer), WTFMove(mtlEncoder)));
 }
 
-GPURenderPassEncoder::GPURenderPassEncoder(PlatformRenderPassEncoderSmartPtr&& encoder)
-    : m_platformRenderPassEncoder(WTFMove(encoder))
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<GPUCommandBuffer>&& commandBuffer, RetainPtr<MTLRenderCommandEncoder>&& encoder)
+    : GPUProgrammablePassEncoder(WTFMove(commandBuffer))
+    , m_platformRenderPassEncoder(WTFMove(encoder))
 {
 }
 
@@ -177,13 +178,14 @@ void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
     m_pipeline = WTFMove(pipeline);
 }
 
-void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<const GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
+void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
     ASSERT(buffers.size() && offsets.size() == buffers.size());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    auto mtlBuffers = buffers.map([] (const auto& buffer) {
+    auto mtlBuffers = buffers.map([this] (auto& buffer) {
+        commandBuffer().useBuffer(buffer.copyRef());
         return buffer->platformBuffer();
     });
 

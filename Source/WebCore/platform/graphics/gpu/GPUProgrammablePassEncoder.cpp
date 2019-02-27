@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,18 +22,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef unsigned long long u64;
-typedef u32 WebGPUVertexFormatEnum;
+#include "config.h"
+#include "GPUProgrammablePassEncoder.h"
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUVertexAttributeDescriptor {
-    u32 shaderLocation;
-    u32 inputSlot;
-    u64 offset;
-    WebGPUVertexFormatEnum format;
-};
+#if ENABLE(WEBGPU)
+
+#include "GPUCommandBuffer.h"
+
+namespace WebCore {
+
+GPUProgrammablePassEncoder::GPUProgrammablePassEncoder(Ref<GPUCommandBuffer>&& commandBuffer)
+    : m_commandBuffer(WTFMove(commandBuffer))
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

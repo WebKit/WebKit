@@ -1,3 +1,22 @@
+2019-02-27  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Buffer updates part 2: setSubData, GPU/CPU synchronization
+        https://bugs.webkit.org/show_bug.cgi?id=195077
+        <rdar://problem/47805229>
+
+        Reviewed by Dean Jackson.
+
+        Add tests for mapReadAysnc and setSubData calls. Nofity testRunner when done on some drawing tests
+        that may take more time.
+
+        * webgpu/buffer-command-buffer-races-expected.html: Added.
+        * webgpu/buffer-command-buffer-races.html: Added.
+        * webgpu/buffer-resource-triangles.html: Use setSubData.
+        * webgpu/depth-enabled-triangle-strip.html: Ditto.
+        * webgpu/map-read-buffers-expected.txt: Added.
+        * webgpu/map-read-buffers.html: Added.
+        * webgpu/vertex-buffer-triangle-strip.html: Use setSubData.
+
 2019-02-27  Antoine Quint  <graouts@apple.com>
 
         Support Pointer Events on macOS

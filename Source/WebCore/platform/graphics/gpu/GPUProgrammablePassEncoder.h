@@ -40,6 +40,7 @@ OBJC_PROTOCOL(MTLResource);
 namespace WebCore {
 
 class GPUBindGroup;
+class GPUCommandBuffer;
 class GPURenderPipeline;
 
 using PlatformProgrammablePassEncoder = MTLCommandEncoder;
@@ -49,11 +50,14 @@ public:
     virtual ~GPUProgrammablePassEncoder() = default;
 
     void endPass();
-    void setBindGroup(unsigned long, const GPUBindGroup&);
+    void setBindGroup(unsigned long, GPUBindGroup&);
     virtual void setPipeline(Ref<GPURenderPipeline>&&) = 0;
 
 protected:
+    GPUProgrammablePassEncoder(Ref<GPUCommandBuffer>&&);
     virtual PlatformProgrammablePassEncoder* platformPassEncoder() const = 0;
+
+    GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
 
 private:
 #if USE(METAL)
@@ -65,6 +69,7 @@ private:
     virtual void setFragmentBuffer(MTLBuffer *, unsigned long, unsigned long) { }
 #endif // USE(METAL)
 
+    Ref<GPUCommandBuffer> m_commandBuffer;
     bool m_isEncoding { true };
 };
 

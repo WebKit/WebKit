@@ -60,7 +60,7 @@ class GPUDevice : public RefCounted<GPUDevice> {
 public:
     static RefPtr<GPUDevice> create(Optional<GPURequestAdapterOptions>&&);
 
-    RefPtr<GPUBuffer> tryCreateBuffer(GPUBufferDescriptor&&) const;
+    RefPtr<GPUBuffer> tryCreateBuffer(GPUBufferDescriptor&&);
     RefPtr<GPUTexture> tryCreateTexture(GPUTextureDescriptor&&) const;
 
     RefPtr<GPUBindGroupLayout> tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor&&) const;

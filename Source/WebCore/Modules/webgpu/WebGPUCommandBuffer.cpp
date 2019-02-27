@@ -51,7 +51,7 @@ RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURende
     if (!gpuDescriptor)
         return nullptr;
 
-    if (auto encoder = GPURenderPassEncoder::create(m_commandBuffer.get(), WTFMove(*gpuDescriptor)))
+    if (auto encoder = GPURenderPassEncoder::tryCreate(m_commandBuffer.copyRef(), WTFMove(*gpuDescriptor)))
         return WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull());
     return nullptr;
 }

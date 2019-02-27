@@ -86,7 +86,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::asGPUBindGroupDescri
             return WTF::nullopt;
         }
 
-        auto layoutBinding = iterator->value;
+        const auto layoutBinding = iterator->value;
 
         auto bindingResourceVisitor = WTF::makeVisitor([] (RefPtr<WebGPUTextureView> view) -> Optional<GPUBindingResource> {
             // FIXME: Validate binding type with the texture's usage flags.
@@ -94,15 +94,15 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::asGPUBindGroupDescri
                 return WTF::nullopt;
 
             return static_cast<GPUBindingResource>(view->texture());
-        }, [&layoutBinding, functionName] (const WebGPUBufferBinding& binding) -> Optional<GPUBindingResource> {
-            if (!binding.buffer || !binding.buffer->buffer()) {
+        }, [&layoutBinding, functionName] (WebGPUBufferBinding bufferBinding) -> Optional<GPUBindingResource> {
+            if (!bufferBinding.buffer || !bufferBinding.buffer->buffer()) {
                 LOG(WebGPU, "%s: Invalid GPUBufferBinding for binding %lu in GPUBindGroupBindings!", functionName, layoutBinding.binding);
                 return WTF::nullopt;
             }
-            if (!validateBufferBindingType(binding.buffer->buffer().get(), layoutBinding, functionName))
+            if (!validateBufferBindingType(bufferBinding.buffer->buffer().get(), layoutBinding, functionName))
                 return WTF::nullopt;
 
-            return static_cast<GPUBindingResource>(GPUBufferBinding { binding.buffer->buffer().releaseNonNull(), binding.offset, binding.size });
+            return static_cast<GPUBindingResource>(GPUBufferBinding { bufferBinding.buffer->buffer().releaseNonNull(), bufferBinding.offset, bufferBinding.size });
         });
 
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);

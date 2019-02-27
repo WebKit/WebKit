@@ -24,13 +24,13 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef u32 GPUBufferUsageFlags;
+typedef unsigned long long u64;
+typedef unsigned long GPUBufferUsageFlags;
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUBufferDescriptor {
-    u32 size;
+    u64 size;
     GPUBufferUsageFlags usage;
 };

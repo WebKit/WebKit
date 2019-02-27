@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset=utf-8>
+<title>Tests for setSubData and mapReadAsync on a GPUBuffer.</title>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="js/webgpu-functions.js"></script>
+<script>
+async function runTests() {
+    const device =  await getBasicDevice();
+
+    // Basic mapReadAsync functionality
+    promise_test(async () => {
+        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ });
+        assert_true(buffer instanceof WebGPUBuffer, "createBuffer returned a WebGPUBuffer");
+
+        let array = new Float32Array([1, 2, 3, 4]);
+        buffer.setSubData(0, array.buffer);
+
+        let arrayBuffer = await buffer.mapReadAsync();
+        assert_true(arrayBuffer instanceof ArrayBuffer, "first mapReadAsync resolved successfully");
+
+        const readArray = new Float32Array(arrayBuffer);
+        assert_equals(readArray[3], 4, "successfully map-read value set by setSubData");
+
+        buffer.unmap();
+
+        buffer.setSubData(4 * 3, array.slice(0, 1).buffer);
+        let arrayBuffer1 = await buffer.mapReadAsync();
+        const readArray1 = new Float32Array(arrayBuffer1);
+        assert_equals(readArray[3], 1, "successfully setSubData with an offset");
+
+        buffer.unmap();
+
+        const promise = buffer.mapReadAsync(); // This will eventually reject due to buffer.destroy()
+
+        buffer.destroy();
+
+        await promise.then(() => {
+            assert_unreached("Buffer was destroyed!");
+        }, () => {});
+
+    }, "setSubData, mapReadAsync, unmap, and destroy on a GPUBuffer.");
+
+    /* Basic validation */
+    // FIXME: Test invalid combinations of GPUBufferUsage after implementing error handling.
+
+    promise_test(async () => {
+        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_WRITE });
+
+        await buffer.mapReadAsync().then(() => {
+            assert_unreached("Buffer was not created with MAP_READ!");
+        }, () => {});
+    }, "Reject a map read on a buffer not created with MAP_READ usage.");
+
+    /* Extended unmap/destroy and promise settling testing */
+
+    promise_test(async () => {
+        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ });
+
+        buffer.mapReadAsync().then(() => {
+            buffer.unmap();
+        }, () => { 
+            assert_unreached(); 
+        });
+
+        await buffer.mapReadAsync().then(() => {
+            assert_unreached("Map operation was invalid!"); // buffer was still in mapped state during promise creation
+        }, () => {});
+    }, "Reject a map read on a mapped GPUBuffer.");
+
+    promise_test(async () => {
+        const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_READ });
+
+        const promise = buffer.mapReadAsync();
+        buffer.unmap();
+
+        await promise.then(() => {
+            assert_unreached("Buffer was unmapped!"); // buffer was unmapped, which rejects pending promises
+        },() => {});
+    }, "Reject a pending map read if GPUBuffer is unmapped.");
+}
+
+runTests();
+</script>
+</body>

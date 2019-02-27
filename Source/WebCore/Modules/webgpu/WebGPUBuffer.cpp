@@ -42,6 +42,14 @@ WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer)
 {
 }
 
+void WebGPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
+{
+    if (!m_buffer)
+        LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
+    else
+        m_buffer->setSubData(offset, data);
+}
+
 void WebGPUBuffer::mapReadAsync(BufferMappingPromise&& promise)
 {
     rejectOrRegisterPromiseCallback(WTFMove(promise), true);
@@ -54,7 +62,9 @@ void WebGPUBuffer::mapWriteAsync(BufferMappingPromise&& promise)
 
 void WebGPUBuffer::unmap()
 {
-    if (m_buffer)
+    if (!m_buffer)
+        LOG(WebGPU, "GPUBuffer::unmap(): Invalid operation!");
+    else
         m_buffer->unmap();
 }
 
@@ -64,7 +74,6 @@ void WebGPUBuffer::destroy()
         LOG(WebGPU, "GPUBuffer::destroy(): Invalid operation!");
     else {
         m_buffer->destroy();
-        // FIXME: Ensure that GPUBuffer is kept alive by resource bindings if still being used by GPU.
         m_buffer = nullptr;
     }
 }
@@ -78,12 +87,10 @@ void WebGPUBuffer::rejectOrRegisterPromiseCallback(BufferMappingPromise&& promis
     }
 
     m_buffer->registerMappingCallback([promise = WTFMove(promise)] (JSC::ArrayBuffer* arrayBuffer) mutable {
-        if (!arrayBuffer) {
+        if (arrayBuffer)
+            promise.resolve(*arrayBuffer);
+        else
             promise.reject();
-            return;
-        }
-
-        promise.resolve(arrayBuffer);
     }, isRead);
 }
 

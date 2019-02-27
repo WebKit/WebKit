@@ -24,13 +24,13 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
+typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUBufferBinding {
     WebGPUBuffer buffer;
-    u32 offset;
-    u32 size;
+    u64 offset;
+    u64 size;
 };

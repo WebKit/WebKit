@@ -1,0 +1,6 @@
+
+PASS setSubData, mapReadAsync, unmap, and destroy on a GPUBuffer. 
+PASS Reject a map read on a buffer not created with MAP_READ usage. 
+PASS Reject a map read on a mapped GPUBuffer. 
+PASS Reject a pending map read if GPUBuffer is unmapped. 
+

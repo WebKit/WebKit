@@ -1,3 +1,98 @@
+2019-02-27  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Buffer updates part 2: setSubData, GPU/CPU synchronization
+        https://bugs.webkit.org/show_bug.cgi?id=195077
+        <rdar://problem/47805229>
+
+        Reviewed by Dean Jackson.
+
+        Implement GPUBuffer.setSubData and prevent the resolving of mapping promises if the buffer is scheduled to be 
+        used on the GPU, and add handlers to resolve such promises after command buffer execution completes. In addition,
+        update buffer sizes to u64 (unsigned long in C++) as per the updated Web GPU API.
+
+        Tests: webgpu/buffer-command-buffer-races.html
+               webgpu/map-read-buffers.html
+
+        * Modules/webgpu/WebGPUBindGroup.h:
+        (WebCore::WebGPUBindGroup::bindGroup const):
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::WebGPUBindGroupDescriptor::asGPUBindGroupDescriptor const): Rename binding -> bufferBinding to reduce confusion.
+        * Modules/webgpu/WebGPUBuffer.cpp: Small tweaks.
+        (WebCore::WebGPUBuffer::setSubData):
+        (WebCore::WebGPUBuffer::unmap): Correctly fail if buffer is destroyed.
+        (WebCore::WebGPUBuffer::destroy):
+        (WebCore::WebGPUBuffer::rejectOrRegisterPromiseCallback):
+        * Modules/webgpu/WebGPUBuffer.h:
+        (WebCore::WebGPUBuffer::buffer const): Returned buffer is no longer const so that it can be used in completed handler callbacks.
+        * Modules/webgpu/WebGPUBuffer.idl: Enable setSubData.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::beginRenderPass):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::isTransferDst const): Added various state and flag getters.
+        (WebCore::GPUBuffer::isVertex const):
+        (WebCore::GPUBuffer::isUniform const):
+        (WebCore::GPUBuffer::isStorage const):
+        (WebCore::GPUBuffer::isReadOnly const):
+        (WebCore::GPUBuffer::isMappable const):
+        (WebCore::GPUBuffer::isMapWrite const):
+        (WebCore::GPUBuffer::isMapRead const):
+        (WebCore::GPUBuffer::isMapWriteable const):
+        (WebCore::GPUBuffer::isMapReadable const):
+        * platform/graphics/gpu/GPUBufferBinding.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        (WebCore::GPUCommandBuffer::usedBuffers const):
+        (WebCore::GPUCommandBuffer::useBuffer):
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer): Pass Ref of itself for Buffer to request the Queue later, if needed.
+        (WebCore::GPUDevice::tryCreateBuffer const): Deleted.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.cpp: Retain the encoder's commandBuffer to reference its used resource buffers.
+        (WebCore::GPUProgrammablePassEncoder::GPUProgrammablePassEncoder):
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        (WebCore::GPUProgrammablePassEncoder::commandBuffer const):
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferCreate): Move validation out of tryCreate.
+        (WebCore::GPUBuffer::tryCreate): Create both shared and private buffers, depending on usage.
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::~GPUBuffer): Call destroy instead of just unmap.
+        (WebCore::GPUBuffer::state const):
+        (WebCore::GPUBuffer::setSubData): Uses a cached collection of staging MTLBuffers to encode data copies to the implementation MTLBuffer.
+        (WebCore::GPUBuffer::commandBufferCommitted): Register on the GPUBuffer that the provided MTLCommandBuffer uses it, and is about to be committed.
+        (WebCore::GPUBuffer::commandBufferCompleted): MTLCommandBuffer's onCompletedHandler calls this.
+        (WebCore::GPUBuffer::reuseSubDataBuffer): SetSubData's blit command buffers call this to return a staging buffer to the pool.
+        (WebCore::GPUBuffer::registerMappingCallback):
+        (WebCore::GPUBuffer::runMappingCallback):
+        (WebCore::GPUBuffer::unmap):
+        (WebCore::GPUBuffer::destroy):
+        (WebCore::GPUBuffer::tryCreateSharedBuffer): Deleted.
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder):
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit): Ensure submitted buffers are in the correct state, and add completed handlers for synchronization.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::tryCreate):
+        (WebCore::GPURenderPassEncoder::GPURenderPassEncoder): Retain the commandBuffer for later reference.
+        (WebCore::GPURenderPassEncoder::setVertexBuffers): Mark vertex buffers as used before submission.
+        (WebCore::GPURenderPassEncoder::create): Deleted.
+
+        Buffer size updates in the IDL:
+        * Modules/webgpu/GPUBufferDescriptor.idl:
+        * Modules/webgpu/WebGPUBuffer.idl:
+        * Modules/webgpu/WebGPUBufferBinding.idl:
+        * Modules/webgpu/WebGPUCommandBuffer.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPUVertexAttributeDescriptor.idl:
+        * Modules/webgpu/WebGPUVertexInputDescriptor.idl:
+
 2019-02-27  Youenn Fablet  <youenn@apple.com>
 
         Remove LeetCode FetchRequest quirk

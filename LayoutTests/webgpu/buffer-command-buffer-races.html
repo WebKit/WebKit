@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="vertex-buffer-triangle-strip-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct VertexIn
+{
+    float2 xy [[attribute(0)]];
+    float3 rgb [[attribute(1)]];
+};
+
+struct VertexOut
+{
+    float4 position [[position]];
+    float4 color;
+};
+
+vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
+{
+    VertexOut vOut;
+    vOut.position = float4(vertexIn.xy, 0, 1);
+    vOut.color = float4(vertexIn.rgb, 1);
+
+    return vOut;
+}
+
+fragment float4 fragment_main(VertexOut v [[stage_in]])
+{
+    return v.color;
+}
+`
+
+function createInputStateDescriptor() {
+    return {
+        indexFormat: WebGPUIndexFormat.UINT32,
+        attributes: [{
+            shaderLocation: 0,
+            inputSlot: 0,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32
+        }, {
+            shaderLocation: 1,
+            inputSlot: 1,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32_B32
+        }],
+        inputs: [{
+            inputSlot: 0,
+            stride: 4 * 2,
+            stepMode: WebGPUInputStepMode.VERTEX
+        }, {
+            inputSlot: 1,
+            stride: 4 * 3,
+            stepMode: WebGPUInputStepMode.INSTANCE
+        }]
+    }
+}
+
+function createAndSetVertexBuffer(device, vertices) {
+    const floatArray = new Float32Array(vertices);
+    const buffer = device.createBuffer({ size: floatArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    buffer.setSubData(0, floatArray.buffer);
+    return buffer;
+}
+
+function drawAndSubmitCommands(device, pipeline, attachment, vertexBuffer, colorBuffer) {
+    const commandBuffer = device.createCommandBuffer();
+    const encoder = commandBuffer.beginRenderPass({ colorAttachments: [attachment] });
+    encoder.setVertexBuffers(0, [vertexBuffer, colorBuffer], [0, 0]);
+    encoder.setPipeline(pipeline);
+    encoder.draw(3, 1, 0, 0);
+    encoder.endPass();
+    device.getQueue().submit([commandBuffer]);
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    const inputStateDescriptor = createInputStateDescriptor();
+    const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
+
+    const upperLeftBuffer = createAndSetVertexBuffer(device, [-1, 1, -1, -1, 0, 1]);
+    const middleBuffer = createAndSetVertexBuffer(device, [0, 1, -1, -1, 1, -1]);
+    const upperRightBuffer = createAndSetVertexBuffer(device, [0, 1, 1, 1, 1, -1]);
+
+    const green = [0, 1, 0];
+    const blue = [0, 0, 1];
+    const greenArray = new Float32Array(green);
+    const blueArray = new Float32Array(blue);
+
+    const colorBuffer = device.createBuffer({ size: greenArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_WRITE });
+    colorBuffer.setSubData(0, greenArray.buffer);
+
+    const attachment = {
+        attachment: context.getNextTexture().createDefaultTextureView(),
+        loadOp: "load",
+        storeOp: "store",
+        clearColor: { r: 1, g: 0, b: 0, a: 1 }
+    };
+
+    /* mapWriteAsync should resolve after GPU commands are complete, so triangle should be green. */
+    drawAndSubmitCommands(device, pipeline, attachment, upperLeftBuffer, colorBuffer);
+    await colorBuffer.mapWriteAsync().then(ab => {
+        let array = new Float32Array(ab);
+        array.set(blue);
+        colorBuffer.unmap();
+    });
+
+    await colorBuffer.mapWriteAsync().then(ab => {
+        let array = new Float32Array(ab);
+        array.set(green);
+    });
+
+    /* colorBuffer that is still mapped should be not submitted to draw a blue triangle. */
+    drawAndSubmitCommands(device, pipeline, attachment, upperLeftBuffer, colorBuffer);
+
+    /* colorBuffer does not actually contain "green" again until this call. */
+    colorBuffer.unmap();
+
+    /* setSubData immediately after a submit should not affect the preceding draw call. */
+    drawAndSubmitCommands(device, pipeline, attachment, middleBuffer, colorBuffer);
+    colorBuffer.setSubData(0, blueArray.buffer);
+
+    /* destroy right after a submit should not affect the draw call. */
+    colorBuffer.setSubData(0, greenArray.buffer);
+    drawAndSubmitCommands(device, pipeline, attachment, upperRightBuffer, colorBuffer);
+    upperRightBuffer.destroy();
+
+    /* draw command with a destroyed buffer should fail */
+    colorBuffer.destroy();
+    drawAndSubmitCommands(device, pipeline, attachment, middleBuffer, colorBuffer);
+
+    upperLeftBuffer.destroy();
+    middleBuffer.destroy();
+    upperRightBuffer.destroy();
+    
+    context.present();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+test();
+</script>

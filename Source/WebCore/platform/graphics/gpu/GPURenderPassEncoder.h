@@ -49,15 +49,15 @@ using PlatformRenderPassEncoderSmartPtr = RetainPtr<MTLRenderCommandEncoder>;
 
 class GPURenderPassEncoder : public GPUProgrammablePassEncoder {
 public:
-    static RefPtr<GPURenderPassEncoder> create(const GPUCommandBuffer&, GPURenderPassDescriptor&&);
+    static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
     void setPipeline(Ref<GPURenderPipeline>&&) final;
 
-    void setVertexBuffers(unsigned long, Vector<Ref<const GPUBuffer>>&&, Vector<unsigned long long>&&);
+    void setVertexBuffers(unsigned long, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 
 private:
-    GPURenderPassEncoder(PlatformRenderPassEncoderSmartPtr&&);
+    GPURenderPassEncoder(Ref<GPUCommandBuffer>&&, PlatformRenderPassEncoderSmartPtr&&);
     ~GPURenderPassEncoder() { endPass(); } // Ensure that encoding has ended before release.
 
     PlatformProgrammablePassEncoder* platformPassEncoder() const final;
