@@ -1,3 +1,14 @@
+2019-02-27  Alex Christensen  <achristensen@webkit.org>
+
+        Silence log after r242122
+        https://bugs.webkit.org/show_bug.cgi?id=195074
+
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+        m_localStorageDirectory can now be null for ephemeral sessions.
+        This is not a failure to create a directory and needs no log.
+        This fixes the WKWebView.InitializingWebViewWithEphemeralStorageDoesNotLog API test.
+
 2019-02-27  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: WebKit content crash in Base System (because NSAppearance is NULL).

@@ -151,7 +151,8 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
     if (!SQLiteFileSystem::ensureDatabaseDirectoryExists(m_localStorageDirectory)) {
-        LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
+        if (!m_localStorageDirectory.isNull())
+            LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
         return String();
     }
 
