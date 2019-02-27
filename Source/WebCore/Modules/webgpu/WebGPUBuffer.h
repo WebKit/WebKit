@@ -47,7 +47,7 @@ public:
 
     RefPtr<GPUBuffer> buffer() const { return m_buffer; }
 
-    void setSubData(unsigned long, const JSC::ArrayBuffer&);
+    void setSubData(unsigned long long, const JSC::ArrayBuffer&);
     using BufferMappingPromise = DOMPromiseDeferred<IDLInterface<JSC::ArrayBuffer>>;
     void mapReadAsync(BufferMappingPromise&&);
     void mapWriteAsync(BufferMappingPromise&&);

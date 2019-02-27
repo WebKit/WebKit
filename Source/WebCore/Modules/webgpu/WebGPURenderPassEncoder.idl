@@ -32,7 +32,6 @@ typedef unsigned long long u64;
     EnabledAtRuntime=WebGPU,
     JSGenerateToJSObject
 ] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
-    // FIXME: (<rdar://problem/47717832>) Last argument should be generated to Vector<unsigned long>, but bindings generates Vector<unsigned long long>.
     void setVertexBuffers(u32 startSlot, sequence<WebGPUBuffer> buffers, sequence<u64> offsets);
 
     void draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);

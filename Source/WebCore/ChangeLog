@@ -1,3 +1,17 @@
+2019-02-27  Justin Fan  <justin_fan@apple.com>
+        Fix build errors after Web GPU buffer updates changed some IDL fields from unsigned long to unsigned long long.
+
+        Unreviewed build fix.
+
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::setSubData):
+        * Modules/webgpu/WebGPUBuffer.h:
+        * Modules/webgpu/WebGPUBufferBinding.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * platform/graphics/gpu/GPUBufferBinding.h:
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h:
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+
 2019-02-27  John Wilander  <wilander@apple.com>
 
         Adopt WebCore::RegistrableDomain in WebCore::ResourceLoadStatistics and WebKit::NetworkProcessProxy

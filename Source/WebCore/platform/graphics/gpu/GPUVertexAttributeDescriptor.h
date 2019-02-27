@@ -46,7 +46,7 @@ public:
 struct GPUVertexAttributeDescriptor {
     unsigned long shaderLocation;
     unsigned long inputSlot;
-    unsigned long offset;
+    unsigned long long offset;
     GPUVertexFormatEnum format;
 };
 

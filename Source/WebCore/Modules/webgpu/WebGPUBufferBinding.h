@@ -34,8 +34,8 @@ namespace WebCore {
 
 struct WebGPUBufferBinding {
     RefPtr<WebGPUBuffer> buffer;
-    unsigned long offset;
-    unsigned long size;
+    unsigned long long offset;
+    unsigned long long size;
 };
 
 } // namespace WebCore

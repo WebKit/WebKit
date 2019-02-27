@@ -42,7 +42,7 @@ WebGPUBuffer::WebGPUBuffer(RefPtr<GPUBuffer>&& buffer)
 {
 }
 
-void WebGPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
+void WebGPUBuffer::setSubData(unsigned long long offset, const JSC::ArrayBuffer& data)
 {
     if (!m_buffer)
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
