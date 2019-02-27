@@ -1,3 +1,15 @@
+2019-02-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Disable permissive call logging in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=194061
+        <rdar://problem/47686253>
+
+        Reviewed by Brent Fulgham.
+
+        Strict call filtering should be reenabled.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-02-27  Chris Dumez  <cdumez@apple.com>
 
         [HTTPSUpgrade] Use open source database until the feature is ready

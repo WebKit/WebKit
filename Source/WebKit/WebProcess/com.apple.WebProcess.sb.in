@@ -837,6 +837,7 @@
 #endif // PLATFORM(MAC)
 
 (when (defined? 'syscall-unix)
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
         (syscall-number SYS_exit)
         (syscall-number SYS_read)
@@ -967,6 +968,7 @@
         (syscall-number SYS_ulock_wait)
         (syscall-number SYS_ulock_wake)
         (syscall-number SYS_work_interval_ctl)
+        (syscall-number SYS_kdebug_typefilter)
     )
 )
 
