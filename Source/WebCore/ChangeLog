@@ -1,3 +1,18 @@
+2019-02-27  Ulrich Pflueger  <up@nanocosmos.de>
+
+        [MSE] SourceBuffer sample time increment vs. last frame duration check is broken
+        https://bugs.webkit.org/show_bug.cgi?id=194747
+        <rdar://problem/48148469>
+
+        Reviewed by Jer Noble.
+
+        Prevent unintended frame drops by including last frame duration in discontinuity check. 
+
+        Test: media/media-source/media-source-append-variable-frame-lengths-with-matching-durations.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2019-02-27  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION: WebKit content crash in Base System (because NSAppearance is NULL).

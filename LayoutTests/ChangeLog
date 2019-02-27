@@ -1,3 +1,14 @@
+2019-02-27  Ulrich Pflueger  <up@nanocosmos.de>
+
+        [MSE] SourceBuffer sample time increment vs. last frame duration check is broken
+        https://bugs.webkit.org/show_bug.cgi?id=194747
+        <rdar://problem/48148469>
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/media-source-append-variable-frame-lengths-with-matching-durations-expected.txt: Added.
+        * media/media-source/media-source-append-variable-frame-lengths-with-matching-durations.html: Added.
+
 2019-02-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove conditional compile guard for InsertIntoTextNodeCommand::doReapply
