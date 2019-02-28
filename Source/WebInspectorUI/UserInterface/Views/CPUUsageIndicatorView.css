@@ -34,7 +34,16 @@
     flex-shrink: 0;
     width: 150px;
     -webkit-padding-start: 15px;
-    -webkit-border-end: 1px solid var(--border-color);
+    
+    --cpu-usage-indicator-view-details-border-end: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .cpu-usage-indicator-view > .details {
+    border-right: var(--cpu-usage-indicator-view-details-border-end);
+}
+
+body[dir=rtl] .cpu-usage-indicator-view > .details {
+    border-left: var(--cpu-usage-indicator-view-details-border-end);
 }
 
 body[dir=rtl] .cpu-usage-indicator-view > .graph {

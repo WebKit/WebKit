@@ -1,5 +1,29 @@
 2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Revert -webkit-border-end changes that are unreliable
+        https://bugs.webkit.org/show_bug.cgi?id=195149
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CPUUsageIndicatorView.css:
+        (.cpu-usage-indicator-view > .details):
+        (body[dir=ltr] .cpu-usage-indicator-view > .details):
+        (body[dir=rtl] .cpu-usage-indicator-view > .details):
+        * UserInterface/Views/CPUUsageStackedView.css:
+        (.cpu-usage-stacked-view > .details):
+        (body[dir=ltr] .cpu-usage-stacked-view > .details):
+        (body[dir=rtl] .cpu-usage-stacked-view > .details):
+        * UserInterface/Views/CPUUsageView.css:
+        (.cpu-usage-view > .details):
+        (body[dir=ltr] .cpu-usage-view > .details):
+        (body[dir=rtl] .cpu-usage-view > .details):
+        * UserInterface/Views/MemoryCategoryView.css:
+        (.memory-category-view > .details):
+        (body[dir=ltr] .memory-category-view > .details):
+        (body[dir=rtl] .memory-category-view > .details):
+
+2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Cleanup some Chart code
         https://bugs.webkit.org/show_bug.cgi?id=195147
 

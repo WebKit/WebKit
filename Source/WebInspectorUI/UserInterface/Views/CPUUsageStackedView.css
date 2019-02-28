@@ -40,7 +40,16 @@
     color: var(--text-color-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-border-end: 1px solid var(--border-color);
+
+    --cpu-usage-stacked-view-details-border-end: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .cpu-usage-stacked-view > .details {
+    border-right: var(--cpu-usage-stacked-view-details-border-end);
+}
+
+body[dir=rtl] .cpu-usage-stacked-view > .details {
+    border-left: var(--cpu-usage-stacked-view-details-border-end);
 }
 
 .cpu-usage-stacked-view > .details > .name {
