@@ -66,6 +66,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
 
 Ref<WebsiteDataStore> WebsiteDataStore::createLegacy(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration)
 {
+    configuration->setIndexedDBDatabaseDirectory(legacyDefaultIndexedDBDatabaseDirectory());
     return adoptRef(*new WebsiteDataStore(WTFMove(configuration), PAL::SessionID::defaultSessionID()));
 }
 
@@ -86,6 +87,11 @@ WebsiteDataStore::~WebsiteDataStore()
 HTTPCookieStore& WebsiteDataStore::httpCookieStore()
 {
     return m_websiteDataStore->cookieStore();
+}
+
+WTF::String WebsiteDataStore:: indexedDBDatabaseDirectory()
+{
+    return m_websiteDataStore->configuration().indexedDBDatabaseDirectory();
 }
 
 bool WebsiteDataStore::isPersistent()

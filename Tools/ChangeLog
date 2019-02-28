@@ -1,3 +1,13 @@
+2019-02-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop using legacy IDB path by default when creating WebProcessPool from websiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=194958
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBUserDelete.mm:
+        (TEST):
+
 2019-02-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Update method to save build to handle builder_display_name

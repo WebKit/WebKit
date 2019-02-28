@@ -31,9 +31,11 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -79,4 +81,20 @@ TEST(IndexedDB, IndexedDBUserDelete)
     EXPECT_WK_STREQ(@"Continue", string.get());
 }
 
+TEST(IndexedDB, IndexedDBUserDeleteBeforeLoading)
+{
+    NSURL *idbURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
+    NSURL *fileIDBURL = [[idbURL URLByAppendingPathComponent:@"file__0"] URLByAppendingPathComponent:@"IndexedDBUserDeleteBeforeLoading"];
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    [[NSFileManager defaultManager] createDirectoryAtURL:fileIDBURL withIntermediateDirectories:YES attributes:nil error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:fileURL toURL:[fileIDBURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBURL.path]);
+
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBURL.path]);
+        readyToContinue = true;
+    }];
+    readyToContinue = false;
+    TestWebKitAPI::Util::run(&readyToContinue);
+}
 #endif

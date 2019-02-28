@@ -219,6 +219,7 @@ static Ref<WebsiteDataStoreConfiguration> legacyWebsiteDataStoreConfiguration(AP
     configuration->setApplicationCacheFlatFileSubdirectoryName(String(processPoolConfiguration.applicationCacheFlatFileSubdirectoryName()));
     configuration->setMediaCacheDirectory(String(processPoolConfiguration.mediaCacheDirectory()));
     configuration->setMediaKeysStorageDirectory(String(processPoolConfiguration.mediaKeysStorageDirectory()));
+    configuration->setIndexedDBDatabaseDirectory(String(processPoolConfiguration.indexedDBDatabaseDirectory()));
     configuration->setResourceLoadStatisticsDirectory(String(processPoolConfiguration.resourceLoadStatisticsDirectory()));
     configuration->setNetworkCacheDirectory(String(processPoolConfiguration.diskCacheDirectory()));
     configuration->setJavaScriptConfigurationDirectory(String(processPoolConfiguration.javaScriptConfigurationDirectory()));

@@ -368,6 +368,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return (__bridge NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
 }
 
+- (NSURL *)_indexedDBDatabaseDirectory
+{
+    return [NSURL fileURLWithPath:_websiteDataStore->indexedDBDatabaseDirectory() isDirectory:YES];
+}
+
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

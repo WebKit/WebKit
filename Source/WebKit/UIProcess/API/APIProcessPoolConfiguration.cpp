@@ -54,7 +54,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataSto
     configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName();
     configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory();
     configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory();
-    configuration->m_indexedDBDatabaseDirectory = WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory();
+    configuration->m_indexedDBDatabaseDirectory = legacyConfiguration.indexedDBDatabaseDirectory();
     configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory();
     configuration->m_deviceIdHashSaltsStorageDirectory = legacyConfiguration.deviceIdHashSaltsStorageDirectory();
     configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory();

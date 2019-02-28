@@ -58,6 +58,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @property (nonatomic, setter=_setAllowsCellularAccess:) BOOL _allowsCellularAccess WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 @property (nonatomic, setter=_setProxyConfiguration:) NSDictionary *_proxyConfiguration WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
+@property (nonatomic, readonly) NSURL *_indexedDBDatabaseDirectory;
+
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_setResourceLoadStatisticsTestingCallback:(nullable void (^)(WKWebsiteDataStore *, NSString *))callback WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_getAllStorageAccessEntriesFor:(WKWebView *)webView completionHandler:(void (^)(NSArray<NSString *> *domains))completionHandler WK_API_AVAILABLE(macosx(10.14), ios(12.0));

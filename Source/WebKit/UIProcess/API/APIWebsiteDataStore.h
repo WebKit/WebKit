@@ -54,6 +54,8 @@ public:
     WebKit::WebsiteDataStore& websiteDataStore() { return m_websiteDataStore.get(); }
     HTTPCookieStore& httpCookieStore();
 
+    WTF::String indexedDBDatabaseDirectory();
+
     static WTF::String defaultApplicationCacheDirectory();
     static WTF::String defaultCacheStorageDirectory();
     static WTF::String defaultNetworkCacheDirectory();
