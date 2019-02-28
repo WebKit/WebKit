@@ -1,3 +1,18 @@
+2019-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Locale names can be nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=195171
+        <rdar://problem/48262376>
+
+        Reviewed by Dean Jackson.
+
+        Nullptr can't be used in keys to HashMaps, so take an early out in this case.
+
+        This is a partial revert of r241288.
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontDescription::platformResolveGenericFamily):
+
 2019-02-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Enable Web GPU only on 64-bit
