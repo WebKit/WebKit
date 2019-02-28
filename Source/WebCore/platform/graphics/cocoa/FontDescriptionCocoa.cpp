@@ -165,7 +165,7 @@ static void languageChanged(void*)
 
 AtomicString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomicString& locale, const AtomicString& familyName)
 {
-    if (script == USCRIPT_COMMON)
+    if (locale.isNull() || script == USCRIPT_COMMON)
         return nullAtom();
 
     static std::once_flag onceFlag;
