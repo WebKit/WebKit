@@ -1,3 +1,15 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        fast/scrolling/ios/hit-testing-iframe-002.html always fails
+        https://bugs.webkit.org/show_bug.cgi?id=195108
+
+        Reviewed by Frédéric Wang.
+
+        Errant ; in this.style.background='green;'
+
+        * fast/scrolling/ios/hit-testing-iframe-002.html:
+        * platform/ios-wk2/TestExpectations:
+
 2019-02-27  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK test gardening
