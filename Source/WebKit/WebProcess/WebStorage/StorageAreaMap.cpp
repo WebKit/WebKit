@@ -84,7 +84,7 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCo
         break;
 
     case StorageType::EphemeralLocal:
-        // The UI process is not involved for EphemeralLocal storages.
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -139,7 +139,7 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::SetItem(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::SetItem(m_securityOrigin->data(), m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, value, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key)
@@ -155,7 +155,7 @@ void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* so
 
     m_pendingValueChanges.add(key);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::RemoveItem(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, sourceFrame->document()->url()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::RemoveItem(m_securityOrigin->data(), m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, key, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea)
@@ -164,7 +164,7 @@ void StorageAreaMap::clear(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceA
 
     m_hasPendingClear = true;
     m_storageMap = StorageMap::create(m_quotaInBytes);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::Clear(m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, sourceFrame->document()->url()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::StorageManager::Clear(m_securityOrigin->data(), m_storageMapID, sourceArea->storageAreaID(), m_currentSeed, sourceFrame->document()->url()), 0);
 }
 
 bool StorageAreaMap::contains(const String& key)
@@ -193,7 +193,7 @@ void StorageAreaMap::loadValuesIfNeeded()
     // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
     // (This flag does not yet exist). Since loadValuesIfNeeded() ends up being called from within JavaScript code, processing incoming synchronous messages
     // could lead to weird reentrency bugs otherwise.
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::StorageManager::GetValues(m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::StorageManager::GetValues(m_securityOrigin->data(), m_storageMapID, m_currentSeed), Messages::StorageManager::GetValues::Reply(values), 0);
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(values);

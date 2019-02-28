@@ -48,8 +48,6 @@ LocalStorageDatabaseTracker::LocalStorageDatabaseTracker(Ref<WorkQueue>&& queue,
     : m_queue(WTFMove(queue))
     , m_localStorageDirectory(localStorageDirectory.isolatedCopy())
 {
-    ASSERT(!m_localStorageDirectory.isEmpty());
-
     // Make sure the encoding is initialized before we start dispatching things to the queue.
     UTF8Encoding();
 
@@ -153,7 +151,8 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
 String LocalStorageDatabaseTracker::databasePath(const String& filename) const
 {
     if (!SQLiteFileSystem::ensureDatabaseDirectoryExists(m_localStorageDirectory)) {
-        LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
+        if (!m_localStorageDirectory.isNull())
+            LOG_ERROR("Unable to create LocalStorage database path %s", m_localStorageDirectory.utf8().data());
         return String();
     }
 

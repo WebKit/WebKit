@@ -59,8 +59,6 @@ private:
     Ref<WebCore::StorageArea> storageArea(const WebCore::SecurityOriginData&) override;
     Ref<WebCore::StorageNamespace> copy(WebCore::Page*) override;
 
-    Ref<WebCore::StorageArea> ephemeralLocalStorageArea(const WebCore::SecurityOriginData&);
-
     const WebCore::StorageType m_storageType;
     const uint64_t m_storageNamespaceID;
 
@@ -70,9 +68,6 @@ private:
     const unsigned m_quotaInBytes;
 
     HashMap<WebCore::SecurityOriginData, StorageAreaMap*> m_storageAreaMaps;
-
-    class EphemeralStorageArea;
-    HashMap<WebCore::SecurityOriginData, RefPtr<EphemeralStorageArea>> m_ephemeralLocalStorageAreas;
 };
 
 } // namespace WebKit

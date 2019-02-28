@@ -1051,8 +1051,10 @@ static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColo
 #endif
 
 #if PLATFORM(MAC)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (supportsSubpixelAntialiasedFonts && acceleratesDrawing)
         return kCAContentsFormatRGBA8ColorRGBA8LinearGlyphMask;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(supportsSubpixelAntialiasedFonts);
     UNUSED_PARAM(acceleratesDrawing);
