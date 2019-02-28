@@ -40,8 +40,8 @@ public:
 
 protected:
     // DrawingArea
-    void setNeedsDisplay() override;
-    void setNeedsDisplayInRect(const WebCore::IntRect&) override;
+    void setNeedsDisplay() override { };
+    void setNeedsDisplayInRect(const WebCore::IntRect&) override { };
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
@@ -128,9 +128,9 @@ protected:
     RunLoop::Timer<AcceleratedDrawingArea> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
-    RefPtr<LayerTreeHost> m_layerTreeHost;
+    std::unique_ptr<LayerTreeHost> m_layerTreeHost;
 
-    RefPtr<LayerTreeHost> m_previousLayerTreeHost;
+    std::unique_ptr<LayerTreeHost> m_previousLayerTreeHost;
     RunLoop::Timer<AcceleratedDrawingArea> m_discardPreviousLayerTreeHostTimer;
 };
 

@@ -61,7 +61,6 @@ void DrawingAreaImpl::setNeedsDisplay()
 {
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
-        AcceleratedDrawingArea::setNeedsDisplay();
         return;
     }
 
@@ -72,7 +71,6 @@ void DrawingAreaImpl::setNeedsDisplayInRect(const IntRect& rect)
 {
     if (m_layerTreeHost) {
         ASSERT(m_dirtyRegion.isEmpty());
-        AcceleratedDrawingArea::setNeedsDisplayInRect(rect);
         return;
     }
 

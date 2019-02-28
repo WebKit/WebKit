@@ -66,24 +66,6 @@ AcceleratedDrawingArea::AcceleratedDrawingArea(WebPage& webPage, const WebPageCr
     m_webPage.corePage()->setDeviceScaleFactor(parameters.deviceScaleFactor);
 }
 
-void AcceleratedDrawingArea::setNeedsDisplay()
-{
-    if (!m_isPaintingEnabled)
-        return;
-
-    if (m_layerTreeHost)
-        m_layerTreeHost->setNonCompositedContentsNeedDisplay();
-}
-
-void AcceleratedDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
-{
-    if (!m_isPaintingEnabled)
-        return;
-
-    if (m_layerTreeHost)
-        m_layerTreeHost->setNonCompositedContentsNeedDisplayInRect(rect);
-}
-
 void AcceleratedDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     if (!m_isPaintingEnabled)
@@ -343,19 +325,19 @@ void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
 
     ASSERT(!m_layerTreeHost);
     if (m_previousLayerTreeHost) {
-#if USE(COORDINATED_GRAPHICS)
         m_layerTreeHost = WTFMove(m_previousLayerTreeHost);
         m_layerTreeHost->setIsDiscardable(false);
         if (!m_isPaintingSuspended)
             m_layerTreeHost->resumeRendering();
         if (!m_layerTreeStateIsFrozen)
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
-#else
-        ASSERT_NOT_REACHED();
-#endif
     } else {
-        m_layerTreeHost = LayerTreeHost::create(m_webPage);
-
+#if USE(COORDINATED_GRAPHICS_THREADED)
+        m_layerTreeHost = std::make_unique<LayerTreeHost>(m_webPage);
+#else
+        m_layerTreeHost = nullptr;
+#endif
+        
         if (!m_layerTreeHost)
             return;
 
@@ -393,16 +375,12 @@ void AcceleratedDrawingArea::exitAcceleratedCompositingModeNow()
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
-#if USE(COORDINATED_GRAPHICS)
     ASSERT(m_layerTreeHost);
     m_previousLayerTreeHost = WTFMove(m_layerTreeHost);
     m_previousLayerTreeHost->setIsDiscardable(true);
     m_previousLayerTreeHost->pauseRendering();
     m_previousLayerTreeHost->setLayerFlushSchedulingEnabled(false);
     m_discardPreviousLayerTreeHostTimer.startOneShot(5_s);
-#else
-    m_layerTreeHost = nullptr;
-#endif
 }
 
 void AcceleratedDrawingArea::discardPreviousLayerTreeHost()

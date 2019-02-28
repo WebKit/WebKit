@@ -81,11 +81,9 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/AcceleratedDrawingArea.cpp
     WebProcess/WebPage/AcceleratedSurface.cpp
     WebProcess/WebPage/DrawingAreaImpl.cpp
-    WebProcess/WebPage/LayerTreeHost.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
-    WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp
-    WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
     WebProcess/WebPage/win/WebInspectorUIWin.cpp
     WebProcess/WebPage/win/WebPageWin.cpp

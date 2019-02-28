@@ -1,3 +1,64 @@
+2019-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CoordinatedGraphics] Unify all LayerTreeHost classes
+        https://bugs.webkit.org/show_bug.cgi?id=195094
+
+        Reviewed by Žan Doberšek.
+
+        There's no reason to have 3 classes, since currently LayerTreeHost is only used by coordinated graphics based
+        ports.
+
+        * PlatformWin.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode):
+        (WebKit::AcceleratedDrawingArea::exitAcceleratedCompositingModeNow):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp: Removed.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h: Removed.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp: Renamed from Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp.
+        (WebKit::LayerTreeHost::LayerTreeHost):
+        (WebKit::LayerTreeHost::~LayerTreeHost):
+        (WebKit::LayerTreeHost::setLayerFlushSchedulingEnabled):
+        (WebKit::LayerTreeHost::scheduleLayerFlush):
+        (WebKit::LayerTreeHost::cancelPendingLayerFlush):
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+        (WebKit::LayerTreeHost::setRootCompositingLayer):
+        (WebKit::LayerTreeHost::setViewOverlayRootLayer):
+        (WebKit::LayerTreeHost::invalidate):
+        (WebKit::LayerTreeHost::scrollNonCompositedContents):
+        (WebKit::LayerTreeHost::forceRepaint):
+        (WebKit::LayerTreeHost::forceRepaintAsync):
+        (WebKit::LayerTreeHost::sizeDidChange):
+        (WebKit::LayerTreeHost::pauseRendering):
+        (WebKit::LayerTreeHost::resumeRendering):
+        (WebKit::LayerTreeHost::graphicsLayerFactory):
+        (WebKit::LayerTreeHost::contentsSizeChanged):
+        (WebKit::LayerTreeHost::didChangeViewportAttributes):
+        (WebKit::LayerTreeHost::didChangeViewport):
+        (WebKit::LayerTreeHost::setIsDiscardable):
+        (WebKit::LayerTreeHost::setNativeSurfaceHandleForCompositing):
+        (WebKit::LayerTreeHost::deviceOrPageScaleFactorChanged):
+        (WebKit::LayerTreeHost::createDisplayRefreshMonitor):
+        (WebKit::LayerTreeHost::didFlushRootLayer):
+        (WebKit::LayerTreeHost::commitSceneState):
+        (WebKit::LayerTreeHost::frameComplete):
+        (WebKit::LayerTreeHost::nativeSurfaceHandleForCompositing):
+        (WebKit::LayerTreeHost::didDestroyGLContext):
+        (WebKit::LayerTreeHost::willRenderFrame):
+        (WebKit::LayerTreeHost::didRenderFrame):
+        (WebKit::LayerTreeHost::requestDisplayRefreshMonitorUpdate):
+        (WebKit::LayerTreeHost::handleDisplayRefreshMonitorUpdate):
+        (WebKit::LayerTreeHost::renderNextFrame):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h: Renamed from Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setNeedsDisplayInRect):
+        * WebProcess/WebPage/LayerTreeHost.cpp: Removed.
+        * WebProcess/WebPage/LayerTreeHost.h: Removed.
+        * WebPage/win/LayerTreeHost.h: Added.
+
 2019-02-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Enable Web GPU only on 64-bit
