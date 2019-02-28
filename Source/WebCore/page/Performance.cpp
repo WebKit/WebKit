@@ -214,11 +214,15 @@ void Performance::resourceTimingBufferFullTimerFired()
     ASSERT(scriptExecutionContext());
 
     while (!m_backupResourceTimingBuffer.isEmpty()) {
+        auto beforeCount = m_backupResourceTimingBuffer.size();
+
         auto backupBuffer = WTFMove(m_backupResourceTimingBuffer);
         ASSERT(m_backupResourceTimingBuffer.isEmpty());
 
-        m_resourceTimingBufferFullFlag = true;
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        if (isResourceTimingBufferFull()) {
+            m_resourceTimingBufferFullFlag = true;
+            dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        }
 
         if (m_resourceTimingBufferFullFlag) {
             for (auto& entry : backupBuffer)
@@ -240,6 +244,13 @@ void Performance::resourceTimingBufferFullTimerFired()
                 queueEntry(*entry);
             } else
                 m_backupResourceTimingBuffer.append(entry.copyRef());
+        }
+
+        auto afterCount = m_backupResourceTimingBuffer.size();
+
+        if (beforeCount <= afterCount) {
+            m_backupResourceTimingBuffer.clear();
+            break;
         }
     }
     m_waitingForBackupBufferToBeProcessed = false;

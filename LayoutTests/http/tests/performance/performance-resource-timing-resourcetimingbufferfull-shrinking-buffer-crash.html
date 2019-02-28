@@ -42,12 +42,11 @@ performance.onresourcetimingbufferfull = () => {
         shouldBe('resourcesAfterShrinkingBuffer = performance.getEntriesByType("resource"); resourcesAfterShrinkingBuffer.length', '2');
         shouldBe('resourcesAfterShrinkingBuffer[0]', 'originalResources[0]');
         shouldBe('resourcesAfterShrinkingBuffer[1]', 'originalResources[1]');
-    } else if (resourcetimingbufferfullEventCount == 2) {
         shouldBe('performance.clearResourceTimings(); performance.getEntriesByType("resource").length', '0');
         setTimeout(() => {
             debug('');
             debug('After resourcetimingbufferfull');
-            shouldBe('resourcetimingbufferfullEventCount', '2');
+            shouldBe('resourcetimingbufferfullEventCount', '1');
             shouldBe('resourcesAfterClearing = performance.getEntriesByType("resource"); resourcesAfterClearing.length', '1');
             shouldBeEqualToString('resourcesAfterClearing[0].initiatorType', 'fetch');
             shouldBeEqualToString('new URL(resourcesAfterClearing[0].name).search', '?resource=2');

@@ -1,3 +1,15 @@
+2019-02-28  Charles Vazac  <cvazac@akamai.com>
+
+        Fix Resource Timing buffer edge cases for WPT
+        https://bugs.webkit.org/show_bug.cgi?id=193213
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/buffer-full-add-after-full-event.html:
+        * web-platform-tests/resource-timing/buffer-full-add-entries-during-callback-that-drop-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-add-then-clear-expected.txt:
+        * web-platform-tests/resource-timing/buffer-full-then-increased-expected.txt:
+
 2019-02-26  Youenn Fablet  <youenn@apple.com>
 
         Move service worker response validation from the service worker client to the service worker itself

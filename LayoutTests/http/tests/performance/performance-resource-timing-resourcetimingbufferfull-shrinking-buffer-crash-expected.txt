@@ -19,12 +19,10 @@ performance.setResourceTimingBufferSize(1)
 PASS resourcesAfterShrinkingBuffer = performance.getEntriesByType("resource"); resourcesAfterShrinkingBuffer.length is 2
 PASS resourcesAfterShrinkingBuffer[0] is originalResources[0]
 PASS resourcesAfterShrinkingBuffer[1] is originalResources[1]
-
-Inside resourcetimingbufferfull 2
 PASS performance.clearResourceTimings(); performance.getEntriesByType("resource").length is 0
 
 After resourcetimingbufferfull
-PASS resourcetimingbufferfullEventCount is 2
+PASS resourcetimingbufferfullEventCount is 1
 PASS resourcesAfterClearing = performance.getEntriesByType("resource"); resourcesAfterClearing.length is 1
 PASS resourcesAfterClearing[0].initiatorType is "fetch"
 PASS new URL(resourcesAfterClearing[0].name).search is "?resource=2"

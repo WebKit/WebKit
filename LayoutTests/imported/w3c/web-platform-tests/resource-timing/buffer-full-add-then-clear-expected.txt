@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: line 2659: Error: assert_unreached: resourcetimingbufferfull should not fire Reached unreachable code
 
-Harness Error (FAIL), message = Error: assert_unreached: resourcetimingbufferfull should not fire Reached unreachable code
-
-FAIL Test that if the buffer is cleared after entries were added to the secondary buffer, those entries make it into the primary one assert_equals: the last 3 resources should be in the buffer, since the first one was cleared expected 3 but got 0
+PASS Test that if the buffer is cleared after entries were added to the secondary buffer, those entries make it into the primary one 
 

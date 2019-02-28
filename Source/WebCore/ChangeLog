@@ -1,3 +1,18 @@
+2019-02-28  Charles Vazac  <cvazac@akamai.com>
+
+        Fix Resource Timing buffer edge cases for WPT
+        https://bugs.webkit.org/show_bug.cgi?id=193213
+
+        Reviewed by Youenn Fablet.
+
+        Test coverage by LayoutTests/imported/w3c/web-platform-tests/resource-timing/buffer*.html
+
+        * page/Performance.cpp:
+        (WebCore::Performance::resourceTimingBufferFullTimerFired): Only dispatch the
+        resourcetimingbufferfull event if the buffer is still full (as it may have been cleared or
+        expanded). Also, avoid infinite loops if we aren't able to decrease the number of entries in
+        the secondary buffer.
+
 2019-02-28  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] HTTP Body is missing with redirection.
