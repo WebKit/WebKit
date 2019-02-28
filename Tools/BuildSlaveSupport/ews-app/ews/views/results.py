@@ -59,7 +59,8 @@ class Results(View):
         if not patch_id or patch_id < 1:
             return HttpResponse("Invalid patch id: {}.".format(patch_id))
 
-        Build.save_build(patch_id=int(patch_id), build_id=data['build_id'], builder_id=data['builder_id'], number=data['number'], result=data['result'],
+        Build.save_build(patch_id=int(patch_id), build_id=data['build_id'], builder_id=data['builder_id'], builder_name=data['builder_name'],
+                   builder_display_name=data['builder_display_name'], number=data['number'], result=data['result'],
                    state_string=data['state_string'], started_at=data['started_at'], complete_at=data['complete_at'])
         return HttpResponse("Saved data for patch: {}.\n".format(patch_id))
 
@@ -76,7 +77,8 @@ class Results(View):
             _log.error("Invalid data type: {}".format(data['type']))
             return False
 
-        required_keys = {u'ews-build': ['patch_id', 'build_id', 'builder_id', 'number', 'result', 'state_string', 'started_at', 'complete_at'],
+        required_keys = {u'ews-build': ['patch_id', 'build_id', 'builder_id', 'builder_name', 'builder_display_name',
+                                           'number', 'result', 'state_string', 'started_at', 'complete_at'],
                          u'ews-step': ['step_id', 'build_id', 'result', 'state_string', 'started_at', 'complete_at']}
 
         for key in required_keys.get(data.get('type')):

@@ -1,3 +1,13 @@
+2019-02-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Update method to save build to handle builder_display_name
+        https://bugs.webkit.org/show_bug.cgi?id=195047
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py: Updated to handle builder_name and builder_display_name.
+        * BuildSlaveSupport/ews-app/ews/views/results.py: Ditto.
+
 2019-02-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Enable Web GPU only on 64-bit

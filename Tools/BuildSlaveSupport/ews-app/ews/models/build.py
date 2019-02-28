@@ -50,22 +50,22 @@ class Build(models.Model):
         return str(self.build_id)
 
     @classmethod
-    def save_build(cls, patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at=None):
+    def save_build(cls, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None):
         if not Build.is_valid_result(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
             return ERR_UNEXPECTED
 
         build = Build.get_existing_build(build_id)
         if build:
             # If the build data is already present in database, update it, e.g.: build complete event.
-            return Build.update_build(build, patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at)
+            return Build.update_build(build, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
         # Save the new build data, e.g.: build start event.
-        Build(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at).save()
+        Build(patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
         _log.info('Saved build {} in database for patch_id: {}'.format(build_id, patch_id))
         return SUCCESS
 
     @classmethod
-    def update_build(cls, build, patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
+    def update_build(cls, build, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
         if build.patch_id != patch_id:
             _log.error('patch_id {} does not match with patch_id {}. Ignoring new data.'.format(build.patch_id, patch_id))
             return ERR_UNEXPECTED
