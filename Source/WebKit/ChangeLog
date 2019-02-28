@@ -1,3 +1,14 @@
+2019-02-28  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Enable Web GPU only on 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=195139
+
+        Because Metal is only supported on 64 bit apps.
+
+        Unreviewed build fix.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
