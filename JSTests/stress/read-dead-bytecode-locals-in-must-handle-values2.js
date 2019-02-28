@@ -10,7 +10,7 @@ function bar(c) {
 function foo() {
     var i = 0;
     if (''.match(/^/)) {
-        while(i < 1e8) {
+        while(i < 1e5) {
             bar(2);
             ++i;
         }
