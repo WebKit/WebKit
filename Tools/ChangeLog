@@ -1,3 +1,14 @@
+2019-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Flaky API Test: TestWebKitAPI.ServiceWorkers.ServiceWorkerAndCacheStorageSpecificDirectories
+        https://bugs.webkit.org/show_bug.cgi?id=194959
+
+        Reviewed by Chris Dumez.
+
+        Spin loop until getting the condition to remove flakiness.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2019-02-27  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Buildbot should include builder_display_name in the build events

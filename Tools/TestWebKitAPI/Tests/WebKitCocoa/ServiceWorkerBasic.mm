@@ -1372,7 +1372,8 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE([websiteDataStore _hasRegisteredServiceWorker]);
+    while (![websiteDataStore _hasRegisteredServiceWorker])
+        TestWebKitAPI::Util::spinRunLoop(0.1);
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageGrabbingCacheStorageDirectory.html"]];
