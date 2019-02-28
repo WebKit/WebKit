@@ -1,3 +1,19 @@
+2019-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Several PasteImage API tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=195160
+
+        Reviewed by Tim Horton.
+
+        Some of these tests, such as PasteTIFFImage, don't wait for the inserted image element to finish loading before
+        querying the image element's size; a few other tests, such as PastePNGFile, are racy since they may begin
+        listening for a "load" event after image load is already complete.
+
+        To address this, make these tests first register a "load" event handler, then run script to insert an image
+        element into the document, and finally wait until the load event is observed before checking image size.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+
 2019-02-28  Chris Dumez  <cdumez@apple.com>
 
         Flaky API Test: TestWebKitAPI.ProcessSwap.PageZoomLevelAfterSwap

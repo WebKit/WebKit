@@ -160,8 +160,7 @@ TEST(PasteImage, PasteGIFFile)
     EXPECT_WK_STREQ("sunset-in-cupertino-400px.gif", [webView stringByEvaluatingJavaScript:@"file.name"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("400", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -182,8 +181,7 @@ TEST(PasteImage, PasteJPEGFile)
     EXPECT_WK_STREQ("sunset-in-cupertino-600px.jpg", [webView stringByEvaluatingJavaScript:@"file.name"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("600", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -204,8 +202,7 @@ TEST(PasteImage, PastePNGFile)
     EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [webView stringByEvaluatingJavaScript:@"file.name"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("200", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -226,8 +223,7 @@ TEST(PasteImage, PasteTIFFFile)
     EXPECT_WK_STREQ("sunset-in-cupertino-100px.tiff", [webView stringByEvaluatingJavaScript:@"file.name"]);
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
-    [webView waitForMessage:@"loaded"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("100", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -248,7 +244,7 @@ TEST(PasteImage, PasteLegacyTIFFImage)
     EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"file = dataTransfer.files[0]; file.type"]);
     EXPECT_WK_STREQ("image.png", [webView stringByEvaluatingJavaScript:@"file.name"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("100", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
@@ -270,7 +266,7 @@ TEST(PasteImage, PasteTIFFImage)
     EXPECT_WK_STREQ("image.png", [webView stringByEvaluatingJavaScript:@"pngItem.file.name"]);
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.includes(pngItem.file).toString()"]);
 
-    [webView stringByEvaluatingJavaScript:@"insertFileAsImage(pngItem.file)"];
+    [webView waitForMessage:@"loaded" afterEvaluatingScript:@"insertFileAsImage(pngItem.file)"];
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"url = new URL(imageElement.src); url.protocol"]);
     EXPECT_WK_STREQ("100", [webView stringByEvaluatingJavaScript:@"imageElement.width"]);
 }
