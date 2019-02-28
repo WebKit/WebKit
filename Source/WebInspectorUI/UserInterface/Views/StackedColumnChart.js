@@ -108,7 +108,6 @@ WI.StackedColumnChart = class StackedColumnChart extends WI.View
         this._svgElement.removeChildren();
 
         for (let {x, totalHeight, width, heights} of this._columns) {
-            let sectionIndex = 0;
             for (let i = heights.length - 1; i >= 0; --i) {
                 let height = heights[i];
                 // Next rect will be identical, skip this one.

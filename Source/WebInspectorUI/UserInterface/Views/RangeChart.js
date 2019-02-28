@@ -98,11 +98,11 @@ WI.RangeChart = class RangeChart extends WI.View
 
         this._svgElement.removeChildren();
 
-        let h = 0;
+        let height = this.size.height;
         for (let {x, width, className} of this._ranges) {
             let rect = this._svgElement.appendChild(createSVGElement("rect"));
             rect.setAttribute("width", width);
-            rect.setAttribute("height", this.size.height);
+            rect.setAttribute("height", height);
             rect.setAttribute("transform", `translate(${x}, 0)`);
             rect.classList.add(className);
         }

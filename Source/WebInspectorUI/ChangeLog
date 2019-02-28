@@ -1,3 +1,17 @@
+2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup some Chart code
+        https://bugs.webkit.org/show_bug.cgi?id=195147
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/RangeChart.js:
+        (WI.RangeChart.prototype.layout):
+        (WI.RangeChart):
+        * UserInterface/Views/StackedColumnChart.js:
+        (WI.StackedColumnChart.prototype.layout):
+        (WI.StackedColumnChart):
+
 2019-02-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add a new Scanner TimelineMarker to show up when mousing over TimelineView graphs
