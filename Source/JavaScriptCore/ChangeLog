@@ -1,3 +1,47 @@
+2019-02-28  Saam barati  <sbarati@apple.com>
+
+        Make JSScript:cacheBytecodeWithError update the cache when the script changes
+        https://bugs.webkit.org/show_bug.cgi?id=194912
+
+        Reviewed by Mark Lam.
+
+        Prior to this patch, the JSScript SPI would never check if its cached
+        bytecode were still valid. This would lead the cacheBytecodeWithError
+        succeeding even if the underlying cache were stale. This patch fixes
+        that by making JSScript check if the cache is still valid. If it's not,
+        we will cache bytecode when cacheBytecodeWithError is invoked.
+
+        * API/JSScript.mm:
+        (-[JSScript readCache]):
+        (-[JSScript writeCache:]):
+        * API/tests/testapi.mm:
+        (testBytecodeCacheWithSameCacheFileAndDifferentScript):
+        (testObjectiveCAPI):
+        * runtime/CachedTypes.cpp:
+        (JSC::Decoder::Decoder):
+        (JSC::VariableLengthObject::buffer const):
+        (JSC::CachedPtr::decode const):
+        (JSC::tagFromSourceCodeType):
+        (JSC::GenericCacheEntry::isUpToDate const):
+        (JSC::CacheEntry::isStillValid const):
+        (JSC::GenericCacheEntry::decode const):
+        (JSC::GenericCacheEntry::isStillValid const):
+        (JSC::encodeCodeBlock):
+        (JSC::decodeCodeBlockImpl):
+        (JSC::isCachedBytecodeStillValid):
+        * runtime/CachedTypes.h:
+        * runtime/CodeCache.cpp:
+        (JSC::sourceCodeKeyForSerializedBytecode):
+        (JSC::sourceCodeKeyForSerializedProgram):
+        (JSC::sourceCodeKeyForSerializedModule):
+        (JSC::serializeBytecode):
+        * runtime/CodeCache.h:
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+        * runtime/Completion.cpp:
+        (JSC::generateProgramBytecode):
+        (JSC::generateBytecode): Deleted.
+        * runtime/Completion.h:
+
 2019-02-28  Mark Lam  <mark.lam@apple.com>
 
         cloop.rb shift mask should depend on the word size being shifted.

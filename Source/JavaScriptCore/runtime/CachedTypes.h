@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,11 @@
 
 namespace JSC {
 
+class CachedBytecode;
 class SourceCodeKey;
 class UnlinkedCodeBlock;
+
+enum class SourceCodeType;
 
 std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM&, const SourceCodeKey&, const UnlinkedCodeBlock*);
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM&, const SourceCodeKey&, const void*, size_t);
@@ -42,5 +45,7 @@ UnlinkedCodeBlockType* decodeCodeBlock(VM& vm, const SourceCodeKey& key, const v
 {
     return jsCast<UnlinkedCodeBlockType*>(decodeCodeBlockImpl(vm, key, buffer, size));
 }
+
+bool isCachedBytecodeStillValid(VM&, const CachedBytecode&, const SourceCodeKey&, SourceCodeType);
 
 } // namespace JSC

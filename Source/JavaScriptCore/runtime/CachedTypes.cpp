@@ -33,6 +33,7 @@
 #include "JSTemplateObjectDescriptor.h"
 #include "ScopedArgumentsTable.h"
 #include "SourceCodeKey.h"
+#include "SourceProvider.h"
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedFunctionCodeBlock.h"
 #include "UnlinkedMetadataTableInlines.h"
@@ -217,7 +218,7 @@ class Decoder {
 public:
     Decoder(VM& vm, const void* baseAddress, size_t size)
         : m_vm(vm)
-        , m_baseAddress(reinterpret_cast<const uint8_t*>(baseAddress))
+        , m_baseAddress(static_cast<const uint8_t*>(baseAddress))
 #ifndef NDEBUG
         , m_size(size)
 #endif
@@ -348,7 +349,7 @@ protected:
     const uint8_t* buffer() const
     {
         ASSERT(m_offset != s_invalidOffset);
-        return reinterpret_cast<const uint8_t*>(this) + m_offset;
+        return bitwise_cast<const uint8_t*>(this) + m_offset;
     }
 
     template<typename T>
@@ -412,7 +413,7 @@ public:
         ptrdiff_t bufferOffset = decoder.offsetOf(this->buffer());
         if (Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
             isNewAllocation = false;
-            return reinterpret_cast<Source*>(*ptr);
+            return static_cast<Source*>(*ptr);
         }
 
         isNewAllocation = true;
@@ -1815,6 +1816,21 @@ enum CachedCodeBlockTag {
     CachedEvalCodeBlockTag,
 };
 
+static constexpr CachedCodeBlockTag tagFromSourceCodeType(SourceCodeType type)
+{
+    switch (type) {
+    case SourceCodeType::ProgramType:
+        return CachedProgramCodeBlockTag;
+    case SourceCodeType::EvalType:
+        return CachedEvalCodeBlockTag;
+    case SourceCodeType::ModuleType:
+        return CachedModuleCodeBlockTag;
+    case SourceCodeType::FunctionType:
+        ASSERT_NOT_REACHED();
+        return static_cast<CachedCodeBlockTag>(-1);
+    }
+}
+
 template<>
 struct CachedCodeBlockTypeImpl<UnlinkedProgramCodeBlock> {
     using type = CachedProgramCodeBlock;
@@ -2078,6 +2094,7 @@ private:
 class GenericCacheEntry {
 public:
     bool decode(Decoder&, std::pair<SourceCodeKey, UnlinkedCodeBlock*>&) const;
+    bool isStillValid(Decoder&, const SourceCodeKey&, CachedCodeBlockTag) const;
 
 protected:
     GenericCacheEntry(Encoder& encoder, CachedCodeBlockTag tag)
@@ -2087,6 +2104,15 @@ protected:
     }
 
     CachedCodeBlockTag tag() const { return m_tag; }
+
+    bool isUpToDate(Decoder& decoder) const
+    {
+        if (m_cacheVersion != JSC_BYTECODE_CACHE_VERSION)
+            return false;
+        if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
+            return false;
+        return true;
+    }
 
 private:
     uint32_t m_cacheVersion { JSC_BYTECODE_CACHE_VERSION };
@@ -2111,6 +2137,13 @@ public:
 private:
     friend GenericCacheEntry;
 
+    bool isStillValid(Decoder& decoder, const SourceCodeKey& key) const
+    {
+        SourceCodeKey decodedKey;
+        m_key.decode(decoder, decodedKey);
+        return decodedKey == key;
+    }
+
     bool decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlockType*>& result) const
     {
         ASSERT(tag() == CachedCodeBlockTypeImpl<UnlinkedCodeBlockType>::tag);
@@ -2126,16 +2159,14 @@ private:
 
 bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, UnlinkedCodeBlock*>& result) const
 {
-    if (m_cacheVersion != JSC_BYTECODE_CACHE_VERSION)
-        return false;
-    if (m_bootSessionUUID.decode(decoder) != bootSessionUUIDString())
+    if (!isUpToDate(decoder))
         return false;
 
     switch (m_tag) {
     case CachedProgramCodeBlockTag:
-        return reinterpret_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
+        return bitwise_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedProgramCodeBlock*>&>(result));
     case CachedModuleCodeBlockTag:
-        return reinterpret_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedModuleProgramCodeBlock*>&>(result));
+        return bitwise_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->decode(decoder, reinterpret_cast<std::pair<SourceCodeKey, UnlinkedModuleProgramCodeBlock*>&>(result));
     case CachedEvalCodeBlockTag:
         // We do not cache eval code blocks
         RELEASE_ASSERT_NOT_REACHED();
@@ -2147,11 +2178,29 @@ bool GenericCacheEntry::decode(Decoder& decoder, std::pair<SourceCodeKey, Unlink
 #endif
 }
 
+bool GenericCacheEntry::isStillValid(Decoder& decoder, const SourceCodeKey& key, CachedCodeBlockTag tag) const
+{
+    if (!isUpToDate(decoder))
+        return false;
+
+    switch (tag) {
+    case CachedProgramCodeBlockTag:
+        return bitwise_cast<const CacheEntry<UnlinkedProgramCodeBlock>*>(this)->isStillValid(decoder, key);
+    case CachedModuleCodeBlockTag:
+        return bitwise_cast<const CacheEntry<UnlinkedModuleProgramCodeBlock>*>(this)->isStillValid(decoder, key);
+    case CachedEvalCodeBlockTag:
+        // We do not cache eval code blocks
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
 template<typename UnlinkedCodeBlockType>
 void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
 {
     auto* entry = encoder.template malloc<CacheEntry<UnlinkedCodeBlockType>>(encoder);
-    entry->encode(encoder,  { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
+    entry->encode(encoder, { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
 }
 
 std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
@@ -2171,7 +2220,7 @@ std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM& vm, const SourceCodeKe
 
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, const void* buffer, size_t size)
 {
-    const auto* cachedEntry = reinterpret_cast<const GenericCacheEntry*>(buffer);
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(buffer);
     Decoder decoder(vm, buffer, size);
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
@@ -2183,6 +2232,17 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, const v
     if (entry.first != key)
         return nullptr;
     return entry.second;
+}
+
+bool isCachedBytecodeStillValid(VM& vm, const CachedBytecode& cachedBytecode, const SourceCodeKey& key, SourceCodeType type)
+{
+    const void* buffer = cachedBytecode.data();
+    size_t size = cachedBytecode.size();
+    if (!size)
+        return false;
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(buffer);
+    Decoder decoder(vm, buffer, size);
+    return cachedEntry->isStillValid(decoder, key, tagFromSourceCodeType(type));
 }
 
 } // namespace JSC

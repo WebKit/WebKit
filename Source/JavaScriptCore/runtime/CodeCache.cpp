@@ -205,15 +205,36 @@ void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& val
     });
 }
 
-CachedBytecode serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
+static SourceCodeKey sourceCodeKeyForSerializedBytecode(VM& vm, const SourceCode& sourceCode, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
 {
-    SourceCodeKey key(
-        source, String(), codeType, strictMode, scriptMode,
+    return SourceCodeKey(
+        sourceCode, String(), codeType, strictMode, scriptMode,
         DerivedContextType::None, EvalContextType::None, false, debuggerMode,
         vm.typeProfiler() ? TypeProfilerEnabled::Yes : TypeProfilerEnabled::No,
         vm.controlFlowProfiler() ? ControlFlowProfilerEnabled::Yes : ControlFlowProfilerEnabled::No,
         WTF::nullopt);
-    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
+}
+
+SourceCodeKey sourceCodeKeyForSerializedProgram(VM& vm, const SourceCode& sourceCode)
+{
+    JSParserStrictMode strictMode = JSParserStrictMode::NotStrict;
+    JSParserScriptMode scriptMode = JSParserScriptMode::Classic;
+    DebuggerMode debuggerMode = DebuggerOff;
+    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ProgramType, strictMode, scriptMode, debuggerMode);
+}
+
+SourceCodeKey sourceCodeKeyForSerializedModule(VM& vm, const SourceCode& sourceCode)
+{
+    JSParserStrictMode strictMode = JSParserStrictMode::Strict;
+    JSParserScriptMode scriptMode = JSParserScriptMode::Module;
+    DebuggerMode debuggerMode = DebuggerOff;
+    return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ModuleType, strictMode, scriptMode, debuggerMode);
+}
+
+CachedBytecode serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
+{
+    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm,
+        sourceCodeKeyForSerializedBytecode(vm, source, codeType, strictMode, scriptMode, debuggerMode), codeBlock);
     return CachedBytecode { WTFMove(result.first), result.second };
 }
 

@@ -27,6 +27,8 @@
 #import "JSScriptInternal.h"
 
 #import "APICast.h"
+#import "CachedTypes.h"
+#import "CodeCache.h"
 #import "Identifier.h"
 #import "JSContextInternal.h"
 #import "JSScriptSourceProvider.h"
@@ -201,7 +203,13 @@ static JSScript *createError(NSString *message, NSError** error)
     void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
     close(fd);
 
-    m_cachedBytecode = JSC::CachedBytecode { buffer, size };
+    JSC::CachedBytecode cachedBytecode { buffer, size };
+
+    JSC::VM& vm = m_virtualMachine.vm;
+    const JSC::SourceCode& sourceCode = [self jsSourceCode]->sourceCode();
+    JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
+    if (isCachedBytecodeStillValid(vm, cachedBytecode, key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
+        m_cachedBytecode = WTFMove(cachedBytecode);
 }
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
@@ -269,7 +277,7 @@ static JSScript *createError(NSString *message, NSError** error)
         m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
+        m_cachedBytecode = JSC::generateProgramBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
         break;
     }
 

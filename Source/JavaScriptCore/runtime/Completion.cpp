@@ -91,7 +91,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     return true;
 }
 
-CachedBytecode generateBytecode(VM& vm, const SourceCode& source, ParserError& error)
+CachedBytecode generateProgramBytecode(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());

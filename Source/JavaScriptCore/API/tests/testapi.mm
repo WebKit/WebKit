@@ -2094,6 +2094,50 @@ static void testBytecodeCacheWithSyntaxError(JSScriptType type)
     }
 }
 
+static void testBytecodeCacheWithSameCacheFileAndDifferentScript(bool forceDiskCache)
+{
+    NSURL *cachePath = tempFile(@"cachePath.cache");
+    NSURL *sourceURL = [NSURL URLWithString:@"my-path"];
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        NSString *source = @"function foo() { return 42; }; function bar() { return 40; }; foo() + bar();";
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        if (![script cacheBytecodeWithError:nil])
+            CRASH();
+
+        JSC::Options::forceDiskCache() = forceDiskCache;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        RELEASE_ASSERT([result isNumber]);
+        checkResult(@"Expected 82 as result", [[result toNumber] intValue] == 82);
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        NSString *source = @"function foo() { return 10; }; function bar() { return 20; }; foo() + bar();";
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        if (![script cacheBytecodeWithError:nil])
+            CRASH();
+
+        JSC::Options::forceDiskCache() = forceDiskCache;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        RELEASE_ASSERT([result isNumber]);
+        checkResult(@"Expected 30 as result", [[result toNumber] intValue] == 30);
+    }
+
+    JSC::Options::forceDiskCache() = false;
+
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
+    checkResult(@"Removed all temp files created", removedAll);
+}
+
 static void testProgramJSScriptException()
 {
     @autoreleasepool {
@@ -2319,6 +2363,8 @@ void testObjectiveCAPI(const char* filter)
     RUN(testProgramBytecodeCache());
     RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeProgram));
     RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeModule));
+    RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(false));
+    RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(true));
     RUN(testProgramJSScriptException());
 
     RUN(testLoaderRejectsNilScriptURL());

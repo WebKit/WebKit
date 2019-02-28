@@ -104,33 +104,6 @@ public:
     iterator end() { return m_map.end(); }
 
     template<typename UnlinkedCodeBlockType>
-    UnlinkedCodeBlockType* fetchFromDiskImpl(VM& vm, const SourceCodeKey& key)
-    {
-        const CachedBytecode* cachedBytecode = key.source().provider().cachedBytecode();
-        if (cachedBytecode && cachedBytecode->size()) {
-            VERBOSE_LOG("Found cached CodeBlock in the SourceProvider");
-            UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, cachedBytecode->data(), cachedBytecode->size());
-            if (unlinkedCodeBlock)
-                return unlinkedCodeBlock;
-        }
-        return nullptr;
-    }
-
-    template<typename UnlinkedCodeBlockType>
-    std::enable_if_t<std::is_base_of<UnlinkedCodeBlock, UnlinkedCodeBlockType>::value && !std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
-    fetchFromDisk(VM& vm, const SourceCodeKey& key)
-    {
-        UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
-        if (UNLIKELY(Options::forceDiskCache()))
-            RELEASE_ASSERT(codeBlock);
-        return codeBlock;
-    }
-
-    template<typename T>
-    std::enable_if_t<!std::is_base_of<UnlinkedCodeBlock, T>::value || std::is_same<T, UnlinkedEvalCodeBlock>::value, T*>
-    fetchFromDisk(VM&, const SourceCodeKey&) { return nullptr; }
-
-    template<typename UnlinkedCodeBlockType>
     UnlinkedCodeBlockType* findCacheAndUpdateAge(VM& vm, const SourceCodeKey& key)
     {
         prune();
@@ -190,6 +163,33 @@ public:
     int64_t age() { return m_age; }
 
 private:
+    template<typename UnlinkedCodeBlockType>
+    UnlinkedCodeBlockType* fetchFromDiskImpl(VM& vm, const SourceCodeKey& key)
+    {
+        const CachedBytecode* cachedBytecode = key.source().provider().cachedBytecode();
+        if (cachedBytecode && cachedBytecode->size()) {
+            VERBOSE_LOG("Found cached CodeBlock in the SourceProvider");
+            UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, cachedBytecode->data(), cachedBytecode->size());
+            if (unlinkedCodeBlock)
+                return unlinkedCodeBlock;
+        }
+        return nullptr;
+    }
+
+    template<typename UnlinkedCodeBlockType>
+    std::enable_if_t<std::is_base_of<UnlinkedCodeBlock, UnlinkedCodeBlockType>::value && !std::is_same<UnlinkedCodeBlockType, UnlinkedEvalCodeBlock>::value, UnlinkedCodeBlockType*>
+    fetchFromDisk(VM& vm, const SourceCodeKey& key)
+    {
+        UnlinkedCodeBlockType* codeBlock = fetchFromDiskImpl<UnlinkedCodeBlockType>(vm, key);
+        if (UNLIKELY(Options::forceDiskCache()))
+            RELEASE_ASSERT(codeBlock);
+        return codeBlock;
+    }
+
+    template<typename T>
+    std::enable_if_t<!std::is_base_of<UnlinkedCodeBlock, T>::value || std::is_same<T, UnlinkedEvalCodeBlock>::value, T*>
+    fetchFromDisk(VM&, const SourceCodeKey&) { return nullptr; }
+
     // This constant factor biases cache capacity toward allowing a minimum
     // working set to enter the cache before it starts evicting.
     static const Seconds workingSetTime;
@@ -330,5 +330,7 @@ recursivelyGenerateUnlinkedCodeBlock(VM& vm, const SourceCode& source, JSParserS
 
 void writeCodeBlock(VM&, const SourceCodeKey&, const SourceCodeValue&);
 CachedBytecode serializeBytecode(VM&, UnlinkedCodeBlock*, const SourceCode&, SourceCodeType, JSParserStrictMode, JSParserScriptMode, DebuggerMode);
+SourceCodeKey sourceCodeKeyForSerializedProgram(VM&, const SourceCode&);
+SourceCodeKey sourceCodeKeyForSerializedModule(VM&, const SourceCode&);
 
 } // namespace JSC
