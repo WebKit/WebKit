@@ -1,5 +1,17 @@
 2019-02-27  Chris Dumez  <cdumez@apple.com>
 
+        Flaky API Test: TestWebKitAPI.ProcessSwap.NumberOfCachedProcesses
+        https://bugs.webkit.org/show_bug.cgi?id=195102
+
+        Reviewed by Geoffrey Garen.
+
+        If the number of processes is not yet what we expect, wait a bit and check again to give
+        processes some time to exit.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2019-02-27  Chris Dumez  <cdumez@apple.com>
+
         Flaky API Test: TestWebKitAPI.ProcessSwap.NavigateToDataURLThenBack
         https://bugs.webkit.org/show_bug.cgi?id=194545
 

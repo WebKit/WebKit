@@ -3089,9 +3089,7 @@ TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 
 TEST(ProcessSwap, NumberOfCachedProcesses)
 {
-    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    processPoolConfiguration.get().processSwapsOnNavigation = YES;
-    processPoolConfiguration.get().usesWebProcessCache = YES;
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
     processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
@@ -3127,6 +3125,12 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    int timeout = 10;
+    while ([processPool _webProcessCount] > (maxSuspendedPageCount + 2) && timeout > 0) {
+        TestWebKitAPI::Util::sleep(0.1);
+        --timeout;
+    }
+
     EXPECT_EQ(maxSuspendedPageCount + 2, [processPool _webProcessCount]);
     EXPECT_EQ(maxSuspendedPageCount + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
     EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
@@ -3136,6 +3140,12 @@ TEST(ProcessSwap, NumberOfCachedProcesses)
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
+
+    timeout = 10;
+    while ([processPool _webProcessCount] > 1 && timeout > 0) {
+        TestWebKitAPI::Util::sleep(0.1);
+        --timeout;
+    }
 
     EXPECT_EQ(1u, [processPool _webProcessCount]);
     EXPECT_EQ(1u, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
