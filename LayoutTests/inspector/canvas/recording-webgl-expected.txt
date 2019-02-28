@@ -9,7 +9,7 @@ initialState:
     height: 2
   parameters:
     0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration)
     0: activeTexture(1)
@@ -31,7 +31,7 @@ initialState:
     height: 2
   parameters:
     0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration)
     0: activeTexture(1)
@@ -156,7 +156,7 @@ frames:
         0: clear
         1: (anonymous function)
         2: executeFrameFunction
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+      snapshot: <filtered>
   16: (duration)
     0: clearColor(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
@@ -355,7 +355,7 @@ frames:
         0: drawArrays
         1: (anonymous function)
         2: executeFrameFunction
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+      snapshot: <filtered>
   45: (duration)
     0: drawElements(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
@@ -363,7 +363,7 @@ frames:
         0: drawElements
         1: (anonymous function)
         2: executeFrameFunction
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+      snapshot: <filtered>
   46: (duration)
     0: enable(1)
       swizzleTypes: [Number]
@@ -1034,7 +1034,7 @@ initialState:
     height: 2
   parameters:
     0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration) (incomplete)
     0: activeTexture(1)

@@ -9,7 +9,7 @@ TestPage.registerInitializer(() => {
         }
     }
 
-    async function logRecording(recording) {
+    async function logRecording(recording, options = {}) {
         InspectorTest.log("initialState:");
 
         InspectorTest.log("  attributes:");
@@ -25,7 +25,9 @@ TestPage.registerInitializer(() => {
         InspectorTest.log("  parameters:");
         log(Object.entries(recording.initialState.parameters), "    ");
 
-        InspectorTest.log("  content: " + JSON.stringify(recording.initialState.content));
+        let currentContent = recording.initialState.content;
+        if (currentContent)
+            InspectorTest.log("  content: <filtered>");
 
         InspectorTest.log("frames:");
         for (let i = 0; i < recording.frames.length; ++i) {
@@ -68,8 +70,13 @@ TestPage.registerInitializer(() => {
                     }
                 }
 
-                if (action.snapshot)
-                    InspectorTest.log("      snapshot: " + JSON.stringify(action.snapshot));
+                if (action.snapshot) {
+                    if (options.checkForContentChange)
+                        InspectorTest.log(`      snapshot: <${currentContent === action.snapshot ? "FAIL" : "PASS"}: content changed>`);
+                    else
+                        InspectorTest.log("      snapshot: <filtered>");
+                    currentContent = action.snapshot;
+                }
             }
         }
     }
@@ -82,7 +89,7 @@ TestPage.registerInitializer(() => {
         return canvases[0];
     };
 
-    window.startRecording = function(type, resolve, reject, {frameCount, memoryLimit} = {}) {
+    window.startRecording = function(type, resolve, reject, {frameCount, memoryLimit, checkForContentChange} = {}) {
         let canvas = getCanvas(type);
         if (!canvas) {
             reject(`Missing canvas with type "${type}".`);
@@ -136,7 +143,7 @@ TestPage.registerInitializer(() => {
             Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
                 swizzled = true;
 
-                logRecording(recording, type)
+                logRecording(recording, {checkForContentChange})
                 .then(() => {
                     if (lastFrame) {
                         InspectorTest.evaluateInPage(`cancelActions()`)

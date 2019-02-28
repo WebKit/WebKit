@@ -1,3 +1,32 @@
+2019-02-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: change tests to not print out dataURLs
+        https://bugs.webkit.org/show_bug.cgi?id=195136
+        <rdar://problem/48248697>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/resources/recording-utilities.js:
+        (TestPage.registerInitializer.async logRecording):
+        (TestPage.registerInitializer.window.startRecording):
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-bitmaprenderer-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+
+        * inspector/canvas/requestContent-2d.html:
+        * inspector/canvas/requestContent-2d-expected.txt:
+        * inspector/canvas/requestContent-bitmaprenderer.html:
+        * inspector/canvas/requestContent-bitmaprenderer-expected.txt:
+        * inspector/canvas/requestContent-webgl.html:
+        * inspector/canvas/requestContent-webgl-expected.txt:
+        * inspector/canvas/requestContent-webgl2.html:
+        * inspector/canvas/requestContent-webgl2-expected.txt:
+
+        * inspector/canvas/setShaderProgramHighlighted.html:
+        * inspector/canvas/setShaderProgramHighlighted-expected.txt:
+
 2019-02-28  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] HTTP Body is missing with redirection.

@@ -8,7 +8,7 @@ initialState:
     width: 2
     height: 2
   parameters:
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration)
     0: transferFromImageBitmap([object ImageBitmap])
@@ -21,7 +21,7 @@ frames:
         4: asyncFunctionResume
         5: (anonymous function)
         6: promiseReactionJob
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
+      snapshot: <filtered>
 
 -- Running test case: Canvas.recordingBitmapRenderer.multipleFrames
 initialState:
@@ -29,7 +29,7 @@ initialState:
     width: 2
     height: 2
   parameters:
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration)
     0: transferFromImageBitmap([object ImageBitmap])
@@ -42,7 +42,7 @@ frames:
         4: asyncFunctionResume
         5: (anonymous function)
         6: promiseReactionJob
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
+      snapshot: <filtered>
   1: (duration)
     0: width
       trace:
@@ -70,7 +70,7 @@ initialState:
     width: 2
     height: 2
   parameters:
-  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+  content: <filtered>
 frames:
   0: (duration) (incomplete)
     0: transferFromImageBitmap([object ImageBitmap])
@@ -83,7 +83,7 @@ frames:
         4: asyncFunctionResume
         5: (anonymous function)
         6: promiseReactionJob
-      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC"
+      snapshot: <filtered>
 
 -- Running test case: Canvas.recordingBitmapRenderer.Console
 PASS: The recording should have the name "TEST".

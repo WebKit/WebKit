@@ -80,6 +80,7 @@ function test() {
 
     let shaderProgram = WI.canvasManager.shaderPrograms[0];
     let originalContent = null;
+    let contentForEval = {};
 
     function validTest({name, highlighted, evaluateString}) {
         suite.addTestCase({
@@ -98,7 +99,13 @@ function test() {
                         }
 
                         CanvasAgent.requestContent(shaderProgram.canvas.identifier)
-                        .then(({content}) => InspectorTest.log(content))
+                        .then(({content}) => {
+                            if (highlighted) {
+                                contentForEval[evaluateString] = content;
+                                InspectorTest.expectNotEqual(content, originalContent, "Highlighting a shader program should change the content.");
+                            } else
+                                InspectorTest.expectNotEqual(content, contentForEval[evaluateString], "Unhighlighting a shader program should change the content.");
+                        })
                         .then(resolve, reject);
                     });
                 });

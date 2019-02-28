@@ -3,5 +3,5 @@ Test that CanvasAgent.requestContent can retrieve a dataURL with the current con
 
 == Running test suite: Canvas.requestContentBitmapRenderer
 -- Running test case: Canvas.requestContentBitmapRenderer.validCanvasId
-data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=
+PASS: Content should not be empty.
 

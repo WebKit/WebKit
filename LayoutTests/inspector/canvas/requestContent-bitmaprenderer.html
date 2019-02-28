@@ -29,7 +29,7 @@ function test() {
             }
 
             CanvasAgent.requestContent(canvas.identifier)
-            .then(({content}) => InspectorTest.log(content))
+            .then(({content}) => InspectorTest.expectGreaterThan(content.length, "data:image/png;base64,".length, "Content should not be empty."))
             .then(resolve, reject);
         }
     });
