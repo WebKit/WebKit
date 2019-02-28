@@ -1,3 +1,12 @@
+2019-02-28  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Disable Parental Controls content filtering
+        <rdar://problem/48464986>
+
+        Rubber-stamped by Beth Dakin.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-02-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r241105. rdar://problem/47893571
