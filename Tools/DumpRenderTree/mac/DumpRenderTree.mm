@@ -875,7 +875,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     preferences.sourceBufferChangeTypeEnabled = YES;
     [preferences setCSSOMViewScrollingAPIEnabled:YES];
     [preferences setMediaRecorderEnabled:YES];
-    [preferences setPointerEventsEnabled:YES];
 }
 
 // Called before each test.

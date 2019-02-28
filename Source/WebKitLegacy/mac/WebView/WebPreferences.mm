@@ -649,7 +649,7 @@ public:
 #endif
         [NSNumber numberWithBool:NO], WebKitDirectoryUploadEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitWebAnimationsEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO], WebKitPointerEventsEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitPointerEventsEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
         @NO, WebKitVisualViewportAPIEnabledPreferenceKey,

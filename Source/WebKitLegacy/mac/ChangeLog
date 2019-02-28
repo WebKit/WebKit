@@ -1,3 +1,13 @@
+2019-02-28  Antoine Quint  <graouts@apple.com>
+
+        Enable the Pointer Events runtime flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=195156
+
+        Reviewed by Dean Jackson.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2019-02-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Enable Web GPU only on 64-bit

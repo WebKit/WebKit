@@ -400,7 +400,7 @@ private:
     bool m_attrStyleEnabled { false };
     bool m_webAPIStatisticsEnabled { false };
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
-    bool m_pointerEventsEnabled { false };
+    bool m_pointerEventsEnabled { true };
     bool m_webSQLEnabled { true };
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
