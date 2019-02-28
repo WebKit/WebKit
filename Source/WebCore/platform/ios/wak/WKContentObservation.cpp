@@ -34,24 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
-WKContentChange _WKContentChange                    = WKContentNoChange;
-bool            _WKObservingContentChanges          = false;
-
-bool WKObservingContentChanges(void)
-{
-    return _WKObservingContentChanges;
-}
-
-void WKStartObservingContentChanges()
-{
-    _WKContentChange = WKContentNoChange;
-    _WKObservingContentChanges = true;
-}
-
-void WKStopObservingContentChanges(void)
-{
-    _WKObservingContentChanges = false;
-}
+WKContentChange _WKContentChange = WKContentNoChange;
 
 WKContentChange WKObservedContentChange(void)
 {

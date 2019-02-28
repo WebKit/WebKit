@@ -34,7 +34,6 @@
 extern "C" {
 #endif
 
-bool WKObservingContentChanges(void);
 void WKSetObservedContentChange(WKContentChange);
 
 #ifdef __cplusplus

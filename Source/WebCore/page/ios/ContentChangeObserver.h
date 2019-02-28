@@ -98,6 +98,7 @@ private:
     bool m_observingNextStyleRecalc { false };
     bool m_observingStyleRecalcScheduling { false };
     bool m_observingDOMTimerScheduling { false };
+    bool m_observingContentChanges { false };
 };
 
 }

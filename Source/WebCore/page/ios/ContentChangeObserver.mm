@@ -60,8 +60,8 @@ void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
-    WKStartObservingContentChanges();
     startObservingStyleRecalcScheduling();
+    m_observingContentChanges = true;
 }
 
 void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
@@ -99,7 +99,7 @@ void ContentChangeObserver::startObservingStyleResolve()
     if (!shouldObserveNextStyleRecalc())
         return;
     LOG(ContentObservation, "startObservingStyleResolve: start observing style resolve.");
-    WKStartObservingContentChanges();
+    m_observingContentChanges = true;
 }
 
 void ContentChangeObserver::stopObservingStyleResolve()
@@ -150,18 +150,19 @@ void ContentChangeObserver::willDetachPage()
 void ContentChangeObserver::startObservingContentChanges()
 {
     startObservingDOMTimerScheduling();
-    WKStartObservingContentChanges();
+    setObservedContentChange(WKContentNoChange);
+    m_observingContentChanges = true;
 }
 
 void ContentChangeObserver::stopObservingContentChanges()
 {
     stopObservingDOMTimerScheduling();
-    WKStopObservingContentChanges();
+    m_observingContentChanges = false;
 }
 
 bool ContentChangeObserver::isObservingContentChanges()
 {
-    return WKObservingContentChanges();
+    return m_observingContentChanges;
 }
 
 void ContentChangeObserver::startObservingDOMTimerScheduling()
