@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006-2010, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -4674,11 +4674,13 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     JSTextPosition expressionStart = tokenStartPosition();
     int newCount = 0;
     JSTokenLocation startLocation = tokenLocation();
-    JSTokenLocation location;
+    JSTokenLocation lastNewTokenLocation;
     while (match(NEW)) {
+        lastNewTokenLocation = tokenLocation();
         next();
         newCount++;
     }
+    JSTokenLocation location = tokenLocation();
 
     bool baseIsSuper = match(SUPER);
     bool previousBaseWasSuper = false;
@@ -4696,7 +4698,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 semanticFailIfFalse(!closestOrdinaryFunctionScope->isGlobalCodeScope() || closestOrdinaryFunctionScope->evalContextType() == EvalContextType::FunctionEvalContext, "new.target is not valid inside arrow functions in global code");
                 currentScope()->setInnerArrowFunctionUsesNewTarget();
             }
-            base = context.createNewTargetExpr(location);
+            ASSERT(lastNewTokenLocation.line);
+            base = context.createNewTargetExpr(lastNewTokenLocation);
             newCount--;
             next();
         } else {
@@ -4730,8 +4733,6 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         if (consume(DOT)) {
             if (matchContextualKeyword(m_vm->propertyNames->builtinNames().metaPublicName())) {
                 semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
-
-                JSTokenLocation location(tokenLocation());
                 base = context.createImportMetaExpr(location, createResolveAndUseVariable(context, &m_vm->propertyNames->metaPrivateName, false, expressionStart, location));
                 next();
             } else {

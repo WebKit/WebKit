@@ -1,3 +1,13 @@
+2019-02-27  Mark Lam  <mark.lam@apple.com>
+
+        The parser is failing to record the token location of new in new.target.
+        https://bugs.webkit.org/show_bug.cgi?id=195127
+        <rdar://problem/39645578>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/parser-should-record-token-location-of-new-dot-target.js: Added.
+
 2019-02-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] mustHandleValues for dead bytecode locals should be ignored in DFG phases
