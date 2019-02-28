@@ -46,7 +46,7 @@ static String cpuUsageString(float cpuUsage)
 {
     if (cpuUsage < 0)
         return "<unknown>"_s;
-    return makeString(FormattedNumber::fixedWidth(cpuUsage, 1), '%');
+    return String::format("%.1f%%", cpuUsage);
 }
 
 static String formatByteNumber(size_t number)
@@ -64,7 +64,7 @@ static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (std::isnan(timerFireDate))
         return "[not scheduled]"_s;
-    return String::number((timerFireDate - now).seconds());
+    return String::format("%g", (timerFireDate - now).seconds());
 }
 
 static const float gFontSize = 14;

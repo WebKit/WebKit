@@ -565,23 +565,26 @@ inline size_t StringView::reverseFind(UChar character, unsigned index) const
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME
-
 inline void StringView::invalidate(const StringImpl&)
 {
 }
-
 #endif
+
+template<typename StringType, typename> class StringTypeAdapter;
 
 template<> class StringTypeAdapter<StringView, void> {
 public:
     StringTypeAdapter(StringView string)
-        : m_string { string }
+        : m_string(string)
     {
     }
 
     unsigned length() { return m_string.length(); }
     bool is8Bit() { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharactersWithUpconvert(destination); }
+    void writeTo(LChar* destination) { m_string.getCharactersWithUpconvert(destination); }
+    void writeTo(UChar* destination) { m_string.getCharactersWithUpconvert(destination); }
+
+    String toString() const { return m_string.toString(); }
 
 private:
     StringView m_string;

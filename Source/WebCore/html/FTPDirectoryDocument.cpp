@@ -210,12 +210,12 @@ static String processFileDateString(const FTPTime& fileTime)
         if (hour < 12) {
             if (hour == 0)
                 hour = 12;
-            timeOfDay = makeString(", ", hour, ':', pad('0', 2, fileTime.tm_min), " AM");
+            timeOfDay = String::format(", %i:%02i AM", hour, fileTime.tm_min);
         } else {
             hour = hour - 12;
             if (hour == 0)
                 hour = 12;
-            timeOfDay = makeString(", ", hour, ':', pad('0', 2, fileTime.tm_min), " PM");
+            timeOfDay = String::format(", %i:%02i PM", hour, fileTime.tm_min);
         }
     }
 

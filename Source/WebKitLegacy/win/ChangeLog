@@ -1,3 +1,10 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
+
+        * FullscreenVideoController.cpp:
+        (timeToString):
+
 2019-02-26  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Add API for webview background color configuration

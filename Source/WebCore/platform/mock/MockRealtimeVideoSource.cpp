@@ -350,10 +350,10 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextModeFill);
-    String string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
+    String string = String::format("%02u:%02u:%02u.%03u", hours, minutes, seconds, milliseconds % 1000);
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
-    string = makeString(pad('0', 6, m_frameNumber++));
+    string = String::format("%06u", m_frameNumber++);
     timeLocation.move(0, m_baseFontSize);
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 

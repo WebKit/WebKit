@@ -1,3 +1,33 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
+
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified const):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+        * mathml/MathMLElement.cpp:
+        (WebCore::convertToPercentageIfNeeded):
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::ResourceUsageOverlay::platformDraw):
+        * page/linux/ResourceUsageOverlayLinux.cpp:
+        (WebCore::cpuUsageString):
+        (WebCore::gcTimerString):
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::toStringForTime const):
+        (WebCore::DateComponents::toString const):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::localizedString):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::formatMediaControlsTime const):
+
 2019-02-27  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Move _WKObservingContentChanges from global to ContentChangeObserver class

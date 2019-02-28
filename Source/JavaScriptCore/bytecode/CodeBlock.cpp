@@ -92,7 +92,6 @@
 #include <wtf/Forward.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/StringPrintStream.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/UniquedStringImpl.h>
 
 #if ENABLE(ASSEMBLER)
@@ -2889,9 +2888,9 @@ String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
     if (virtualRegister == thisRegister())
         return "this"_s;
     if (virtualRegister.isArgument())
-        return makeString("arguments[", pad(' ', 3, virtualRegister.toArgument()), ']');
+        return String::format("arguments[%3d]", virtualRegister.toArgument());
 
-    return emptyString();
+    return "";
 }
 
 ValueProfile* CodeBlock::tryGetValueProfileForBytecodeOffset(int bytecodeOffset)

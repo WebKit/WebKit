@@ -4996,19 +4996,15 @@ String Document::lastModified() const
     else if (loader())
         dateTime = loader()->response().lastModified();
 
-    // FIXME: If this document came from the file system, the HTML specification tells
-    // us to read the last modification date from the file system.
+    // FIXME: If this document came from the file system, the HTML5
+    // specification tells us to read the last modification date from the file
+    // system.
     if (!dateTime)
         dateTime = WallTime::now();
 
     auto ctime = dateTime.value().secondsSinceEpoch().secondsAs<time_t>();
     auto localDateTime = std::localtime(&ctime);
-    return makeString(pad('0', 2, localDateTime->tm_mon + 1), '/',
-        pad('0', 2, localDateTime->tm_mday), '/',
-        pad('0', 4, 1900 + localDateTime->tm_year), ' ',
-        pad('0', 2, localDateTime->tm_hour), ':',
-        pad('0', 2, localDateTime->tm_min), ':',
-        pad('0', 2, localDateTime->tm_sec));
+    return String::format("%02d/%02d/%04d %02d:%02d:%02d", localDateTime->tm_mon + 1, localDateTime->tm_mday, 1900 + localDateTime->tm_year, localDateTime->tm_hour, localDateTime->tm_min, localDateTime->tm_sec);
 }
 
 void Document::setCookieURL(const URL& url)

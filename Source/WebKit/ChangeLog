@@ -1,3 +1,10 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::getAssertion):
+
 2019-02-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wformat warning

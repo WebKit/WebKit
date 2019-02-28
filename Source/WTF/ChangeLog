@@ -1,3 +1,31 @@
+2019-02-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
+
+        * wtf/Assertions.cpp:
+        (WTF::createWithFormatAndArguments): Deleted.
+        * wtf/HexNumber.h:
+        (WTF::StringTypeAdapter<HexNumberBuffer>::toString const):
+        * wtf/text/StringConcatenate.h:
+        (WTF::makeString):
+        (WTF::pad): Deleted.
+        (WTF::StringTypeAdapter<PaddingSpecification<UnderlyingAdapterType>>::StringTypeAdapter): Deleted.
+        (WTF::StringTypeAdapter<PaddingSpecification<UnderlyingAdapterType>>::length const): Deleted.
+        (WTF::StringTypeAdapter<PaddingSpecification<UnderlyingAdapterType>>::is8Bit const): Deleted.
+        (WTF::StringTypeAdapter<PaddingSpecification<UnderlyingAdapterType>>::writeTo const): Deleted.
+        * wtf/text/StringConcatenateNumbers.h:
+        (WTF::FormattedNumber::fixedPrecision):
+        (WTF::FormattedNumber::fixedWidth):
+        (WTF::StringTypeAdapter<FormattedNumber>::toString const):
+        * wtf/text/StringOperators.h:
+        (WTF::StringAppend::StringAppend):
+        * wtf/text/StringView.h:
+        (WTF::StringView::invalidate):
+        * wtf/text/WTFString.cpp:
+        (WTF::createWithFormatAndArguments):
+        (WTF::String::format):
+        * wtf/text/WTFString.h:
+
 2019-02-26  Mark Lam  <mark.lam@apple.com>
 
         Remove remaining poisoning code.

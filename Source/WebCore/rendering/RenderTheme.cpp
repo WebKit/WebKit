@@ -46,7 +46,6 @@
 #include "TextControlInnerElements.h"
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
@@ -569,14 +568,18 @@ String RenderTheme::formatMediaControlsTime(float time) const
 {
     if (!std::isfinite(time))
         time = 0;
-    // FIXME: Seems like it would be better to use std::lround here.
-    int seconds = static_cast<int>(std::abs(time));
+    int seconds = (int)fabsf(time);
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
     seconds %= 60;
-    if (hours)
-        return makeString((time < 0 ? "-" : ""), hours, ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString((time < 0 ? "-" : ""), pad('0', 2, minutes), ':', pad('0', 2, seconds));
+    if (hours) {
+        if (hours > 9)
+            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+
+        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+    }
+
+    return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
 }
 
 String RenderTheme::formatMediaControlsCurrentTime(float currentTime, float /*duration*/) const

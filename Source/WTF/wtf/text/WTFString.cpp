@@ -449,6 +449,61 @@ Vector<UChar> String::charactersWithNullTermination() const
     return result;
 }
 
+WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char *format, va_list args)
+{
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+
+    ALLOW_NONLITERAL_FORMAT_BEGIN
+
+#if USE(CF) && !OS(WINDOWS)
+    if (strstr(format, "%@")) {
+        auto cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+        auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
+        va_end(argsCopy);
+        return result.get();
+    }
+#endif
+
+    // Do the format once to get the length.
+#if COMPILER(MSVC)
+    int result = _vscprintf(format, args);
+#else
+    char ch;
+    int result = vsnprintf(&ch, 1, format, args);
+#endif
+
+    if (!result) {
+        va_end(argsCopy);
+        return emptyString();
+    }
+    if (result < 0) {
+        va_end(argsCopy);
+        return String();
+    }
+
+    Vector<char, 256> buffer;
+    unsigned len = result;
+    buffer.grow(len + 1);
+
+    // Now do the formatting again, guaranteed to fit.
+    vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
+    va_end(argsCopy);
+
+    ALLOW_NONLITERAL_FORMAT_END
+
+    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), len);
+}
+
+String String::format(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    String result = createWithFormatAndArguments(format, args);
+    va_end(args);
+    return result;
+}
+
 String String::number(int number)
 {
     return numberToStringSigned<String>(number);

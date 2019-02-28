@@ -41,7 +41,6 @@
 #include <WebCore/TextRun.h>
 #include <windowsx.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if USE(CA)
 #include <WebCore/PlatformCALayerClient.h>
@@ -471,9 +470,14 @@ static String timeToString(float time)
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
     seconds %= 60;
-    if (hours)
-        return makeString((time < 0 ? "-" : ""), hours, ':', pad('0', 2, minutes), ':', pad('0', 2, seconds));
-    return makeString((time < 0 ? "-" : ""), pad('0', 2, minutes), ':', pad('0', 2, seconds));
+
+    if (hours) {
+        if (hours > 9)
+            return String::format("%s%02d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+        return String::format("%s%01d:%02d:%02d", (time < 0 ? "-" : ""), hours, minutes, seconds);
+    }
+
+    return String::format("%s%02d:%02d", (time < 0 ? "-" : ""), minutes, seconds);
 }
 
 void FullscreenVideoController::draw()
