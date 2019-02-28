@@ -2765,19 +2765,38 @@ TEST(ProcessSwap, MainFramesOnly)
 
 #if PLATFORM(MAC)
 
-static const char* sendBodyClientWidth = R"PSONRESOURCE(
+static const char* getClientWidthBytes = R"PSONRESOURCE(
 <body>
 TEST
 <script>
-onload = () => {
-    document.body.offsetTop;    // force layout
-    setTimeout(() => {
-        window.webkit.messageHandlers.pson.postMessage("" + document.body.clientWidth);
-    });
+function getClientWidth()
+{
+    document.body.offsetTop; // Force layout.
+    return document.body.clientWidth;
 }
 </script>
 </body>
 )PSONRESOURCE";
+
+static unsigned waitUntilClientWidthIs(WKWebView *webView, unsigned expectedClientWidth)
+{
+    int timeout = 10;
+    unsigned clientWidth = 0;
+    do {
+        if (timeout != 10)
+            TestWebKitAPI::Util::sleep(0.1);
+
+        [webView evaluateJavaScript:@"getClientWidth()" completionHandler: [&] (id result, NSError *error) {
+            clientWidth = [result integerValue];
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        --timeout;
+    } while (clientWidth != expectedClientWidth && timeout >= 0);
+
+    return clientWidth;
+}
 
 TEST(ProcessSwap, PageZoomLevelAfterSwap)
 {
@@ -2787,12 +2806,9 @@ TEST(ProcessSwap, PageZoomLevelAfterSwap)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
     auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:sendBodyClientWidth];
-    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:sendBodyClientWidth];
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:getClientWidthBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:getClientWidthBytes];
     [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
-
-    auto messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
-    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
@@ -2806,35 +2822,29 @@ TEST(ProcessSwap, PageZoomLevelAfterSwap)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedMessage);
-    receivedMessage = false;
-
-    EXPECT_WK_STREQ(@"400", receivedMessages.get()[0]);
-
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    unsigned clientWidth = waitUntilClientWidthIs(webView.get(), 400);
+    EXPECT_EQ(400U, clientWidth);
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedMessage);
-    receivedMessage = false;
-
-    EXPECT_WK_STREQ(@"400", receivedMessages.get()[1]);
-
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    clientWidth = waitUntilClientWidthIs(webView.get(), 400);
+    EXPECT_EQ(400U, clientWidth);
 
     // Kill the WebProcess, the page should reload automatically and the page zoom level should be maintained.
     kill([webView _webProcessIdentifier], 9);
 
-    TestWebKitAPI::Util::run(&receivedMessage);
-    receivedMessage = false;
-
-    EXPECT_WK_STREQ(@"400", receivedMessages.get()[2]);
-
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    clientWidth = waitUntilClientWidthIs(webView.get(), 400);
+    EXPECT_EQ(400U, clientWidth);
 }
 
 #endif // PLATFORM(MAC)
