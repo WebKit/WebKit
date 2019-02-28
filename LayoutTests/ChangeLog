@@ -1,3 +1,21 @@
+2019-02-28  Daniel Bates  <dabates@apple.com>
+
+        Fix timing out tests following r241747
+        (https://bugs.webkit.org/show_bug.cgi?id=193599)
+
+        Fix up the path to ui-helper.js so that we actually load it.
+
+        * fast/forms/ios/focus-button.html:
+        * fast/forms/ios/focus-checkbox.html:
+        * fast/forms/ios/focus-checked-checkbox.html:
+        * fast/forms/ios/focus-checked-radio.html:
+        * fast/forms/ios/focus-radio.html:
+        * fast/forms/ios/focus-reset-button.html:
+        * fast/forms/ios/focus-search-field.html:
+        * fast/forms/ios/focus-submit-button.html:
+        * fast/forms/ios/focus-text-field.html:
+        * fast/forms/ios/focus-textarea.html:
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         fast/scrolling/ios/hit-testing-iframe-002.html always fails
