@@ -923,6 +923,12 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 [ Debug ] http/tests/multipart [ Skip ]
 
 http/tests/navigation [ Skip ]
+http/tests/navigation/post-301-response.html [ Pass ]
+http/tests/navigation/post-302-response.html [ Pass ]
+http/tests/navigation/post-303-response.html [ Pass ]
+http/tests/navigation/post-307-response.html [ Pass ]
+http/tests/navigation/post-308-response.html [ Pass ]
+
 http/tests/notifications [ Skip ]
 http/tests/paymentrequest [ Skip ]
 http/tests/plugins [ Skip ]

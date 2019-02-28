@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,7 +61,7 @@ public:
     {
     }
 
-    void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+    WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
     // Needed for compatibility.
     CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const { return 0; }
