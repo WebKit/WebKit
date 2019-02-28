@@ -1,3 +1,15 @@
+2019-02-28  David Quesada  <david_quesada@apple.com>
+
+        Expose APINavigationAction.shouldPerformDownload() on WKNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=195121
+        rdar://problem/48450302
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction _shouldPerformDownload]):
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+
 2019-02-28  Antoine Quint  <graouts@apple.com>
 
         Disable Web Animations in Safari Technology Preview

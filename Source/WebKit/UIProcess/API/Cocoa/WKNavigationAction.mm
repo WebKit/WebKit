@@ -187,6 +187,11 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
     return _navigationAction->shouldOpenAppLinks();
 }
 
+- (BOOL)_shouldPerformDownload
+{
+    return _navigationAction->shouldPerformDownload();
+}
+
 - (BOOL)_shouldOpenExternalURLs
 {
     return [self _shouldOpenExternalSchemes];

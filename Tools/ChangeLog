@@ -1,3 +1,26 @@
+2019-02-28  David Quesada  <david_quesada@apple.com>
+
+        Expose APINavigationAction.shouldPerformDownload() on WKNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=195121
+        rdar://problem/48450302
+
+        Reviewed by Alex Christensen.
+
+        Add API tests for -WKNavigationAction._shouldPerformDownload in various
+        configurations where the 'download' attribute is absent, blank, or populated
+        with a filename, and where the anchor element is same-origin or cross-origin
+        (meaning the 'download' attribute shouldn't be honored).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NavigationAction.mm: Added.
+        (-[NavigationActionTestDelegate init]):
+        (-[NavigationActionTestDelegate navigationAction]):
+        (-[NavigationActionTestDelegate waitForNavigationActionCallback]):
+        (-[NavigationActionTestDelegate waitForDidFinishNavigation]):
+        (-[NavigationActionTestDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[NavigationActionTestDelegate webView:didFinishNavigation:]):
+        (TEST):
+
 2019-02-28  Antoine Quint  <graouts@apple.com>
 
         Enable the Pointer Events runtime flag by default
