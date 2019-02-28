@@ -236,14 +236,6 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
     if (timeoutId <= 0)
         return;
 
-#if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context) && downcast<Document>(context).page()) {
-        auto& document = downcast<Document>(context);
-        if (auto* timer = document.findTimeout(timeoutId))
-            document.page()->contentChangeObserver().didRemoveDOMTimer(*timer);
-    }
-#endif
-
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->remove(timeoutId);
 

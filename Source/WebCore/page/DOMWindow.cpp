@@ -140,6 +140,10 @@
 #include "PointerLockController.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
+
 namespace WebCore {
 using namespace Inspector;
 
@@ -1679,6 +1683,18 @@ ExceptionOr<int> DOMWindow::setTimeout(JSC::ExecState& state, std::unique_ptr<Sc
 
 void DOMWindow::clearTimeout(int timeoutId)
 {
+#if PLATFORM(IOS_FAMILY)
+    auto handleObservedTimerCancelIfNeeded = [&] {
+        if (!frame() || !frame()->document() || !frame()->document()->page())
+            return;
+        if (timeoutId <= 0)
+            return;
+        auto& document = *frame()->document();
+        if (auto* timer = document.findTimeout(timeoutId))
+            document.page()->contentChangeObserver().removeDOMTimer(*timer);
+    };
+    handleObservedTimerCancelIfNeeded();
+#endif
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context)
         return;
