@@ -49,6 +49,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._editing = false;
         this._valueBeforeEditing = "";
         this._completionPrefix = "";
+        this._controlSpaceKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, WI.KeyboardShortcut.Key.Space);
     }
 
     // Public
@@ -278,6 +279,17 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             }
         }
 
+        if (this._controlSpaceKeyboardShortcut.matchesEvent(event)) {
+            event.stop();
+            if (this._suggestionsView.visible)
+                this._suggestionsView.hide();
+            else {
+                const forceCompletions = true;
+                this._updateCompletions(forceCompletions);
+            }
+            return;
+        }
+
         if (event.key === "Escape") {
             event.stop();
             this._discardChange();
@@ -358,13 +370,13 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             this._delegate.spreadsheetTextFieldDidChange(this);
     }
 
-    _updateCompletions()
+    _updateCompletions(forceCompletions = false)
     {
         if (!this._completionProvider)
             return;
 
         let valueWithoutSuggestion = this.valueWithoutSuggestion();
-        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion);
+        let {completions, prefix} = this._completionProvider(valueWithoutSuggestion, {allowEmptyPrefix: forceCompletions});
         this._completionPrefix = prefix;
 
         if (!completions.length) {

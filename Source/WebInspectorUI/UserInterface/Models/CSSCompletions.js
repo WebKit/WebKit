@@ -265,11 +265,14 @@ WI.CSSCompletions = class CSSCompletions
 
     startsWith(prefix)
     {
-        var firstIndex = this._firstIndexOfPrefix(prefix);
+        if (!prefix)
+            return this._acceptEmptyPrefix ? this._values.slice() : [];
+
+        let firstIndex = this._firstIndexOfPrefix(prefix);
         if (firstIndex === -1)
             return [];
 
-        var results = [];
+        let results = [];
         while (firstIndex < this._values.length && this._values[firstIndex].startsWith(prefix))
             results.push(this._values[firstIndex++]);
         return results;

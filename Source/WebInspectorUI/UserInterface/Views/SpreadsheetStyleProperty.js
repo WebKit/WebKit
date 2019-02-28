@@ -727,12 +727,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
     }
 
-    _nameCompletionDataProvider(prefix)
+    _nameCompletionDataProvider(prefix, options = {})
     {
-        return {
-            prefix,
-            completions: WI.CSSCompletions.cssNameCompletions.startsWith(prefix)
-        };
+        let completions;
+        if (!prefix && options.allowEmptyPrefix)
+            completions = WI.CSSCompletions.cssNameCompletions.values;
+        else
+            completions = WI.CSSCompletions.cssNameCompletions.startsWith(prefix);
+        return {prefix, completions};
     }
 
     _handleValueBeforeInput(event)
@@ -758,10 +760,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         // For "border: 1px so|", we want to suggest "solid" based on "so" prefix.
         let match = prefix.match(/[a-z0-9()-]+$/i);
-        if (!match)
+
+        // Clicking on the value of `height: 100%` shouldn't show any completions.
+        if (!match && prefix)
             return {completions: [], prefix: ""};
 
-        prefix = match[0];
+        prefix = match ? match[0] : "";
         let propertyName = this._nameElement.textContent.trim();
         return {
             prefix,
