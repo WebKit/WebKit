@@ -33,6 +33,14 @@
 
 @implementation TestNavigationDelegate
 
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    if (_decidePolicyForNavigationAction)
+        _decidePolicyForNavigationAction(navigationAction, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow);
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     if (_didStartProvisionalNavigation)

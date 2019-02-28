@@ -1,3 +1,16 @@
+2019-02-27  Brady Eidson  <beidson@apple.com>
+
+        Universal links from Google search results pages don't open the app.
+        <rdar://problem/46887179> and https://bugs.webkit.org/show_bug.cgi?id=195126
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API tests.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldOpenExternalURLsPolicyToPropagate const): Propagate the external URL policy from
+          an iframe if it is from the same security origin as the main frame.
+
 2019-02-27  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Move DOMTimer schedule handling from global to ContentChangeObserver class

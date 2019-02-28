@@ -2076,10 +2076,18 @@ void DocumentLoader::setTriggeringAction(NavigationAction&& action)
 
 ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropagate() const
 {
-    if (!m_frame || !m_frame->isMainFrame())
+    if (!m_frame)
         return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
 
-    return m_shouldOpenExternalURLsPolicy;
+    if (m_frame->isMainFrame())
+        return m_shouldOpenExternalURLsPolicy;
+
+    if (auto* currentDocument = document()) {
+        if (originsMatch(currentDocument->securityOrigin(), currentDocument->topOrigin()))
+            return m_shouldOpenExternalURLsPolicy;
+    }
+
+    return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
 }
 
 void DocumentLoader::becomeMainResourceClient()

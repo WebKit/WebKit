@@ -28,6 +28,8 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -248,6 +250,82 @@ TEST(WebKit, RestoreShouldOpenExternalURLsPolicyAfterCrash)
 
     ASSERT_TRUE([action _shouldOpenExternalSchemes]);
     ASSERT_FALSE([action _shouldOpenAppLinks]);
+};
+
+
+
+static const char* iframeBytes = R"schemeresource(
+<script>
+top.location.href = "externalScheme://someotherhost/foo";
+</script>
+)schemeresource";
+
+static const char* mainFrameBytes = R"schemeresource(
+<script>
+function clicked() {
+    var iframe = document.createElement('iframe');
+    iframe.src = "custom://firsthost/iframe.html";
+    document.body.appendChild(iframe);
+}
+</script>
+
+<a style="display: block; height: 100%" onclick="clicked();">Click to start iframe dance</a>
+)schemeresource";
+
+TEST(WebKit, IFrameWithSameOriginAsMainFramePropagates)
+{
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"custom"];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURL *requestURL = [task request].URL;
+        
+        NSString *responseText = nil;
+        if ([[task request].URL.absoluteString containsString:@"iframe.html"])
+            responseText = [NSString stringWithUTF8String:iframeBytes];
+        else if ([[task request].URL.absoluteString containsString:@"mainframe.html"])
+            responseText = [NSString stringWithUTF8String:mainFrameBytes];
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:[responseText length] textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[responseText dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"custom://firsthost/mainframe.html"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    
+    // Install the decidePolicyListener
+    static bool openAppLinks;
+    static bool externalSchemes;
+    static bool finished = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        if (!action.targetFrame.mainFrame) {
+            decisionHandler(WKNavigationActionPolicyAllow);
+            return;
+        }
+
+        openAppLinks = [action _shouldOpenAppLinks];
+        externalSchemes = [action _shouldOpenExternalSchemes];
+        
+        decisionHandler(WKNavigationActionPolicyCancel);
+        finished = true;
+    };
+    
+    // Click the link
+    NSPoint clickPoint = NSMakePoint(100, 100);
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[webView.get().window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[webView.get().window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+
+    TestWebKitAPI::Util::run(&finished);
+    
+    ASSERT_TRUE(openAppLinks);
+    ASSERT_TRUE(externalSchemes);
 };
 
 #endif
