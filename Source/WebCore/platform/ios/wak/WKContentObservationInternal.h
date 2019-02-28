@@ -36,9 +36,6 @@ extern "C" {
 
 bool WKObservingContentChanges(void);
 void WKSetObservedContentChange(WKContentChange);
-bool WebThreadContainsObservedDOMTimer(void* timer);
-void WebThreadAddObservedDOMTimer(void* timer);
-void WebThreadRemoveObservedDOMTimer(void* timer);
 
 #ifdef __cplusplus
 }

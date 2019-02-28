@@ -166,18 +166,18 @@ bool ContentChangeObserver::isObservingContentChanges()
 
 void ContentChangeObserver::startObservingDOMTimerScheduling()
 {
-    WKStartObservingDOMTimerScheduling();
+    m_observingDOMTimerScheduling = true;
     clearObservedDOMTimers();
 }
 
 void ContentChangeObserver::stopObservingDOMTimerScheduling()
 {
-    WKStopObservingDOMTimerScheduling();
+    m_observingDOMTimerScheduling = false;
 }
 
 bool ContentChangeObserver::isObservingDOMTimerScheduling()
 {
-    return WKIsObservingDOMTimerScheduling();
+    return m_observingDOMTimerScheduling;
 }
 
 void ContentChangeObserver::startObservingStyleRecalcScheduling()

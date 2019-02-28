@@ -36,7 +36,6 @@
 
 WKContentChange _WKContentChange                    = WKContentNoChange;
 bool            _WKObservingContentChanges          = false;
-bool            _WKObservingDOMTimerScheduling      = false;
 
 bool WKObservingContentChanges(void)
 {
@@ -52,21 +51,6 @@ void WKStartObservingContentChanges()
 void WKStopObservingContentChanges(void)
 {
     _WKObservingContentChanges = false;
-}
-
-void WKStartObservingDOMTimerScheduling(void)
-{
-    _WKObservingDOMTimerScheduling = true;
-}
-
-void WKStopObservingDOMTimerScheduling(void)
-{
-    _WKObservingDOMTimerScheduling = false;
-}
-
-bool WKIsObservingDOMTimerScheduling(void)
-{
-    return _WKObservingDOMTimerScheduling;
 }
 
 WKContentChange WKObservedContentChange(void)

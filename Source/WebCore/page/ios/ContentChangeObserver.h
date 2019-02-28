@@ -97,6 +97,7 @@ private:
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_observingNextStyleRecalc { false };
     bool m_observingStyleRecalcScheduling { false };
+    bool m_observingDOMTimerScheduling { false };
 };
 
 }
