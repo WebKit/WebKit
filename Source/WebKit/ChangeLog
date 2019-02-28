@@ -1,3 +1,10 @@
+2019-02-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wformat warning
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+
 2019-02-27  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION: Crash beneath ResourceLoadObserver::logSubresourceLoading
