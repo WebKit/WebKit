@@ -174,7 +174,7 @@ void RenderCombineText::combineTextIfNeeded()
             bestFitDescription.setComputedSize(computedSize);
             shouldUpdateFont = m_combineFontStyle->setFontDescription(FontCascadeDescription { bestFitDescription });
         
-            FontCascade compressedFont(WTFMove(bestFitDescription), style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            FontCascade compressedFont(FontCascadeDescription(bestFitDescription), style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;

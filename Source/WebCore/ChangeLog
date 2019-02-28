@@ -1,3 +1,30 @@
+2019-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use-after-move in RenderCombineText::combineTextIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=195188
+
+        Reviewed by Zalan Bujtas.
+
+        r241288 uncovered an existing problem with our text-combine code. r242204 alleviated the
+        symptom, but this patch fixes the source of the problem (and reverts r242204).
+
+        The code in RenderCombineText::combineTextIfNeeded() has a bit that’s like:
+
+        FontDescription bestFitDescription;
+        while (...) {
+            FontCascade compressedFont(WTFMove(bestFitDescription), ...);
+            ...
+        }
+
+        Clearly this is wrong.
+
+        Test: fast/text/text-combine-crash-2.html
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontDescription::platformResolveGenericFamily):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineTextIfNeeded):
+
 2019-02-28  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Introduce observer subclasses to scope content change observing.
