@@ -1,3 +1,4 @@
+//@ skip if ["arm", "mips"].include?($architecture)
 //@ runDefault("--useMaximalFlushInsertionPhase=1", "--useConcurrentJIT=0")
 function bar(c) {
     if (c > 1) {

@@ -1,3 +1,12 @@
+2019-02-28  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Test times out on ARM/MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=195168
+
+        Unreviewed. Skip test on ARM/MIPS.
+
+        * stress/read-dead-bytecode-locals-in-must-handle-values2.js:
+
 2019-02-27  Mark Lam  <mark.lam@apple.com>
 
         The parser is failing to record the token location of new in new.target.
