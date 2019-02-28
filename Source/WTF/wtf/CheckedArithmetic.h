@@ -541,7 +541,7 @@ template <typename ResultType> struct ArithmeticOperations<unsigned, int, Result
     }
 };
 
-template <class OverflowHandler, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
+template <class OverflowHandler, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
 inline constexpr bool observesOverflow() { return true; }
 
 template <>
@@ -553,7 +553,7 @@ template <typename U, typename V, typename R> static inline bool safeAdd(U lhs, 
     return true;
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
+template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
 static inline bool safeAdd(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
@@ -567,7 +567,7 @@ template <typename U, typename V, typename R> static inline bool safeSub(U lhs, 
     return ArithmeticOperations<U, V, R>::sub(lhs, rhs, result);
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
+template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
 static inline bool safeSub(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
@@ -581,7 +581,7 @@ template <typename U, typename V, typename R> static inline bool safeMultiply(U 
     return ArithmeticOperations<U, V, R>::multiply(lhs, rhs, result);
 }
 
-template <class OverflowHandler, typename U, typename V, typename R, typename = std::enable_if_t<!std::is_scalar<OverflowHandler>::value>>
+template <class OverflowHandler, typename U, typename V, typename R, typename = typename std::enable_if<!std::is_scalar<OverflowHandler>::value>::type>
 static inline bool safeMultiply(U lhs, V rhs, R& result)
 {
     if (observesOverflow<OverflowHandler>())
