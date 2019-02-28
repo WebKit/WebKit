@@ -150,7 +150,7 @@ void ContentChangeObserver::willDetachPage()
 void ContentChangeObserver::startObservingContentChanges()
 {
     startObservingDOMTimerScheduling();
-    setObservedContentChange(WKContentNoChange);
+    resetObservedContentChange();
     m_observingContentChanges = true;
 }
 
@@ -221,6 +221,11 @@ void ContentChangeObserver::clearObservedDOMTimers()
     m_DOMTimerList.clear();
 }
 
+void ContentChangeObserver::resetObservedContentChange()
+{
+    WKSetObservedContentChange(WKContentNoChange);
+}
+
 void ContentChangeObserver::setObservedContentChange(WKContentChange change)
 {
     if (observedContentChange() == WKContentVisibilityChange)
@@ -244,9 +249,9 @@ void ContentChangeObserver::addObservedDOMTimer(const DOMTimer& timer)
 void ContentChangeObserver::removeObservedDOMTimer(const DOMTimer& timer)
 {
     m_DOMTimerList.remove(&timer);
-    // Force reset the content change flag when the last observed content modifier is removed. We should not be in indeterminate state anymore.
+    // Force reset the content change flag when the last observed content modifier is removed. We should not be in an indeterminate state anymore.
     if (!countOfObservedDOMTimers() && observedContentChange() == WKContentIndeterminateChange)
-        setObservedContentChange(WKContentNoChange);
+        resetObservedContentChange();
 }
 
 static Visibility elementImplicitVisibility(const Element& element)

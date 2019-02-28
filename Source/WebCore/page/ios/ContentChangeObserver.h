@@ -87,6 +87,7 @@ private:
     bool isObservingStyleRecalcScheduling();
 
     void setObservedContentChange(WKContentChange);
+    void resetObservedContentChange();
 
     unsigned countOfObservedDOMTimers();
     void clearObservedDOMTimers();
