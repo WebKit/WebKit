@@ -1,3 +1,51 @@
+2019-02-28  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r242200. rdar://problem/48464986
+
+    [watchOS] Disable Parental Controls content filtering
+    <rdar://problem/48464986>
+    
+    Rubber-stamped by Beth Dakin.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebCore/PAL:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/FeatureDefines.xcconfig:
+    
+    Source/WTF:
+    
+    * wtf/Platform.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607-branch@242200 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-28  Andy Estes  <aestes@apple.com>
+
+            [watchOS] Disable Parental Controls content filtering
+            <rdar://problem/48464986>
+
+            Rubber-stamped by Beth Dakin.
+
+            * Configurations/FeatureDefines.xcconfig:
+
 2019-02-24  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r241986. rdar://problem/48350373
