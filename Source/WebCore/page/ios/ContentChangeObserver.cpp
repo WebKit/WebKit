@@ -22,16 +22,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ContentChangeObserver.h"
+#include "config.h"
+#include "ContentChangeObserver.h"
 
 #if PLATFORM(IOS_FAMILY)
-#import "Chrome.h"
-#import "ChromeClient.h"
-#import "DOMTimer.h"
-#import "Logging.h"
-#import "Page.h"
-#import "WKContentObservationInternal.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DOMTimer.h"
+#include "Logging.h"
+#include "NodeRenderStyle.h"
+#include "Page.h"
 
 namespace WebCore {
 
@@ -223,6 +223,8 @@ void ContentChangeObserver::clearObservedDOMTimers()
 
 void ContentChangeObserver::setObservedContentChange(WKContentChange change)
 {
+    if (observedContentChange() == WKContentVisibilityChange)
+        return;
     WKSetObservedContentChange(change);
 }
 

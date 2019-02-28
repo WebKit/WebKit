@@ -4923,7 +4923,6 @@
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		ECCDB8811E4B8C5900A1AEA6 /* WKContentObservationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ECCDB8801E4B8C5900A1AEA6 /* WKContentObservationInternal.h */; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
@@ -9245,7 +9244,7 @@
 		6FE7CFA02177EEF1005B1573 /* InlineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineItem.h; sourceTree = "<group>"; };
 		6FE7CFA32177EF10005B1573 /* LayoutLineBreakBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutLineBreakBox.h; sourceTree = "<group>"; };
 		6FE7CFA52177F069005B1573 /* LayoutLineBreakBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutLineBreakBox.cpp; sourceTree = "<group>"; };
-		6FE9F09222211035004C5082 /* ContentChangeObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentChangeObserver.mm; sourceTree = "<group>"; };
+		6FE9F09222211035004C5082 /* ContentChangeObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentChangeObserver.cpp; sourceTree = "<group>"; };
 		6FFDC43E212EFF1600A9CA91 /* FloatAvoider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatAvoider.cpp; sourceTree = "<group>"; };
 		6FFDC440212EFF1600A9CA91 /* FloatAvoider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatAvoider.h; sourceTree = "<group>"; };
 		709A01FD1E3D0BCC006B0D4C /* ModuleFetchFailureKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleFetchFailureKind.h; sourceTree = "<group>"; };
@@ -15136,7 +15135,6 @@
 		EBF5121B1696496C0056BD25 /* JSTypeConversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeConversions.h; sourceTree = "<group>"; };
 		ECA680C61E67724500731D20 /* StringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtilities.h; sourceTree = "<group>"; };
 		ECA680C81E67730B00731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
-		ECCDB8801E4B8C5900A1AEA6 /* WKContentObservationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentObservationInternal.h; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
@@ -16591,8 +16589,8 @@
 		18A6CD6F0D8F2025001DC3CE /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				6FE9F09222211035004C5082 /* ContentChangeObserver.cpp */,
 				6FB5E212221F2447003989CF /* ContentChangeObserver.h */,
-				6FE9F09222211035004C5082 /* ContentChangeObserver.mm */,
 				FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */,
 				FED13D3B0CEA936A00D89466 /* FrameIOS.mm */,
 				225A16B30D5C11E900090295 /* WebEventRegion.h */,
@@ -22308,7 +22306,6 @@
 				A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */,
 				A14832A2187F508700DA63A6 /* WKContentObservation.cpp */,
 				A14832A3187F508700DA63A6 /* WKContentObservation.h */,
-				ECCDB8801E4B8C5900A1AEA6 /* WKContentObservationInternal.h */,
 				A14832A4187F508700DA63A6 /* WKGraphics.h */,
 				A14832A5187F508700DA63A6 /* WKGraphics.mm */,
 				A14832A6187F508700DA63A6 /* WKTypes.h */,
@@ -32382,7 +32379,6 @@
 				E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */,
 				501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */,
 				A14832BE187F64CC00DA63A6 /* WKContentObservation.h in Headers */,
-				ECCDB8811E4B8C5900A1AEA6 /* WKContentObservationInternal.h in Headers */,
 				A14832BF187F652C00DA63A6 /* WKGraphics.h in Headers */,
 				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,

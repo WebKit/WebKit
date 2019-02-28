@@ -40,6 +40,7 @@ typedef enum
 }   WKContentChange;
 
 WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
+WEBCORE_EXPORT void WKSetObservedContentChange(WKContentChange);
 
 #ifdef __cplusplus
 }

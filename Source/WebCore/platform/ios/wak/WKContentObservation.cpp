@@ -25,14 +25,8 @@
 
 #include "config.h"
 #include "WKContentObservation.h"
-#include "WKContentObservationInternal.h"
 
 #if PLATFORM(IOS_FAMILY)
-
-#include "JSDOMBinding.h"
-#include "WebCoreThread.h"
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 
 WKContentChange _WKContentChange = WKContentNoChange;
 
@@ -43,15 +37,7 @@ WKContentChange WKObservedContentChange(void)
 
 void WKSetObservedContentChange(WKContentChange change)
 {
-    // We've already have a definite answer.
-    if (_WKContentChange == WKContentVisibilityChange)
-        return;
-
-    if (change == WKContentVisibilityChange || change == WKContentIndeterminateChange) {
-        _WKContentChange = change;
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    _WKContentChange = change;
 }
 
 #endif // PLATFORM(IOS_FAMILY)

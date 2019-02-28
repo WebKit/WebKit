@@ -1,3 +1,21 @@
+2019-02-27  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move WKSetObservedContentChange logic to ContentChangeObserver class.
+        https://bugs.webkit.org/show_bug.cgi?id=195128
+        <rdar://problem/48456752>
+
+        Reviewed by Simon Fraser.
+
+        Move the final bits over to ContentChangeObserver and delete WKContentObservationInternal.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ios/ContentChangeObserver.mm:
+        (WebCore::ContentChangeObserver::setObservedContentChange):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKSetObservedContentChange):
+        * platform/ios/wak/WKContentObservation.h:
+        * platform/ios/wak/WKContentObservationInternal.h: Removed.
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)

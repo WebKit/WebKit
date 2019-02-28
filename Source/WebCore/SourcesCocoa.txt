@@ -131,7 +131,7 @@ page/cocoa/ResourceUsageOverlayCocoa.mm
 page/cocoa/ResourceUsageThreadCocoa.mm
 page/cocoa/SettingsBaseCocoa.mm
 
-page/ios/ContentChangeObserver.mm
+page/ios/ContentChangeObserver.cpp
 page/ios/EventHandlerIOS.mm
 page/ios/FrameIOS.mm
 page/ios/WebEventRegion.mm
