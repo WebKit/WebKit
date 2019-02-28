@@ -39,7 +39,7 @@ public:
     ContentChangeObserver(Page&);
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
-    void removeDOMTimer(const DOMTimer&);
+    void didRemoveDOMTimer(const DOMTimer&);
     void startObservingDOMTimerExecute(const DOMTimer&);
     void stopObservingDOMTimerExecute(const DOMTimer&);
 

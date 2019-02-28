@@ -117,7 +117,7 @@ void ContentChangeObserver::stopObservingStyleResolve()
     m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
 
-void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
+void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
         return;
