@@ -57,7 +57,7 @@ public:
     Plan(
         CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
         CompilationMode, unsigned osrEntryBytecodeIndex,
-        const Operands<JSValue>& mustHandleValues);
+        const Operands<Optional<JSValue>>& mustHandleValues);
     ~Plan();
 
     void compileInThread(ThreadData*);
@@ -88,8 +88,7 @@ public:
     bool isFTL() const { return DFG::isFTL(m_mode); }
     CompilationMode mode() const { return m_mode; }
     unsigned osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
-    const Operands<JSValue>& mustHandleValues() const { return m_mustHandleValues; }
-
+    const Operands<Optional<JSValue>>& mustHandleValues() const { return m_mustHandleValues; }
     ThreadData* threadData() const { return m_threadData; }
     Profiler::Compilation* compilation() const { return m_compilation.get(); }
 
@@ -138,7 +137,7 @@ private:
 
     CompilationMode m_mode;
     const unsigned m_osrEntryBytecodeIndex;
-    Operands<JSValue> m_mustHandleValues;
+    Operands<Optional<JSValue>> m_mustHandleValues;
     bool m_mustHandleValuesMayIncludeGarbage { true };
     Lock m_mustHandleValueCleaningLock;
 

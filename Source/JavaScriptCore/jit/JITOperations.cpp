@@ -1542,7 +1542,7 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, uint32_t byt
             numVarsWithValues = codeBlock->numCalleeLocals();
         else
             numVarsWithValues = 0;
-        Operands<JSValue> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
+        Operands<Optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues);
         int localsUsedForCalleeSaves = static_cast<int>(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
         for (size_t i = 0; i < mustHandleValues.size(); ++i) {
             int operand = mustHandleValues.operandForIndex(i);

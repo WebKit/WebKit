@@ -135,7 +135,7 @@ Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     CompilationMode mode, unsigned osrEntryBytecodeIndex,
-    const Operands<JSValue>& mustHandleValues)
+    const Operands<Optional<JSValue>>& mustHandleValues)
     : m_vm(passedCodeBlock->vm())
     , m_codeBlock(passedCodeBlock)
     , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
@@ -639,8 +639,11 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
         return;
 
     cleanMustHandleValuesIfNecessary();
-    for (unsigned i = m_mustHandleValues.size(); i--;)
-        visitor.appendUnbarriered(m_mustHandleValues[i]);
+    for (unsigned i = m_mustHandleValues.size(); i--;) {
+        Optional<JSValue> value = m_mustHandleValues[i];
+        if (value)
+            visitor.appendUnbarriered(value.value());
+    }
 
     m_recordedStatuses.markIfCheap(visitor);
 
@@ -715,7 +718,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
 
     for (unsigned local = m_mustHandleValues.numberOfLocals(); local--;) {
         if (!liveness[local])
-            m_mustHandleValues.local(local) = jsUndefined();
+            m_mustHandleValues.local(local) = WTF::nullopt;
     }
 }
 

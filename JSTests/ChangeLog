@@ -1,3 +1,18 @@
+2019-02-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] mustHandleValues for dead bytecode locals should be ignored in DFG phases
+        https://bugs.webkit.org/show_bug.cgi?id=195144
+        <rdar://problem/47595961>
+
+        Reviewed by Mark Lam.
+
+        * stress/read-dead-bytecode-locals-in-must-handle-values1.js: Added.
+        (bar):
+        (foo):
+        * stress/read-dead-bytecode-locals-in-must-handle-values2.js: Added.
+        (bar):
+        (foo):
+
 2019-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION: stress/regress-178386.js is timing out on JSC debug bot

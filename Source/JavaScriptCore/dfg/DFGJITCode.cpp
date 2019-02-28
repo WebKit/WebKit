@@ -78,12 +78,12 @@ void JITCode::reconstruct(
 
 void JITCode::reconstruct(
     ExecState* exec, CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex,
-    Operands<JSValue>& result)
+    Operands<Optional<JSValue>>& result)
 {
     Operands<ValueRecovery> recoveries;
     reconstruct(codeBlock, codeOrigin, streamIndex, recoveries);
     
-    result = Operands<JSValue>(OperandsLike, recoveries);
+    result = Operands<Optional<JSValue>>(OperandsLike, recoveries);
     for (size_t i = result.size(); i--;)
         result[i] = recoveries[i].recover(exec);
 }

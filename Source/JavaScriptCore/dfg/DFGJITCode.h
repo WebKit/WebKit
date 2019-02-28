@@ -98,7 +98,7 @@ public:
     // stack. Currently, it also has the restriction that the values must be in their
     // bytecode-designated stack slots.
     void reconstruct(
-        ExecState*, CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<JSValue>& result);
+        ExecState*, CodeBlock*, CodeOrigin, unsigned streamIndex, Operands<Optional<JSValue>>& result);
 
 #if ENABLE(FTL_JIT)
     // NB. All of these methods take CodeBlock* because they may want to use

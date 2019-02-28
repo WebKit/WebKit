@@ -42,7 +42,7 @@ JS_EXPORT_PRIVATE unsigned getNumCompilations();
 // compile. Even if we do a synchronous compile, we call the callback with the result.
 CompilationResult compile(
     VM&, CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationMode,
-    unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
+    unsigned osrEntryBytecodeIndex, const Operands<Optional<JSValue>>& mustHandleValues,
     Ref<DeferredCompilationCallback>&&);
 
 } } // namespace JSC::DFG

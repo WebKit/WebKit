@@ -1,3 +1,48 @@
+2019-02-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] mustHandleValues for dead bytecode locals should be ignored in DFG phases
+        https://bugs.webkit.org/show_bug.cgi?id=195144
+        <rdar://problem/47595961>
+
+        Reviewed by Mark Lam.
+
+        DFGMaximalFlushInsertionPhase inserts Flush for all the locals at the end of basic blocks. This enlarges the live ranges of
+        locals in DFG, and it sometimes makes DFG value live while it is dead in bytecode. The issue happens when we use mustHandleValues
+        to widen AbstractValue in CFAPhase. At that time, DFG tells "this value is live in DFG", but it may be dead in the bytecode level.
+        At that time, we attempt to merge AbstractValue with dead mustHandleValue, which is cleared as jsUndefined() in
+        DFG::Plan::cleanMustHandleValuesIfNecessary before start compilation, and crash because jsUndefined() may be irrelevant to the FlushFormat
+        in VariableAccessData.
+
+        This patch makes the type of mustHandleValues Operands<Optional<JSValue>>. We clear dead JSValues in DFG::Plan::cleanMustHandleValuesIfNecessary.
+        And we skip handling dead mustHandleValue in DFG phases.
+
+        * bytecode/Operands.h:
+        (JSC::Operands::isLocal const):
+        (JSC::Operands::isVariable const): Deleted.
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::injectOSR):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::cleanMustHandleValuesIfNecessary):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::mustHandleValues const):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::disableHoistingAcrossOSREntries):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * jit/JITOperations.cpp:
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)
