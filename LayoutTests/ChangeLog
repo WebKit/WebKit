@@ -1,5 +1,18 @@
 2019-02-28  Devin Rousso  <drousso@apple.com>
 
+        REGRESSION (r240644): Layout Test inspector/page/overrideSetting-ICECandidateFilteringEnabled.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=194437
+        <rdar://problem/48008005>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/page/overrideSetting-ICECandidateFilteringEnabled.html:
+        * inspector/page/overrideSetting-ICECandidateFilteringEnabled-expected.txt:
+        Make sure to close the peer connection and data channel after each phase of the test.
+        Also add failure logging.
+
+2019-02-28  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: change tests to not print out dataURLs
         https://bugs.webkit.org/show_bug.cgi?id=195136
         <rdar://problem/48248697>

@@ -3,9 +3,13 @@ Tests for the Page.overrideSetting command.
 
 == Running test suite: Page.overrideSetting
 -- Running test case: Page.overrideSetting.ICECandidateFilteringEnabled
+PASS: created offer
 PASS: Should not be able to establish a connection when filtering ice candidates.
 Overriding ICECandidateFilteringEnabled to false...
+PASS: created offer
+PASS: received ICE candidate.
 PASS: Should be able to establish a connection when filtering ice candidates.
 Removing ICECandidateFilteringEnabled override...
+PASS: created offer
 PASS: Should not be able to establish a connection when filtering ice candidates.
 

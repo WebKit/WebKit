@@ -10,25 +10,36 @@ if (window.internals)
 function createDataChannel() {
     let receivedCandidate = false;
 
+    let dc = null;
+
     let pc = new RTCPeerConnection();
-    pc.createDataChannel("sendDataChannel");
     pc.onicecandidate = (event) => {
         if (event.candidate) {
+            if (!receivedCandidate)
+                TestPage.addResult("PASS: received ICE candidate.");
             receivedCandidate = true;
             return;
         }
 
+        delete pc.onicecandidate;
+        pc.close();
+        dc.close();
+
         if (receivedCandidate) {
-            pc.createOffer().then((offer) => {
-                TestPage.dispatchEventToFrontend("DataChannel", {success: true});
-            });
+            TestPage.dispatchEventToFrontend("DataChannel", {success: true});
         } else
             TestPage.dispatchEventToFrontend("DataChannel", {success: false});
-
-        delete pc.onicecandidate;
     };
-    pc.createOffer().then((offer) => {
-        pc.setLocalDescription(offer);
+
+    dc = pc.createDataChannel("sendDataChannel");
+
+    pc.createOffer()
+    .then((offer) => {
+        TestPage.addResult("PASS: created offer");
+        return pc.setLocalDescription(offer);
+    })
+    .catch((error) => {
+        TestPage.addResult("FAIL: " + error);
     });
 }
 
