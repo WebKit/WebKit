@@ -754,7 +754,7 @@ void WebPageProxy::reattachToWebProcess()
     m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::Yes);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    finishAttachingToWebProcess();
+    finishAttachingToWebProcess(IsProcessSwap::No);
 }
 
 bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient)
@@ -816,16 +816,18 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    // No need to initialize the WebPage since it was created when we created the ProvisionalPageProxy.
-    finishAttachingToWebProcess(ShouldInitializeWebPage::No);
+    finishAttachingToWebProcess(IsProcessSwap::Yes);
 }
 
-void WebPageProxy::finishAttachingToWebProcess(ShouldInitializeWebPage shouldInitializePage)
+void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
 {
     ASSERT(m_process->state() != AuxiliaryProcessProxy::State::Terminated);
 
     if (m_process->state() == AuxiliaryProcessProxy::State::Running) {
-        m_webProcessLifetimeTracker.webPageEnteringWebProcess();
+        // In the process-swap case, the ProvisionalPageProxy constructor already took care of calling webPageEnteringWebProcess()
+        // when the process was provisional.
+        if (isProcessSwap != IsProcessSwap::Yes)
+            m_webProcessLifetimeTracker.webPageEnteringWebProcess(m_process);
         processDidFinishLaunching();
     }
 
@@ -856,7 +858,8 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldInitializeWebPage shouldIni
     m_editableImageController = std::make_unique<EditableImageController>(*this);
 #endif
 
-    if (shouldInitializePage == ShouldInitializeWebPage::Yes)
+    // In the process-swap case, the ProvisionalPageProxy already took care of initializing the WebPage in the WebProcess.
+    if (isProcessSwap != IsProcessSwap::Yes)
         initializeWebPage();
 
     m_inspector->updateForNewPageProcess(this);
@@ -4996,12 +4999,12 @@ void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 {
     ASSERT_UNUSED(connection, &connection == m_process->connection());
 
-    m_webProcessLifetimeTracker.webPageEnteringWebProcess();
+    m_webProcessLifetimeTracker.webPageEnteringWebProcess(m_process);
 }
 
 void WebPageProxy::webProcessWillShutDown()
 {
-    m_webProcessLifetimeTracker.webPageLeavingWebProcess();
+    m_webProcessLifetimeTracker.webPageLeavingWebProcess(m_process);
 }
 
 void WebPageProxy::processDidFinishLaunching()
@@ -6560,7 +6563,7 @@ void WebPageProxy::processDidTerminate(ProcessTerminationReason reason)
     // If it does *during* process swapping, and the client triggers a reload, that causes bizarre WebKit re-entry.
     // FIXME: This might have to change
     if (reason == ProcessTerminationReason::NavigationSwap)
-        m_webProcessLifetimeTracker.webPageLeavingWebProcess();
+        m_webProcessLifetimeTracker.webPageLeavingWebProcess(m_process);
     else {
         navigationState().clearAllNavigations();
         dispatchProcessDidTerminate(reason);

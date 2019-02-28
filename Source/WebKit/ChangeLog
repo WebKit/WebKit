@@ -1,3 +1,67 @@
+2019-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Flaky API Test: TestWebKitAPI.ProcessSwap.SessionStorage
+        https://bugs.webkit.org/show_bug.cgi?id=194480
+
+        Reviewed by Brady Eidson.
+
+        The StorageManager would only start listening for IPC on a given connection when
+        StorageManager::processWillOpenConnection() is called. This gets called from
+        WebsiteDataStore::webProcessWillOpenConnection() which gets called from
+        WebProcessLifetimeTracker::webPageEnteringWebProcess().
+
+        webPageEnteringWebProcess() was called in WebPageProxy::finishAttachingToWebProcess()
+        after process-swapping. This means that IPC comming from the *provisional* process
+        would not get processed and we would only start processing IPC on the provisional
+        process's connection when it would get committed.
+
+        To address the issue, this patch teaches WebProcessLifetimeTracker that a page can
+        now have several processes. We also make sure that webPageEnteringWebProcess() gets
+        called for the provisional process as soon as we create the provisional page, instead
+        of waiting for it to get committed.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::connectionWillOpen):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::connectionWillOpen):
+        (WebKit::WebPageProxy::webProcessWillShutDown):
+        (WebKit::WebPageProxy::processDidTerminate):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::webProcessLifetimeTracker):
+        * UIProcess/WebProcessLifetimeObserver.cpp:
+        (WebKit::WebProcessLifetimeObserver::addWebPage):
+        (WebKit::WebProcessLifetimeObserver::removeWebPage):
+        * UIProcess/WebProcessLifetimeObserver.h:
+        * UIProcess/WebProcessLifetimeTracker.cpp:
+        (WebKit::WebProcessLifetimeTracker::addObserver):
+        (WebKit::WebProcessLifetimeTracker::webPageEnteringWebProcess):
+        (WebKit::WebProcessLifetimeTracker::webPageLeavingWebProcess):
+        (WebKit::WebProcessLifetimeTracker::pageWasInvalidated):
+        (WebKit::WebProcessLifetimeTracker::processIsRunning):
+        * UIProcess/WebProcessLifetimeTracker.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::SessionStorageNamespace::allowedConnections const):
+        (WebKit::StorageManager::SessionStorageNamespace::addAllowedConnection):
+        (WebKit::StorageManager::SessionStorageNamespace::removeAllowedConnection):
+        (WebKit::StorageManager::addAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::removeAllowedSessionStorageNamespaceConnection):
+        (WebKit::StorageManager::processWillOpenConnection):
+        (WebKit::StorageManager::processDidCloseConnection):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::SessionStorageNamespace::allowedConnection const): Deleted.
+        (WebKit::StorageManager::SessionStorageNamespace::setAllowedConnection): Deleted.
+        (WebKit::StorageManager::setAllowedSessionStorageNamespaceConnection): Deleted.
+        * UIProcess/WebStorage/StorageManager.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::webPageWillOpenConnection):
+        (WebKit::WebsiteDataStore::webPageDidCloseConnection):
+
 2019-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web pages shouldn't be able to present a keyboard after the web view resigns first responder

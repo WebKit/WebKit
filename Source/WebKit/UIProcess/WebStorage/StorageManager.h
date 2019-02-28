@@ -51,7 +51,8 @@ public:
 
     void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
-    void setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection);
+    void addAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection&);
+    void removeAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection&);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);

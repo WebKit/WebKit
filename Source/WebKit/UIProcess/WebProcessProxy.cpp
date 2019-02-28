@@ -261,6 +261,9 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 
     for (auto& page : m_pageMap.values())
         page->connectionWillOpen(connection);
+
+    for (auto* provisionalPage : m_provisionalPages)
+        provisionalPage->connectionWillOpen(connection);
 }
 
 void WebProcessProxy::processWillShutDown(IPC::Connection& connection)

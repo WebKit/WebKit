@@ -43,8 +43,8 @@ public:
     WebProcessLifetimeObserver();
     virtual ~WebProcessLifetimeObserver();
 
-    void addWebPage(WebPageProxy&);
-    void removeWebPage(WebPageProxy&);
+    void addWebPage(WebPageProxy&, WebProcessProxy&);
+    void removeWebPage(WebPageProxy&, WebProcessProxy&);
 
     WTF::IteratorRange<HashCountedSet<WebProcessProxy*>::const_iterator::Keys> processes() const;
 

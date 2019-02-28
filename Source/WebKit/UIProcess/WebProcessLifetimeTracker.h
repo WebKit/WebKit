@@ -36,6 +36,7 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebProcessLifetimeObserver;
+class WebProcessProxy;
 
 class WebProcessLifetimeTracker {
 public:
@@ -44,13 +45,13 @@ public:
 
     void addObserver(WebProcessLifetimeObserver&);
 
-    void webPageEnteringWebProcess();
-    void webPageLeavingWebProcess();
+    void webPageEnteringWebProcess(WebProcessProxy&);
+    void webPageLeavingWebProcess(WebProcessProxy&);
 
     void pageWasInvalidated();
 
 private:
-    bool processIsRunning();
+    static bool processIsRunning(WebProcessProxy&);
 
     WebPageProxy& m_webPageProxy;
 

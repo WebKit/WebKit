@@ -377,6 +377,8 @@ public:
 
     void addPreviouslyVisitedPath(const String&);
 
+    WebProcessLifetimeTracker& webProcessLifetimeTracker() { return m_webProcessLifetimeTracker; }
+
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
     void detectDataInAllFrames(WebCore::DataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&&);
@@ -1634,8 +1636,8 @@ private:
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
 
-    enum class ShouldInitializeWebPage { No, Yes };
-    void finishAttachingToWebProcess(ShouldInitializeWebPage = ShouldInitializeWebPage::Yes);
+    enum class IsProcessSwap { No, Yes };
+    void finishAttachingToWebProcess(IsProcessSwap);
 
     RefPtr<API::Navigation> reattachToWebProcessForReload();
     RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);

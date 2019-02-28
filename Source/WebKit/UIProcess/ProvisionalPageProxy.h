@@ -80,6 +80,7 @@ public:
 
     void processDidFinishLaunching();
     void processDidTerminate();
+    void connectionWillOpen(IPC::Connection&);
 
 private:
     // IPC::MessageReceiver

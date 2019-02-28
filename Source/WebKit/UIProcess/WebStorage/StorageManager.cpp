@@ -383,8 +383,9 @@ public:
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
-    IPC::Connection::UniqueID allowedConnection() const { return m_allowedConnection; }
-    void setAllowedConnection(IPC::Connection::UniqueID);
+    Vector<IPC::Connection::UniqueID> allowedConnections() const { return m_allowedConnections; }
+    void addAllowedConnection(IPC::Connection::UniqueID);
+    void removeAllowedConnection(IPC::Connection::UniqueID);
 
     Ref<StorageArea> getOrCreateStorageArea(SecurityOriginData&&);
 
@@ -419,7 +420,7 @@ public:
 private:
     explicit SessionStorageNamespace(unsigned quotaInBytes);
 
-    IPC::Connection::UniqueID m_allowedConnection;
+    Vector<IPC::Connection::UniqueID> m_allowedConnections;
     unsigned m_quotaInBytes;
 
     HashMap<SecurityOriginData, RefPtr<StorageArea>> m_storageAreaMap;
@@ -439,11 +440,18 @@ StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
 {
 }
 
-void StorageManager::SessionStorageNamespace::setAllowedConnection(IPC::Connection::UniqueID allowedConnection)
+void StorageManager::SessionStorageNamespace::addAllowedConnection(IPC::Connection::UniqueID allowedConnection)
 {
-    m_allowedConnection = allowedConnection;
+    ASSERT(!m_allowedConnections.contains(allowedConnection));
+    m_allowedConnections.append(allowedConnection);
 }
 
+
+void StorageManager::SessionStorageNamespace::removeAllowedConnection(IPC::Connection::UniqueID allowedConnection)
+{
+    ASSERT(m_allowedConnections.contains(allowedConnection));
+    m_allowedConnections.removeAll(allowedConnection);
+}
 auto StorageManager::SessionStorageNamespace::getOrCreateStorageArea(SecurityOriginData&& securityOrigin) -> Ref<StorageArea>
 {
     return *m_storageAreaMap.ensure(securityOrigin, [this, securityOrigin]() mutable {
@@ -494,13 +502,23 @@ void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
     });
 }
 
-void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection)
+void StorageManager::addAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection& allowedConnection)
 {
-    auto allowedConnectionID = allowedConnection ? allowedConnection->uniqueID() : IPC::Connection::UniqueID { };
+    auto allowedConnectionID = allowedConnection.uniqueID();
     m_queue->dispatch([this, protectedThis = makeRef(*this), allowedConnectionID, storageNamespaceID]() mutable {
         ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-        m_sessionStorageNamespaces.get(storageNamespaceID)->setAllowedConnection(allowedConnectionID);
+        m_sessionStorageNamespaces.get(storageNamespaceID)->addAllowedConnection(allowedConnectionID);
+    });
+}
+
+void StorageManager::removeAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection& allowedConnection)
+{
+    auto allowedConnectionID = allowedConnection.uniqueID();
+    m_queue->dispatch([this, protectedThis = makeRef(*this), allowedConnectionID, storageNamespaceID]() mutable {
+        ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
+
+        m_sessionStorageNamespaces.get(storageNamespaceID)->removeAllowedConnection(allowedConnectionID);
     });
 }
 
@@ -522,12 +540,12 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     });
 }
 
-void StorageManager::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
+void StorageManager::processWillOpenConnection(WebProcessProxy& process, IPC::Connection& connection)
 {
     connection.addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
 }
 
-void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection& connection)
+void StorageManager::processDidCloseConnection(WebProcessProxy& process, IPC::Connection& connection)
 {
     connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
@@ -764,7 +782,7 @@ void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64
     ASSERT(!slot);
 
     // FIXME: This should be a message check.
-    ASSERT(connection.uniqueID() == sessionStorageNamespace->allowedConnection());
+    ASSERT(sessionStorageNamespace->allowedConnections().contains(connection.uniqueID()));
 
     auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(WTFMove(securityOriginData));
     storageArea->addListener(connection.uniqueID(), storageMapID);

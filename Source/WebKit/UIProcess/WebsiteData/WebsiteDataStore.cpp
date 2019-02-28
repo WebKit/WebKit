@@ -1803,13 +1803,13 @@ void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessP
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
 {
     if (m_storageManager)
-        m_storageManager->setAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), &connection);
+        m_storageManager->addAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), connection);
 }
 
-void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC::Connection&)
+void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
 {
     if (m_storageManager)
-        m_storageManager->setAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), nullptr);
+        m_storageManager->removeAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), connection);
 }
 
 void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)

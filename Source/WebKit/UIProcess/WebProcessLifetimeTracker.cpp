@@ -49,41 +49,41 @@ void WebProcessLifetimeTracker::addObserver(WebProcessLifetimeObserver& observer
 
     observer.webPageWasAdded(m_webPageProxy);
 
-    if (processIsRunning())
-        observer.addWebPage(m_webPageProxy);
+    if (processIsRunning(m_webPageProxy.process()))
+        observer.addWebPage(m_webPageProxy, m_webPageProxy.process());
 }
 
-void WebProcessLifetimeTracker::webPageEnteringWebProcess()
+void WebProcessLifetimeTracker::webPageEnteringWebProcess(WebProcessProxy& process)
 {
-    ASSERT(processIsRunning());
+    ASSERT(processIsRunning(process));
 
     for (auto& observer : m_observers)
-        observer->addWebPage(m_webPageProxy);
+        observer->addWebPage(m_webPageProxy, process);
 }
 
-void WebProcessLifetimeTracker::webPageLeavingWebProcess()
+void WebProcessLifetimeTracker::webPageLeavingWebProcess(WebProcessProxy& process)
 {
-    ASSERT(processIsRunning());
+    ASSERT(processIsRunning(process));
 
     for (auto& observer : m_observers)
-        observer->removeWebPage(m_webPageProxy);
+        observer->removeWebPage(m_webPageProxy, process);
 }
 
 void WebProcessLifetimeTracker::pageWasInvalidated()
 {
-    if (!processIsRunning())
+    if (!processIsRunning(m_webPageProxy.process()))
         return;
 
     for (auto& observer : m_observers) {
-        observer->removeWebPage(m_webPageProxy);
+        observer->removeWebPage(m_webPageProxy, m_webPageProxy.process());
 
         observer->webPageWasInvalidated(m_webPageProxy);
     }
 }
 
-bool WebProcessLifetimeTracker::processIsRunning()
+bool WebProcessLifetimeTracker::processIsRunning(WebProcessProxy& process)
 {
-    return m_webPageProxy.process().state() == WebProcessProxy::State::Running;
+    return process.state() == WebProcessProxy::State::Running;
 }
 
 }
