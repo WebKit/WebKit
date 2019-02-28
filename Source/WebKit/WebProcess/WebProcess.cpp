@@ -209,7 +209,7 @@ WebProcess::WebProcess()
     ResourceLoadObserver::shared().setNotificationCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
         parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
 
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RequestResourceLoadStatisticsUpdate(), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestResourceLoadStatisticsUpdate(), 0);
     });
 
     ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain) {
@@ -404,19 +404,19 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     ResourceLoadObserver::shared().setLogUserInteractionNotificationCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domain) {
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(sessionID, domain), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogUserInteraction(sessionID, domain), 0);
     });
 
     ResourceLoadObserver::shared().setLogWebSocketLoadingNotificationCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen) {
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::LogWebSocketLoading(sessionID, targetDomain, topFrameDomain, lastSeen), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogWebSocketLoading(sessionID, targetDomain, topFrameDomain, lastSeen), 0);
     });
     
     ResourceLoadObserver::shared().setLogSubresourceLoadingNotificationCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen) {
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::LogSubresourceLoading(sessionID, targetDomain, topFrameDomain, lastSeen), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogSubresourceLoading(sessionID, targetDomain, topFrameDomain, lastSeen), 0);
     });
 
     ResourceLoadObserver::shared().setLogSubresourceRedirectNotificationCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& sourceDomain, const RegistrableDomain& targetDomain) {
-        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::LogSubresourceRedirect(sessionID, sourceDomain, targetDomain), 0);
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::LogSubresourceRedirect(sessionID, sourceDomain, targetDomain), 0);
     });
 #endif
 

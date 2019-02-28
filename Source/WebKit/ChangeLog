@@ -1,3 +1,21 @@
+2019-02-27  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION: Crash beneath ResourceLoadObserver::logSubresourceLoading
+        https://bugs.webkit.org/show_bug.cgi?id=195072
+
+        Reviewed by Ryosuke Niwa.
+
+        ResourceLoadObserver and WebProcess should exist as long as the web page (process) is running. However,
+        the NetworkProcess connection can close for a variety of reasons. If the ResourceLoadObserver observes
+        a load or user gesture in the WebProcess, we should attempt to reconnect to the NetworkProcess (if it
+        was disconnected), just like we do for other message send cases.
+
+        This patch switches from using the m_networkProcessConnection member (which might be null) to use the
+        'ensureNetworkProcessConnection' accessor which ensures we have a valid connection for message sends.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2019-02-27  Chris Dumez  <cdumez@apple.com>
 
         Flaky API Test: TestWebKitAPI.ProcessSwap.SessionStorage
