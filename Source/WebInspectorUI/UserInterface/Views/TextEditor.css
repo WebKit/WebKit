@@ -59,20 +59,29 @@
 
     -webkit-clip-path: polygon(0% 50%, 5px 100%, 100% 100%, 100% 0, 5px 0);
     transform: scaleX(-1);
-    background-color: var(--glyph-color-active);
-    filter: grayscale() brightness(1.2);
+    background-color: var(--breakpoint-color);
+    filter: grayscale();
 }
 
 .text-editor > .CodeMirror .breakpoint-resolved .CodeMirror-linenumber::before {
     filter: none;
 }
 
-.text-editor > .CodeMirror .breakpoint-auto-continue:not(.breakpoint-disabled) .CodeMirror-linenumber::before {
-    opacity: 0.6;
+.text-editor > .CodeMirror .breakpoint-auto-continue:not(.execution-line.primary) .CodeMirror-linenumber::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: -7px;
+    content: "";
+    z-index: -1;
+    -webkit-clip-path: polygon(5px 20%, 5px 80%, 2px 50%);
+    background-color: var(--selected-foreground-color);
+    transform: scaleX(-1);
 }
 
 .text-editor > .CodeMirror .breakpoint-disabled .CodeMirror-linenumber::before {
-    opacity: 0.35;
+    background-color: var(--breakpoint-color-disabled);
 }
 
 .text-editor > .CodeMirror .has-breakpoint.multiple-breakpoints .CodeMirror-linenumber::before {

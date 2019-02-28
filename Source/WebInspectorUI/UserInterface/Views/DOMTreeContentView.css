@@ -61,21 +61,28 @@ body[dir=rtl] .content-view.dom-tree .tree-outline.dom li .status-image {
 
 .content-view.dom-tree .tree-outline.dom li .status-image.breakpoint {
     width: 15px;
-    fill: var(--glyph-color-active);
+    fill: var(--breakpoint-color);
 }
 
-body:not(.window-inactive) .content-view.dom-tree .tree-outline.dom:focus li.selected .status-image.breakpoint {
-    stroke: white;
+body:not(.window-inactive) .content-view.dom-tree .tree-outline.dom:focus li:matches(.selected, :hover) .status-image.breakpoint {
+    stroke: var(--selected-foreground-color);
 }
 
-.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled,
+.content-view.dom-tree .tree-outline.dom:not(.breakpoints-disabled) li .status-image.breakpoint.disabled {
+    fill: var(--breakpoint-color-disabled);
+}
+
 .content-view.dom-tree .tree-outline.dom.breakpoints-disabled li .status-image.breakpoint {
     filter: grayscale();
 }
 
 .content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.subtree {
     fill: none;
-    stroke: var(--glyph-color-active);
+    stroke: var(--breakpoint-color);
+}
+
+body:not(.window-inactive) .content-view.dom-tree .tree-outline.dom:focus li:matches(.selected, :hover) .status-image.breakpoint.subtree {
+    stroke: var(--selected-foreground-color);
 }
 
 .content-view.dom-tree .tree-outline.dom li.expanded .status-image.breakpoint.subtree {

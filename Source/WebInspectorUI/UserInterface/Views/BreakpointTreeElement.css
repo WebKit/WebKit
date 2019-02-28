@@ -28,7 +28,7 @@
     height: 12px;
     margin-top: 2px;
 
-    fill: var(--glyph-color-active);
+    fill: var(--breakpoint-color);
     stroke: hsla(0, 0%, 10%, 0.3);
     filter: grayscale();
 }
@@ -37,12 +37,22 @@
     filter: none;
 }
 
-.item.breakpoint .status > .status-image.auto-continue {
-    opacity: 0.6;
+.tree-outline:focus .item.breakpoint.selected .status > .status-image.resolved {
+    stroke: var(--selected-foreground-color);
+}
+
+.item.breakpoint .status > .status-image.auto-continue::after {
+    position: absolute;
+    right: 8px;
+    width: 3px;
+    height: 12px;
+    content: "";
+    -webkit-clip-path: polygon(0 20%, 100% 50%, 0 80%);
+    background-color: var(--selected-foreground-color);
 }
 
 .item.breakpoint .status > .status-image.disabled {
-    opacity: 0.35;
+    fill: var(--breakpoint-color-disabled);
 }
 
 .item.breakpoint .subtitle.formatted-location {

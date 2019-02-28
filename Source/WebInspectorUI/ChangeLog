@@ -1,3 +1,46 @@
+2019-02-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Debugger: disabled breakpoint color is too dark
+        https://bugs.webkit.org/show_bug.cgi?id=195103
+        <rdar://problem/48440678>
+
+        Reviewed by Devin Rousso.
+
+        Increase the disabled breakpoint contrast, as well as the contrast between
+        disabled and auto-continue breakpoints. Disabled breakpoints stand out by
+        being somewhat brighter and less saturated. Using the same strategy for
+        auto-continue breakpoints is too subtle to provide sufficient contrast.
+
+        We can adopt the technique used by Xcode, and overlay a white triangle
+        marker on the breakpoint arrow to indicate an auto-continue breakpoint.
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image):
+        (.item.breakpoint.selected .status > .status-image.resolved):
+        Add white outline to make selected breakpoint button stand out.
+        (.item.breakpoint .status > .status-image.auto-continue::after):
+        (.item.breakpoint .status > .status-image.disabled):
+        (.item.breakpoint .status > .status-image.auto-continue): Deleted.
+
+
+        * UserInterface/Views/DOMTreeContentView.css:
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.subtree):
+        (.content-view.dom-tree .tree-outline.dom li .status-image.breakpoint.disabled,): Deleted.
+
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .breakpoint-auto-continue:not(.execution-line.primary) .CodeMirror-linenumber::after):
+        (.text-editor > .CodeMirror .breakpoint-disabled .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .breakpoint-auto-continue:not(.breakpoint-disabled) .CodeMirror-linenumber::before): Deleted.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add breakpoint color variables to use across all breakpoint controls.
+        Use system colors if available, otherwise fall back to hard-coded values
+        based on sampling the default (blue) accent color on Mojave.
+
 2019-02-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Control-Space should force completion

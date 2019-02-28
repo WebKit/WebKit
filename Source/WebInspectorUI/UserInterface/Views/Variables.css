@@ -59,6 +59,9 @@
     --selected-background-color-highlight: hsla(0, 0%, 100%, 0.3);
     --selected-text-background-color: hsl(210, 98%, 93%);
 
+    --breakpoint-color: hsl(211, 100%, 50%);
+    --breakpoint-color-disabled: hsl(211, 82%, 82%);
+
     --glyph-color: hsl(0, 0%, 30%);
     --glyph-color-pressed: hsl(0, 0%, 15%);
     --glyph-color-disabled: hsla(0, 0%, 30%, 0.55);
@@ -325,6 +328,9 @@ body.mac-platform:not(.sierra, .high-sierra) {
     --selected-foreground-color: -apple-system-alternate-selected-text;
     --selected-background-color: -apple-system-selected-content-background;
     --selected-text-background-color: -apple-system-selected-text-background;
+
+    --breakpoint-color: -apple-system-control-accent;
+    --breakpoint-color-disabled: -apple-system-selected-text-background;
 
     --glyph-color-active: -apple-system-control-accent;
     --glyph-color-active-pressed: -apple-system-control-accent;
