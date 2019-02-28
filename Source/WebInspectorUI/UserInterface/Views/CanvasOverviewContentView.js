@@ -189,9 +189,6 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _setRecordingAutoCaptureFrameCount(frameCount)
     {
-        if (isNaN(frameCount))
-            frameCount = this._recordingAutoCaptureFrameCountInputElementValue;
-
         console.assert(!isNaN(frameCount) && frameCount >= 0);
 
         if (this._recordingAutoCaptureNavigationItem.checked)
@@ -204,22 +201,17 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _updateRecordingAutoCaptureCheckboxLabel(frameCount)
     {
-        if (isNaN(frameCount))
-            frameCount = this._recordingAutoCaptureFrameCountInputElementValue;
-
-        let label = frameCount === 1 ? WI.UIString("Record first %s frame") : WI.UIString("Record first %s frames");
-
         let active = document.activeElement === this._recordingAutoCaptureFrameCountInputElement;
         let selectionStart = this._recordingAutoCaptureFrameCountInputElement.selectionStart;
         let selectionEnd = this._recordingAutoCaptureFrameCountInputElement.selectionEnd;
         let direction = this._recordingAutoCaptureFrameCountInputElement.direction;
 
+        let label = frameCount === 1 ? WI.UIString("Record first %s frame") : WI.UIString("Record first %s frames");
         let fragment = document.createDocumentFragment();
         String.format(label, [this._recordingAutoCaptureFrameCountInputElement], String.standardFormatters, fragment, (a, b) => {
             a.append(b);
             return a;
         });
-
         this._recordingAutoCaptureNavigationItem.label = fragment;
 
         if (active) {
@@ -276,7 +268,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _handleRecordingAutoCaptureCheckedDidChange(event)
     {
-        this._setRecordingAutoCaptureFrameCount();
+        this._setRecordingAutoCaptureFrameCount(this._recordingAutoCaptureFrameCountInputElementValue || 0);
     }
 
     _handleCanvasRecordingAutoCaptureEnabledChanged(event)

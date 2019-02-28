@@ -1,3 +1,15 @@
+2019-02-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: enabling auto-capture if the frame count is empty triggers an assertion
+        https://bugs.webkit.org/show_bug.cgi?id=195060
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._setRecordingAutoCaptureFrameCount):
+        (WI.CanvasOverviewContentView.prototype._updateRecordingAutoCaptureCheckboxLabel):
+        (WI.CanvasOverviewContentView.prototype._handleRecordingAutoCaptureCheckedDidChange):
+
 2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Revert -webkit-border-end changes that are unreliable
