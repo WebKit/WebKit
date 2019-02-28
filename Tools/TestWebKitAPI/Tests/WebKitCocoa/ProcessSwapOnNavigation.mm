@@ -3748,6 +3748,12 @@ TEST(ProcessSwap, NavigateToInvalidURL)
 static const char* navigateToDataURLThenBackBytes = R"PSONRESOURCE(
 <script>
 onpageshow = function(event) {
+    if (sessionStorage.getItem('navigated') == 'true') {
+        sessionStorage.clear();
+        return;
+    }
+    sessionStorage.setItem('navigated', 'true');
+
     // Location changes need to happen outside the onload handler to generate history entries.
     setTimeout(function() {
       window.location.href = "data:text/html,<body onload='history.back()'></body>";

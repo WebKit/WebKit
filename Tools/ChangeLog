@@ -1,3 +1,15 @@
+2019-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Flaky API Test: TestWebKitAPI.ProcessSwap.NavigateToDataURLThenBack
+        https://bugs.webkit.org/show_bug.cgi?id=194545
+
+        Reviewed by Brady Eidson.
+
+        Make sure the test navigates forward and then back only once. Previously, navigating
+        back would trigger a navigation again in a timer.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-02-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         High Sierra Debug JSC test queue should use faster hardware
