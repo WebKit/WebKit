@@ -335,15 +335,9 @@ void DOMTimer::fired()
         nestedTimers->startTracking();
 
 #if PLATFORM(IOS_FAMILY)
-    Page* page = is<Document>(context) ? downcast<Document>(context).page() : nullptr;
-    if (page)
-        page->contentChangeObserver().startObservingDOMTimerExecute(*this);
+    ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? downcast<Document>(context).page() : nullptr, *this);
 #endif
     m_action->execute(context);
-#if PLATFORM(IOS_FAMILY)
-    if (page)
-        page->contentChangeObserver().stopObservingDOMTimerExecute(*this);
-#endif
 
     InspectorInstrumentation::didFireTimer(cookie);
 

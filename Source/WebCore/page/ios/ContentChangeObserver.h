@@ -38,39 +38,57 @@ class ContentChangeObserver {
 public:
     ContentChangeObserver(Page&);
 
+    WEBCORE_EXPORT void startObservingContentChanges();
+    WEBCORE_EXPORT void stopObservingContentChanges();
+    WEBCORE_EXPORT WKContentChange observedContentChange();
+
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void removeDOMTimer(const DOMTimer&);
-    void startObservingDOMTimerExecute(const DOMTimer&);
-    void stopObservingDOMTimerExecute(const DOMTimer&);
 
     void didScheduleStyleRecalc();
-    void startObservingStyleResolve();
-    void stopObservingStyleResolve();
-
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
-    WEBCORE_EXPORT void startObservingContentChanges();
-    WEBCORE_EXPORT void stopObservingContentChanges();
-
-    WEBCORE_EXPORT WKContentChange observedContentChange();
-
-    class StyleChange {
+    class StyleChangeScope {
     public:
-        StyleChange(const Element&, ContentChangeObserver&);
-        ~StyleChange();
+        StyleChangeScope(Page*, const Element&);
+        ~StyleChangeScope();
 
     private:
+        ContentChangeObserver* m_contentChangeObserver { nullptr };
         const Element& m_element;
-        ContentChangeObserver& m_contentChangeObserver;
+        bool m_needsObserving { false };
         DisplayType m_previousDisplay;
         Visibility m_previousVisibility;
         Visibility m_previousImplicitVisibility;
     };
 
+    class StyleRecalcScope {
+    public:
+        StyleRecalcScope(Page*);
+        ~StyleRecalcScope();
+    private:
+        ContentChangeObserver* m_contentChangeObserver { nullptr };
+    };
+
+    class DOMTimerScope {
+    public:
+        DOMTimerScope(Page*, const DOMTimer&);
+        ~DOMTimerScope();
+    private:
+        ContentChangeObserver* m_contentChangeObserver { nullptr };
+        const DOMTimer& m_domTimer;
+    };
+
 private:
     void startObservingDOMTimerScheduling();
     void stopObservingDOMTimerScheduling();
+
+    void startObservingDOMTimerExecute(const DOMTimer&);
+    void stopObservingDOMTimerExecute(const DOMTimer&);
+
+    void startObservingStyleResolve();
+    void stopObservingStyleResolve();
 
     void addObservedDOMTimer(const DOMTimer&);
     bool isObservingDOMTimerScheduling();

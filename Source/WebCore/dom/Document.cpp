@@ -2055,18 +2055,11 @@ bool Document::updateStyleIfNeeded()
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page())
-        page->contentChangeObserver().startObservingStyleResolve();
+    ContentChangeObserver::StyleRecalcScope observingScope(page());
 #endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
-
     resolveStyle();
-
-#if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page())
-        page->contentChangeObserver().stopObservingStyleResolve();
-#endif
     return true;
 }
 

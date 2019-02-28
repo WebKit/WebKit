@@ -293,7 +293,7 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
 #if PLATFORM(IOS_FAMILY)
-    ContentChangeObserver::StyleChange checkForStyleChange(element, m_document.page()->contentChangeObserver());
+    ContentChangeObserver::StyleChangeScope observingScope(m_document.page(), element);
 #endif
 
     bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.hasDisplayContents());

@@ -277,18 +277,21 @@ static Visibility elementImplicitVisibility(const Element& element)
     return Visibility::Visible;
 }
 
-ContentChangeObserver::StyleChange::StyleChange(const Element& element, ContentChangeObserver& contentChangeObserver)
-    : m_element(element)
-    , m_contentChangeObserver(contentChangeObserver)
-    , m_previousDisplay(element.renderStyle() ? element.renderStyle()->display() : DisplayType::None)
-    , m_previousVisibility(element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden)
-    , m_previousImplicitVisibility(contentChangeObserver.isObservingContentChanges() && contentChangeObserver.observedContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : Visibility::Visible)
+ContentChangeObserver::StyleChangeScope::StyleChangeScope(Page* page, const Element& element)
+    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+    , m_element(element)
+    , m_needsObserving(m_contentChangeObserver && m_contentChangeObserver->isObservingContentChanges() && m_contentChangeObserver->observedContentChange() != WKContentVisibilityChange)
 {
+    if (m_needsObserving) {
+        m_previousDisplay = element.renderStyle() ? element.renderStyle()->display() : DisplayType::None;
+        m_previousVisibility = element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden;
+        m_previousImplicitVisibility = elementImplicitVisibility(element);
+    }
 }
 
-ContentChangeObserver::StyleChange::~StyleChange()
+ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 {
-    if (!m_contentChangeObserver.isObservingContentChanges())
+    if (!m_needsObserving)
         return;
 
     auto* style = m_element.renderStyle();
@@ -308,8 +311,36 @@ ContentChangeObserver::StyleChange::~StyleChange()
     if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None)
         || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        m_contentChangeObserver.setObservedContentChange(WKContentVisibilityChange);
+        m_contentChangeObserver->setObservedContentChange(WKContentVisibilityChange);
 }
+
+ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Page* page)
+    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->startObservingStyleResolve();
+}
+
+ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope()
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->stopObservingStyleResolve();
+}
+
+ContentChangeObserver::DOMTimerScope::DOMTimerScope(Page* page, const DOMTimer& domTimer)
+    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+    , m_domTimer(domTimer)
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->startObservingDOMTimerExecute(m_domTimer);
+}
+
+ContentChangeObserver::DOMTimerScope::~DOMTimerScope()
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->stopObservingDOMTimerExecute(m_domTimer);
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)
