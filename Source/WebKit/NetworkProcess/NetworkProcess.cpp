@@ -128,6 +128,9 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_networkContentRuleListManager(*this)
 #endif
+#if PLATFORM(IOS_FAMILY)
+    , m_webSQLiteDatabaseTracker(*this)
+#endif
 {
     NetworkProcessPlatformStrategies::initialize();
 

@@ -1,3 +1,23 @@
+2019-02-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Revert r232263: it caused processes to crash because process was suspended with locked file
+        https://bugs.webkit.org/show_bug.cgi?id=195122
+        <rdar://problem/48444599>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker):
+        (WebKit::WebSQLiteDatabaseTracker::hysteresisUpdated):
+        * Shared/WebSQLiteDatabaseTracker.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::m_webSQLiteDatabaseTracker):
+        (WebKit::m_nonVisibleProcessCleanupTimer): Deleted.
+        * WebProcess/WebProcess.h:
+
 2019-02-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Move calls to [UIKeyboard isInHardwareKeyboardMode] to the UI process.
