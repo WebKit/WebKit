@@ -1,3 +1,18 @@
+2019-02-27  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=195138
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/visibility/root-visibility-toggle-expected.txt: Added.
+        * platform/gtk/editing/deleting/smart-delete-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/smart-delete-002-expected.txt: Removed.
+        * platform/gtk/editing/deleting/smart-delete-003-expected.txt: Removed.
+        * platform/gtk/editing/deleting/smart-delete-004-expected.txt: Removed.
+        * platform/gtk/fast/css/apple-system-colors-expected.txt: Added.
+        * platform/gtk/fast/text/ja-sans-serif-expected.png: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+
 2019-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web pages shouldn't be able to present a keyboard after the web view resigns first responder

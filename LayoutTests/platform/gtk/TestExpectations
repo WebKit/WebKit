@@ -2504,6 +2504,8 @@ webkit.org/b/194629 http/tests/websocket/connection-refusal-in-frame-resource-lo
 
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Timeout ]
 
+webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3727,6 +3729,26 @@ webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [
 webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
+
+webkit.org/b/195129 accessibility/image-link.html [ Failure ]
+webkit.org/b/195129 accessibility/image-map2.html [ Failure ]
+webkit.org/b/195129 accessibility/lists.html [ Failure ]
+webkit.org/b/195129 accessibility/math-multiscript-attributes.html [ Failure ]
+webkit.org/b/195129 accessibility/roles-exposed.html [ Failure ]
+webkit.org/b/195129 accessibility/table-attributes.html [ Failure ]
+webkit.org/b/195129 accessibility/table-cell-spans.html [ Failure ]
+webkit.org/b/195129 accessibility/table-cells.html [ Failure ]
+webkit.org/b/195129 accessibility/table-one-cell.html [ Failure ]
+webkit.org/b/195129 accessibility/table-sections.html [ Failure ]
+webkit.org/b/195129 accessibility/table-with-rules.html [ Failure ]
+webkit.org/b/195129 accessibility/transformed-element.html [ Failure ]
+webkit.org/b/195129 accessibility/gtk/object-attributes.html [ Failure ]
+webkit.org/b/195129 accessibility/gtk/xml-roles-exposed.html [ Failure ]
+
+webkit.org/b/195133 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html [ Failure ]
+
+webkit.org/b/195134 inspector/cpu-profiler/threads.html [ Failure ]
+webkit.org/b/195134 inspector/cpu-profiler/tracking.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
