@@ -1,3 +1,17 @@
+2019-02-28  Mark Lam  <mark.lam@apple.com>
+
+        cloop.rb shift mask should depend on the word size being shifted.
+        https://bugs.webkit.org/show_bug.cgi?id=195181
+        <rdar://problem/48484164>
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, we're always masking the shift amount with 0x1f.  This is only correct
+        for 32-bit words.  For 64-bit words, the mask should be 0x3f.  For pointer sized
+        shifts, the mask depends on sizeof(uintptr_t).
+
+        * offlineasm/cloop.rb:
+
 2019-02-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Enable Web GPU only on 64-bit
