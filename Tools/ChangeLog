@@ -1,3 +1,15 @@
+2019-02-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Buildbot should include builder_display_name in the build events
+        https://bugs.webkit.org/show_bug.cgi?id=195045
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-build/events.py:
+        (Events.buildStarted): Included builder_display_name in event data. Also renamed
+        buildername to builder_name to be consistent in naming style.
+        (Events.buildFinished): Ditto.
+
 2019-02-27  Chris Dumez  <cdumez@apple.com>
 
         Flaky API Test: TestWebKitAPI.ProcessSwap.SessionStorage

@@ -109,6 +109,9 @@ class Events(service.BuildbotService):
         if not build.get('properties'):
             build['properties'] = yield self.master.db.builds.getBuildProperties(build.get('buildid'))
 
+        builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
+        builder_display_name = builder.get('description')
+
         data = {
             "type": self.type_prefix + "build",
             "status": "started",
@@ -120,7 +123,8 @@ class Events(service.BuildbotService):
             "started_at": build.get('started_at'),
             "complete_at": build.get('complete_at'),
             "state_string": build.get('state_string'),
-            "buildername": self.getBuilderName(build),
+            "builder_name": self.getBuilderName(build),
+            "builder_display_name": builder_display_name,
         }
 
         self.sendData(data)
@@ -131,6 +135,9 @@ class Events(service.BuildbotService):
             build['properties'] = yield self.master.db.builds.getBuildProperties(build.get('buildid'))
         if not build.get('steps'):
             build['steps'] = yield self.master.db.steps.getSteps(build.get('buildid'))
+
+        builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
+        builder_display_name = builder.get('description')
 
         data = {
             "type": self.type_prefix + "build",
@@ -143,7 +150,8 @@ class Events(service.BuildbotService):
             "started_at": build.get('started_at'),
             "complete_at": build.get('complete_at'),
             "state_string": build.get('state_string'),
-            "buildername": self.getBuilderName(build),
+            "builder_name": self.getBuilderName(build),
+            "builder_display_name": builder_display_name,
             "steps": build.get('steps'),
         }
 
