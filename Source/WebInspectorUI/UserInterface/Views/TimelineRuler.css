@@ -197,6 +197,10 @@ body[dir=rtl] .timeline-ruler > .markers > .marker::after {
     color: hsl(119, 100%, 21%);
 }
 
+.timeline-ruler > .markers > .marker.scanner {
+    color: var(--timeline-scanner-color);
+}
+
 .timeline-ruler > .selection-drag {
     position: absolute;
     top: 0;

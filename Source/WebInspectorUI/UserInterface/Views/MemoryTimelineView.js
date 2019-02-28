@@ -94,6 +94,8 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         this._maxComparisonCurrentSizeElement = null;
 
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
+
+        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
     }
 
     // Static
@@ -277,6 +279,34 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
     }
 
     // Private
+
+    _graphPositionForMouseEvent(event)
+    {
+        let chartElement = event.target.closest(".area-chart, .stacked-area-chart, .range-chart");
+        if (!chartElement)
+            return NaN;
+
+        let chartRect = chartElement.getBoundingClientRect();
+        let position = event.pageX - chartRect.left;
+
+        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
+            return chartRect.width - position;
+        return position;
+    }
+
+    _handleGraphMouseMove(event)
+    {
+        let mousePosition = this._graphPositionForMouseEvent(event);
+        if (isNaN(mousePosition)) {
+            this.dispatchEventToListeners(WI.TimelineView.Event.ScannerHide);
+            return;
+        }
+
+        let secondsPerPixel = this._timelineRuler.secondsPerPixel;
+        let time = this.startTime + (mousePosition * secondsPerPixel);
+
+        this.dispatchEventToListeners(WI.TimelineView.Event.ScannerShow, {time});
+    }
 
     _clearUsageLegend()
     {

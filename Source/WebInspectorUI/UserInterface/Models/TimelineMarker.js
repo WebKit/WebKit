@@ -76,5 +76,6 @@ WI.TimelineMarker.Type = {
     CurrentTime: "current-time",
     LoadEvent: "load-event",
     DOMContentEvent: "dom-content-event",
-    TimeStamp: "timestamp"
+    TimeStamp: "timestamp",
+    Scanner: "scanner",
 };

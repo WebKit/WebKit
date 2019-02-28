@@ -1,3 +1,58 @@
+2019-02-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add a new Scanner TimelineMarker to show up when mousing over TimelineView graphs
+        https://bugs.webkit.org/show_bug.cgi?id=195079
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Utilities.js:
+        (Note.prototype.enclosingNodeOrSelfWithClassInArray):
+        Helper for a set of classes.
+
+        * UserInterface/Models/TimelineMarker.js:
+        Add a new marker type, "Scanner".
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype._graphPositionForMouseEvent):
+        (WI.CPUTimelineView.prototype._handleGraphMouseMove):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView):
+        (WI.MemoryTimelineView.prototype._graphPositionForMouseEvent):
+        (WI.MemoryTimelineView.prototype._handleGraphMouseMove):
+        Update a scanner time when mousing over various graphs that span the entire time range.
+        These use the containing graph element because there was a single pixel between
+        adjacent graphs which would cause the scanner to flicker because the mouse event target
+        was not an svg element.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype.hidden):
+        (WI.TimelineOverview.prototype.updateScannerTime):
+        (WI.TimelineOverview.prototype.clearScanner):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewScannerTimeDidChange):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineViewScannerDidClear):
+        Update the overview's ruler with scanner changes.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .markers > .marker.scanner):
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler):
+        (WI.TimelineRuler.prototype.clearMarkers):
+        (WI.TimelineRuler.prototype.updateScannerTime):
+        (WI.TimelineRuler.prototype.clearScanner):
+        (WI.TimelineRuler.prototype._updateMarkers):
+        Have a special scanner marker that updates.
+
+        * UserInterface/Views/TimelineView.js:
+        New events that a TimelineView can dispatch to update the overview.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark)):
+        Scanner marker colors.
+
 2019-02-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Use Element.closest for internal code

@@ -360,6 +360,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values())
             overviewGraph.hidden();
+
+        this.hideScanner();
     }
 
     closed()
@@ -407,6 +409,16 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         console.assert(overviewGraph.visible, "Record selected in hidden overview graph", record);
 
         overviewGraph.selectedRecord = record;
+    }
+
+    showScanner(time)
+    {
+        this._timelineRuler.showScanner(time);
+    }
+
+    hideScanner()
+    {
+        this._timelineRuler.hideScanner();
     }
 
     updateLayoutIfNeeded(layoutReason)

@@ -227,6 +227,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._detailsContainerElement.appendChild(this._unknownThreadUsageView.element);
 
         this._workerViews = [];
+
+        this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
     }
 
     layout()
@@ -720,15 +722,15 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     _graphPositionForMouseEvent(event)
     {
-        let svgElement = event.target.closest("svg");
-        if (!svgElement)
+        let chartElement = event.target.closest(".area-chart, .stacked-area-chart, .range-chart");
+        if (!chartElement)
             return NaN;
 
-        let svgRect = svgElement.getBoundingClientRect();
-        let position = event.pageX - svgRect.left;
+        let chartRect = chartElement.getBoundingClientRect();
+        let position = event.pageX - chartRect.left;
 
         if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
-            return svgRect.width - position;
+            return chartRect.width - position;
         return position;
     }
 
@@ -825,6 +827,20 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     _selectTimelineRecord(record)
     {
         this.dispatchEventToListeners(WI.TimelineView.Event.RecordWasSelected, {record});
+    }
+
+    _handleGraphMouseMove(event)
+    {
+        let mousePosition = this._graphPositionForMouseEvent(event);
+        if (isNaN(mousePosition)) {
+            this.dispatchEventToListeners(WI.TimelineView.Event.ScannerHide);
+            return;
+        }
+
+        let secondsPerPixel = this._timelineRuler.secondsPerPixel;
+        let time = this.startTime + (mousePosition * secondsPerPixel);
+
+        this.dispatchEventToListeners(WI.TimelineView.Event.ScannerShow, {time});
     }
 };
 

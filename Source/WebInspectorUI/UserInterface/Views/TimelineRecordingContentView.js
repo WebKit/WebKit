@@ -98,6 +98,8 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasFiltered, this._handleTimelineViewRecordFiltered, this);
         WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasSelected, this._handleTimelineViewRecordSelected, this);
+        WI.TimelineView.addEventListener(WI.TimelineView.Event.ScannerShow, this._handleTimelineViewScannerShow, this);
+        WI.TimelineView.addEventListener(WI.TimelineView.Event.ScannerHide, this._handleTimelineViewScannerHide, this);
 
         WI.notifications.addEventListener(WI.Notification.VisibilityStateDidChange, this._inspectorVisibilityStateChanged, this);
 
@@ -844,6 +846,23 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             if (!record || recordMatchesTimeline)
                 timelineView.selectRecord(record);
         }
+    }
+
+    _handleTimelineViewScannerShow(event)
+    {
+        if (!this.visible)
+            return;
+
+        let {time} = event.data;
+        this._timelineOverview.showScanner(time);
+    }
+
+    _handleTimelineViewScannerHide(event)
+    {
+        if (!this.visible)
+            return;
+
+        this._timelineOverview.hideScanner();
     }
 
     _updateProgressView()

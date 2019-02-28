@@ -55,6 +55,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         this._timeRangeSelectionChanged = false;
         this._enabled = true;
 
+        this._scannerMarker = null;
         this._markerElementMap = new Map;
         this._cachedClientWidth = 0;
     }
@@ -374,11 +375,29 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         }
 
         this._markerElementMap.clear();
+
+        this._scannerMarker = null;
     }
 
     elementForMarker(marker)
     {
         return this._markerElementMap.get(marker) || null;
+    }
+
+    showScanner(time)
+    {
+        if (!this._scannerMarker) {
+            this._scannerMarker = new WI.TimelineMarker(time, WI.TimelineMarker.Type.Scanner);
+            this.addMarker(this._scannerMarker);
+        }
+
+        this._scannerMarker.time = time;
+    }
+
+    hideScanner()
+    {
+        if (this._scannerMarker)
+            this._scannerMarker.time = -1;
     }
 
     updateLayoutIfNeeded(layoutReason)
@@ -624,6 +643,11 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         }
 
         for (let [marker, markerElement] of this._markerElementMap) {
+            if (marker.time < 0) {
+                markerElement.remove();
+                continue;
+            }
+
             let newPosition = (marker.time - this._startTime) / duration;
             let property = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
             this._updatePositionOfElement(markerElement, newPosition, visibleWidth, property);

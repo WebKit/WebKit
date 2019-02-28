@@ -28,7 +28,7 @@
     top: 0;
     bottom: 0;
 
-    --border-start-style: 1px solid lightgrey;;
+    --border-start-style: 1px solid lightgrey;
 }
 
 body[dir=ltr] .content-view.shader-program > .text-editor.shader.vertex,
