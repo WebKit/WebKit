@@ -269,6 +269,11 @@ public:
     void sendProcessDidResume() override;
     void didSetAssertionState(AssertionState) override;
 
+#if PLATFORM(IOS_FAMILY)
+    void setKeyboardIsAttached(bool keyboardIsAttached) { m_keyboardIsAttached = keyboardIsAttached; }
+    bool keyboardIsAttached() const { return m_keyboardIsAttached; }
+#endif
+
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
         None = 0,
@@ -456,6 +461,10 @@ private:
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_keyboardIsAttached { false };
 #endif
 
 #if PLATFORM(COCOA)

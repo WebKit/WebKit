@@ -4849,7 +4849,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
                 if (_isChangingFocus)
                     return YES;
 
-                if (UIKeyboard.isInHardwareKeyboardMode)
+                if (_page->process().keyboardIsAttached())
                     return YES;
 #endif
             }

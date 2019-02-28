@@ -1,3 +1,33 @@
+2019-02-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Move calls to [UIKeyboard isInHardwareKeyboardMode] to the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=193683
+        <rdar://problem/47634345>
+
+        Reviewed by Brent Fulgham.
+
+        When a keyboard is attached/deattached or the application becomes foreground, send a message from
+        the UI process to the WebContent process, notifying whether a keyboard is attached or not. Also,
+        cache the value of [UIKeyboard isInHardwareKeyboardMode] in the UI process, since this call seems
+        to be expensive.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::setKeyboardIsAttached):
+        (WebKit::WebProcessProxy::keyboardIsAttached const):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationWillEnterForeground):
+        (WebKit::WebPageProxy::hardwareKeyboardAvailabilityChanged):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::hardwareKeyboardAvailabilityChanged):
+
 2019-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CoordinatedGraphics] Remove COORDINATED_GRAPHICS_THREADED option
