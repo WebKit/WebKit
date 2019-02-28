@@ -29,7 +29,7 @@
 #include "config.h"
 #include "LayerTreeHost.h"
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "DrawingArea.h"
 #include "WebPage.h"

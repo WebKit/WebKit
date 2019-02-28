@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CompositingRunLoop.h"
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -260,4 +260,4 @@ void CompositingRunLoop::updateTimerFired()
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)

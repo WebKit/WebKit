@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "NicosiaPaintingEngine.h"
 #include <wtf/WorkerPool.h>
@@ -48,4 +48,4 @@ private:
 
 } // namespace Nicosia
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)

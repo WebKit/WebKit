@@ -96,12 +96,10 @@ void CoordinatedGraphicsScene::updateViewport()
         m_client->updateViewport();
 }
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
 void CoordinatedGraphicsScene::onNewBufferAvailable()
 {
     updateViewport();
 }
-#endif
 
 Nicosia::CompositionLayerTextureMapperImpl& compositionLayerImpl(Nicosia::CompositionLayer& compositionLayer)
 {

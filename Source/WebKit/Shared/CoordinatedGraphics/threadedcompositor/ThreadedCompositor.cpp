@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ThreadedCompositor.h"
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "CompositingRunLoop.h"
 #include "ThreadedDisplayRefreshMonitor.h"
@@ -331,4 +331,4 @@ void ThreadedCompositor::frameComplete()
 }
 
 }
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)

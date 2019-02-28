@@ -1,3 +1,49 @@
+2019-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CoordinatedGraphics] Remove COORDINATED_GRAPHICS_THREADED option
+        https://bugs.webkit.org/show_bug.cgi?id=195159
+
+        Reviewed by Don Olmstead.
+
+        Use COORDINATED_GRAPHICS instead.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/PlatformLayer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::ImageBufferData::~ImageBufferData):
+        * platform/graphics/cairo/ImageBufferDataCairo.h:
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp:
+        * platform/graphics/nicosia/NicosiaPaintingEngineThreaded.h:
+        * platform/graphics/nicosia/texmap/NicosiaGC3DLayer.cpp:
+        (Nicosia::GC3DLayer::swapBuffersIfNeeded):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        (WebCore::TextureMapperGC3DPlatformLayer::TextureMapperGC3DPlatformLayer):
+        (WebCore::TextureMapperGC3DPlatformLayer::~TextureMapperGC3DPlatformLayer):
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp:
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyProvider.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::updatePlatformLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintsIntoWindow const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::shouldCompositeOverflowControls const):
+
 2019-02-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Locale names can be nullptr

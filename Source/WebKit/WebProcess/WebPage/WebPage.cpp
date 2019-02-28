@@ -1621,7 +1621,7 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
     // This also takes care of the relayout.
     setFixedLayoutSize(roundedIntSize(attr.layoutSize));
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     m_drawingArea->didChangeViewportAttributes(WTFMove(attr));
 #else
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
@@ -2015,10 +2015,8 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
     FrameView* view = m_page->mainFrame().view();
     if (view && view->useFixedLayout())
         sendViewportAttributesChanged(viewportArguments);
-#if USE(COORDINATED_GRAPHICS_THREADED)
     else
         m_drawingArea->didChangeViewportAttributes(ViewportAttributes());
-#endif
 #endif
 
 #if !PLATFORM(IOS_FAMILY) && !USE(COORDINATED_GRAPHICS)

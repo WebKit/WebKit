@@ -39,7 +39,7 @@ public:
     bool makeContextCurrent();
     PlatformGraphicsContext3D platformContext();
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
     void swapBuffersIfNeeded() override;
 #else
@@ -50,7 +50,7 @@ private:
     GraphicsContext3D& m_context;
     std::unique_ptr<GLContext> m_glContext;
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif
 };

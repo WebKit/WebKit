@@ -50,7 +50,7 @@ public:
             g_usleep(30 * G_USEC_PER_SEC);
 #endif
 
-#if (USE(COORDINATED_GRAPHICS_THREADED) || USE(GSTREAMER_GL)) && PLATFORM(X11)
+#if (USE(COORDINATED_GRAPHICS) || USE(GSTREAMER_GL)) && PLATFORM(X11)
         XInitThreads();
 #endif
         gtk_init(nullptr, nullptr);

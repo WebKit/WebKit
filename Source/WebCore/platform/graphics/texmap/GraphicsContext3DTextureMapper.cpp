@@ -133,7 +133,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, Hos
         ::glGenFramebuffers(1, &m_fbo);
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
         ::glGenTextures(1, &m_compositorTexture);
         ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
         ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -235,7 +235,7 @@ GraphicsContext3D::~GraphicsContext3D()
     makeContextCurrent();
     if (m_texture)
         ::glDeleteTextures(1, &m_texture);
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture)
         ::glDeleteTextures(1, &m_compositorTexture);
 #endif
@@ -257,7 +257,7 @@ GraphicsContext3D::~GraphicsContext3D()
             ::glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     ::glDeleteFramebuffers(1, &m_fbo);
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     ::glDeleteTextures(1, &m_intermediateTexture);
 #endif
 

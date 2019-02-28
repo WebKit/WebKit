@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CompositingRunLoop_h
-#define CompositingRunLoop_h
+#pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include <wtf/Atomics.h>
 #include <wtf/Condition.h>
@@ -87,6 +86,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
-
-#endif // CompositingRunLoop_h
+#endif // USE(COORDINATED_GRAPHICS)

@@ -31,7 +31,7 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
@@ -76,7 +76,7 @@ PlatformGraphicsContext3D GC3DLayer::platformContext()
 
 void GC3DLayer::swapBuffersIfNeeded()
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     if (m_context.layerComposited())
         return;
 

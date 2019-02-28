@@ -19,10 +19,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SimpleViewportController_h
-#define SimpleViewportController_h
+#pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
@@ -76,6 +75,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
-
-#endif // SimpleViewportController_h
+#endif // USE(COORDINATED_GRAPHICS)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TextureMapperPlatformLayerProxy.h"
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "BitmapTextureGL.h"
 #include "TextureMapperGL.h"
@@ -243,4 +243,4 @@ void TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired()
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)

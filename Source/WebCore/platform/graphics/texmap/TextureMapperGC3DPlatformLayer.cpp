@@ -42,14 +42,14 @@ TextureMapperGC3DPlatformLayer::TextureMapperGC3DPlatformLayer(GraphicsContext3D
         break;
     }
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy());
 #endif
 }
 
 TextureMapperGC3DPlatformLayer::~TextureMapperGC3DPlatformLayer()
 {
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(COORDINATED_GRAPHICS)
     if (client())
         client()->platformLayerWillBeDestroyed();
 #endif
@@ -67,7 +67,7 @@ PlatformGraphicsContext3D TextureMapperGC3DPlatformLayer::platformContext()
     return m_glContext->platformContext();
 }
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 RefPtr<TextureMapperPlatformLayerProxy> TextureMapperGC3DPlatformLayer::proxy() const
 {
     return m_platformLayerProxy.copyRef();
@@ -115,7 +115,7 @@ void TextureMapperGC3DPlatformLayer::paintToTextureMapper(TextureMapper& texture
     texmapGL.drawTexture(m_context.m_texture, flags, textureSize, targetRect, matrix, opacity);
 #endif // USE(TEXTURE_MAPPER_GL)
 }
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)
 
 } // namespace WebCore
 

@@ -69,7 +69,7 @@
 #include "OpenGLShims.h"
 #endif
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
 #endif
@@ -83,13 +83,13 @@ ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMod
     , m_size(size)
     , m_renderingMode(renderingMode)
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     , m_compositorTexture(0)
 #endif
     , m_texture(0)
 #endif
 {
-#if ENABLE(ACCELERATED_2D_CANVAS) && USE(COORDINATED_GRAPHICS_THREADED)
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(COORDINATED_GRAPHICS)
     if (m_renderingMode == RenderingMode::Accelerated) {
 #if USE(NICOSIA)
         m_nicosiaLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this));
@@ -106,7 +106,7 @@ ImageBufferData::~ImageBufferData()
         return;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 #endif
 
@@ -116,7 +116,7 @@ ImageBufferData::~ImageBufferData()
     if (m_texture)
         glDeleteTextures(1, &m_texture);
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture)
         glDeleteTextures(1, &m_compositorTexture);
 #endif
@@ -127,7 +127,7 @@ ImageBufferData::~ImageBufferData()
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 void ImageBufferData::createCompositorBuffer()
 {
     auto* context = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext();
@@ -674,7 +674,7 @@ Vector<uint8_t> ImageBuffer::toData(const String& mimeType, Optional<double>) co
 
 #endif
 
-#if ENABLE(ACCELERATED_2D_CANVAS) && !USE(COORDINATED_GRAPHICS_THREADED)
+#if ENABLE(ACCELERATED_2D_CANVAS) && !USE(COORDINATED_GRAPHICS)
 void ImageBufferData::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     ASSERT(m_texture);
