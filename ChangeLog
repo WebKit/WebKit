@@ -1,3 +1,12 @@
+2019-02-28  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Turn ENABLE_RESOURCE_LOAD_STATISTICS on
+        https://bugs.webkit.org/show_bug.cgi?id=194267
+
+        Reviewed by Brent Fulgham.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2019-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [CoordinatedGraphics] Remove COORDINATED_GRAPHICS_THREADED option
