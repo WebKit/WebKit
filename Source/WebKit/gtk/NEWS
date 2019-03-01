@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 2.22.7
+=================
+
+What's new in WebKitGTK+ 2.22.7?
+
+  - Fix rendering of glyphs in Hebrew (and possibly other languages) when
+    Unicode NFC normalization is used.
+  - Fix several crashes and race conditions.
+
+=================
 WebKitGTK+ 2.22.6
 =================
 

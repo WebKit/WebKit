@@ -1,8 +1,18 @@
 =================
+WPE WebKit 2.22.5
+=================
+
+What's new in WPE WebKit 2.22.5?
+
+  - Fix rendering of glyphs in Hebrew (and possibly other languages) when
+    Unicode NFC normalization is used.
+  - Fix several crashes and race conditions.
+
+=================
 WPE WebKit 2.22.4
 =================
 
-What's new in WPE WebKit 2.22.3?
+What's new in WPE WebKit 2.22.4?
 
   - Add missing WebKitVersion.h to the set of installed haders.
   - Fix several crashes, race conditions, and rendering issues.
