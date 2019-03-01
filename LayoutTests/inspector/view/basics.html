@@ -82,6 +82,24 @@ function test()
     });
 
     suite.addTestCase({
+        name: "View.removeSubview.IndirectDescendant",
+        test() {
+            let parent = new WI.View;
+            let middleElement = parent.element.appendChild(document.createElement("div"));
+
+            let child = new WI.View;
+            middleElement.appendChild(child.element);
+
+            parent.addSubview(child);
+            parent.removeSubview(child);
+
+            InspectorTest.expectFalse(child.element.parentNode, "Removed view should not be in the DOM.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
         name: "View.insertSubviewBefore",
         test() {
             let parent = new WI.View;

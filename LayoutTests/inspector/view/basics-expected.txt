@@ -31,6 +31,9 @@ PASS: Removed view should not be a descendant of the parent.
 PASS: Removed view should not be included in the parent's subviews.
 PASS: Removing a nonexistent view should have no effect.
 
+-- Running test case: View.removeSubview.IndirectDescendant
+PASS: Removed view should not be in the DOM.
+
 -- Running test case: View.insertSubviewBefore
 PASS: Inserting a view before `null` should append the view.
 PASS: child2 should be inserted before dhild1.
