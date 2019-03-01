@@ -1,3 +1,12 @@
+2019-03-01  Truitt Savell  <tsavell@apple.com>
+
+        REGRESSION: (r242189): Six Layout Tests in storage/indexeddb/ are crashing after r242189
+        https://bugs.webkit.org/show_bug.cgi?id=195210
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2019-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS] Dark flash when opening Google AMP pages
