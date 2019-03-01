@@ -1826,9 +1826,10 @@ static constexpr CachedCodeBlockTag tagFromSourceCodeType(SourceCodeType type)
     case SourceCodeType::ModuleType:
         return CachedModuleCodeBlockTag;
     case SourceCodeType::FunctionType:
-        ASSERT_NOT_REACHED();
-        return static_cast<CachedCodeBlockTag>(-1);
+        break;
     }
+    ASSERT_NOT_REACHED();
+    return static_cast<CachedCodeBlockTag>(-1);
 }
 
 template<>

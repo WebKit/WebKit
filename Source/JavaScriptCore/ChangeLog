@@ -1,3 +1,10 @@
+2019-02-28  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Attempt windows build fix after r242239.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::tagFromSourceCodeType):
+
 2019-02-28  Mark Lam  <mark.lam@apple.com>
 
         In cloop.rb, rename :int and :uint to :intptr and :uintptr.
