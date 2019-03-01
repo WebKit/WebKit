@@ -1,3 +1,31 @@
+2019-03-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        EnvironmentUtilities::stripValuesEndingWithString isn't thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=194612
+
+        Reviewed by Alex Christensen.
+
+        This API test really shouldn't be verifying that the actual environment was successfully modified.
+
+        At its core, stripValuesEndingWithString is really just split-filter-join. By replacing it with a pair of
+        simple functions -- one for string processing, one for environment processing -- the API test only needs to
+        worry about the former.
+
+        * Platform/unix/EnvironmentUtilities.cpp:
+        (WebKit::EnvironmentUtilities::stripEntriesEndingWith):
+        (WebKit::EnvironmentUtilities::removeValuesEndingWith):
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString): Deleted.
+        * Platform/unix/EnvironmentUtilities.h:
+        Replace old function with a pair of simpler ones.
+
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm:
+        (NetworkServiceInitializer):
+        * PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm:
+        (PluginServiceInitializer):
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm:
+        (WebContentServiceInitializer):
+        Update function name.
+
 2019-03-01  Don Olmstead  <don.olmstead@sony.com>
 
         Unify WebsiteDataStore::defaultDataStoreConfiguration across ports

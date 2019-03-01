@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,104 +27,46 @@
 #include "config.h"
 #include "EnvironmentUtilities.h"
 
-#include <wtf/text/CString.h>
+#include <cstdlib>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
 namespace EnvironmentUtilities {
 
-void stripValuesEndingWithString(const char* environmentVariable, const char* searchValue)
+String stripEntriesEndingWith(StringView input, StringView suffix)
 {
-    ASSERT(environmentVariable);
-    ASSERT(searchValue);
-    
-    // Grab the current value of the environment variable.
-    char* environmentValue = getenv(environmentVariable);
+    StringBuilder output;
 
-    if (!environmentValue || environmentValue[0] == '\0')
-        return;
+    auto hasAppended = false;
+    for (auto entry : input.splitAllowingEmptyEntries(':')) {
+        if (entry.endsWith(suffix))
+            continue;
 
-    const size_t environmentValueLength = strlen(environmentValue);
-    const size_t environmentValueBufferLength = environmentValueLength + 1;
+        if (hasAppended)
+            output.append(':');
+        else
+            hasAppended = true;
 
-    // Set up the strings we'll be searching for.
-    size_t searchLength = strlen(searchValue);
-    if (!searchLength)
-        return;
-
-    Vector<char> searchValueWithColonVector;
-    searchValueWithColonVector.grow(searchLength + 2);
-    char* searchValueWithColon = searchValueWithColonVector.data();
-    size_t searchLengthWithColon = searchLength + 1;
-
-    memcpy(searchValueWithColon, searchValue, searchLength);
-    searchValueWithColon[searchLength] = ':';
-    searchValueWithColon[searchLengthWithColon] = '\0';
-    
-    // Loop over environmentValueBuffer, removing any components that match the search value ending with a colon.
-    char* componentStart = environmentValue;
-    char* match = strnstr(componentStart, searchValueWithColon, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
-    bool foundAnyMatches = match != NULL;
-    while (match != NULL) {
-        // Update componentStart to point to the colon immediately preceding the match.
-        char* nextColon = strnstr(componentStart, ":", environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
-        while (nextColon && nextColon < match) {
-            componentStart = nextColon;
-            nextColon = strnstr(componentStart + 1, ":", environmentValueLength - static_cast<size_t>(componentStart + 1 - environmentValue));
-        }
-
-        RELEASE_ASSERT(componentStart >= environmentValue);
-        size_t environmentValueOffset = static_cast<size_t>(componentStart - environmentValue);
-        RELEASE_ASSERT(environmentValueOffset < environmentValueBufferLength);
-
-        // Copy over everything right of the match to the current component start, and search from there again.
-        if (componentStart[0] == ':') {
-            // If componentStart points to a colon, copy the colon over.
-            strlcpy(componentStart, match + searchLength, environmentValueBufferLength - environmentValueOffset);
-        } else {
-            // Otherwise, componentStart still points to the beginning of environmentValueBuffer, so don't copy over the colon.
-            // The edge case is if the colon is the last character in the string, so "match + searchLengthWithoutColon + 1" is the
-            // null terminator of the original input, in which case this is still safe.
-            strlcpy(componentStart, match + searchLengthWithColon, environmentValueBufferLength - environmentValueOffset);
-        }
-        
-        match = strnstr(componentStart, searchValueWithColon, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
-    }
-    
-    // Search for the value without a trailing colon, seeing if the original input ends with it.
-    match = strnstr(componentStart, searchValue, environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
-    while (match != NULL) {
-        if (match[searchLength] == '\0')
-            break;
-        match = strnstr(match + 1, searchValue, environmentValueLength - static_cast<size_t>(match + 1 - environmentValue));
-    }
-    
-    // Since the original input ends with the search, strip out the last component.
-    if (match) {
-        // Update componentStart to point to the colon immediately preceding the match.
-        char* nextColon = strnstr(componentStart, ":", environmentValueLength - static_cast<size_t>(componentStart - environmentValue));
-        while (nextColon && nextColon < match) {
-            componentStart = nextColon;
-            nextColon = strnstr(componentStart + 1, ":", environmentValueLength - static_cast<size_t>(componentStart + 1 - environmentValue));
-        }
-        
-        // Whether componentStart points to the original string or the last colon, putting the null terminator there will get us the desired result.
-        componentStart[0] = '\0';
-
-        foundAnyMatches = true;
+        output.append(entry);
     }
 
-    // If we found no matches, don't change anything.
-    if (!foundAnyMatches)
+    return output.toString();
+}
+
+void removeValuesEndingWith(const char* environmentVariable, const char* searchValue)
+{
+    const char* before = getenv(environmentVariable);
+    if (!before)
         return;
 
-    // If we have nothing left, just unset the variable
-    if (environmentValue[0] == '\0') {
+    auto after = stripEntriesEndingWith(before, searchValue);
+    if (after.isEmpty()) {
         unsetenv(environmentVariable);
         return;
     }
-    
-    setenv(environmentVariable, environmentValue, 1);
+
+    setenv(environmentVariable, after.utf8().data(), 1);
 }
 
 } // namespace EnvironmentUtilities

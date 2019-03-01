@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +27,15 @@
 #pragma once
 
 #include "WKDeclarationSpecifiers.h"
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 namespace EnvironmentUtilities {
 
-WK_EXPORT void stripValuesEndingWithString(const char* environmentVariable, const char* search);
+WK_EXPORT String stripEntriesEndingWith(StringView input, StringView suffix);
+WK_EXPORT void removeValuesEndingWith(const char* environmentVariable, const char* search);
 
 } // namespace EnvironmentUtilities
 

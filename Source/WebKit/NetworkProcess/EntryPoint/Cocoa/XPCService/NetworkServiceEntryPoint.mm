@@ -56,6 +56,6 @@ void NetworkServiceInitializer(xpc_connection_t connection, xpc_object_t initial
 {
     // Remove the SecItemShim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the this process don't try to insert the shim and crash.
-    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
+    EnvironmentUtilities::removeValuesEndingWith("DYLD_INSERT_LIBRARIES", "/SecItemShim.dylib");
     XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
 }
