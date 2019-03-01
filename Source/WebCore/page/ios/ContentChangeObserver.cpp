@@ -35,6 +35,17 @@
 
 namespace WebCore {
 
+static bool hasPendingStyleRecalc(const Page& page)
+{
+    for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document()) {
+            if (document->hasPendingStyleRecalc())
+                return true;
+        }
+    }
+    return false;
+}
+
 ContentChangeObserver::ContentChangeObserver(Page& page)
     : m_page(page)
 {
@@ -71,7 +82,6 @@ void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
-    startObservingStyleRecalcScheduling();
     m_isObservingContentChanges = true;
 }
 
@@ -79,30 +89,24 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
         return;
+    LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
+
     removeObservedDOMTimer(timer);
-    stopObservingStyleRecalcScheduling();
     stopObservingContentChanges();
     auto observedContentChange = this->observedContentChange();
+    auto hasPendingStyleRecalc = WebCore::hasPendingStyleRecalc(m_page);
     // Check if the timer callback triggered either a sync or async style update.
-    auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (!countOfObservedDOMTimers() && observedContentChange == WKContentNoChange);  
-
-    LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
-    if (inDeterminedState) {
+    auto hasDeterminedState = observedContentChange == WKContentVisibilityChange || (!countOfObservedDOMTimers() && observedContentChange == WKContentNoChange && !hasPendingStyleRecalc);  
+    if (hasDeterminedState) {
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") in determined state.");
         m_page.chrome().client().observedContentChange(m_page.mainFrame());
-    } else if (observedContentChange == WKContentIndeterminateChange) {
+        return;
+    }
+    if (hasPendingStyleRecalc) {
         // An async style recalc has been scheduled. Let's observe it.
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") wait until next style recalc fires.");
         setShouldObserveStyleRecalc(true);
     }
-}
-
-void ContentChangeObserver::didScheduleStyleRecalc()
-{
-    if (!isObservingStyleRecalcScheduling())
-        return;
-    LOG(ContentObservation, "didScheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
-    setObservedContentChange(WKContentIndeterminateChange);
 }
 
 void ContentChangeObserver::startObservingStyleRecalc()
@@ -119,8 +123,8 @@ void ContentChangeObserver::stopObservingStyleRecalc()
         return;
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
     setShouldObserveStyleRecalc(false);
-    auto inDeterminedState = observedContentChange() == WKContentVisibilityChange || !countOfObservedDOMTimers();
-    if (!inDeterminedState) {
+    auto hasDeterminedState = observedContentChange() == WKContentVisibilityChange || !countOfObservedDOMTimers();
+    if (!hasDeterminedState) {
         LOG(ContentObservation, "stopObservingStyleRecalc: can't decided it yet.");
         return;
     }
@@ -154,6 +158,7 @@ void ContentChangeObserver::didContentVisibilityChange()
 
 void ContentChangeObserver::startObservingContentChanges()
 {
+    ASSERT(!hasPendingStyleRecalc(m_page));
     startObservingDOMTimerScheduling();
     resetObservedContentChange();
     clearObservedDOMTimers();

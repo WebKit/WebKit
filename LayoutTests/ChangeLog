@@ -1,3 +1,14 @@
+2019-03-01  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Check for pending style recalcs at the end of each timer run.
+        https://bugs.webkit.org/show_bug.cgi?id=195220
+        <rdar://problem/48518979>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/style-recalc-schedule-and-force-relalc-expected.txt: Added.
+        * fast/events/touch/ios/style-recalc-schedule-and-force-relalc.html: Added.
+
 2019-03-01  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration

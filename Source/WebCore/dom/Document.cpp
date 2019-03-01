@@ -1833,10 +1833,6 @@ void Document::scheduleStyleRecalc()
         return;
 
     m_styleRecalcTimer.startOneShot(0_s);
-#if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page())
-        page->contentChangeObserver().didScheduleStyleRecalc();
-#endif
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);
 }

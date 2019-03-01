@@ -45,7 +45,6 @@ public:
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
     void didContentVisibilityChange();
-    void didScheduleStyleRecalc();
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
@@ -95,10 +94,6 @@ private:
     void removeObservedDOMTimer(const DOMTimer&);
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
-    void startObservingStyleRecalcScheduling() { m_isObservingStyleRecalcScheduling = true; }
-    void stopObservingStyleRecalcScheduling() { m_isObservingStyleRecalcScheduling = false; }
-    bool isObservingStyleRecalcScheduling() const { return m_isObservingStyleRecalcScheduling; }
-
     void setShouldObserveStyleRecalc(bool shouldObserve) { m_shouldObserveStyleRecalc = shouldObserve; }
     bool shouldObserveStyleRecalc() const { return m_shouldObserveStyleRecalc; }
 
@@ -114,7 +109,6 @@ private:
     Page& m_page;
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_shouldObserveStyleRecalc { false };
-    bool m_isObservingStyleRecalcScheduling { false };
     bool m_isObservingDOMTimerScheduling { false };
     bool m_isObservingContentChanges { false };
 };
