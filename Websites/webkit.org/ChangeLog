@@ -1,3 +1,15 @@
+2019-02-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Codify the naming convention for fooIfExists
+        https://bugs.webkit.org/show_bug.cgi?id=194930
+
+        Reviewed by Darin Adler.
+
+        Updating the coding style guideline after the discussion following
+        https://lists.webkit.org/pipermail/webkit-dev/2013-June/025056.html
+
+        * code-style.md:
+
 2019-02-20  Jon Davis  <jond@apple.com>
 
         Added macOS Mojave builds to the WebKit Build Archives.
