@@ -330,9 +330,9 @@ public:
     CachedObject() = default;
 
     inline void* operator new(size_t, void* where) { return where; }
+    void* operator new[](size_t, void* where) { return where; }
 
     // Copied from WTF_FORBID_HEAP_ALLOCATION, since we only want to allow placement new
-    void* operator new[](size_t, void*) = delete;
     void* operator new(size_t) = delete;
     void operator delete(void*) = delete;
     void* operator new[](size_t size) = delete;
@@ -370,7 +370,12 @@ protected:
     T* allocate(Encoder& encoder, unsigned size = 1)
     {
         uint8_t* result = allocate(encoder, sizeof(T) * size);
-        return new (result) T();
+        return new (result) T[size];
+    }
+
+    bool isEmpty() const
+    {
+        return m_offset == s_invalidOffset;
     }
 
 private:
@@ -388,8 +393,7 @@ class CachedPtr : public VariableLengthObject<Source*> {
 public:
     void encode(Encoder& encoder, const Source* src)
     {
-        m_isEmpty = !src;
-        if (m_isEmpty)
+        if (!src)
             return;
 
         if (Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
@@ -405,7 +409,7 @@ public:
     template<typename... Args>
     Source* decode(Decoder& decoder, bool& isNewAllocation, Args&&... args) const
     {
-        if (m_isEmpty) {
+        if (this->isEmpty()) {
             isNewAllocation = false;
             return nullptr;
         }
@@ -434,13 +438,10 @@ public:
 private:
     const T* get() const
     {
-        if (m_isEmpty)
+        if (this->isEmpty())
             return nullptr;
         return this->template buffer<T>();
     }
-
-    bool m_isEmpty;
-
 };
 
 template<typename T, typename Source = SourceType<T>>
@@ -708,9 +709,7 @@ class CachedOptional : public VariableLengthObject<Optional<SourceType<T>>> {
 public:
     void encode(Encoder& encoder, const Optional<SourceType<T>>& source)
     {
-        m_isEmpty = !source;
-
-        if (m_isEmpty)
+        if (!source)
             return;
 
         this->template allocate<T>(encoder)->encode(encoder, *source);
@@ -718,7 +717,7 @@ public:
 
     Optional<SourceType<T>> decode(Decoder& decoder) const
     {
-        if (m_isEmpty)
+        if (this->isEmpty())
             return WTF::nullopt;
 
         return { this->template buffer<T>()->decode(decoder) };
@@ -739,14 +738,11 @@ public:
 
     SourceType<T>* decodeAsPtr(Decoder& decoder) const
     {
-        if (m_isEmpty)
+        if (this->isEmpty())
             return nullptr;
 
         return this->template buffer<T>()->decode(decoder);
     }
-
-private:
-    bool m_isEmpty;
 };
 
 class CachedSimpleJumpTable : public CachedObject<UnlinkedSimpleJumpTable> {

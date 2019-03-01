@@ -1,3 +1,26 @@
+2019-02-28  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Remove CachedPtr::m_isEmpty and CachedOptional::m_isEmpty fields
+        https://bugs.webkit.org/show_bug.cgi?id=194999
+
+        Reviewed by Saam Barati.
+
+        These fields are unnecessary, since we can just check that m_offset
+        has not been initialized (I added VariableLengthObject::isEmpty for
+        that). They also add 7-byte padding to these classes, which is pretty
+        bad given how frequently CachedPtr is used.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedObject::operator new[]):
+        (JSC::VariableLengthObject::allocate):
+        (JSC::VariableLengthObject::isEmpty const):
+        (JSC::CachedPtr::encode):
+        (JSC::CachedPtr::decode const):
+        (JSC::CachedPtr::get const):
+        (JSC::CachedOptional::encode):
+        (JSC::CachedOptional::decode const):
+        (JSC::CachedOptional::decodeAsPtr const):
+
 2019-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] sizeof(JSString) should be 16
