@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+        }
+        .outer-clipper {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            border: 2px solid orange;
+        }
+        .clipper {
+            margin: 20px;
+            padding: 10px;
+            width: 300px;
+            height: 100px;
+            overflow: hidden;
+            background-color: gray;
+        }
+        .changed .clipper {
+            height: 300px;
+        }
+        .content {
+            transform: translateZ(0);
+            background-color: green;
+            height: 300px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        }, false);
+    </script>
+</head>
+<body>
+        <div class="outer-clipper">
+            <div class="clipper">
+                <div class="content">
+                    &nbsp;
+                </div>
+            </div>
+        </div>
+</body>
+</html>
