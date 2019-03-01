@@ -1,3 +1,21 @@
+2019-03-01  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM] Fix assembler warnings in ctiMasmProbeTrampoline
+        https://bugs.webkit.org/show_bug.cgi?id=195164
+
+        Reviewed by Mark Lam.
+
+        Short branches in IT blocks are deprecated in AArch32. In addition the
+        the conditional branch was the only instruction in the IT block. Short
+        branches are able to encode the condition code themselves, the additional
+        IT instruction is not needed.
+
+        The assembler was also warning that writing into APSR without a bitmask
+        was deprecated. Therefore use APSR_nzcvq instead, this generates the same
+        instruction encoding.
+
+        * assembler/MacroAssemblerARMv7.cpp:
+
 2019-02-28  Tadeu Zagallo  <tzagallo@apple.com>
 
         Remove CachedPtr::m_isEmpty and CachedOptional::m_isEmpty fields
