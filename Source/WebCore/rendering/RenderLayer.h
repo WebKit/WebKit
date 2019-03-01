@@ -505,11 +505,12 @@ public:
     bool canRender3DTransforms() const;
 
     enum UpdateLayerPositionsFlag {
-        CheckForRepaint                 = 1 << 0,
-        NeedsFullRepaintInBacking       = 1 << 1,
-        UpdatePagination                = 1 << 2,
-        SeenTransformedLayer            = 1 << 3,
-        Seen3DTransformedLayer          = 1 << 4,
+        CheckForRepaint                     = 1 << 0,
+        NeedsFullRepaintInBacking           = 1 << 1,
+        ContainingClippingLayerChangedSize  = 1 << 2,
+        UpdatePagination                    = 1 << 3,
+        SeenTransformedLayer                = 1 << 4,
+        Seen3DTransformedLayer              = 1 << 5,
     };
     static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
 
@@ -931,7 +932,7 @@ private:
     void updateScrollbarsAfterLayout();
 
     // Returns true if the position changed.
-    bool updateLayerPosition();
+    bool updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* = nullptr);
 
     void updateLayerPositions(RenderGeometryMap* = nullptr, OptionSet<UpdateLayerPositionsFlag> = updateLayerPositionsDefaultFlags());
 

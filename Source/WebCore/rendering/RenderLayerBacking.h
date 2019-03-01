@@ -83,7 +83,7 @@ public:
     // Update contents and clipping structure.
     void updateDrawsContent();
     
-    void updateAfterLayout(bool needsFullRepaint);
+    void updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint);
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
 

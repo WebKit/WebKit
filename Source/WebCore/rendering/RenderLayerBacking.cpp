@@ -651,7 +651,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
     }
 }
 
-void RenderLayerBacking::updateAfterLayout(bool needsFullRepaint)
+void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsFullRepaint)
 {
     LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
 
@@ -662,7 +662,8 @@ void RenderLayerBacking::updateAfterLayout(bool needsFullRepaint)
         m_owningLayer.setNeedsCompositingGeometryUpdate();
         // This layer's geometry affects those of its children.
         m_owningLayer.setChildrenNeedCompositingGeometryUpdate();
-    }
+    } else if (needsClippingUpdate)
+        m_owningLayer.setNeedsCompositingGeometryUpdate();
     
     if (needsFullRepaint && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
