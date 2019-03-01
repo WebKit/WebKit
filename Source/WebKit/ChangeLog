@@ -1,5 +1,14 @@
 2019-03-01  Tim Horton  <timothy_horton@apple.com>
 
+        Remove unused code in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=189614
+
+        Reviewed by Simon Fraser.
+
+        * mac/MigrateHeadersFromWebKitLegacy.make:
+
+2019-03-01  Tim Horton  <timothy_horton@apple.com>
+
         Modernize WebKit::AttributedString a little bit
         https://bugs.webkit.org/show_bug.cgi?id=195200
 

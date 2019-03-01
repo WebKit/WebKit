@@ -1,3 +1,25 @@
+2019-03-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused code in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=189614
+
+        Reviewed by Simon Fraser.
+
+        * Carbon/CarbonUtils.h: Removed.
+        * Carbon/CarbonUtils.m: Removed.
+        * Carbon/CarbonWindowAdapter.h: Removed.
+        * Carbon/CarbonWindowAdapter.mm: Removed.
+        * Carbon/CarbonWindowContentView.h: Removed.
+        * Carbon/CarbonWindowContentView.m: Removed.
+        * Carbon/CarbonWindowFrame.h: Removed.
+        * Carbon/CarbonWindowFrame.m: Removed.
+        * Carbon/HIViewAdapter.h: Removed.
+        * Carbon/HIViewAdapter.m: Removed.
+        * Carbon/HIWebView.h: Removed.
+        * Carbon/HIWebView.mm: Removed.
+        * Configurations/WebKitLegacy.xcconfig:
+        * WebKit.mac.exp:
+
 2019-03-01  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] 32-bit builds broken by attempt to disable WebGPU on 32-bit

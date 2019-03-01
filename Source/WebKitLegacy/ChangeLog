@@ -1,3 +1,12 @@
+2019-03-01  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused code in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=189614
+
+        Reviewed by Simon Fraser.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2019-02-20  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add SDKVariant.xcconfig to various Xcode projects

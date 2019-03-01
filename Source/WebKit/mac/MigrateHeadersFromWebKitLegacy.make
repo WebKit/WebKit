@@ -33,7 +33,6 @@ PUBLIC_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)
 ifeq ($(WK_PLATFORM_NAME), macosx)
 
 WEBKIT_PUBLIC_HEADERS = \
-    CarbonUtils.h \
     DOM.h \
     DOMAbstractView.h \
     DOMAttr.h \
@@ -164,7 +163,6 @@ WEBKIT_PUBLIC_HEADERS = \
     DOMXPathExpression.h \
     DOMXPathNSResolver.h \
     DOMXPathResult.h \
-    HIWebView.h \
     WebArchive.h \
     WebBackForwardList.h \
     WebDOMOperations.h \

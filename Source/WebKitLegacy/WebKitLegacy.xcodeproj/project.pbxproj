@@ -237,12 +237,6 @@
 		939810600824BF01008DF038 /* WebResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810630824BF01008DF038 /* WebHistoryItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 516F296F03A6C45A00CA2D3A /* WebHistoryItemInternal.h */; };
 		939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D36FD5E03F78F9E00A80166 /* WebFormDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */; };
-		939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */; };
-		939810670824BF01008DF038 /* CarbonWindowFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */; };
-		939810680824BF01008DF038 /* HIViewAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEE9A03F9DBA103CA0DE6 /* HIViewAdapter.h */; };
-		939810690824BF01008DF038 /* HIWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9398106A0824BF01008DF038 /* CarbonUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F79B974804019934036909D2 /* CarbonUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84CA5F7E042685E800CA2ACA /* WebKitErrorsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398106E0824BF01008DF038 /* WebFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8B52E04282B5900CA2D3A /* WebFrameView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398106F0824BF01008DF038 /* WebFrameViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A8B53204282BD200CA2D3A /* WebFrameViewInternal.h */; };
@@ -315,11 +309,6 @@
 		939810F40824BF01008DF038 /* WebHTMLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 35081D9502B6D4D80ACA2ACA /* WebHTMLView.mm */; };
 		939810F80824BF01008DF038 /* WebPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5AEBB3D024A527601C1A526 /* WebPreferences.mm */; };
 		939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */; };
-		939810FD0824BF01008DF038 /* CarbonWindowAdapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */; };
-		939810FE0824BF01008DF038 /* CarbonWindowContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */; };
-		939810FF0824BF01008DF038 /* CarbonWindowFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9503F9DBA103CA0DE6 /* CarbonWindowFrame.m */; };
-		939811000824BF01008DF038 /* HIViewAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
-		939811010824BF01008DF038 /* CarbonUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F79B974904019934036909D2 /* CarbonUtils.m */; };
 		939811030824BF01008DF038 /* WebKitErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 83730F9803FB1E660004736E /* WebKitErrors.m */; };
 		939811060824BF01008DF038 /* WebFrameView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B52F04282B5900CA2D3A /* WebFrameView.mm */; };
 		939811070824BF01008DF038 /* WebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8B57A042834F700CA2D3A /* WebView.mm */; };
@@ -678,7 +667,6 @@
 		93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
-		A10265831F56540300B4C844 /* HIWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10265821F56540300B4C844 /* HIWebView.mm */; };
 		A10C1D1818202F9C0036883A /* WebDefaultFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D1018202F9C0036883A /* WebDefaultFormDelegate.h */; };
 		A10C1D1918202F9C0036883A /* WebDefaultFormDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D1118202F9C0036883A /* WebDefaultFormDelegate.m */; };
 		A10C1D1A18202F9C0036883A /* WebDefaultFrameLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D1218202F9C0036883A /* WebDefaultFrameLoadDelegate.h */; };
@@ -1424,7 +1412,6 @@
 		93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryInternal.h; sourceTree = "<group>"; };
 		9CAE9D070252A4130ECA16EA /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9CF0E249021361B00ECA16EA /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebFramePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A10265821F56540300B4C844 /* HIWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIWebView.mm; sourceTree = "<group>"; };
 		A10C1D1018202F9C0036883A /* WebDefaultFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDefaultFormDelegate.h; path = ios/DefaultDelegates/WebDefaultFormDelegate.h; sourceTree = SOURCE_ROOT; };
 		A10C1D1118202F9C0036883A /* WebDefaultFormDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebDefaultFormDelegate.m; path = ios/DefaultDelegates/WebDefaultFormDelegate.m; sourceTree = SOURCE_ROOT; };
 		A10C1D1218202F9C0036883A /* WebDefaultFrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDefaultFrameLoadDelegate.h; path = ios/DefaultDelegates/WebDefaultFrameLoadDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -1600,17 +1587,6 @@
 		F5F732D202FF4D4F01A80180 /* WebKit.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; name = WebKit.exp; path = mac/WebKit.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		F738C9E903FAD3DF0321FBE0 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F738C9EA03FAD3DF0321FBE0 /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F79B974804019934036909D2 /* CarbonUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonUtils.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F79B974904019934036909D2 /* CarbonUtils.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = CarbonUtils.m; sourceTree = "<group>"; usesTabs = 0; };
-		F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CarbonWindowAdapter.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowContentView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = CarbonWindowContentView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CarbonWindowFrame.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9503F9DBA103CA0DE6 /* CarbonWindowFrame.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = CarbonWindowFrame.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9A03F9DBA103CA0DE6 /* HIViewAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HIViewAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = HIViewAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HIWebView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F834AAD50E64B1C700E2737C /* WebTextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextIterator.h; sourceTree = "<group>"; };
 		F834AAD60E64B1C700E2737C /* WebTextIterator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTextIterator.mm; sourceTree = "<group>"; };
 		F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1663,7 +1639,6 @@
 				F5B36B400281DE87018635CB /* WebCoreSupport */,
 				9C7CABBB0190A37C0ECA16EA /* WebView */,
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
-				F7EBEE5903F9DB2203CA0DE6 /* Carbon */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -2662,52 +2637,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		F7EBEE5903F9DB2203CA0DE6 /* Carbon */ = {
-			isa = PBXGroup;
-			children = (
-				F7EBEECF03F9DBBD03CA0DE6 /* AppKit Overrides */,
-				F7EBEED103F9DBEB03CA0DE6 /* C API */,
-				F7EBEED203F9DBFE03CA0DE6 /* Glue */,
-			);
-			name = Carbon;
-			path = mac/Carbon;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		F7EBEECF03F9DBBD03CA0DE6 /* AppKit Overrides */ = {
-			isa = PBXGroup;
-			children = (
-				F7EBEE9003F9DBA103CA0DE6 /* CarbonWindowAdapter.h */,
-				F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.mm */,
-				F7EBEE9203F9DBA103CA0DE6 /* CarbonWindowContentView.h */,
-				F7EBEE9303F9DBA103CA0DE6 /* CarbonWindowContentView.m */,
-				F7EBEE9403F9DBA103CA0DE6 /* CarbonWindowFrame.h */,
-				F7EBEE9503F9DBA103CA0DE6 /* CarbonWindowFrame.m */,
-				F7EBEE9A03F9DBA103CA0DE6 /* HIViewAdapter.h */,
-				F7EBEE9B03F9DBA103CA0DE6 /* HIViewAdapter.m */,
-			);
-			name = "AppKit Overrides";
-			sourceTree = "<group>";
-		};
-		F7EBEED103F9DBEB03CA0DE6 /* C API */ = {
-			isa = PBXGroup;
-			children = (
-				F7EBEEAA03F9DBA103CA0DE6 /* HIWebView.h */,
-				A10265821F56540300B4C844 /* HIWebView.mm */,
-			);
-			name = "C API";
-			sourceTree = "<group>";
-		};
-		F7EBEED203F9DBFE03CA0DE6 /* Glue */ = {
-			isa = PBXGroup;
-			children = (
-				F79B974804019934036909D2 /* CarbonUtils.h */,
-				F79B974904019934036909D2 /* CarbonUtils.m */,
-			);
-			name = Glue;
-			sourceTree = "<group>";
-		};
 		F8CA15B4029A399401000122 /* Panels */ = {
 			isa = PBXGroup;
 			children = (
@@ -2732,10 +2661,6 @@
 			files = (
 				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */,
-				9398106A0824BF01008DF038 /* CarbonUtils.h in Headers */,
-				939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */,
-				939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */,
-				939810670824BF01008DF038 /* CarbonWindowFrame.h in Headers */,
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
 				93D4364D1D57ABEE00AB85EA /* DOM.h in Headers */,
 				93D4364F1D57ABEE00AB85EA /* DOMAbstractView.h in Headers */,
@@ -2945,8 +2870,6 @@
 				93D437981D57ABEF00AB85EA /* DOMXPathResultInternal.h in Headers */,
 				93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
-				939810680824BF01008DF038 /* HIViewAdapter.h in Headers */,
-				939810690824BF01008DF038 /* HIWebView.h in Headers */,
 				1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */,
 				A10C1D3218202FC50036883A /* MemoryMeasure.h in Headers */,
 				1AAF5CEA0EDDE1FE008D883D /* NetscapePluginHostManager.h in Headers */,
@@ -3398,10 +3321,6 @@
 			files = (
 				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */,
-				939811010824BF01008DF038 /* CarbonUtils.m in Sources */,
-				939810FD0824BF01008DF038 /* CarbonWindowAdapter.mm in Sources */,
-				939810FE0824BF01008DF038 /* CarbonWindowContentView.m in Sources */,
-				939810FF0824BF01008DF038 /* CarbonWindowFrame.m in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 				93D4364E1D57ABEE00AB85EA /* DOM.mm in Sources */,
 				93D436501D57ABEE00AB85EA /* DOMAbstractView.mm in Sources */,
@@ -3532,8 +3451,6 @@
 				93D437971D57ABEF00AB85EA /* DOMXPathResult.mm in Sources */,
 				93D4379A1D57ABEF00AB85EA /* ExceptionHandlers.mm in Sources */,
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
-				939811000824BF01008DF038 /* HIViewAdapter.m in Sources */,
-				A10265831F56540300B4C844 /* HIWebView.mm in Sources */,
 				1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */,
 				A10C1D3318202FC50036883A /* MemoryMeasure.mm in Sources */,
 				1AAF5CEB0EDDE1FE008D883D /* NetscapePluginHostManager.mm in Sources */,
