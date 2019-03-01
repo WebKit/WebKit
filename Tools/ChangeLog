@@ -1,3 +1,13 @@
+2019-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix lldb webkitpy tests
+        https://bugs.webkit.org/show_bug.cgi?id=194375
+
+        Since we changed the value of Is8Bit flag in StringImpl, we change lldb webkitpy tests accordingly.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImplProvider.is_8bit):
+
 2019-02-28  David Quesada  <david_quesada@apple.com>
 
         Expose APINavigationAction.shouldPerformDownload() on WKNavigationAction
