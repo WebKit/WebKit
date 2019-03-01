@@ -1,3 +1,16 @@
+2019-03-01  Antoine Quint  <graouts@apple.com>
+
+        Enable WPT Pointer Events tests
+        https://bugs.webkit.org/show_bug.cgi?id=195204
+        <rdar://problem/48502751>
+
+        Reviewed by Dean Jackson.
+
+        The touch-action property has been enabled as part of the work on webkit.org/b/195008 but the WPT tests
+        had not been enabled yet.
+
+        * platform/mac/TestExpectations:
+
 2019-03-01  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: (r242189): Six Layout Tests in storage/indexeddb/ are crashing after r242189

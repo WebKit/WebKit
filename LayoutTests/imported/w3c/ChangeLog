@@ -1,3 +1,17 @@
+2019-03-01  Antoine Quint  <graouts@apple.com>
+
+        Enable WPT Pointer Events tests
+        https://bugs.webkit.org/show_bug.cgi?id=195204
+        <rdar://problem/48502751>
+
+        Reviewed by Dean Jackson.
+
+        The touch-action property has been enabled as part of the work on webkit.org/b/195008 but the WPT tests
+        had not been enabled yet, so we're now adding the progressions made.
+
+        * web-platform-tests/pointerevents/extension/pointerevent_touch-action-verification-expected.txt:
+        * web-platform-tests/pointerevents/pointerevent_touch-action-verification-expected.txt:
+
 2019-02-28  Charles Vazac  <cvazac@akamai.com>
 
         Fix Resource Timing buffer edge cases for WPT
