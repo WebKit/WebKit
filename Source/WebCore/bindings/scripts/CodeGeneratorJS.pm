@@ -3749,9 +3749,28 @@ sub GenerateRuntimeEnableConditionalString
 
         AddToImplIncludes("RuntimeEnabledFeatures.h");
 
-        my @flags = split(/&/, $context->extendedAttributes->{EnabledAtRuntime});
-        foreach my $flag (@flags) {
-            push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
+        if ($context->extendedAttributes->{EnabledByQuirk}) {
+            AddToImplIncludes("Document.h");
+            AddToImplIncludes("Quirks.h");
+            
+            assert("EnabledByQuirks can only be used by interfaces only exposed to the Window") if $interface->extendedAttributes->{Exposed} && $interface->extendedAttributes->{Exposed} ne "Window";
+    
+            my @quirkFlags = split(/&/, $context->extendedAttributes->{EnabledByQuirk});
+            my @runtimeFlags = split(/&/, $context->extendedAttributes->{EnabledAtRuntime});
+            my @quirks;
+            my @runtimes;
+            foreach my $flag (@quirkFlags) {
+                push(@quirks, "downcast<Document>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())->quirks()." . ToMethodName($flag) . "Quirk()");
+            }
+            foreach my $flag (@runtimeFlags) {
+                push(@runtimes, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
+            }
+            push(@conjuncts, "(" . join(" && ", @quirks) . " || " . join(" && ", @runtimes) .")");
+        } else {
+            my @flags = split(/&/, $context->extendedAttributes->{EnabledAtRuntime});
+            foreach my $flag (@flags) {
+                push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
+            }
         }
     }
 

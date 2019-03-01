@@ -56,4 +56,22 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
     return m_hasBrokenEncryptedMediaAPISupportQuirk.value();
 }
 
+bool Quirks::hasWebSQLSupportQuirk() const
+{
+    if (!m_document || !m_document->settings().needsSiteSpecificQuirks())
+        return false;
+    
+    if (m_hasWebSQLSupportQuirk)
+        return m_hasWebSQLSupportQuirk.value();
+    
+    auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
+    
+    m_hasWebSQLSupportQuirk = domain == "bostongloble.com"
+    || domain.endsWith(".bostongloble.com")
+    || domain == "latimes.com"
+    || domain.endsWith(".latimes.com");
+    
+    return m_hasWebSQLSupportQuirk.value();
+}
+
 }

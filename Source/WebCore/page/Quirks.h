@@ -38,11 +38,13 @@ public:
     ~Quirks();
 
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
+    bool hasWebSQLSupportQuirk() const;
 
 private:
     WeakPtr<Document> m_document;
 
     mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
+    mutable Optional<bool> m_hasWebSQLSupportQuirk;
 };
 
 }
