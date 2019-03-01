@@ -70,11 +70,11 @@ private:
 
     void updateTimerFired();
 
+    RunLoop* m_runLoop { nullptr };
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
     Function<void ()> m_updateFunction;
     Lock m_dispatchSyncConditionMutex;
     Condition m_dispatchSyncCondition;
-
 
     struct {
         Lock lock;
