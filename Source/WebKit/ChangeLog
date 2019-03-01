@@ -1,3 +1,22 @@
+2019-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Flaky API Test TestWebKitAPI.ProcessSwap.LoadUnload
+        https://bugs.webkit.org/show_bug.cgi?id=195110
+
+        Reviewed by Ryosuke Niwa.
+
+        The test was attempting to disable PageCache via view preferences instead of using the
+        process pool configuration flag. This would fail to disable PageCache because the
+        usesPageCache preference would not prevent the creation of SuspendedPageProxy objects.
+        As a result, the firing on the unload event would get delayed until the SuspendedPageProxy
+        objects would get destroyed, which would lead to flakiness.
+
+        This patch updates WebPageProxy::suspendCurrentPageIfPossible() to not create suspended
+        pages proxies when the usesPageCache preference is set to false.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+
 2019-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ThreadedCompositor] Simply the compositing run loop worker thread

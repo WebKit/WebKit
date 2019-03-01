@@ -762,6 +762,11 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     if (!mainFrameID)
         return false;
 
+    if (!m_preferences->usesPageCache()) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because page cache is disabled", m_process->processIdentifier());
+        return false;
+    }
+
     // If the client forced a swap then it may not be Web-compatible to suspend the previous page because other windows may have an opener link to the page.
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because the swap was requested by the client", m_process->processIdentifier());
