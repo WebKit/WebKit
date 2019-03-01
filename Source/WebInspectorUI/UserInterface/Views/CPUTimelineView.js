@@ -301,6 +301,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         let dataPoints = [];
         let workersDataMap = new Map;
+        let workersSeenInCurrentRecord = new Set;
 
         let max = -Infinity;
         let mainThreadMax = -Infinity;
@@ -361,8 +362,12 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             webkitThreadAverage += webkitThreadUsage;
             unknownThreadAverage += unknownThreadUsage;
 
+            let workersSeenInLastRecord = workersSeenInCurrentRecord;
+            workersSeenInCurrentRecord = new Set;
+
             if (record.workersData && record.workersData.length) {
                 for (let {targetId, usage} of record.workersData) {
+                    workersSeenInCurrentRecord.add(targetId);
                     let workerData = workersDataMap.get(targetId);
                     if (!workerData) {
                         workerData = {
@@ -400,6 +405,16 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                     workerData.max = Math.max(workerData.max, usage);
                     workerData.min = Math.min(workerData.min, usage);
                     workerData.average += usage;
+                }
+            }
+
+            // Close any worker that died by dropping to zero.
+            if (workersSeenInLastRecord.size) {
+                let deadWorkers = workersSeenInLastRecord.difference(workersSeenInCurrentRecord);
+                for (let workerId of deadWorkers) {
+                    let workerData = workersDataMap.get(workerId);
+                    if (workerData.dataPoints.lastValue.usage !== 0)
+                        workerData.dataPoints.push({time, usage: 0});
                 }
             }
         }
