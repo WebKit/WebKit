@@ -1,5 +1,20 @@
 2019-03-01  Youenn Fablet  <youenn@apple.com>
 
+        Update originsMatch to handle the case of file origins which enforce file path separation
+        https://bugs.webkit.org/show_bug.cgi?id=195216
+
+        Reviewed by Brady Eidson.
+
+        Covered by the assertion and existing tests like fast/xmlhttprequest/xmlhttprequest-no-file-access.html.
+        Make sure originsMatch returns true if either compared origins are the same object
+        or they have the same file path separation behavior.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::areOriginsMatching):
+        (WebCore::originsMatch):
+
+2019-03-01  Youenn Fablet  <youenn@apple.com>
+
         Serialize IndexedDB::ObjectStoreOverwriteMode as an enum
         https://bugs.webkit.org/show_bug.cgi?id=195213
 

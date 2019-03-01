@@ -473,6 +473,8 @@ String SecurityOrigin::toRawString() const
 
 static inline bool areOriginsMatching(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
 {
+    ASSERT(&origin1 != &origin2);
+
     if (origin1.isUnique() || origin2.isUnique())
         return origin1.isUnique() == origin2.isUnique();
 
@@ -480,7 +482,7 @@ static inline bool areOriginsMatching(const SecurityOrigin& origin1, const Secur
         return false;
 
     if (origin1.protocol() == "file")
-        return true;
+        return origin1.enforcesFilePathSeparation() == origin2.enforcesFilePathSeparation();
 
     if (origin1.host() != origin2.host())
         return false;
@@ -488,12 +490,13 @@ static inline bool areOriginsMatching(const SecurityOrigin& origin1, const Secur
     return origin1.port() == origin2.port();
 }
 
-// This function mimics the result of string comparison of serialized origins
+// This function mimics the result of string comparison of serialized origins.
 bool originsMatch(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
 {
     if (&origin1 == &origin2)
         return true;
 
+    ASSERT(areOriginsMatching(origin1, origin2) == (origin1.toString() == origin2.toString()));
     return areOriginsMatching(origin1, origin2);
 }
 
