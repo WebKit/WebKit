@@ -684,3 +684,4 @@ webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/abort-requests-cancelled-
 webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/abort-requests-cancelled.html [ Skip ]
 webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/blocked-open-db-requests-private.html [ Skip ]
 webkit.org/b/195210 [ Debug ] storage/indexeddb/odd-strings-private.html [ Skip ]
+webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/blocked-open-db-requests.html [ Skip ]
