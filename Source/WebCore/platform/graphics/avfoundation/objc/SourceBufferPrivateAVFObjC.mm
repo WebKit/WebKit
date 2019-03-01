@@ -664,13 +664,14 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (auto session = m_mediaSource->player()->cdmSession()) {
         session->addParser(m_parser.get());
         hasSessionSemaphore->signal();
-    } else {
-        if (m_hasSessionSemaphore)
-            m_hasSessionSemaphore->signal();
-        m_hasSessionSemaphore = hasSessionSemaphore;
+        return;
     }
 #endif
 
+    if (m_hasSessionSemaphore)
+        m_hasSessionSemaphore->signal();
+    m_hasSessionSemaphore = hasSessionSemaphore;
+    
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     auto initDataBuffer = SharedBuffer::create(initData);
     auto keyIDs = CDMPrivateFairPlayStreaming::extractKeyIDsSinf(initDataBuffer);

@@ -1,3 +1,13 @@
+2019-03-01  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Make sure the hasSessionSemaphore is set even if HAVE(AVSTREAMSESSION) is false
+        https://bugs.webkit.org/show_bug.cgi?id=195217
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+
 2019-03-01  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] 32-bit builds broken by attempt to disable WebGPU on 32-bit
