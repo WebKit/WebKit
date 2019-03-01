@@ -1,3 +1,45 @@
+2019-03-01  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=195196
+        <rdar://problem/48006419>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html
+               http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html
+
+        Trackers abuse link query parameters to transport user identifiers cross-site.
+        This patch detects such navigations and applies further restrictions to
+        client-site cookies on the destination page.
+
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::setAgeCapForClientSideCookies):
+            Now sets the regular 7-day cap and a reduced 1-day cap.
+        (WebCore::NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics):
+            Renamed NetworkStorageSession::removeStorageAccessForAllFramesOnPage() to
+            NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics since
+            it now clears out two types of page-specific data.
+        (WebCore::NetworkStorageSession::committedCrossSiteLoadWithLinkDecoration):
+            This function receives a cross-site navigation and checks if the originating
+            site is a prevalent resource. If so, it marks the page or stricter cookie
+            rules.
+        (WebCore::NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            Test infrastructure. This sets a state that overrides the regular per-page
+            clear of data. The reason is that the double clear was racy and caused test
+            failures.
+        (WebCore::NetworkStorageSession::clientSideCookieCap const):
+            New function that returns the current cookie lifetime cap.
+        (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage): Deleted.
+            Renamed to NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics().
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+            Now calls NetworkStorageSession::clientSideCookieCap() to set the cap.
+
 2019-03-01  Rob Buis  <rbuis@igalia.com>
 
         Adjust XMLHttpRequest Content-Type handling

@@ -149,11 +149,13 @@ public:
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
     WEBCORE_EXPORT void grantStorageAccess(const RegistrableDomain& resourceDomain, const RegistrableDomain& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
-    WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
+    WEBCORE_EXPORT void clearPageSpecificDataForResourceLoadStatistics(uint64_t pageID);
     WEBCORE_EXPORT void removeAllStorageAccess();
     WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
     WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
     WEBCORE_EXPORT Optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
+    WEBCORE_EXPORT void committedCrossSiteLoadWithLinkDecoration(const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID);
+    WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
 #endif
 
 private:
@@ -178,11 +180,15 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool shouldBlockThirdPartyCookies(const RegistrableDomain&) const;
+    Optional<Seconds> clientSideCookieCap(const RegistrableDomain& firstParty, Optional<uint64_t> pageID) const;
     HashSet<RegistrableDomain> m_registrableDomainsToBlockCookieFor;
     HashMap<uint64_t, HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
     HashMap<uint64_t, HashMap<RegistrableDomain, RegistrableDomain>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
     Optional<Seconds> m_ageCapForClientSideCookies { };
+    Optional<Seconds> m_ageCapForClientSideCookiesShort { };
+    HashMap<uint64_t, RegistrableDomain, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_navigatedToWithLinkDecorationByPrevalentResource;
+    bool m_navigationWithLinkDecorationTestMode = false;
 #endif
 
 #if PLATFORM(COCOA)

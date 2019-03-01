@@ -200,7 +200,7 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, uint64_t pageID);
-    void removeStorageAccessForAllFramesOnPage(PAL::SessionID, uint64_t pageID);
+    void clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID, uint64_t pageID);
 
     void logUserInteraction(PAL::SessionID, const RegistrableDomain&);
     void logWebSocketLoading(PAL::SessionID, const RegistrableDomain& targetDomain, const RegistrableDomain& topFrameDomain, WallTime lastSeen);

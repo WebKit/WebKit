@@ -1,3 +1,48 @@
+2019-03-01  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=195196
+        <rdar://problem/48006419>
+
+        Reviewed by Brent Fulgham.
+
+        Trackers abuse link query parameters to transport user identifiers cross-site.
+        This patch detects such navigations and applies further restrictions to
+        client-site cookies on the destination page.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage): Deleted.
+            Renamed NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics().
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::committedCrossSiteLoadWithLinkDecoration):
+            Reporting IPC message when a link decorated cross-site navigation happens.
+        (WebKit::NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+            Added clearing of the new state between test runs.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            Test infrastructure.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::isNonUniqueNavigationWithLinkDecoration):
+            Convenience function.
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+            This function now reports to the network process when a link decorated
+            cross-site navigation happens.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            Test infrastructure.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+            Name change of function called.
+
 2019-03-01  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused code in WebKitLegacy

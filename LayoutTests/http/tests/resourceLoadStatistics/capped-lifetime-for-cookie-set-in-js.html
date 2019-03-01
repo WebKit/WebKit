@@ -62,6 +62,9 @@
                     break;
             }
         }
+
+        resetCookiesForCurrentOrigin();
+
         if (passedTests === 4) {
             testPassed("The two short-lived cookies don't expire after more than " + overTwoDaysInSeconds + " seconds.");
             testPassed("The two long-lived cookies don't expire after more than " + overOneWeekInSeconds + " seconds.");

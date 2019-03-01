@@ -100,6 +100,7 @@ Optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& r
 void NetworkStorageSession::setAgeCapForClientSideCookies(Optional<Seconds> seconds)
 {
     m_ageCapForClientSideCookies = seconds;
+    m_ageCapForClientSideCookiesShort = seconds ? Seconds { seconds->seconds() / 7. } : seconds;
 }
 
 void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<RegistrableDomain>& domains)
@@ -190,10 +191,12 @@ void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64
     iteration->value.remove(frameID);
 }
 
-void NetworkStorageSession::removeStorageAccessForAllFramesOnPage(uint64_t pageID)
+void NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics(uint64_t pageID)
 {
     m_pagesGrantedStorageAccess.remove(pageID);
     m_framesGrantedStorageAccess.remove(pageID);
+    if (!m_navigationWithLinkDecorationTestMode)
+        m_navigatedToWithLinkDecorationByPrevalentResource.remove(pageID);
 }
 
 void NetworkStorageSession::removeAllStorageAccess()
@@ -210,6 +213,33 @@ void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds secon
 void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
     m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
+}
+
+void NetworkStorageSession::committedCrossSiteLoadWithLinkDecoration(const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID)
+{
+    if (shouldBlockThirdPartyCookies(fromDomain))
+        m_navigatedToWithLinkDecorationByPrevalentResource.add(pageID, toDomain);
+}
+
+void NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting()
+{
+    m_navigatedToWithLinkDecorationByPrevalentResource.clear();
+    m_navigationWithLinkDecorationTestMode = true;
+}
+
+Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, Optional<uint64_t> pageID) const
+{
+    if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
+        return m_ageCapForClientSideCookies;
+
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
+    if (domainIterator == m_navigatedToWithLinkDecorationByPrevalentResource.end())
+        return m_ageCapForClientSideCookies;
+
+    if (domainIterator->value == firstParty)
+        return m_ageCapForClientSideCookiesShort;
+
+    return m_ageCapForClientSideCookies;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
