@@ -171,7 +171,7 @@ bool SearchPopupMenuDB::openDatabase()
     bool existsDatabaseFile = SQLiteFileSystem::ensureDatabaseFileExists(m_databaseFilename, false);
 
     if (existsDatabaseFile) {
-        if (m_database.open(m_databaseFilename, false)) {
+        if (m_database.open(m_databaseFilename)) {
             if (!checkDatabaseValidity()) {
                 // delete database and try to re-create again
                 LOG_ERROR("Search autosave database validity check failed, attempting to recreate the database");
@@ -190,7 +190,7 @@ bool SearchPopupMenuDB::openDatabase()
         if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_databaseFilename)))
             LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8().data());
 
-        m_database.open(m_databaseFilename, false);
+        m_database.open(m_databaseFilename);
     }
 
     if (!m_database.isOpen())

@@ -1,3 +1,10 @@
+2019-02-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r242251.
+
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::openDatabase):
+
 2019-02-28  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Move timer removal code from DOMWindow::clearTimeout to DOMTimer::removeById
