@@ -1,3 +1,12 @@
+2019-03-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Enable service worker
+        https://bugs.webkit.org/show_bug.cgi?id=188318
+
+        Reviewed by Youenn Fablet.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2019-02-28  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Turn ENABLE_RESOURCE_LOAD_STATISTICS on

@@ -87,7 +87,7 @@ private:
     SWContextManager() = default;
 
     void startedServiceWorker(Optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage);
-    void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
+    NO_RETURN_DUE_TO_CRASH void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
 
     HashMap<ServiceWorkerIdentifier, RefPtr<ServiceWorkerThreadProxy>> m_workerMap;
     std::unique_ptr<Connection> m_connection;

@@ -36,7 +36,9 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#if OS(WINDOWS)
+#if PLATFORM(WIN)
 #undef WEBCORE_EXPORT
 #define WEBCORE_EXPORT WTF_IMPORT_DECLARATION
+#undef WEBCORE_TESTSUPPORT_EXPORT
+#define WEBCORE_TESTSUPPORT_EXPORT
 #endif

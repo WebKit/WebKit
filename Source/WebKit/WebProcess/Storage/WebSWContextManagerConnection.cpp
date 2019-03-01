@@ -357,7 +357,7 @@ void WebSWContextManagerConnection::didFinishSkipWaiting(uint64_t callbackID)
         callback();
 }
 
-NO_RETURN void WebSWContextManagerConnection::terminateProcess()
+void WebSWContextManagerConnection::terminateProcess()
 {
     RELEASE_LOG(ServiceWorker, "Service worker process is exiting because it is no longer needed");
     _exit(EXIT_SUCCESS);

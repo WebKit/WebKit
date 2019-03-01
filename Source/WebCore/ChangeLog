@@ -1,3 +1,16 @@
+2019-03-01  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Enable service worker
+        https://bugs.webkit.org/show_bug.cgi?id=188318
+
+        Reviewed by Youenn Fablet.
+
+        * WebCorePrefix.h:
+        * testing/ServiceWorkerInternals.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::serviceWorkerFailedToTerminate):
+        * workers/service/context/SWContextManager.h:
+
 2019-03-01  Sihui Liu  <sihui_liu@apple.com>
 
         Add a quirk for bostongloble.com and latimes.com

@@ -18,7 +18,7 @@ include_directories(
     ${DERIVED_SOURCES_DIR}/WebKit/Interfaces
 )
 
-add_definitions(-DWEBCORE_EXPORT=)
+add_definitions(-DWEBCORE_EXPORT= -DWEBCORE_TESTSUPPORT_EXPORT=)
 
 set(test_webcore_LIBRARIES
     Crypt32
