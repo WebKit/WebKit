@@ -115,7 +115,7 @@ bool CookieJarDB::openDatabase()
         existsDatabaseFile = SQLiteFileSystem::ensureDatabaseFileExists(m_databasePath, false);
 
     if (existsDatabaseFile) {
-        if (m_database.open(m_databasePath, false)) {
+        if (m_database.open(m_databasePath)) {
             if (checkDatabaseValidity())
                 executeSql(DELETE_ALL_SESSION_COOKIE_SQL);
             else {
@@ -136,7 +136,7 @@ bool CookieJarDB::openDatabase()
         if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_databasePath)))
             LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8().data());
 
-        m_database.open(m_databasePath, false);
+        m_database.open(m_databasePath);
     }
 
     if (!m_database.isOpen())
