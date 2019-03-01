@@ -1,3 +1,17 @@
+2019-02-28  Chris Dumez  <cdumez@apple.com>
+
+        HTTPSUpgradeList.db database should be opened in readonly mode
+        https://bugs.webkit.org/show_bug.cgi?id=195194
+        <rdar://problem/47103889>
+
+        Reviewed by Youenn Fablet.
+
+        HTTPSUpgradeList.db database should be opened in readonly mode since it is not meant to be
+        modified by WebKit. Opening it in ReadWrite mode causes sandbox violations.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp:
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+
 2019-02-28  David Quesada  <david_quesada@apple.com>
 
         Expose APINavigationAction.shouldPerformDownload() on WKNavigationAction

@@ -53,7 +53,8 @@ public:
     WEBCORE_EXPORT SQLiteDatabase();
     WEBCORE_EXPORT ~SQLiteDatabase();
 
-    WEBCORE_EXPORT bool open(const String& filename, bool forWebSQLDatabase = false);
+    enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
+    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 

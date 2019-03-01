@@ -68,7 +68,7 @@ NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker()
             return;
         }
 
-        bool isDatabaseOpen = m_database->open(path);
+        bool isDatabaseOpen = m_database->open(path, WebCore::SQLiteDatabase::OpenMode::ReadOnly);
         if (!isDatabaseOpen) {
 #if PLATFORM(COCOA)
             RELEASE_LOG_ERROR(Network, "%p - NetworkHTTPSUpgradeChecker::open failed, error message: %{public}s, database path: %{public}s", this, m_database->lastErrorMsg(), path.utf8().data());

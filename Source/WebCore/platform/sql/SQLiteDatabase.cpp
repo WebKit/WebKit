@@ -35,6 +35,7 @@
 #include <mutex>
 #include <sqlite3.h>
 #include <thread>
+#include <wtf/FileSystem.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -76,13 +77,26 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
-bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
+bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
 {
     initializeSQLiteIfNecessary();
 
     close();
 
-    m_openError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
+    int flags = SQLITE_OPEN_AUTOPROXY;
+    switch (openMode) {
+    case OpenMode::ReadOnly:
+        flags |= SQLITE_OPEN_READONLY;
+        break;
+    case OpenMode::ReadWrite:
+        flags |= SQLITE_OPEN_READWRITE;
+        break;
+    case OpenMode::ReadWriteCreate:
+        flags |= SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+        break;
+    }
+
+    m_openError = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
     if (m_openError != SQLITE_OK) {
         m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
         LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),

@@ -44,16 +44,6 @@ class SQLiteDatabase;
 // by the WebKit database code.
 class SQLiteFileSystem {
 public:
-    // Opens a database file.
-    //
-    // filemame - The name of the database file.
-    // database - The SQLite structure that represents the database stored
-    //            in the given file.
-    // forWebSQLDatabase - True, if and only if we're opening a Web SQL Database file.
-    //                     Used by Chromium to determine if the DB file needs to be opened
-    //                     using a custom VFS.
-    static int openDatabase(const String& filename, sqlite3** database, bool forWebSQLDatabase);
-
     // Creates an absolute file path given a directory and a file name.
     //
     // path - The directory.

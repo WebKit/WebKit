@@ -46,11 +46,6 @@ SQLiteFileSystem::SQLiteFileSystem()
 {
 }
 
-int SQLiteFileSystem::openDatabase(const String& filename, sqlite3** database, bool)
-{
-    return sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_AUTOPROXY, nullptr);
-}
-
 String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)
 {
     return FileSystem::pathByAppendingComponent(path, fileName);

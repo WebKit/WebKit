@@ -348,7 +348,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-    if (!m_sqliteDatabase.open(m_filename, true))
+    if (!m_sqliteDatabase.open(m_filename))
         return Exception { InvalidStateError, formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg()) };
     if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
         LOG_ERROR("Unable to turn on incremental auto-vacuum (%d %s)", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
