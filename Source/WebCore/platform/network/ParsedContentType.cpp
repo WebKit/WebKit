@@ -346,6 +346,11 @@ String ParsedContentType::charset() const
     return parameterValueForName("charset");
 }
 
+void ParsedContentType::setCharset(String&& charset)
+{
+    m_parameterValues.set("charset"_s, WTFMove(charset));
+}
+
 String ParsedContentType::parameterValueForName(const String& name) const
 {
     return m_parameterValues.get(name);

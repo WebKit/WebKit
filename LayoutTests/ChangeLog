@@ -1,3 +1,14 @@
+2019-03-01  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest Content-Type handling
+        https://bugs.webkit.org/show_bug.cgi?id=184645
+
+        Reviewed by Youenn Fablet.
+
+        Fix 2 subtest expectations.
+
+        * http/tests/xmlhttprequest/request-encoding2.html:
+
 2019-03-01  Truitt Savell  <tsavell@apple.com>
 
         Continued gardening of storage/indexeddb/ crashes after r242189

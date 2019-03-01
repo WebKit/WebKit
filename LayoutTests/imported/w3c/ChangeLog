@@ -1,3 +1,15 @@
+2019-03-01  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest Content-Type handling
+        https://bugs.webkit.org/show_bug.cgi?id=184645
+
+        Reviewed by Youenn Fablet.
+
+        Sync test and update test expectation (all PASSes).
+
+        * web-platform-tests/xhr/send-content-type-charset-expected.txt:
+        * web-platform-tests/xhr/send-content-type-charset.htm:
+
 2019-03-01  Antoine Quint  <graouts@apple.com>
 
         Enable WPT Pointer Events tests

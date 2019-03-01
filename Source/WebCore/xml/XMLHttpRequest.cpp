@@ -74,23 +74,14 @@ enum XMLHttpRequestSendArrayBufferOrView {
     XMLHttpRequestSendArrayBufferOrViewMax,
 };
 
-static void replaceCharsetInMediaType(String& mediaType, const String& charsetValue)
+static void replaceCharsetInMediaTypeIfNeeded(String& mediaType)
 {
-    unsigned pos = 0, len = 0;
-
-    findCharsetInMediaType(mediaType, pos, len);
-
-    if (!len) {
-        // When no charset found, do nothing.
+    auto parsedContentType = ParsedContentType::create(mediaType);
+    if (!parsedContentType || parsedContentType->charset().isEmpty() || equalIgnoringASCIICase(parsedContentType->charset(), "UTF-8"))
         return;
-    }
 
-    // Found at least one existing charset, replace all occurrences with new charset.
-    while (len) {
-        mediaType.replace(pos, len, charsetValue);
-        unsigned start = pos + charsetValue.length();
-        findCharsetInMediaType(mediaType, pos, len, start);
-    }
+    parsedContentType->setCharset("UTF-8");
+    mediaType = parsedContentType->serialize();
 }
 
 static void logConsoleError(ScriptExecutionContext* context, const String& message)
@@ -476,7 +467,7 @@ ExceptionOr<void> XMLHttpRequest::send(Document& document)
                 m_requestHeaders.set(HTTPHeaderName::ContentType, document.isHTMLDocument() ? "text/html;charset=UTF-8"_s : "application/xml;charset=UTF-8"_s);
         } else {
             String contentType = m_requestHeaders.get(HTTPHeaderName::ContentType);
-            replaceCharsetInMediaType(contentType, "UTF-8");
+            replaceCharsetInMediaTypeIfNeeded(contentType);
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 
@@ -505,7 +496,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
 #endif
                 m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::textPlainContentType());
         } else {
-            replaceCharsetInMediaType(contentType, "UTF-8");
+            replaceCharsetInMediaTypeIfNeeded(contentType);
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);
         }
 

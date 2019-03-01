@@ -1,3 +1,24 @@
+2019-03-01  Rob Buis  <rbuis@igalia.com>
+
+        Adjust XMLHttpRequest Content-Type handling
+        https://bugs.webkit.org/show_bug.cgi?id=184645
+
+        Reviewed by Youenn Fablet.
+
+        Implement steps 4.4.1.2 and 4.4.1.3 of send() [1].
+
+        Test: web-platform-tests/xhr/send-content-type-charset.htm
+
+        [1] https://xhr.spec.whatwg.org/#dom-xmlhttprequest-send
+
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::ParsedContentType::setCharset):
+        * platform/network/ParsedContentType.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::replaceCharsetInMediaTypeIfNeeded):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::replaceCharsetInMediaType): Deleted.
+
 2019-03-01  Youenn Fablet  <youenn@apple.com>
 
         Update originsMatch to handle the case of file origins which enforce file path separation

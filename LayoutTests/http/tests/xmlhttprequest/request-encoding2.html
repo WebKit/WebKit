@@ -48,7 +48,7 @@ XMLHttpRequest should force to send content-type as charset equals UTF-8.</p>
         req.send("");
 
         document.getElementById("result3").firstChild.data = "Test3 (setRequestHeader was called with a non-UTF8 charset):";
-        if (req.responseText == "application/xml; charset=UTF-8\n")
+        if (req.responseText == "application/xml;charset=UTF-8\n")
             document.getElementById("result3").firstChild.data += " SUCCESS";
         else
             document.getElementById("result3").firstChild.data += " FAILURE: '" + req.responseText + "'";
@@ -63,7 +63,7 @@ XMLHttpRequest should force to send content-type as charset equals UTF-8.</p>
         req.send("");
 
         document.getElementById("result4").firstChild.data = "Test4 (setRequestHeader was called with multiple charsets and other attributes):";
-        if (req.responseText == "application/xml; charset=UTF-8; charset=UTF-8; charset=UTF-8; KOI8-R\n")
+        if (req.responseText == "application/xml;charset=UTF-8\n")
             document.getElementById("result4").firstChild.data += " SUCCESS";
         else
             document.getElementById("result4").firstChild.data += " FAILURE: '" + req.responseText + "'";

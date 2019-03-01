@@ -50,6 +50,7 @@ public:
 
     String mimeType() const { return m_mimeType; }
     String charset() const;
+    void setCharset(String&&);
 
     // Note that in the case of multiple values for the same name, the last value is returned.
     String parameterValueForName(const String&) const;
