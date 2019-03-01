@@ -43,7 +43,7 @@ public:
     WEBCORE_EXPORT WKContentChange observedContentChange();
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
-    void removeDOMTimer(const DOMTimer&);
+    void didRemoveDOMTimer(const DOMTimer&);
 
     void didScheduleStyleRecalc();
     void didSuspendActiveDOMObjects();

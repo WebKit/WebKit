@@ -1,3 +1,24 @@
+2019-02-28  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move timer removal code from DOMWindow::clearTimeout to DOMTimer::removeById
+        https://bugs.webkit.org/show_bug.cgi?id=195143
+        <rdar://problem/48462351>
+
+        Reviewed by Simon Fraser.
+
+        Currently DOMWindow::clearTimeout() is the only callsite that we are interested in, but this is more future-proof.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::removeById):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clearTimeout):
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::startObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::didRemoveDOMTimer):
+        (WebCore::ContentChangeObserver::removeDOMTimer): Deleted.
+        * page/ios/ContentChangeObserver.h:
+
 2019-02-28  Chris Dumez  <cdumez@apple.com>
 
         HTTPSUpgradeList.db database should be opened in readonly mode

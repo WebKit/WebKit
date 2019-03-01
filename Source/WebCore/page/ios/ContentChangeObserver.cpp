@@ -55,6 +55,17 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
     LOG_WITH_STREAM(ContentObservation, stream << "didInstallDOMTimer: register this timer: (" << &timer << ") and observe when it fires.");
 }
 
+void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
+{
+    if (!containsObservedDOMTimer(timer))
+        return;
+    removeObservedDOMTimer(timer);
+    LOG_WITH_STREAM(ContentObservation, stream << "removeDOMTimer: remove registered timer (" << &timer << ")");
+    if (countOfObservedDOMTimers())
+        return;
+    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+}
+
 void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
@@ -114,17 +125,6 @@ void ContentChangeObserver::stopObservingStyleResolve()
         return;
     }
     LOG(ContentObservation, "stopObservingStyleResolve: notify the pending synthetic click handler.");
-    m_page.chrome().client().observedContentChange(m_page.mainFrame());
-}
-
-void ContentChangeObserver::removeDOMTimer(const DOMTimer& timer)
-{
-    if (!containsObservedDOMTimer(timer))
-        return;
-    removeObservedDOMTimer(timer);
-    LOG_WITH_STREAM(ContentObservation, stream << "removeDOMTimer: remove registered timer (" << &timer << ")");
-    if (countOfObservedDOMTimers())
-        return;
     m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
 
