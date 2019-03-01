@@ -147,6 +147,11 @@ void ContentChangeObserver::willDetachPage()
     clearTimersAndReportContentChange();
 }
 
+void ContentChangeObserver::didContentVisibilityChange()
+{
+    setObservedContentChange(WKContentVisibilityChange);
+}
+
 void ContentChangeObserver::startObservingContentChanges()
 {
     startObservingDOMTimerScheduling();
@@ -311,7 +316,7 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None)
         || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        m_contentChangeObserver->setObservedContentChange(WKContentVisibilityChange);
+        m_contentChangeObserver->didContentVisibilityChange();
 }
 
 ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Page* page)

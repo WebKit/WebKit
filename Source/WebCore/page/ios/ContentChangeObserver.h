@@ -44,7 +44,7 @@ public:
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
-
+    void didContentVisibilityChange();
     void didScheduleStyleRecalc();
     void didSuspendActiveDOMObjects();
     void willDetachPage();
