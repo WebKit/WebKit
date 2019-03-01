@@ -56,6 +56,16 @@
         (bar):
         (foo):
 
+2019-02-27  Robin Morisset  <rmorisset@apple.com>
+
+        DFG: Loop-invariant code motion (LICM) should not hoist dead code
+        https://bugs.webkit.org/show_bug.cgi?id=194945
+        <rdar://problem/48311657>
+
+        Reviewed by Mark Lam.
+
+        * stress/licm-dead-code.js: Added.
+
 2019-02-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION: stress/regress-178386.js is timing out on JSC debug bot
