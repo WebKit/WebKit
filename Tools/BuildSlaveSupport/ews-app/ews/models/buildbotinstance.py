@@ -22,7 +22,11 @@
 
 from __future__ import unicode_literals
 
+import logging
+
 from django.db import models
+
+_log = logging.getLogger(__name__)
 
 
 class BuildbotInstance(models.Model):
@@ -34,3 +38,18 @@ class BuildbotInstance(models.Model):
 
     def __str__(self):
         return '{}_{}'.format(self.instance_id, self.hostname)
+
+    @classmethod
+    def get_instance_id(cls, hostname):
+        try:
+            return BuildbotInstance.objects.get(hostname=hostname, active=True).instance_id
+        except BuildbotInstance.DoesNotExist:
+            instance = BuildbotInstance(hostname=hostname)
+            instance.save()
+            _log.info('Created new buildbot instance id {} for hostname: {}'.format(instance.instance_id, hostname))
+            return instance.instance_id
+
+    @classmethod
+    def get_uid(cls, hostname, build_or_step_id):
+        instance_id = BuildbotInstance.get_instance_id(hostname)
+        return '{}_{}'.format(instance_id, build_or_step_id)

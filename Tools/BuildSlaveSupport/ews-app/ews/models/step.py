@@ -27,14 +27,15 @@ import logging
 from django.db import models
 from ews.config import ERR_UNEXPECTED, SUCCESS
 from ews.models.build import Build
+from ews.models.buildbotinstance import BuildbotInstance
 import ews.common.util as util
 
 _log = logging.getLogger(__name__)
 
 
 class Step(models.Model):
-    step_id = models.IntegerField(primary_key=True)
-    build = models.ForeignKey(Build, on_delete=models.CASCADE)
+    uid = models.TextField(primary_key=True)
+    build_uid = models.ForeignKey(Build, on_delete=models.CASCADE, db_column='build_uid')
     result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
     started_at = models.IntegerField(null=True, blank=True)
@@ -43,44 +44,44 @@ class Step(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.step_id)
+        return str(self.uid)
 
     @classmethod
-    def save_step(cls, step_id, build_id, result, state_string, started_at, complete_at=None):
+    def save_step(cls, hostname, step_id, build_id, result, state_string, started_at, complete_at=None):
         if not Step.is_valid_result(step_id, build_id, result, state_string, started_at, complete_at):
             return ERR_UNEXPECTED
 
-        step = Step.get_existing_step(step_id)
+        step_uid = BuildbotInstance.get_uid(hostname, step_id)
+        build_uid = BuildbotInstance.get_uid(hostname, build_id)
+
+        step = Step.get_existing_step(step_uid)
         if step:
             # If the step data is already present in database, update it, e.g.: step complete event.
-            return Step.update_step(step, step_id, build_id, result, state_string, started_at, complete_at)
+            return Step.update_step(step, step_uid, build_uid, result, state_string, started_at, complete_at)
 
         # Save the new step data, e.g.: step start event.
-        Step(step_id, build_id, result, state_string, started_at, complete_at).save()
-        _log.debug('Saved step {} in database for build: {}'.format(step_id, build_id))
+        Step(step_uid, build_uid, result, state_string, started_at, complete_at).save()
+        _log.debug('Saved step {} in database for build: {}'.format(step_uid, build_uid))
         return SUCCESS
 
     @classmethod
-    def update_step(cls, step, step_id, build_id, result, state_string, started_at, complete_at):
-        if step.step_id != step_id:
-            _log.error('step_id {} does not match with step_id {}. Ignoring new data.'.format(step.step_id, step_id))
-            return ERR_UNEXPECTED
-        if step.build_id != build_id:
-            _log.error('build_id {} does not match with build_id {}. Ignoring new data.'.format(step.build_id, build_id))
+    def update_step(cls, step, step_uid, build_uid, result, state_string, started_at, complete_at):
+        if step.uid != step_uid:
+            _log.error('step_uid {} does not match with step_uid {}. Ignoring new data.'.format(step.uid, step_uid))
             return ERR_UNEXPECTED
         step.result = result
         step.state_string = state_string
         step.started_at = started_at
         step.complete_at = complete_at
         step.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
-        _log.info('Updated step {} in database for build: {}'.format(step_id, build_id))
+        _log.info('Updated step {} in database for build: {}'.format(step_uid, build_uid))
         return SUCCESS
 
     @classmethod
-    def get_existing_step(cls, step_id):
+    def get_existing_step(cls, uid):
         try:
-            return Step.objects.get(step_id=step_id)
-        except:
+            return Step.objects.get(uid=uid)
+        except Step.DoesNotExist:
             return None
 
     @classmethod

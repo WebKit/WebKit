@@ -1,3 +1,21 @@
+2019-03-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Update primary keys for handling multiple Buildbot instances
+        https://bugs.webkit.org/show_bug.cgi?id=195120
+
+        Reviewed by Stephanie Lewis.
+
+        Use a new primary key uid for build and step tables. Previous primary keys build_id and step_id
+        were not enough to handle multiple buildbot instances. This new primary key uid would be generated
+        by a combination of buildbot_instance_id and current primary key. e.g.: buildbot_instance_id + build_id
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py: Added new primary key uid.
+        * BuildSlaveSupport/ews-app/ews/models/step.py: Ditto.
+        * BuildSlaveSupport/ews-app/ews/models/buildbotinstance.py: Generate uid and instance_id.
+        * BuildSlaveSupport/ews-app/ews/views/results.py: Updated to receive hostname in events.
+        * BuildSlaveSupport/ews-build/events.py: Send hostname along-with events.
+        * BuildSlaveSupport/ews-build/master.cfg: Ditto.
+
 2019-03-01  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Enable service worker

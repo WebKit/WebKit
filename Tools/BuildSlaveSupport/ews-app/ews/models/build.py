@@ -26,6 +26,7 @@ import logging
 
 from django.db import models
 from ews.config import ERR_UNEXPECTED, SUCCESS
+from ews.models.buildbotinstance import BuildbotInstance
 from ews.models.patch import Patch
 import ews.common.util as util
 
@@ -34,7 +35,7 @@ _log = logging.getLogger(__name__)
 
 class Build(models.Model):
     patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
-    build_id = models.IntegerField(primary_key=True)
+    uid = models.TextField(primary_key=True)
     builder_id = models.IntegerField()
     builder_name = models.TextField()
     builder_display_name = models.TextField()
@@ -47,30 +48,31 @@ class Build(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.build_id)
+        return str(self.uid)
 
     @classmethod
-    def save_build(cls, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None):
+    def save_build(cls, patch_id, hostname, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at=None):
         if not Build.is_valid_result(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
             return ERR_UNEXPECTED
 
-        build = Build.get_existing_build(build_id)
+        uid = BuildbotInstance.get_uid(hostname, build_id)
+        build = Build.get_existing_build(uid)
         if build:
             # If the build data is already present in database, update it, e.g.: build complete event.
-            return Build.update_build(build, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
+            return Build.update_build(build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at)
 
         # Save the new build data, e.g.: build start event.
-        Build(patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
-        _log.info('Saved build {} in database for patch_id: {}'.format(build_id, patch_id))
+        Build(patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at).save()
+        _log.info('Saved build {} in database for patch_id: {}'.format(uid, patch_id))
         return SUCCESS
 
     @classmethod
-    def update_build(cls, build, patch_id, build_id, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
+    def update_build(cls, build, patch_id, uid, builder_id, builder_name, builder_display_name, number, result, state_string, started_at, complete_at):
         if build.patch_id != patch_id:
             _log.error('patch_id {} does not match with patch_id {}. Ignoring new data.'.format(build.patch_id, patch_id))
             return ERR_UNEXPECTED
-        if build.build_id != build_id:
-            _log.error('build_id {} does not match with build_id {}. Ignoring new data.'.format(build.build_id, build_id))
+        if build.uid != uid:
+            _log.error('uid {} does not match with uid {}. Ignoring new data.'.format(build.uid, uid))
             return ERR_UNEXPECTED
         if build.builder_id != builder_id:
             _log.error('builder_id {} does not match with builder_id {}. Ignoring new data.'.format(build.builder_id, builder_id))
@@ -83,14 +85,14 @@ class Build(models.Model):
         build.started_at = started_at
         build.complete_at = complete_at
         build.save(update_fields=['result', 'state_string', 'started_at', 'complete_at', 'modified'])
-        _log.info('Updated build {} in database for patch_id: {}'.format(build_id, patch_id))
+        _log.info('Updated build {} in database for patch_id: {}'.format(uid, patch_id))
         return SUCCESS
 
     @classmethod
-    def get_existing_build(cls, build_id):
+    def get_existing_build(cls, uid):
         try:
-            return Build.objects.get(build_id=build_id)
-        except:
+            return Build.objects.get(uid=uid)
+        except Build.DoesNotExist:
             return None
 
     @classmethod
