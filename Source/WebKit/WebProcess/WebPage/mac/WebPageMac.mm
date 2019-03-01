@@ -340,24 +340,21 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
 
 void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
 {
-    AttributedString result;
-
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     const VisibleSelection& selection = frame.selection().selection();
     if (selection.isNone() || !selection.isContentEditable() || selection.isInPasswordField()) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
         return;
     }
 
     RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
     if (!range) {
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
         return;
     }
 
-    result.string = editingAttributedStringFromRange(*range, IncludeImagesInAttributedString::No);
-    NSAttributedString* attributedString = result.string.get();
+    NSAttributedString *attributedString = editingAttributedStringFromRange(*range, IncludeImagesInAttributedString::No);
     
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -365,18 +362,18 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     if ([attributedString length] > editingRange.length) {
         ASSERT([attributedString length] == editingRange.length + 1);
         ASSERT([[attributedString string] characterAtIndex:editingRange.length] == '\n' || [[attributedString string] characterAtIndex:editingRange.length] == ' ');
-        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
+        attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, editingRange.length)];
     }
 
-    EditingRange rangeToSend(editingRange.location, [result.string length]);
+    EditingRange rangeToSend(editingRange.location, attributedString.length);
     ASSERT(rangeToSend.isValid());
     if (!rangeToSend.isValid()) {
         // Send an empty EditingRange as a last resort for <rdar://problem/27078089>.
-        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, EditingRange(), callbackID));
+        send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, EditingRange(), callbackID));
         return;
     }
 
-    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, rangeToSend, callbackID));
+    send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(attributedString, rangeToSend, callbackID));
 }
 
 void WebPage::fontAtSelection(CallbackID callbackID)

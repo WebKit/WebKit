@@ -23,27 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AttributedString_h
-#define AttributedString_h
+#pragma once
 
+#include "ArgumentCoders.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSAttributedString;
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct AttributedString {
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, AttributedString&);
+    AttributedString()
+    {
+    }
+
+#if defined(__OBJC__)
+    AttributedString(NSAttributedString *attributedString)
+        : string(attributedString)
+    {
+    }
+
+    operator NSAttributedString *() const
+    {
+        return string.get();
+    }
+#endif
     
     RetainPtr<NSAttributedString> string;
 };
 
 }
 
-#endif // AttributedString_h
+namespace IPC {
+template<> struct ArgumentCoder<WebKit::AttributedString> {
+    static void encode(Encoder&, const WebKit::AttributedString&);
+    static Optional<WebKit::AttributedString> decode(Decoder&);
+};
+}
+

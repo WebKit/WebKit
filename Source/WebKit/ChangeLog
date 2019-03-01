@@ -1,3 +1,25 @@
+2019-03-01  Tim Horton  <timothy_horton@apple.com>
+
+        Modernize WebKit::AttributedString a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=195200
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/mac/AttributedString.h:
+        (WebKit::AttributedString::AttributedString):
+        (WebKit::AttributedString::operator NSAttributedString * const):
+        * Shared/mac/AttributedString.mm:
+        (IPC::ArgumentCoder<WebKit::AttributedString>::encode):
+        (IPC::ArgumentCoder<WebKit::AttributedString>::decode):
+        (WebKit::AttributedString::encode const): Deleted.
+        (WebKit::AttributedString::decode): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::attributedSubstringForProposedRange):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+        Modern coders, and a constructor and cast operator to/from NSAttributedString.
+        Also adopt those in a few places just for fun.
+
 2019-03-01  Youenn Fablet  <youenn@apple.com>
 
         Serialize IndexedDB::ObjectStoreOverwriteMode as an enum

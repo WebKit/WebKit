@@ -4860,8 +4860,9 @@ void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, voi
             completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
             return;
         }
-        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", [string.string.get() string]);
-        completionHandlerBlock([[string.string.get() retain] autorelease], actualRange);
+        NSAttributedString *attributedString = string;
+        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", [attributedString string]);
+        completionHandlerBlock([[attributedString retain] autorelease], actualRange);
     });
 }
 
