@@ -1,3 +1,14 @@
+2019-02-28  Mark Lam  <mark.lam@apple.com>
+
+        In cloop.rb, rename :int and :uint to :intptr and :uintptr.
+        https://bugs.webkit.org/show_bug.cgi?id=195183
+
+        Reviewed by Yusuke Suzuki.
+
+        Also changed intMemRef and uintMemRef to intptrMemRef and uintptrMemRef respectively.
+
+        * offlineasm/cloop.rb:
+
 2019-02-28  Saam barati  <sbarati@apple.com>
 
         Make JSScript:cacheBytecodeWithError update the cache when the script changes
