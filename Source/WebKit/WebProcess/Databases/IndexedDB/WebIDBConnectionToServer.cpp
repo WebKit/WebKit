@@ -143,7 +143,7 @@ void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, ui
 
 void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
-    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, value, static_cast<unsigned>(mode)));
+    send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, value, mode));
 }
 
 void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)

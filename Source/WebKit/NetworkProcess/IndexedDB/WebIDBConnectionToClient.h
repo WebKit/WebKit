@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include "NetworkConnectionToWebProcess.h"
 #include <WebCore/IDBConnectionToClient.h>
+#include <WebCore/IndexedDB.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {
@@ -105,7 +106,7 @@ public:
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
-    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, unsigned overwriteMode);
+    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
