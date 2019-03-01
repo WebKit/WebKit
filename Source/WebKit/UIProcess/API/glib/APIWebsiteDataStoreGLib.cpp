@@ -177,23 +177,4 @@ WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
     return FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
 }
 
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
-{
-    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
-
-    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
-    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
-
-    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
-    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
-    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
-    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
-    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
-    configuration->setDeviceIdHashSaltsStorageDirectory(defaultDeviceIdHashSaltsStorageDirectory());
-
-    return configuration;
-}
-
 } // namespace API
-

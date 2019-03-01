@@ -94,12 +94,6 @@ WTF::String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys");
 }
 
-WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
-{
-    // Not implemented.
-    return String();
-}
-
 WTF::String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return websiteDataDirectoryFileSystemRepresentation("WebSQL");
@@ -311,28 +305,6 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
         LOG_ERROR("Failed to create directory %@", url);
 
     return url.absoluteURL.path.fileSystemRepresentation;
-}
-
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
-{
-    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
-
-    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
-    configuration->setApplicationCacheFlatFileSubdirectoryName("Files");
-    configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
-    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
-    configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
-
-    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
-    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
-    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
-    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
-    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
-    
-    configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
-
-    return configuration;
 }
 
 } // namespace API

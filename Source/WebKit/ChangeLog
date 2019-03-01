@@ -1,3 +1,26 @@
+2019-03-01  Don Olmstead  <don.olmstead@sony.com>
+
+        Unify WebsiteDataStore::defaultDataStoreConfiguration across ports
+        https://bugs.webkit.org/show_bug.cgi?id=194844
+
+        Reviewed by Youenn Fablet.
+
+        Move the Cocoa implementation into APIWebsiteDataStore.cpp as the source of truth and
+        append configuration for Glib's DeviceIdHashSalts storage directory. This also fixes
+        a crash in Windows when running a Service Worker.
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultDataStoreConfiguration): Deleted.
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration): Deleted.
+        * UIProcess/API/win/APIWebsiteDataStoreWin.cpp:
+        (API::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory): Deleted.
+        (API::WebsiteDataStore::defaultDataStoreConfiguration): Deleted.
+
 2019-03-01  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration

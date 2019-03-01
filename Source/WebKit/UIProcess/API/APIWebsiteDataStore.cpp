@@ -133,6 +133,37 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 }
 #endif
 
+#if !USE(GLIB)
+WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+{
+    // Not implemented.
+    return WTF::String();
+}
+#endif
+
+Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
+{
+    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
+
+    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
+    configuration->setApplicationCacheFlatFileSubdirectoryName("Files");
+    configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
+    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
+    configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
+
+    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
+    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
+    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
+    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
+    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
+    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
+    configuration->setDeviceIdHashSaltsStorageDirectory(defaultDeviceIdHashSaltsStorageDirectory());
+
+    configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
+
+    return configuration;
+}
+
 Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::legacyDefaultDataStoreConfiguration()
 {
     auto configuration = defaultDataStoreConfiguration();

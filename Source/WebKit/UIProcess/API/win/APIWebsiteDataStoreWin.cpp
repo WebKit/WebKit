@@ -65,12 +65,6 @@ String WebsiteDataStore::defaultMediaKeysStorageDirectory()
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
-{
-    // Not Implemented.
-    return String();
-}
-
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL");
@@ -135,20 +129,6 @@ String WebsiteDataStore::legacyDefaultDeviceIdHashSaltsStorageDirectory()
 String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
 {
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "JavaScriptCoreDebug");
-}
-
-Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
-{
-    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
-
-    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
-    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
-    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
-    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
-    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
-    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
-
-    return configuration;
 }
 
 } // namespace API
