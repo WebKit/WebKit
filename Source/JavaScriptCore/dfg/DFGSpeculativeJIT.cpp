@@ -13384,6 +13384,184 @@ void SpeculativeJIT::compileBigIntEquality(Node* node)
     unblessedBooleanResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
+void SpeculativeJIT::compileMakeRope(Node* node)
+{
+    ASSERT(node->child1().useKind() == KnownStringUse);
+    ASSERT(node->child2().useKind() == KnownStringUse);
+    ASSERT(!node->child3() || node->child3().useKind() == KnownStringUse);
+
+    SpeculateCellOperand op1(this, node->child1());
+    SpeculateCellOperand op2(this, node->child2());
+    SpeculateCellOperand op3(this, node->child3());
+    GPRReg opGPRs[3];
+    unsigned numOpGPRs;
+    opGPRs[0] = op1.gpr();
+    opGPRs[1] = op2.gpr();
+    if (node->child3()) {
+        opGPRs[2] = op3.gpr();
+        numOpGPRs = 3;
+    } else {
+        opGPRs[2] = InvalidGPRReg;
+        numOpGPRs = 2;
+    }
+
+#if CPU(ADDRESS64)
+    Edge edges[3] = {
+        node->child1(),
+        node->child2(),
+        node->child3()
+    };
+
+    GPRTemporary result(this);
+    GPRTemporary allocator(this);
+    GPRTemporary scratch(this);
+    GPRTemporary scratch2(this);
+    GPRReg resultGPR = result.gpr();
+    GPRReg allocatorGPR = allocator.gpr();
+    GPRReg scratchGPR = scratch.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+
+    CCallHelpers::JumpList slowPath;
+    Allocator allocatorValue = allocatorForNonVirtualConcurrently<JSRopeString>(*m_jit.vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+    emitAllocateJSCell(resultGPR, JITAllocator::constant(allocatorValue), allocatorGPR, TrustedImmPtr(m_jit.graph().registerStructure(m_jit.vm()->stringStructure.get())), scratchGPR, slowPath);
+
+    m_jit.orPtr(TrustedImm32(JSString::isRopeInPointer), opGPRs[0], allocatorGPR);
+    m_jit.storePtr(allocatorGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber0()));
+
+    m_jit.move(opGPRs[1], scratchGPR);
+    m_jit.store32(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber1Lower()));
+    m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
+    m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber1Upper()));
+
+    if (numOpGPRs == 3) {
+        m_jit.move(opGPRs[2], scratchGPR);
+        m_jit.store32(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Lower()));
+        m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
+        m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Upper()));
+    } else {
+        m_jit.storeZero32(CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Lower()));
+        m_jit.storeZero16(CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Upper()));
+    }
+
+    {
+        if (JSString* string = edges[0]->dynamicCastConstant<JSString*>(*m_jit.vm())) {
+            m_jit.move(TrustedImm32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0), scratchGPR);
+            m_jit.move(TrustedImm32(string->length()), allocatorGPR);
+        } else {
+            bool canBeRope = !m_state.forNode(edges[0]).isType(SpecStringIdent);
+            m_jit.loadPtr(CCallHelpers::Address(opGPRs[0], JSString::offsetOfValue()), scratch2GPR);
+            CCallHelpers::Jump isRope;
+            if (canBeRope)
+                isRope = m_jit.branchIfRopeStringImpl(scratch2GPR);
+
+            m_jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
+            m_jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::lengthMemoryOffset()), allocatorGPR);
+
+            if (canBeRope) {
+                auto done = m_jit.jump();
+
+                isRope.link(&m_jit);
+                m_jit.load16(CCallHelpers::Address(opGPRs[0], JSRopeString::offsetOfFlags()), scratchGPR);
+                m_jit.load32(CCallHelpers::Address(opGPRs[0], JSRopeString::offsetOfLength()), allocatorGPR);
+                done.link(&m_jit);
+            }
+        }
+
+        if (!ASSERT_DISABLED) {
+            CCallHelpers::Jump ok = m_jit.branch32(
+                CCallHelpers::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
+            m_jit.abortWithReason(DFGNegativeStringLength);
+            ok.link(&m_jit);
+        }
+    }
+
+    for (unsigned i = 1; i < numOpGPRs; ++i) {
+        if (JSString* string = edges[i]->dynamicCastConstant<JSString*>(*m_jit.vm())) {
+            m_jit.and32(TrustedImm32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0), scratchGPR);
+            speculationCheck(
+                Uncountable, JSValueSource(), nullptr,
+                m_jit.branchAdd32(
+                    CCallHelpers::Overflow,
+                    TrustedImm32(string->length()), allocatorGPR));
+        } else {
+            bool canBeRope = !m_state.forNode(edges[i]).isType(SpecStringIdent);
+            m_jit.loadPtr(CCallHelpers::Address(opGPRs[i], JSString::offsetOfValue()), scratch2GPR);
+            CCallHelpers::Jump isRope;
+            if (canBeRope)
+                isRope = m_jit.branchIfRopeStringImpl(scratch2GPR);
+
+            m_jit.and16(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
+            speculationCheck(
+                Uncountable, JSValueSource(), nullptr,
+                m_jit.branchAdd32(
+                    CCallHelpers::Overflow,
+                    CCallHelpers::Address(scratch2GPR, StringImpl::lengthMemoryOffset()), allocatorGPR));
+            if (canBeRope) {
+                auto done = m_jit.jump();
+
+                isRope.link(&m_jit);
+                m_jit.and16(CCallHelpers::Address(opGPRs[i], JSRopeString::offsetOfFlags()), scratchGPR);
+                m_jit.load32(CCallHelpers::Address(opGPRs[i], JSRopeString::offsetOfLength()), scratch2GPR);
+                speculationCheck(
+                    Uncountable, JSValueSource(), nullptr,
+                    m_jit.branchAdd32(
+                        CCallHelpers::Overflow, scratch2GPR, allocatorGPR));
+                done.link(&m_jit);
+            }
+        }
+    }
+    m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFlags()));
+    if (!ASSERT_DISABLED) {
+        CCallHelpers::Jump ok = m_jit.branch32(
+            CCallHelpers::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
+        m_jit.abortWithReason(DFGNegativeStringLength);
+        ok.link(&m_jit);
+    }
+    m_jit.store32(allocatorGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfLength()));
+    auto isNonEmptyString = m_jit.branchTest32(CCallHelpers::NonZero, allocatorGPR);
+
+    m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), jsEmptyString(&m_jit.graph().m_vm)), resultGPR);
+
+    isNonEmptyString.link(&m_jit);
+    m_jit.mutatorFence(*m_jit.vm());
+
+    switch (numOpGPRs) {
+    case 2:
+        addSlowPathGenerator(slowPathCall(
+            slowPath, this, operationMakeRope2, resultGPR, opGPRs[0], opGPRs[1]));
+        break;
+    case 3:
+        addSlowPathGenerator(slowPathCall(
+            slowPath, this, operationMakeRope3, resultGPR, opGPRs[0], opGPRs[1], opGPRs[2]));
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    cellResult(resultGPR, node);
+#else
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    switch (numOpGPRs) {
+    case 2:
+        callOperation(operationMakeRope2, resultGPR, opGPRs[0], opGPRs[1]);
+        m_jit.exceptionCheck();
+        break;
+    case 3:
+        callOperation(operationMakeRope3, resultGPR, opGPRs[0], opGPRs[1], opGPRs[2]);
+        m_jit.exceptionCheck();
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    cellResult(resultGPR, node);
+#endif
+}
+
 } } // namespace JSC::DFG
 
 #endif

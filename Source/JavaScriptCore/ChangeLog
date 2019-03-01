@@ -1,3 +1,20 @@
+2019-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use runtime calls for DFG MakeRope if !CPU(ADDRESS64)
+        https://bugs.webkit.org/show_bug.cgi?id=195221
+
+        Reviewed by Mark Lam.
+
+        ARM32_64 builds DFG 64bit, but the size of address is 32bit. Make DFG MakeRope a runtime call not only for DFG 32_64,
+        but also DFG 64 with !CPU(ADDRESS64). This patch unifies compileMakeRope again, and use a runtime call for !CPU(ADDRESS64).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMakeRope): Deleted.
+
 2019-03-01  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] 32-bit builds broken by attempt to disable WebGPU on 32-bit
