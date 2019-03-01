@@ -72,7 +72,7 @@ void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
     startObservingStyleRecalcScheduling();
-    m_observingContentChanges = true;
+    m_isObservingContentChanges = true;
 }
 
 void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
@@ -93,7 +93,7 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
     } else if (observedContentChange == WKContentIndeterminateChange) {
         // An async style recalc has been scheduled. Let's observe it.
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") wait until next style recalc fires.");
-        setShouldObserveNextStyleRecalc(true);
+        setShouldObserveStyleRecalc(true);
     }
 }
 
@@ -105,26 +105,26 @@ void ContentChangeObserver::didScheduleStyleRecalc()
     setObservedContentChange(WKContentIndeterminateChange);
 }
 
-void ContentChangeObserver::startObservingStyleResolve()
+void ContentChangeObserver::startObservingStyleRecalc()
 {
-    if (!shouldObserveNextStyleRecalc())
+    if (!shouldObserveStyleRecalc())
         return;
-    LOG(ContentObservation, "startObservingStyleResolve: start observing style resolve.");
-    m_observingContentChanges = true;
+    LOG(ContentObservation, "startObservingStyleRecalc: start observing style recalc.");
+    m_isObservingContentChanges = true;
 }
 
-void ContentChangeObserver::stopObservingStyleResolve()
+void ContentChangeObserver::stopObservingStyleRecalc()
 {
-    if (!shouldObserveNextStyleRecalc())
+    if (!shouldObserveStyleRecalc())
         return;
-    LOG(ContentObservation, "stopObservingStyleResolve: stop observing style resolve");
-    setShouldObserveNextStyleRecalc(false);
+    LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
+    setShouldObserveStyleRecalc(false);
     auto inDeterminedState = observedContentChange() == WKContentVisibilityChange || !countOfObservedDOMTimers();
     if (!inDeterminedState) {
-        LOG(ContentObservation, "stopObservingStyleResolve: can't decided it yet.");
+        LOG(ContentObservation, "stopObservingStyleRecalc: can't decided it yet.");
         return;
     }
-    LOG(ContentObservation, "stopObservingStyleResolve: notify the pending synthetic click handler.");
+    LOG(ContentObservation, "stopObservingStyleRecalc: notify the pending synthetic click handler.");
     m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
 
@@ -156,74 +156,19 @@ void ContentChangeObserver::startObservingContentChanges()
 {
     startObservingDOMTimerScheduling();
     resetObservedContentChange();
-    m_observingContentChanges = true;
+    clearObservedDOMTimers();
+    m_isObservingContentChanges = true;
 }
 
 void ContentChangeObserver::stopObservingContentChanges()
 {
     stopObservingDOMTimerScheduling();
-    m_observingContentChanges = false;
-}
-
-bool ContentChangeObserver::isObservingContentChanges()
-{
-    return m_observingContentChanges;
-}
-
-void ContentChangeObserver::startObservingDOMTimerScheduling()
-{
-    m_observingDOMTimerScheduling = true;
-    clearObservedDOMTimers();
-}
-
-void ContentChangeObserver::stopObservingDOMTimerScheduling()
-{
-    m_observingDOMTimerScheduling = false;
-}
-
-bool ContentChangeObserver::isObservingDOMTimerScheduling()
-{
-    return m_observingDOMTimerScheduling;
-}
-
-void ContentChangeObserver::startObservingStyleRecalcScheduling()
-{
-    m_observingStyleRecalcScheduling = true;
-}
-
-void ContentChangeObserver::stopObservingStyleRecalcScheduling()
-{
-    m_observingStyleRecalcScheduling = false;
-}
-
-bool ContentChangeObserver::isObservingStyleRecalcScheduling()
-{
-    return m_observingStyleRecalcScheduling;
-}
-
-void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool observe)
-{
-    m_observingNextStyleRecalc = observe;
-}
-
-bool ContentChangeObserver::shouldObserveNextStyleRecalc()
-{
-    return m_observingNextStyleRecalc;
+    m_isObservingContentChanges = false;
 }
 
 WKContentChange ContentChangeObserver::observedContentChange()
 {
     return WKObservedContentChange();
-}
-
-unsigned ContentChangeObserver::countOfObservedDOMTimers()
-{
-    return m_DOMTimerList.size();
-}
-
-void ContentChangeObserver::clearObservedDOMTimers()
-{
-    m_DOMTimerList.clear();
 }
 
 void ContentChangeObserver::resetObservedContentChange()
@@ -236,11 +181,6 @@ void ContentChangeObserver::setObservedContentChange(WKContentChange change)
     if (observedContentChange() == WKContentVisibilityChange)
         return;
     WKSetObservedContentChange(change);
-}
-
-bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer)
-{
-    return m_DOMTimerList.contains(&timer);
 }
 
 void ContentChangeObserver::addObservedDOMTimer(const DOMTimer& timer)
@@ -323,13 +263,13 @@ ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Page* page)
     : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
 {
     if (m_contentChangeObserver)
-        m_contentChangeObserver->startObservingStyleResolve();
+        m_contentChangeObserver->startObservingStyleRecalc();
 }
 
 ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope()
 {
     if (m_contentChangeObserver)
-        m_contentChangeObserver->stopObservingStyleResolve();
+        m_contentChangeObserver->stopObservingStyleRecalc();
 }
 
 ContentChangeObserver::DOMTimerScope::DOMTimerScope(Page* page, const DOMTimer& domTimer)

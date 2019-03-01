@@ -81,43 +81,42 @@ public:
     };
 
 private:
-    void startObservingDOMTimerScheduling();
-    void stopObservingDOMTimerScheduling();
+    void startObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = true; }
+    void stopObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = false; }
 
     void startObservingDOMTimerExecute(const DOMTimer&);
     void stopObservingDOMTimerExecute(const DOMTimer&);
 
-    void startObservingStyleResolve();
-    void stopObservingStyleResolve();
+    void startObservingStyleRecalc();
+    void stopObservingStyleRecalc();
 
     void addObservedDOMTimer(const DOMTimer&);
-    bool isObservingDOMTimerScheduling();
+    bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     void removeObservedDOMTimer(const DOMTimer&);
-    bool containsObservedDOMTimer(const DOMTimer&);
+    bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
-    void startObservingStyleRecalcScheduling();
-    void stopObservingStyleRecalcScheduling();
+    void startObservingStyleRecalcScheduling() { m_isObservingStyleRecalcScheduling = true; }
+    void stopObservingStyleRecalcScheduling() { m_isObservingStyleRecalcScheduling = false; }
+    bool isObservingStyleRecalcScheduling() const { return m_isObservingStyleRecalcScheduling; }
 
-    void setShouldObserveNextStyleRecalc(bool);
-    bool shouldObserveNextStyleRecalc();
-
-    bool isObservingContentChanges();
-    bool isObservingStyleRecalcScheduling();
+    void setShouldObserveStyleRecalc(bool shouldObserve) { m_shouldObserveStyleRecalc = shouldObserve; }
+    bool shouldObserveStyleRecalc() const { return m_shouldObserveStyleRecalc; }
 
     void setObservedContentChange(WKContentChange);
     void resetObservedContentChange();
+    bool isObservingContentChanges() const { return m_isObservingContentChanges; }
 
-    unsigned countOfObservedDOMTimers();
-    void clearObservedDOMTimers();
+    unsigned countOfObservedDOMTimers() const { return m_DOMTimerList.size(); }
+    void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
 
     void clearTimersAndReportContentChange();
 
     Page& m_page;
     HashSet<const DOMTimer*> m_DOMTimerList;
-    bool m_observingNextStyleRecalc { false };
-    bool m_observingStyleRecalcScheduling { false };
-    bool m_observingDOMTimerScheduling { false };
-    bool m_observingContentChanges { false };
+    bool m_shouldObserveStyleRecalc { false };
+    bool m_isObservingStyleRecalcScheduling { false };
+    bool m_isObservingDOMTimerScheduling { false };
+    bool m_isObservingContentChanges { false };
 };
 
 }

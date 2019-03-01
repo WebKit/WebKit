@@ -1,5 +1,50 @@
 2019-03-01  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Rename members and move implementation to header.
+        https://bugs.webkit.org/show_bug.cgi?id=195198
+        <rdar://problem/48499967>
+
+        Reviewed by Simon Fraser.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::startObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::startObservingStyleRecalc):
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalc):
+        (WebCore::ContentChangeObserver::startObservingContentChanges):
+        (WebCore::ContentChangeObserver::stopObservingContentChanges):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::StyleRecalcScope):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope):
+        (WebCore::ContentChangeObserver::startObservingStyleResolve): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingStyleResolve): Deleted.
+        (WebCore::ContentChangeObserver::isObservingContentChanges): Deleted.
+        (WebCore::ContentChangeObserver::startObservingDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::isObservingDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::startObservingStyleRecalcScheduling): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalcScheduling): Deleted.
+        (WebCore::ContentChangeObserver::isObservingStyleRecalcScheduling): Deleted.
+        (WebCore::ContentChangeObserver::setShouldObserveNextStyleRecalc): Deleted.
+        (WebCore::ContentChangeObserver::shouldObserveNextStyleRecalc): Deleted.
+        (WebCore::ContentChangeObserver::countOfObservedDOMTimers): Deleted.
+        (WebCore::ContentChangeObserver::clearObservedDOMTimers): Deleted.
+        (WebCore::ContentChangeObserver::containsObservedDOMTimer): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::startObservingDOMTimerScheduling):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerScheduling):
+        (WebCore::ContentChangeObserver::isObservingDOMTimerScheduling const):
+        (WebCore::ContentChangeObserver::containsObservedDOMTimer const):
+        (WebCore::ContentChangeObserver::startObservingStyleRecalcScheduling):
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalcScheduling):
+        (WebCore::ContentChangeObserver::isObservingStyleRecalcScheduling const):
+        (WebCore::ContentChangeObserver::setShouldObserveStyleRecalc):
+        (WebCore::ContentChangeObserver::shouldObserveStyleRecalc const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::countOfObservedDOMTimers const):
+        (WebCore::ContentChangeObserver::clearObservedDOMTimers):
+
+2019-03-01  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] ContentChangeObserver::StyleChangeScope should not set WKContentVisibilityChange directly
         https://bugs.webkit.org/show_bug.cgi?id=195197
         <rdar://problem/48498332>
