@@ -494,9 +494,7 @@ bool originsMatch(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
     if (&origin1 == &origin2)
         return true;
 
-    bool result = areOriginsMatching(origin1, origin2);
-    ASSERT(result == (origin1.toString() == origin2.toString()));
-    return result;
+    return areOriginsMatching(origin1, origin2);
 }
 
 bool originsMatch(const SecurityOrigin* origin1, const SecurityOrigin* origin2)
