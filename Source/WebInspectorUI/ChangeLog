@@ -1,5 +1,32 @@
 2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Make Threads section expandable / collapsable
+        https://bugs.webkit.org/show_bug.cgi?id=195085
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Setting.js:
+        New setting to save the Threads expanded/collapsed state.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .details > .subtitle):
+        (.timeline-view.cpu > .content > .details > details > .subtitle.threads):
+        (.timeline-view.cpu > .content > .details > .subtitle): Deleted.
+        (.timeline-view.cpu > .content > .details > .subtitle.threads): Deleted.
+        Ensure subtitle styles apply now that one of the subtitles is inside
+        of a <details> / <summary> element.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.initialLayout):
+        Make the Threads group a <details> / <summary> expandable / collapsed element.
+
+        * UserInterface/Views/Main.css:
+        (summary):
+        (summary::-webkit-details-marker):
+        Default styles for <summary>.
+
+2019-02-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: View.removeSubview not removing the element properly when not parented
         https://bugs.webkit.org/show_bug.cgi?id=195146
 

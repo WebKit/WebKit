@@ -129,6 +129,7 @@ WI.settings = {
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     clearLogOnNavigate: new WI.Setting("clear-log-on-navigate", true),
     clearNetworkOnNavigate: new WI.Setting("clear-network-on-navigate", true),
+    cpuTimelineThreadDetailsExpanded: new WI.Setting("cpu-timeline-thread-details-expanded", false),
     emulateInUserGesture: new WI.Setting("emulate-in-user-gesture", false),
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", false),

@@ -31,6 +31,14 @@
     supported-color-schemes: light dark;
 }
 
+summary {
+    outline: none;
+}
+
+summary::-webkit-details-marker {
+    color: hsl(0, 0%, 55%);
+}
+
 body {
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;

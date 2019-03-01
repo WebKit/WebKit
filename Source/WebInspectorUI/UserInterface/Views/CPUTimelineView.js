@@ -178,7 +178,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._breakdownLegendPaintElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Paint);
         this._breakdownLegendStyleElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Style);
 
-        let detailsContainerElement = this._detailsContainerElement = contentElement.appendChild(document.createElement("div"));
+        let detailsContainerElement = contentElement.appendChild(document.createElement("div"));
         detailsContainerElement.classList.add("details");
 
         this._timelineRuler = new WI.TimelineRuler;
@@ -199,32 +199,39 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this._cpuUsageView = new WI.CPUUsageStackedView(WI.UIString("Total"));
         this.addSubview(this._cpuUsageView);
-        this._detailsContainerElement.appendChild(this._cpuUsageView.element);
+        detailsContainerElement.appendChild(this._cpuUsageView.element);
 
         this._mainThreadWorkIndicatorView = new WI.CPUUsageIndicatorView;
         this.addSubview(this._mainThreadWorkIndicatorView);
-        this._detailsContainerElement.appendChild(this._mainThreadWorkIndicatorView.element);
+        detailsContainerElement.appendChild(this._mainThreadWorkIndicatorView.element);
 
         this._mainThreadWorkIndicatorView.chart.element.addEventListener("click", this._handleIndicatorClick.bind(this));
 
-        let threadsSubtitleElement = detailsContainerElement.appendChild(document.createElement("div"));
-        threadsSubtitleElement.classList.add("subtitle", "threads");
+        this._threadsDetailsElement = detailsContainerElement.appendChild(document.createElement("details"));
+        this._threadsDetailsElement.open = WI.settings.cpuTimelineThreadDetailsExpanded.value;
+        this._threadsDetailsElement.addEventListener("toggle", (event) => {
+            WI.settings.cpuTimelineThreadDetailsExpanded.value = this._threadsDetailsElement.open;
+            this.updateLayout();
+        });
+
+        let threadsSubtitleElement = this._threadsDetailsElement.appendChild(document.createElement("summary"));
+        threadsSubtitleElement.classList.add("subtitle", "threads", "expandable");
         threadsSubtitleElement.textContent = WI.UIString("Threads");
 
         this._mainThreadUsageView = new WI.CPUUsageView(WI.UIString("Main Thread"));
         this._mainThreadUsageView.element.classList.add("main-thread");
         this.addSubview(this._mainThreadUsageView);
-        this._detailsContainerElement.appendChild(this._mainThreadUsageView.element);
+        this._threadsDetailsElement.appendChild(this._mainThreadUsageView.element);
 
         this._webkitThreadUsageView = new WI.CPUUsageView(WI.UIString("WebKit Threads"));
         this._webkitThreadUsageView.element.classList.add("non-main-thread");
         this.addSubview(this._webkitThreadUsageView);
-        this._detailsContainerElement.appendChild(this._webkitThreadUsageView.element);
+        this._threadsDetailsElement.appendChild(this._webkitThreadUsageView.element);
 
         this._unknownThreadUsageView = new WI.CPUUsageView(WI.UIString("Other Threads"));
         this._unknownThreadUsageView.element.classList.add("non-main-thread");
         this.addSubview(this._unknownThreadUsageView);
-        this._detailsContainerElement.appendChild(this._unknownThreadUsageView.element);
+        this._threadsDetailsElement.appendChild(this._unknownThreadUsageView.element);
 
         this._workerViews = [];
 
@@ -510,22 +517,25 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
 
         layoutView(this._cpuUsageView, null, CPUTimelineView.cpuUsageViewHeight, {dataPoints, min, max, average});
-        layoutView(this._mainThreadUsageView, "mainThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: mainThreadMin, max: mainThreadMax, average: mainThreadAverage});
-        layoutView(this._webkitThreadUsageView, "webkitThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: webkitThreadMin, max: webkitThreadMax, average: webkitThreadAverage});
-        layoutView(this._unknownThreadUsageView, "unknownThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: unknownThreadMin, max: unknownThreadMax, average: unknownThreadAverage});
 
-        this._removeWorkerThreadViews();
+        if (this._threadsDetailsElement.open) {
+            layoutView(this._mainThreadUsageView, "mainThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: mainThreadMin, max: mainThreadMax, average: mainThreadAverage});
+            layoutView(this._webkitThreadUsageView, "webkitThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: webkitThreadMin, max: webkitThreadMax, average: webkitThreadAverage});
+            layoutView(this._unknownThreadUsageView, "unknownThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: unknownThreadMin, max: unknownThreadMax, average: unknownThreadAverage});
 
-        for (let [workerId, workerData] of workersDataMap) {
-            let worker = WI.targetManager.targetForIdentifier(workerId);
-            let displayName = worker ? worker.displayName : WI.UIString("Worker Thread");
-            let workerView = new WI.CPUUsageView(displayName);
-            workerView.element.classList.add("worker-thread");
-            this.addSubview(workerView);
-            this._detailsContainerElement.insertBefore(workerView.element, this._webkitThreadUsageView.element);
-            this._workerViews.push(workerView);
+            this._removeWorkerThreadViews();
 
-            layoutView(workerView, "usage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints: workerData.dataPoints, min: workerData.min, max: workerData.max, average: workerData.average});
+            for (let [workerId, workerData] of workersDataMap) {
+                let worker = WI.targetManager.targetForIdentifier(workerId);
+                let displayName = worker ? worker.displayName : WI.UIString("Worker Thread");
+                let workerView = new WI.CPUUsageView(displayName);
+                workerView.element.classList.add("worker-thread");
+                this.addSubview(workerView);
+                this._threadsDetailsElement.insertBefore(workerView.element, this._webkitThreadUsageView.element);
+                this._workerViews.push(workerView);
+
+                layoutView(workerView, "usage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints: workerData.dataPoints, min: workerData.min, max: workerData.max, average: workerData.average});
+            }
         }
 
         function xScaleIndicatorRange(sampleIndex) {

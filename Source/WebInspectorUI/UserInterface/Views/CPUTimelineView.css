@@ -62,12 +62,13 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     right: var(--cpu-timeline-view-details-timeline-ruler-offset-start);
 }
 
-.timeline-view.cpu > .content > .details > .subtitle {
+.timeline-view.cpu > .content > .details > .subtitle,
+.timeline-view.cpu > .content > .details > details > .subtitle {
     padding: 0 10px 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.timeline-view.cpu > .content > .details > .subtitle.threads {
+.timeline-view.cpu > .content > .details > details > .subtitle.threads {
     position: relative;
     z-index: calc(var(--timeline-marker-z-index) + 1);
     padding-top: 10px;
