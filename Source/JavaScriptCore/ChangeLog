@@ -1,5 +1,16 @@
 2019-03-01  Dominik Infuehr  <dinfuehr@igalia.com>
 
+        Fix debug builds with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=195205
+
+        Unreviewed. Fix debug builds in GCC by removing
+        the constexpr-keyword for this function.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::tagFromSourceCodeType):
+
+2019-03-01  Dominik Infuehr  <dinfuehr@igalia.com>
+
         [ARM] Fix assembler warnings in ctiMasmProbeTrampoline
         https://bugs.webkit.org/show_bug.cgi?id=195164
 

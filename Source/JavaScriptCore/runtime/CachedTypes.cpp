@@ -1812,7 +1812,7 @@ enum CachedCodeBlockTag {
     CachedEvalCodeBlockTag,
 };
 
-static constexpr CachedCodeBlockTag tagFromSourceCodeType(SourceCodeType type)
+static CachedCodeBlockTag tagFromSourceCodeType(SourceCodeType type)
 {
     switch (type) {
     case SourceCodeType::ProgramType:
