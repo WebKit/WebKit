@@ -200,8 +200,8 @@ private:
     static constexpr const unsigned s_hashFlagStringKindIsAtomic = 1u << (s_flagStringKindCount);
     static constexpr const unsigned s_hashFlagStringKindIsSymbol = 1u << (s_flagStringKindCount + 1);
     static constexpr const unsigned s_hashMaskStringKind = s_hashFlagStringKindIsAtomic | s_hashFlagStringKindIsSymbol;
-    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 3;
-    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 2;
+    static constexpr const unsigned s_hashFlagDidReportCost = 1u << 3;
+    static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
     static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
 
     enum StringKind {
@@ -264,10 +264,10 @@ public:
     static Expected<Ref<StringImpl>, UTF8ConversionError> tryReallocate(Ref<StringImpl>&& originalString, unsigned length, UChar*& data);
 
     static unsigned flagsOffset() { return OBJECT_OFFSETOF(StringImpl, m_hashAndFlags); }
-    static unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
-    static unsigned flagIsAtomic() { return s_hashFlagStringKindIsAtomic; }
-    static unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
-    static unsigned maskStringKind() { return s_hashMaskStringKind; }
+    static constexpr unsigned flagIs8Bit() { return s_hashFlag8BitBuffer; }
+    static constexpr unsigned flagIsAtomic() { return s_hashFlagStringKindIsAtomic; }
+    static constexpr unsigned flagIsSymbol() { return s_hashFlagStringKindIsSymbol; }
+    static constexpr unsigned maskStringKind() { return s_hashMaskStringKind; }
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
 
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>

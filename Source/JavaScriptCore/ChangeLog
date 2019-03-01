@@ -1,3 +1,198 @@
+2019-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] sizeof(JSString) should be 16
+        https://bugs.webkit.org/show_bug.cgi?id=194375
+
+        Reviewed by Saam Barati.
+
+        This patch reduces sizeof(JSString) from 24 to 16 to fit it into GC heap cell atom. And it also reduces sizeof(JSRopeString) from 48 to 32.
+        Both classes cut 16 bytes per instance in GC allocation. This new layout is used in 64bit architectures which has little endianess.
+
+        JSString no longer has length and flags directly. JSString has String, and we query information to this String instead of holding duplicate
+        information in JSString. We embed isRope bit into this String's pointer so that we can convert JSRopeString to JSString in an atomic manner.
+        We emit store-store fence before we put String pointer. This should exist even before this patch, so this patch also fixes one concurrency issue.
+
+        The old JSRopeString separately had JSString* fibers along with String. In this patch, we merge the first JSString* fiber and String pointer
+        storage into one to reduce the size of JSRopeString. JSRopeString has three pointer width storage. We pick 48bit effective address of JSString*
+        fibers to compress three fibers + length + flags into three pointer width storage.
+
+        In 64bit architecture, JSString and JSRopeString have the following memory layout to make sizeof(JSString) == 16 and sizeof(JSRopeString) == 32.
+        JSString has only one pointer. We use it for String. length() and is8Bit() queries go to StringImpl. In JSRopeString, we reuse the above pointer
+        place for the 1st fiber. JSRopeString has three fibers so its size is 48. To keep length and is8Bit flag information in JSRopeString, JSRopeString
+        encodes these information into the fiber pointers. is8Bit flag is encoded in the 1st fiber pointer. length is embedded directly, and two fibers
+        are compressed into 12bytes. isRope information is encoded in the first fiber's LSB.
+
+        Since length of JSRopeString should be frequently accessed compared to each fiber, we put length in contiguous 32byte field, and compress 2nd
+        and 3rd fibers into the following 80byte fields. One problem is that now 2nd and 3rd fibers are split. Storing and loading 2nd and 3rd fibers
+        are not one pointer load operation. To make concurrent collector work correctly, we must initialize 2nd and 3rd fibers at JSRopeString creation
+        and we must not modify these part later.
+
+                     0                        8        10               16                       32                                     48
+        JSString     [   ID      ][  header  ][   String pointer      0]
+        JSRopeString [   ID      ][  header  ][ flags ][ 1st fiber    1][  length  ][2nd lower32][2nd upper16][3rd lower16][3rd upper32]
+                                                                      ^
+                                                                   isRope bit
+
+        Since fibers in JSRopeString are not initialized in atomic pointer store manner, we must initialize all the fiber fields at JSRopeString creation.
+        To achieve this, we modify our JSRopeString::RopeBuilder implementation not to create half-baked JSRopeString.
+
+        This patch also makes an empty JSString singleton per VM. This makes evaluation of JSString in boolean context one pointer comparison. This is
+        critical in this change since this patch enlarges the code necessary to get length from JSString in JIT. Without this guarantee, our code of boolean
+        context evaluation is bloated. This patch hides all the JSString::create and JSRopeString::create in the private permission. JSString and JSRopeString
+        creation is only allowed from jsString and related helper functions and they return a singleton empty JSString if the length is zero. We also change
+        JSRopeString::RopeBuilder not to construct an empty JSRopeString.
+
+        This patch is performance neutral in Speedometer2 and JetStream2. And it improves RAMification by 2.7%.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::storeZero16):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::storeZero16):
+        (JSC::MacroAssemblerX86Common::store16):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::dumpCacheSizesAndCrash):
+        (JSC::linkCodeInline):
+        (JSC::InlineAccess::isCacheableStringLength):
+        (JSC::InlineAccess::generateStringLength):
+        * bytecode/InlineAccess.h:
+        (JSC::InlineAccess::sizeForPropertyAccess):
+        (JSC::InlineAccess::sizeForPropertyReplace):
+        (JSC::InlineAccess::sizeForLengthAccess):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+        (JSC::DFG::SpeculativeJIT::compileToLowerCase):
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileStringEquality):
+        (JSC::DFG::SpeculativeJIT::compileStringZeroLength):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNotStringOrOther):
+        (JSC::DFG::SpeculativeJIT::emitStringBranch):
+        (JSC::DFG::SpeculativeJIT::emitStringOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::emitPopulateSliceIndex):
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        (JSC::DFG::SpeculativeJIT::speculateStringIdentAndLoadStorage):
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringToUntypedStrictEquality):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::mapHashString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringSlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToLowerCase):
+        (JSC::FTL::DFG::LowerDFGToB3::stringsEqual):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::switchString):
+        (JSC::FTL::DFG::LowerDFGToB3::isRopeString):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotRopeString):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateStringIdent):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        (JSC::AssemblyHelpers::branchIfValue):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfRopeStringImpl):
+        (JSC::AssemblyHelpers::branchIfNotRopeStringImpl):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringGetByValGenerator):
+        (JSC::stringCharLoad):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSString.cpp:
+        (JSC::JSString::createEmptyString):
+        (JSC::JSRopeString::RopeBuilder<RecordOverflow>::expand):
+        (JSC::JSString::dumpToStream):
+        (JSC::JSString::estimatedSize):
+        (JSC::JSString::visitChildren):
+        (JSC::JSRopeString::resolveRopeInternal8 const):
+        (JSC::JSRopeString::resolveRopeInternal8NoSubstring const):
+        (JSC::JSRopeString::resolveRopeInternal16 const):
+        (JSC::JSRopeString::resolveRopeInternal16NoSubstring const):
+        (JSC::JSRopeString::resolveRopeToAtomicString const):
+        (JSC::JSRopeString::convertToNonRope const):
+        (JSC::JSRopeString::resolveRopeToExistingAtomicString const):
+        (JSC::JSRopeString::resolveRopeWithFunction const):
+        (JSC::JSRopeString::resolveRope const):
+        (JSC::JSRopeString::resolveRopeSlowCase8 const):
+        (JSC::JSRopeString::resolveRopeSlowCase const):
+        (JSC::JSRopeString::outOfMemory const):
+        (JSC::JSRopeString::visitFibers): Deleted.
+        (JSC::JSRopeString::clearFibers const): Deleted.
+        * runtime/JSString.h:
+        (JSC::JSString::uninitializedValueInternal const):
+        (JSC::JSString::valueInternal const):
+        (JSC::JSString::JSString):
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::create):
+        (JSC::JSString::offsetOfValue):
+        (JSC::JSString::isRope const):
+        (JSC::JSString::is8Bit const):
+        (JSC::JSString::length const):
+        (JSC::JSString::tryGetValueImpl const):
+        (JSC::JSString::toAtomicString const):
+        (JSC::JSString::toExistingAtomicString const):
+        (JSC::JSString::value const):
+        (JSC::JSString::tryGetValue const):
+        (JSC::JSRopeString::unsafeView const):
+        (JSC::JSRopeString::viewWithUnderlyingString const):
+        (JSC::JSString::unsafeView const):
+        (JSC::JSString::viewWithUnderlyingString const):
+        (JSC::JSString::offsetOfLength): Deleted.
+        (JSC::JSString::offsetOfFlags): Deleted.
+        (JSC::JSString::setIs8Bit const): Deleted.
+        (JSC::JSString::setLength): Deleted.
+        (JSC::JSString::string): Deleted.
+        (JSC::jsStringBuilder): Deleted.
+        * runtime/JSStringInlines.h:
+        (JSC::JSString::~JSString):
+        (JSC::JSString::equal const):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::collectMatches):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::createEmptyString): Deleted.
+        * runtime/SmallStrings.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSlice):
+        * runtime/StringPrototypeInlines.h: Added.
+        (JSC::stringSlice):
+
 2019-02-28  Saam barati  <sbarati@apple.com>
 
         Unreviewed. Attempt windows build fix after r242239.

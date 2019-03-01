@@ -45,6 +45,7 @@
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
 #include "RegExpGlobalDataInlines.h"
+#include "StringPrototypeInlines.h"
 #include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
@@ -1141,28 +1142,19 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    int len = s.length();
-    RELEASE_ASSERT(len >= 0);
-
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
+
+    int len = s.length();
+    RELEASE_ASSERT(len >= 0);
 
     // The arg processing is very much like ArrayProtoFunc::Slice
     double start = a0.toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double end = a1.isUndefined() ? len : a1.toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    double from = start < 0 ? len + start : start;
-    double to = end < 0 ? len + end : end;
-    if (to > from && to > 0 && from < len) {
-        if (from < 0)
-            from = 0;
-        if (to > len)
-            to = len;
-        return JSValue::encode(jsSubstring(exec, s, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from)));
-    }
-
-    return JSValue::encode(jsEmptyString(exec));
+    scope.release();
+    return JSValue::encode(stringSlice(exec, WTFMove(s), start, end));
 }
 
 // Return true in case of early return (resultLength got to limitLength).

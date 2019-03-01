@@ -127,8 +127,6 @@ public:
 private:
     static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
-    void createEmptyString(VM*);
-
     void initialize(VM*, JSString*&, const char* value);
 
     JSString* m_emptyString { nullptr };

@@ -1213,8 +1213,16 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     }
         
     case StringLength: {
-        jit.load32(CCallHelpers::Address(baseGPR, JSString::offsetOfLength()), valueRegs.payloadGPR());
-        jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
+        jit.loadPtr(CCallHelpers::Address(baseGPR, JSString::offsetOfValue()), scratchGPR);
+        auto isRope = jit.branchIfRopeStringImpl(scratchGPR);
+        jit.load32(CCallHelpers::Address(scratchGPR, StringImpl::lengthMemoryOffset()), scratchGPR);
+        auto done = jit.jump();
+
+        isRope.link(&jit);
+        jit.load32(CCallHelpers::Address(baseGPR, JSRopeString::offsetOfLength()), scratchGPR);
+
+        done.link(&jit);
+        jit.boxInt32(scratchGPR, valueRegs);
         state.succeed();
         return;
     }

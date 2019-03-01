@@ -423,8 +423,9 @@ bool codePointCompareLessThan(const String&, const String&);
 
 template<typename CharacterType> void appendNumber(Vector<CharacterType>&, unsigned char number);
 
-// Shared global empty string.
+// Shared global empty and null string.
 WTF_EXPORT_PRIVATE const String& emptyString();
+WTF_EXPORT_PRIVATE const String& nullString();
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String> { using Hash = StringHash; };
@@ -658,6 +659,7 @@ using WTF::charactersToUInt64Strict;
 using WTF::charactersToUInt;
 using WTF::charactersToUIntStrict;
 using WTF::emptyString;
+using WTF::nullString;
 using WTF::equal;
 using WTF::find;
 using WTF::isAllSpecialCharacters;

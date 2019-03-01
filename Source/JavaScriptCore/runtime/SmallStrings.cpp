@@ -44,7 +44,9 @@ SmallStrings::SmallStrings()
 
 void SmallStrings::initializeCommonStrings(VM& vm)
 {
-    createEmptyString(&vm);
+    ASSERT(!m_emptyString);
+    m_emptyString = JSString::createEmptyString(vm);
+    ASSERT(m_needsToBeVisited);
 
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         ASSERT(!m_singleCharacterStrings[i]);
@@ -79,13 +81,6 @@ void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
 
 SmallStrings::~SmallStrings()
 {
-}
-
-void SmallStrings::createEmptyString(VM* vm)
-{
-    ASSERT(!m_emptyString);
-    m_emptyString = JSString::createHasOtherOwner(*vm, *StringImpl::empty());
-    ASSERT(m_needsToBeVisited);
 }
 
 Ref<StringImpl> SmallStrings::singleCharacterStringRep(unsigned char character)

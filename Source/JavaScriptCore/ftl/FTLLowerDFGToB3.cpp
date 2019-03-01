@@ -3652,8 +3652,7 @@ private:
             LValue fastResultValue = m_out.loadPtr(cell, m_heaps.JSString_value);
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             
-            m_out.branch(
-                m_out.notNull(fastResultValue), usually(continuation), rarely(slowPath));
+            m_out.branch(isRopeString(cell, m_node->child1()), rarely(slowPath), usually(continuation));
             
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
             
@@ -3825,7 +3824,23 @@ private:
             
         case Array::String: {
             LValue string = lowCell(m_node->child1());
-            setInt32(m_out.load32NonNegative(string, m_heaps.JSString_length));
+
+            LBasicBlock ropePath = m_out.newBlock();
+            LBasicBlock nonRopePath = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            m_out.branch(isRopeString(string, m_node->child1()), rarely(ropePath), usually(nonRopePath));
+
+            LBasicBlock lastNext = m_out.appendTo(ropePath, nonRopePath);
+            ValueFromBlock ropeLength = m_out.anchor(m_out.load32NonNegative(string, m_heaps.JSRopeString_length));
+            m_out.jump(continuation);
+
+            m_out.appendTo(nonRopePath, continuation);
+            ValueFromBlock nonRopeLength = m_out.anchor(m_out.load32NonNegative(m_out.loadPtr(string, m_heaps.JSString_value), m_heaps.StringImpl_length));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setInt32(m_out.phi(Int32, ropeLength, nonRopeLength));
             return;
         }
             
@@ -6487,12 +6502,22 @@ private:
     
     void compileMakeRope()
     {
+        struct FlagsAndLength {
+            LValue flags;
+            LValue length;
+        };
+
+        Edge edges[3] = {
+            m_node->child1(),
+            m_node->child2(),
+            m_node->child3(),
+        };
         LValue kids[3];
         unsigned numKids;
-        kids[0] = lowCell(m_node->child1());
-        kids[1] = lowCell(m_node->child2());
-        if (m_node->child3()) {
-            kids[2] = lowCell(m_node->child3());
+        kids[0] = lowCell(edges[0]);
+        kids[1] = lowCell(edges[1]);
+        if (edges[2]) {
+            kids[2] = lowCell(edges[2]);
             numKids = 3;
         } else {
             kids[2] = 0;
@@ -6502,37 +6527,78 @@ private:
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
-        
         Allocator allocator = allocatorForNonVirtualConcurrently<JSRopeString>(vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
         
         LValue result = allocateCell(
             m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
         
-        m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSString_value);
-        for (unsigned i = 0; i < numKids; ++i)
-            m_out.storePtr(kids[i], result, m_heaps.JSRopeString_fibers[i]);
-        for (unsigned i = numKids; i < JSRopeString::s_maxInternalRopeLength; ++i)
-            m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSRopeString_fibers[i]);
-        LValue flags = m_out.load16ZeroExt32(kids[0], m_heaps.JSString_flags);
-        LValue length = m_out.load32(kids[0], m_heaps.JSString_length);
-        for (unsigned i = 1; i < numKids; ++i) {
-            flags = m_out.bitAnd(flags, m_out.load16ZeroExt32(kids[i], m_heaps.JSString_flags));
-            CheckValue* lengthCheck = m_out.speculateAdd(
-                length, m_out.load32(kids[i], m_heaps.JSString_length));
-            blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
-            length = lengthCheck;
+        m_out.storePtr(m_out.bitOr(kids[0], m_out.constIntPtr(JSString::isRopeInPointer)), result, m_heaps.JSRopeString_fiber0);
+
+        m_out.store32(m_out.castToInt32(kids[1]), result, m_heaps.JSRopeString_fiber1Lower);
+        m_out.store32As16(m_out.castToInt32(m_out.lShr(kids[1], m_out.constInt32(32))), result, m_heaps.JSRopeString_fiber1Upper);
+
+        if (numKids == 3) {
+            m_out.store32(m_out.castToInt32(kids[2]), result, m_heaps.JSRopeString_fiber2Lower);
+            m_out.store32As16(m_out.castToInt32(m_out.lShr(kids[2], m_out.constInt32(32))), result, m_heaps.JSRopeString_fiber2Upper);
+        } else {
+            m_out.store32(m_out.int32Zero, result, m_heaps.JSRopeString_fiber2Lower);
+            m_out.store32As16(m_out.int32Zero, result, m_heaps.JSRopeString_fiber2Upper);
         }
-        m_out.store32As16(
-            m_out.bitAnd(m_out.constInt32(JSString::Is8Bit), flags),
-            result, m_heaps.JSString_flags);
-        m_out.store32(length, result, m_heaps.JSString_length);
+
+        auto getFlagsAndLength = [&] (Edge& edge, LValue child) {
+            if (JSString* string = edge->dynamicCastConstant<JSString*>(vm())) {
+                return FlagsAndLength {
+                    m_out.constInt32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0),
+                    m_out.constInt32(string->length())
+                };
+            }
+
+            LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock ropeCase = m_out.newBlock();
+            LBasicBlock notRopeCase = m_out.newBlock();
+
+            m_out.branch(isRopeString(child, edge), unsure(ropeCase), unsure(notRopeCase));
+
+            LBasicBlock lastNext = m_out.appendTo(ropeCase, notRopeCase);
+            ValueFromBlock flagsForRope = m_out.anchor(m_out.load16ZeroExt32(child, m_heaps.JSRopeString_flags));
+            ValueFromBlock lengthForRope = m_out.anchor(m_out.load32NonNegative(child, m_heaps.JSRopeString_length));
+            m_out.jump(continuation);
+
+            m_out.appendTo(notRopeCase, continuation);
+            LValue stringImpl = m_out.loadPtr(child, m_heaps.JSString_value);
+            ValueFromBlock flagsForNonRope = m_out.anchor(m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_hashAndFlags));
+            ValueFromBlock lengthForNonRope = m_out.anchor(m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            return FlagsAndLength {
+                m_out.phi(Int32, flagsForRope, flagsForNonRope),
+                m_out.phi(Int32, lengthForRope, lengthForNonRope)
+            };
+        };
+
+        FlagsAndLength flagsAndLength = getFlagsAndLength(edges[0], kids[0]);
+        for (unsigned i = 1; i < numKids; ++i) {
+            auto mergeFlagsAndLength = [&] (Edge& edge, LValue child, FlagsAndLength previousFlagsAndLength) {
+                FlagsAndLength flagsAndLength = getFlagsAndLength(edge, child);
+                LValue flags = m_out.bitAnd(previousFlagsAndLength.flags, flagsAndLength.flags);
+                CheckValue* lengthCheck = m_out.speculateAdd(previousFlagsAndLength.length, flagsAndLength.length);
+                blessSpeculation(lengthCheck, Uncountable, noValue(), nullptr, m_origin);
+                return FlagsAndLength {
+                    flags,
+                    lengthCheck
+                };
+            };
+            flagsAndLength = mergeFlagsAndLength(edges[i], kids[i], flagsAndLength);
+        }
+        m_out.store32As16(flagsAndLength.flags, result, m_heaps.JSRopeString_flags);
+        m_out.store32(flagsAndLength.length, result, m_heaps.JSRopeString_length);
         
         mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(result);
+        ValueFromBlock fastResult = m_out.anchor(m_out.select(m_out.isZero32(flagsAndLength.length), weakPointer(jsEmptyString(&m_graph.m_vm)), result));
         m_out.jump(continuation);
         
-        m_out.appendTo(slowPath, continuation);
+        LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
         LValue slowResultValue;
         VM& vm = this->vm();
         switch (numKids) {
@@ -6573,14 +6639,13 @@ private:
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
             
+        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
         m_out.branch(
             m_out.aboveOrEqual(
-                index, m_out.load32NonNegative(base, m_heaps.JSString_length)),
+                index, m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length)),
             rarely(slowPath), usually(fastPath));
             
         LBasicBlock lastNext = m_out.appendTo(fastPath, slowPath);
-            
-        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
             
         LBasicBlock is8Bit = m_out.newBlock();
         LBasicBlock is16Bit = m_out.newBlock();
@@ -6683,12 +6748,12 @@ private:
         LValue index = lowInt32(m_node->child2());
         LValue storage = lowStorage(m_node->child3());
         
+        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+
         speculate(
             Uncountable, noValue(), 0,
             m_out.aboveOrEqual(
-                index, m_out.load32NonNegative(base, m_heaps.JSString_length)));
-        
-        LValue stringImpl = m_out.loadPtr(base, m_heaps.JSString_value);
+                index, m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length)));
         
         m_out.branch(
             m_out.testIsZero32(
@@ -7202,7 +7267,7 @@ private:
 
             speculateString(m_node->child2(), right);
             
-            ValueFromBlock slowResult = m_out.anchor(stringsEqual(left, right));
+            ValueFromBlock slowResult = m_out.anchor(stringsEqual(left, right, m_node->child1(), m_node->child2()));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -7376,7 +7441,7 @@ private:
 
         // Full String compare.
         m_out.appendTo(testStringEquality, continuation);
-        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftString, rightValue));
+        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftString, rightValue, stringEdge, untypedEdge));
         m_out.jump(continuation);
 
         // Continuation.
@@ -9026,25 +9091,25 @@ private:
             LBasicBlock is16Bit = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
             
+            ValueFromBlock fastValue = m_out.anchor(m_out.loadPtr(stringValue, m_heaps.JSString_value));
+            m_out.branch(
+                isRopeString(stringValue, m_node->child1()),
+                rarely(needResolution), usually(resolved));
+
+            LBasicBlock lastNext = m_out.appendTo(needResolution, resolved);
+            ValueFromBlock slowValue = m_out.anchor(
+                vmCall(pointerType(), m_out.operation(operationResolveRope), m_callFrame, stringValue));
+            m_out.jump(resolved);
+
+            m_out.appendTo(resolved, lengthIs1);
+            LValue value = m_out.phi(pointerType(), fastValue, slowValue);
             m_out.branch(
                 m_out.notEqual(
-                    m_out.load32NonNegative(stringValue, m_heaps.JSString_length),
+                    m_out.load32NonNegative(value, m_heaps.StringImpl_length),
                     m_out.int32One),
                 unsure(lowBlock(data->fallThrough.block)), unsure(lengthIs1));
-            
-            LBasicBlock lastNext = m_out.appendTo(lengthIs1, needResolution);
-            Vector<ValueFromBlock, 2> values;
-            LValue fastValue = m_out.loadPtr(stringValue, m_heaps.JSString_value);
-            values.append(m_out.anchor(fastValue));
-            m_out.branch(m_out.isNull(fastValue), rarely(needResolution), usually(resolved));
-            
-            m_out.appendTo(needResolution, resolved);
-            values.append(m_out.anchor(
-                vmCall(pointerType(), m_out.operation(operationResolveRope), m_callFrame, stringValue)));
-            m_out.jump(resolved);
-            
-            m_out.appendTo(resolved, is8Bit);
-            LValue value = m_out.phi(pointerType(), values);
+
+            m_out.appendTo(lengthIs1, is8Bit);
             LValue characterData = m_out.loadPtr(value, m_heaps.StringImpl_data);
             m_out.branch(
                 m_out.testNonZero32(
@@ -9086,7 +9151,7 @@ private:
             }
                 
             case StringUse: {
-                switchString(data, lowString(m_node->child1()));
+                switchString(data, lowString(m_node->child1()), m_node->child1());
                 return;
             }
                 
@@ -9108,7 +9173,7 @@ private:
                 
                 m_out.appendTo(isStringBlock, lastNext);
                 
-                switchString(data, value);
+                switchString(data, value, m_node->child1());
                 return;
             }
                 
@@ -9446,17 +9511,16 @@ private:
         return key;
     }
 
-    LValue mapHashString(LValue string)
+    LValue mapHashString(LValue string, Edge& edge)
     {
         LBasicBlock nonEmptyStringCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.equal(stringImpl, m_out.constIntPtr(0)), unsure(slowCase), unsure(nonEmptyStringCase));
+        m_out.branch(isRopeString(string, edge), rarely(slowCase), usually(nonEmptyStringCase));
 
         LBasicBlock lastNext = m_out.appendTo(nonEmptyStringCase, slowCase);
+        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
         LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
         ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
         m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
@@ -9495,7 +9559,7 @@ private:
                 isStringValue, unsure(isString), unsure(notString));
 
             LBasicBlock lastNext = m_out.appendTo(isString, notString);
-            ValueFromBlock stringResult = m_out.anchor(mapHashString(value));
+            ValueFromBlock stringResult = m_out.anchor(mapHashString(value, m_node->child1()));
             m_out.jump(continuation);
 
             m_out.appendTo(notString, continuation);
@@ -9509,7 +9573,7 @@ private:
 
         case StringUse: {
             LValue string = lowString(m_node->child1());
-            setInt32(mapHashString(string));
+            setInt32(mapHashString(string, m_node->child1()));
             return;
         }
 
@@ -9536,11 +9600,10 @@ private:
             isString, unsure(isStringCase), unsure(straightHash));
 
         m_out.appendTo(isStringCase, nonEmptyStringCase);
-        LValue stringImpl = m_out.loadPtr(value, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.equal(stringImpl, m_out.constIntPtr(0)), rarely(slowCase), usually(nonEmptyStringCase));
+        m_out.branch(isRopeString(value, m_node->child1()), rarely(slowCase), usually(nonEmptyStringCase));
 
         m_out.appendTo(nonEmptyStringCase, straightHash);
+        LValue stringImpl = m_out.loadPtr(value, m_heaps.JSString_value);
         LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
         ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
         m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
@@ -10138,10 +10201,10 @@ private:
             LBasicBlock isAtomicString = m_out.newBlock();
 
             keyAsValue = lowString(m_node->child2());
-            uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
-            m_out.branch(m_out.notNull(uniquedStringImpl), usually(isNonEmptyString), rarely(slowCase));
+            m_out.branch(isNotRopeString(keyAsValue, m_node->child2()), usually(isNonEmptyString), rarely(slowCase));
 
             lastNext = m_out.appendTo(isNonEmptyString, isAtomicString);
+            uniquedStringImpl = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
             LValue isNotAtomic = m_out.testIsZero32(m_out.load32(uniquedStringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
             m_out.branch(isNotAtomic, rarely(slowCase), usually(isAtomicString));
 
@@ -10169,11 +10232,11 @@ private:
             m_out.branch(isString(keyAsValue), unsure(isStringCase), unsure(notStringCase));
 
             m_out.appendTo(isStringCase, isNonEmptyString);
-            LValue implFromString = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
-            ValueFromBlock stringResult = m_out.anchor(implFromString);
-            m_out.branch(m_out.notNull(implFromString), usually(isNonEmptyString), rarely(slowCase));
+            m_out.branch(isNotRopeString(keyAsValue, m_node->child2()), usually(isNonEmptyString), rarely(slowCase));
 
             m_out.appendTo(isNonEmptyString, notStringCase);
+            LValue implFromString = m_out.loadPtr(keyAsValue, m_heaps.JSString_value);
+            ValueFromBlock stringResult = m_out.anchor(implFromString);
             LValue isNotAtomic = m_out.testIsZero32(m_out.load32(implFromString, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::flagIsAtomic()));
             m_out.branch(isNotAtomic, rarely(slowCase), usually(hasUniquedStringImpl));
 
@@ -11911,45 +11974,46 @@ private:
 
     void compileStringSlice()
     {
+        LBasicBlock lengthCheckCase = m_out.newBlock();
         LBasicBlock emptyCase = m_out.newBlock();
         LBasicBlock notEmptyCase = m_out.newBlock();
         LBasicBlock oneCharCase = m_out.newBlock();
-        LBasicBlock bitCheckCase = m_out.newBlock();
         LBasicBlock is8Bit = m_out.newBlock();
         LBasicBlock is16Bit = m_out.newBlock();
         LBasicBlock bitsContinuation = m_out.newBlock();
         LBasicBlock bigCharacter = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock ropeSlowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LValue string = lowString(m_node->child1());
-        LValue length = m_out.load32NonNegative(string, m_heaps.JSString_length);
         LValue start = lowInt32(m_node->child2());
         LValue end = nullptr;
         if (m_node->child3())
             end = lowInt32(m_node->child3());
+        else
+            end = m_out.constInt32(std::numeric_limits<int32_t>::max());
+        m_out.branch(isRopeString(string, m_node->child1()), rarely(ropeSlowCase), usually(lengthCheckCase));
 
+        LBasicBlock lastNext = m_out.appendTo(lengthCheckCase, emptyCase);
+        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
+        LValue length = m_out.load32NonNegative(stringImpl, m_heaps.StringImpl_length);
         auto range = populateSliceRange(start, end, length);
         LValue from = range.first;
         LValue to = range.second;
-
         LValue span = m_out.sub(to, from);
         m_out.branch(m_out.lessThanOrEqual(span, m_out.int32Zero), unsure(emptyCase), unsure(notEmptyCase));
 
-        Vector<ValueFromBlock, 4> results;
+        Vector<ValueFromBlock, 5> results;
 
-        LBasicBlock lastNext = m_out.appendTo(emptyCase, notEmptyCase);
+        m_out.appendTo(emptyCase, notEmptyCase);
         results.append(m_out.anchor(weakPointer(jsEmptyString(&vm()))));
         m_out.jump(continuation);
 
         m_out.appendTo(notEmptyCase, oneCharCase);
         m_out.branch(m_out.equal(span, m_out.int32One), unsure(oneCharCase), unsure(slowCase));
 
-        m_out.appendTo(oneCharCase, bitCheckCase);
-        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
-        m_out.branch(m_out.isNull(stringImpl), unsure(slowCase), unsure(bitCheckCase));
-
-        m_out.appendTo(bitCheckCase, is8Bit);
+        m_out.appendTo(oneCharCase, is8Bit);
         LValue storage = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
         m_out.branch(
             m_out.testIsZero32(
@@ -11958,8 +12022,6 @@ private:
             unsure(is16Bit), unsure(is8Bit));
 
         m_out.appendTo(is8Bit, is16Bit);
-        // FIXME: Need to cage strings!
-        // https://bugs.webkit.org/show_bug.cgi?id=174924
         ValueFromBlock char8Bit = m_out.anchor(m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, storage, m_out.zeroExtPtr(from))));
         m_out.jump(bitsContinuation);
 
@@ -11983,8 +12045,12 @@ private:
             m_heaps.singleCharacterStrings, smallStrings, m_out.zeroExtPtr(character)))));
         m_out.jump(continuation);
 
-        m_out.appendTo(slowCase, continuation);
+        m_out.appendTo(slowCase, ropeSlowCase);
         results.append(m_out.anchor(vmCall(pointerType(), m_out.operation(operationStringSubstr), m_callFrame, string, from, span)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(ropeSlowCase, continuation);
+        results.append(m_out.anchor(vmCall(pointerType(), m_out.operation(operationStringSlice), m_callFrame, string, start, end)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
@@ -12003,12 +12069,11 @@ private:
         LValue string = lowString(m_node->child1());
         ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
         ValueFromBlock startIndexForCall = m_out.anchor(m_out.constInt32(0));
-        LValue impl = m_out.loadPtr(string, m_heaps.JSString_value);
-        m_out.branch(m_out.isZero64(impl),
+        m_out.branch(isRopeString(string, m_node->child1()),
             unsure(slowPath), unsure(notRope));
 
         LBasicBlock lastNext = m_out.appendTo(notRope, is8Bit);
-
+        LValue impl = m_out.loadPtr(string, m_heaps.JSString_value);
         m_out.branch(
             m_out.testIsZero32(
                 m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
@@ -12779,7 +12844,7 @@ private:
         setBoolean(m_out.phi(Int32, fastResult, slowResult));
     }
 
-    LValue stringsEqual(LValue leftJSString, LValue rightJSString)
+    LValue stringsEqual(LValue leftJSString, LValue rightJSString, Edge leftJSStringEdge = Edge(), Edge rightJSStringEdge = Edge())
     {
         LBasicBlock notTriviallyUnequalCase = m_out.newBlock();
         LBasicBlock notEmptyCase = m_out.newBlock();
@@ -12794,29 +12859,23 @@ private:
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LValue length = m_out.load32(leftJSString, m_heaps.JSString_length);
+        m_out.branch(isRopeString(leftJSString, leftJSStringEdge), rarely(slowCase), usually(leftReadyCase));
 
-        m_out.branch(
-            m_out.notEqual(length, m_out.load32(rightJSString, m_heaps.JSString_length)),
-            unsure(falseCase), unsure(notTriviallyUnequalCase));
+        LBasicBlock lastNext = m_out.appendTo(leftReadyCase, rightReadyCase);
+        m_out.branch(isRopeString(rightJSString, rightJSStringEdge), rarely(slowCase), usually(rightReadyCase));
 
-        LBasicBlock lastNext = m_out.appendTo(notTriviallyUnequalCase, notEmptyCase);
-
-        m_out.branch(m_out.isZero32(length), unsure(trueCase), unsure(notEmptyCase));
-
-        m_out.appendTo(notEmptyCase, leftReadyCase);
-
+        m_out.appendTo(rightReadyCase, notTriviallyUnequalCase);
         LValue left = m_out.loadPtr(leftJSString, m_heaps.JSString_value);
         LValue right = m_out.loadPtr(rightJSString, m_heaps.JSString_value);
+        LValue length = m_out.load32(left, m_heaps.StringImpl_length);
+        m_out.branch(
+            m_out.notEqual(length, m_out.load32(right, m_heaps.StringImpl_length)),
+            unsure(falseCase), unsure(notTriviallyUnequalCase));
 
-        m_out.branch(m_out.notNull(left), usually(leftReadyCase), rarely(slowCase));
+        m_out.appendTo(notTriviallyUnequalCase, notEmptyCase);
+        m_out.branch(m_out.isZero32(length), unsure(trueCase), unsure(notEmptyCase));
 
-        m_out.appendTo(leftReadyCase, rightReadyCase);
-        
-        m_out.branch(m_out.notNull(right), usually(rightReadyCase), rarely(slowCase));
-
-        m_out.appendTo(rightReadyCase, left8BitCase);
-
+        m_out.appendTo(notEmptyCase, left8BitCase);
         m_out.branch(
             m_out.testIsZero32(
                 m_out.load32(left, m_heaps.StringImpl_hashAndFlags),
@@ -12824,7 +12883,6 @@ private:
             unsure(slowCase), unsure(left8BitCase));
 
         m_out.appendTo(left8BitCase, right8BitCase);
-
         m_out.branch(
             m_out.testIsZero32(
                 m_out.load32(right, m_heaps.StringImpl_hashAndFlags),
@@ -13546,11 +13604,8 @@ private:
                 equalNullOrUndefined(
                     edge, CellCaseSpeculatesObject, SpeculateNullOrUndefined,
                     ManualOperandSpeculation));
-        case StringUse: {
-            LValue stringValue = lowString(edge);
-            LValue length = m_out.load32NonNegative(stringValue, m_heaps.JSString_length);
-            return m_out.notEqual(length, m_out.int32Zero);
-        }
+        case StringUse:
+            return m_out.notEqual(lowString(edge), weakPointer(jsEmptyString(&m_graph.m_vm)));
         case StringOrOtherUse: {
             LValue value = lowJSValue(edge, ManualOperandSpeculation);
 
@@ -13561,20 +13616,17 @@ private:
             m_out.branch(isCell(value, provenType(edge)), unsure(cellCase), unsure(notCellCase));
             
             LBasicBlock lastNext = m_out.appendTo(cellCase, notCellCase);
-            
             FTL_TYPE_CHECK(jsValueValue(value), edge, (~SpecCellCheck) | SpecString, isNotString(value));
-            LValue length = m_out.load32NonNegative(value, m_heaps.JSString_length);
-            ValueFromBlock cellResult = m_out.anchor(m_out.notEqual(length, m_out.int32Zero));
+            ValueFromBlock stringResult = m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(&m_graph.m_vm))));
             m_out.jump(continuation);
-            
+
             m_out.appendTo(notCellCase, continuation);
-            
             FTL_TYPE_CHECK(jsValueValue(value), edge, SpecCellCheck | SpecOther, isNotOther(value));
             ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
             m_out.jump(continuation);
-            m_out.appendTo(continuation, lastNext);
 
-            return m_out.phi(Int32, cellResult, notCellResult);
+            m_out.appendTo(continuation, lastNext);
+            return m_out.phi(Int32, stringResult, notCellResult);
         }
         case UntypedUse: {
             LValue value = lowJSValue(edge);
@@ -13597,7 +13649,8 @@ private:
             
             LBasicBlock cellCase = m_out.newBlock();
             LBasicBlock notStringCase = m_out.newBlock();
-            LBasicBlock stringOrBigIntCase = m_out.newBlock();
+            LBasicBlock stringCase = m_out.newBlock();
+            LBasicBlock bigIntCase = m_out.newBlock();
             LBasicBlock notStringOrBigIntCase = m_out.newBlock();
             LBasicBlock notCellCase = m_out.newBlock();
             LBasicBlock int32Case = m_out.newBlock();
@@ -13613,17 +13666,21 @@ private:
             LBasicBlock lastNext = m_out.appendTo(cellCase, notStringCase);
             m_out.branch(
                 isString(value, provenType(edge) & SpecCell),
-                unsure(stringOrBigIntCase), unsure(notStringCase));
+                unsure(stringCase), unsure(notStringCase));
             
-            m_out.appendTo(notStringCase, stringOrBigIntCase);
+            m_out.appendTo(notStringCase, stringCase);
             m_out.branch(
                 isBigInt(value, provenType(edge) & (SpecCell - SpecString)),
-                unsure(stringOrBigIntCase), unsure(notStringOrBigIntCase));
+                unsure(bigIntCase), unsure(notStringOrBigIntCase));
 
-            m_out.appendTo(stringOrBigIntCase, notStringOrBigIntCase);
-            LValue nonZeroCell = m_out.notZero32(
-                m_out.load32NonNegative(value, m_heaps.JSBigIntOrString_length));
-            results.append(m_out.anchor(nonZeroCell));
+            m_out.appendTo(stringCase, bigIntCase);
+            results.append(m_out.anchor(m_out.notEqual(value, weakPointer(jsEmptyString(&m_graph.m_vm)))));
+            m_out.jump(continuation);
+
+            m_out.appendTo(bigIntCase, notStringOrBigIntCase);
+            LValue nonZeroBigInt = m_out.notZero32(
+                m_out.load32NonNegative(value, m_heaps.JSBigInt_length));
+            results.append(m_out.anchor(nonZeroBigInt));
             m_out.jump(continuation);
             
             m_out.appendTo(notStringOrBigIntCase, notCellCase);
@@ -13887,7 +13944,7 @@ private:
             lowBlock(data->fallThrough.block), Weight(data->fallThrough.count));
     }
     
-    void switchString(SwitchData* data, LValue string)
+    void switchString(SwitchData* data, LValue string, Edge& edge)
     {
         bool canDoBinarySwitch = true;
         unsigned totalLength = 0;
@@ -13910,16 +13967,16 @@ private:
             return;
         }
         
-        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
-        LValue length = m_out.load32(string, m_heaps.JSString_length);
-        
         LBasicBlock hasImplBlock = m_out.newBlock();
         LBasicBlock is8BitBlock = m_out.newBlock();
         LBasicBlock slowBlock = m_out.newBlock();
         
-        m_out.branch(m_out.isNull(stringImpl), unsure(slowBlock), unsure(hasImplBlock));
+        m_out.branch(isRopeString(string, edge), unsure(slowBlock), unsure(hasImplBlock));
         
         LBasicBlock lastNext = m_out.appendTo(hasImplBlock, is8BitBlock);
+
+        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
+        LValue length = m_out.load32(stringImpl, m_heaps.StringImpl_length);
         
         m_out.branch(
             m_out.testIsZero32(
@@ -15614,6 +15671,34 @@ private:
             m_out.constInt32(vm().stringStructure->id()));
     }
 
+    LValue isRopeString(LValue string, Edge edge = Edge())
+    {
+        if (edge) {
+            if (!((provenType(edge) & SpecString) & ~SpecStringIdent))
+                return m_out.booleanFalse;
+            if (JSValue value = provenValue(edge)) {
+                if (value.isCell() && value.asCell()->type() == StringType && !asString(value)->isRope())
+                    return m_out.booleanFalse;
+            }
+        }
+
+        return m_out.testNonZeroPtr(m_out.loadPtr(string, m_heaps.JSString_value), m_out.constIntPtr(JSString::isRopeInPointer));
+    }
+
+    LValue isNotRopeString(LValue string, Edge edge = Edge())
+    {
+        if (edge) {
+            if (!((provenType(edge) & SpecString) & ~SpecStringIdent))
+                return m_out.booleanTrue;
+            if (JSValue value = provenValue(edge)) {
+                if (value.isCell() && value.asCell()->type() == StringType && !asString(value)->isRope())
+                    return m_out.booleanTrue;
+            }
+        }
+
+        return m_out.testIsZeroPtr(m_out.loadPtr(string, m_heaps.JSString_value), m_out.constIntPtr(JSString::isRopeInPointer));
+    }
+
     LValue isNotSymbol(LValue cell, SpeculatedType type = SpecFullTop)
     {
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecSymbol))
@@ -16011,7 +16096,7 @@ private:
         if (!m_interpreter.needsTypeCheck(edge, SpecStringIdent | ~SpecString))
             return;
         
-        speculate(BadType, jsValueValue(string), edge.node(), m_out.isNull(stringImpl));
+        speculate(BadType, jsValueValue(string), edge.node(), isRopeString(string));
         speculate(
             BadType, jsValueValue(string), edge.node(),
             m_out.testIsZero32(

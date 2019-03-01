@@ -1121,6 +1121,12 @@ const String& emptyString()
     return emptyString;
 }
 
+const String& nullString()
+{
+    static NeverDestroyed<String> nullString;
+    return nullString;
+}
+
 } // namespace WTF
 
 #ifndef NDEBUG

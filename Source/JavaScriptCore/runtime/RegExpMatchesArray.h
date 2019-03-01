@@ -120,7 +120,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
             int start = subpatternResults[2 * i];
             JSValue value;
             if (start >= 0)
-                value = JSRopeString::createSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
+                value = jsSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(scope, i, value);
@@ -144,7 +144,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
             int start = subpatternResults[2 * i];
             JSValue value;
             if (start >= 0)
-                value = JSRopeString::createSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
+                value = jsSubstringOfResolved(vm, &deferralContext, input, start, subpatternResults[2 * i + 1] - start);
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(scope, i, value, ArrayWithContiguous);

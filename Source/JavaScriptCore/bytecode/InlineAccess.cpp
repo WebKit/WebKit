@@ -50,11 +50,21 @@ void InlineAccess::dumpCacheSizesAndCrash()
     {
         CCallHelpers jit;
 
+        GPRReg scratchGPR = value;
         jit.patchableBranch8(
             CCallHelpers::NotEqual,
             CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
             CCallHelpers::TrustedImm32(StringType));
-        jit.load32(CCallHelpers::Address(base, JSString::offsetOfLength()), regs.payloadGPR());
+
+        jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfValue()), scratchGPR);
+        auto isRope = jit.branchIfRopeStringImpl(scratchGPR);
+        jit.load32(CCallHelpers::Address(scratchGPR, StringImpl::lengthMemoryOffset()), regs.payloadGPR());
+        auto done = jit.jump();
+
+        isRope.link(&jit);
+        jit.load32(CCallHelpers::Address(base, JSRopeString::offsetOfLength()), regs.payloadGPR());
+
+        done.link(&jit);
         jit.boxInt32(regs.payloadGPR(), regs);
 
         dataLog("string length size: ", jit.m_assembler.buffer().codeSize(), "\n");
@@ -143,7 +153,7 @@ template <typename Function>
 ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, StructureStubInfo& stubInfo, const Function& function)
 {
     if (jit.m_assembler.buffer().codeSize() <= stubInfo.patch.inlineSize()) {
-        bool needsBranchCompaction = false;
+        bool needsBranchCompaction = true;
         LinkBuffer linkBuffer(jit, stubInfo.patch.start, stubInfo.patch.inlineSize(), JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
         function(linkBuffer);
@@ -156,7 +166,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
     // there may be variability in the length of the code we generate just because
     // of randomness. It's helpful to flip this on when running tests or browsing
     // the web just to see how often it fails. You don't want an IC size that always fails.
-    const bool failIfCantInline = false;
+    constexpr bool failIfCantInline = false;
     if (failIfCantInline) {
         dataLog("Failure for: ", name, "\n");
         dataLog("real size: ", jit.m_assembler.buffer().codeSize(), " inline size:", stubInfo.patch.inlineSize(), "\n");
@@ -288,18 +298,35 @@ bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* arr
     return linkedCodeInline;
 }
 
+bool InlineAccess::isCacheableStringLength(StructureStubInfo& stubInfo)
+{
+    return hasFreeRegister(stubInfo);
+}
+
 bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 {
+    ASSERT(isCacheableStringLength(stubInfo));
+
     CCallHelpers jit;
 
     GPRReg base = stubInfo.baseGPR();
     JSValueRegs value = stubInfo.valueRegs();
+    GPRReg scratch = getScratchRegister(stubInfo);
 
     auto branchToSlowPath = jit.patchableBranch8(
         CCallHelpers::NotEqual,
         CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
         CCallHelpers::TrustedImm32(StringType));
-    jit.load32(CCallHelpers::Address(base, JSString::offsetOfLength()), value.payloadGPR());
+
+    jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfValue()), scratch);
+    auto isRope = jit.branchIfRopeStringImpl(scratch);
+    jit.load32(CCallHelpers::Address(scratch, StringImpl::lengthMemoryOffset()), value.payloadGPR());
+    auto done = jit.jump();
+
+    isRope.link(&jit);
+    jit.load32(CCallHelpers::Address(base, JSRopeString::offsetOfLength()), value.payloadGPR());
+
+    done.link(&jit);
     jit.boxInt32(value.payloadGPR(), value);
 
     bool linkedCodeInline = linkCodeInline("string length", jit, stubInfo, [&] (LinkBuffer& linkBuffer) {

@@ -727,8 +727,11 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     done.append(jump());
 
     isString.link(this);
+    move(TrustedImmPtr(jsEmptyString(&vm)), result);
+    comparePtr(invert ? Equal : NotEqual, value.payloadGPR(), result, result);
+    done.append(jump());
+
     isBigInt.link(this);
-    RELEASE_ASSERT(JSString::offsetOfLength() == JSBigInt::offsetOfLength());
     load32(Address(value.payloadGPR(), JSBigInt::offsetOfLength()), result);
     compare32(invert ? Equal : NotEqual, result, TrustedImm32(0), result);
     done.append(jump());
@@ -814,8 +817,10 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
     }
 
     isString.link(this);
+    truthy.append(branchPtr(invert ? Equal : NotEqual, value.payloadGPR(), TrustedImmPtr(jsEmptyString(&vm))));
+    done.append(jump());
+
     isBigInt.link(this);
-    RELEASE_ASSERT(JSString::offsetOfLength() == JSBigInt::offsetOfLength());
     truthy.append(branchTest32(invert ? Zero : NonZero, Address(value.payloadGPR(), JSBigInt::offsetOfLength())));
     done.append(jump());
 

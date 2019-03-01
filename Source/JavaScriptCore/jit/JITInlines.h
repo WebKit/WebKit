@@ -94,9 +94,9 @@ ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, int entry)
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
     failures.append(branchIfNotString(src));
-    failures.append(branch32(NotEqual, MacroAssembler::Address(src, JSString::offsetOfLength()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, JSString::offsetOfValue()), dst);
-    failures.append(branchTest32(Zero, dst));
+    failures.append(branchIfRopeStringImpl(dst));
+    failures.append(branch32(NotEqual, MacroAssembler::Address(dst, StringImpl::lengthMemoryOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(dst, StringImpl::flagsOffset()), regT1);
     loadPtr(MacroAssembler::Address(dst, StringImpl::dataOffset()), dst);
 

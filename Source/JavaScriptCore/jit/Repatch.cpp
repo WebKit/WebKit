@@ -210,7 +210,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength);
             } else if (isJSString(baseCell)) {
-                if (stubInfo.cacheType == CacheType::Unset) {
+                if (stubInfo.cacheType == CacheType::Unset && InlineAccess::isCacheableStringLength(stubInfo)) {
                     bool generatedCodeInline = InlineAccess::generateStringLength(stubInfo);
                     if (generatedCodeInline) {
                         ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));

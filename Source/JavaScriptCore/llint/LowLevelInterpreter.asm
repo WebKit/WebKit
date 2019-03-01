@@ -482,6 +482,7 @@ const ModuleCode = constexpr ModuleCode
 const LLIntReturnPC = ArgumentCount + TagOffset
 
 # String flags.
+const isRopeInPointer = constexpr JSString::isRopeInPointer
 const HashFlags8BitBuffer = constexpr StringImpl::s_hashFlag8BitBuffer
 
 # Copied from PropertyOffset.h
