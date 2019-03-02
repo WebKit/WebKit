@@ -189,12 +189,16 @@ body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
     pointer-events: none;
 }
 
+.data-grid:focus tr.selected td:not(:last-child) {
+    --border-end-color: hsla(0, 0%, var(--foreground-lightness), 0.05);
+}
+
 body[dir=ltr] .data-grid:focus tr.selected td:not(:last-child) {
-    border-right-color: hsl(210, 100%, 40%);
+    border-right-color: var(--border-end-color);
 }
 
 body[dir=rtl] .data-grid:focus tr.selected td:not(:last-child) {
-    border-left-color: hsl(210, 100%, 40%);
+    border-left-color: var(--border-end-color);
 }
 
 .data-grid :matches(th, td) > div {
