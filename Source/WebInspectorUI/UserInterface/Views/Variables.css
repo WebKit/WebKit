@@ -142,6 +142,10 @@
     --cpu-paint-fill-color: hsl(76, 49%, 75%);
     --cpu-paint-stroke-color: hsl(79, 45%, 50%);
 
+    --cpu-low-color: hsl(110, 52%, 56%);
+    --cpu-medium-color: hsl(46, 91%, 62%);
+    --cpu-high-color: hsl(6, 79%, 57%);
+
     --network-header-color: hsl(204, 52%, 55%);
     --network-system-color: hsl(79, 32%, 50%);
     --network-pseudo-header-color: hsl(312, 35%, 51%);
@@ -283,6 +287,10 @@ body.window-inactive * {
         --network-system-color: hsl(79, 95%, 50%);
         --network-pseudo-header-color: hsl(312, 55%, 61%);
         --network-error-color: hsl(0, 54%, 55%);
+
+        --cpu-low-color: hsl(110, 52%, 56%);
+        --cpu-medium-color: hsl(46, 91%, 62%);
+        --cpu-high-color: hsl(6, 79%, 57%);
 
         --even-zebra-stripe-row-background-color: var(--background-color);
         --odd-zebra-stripe-row-background-color: var(--background-color-secondary);

@@ -40,6 +40,23 @@ body .timeline-view.cpu {
     font-size: 14px;
 }
 
+.timeline-view.cpu > .content .subtitle > .info {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    -webkit-margin-start: 7px;
+    color: white;
+    font-size: 12px;
+    background-color: darkgray;
+    border-radius: 50%;
+}
+
+.energy-info-popover-content {
+    width: 275px;
+    padding: 0 5px;
+    -webkit-hyphens: auto;
+}
+
 .timeline-view.cpu > .content > .details {
     position: relative;
 }
@@ -87,6 +104,20 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
 .timeline-view.cpu > .content > .overview > .chart > .container {
     display: flex;
     justify-content: center;
+}
+
+.timeline-view.cpu > .content > .overview > .divider {
+    margin: 0 5px;
+
+    --cpu-timeline-view-overview-divider-border-end: 1px solid var(--border-color);
+}
+
+body[dir=ltr] .timeline-view.cpu > .content > .overview > .divider {
+    border-right: var(--cpu-timeline-view-overview-divider-border-end);
+}
+
+body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
+    border-left: var(--cpu-timeline-view-overview-divider-border-end);
 }
 
 .timeline-view.cpu > .content > .overview .samples,
@@ -165,7 +196,7 @@ body[dir=rtl] .timeline-view.cpu > .content > .details > .timeline-ruler {
     fill: var(--cpu-paint-fill-color);
 }
 
-.timeline-view.cpu svg > path {
+.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) svg > path {
     stroke: var(--cpu-stroke-color);
     fill: var(--cpu-fill-color);
 }
@@ -238,4 +269,62 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
 .timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-paint {
     stroke: var(--cpu-paint-stroke-color);
     fill: var(--cpu-paint-fill-color);
+}
+
+.timeline-view.cpu .gauge-chart .low {
+    --gauge-chart-path-fill-color: var(--cpu-low-color);
+    --gauge-chart-path-stroke-color: var(--cpu-low-color);
+}
+
+.timeline-view.cpu .gauge-chart .medium {
+    --gauge-chart-path-fill-color: var(--cpu-medium-color);
+    --gauge-chart-path-stroke-color: var(--cpu-medium-color);
+}
+
+.timeline-view.cpu .gauge-chart .high {
+    --gauge-chart-path-fill-color: var(--cpu-high-color);
+    --gauge-chart-path-stroke-color: var(--cpu-high-color);
+}
+
+.timeline-view.cpu .gauge-chart {
+    --gauge-chart-needle-fill-color: hsla(0, 0%, 36%, 0.85);
+    --gauge-chart-needle-stroke-color: hsla(0, 0%, 36%, 0.85);
+}
+
+.timeline-view.cpu .energy {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.85);
+}
+
+.timeline-view.cpu .energy .energy-impact {
+    min-width: 140px;
+    margin-top: 15px;
+    font-size: 3em;
+    color: var(--text-color-secondary);
+}
+
+.timeline-view.cpu .energy .energy-impact.low {
+    color: var(--cpu-low-color);
+}
+
+.timeline-view.cpu .energy .energy-impact.medium {
+    color: var(--cpu-medium-color);
+}
+
+.timeline-view.cpu .energy .energy-impact.high {
+    color: var(--cpu-high-color);
+}
+
+.timeline-view.cpu .energy .energy-impact-number {
+    font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .timeline-view.cpu > .content .subtitle > .info {
+        background-color: gray;
+    }
+
+    .timeline-view.cpu .gauge-chart:not(.empty) > svg > polygon.needle {
+        fill: hsla(0, 0%, var(--foreground-lightness), 0.85);
+        stroke: hsla(0, 0%, var(--foreground-lightness), 0.85);
+    }
 }

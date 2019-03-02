@@ -59,6 +59,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     static get threadCPUUsageViewHeight() { return 65; }
     static get indicatorViewHeight() { return 15; }
 
+    static get lowEnergyThreshold() { return 3; }
+    static get mediumEnergyThreshold() { return 50; }
+    static get highEnergyThreshold() { return 150; }
+
     // Public
 
     shown()
@@ -90,6 +94,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._breakdownChart.clear();
         this._breakdownChart.needsLayout();
         this._clearBreakdownLegend();
+
+        this._energyChart.clear();
+        this._energyChart.needsLayout();
+        this._clearEnergyImpactText();
 
         function clearUsageView(view) {
             view.clear();
@@ -178,6 +186,75 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._breakdownLegendPaintElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Paint);
         this._breakdownLegendStyleElement = appendLegendRow(this._breakdownLegendElement, WI.CPUTimelineView.SampleType.Style);
 
+        let dividerElement = overviewElement.appendChild(document.createElement("div"));
+        dividerElement.classList.add("divider");
+
+        let energyTooltip = WI.UIString("Estimated energy impact.")
+        let energyContainerElement = createChartContainer(overviewElement, WI.UIString("Energy Impact"), energyTooltip);
+        energyContainerElement.classList.add("energy");
+
+        let energyChartElement = energyContainerElement.parentElement;
+        let energySubtitleElement = energyChartElement.firstChild;
+        let energyInfoElement = energySubtitleElement.appendChild(document.createElement("span"));
+        energyInfoElement.className = "info";
+        energyInfoElement.textContent = "?";
+
+        this._energyInfoPopover = null;
+        this._energyInfoPopoverContentElement = null;
+        energyInfoElement.addEventListener("click", (event) => {
+            if (!this._energyInfoPopover)
+                this._energyInfoPopover = new WI.Popover;
+
+            if (!this._energyInfoPopoverContentElement) {
+                this._energyInfoPopoverContentElement = document.createElement("div");
+                this._energyInfoPopoverContentElement.className = "energy-info-popover-content";
+
+                const precision = 0;
+                let lowPercent = Number.percentageString(CPUTimelineView.lowEnergyThreshold / 100, precision);
+
+                let p1 = this._energyInfoPopoverContentElement.appendChild(document.createElement("p"));
+                p1.textContent = WI.UIString("Periods of high CPU utilization will rapidly drain battery. Strive to keep idle pages under %s average CPU utilization.").format(lowPercent);
+
+                let p2 = this._energyInfoPopoverContentElement.appendChild(document.createElement("p"));
+                p2.textContent = WI.UIString("There is an incurred energy penalty each time the page enters script. This commonly happens with timers, event handlers, and observers.");
+
+                let p3 = this._energyInfoPopoverContentElement.appendChild(document.createElement("p"));
+                p3.textContent = WI.UIString("To improve CPU utilization reduce or batch workloads when the page is not visible or during times when the page is not being interacted with.");
+            }
+
+            let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
+            let preferredEdges = isRTL ? [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_X] : [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
+            let calculateTargetFrame = () => WI.Rect.rectFromClientRect(energyInfoElement.getBoundingClientRect()).pad(3);
+
+            this._energyInfoPopover.presentNewContentWithFrame(this._energyInfoPopoverContentElement, calculateTargetFrame(), preferredEdges);
+            this._energyInfoPopover.windowResizeHandler = () => {
+                this._energyInfoPopover.present(calculateTargetFrame(), preferredEdges);
+            };
+        });
+
+        this._energyChart = new WI.GaugeChart({
+            height: 110,
+            strokeWidth: 20,
+            segments: [
+                {className: "low", limit: 10},
+                {className: "medium", limit: 80},
+                {className: "high", limit: 100},
+            ]
+        });
+        this.addSubview(this._energyChart);
+        energyContainerElement.appendChild(this._energyChart.element);
+
+        let energyTextContainerElement = energyContainerElement.appendChild(document.createElement("div"));
+
+        this._energyImpactLabelElement = energyTextContainerElement.appendChild(document.createElement("div"));
+        this._energyImpactLabelElement.className = "energy-impact";
+
+        this._energyImpactNumberElement = energyTextContainerElement.appendChild(document.createElement("div"));
+        this._energyImpactNumberElement.className = "energy-impact-number";
+
+        this._energyImpactDurationElement = energyTextContainerElement.appendChild(document.createElement("div"));
+        this._energyImpactDurationElement.className = "energy-impact-number";
+
         let detailsContainerElement = contentElement.appendChild(document.createElement("div"));
         detailsContainerElement.classList.add("details");
 
@@ -255,6 +332,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
+        let visibleDuration = visibleEndTime - graphStartTime;
 
         let discontinuities = this._recording.discontinuitiesInTimeRange(graphStartTime, visibleEndTime);
         let originalDiscontinuities = discontinuities.slice();
@@ -560,9 +638,63 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let graphWidth = (graphEndTime - graphStartTime) / secondsPerPixel;
         let size = new WI.Size(graphWidth, CPUTimelineView.indicatorViewHeight);
         this._mainThreadWorkIndicatorView.updateChart(samplingData.samples, size, visibleEndTime, xScaleIndicatorRange);
+
+        this._layoutEnergyChart(average, visibleDuration);
     }
 
     // Private
+
+    _layoutEnergyChart(average, visibleDuration)
+    {
+        // The lower the bias value [0..1], the more it increases the skew towards rangeHigh.
+        function mapWithBias(value, rangeLow, rangeHigh, outputRangeLow, outputRangeHigh, bias) {
+            console.assert(value >= rangeLow && value <= rangeHigh, "value was not in range.", value);
+            let percentInRange = (value - rangeLow) / (rangeHigh - rangeLow);
+            let skewedPercent = Math.pow(percentInRange, bias);
+            let valueInOutputRange = (skewedPercent * (outputRangeHigh - outputRangeLow)) + outputRangeLow;
+            return valueInOutputRange;
+        }
+
+        this._clearEnergyImpactText();
+
+        if (average === 0) {
+             // Zero. (0% CPU, mapped to 0)
+            this._energyImpactLabelElement.textContent = WI.UIString("Low");
+            this._energyImpactLabelElement.classList.add("low");
+            this._energyChart.value = 0;
+        } else if (average <= CPUTimelineView.lowEnergyThreshold) {
+            // Low. (<=3% CPU, mapped to 0-10)
+            this._energyImpactLabelElement.textContent = WI.UIString("Low");
+            this._energyImpactLabelElement.classList.add("low");
+            this._energyChart.value = mapWithBias(average, 0, CPUTimelineView.lowEnergyThreshold, 0, 10, 0.85);
+        } else if (average <= CPUTimelineView. mediumEnergyThreshold) {
+            // Medium (3%-90% CPU, mapped to 10-80)
+            this._energyImpactLabelElement.textContent = WI.UIString("Medium");
+            this._energyImpactLabelElement.classList.add("medium");
+            this._energyChart.value = mapWithBias(average, CPUTimelineView.lowEnergyThreshold, CPUTimelineView.mediumEnergyThreshold, 10, 80, 0.6);
+        } else if (average < CPUTimelineView. highEnergyThreshold) {
+            // High. (50-150% CPU, mapped to 80-100)
+            this._energyImpactLabelElement.textContent = WI.UIString("High");
+            this._energyImpactLabelElement.classList.add("high");
+            this._energyChart.value = mapWithBias(average, CPUTimelineView.mediumEnergyThreshold, CPUTimelineView.highEnergyThreshold, 80, 100, 0.9);
+        } else {
+            // Very High. (>150% CPU, mapped to 100)
+            this._energyImpactLabelElement.textContent = WI.UIString("Very High");
+            this._energyImpactLabelElement.classList.add("high");
+            this._energyChart.value = 100;
+        }
+
+        this._energyChart.needsLayout();
+
+        this._energyImpactNumberElement.textContent = WI.UIString("Average CPU: %s").format(Number.percentageString(average / 100));
+
+        if (visibleDuration < 5)
+            this._energyImpactDurationElement.textContent = WI.UIString("Duration: %s").format(WI.UIString("Short"));
+        else {
+            let durationDisplayString = Math.floor(visibleDuration) + "s";
+            this._energyImpactDurationElement.textContent = WI.UIString("Duration: %s").format(durationDisplayString);
+        }
+    }
 
     _computeSamplingData(startTime, endTime)
     {
@@ -724,6 +856,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             this.removeSubview(view);
 
         this._workerViews = [];
+    }
+
+    _clearEnergyImpactText()
+    {
+        this._energyImpactLabelElement.classList.remove("low", "medium", "high");
+        this._energyImpactLabelElement.textContent = emDash;
+        this._energyImpactNumberElement.textContent = "";
+        this._energyImpactDurationElement.textContent = "";
     }
 
     _clearBreakdownLegend()

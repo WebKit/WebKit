@@ -1,3 +1,76 @@
+2019-03-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage - Energy Impact Section
+        https://bugs.webkit.org/show_bug.cgi?id=195151
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and resources.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content .subtitle > .info):
+        (@media (prefers-color-scheme: dark)):
+        (.energy-info-popover-content):
+        (.timeline-view.cpu > .content > .overview > .divider):
+        (body[dir=ltr] .timeline-view.cpu > .content > .overview > .divider):
+        (body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider):
+        (.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) svg > path):
+        (.timeline-view.cpu .gauge-chart:not(.empty) > svg > path.low):
+        (.timeline-view.cpu .gauge-chart:not(.empty) > svg > path.medium):
+        (.timeline-view.cpu .gauge-chart:not(.empty) > svg > path.high):
+        (.timeline-view.cpu .gauge-chart:not(.empty) > svg > polygon.needle):
+        (.timeline-view.cpu .energy):
+        (.timeline-view.cpu .energy .energy-impact):
+        (.timeline-view.cpu .energy .energy-impact.low):
+        (.timeline-view.cpu .energy .energy-impact.medium):
+        (.timeline-view.cpu .energy .energy-impact.high):
+        (.timeline-view.cpu .energy .energy-impact-number):
+        Styling the chart and text for the different energy impact levels.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.get lowEnergyValue):
+        (WI.CPUTimelineView.prototype.get highEnergyValue):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype._layoutEnergyChart.mapWithBias):
+        (WI.CPUTimelineView.prototype._layoutEnergyChart.valuesForGauge):
+        (WI.CPUTimelineView.prototype._layoutEnergyChart):
+        (WI.CPUTimelineView.prototype._clearEnergyImpactText):
+        New gauge chart and associated popover.
+        We do a bit of biasing of the data for each of the sections
+        in the gauge chart. Each section biases toward the cap of the
+        section so that:
+          - we encourage lower power usage (sub 3%)
+          - the gauge needle quickly moves past the low value of a range
+
+        * UserInterface/Views/GaugeChart.css: Added.
+        (.gauge-chart):
+        (body[dir=rtl] .gauge-chart):
+        (.gauge-chart > svg > path,):
+        (.gauge-chart > svg > polygon.needle):
+        (.gauge-chart.empty > svg > polygon.needle):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/GaugeChart.js: Added.
+        (WI.GaugeChart.prototype.get size):
+        (WI.GaugeChart.prototype.get segments):
+        (WI.GaugeChart.prototype.get value):
+        (WI.GaugeChart.prototype.set value):
+        (WI.GaugeChart.prototype.clear):
+        (WI.GaugeChart.prototype.initialLayout):
+        (WI.GaugeChart.prototype.layout):
+        (WI.GaugeChart.prototype._validateSegments):
+        (WI.GaugeChart.prototype._createSegmentPathData):
+        GaugeChart with variable number of sections and a
+        current value needle. It has a bit of customization
+        when drawing the arc at the start of each segment.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark)):
+        New CPU colors for the different energy impact levels.
+
 2019-03-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Data grid border colors don't match accent colors
