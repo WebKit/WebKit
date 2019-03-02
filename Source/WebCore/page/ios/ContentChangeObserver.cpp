@@ -61,20 +61,24 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
         return;
     if (!isObservingDOMTimerScheduling())
         return;
-    setObservedContentChange(WKContentIndeterminateChange);
-    addObservedDOMTimer(timer);
+    if (hasVisibleChangeState())
+        return;
     LOG_WITH_STREAM(ContentObservation, stream << "didInstallDOMTimer: register this timer: (" << &timer << ") and observe when it fires.");
+
+    setHasIndeterminateState();
+    addObservedDOMTimer(timer);
 }
 
 void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
         return;
-    removeObservedDOMTimer(timer);
     LOG_WITH_STREAM(ContentObservation, stream << "removeDOMTimer: remove registered timer (" << &timer << ")");
-    if (countOfObservedDOMTimers())
-        return;
-    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+
+    removeObservedDOMTimer(timer);
+    // FIXME: Just because this is the last timer, it does not mean we are in a determined state.
+    if (!hasObservedDOMTimer())
+        m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
 
 void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
@@ -82,6 +86,7 @@ void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
+
     m_isObservingContentChanges = true;
 }
 
@@ -93,16 +98,13 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
 
     removeObservedDOMTimer(timer);
     stopObservingContentChanges();
-    auto observedContentChange = this->observedContentChange();
-    auto hasPendingStyleRecalc = WebCore::hasPendingStyleRecalc(m_page);
     // Check if the timer callback triggered either a sync or async style update.
-    auto hasDeterminedState = observedContentChange == WKContentVisibilityChange || (!countOfObservedDOMTimers() && observedContentChange == WKContentNoChange && !hasPendingStyleRecalc);  
-    if (hasDeterminedState) {
+    if (hasDeterminateState()) {
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") in determined state.");
         m_page.chrome().client().observedContentChange(m_page.mainFrame());
         return;
     }
-    if (hasPendingStyleRecalc) {
+    if (WebCore::hasPendingStyleRecalc(m_page)) {
         // An async style recalc has been scheduled. Let's observe it.
         LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: (" << &timer << ") wait until next style recalc fires.");
         setShouldObserveStyleRecalc(true);
@@ -113,7 +115,10 @@ void ContentChangeObserver::startObservingStyleRecalc()
 {
     if (!shouldObserveStyleRecalc())
         return;
+    if (hasVisibleChangeState())
+        return;
     LOG(ContentObservation, "startObservingStyleRecalc: start observing style recalc.");
+
     m_isObservingContentChanges = true;
 }
 
@@ -122,21 +127,22 @@ void ContentChangeObserver::stopObservingStyleRecalc()
     if (!shouldObserveStyleRecalc())
         return;
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
+
     setShouldObserveStyleRecalc(false);
-    auto hasDeterminedState = observedContentChange() == WKContentVisibilityChange || !countOfObservedDOMTimers();
-    if (!hasDeterminedState) {
-        LOG(ContentObservation, "stopObservingStyleRecalc: can't decided it yet.");
+    if (hasDeterminateState()) {
+        LOG(ContentObservation, "stopObservingStyleRecalc: has determinate state, report content change.");
+        m_page.chrome().client().observedContentChange(m_page.mainFrame());
         return;
     }
-    LOG(ContentObservation, "stopObservingStyleRecalc: notify the pending synthetic click handler.");
-    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+    LOG(ContentObservation, "stopObservingStyleRecalc: can't decide it yet.");
 }
 
 void ContentChangeObserver::clearTimersAndReportContentChange()
 {
-    if (!countOfObservedDOMTimers())
+    if (!hasObservedDOMTimer())
         return;
     LOG(ContentObservation, "clearTimersAndReportContentChange: remove registered timers and report content change.");
+
     clearObservedDOMTimers();
     m_page.chrome().client().observedContentChange(m_page.mainFrame());
 }
@@ -153,14 +159,14 @@ void ContentChangeObserver::willDetachPage()
 
 void ContentChangeObserver::didContentVisibilityChange()
 {
-    setObservedContentChange(WKContentVisibilityChange);
+    setHasVisibleChangeState();
 }
 
 void ContentChangeObserver::startObservingContentChanges()
 {
     ASSERT(!hasPendingStyleRecalc(m_page));
     startObservingDOMTimerScheduling();
-    resetObservedContentChange();
+    setHasNoChangeState();
     clearObservedDOMTimers();
     m_isObservingContentChanges = true;
 }
@@ -171,37 +177,24 @@ void ContentChangeObserver::stopObservingContentChanges()
     m_isObservingContentChanges = false;
 }
 
-WKContentChange ContentChangeObserver::observedContentChange()
+WKContentChange ContentChangeObserver::observedContentChange() const
 {
     return WKObservedContentChange();
-}
-
-void ContentChangeObserver::resetObservedContentChange()
-{
-    WKSetObservedContentChange(WKContentNoChange);
-}
-
-void ContentChangeObserver::setObservedContentChange(WKContentChange change)
-{
-    if (observedContentChange() == WKContentVisibilityChange)
-        return;
-    WKSetObservedContentChange(change);
-}
-
-void ContentChangeObserver::addObservedDOMTimer(const DOMTimer& timer)
-{
-    ASSERT(isObservingDOMTimerScheduling());
-    if (observedContentChange() == WKContentVisibilityChange)
-        return;
-    m_DOMTimerList.add(&timer);
 }
 
 void ContentChangeObserver::removeObservedDOMTimer(const DOMTimer& timer)
 {
     m_DOMTimerList.remove(&timer);
     // Force reset the content change flag when the last observed content modifier is removed. We should not be in an indeterminate state anymore.
-    if (!countOfObservedDOMTimers() && observedContentChange() == WKContentIndeterminateChange)
-        resetObservedContentChange();
+    if (!hasObservedDOMTimer() && observedContentChange() == WKContentIndeterminateChange)
+        setHasNoChangeState();
+}
+
+bool ContentChangeObserver::hasDeterminateState() const
+{
+    if (hasVisibleChangeState())
+        return true;
+    return observedContentChange() == WKContentNoChange && !hasObservedDOMTimer() && !hasPendingStyleRecalc(m_page);
 }
 
 static Visibility elementImplicitVisibility(const Element& element)

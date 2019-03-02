@@ -1,3 +1,40 @@
+2019-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Move away from WKContentChange values
+        https://bugs.webkit.org/show_bug.cgi?id=195240
+        <rdar://problem/48532358>
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for moving towards a state machine-like implementation.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didInstallDOMTimer): Do not install the timer if we are already in "hover" state.
+        (WebCore::ContentChangeObserver::didRemoveDOMTimer):
+        (WebCore::ContentChangeObserver::startObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::startObservingStyleRecalc): No need to start observing the style recalc if we are already in "hover" state.
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalc):
+        (WebCore::ContentChangeObserver::clearTimersAndReportContentChange):
+        (WebCore::ContentChangeObserver::didContentVisibilityChange):
+        (WebCore::ContentChangeObserver::startObservingContentChanges):
+        (WebCore::ContentChangeObserver::observedContentChange const):
+        (WebCore::ContentChangeObserver::removeObservedDOMTimer):
+        (WebCore::ContentChangeObserver::hasDeterminedState const):
+        (WebCore::ContentChangeObserver::observedContentChange): Deleted.
+        (WebCore::ContentChangeObserver::resetObservedContentChange): Deleted.
+        (WebCore::ContentChangeObserver::setObservedContentChange): Deleted.
+        (WebCore::ContentChangeObserver::addObservedDOMTimer): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::addObservedDOMTimer):
+        (WebCore::ContentChangeObserver::clearObservedDOMTimers):
+        (WebCore::ContentChangeObserver::hasVisibleChangeState const):
+        (WebCore::ContentChangeObserver::hasObservedDOMTimer const):
+        (WebCore::ContentChangeObserver::setHasNoChangeState):
+        (WebCore::ContentChangeObserver::setHasIndeterminateState):
+        (WebCore::ContentChangeObserver::setHasVisibleChangeState):
+        (WebCore::ContentChangeObserver::countOfObservedDOMTimers const): Deleted.
+
 2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Programmatic paste access should be granted when copying and pasting within the same origin

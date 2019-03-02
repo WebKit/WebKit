@@ -40,7 +40,7 @@ public:
 
     WEBCORE_EXPORT void startObservingContentChanges();
     WEBCORE_EXPORT void stopObservingContentChanges();
-    WEBCORE_EXPORT WKContentChange observedContentChange();
+    WEBCORE_EXPORT WKContentChange observedContentChange() const;
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
@@ -89,7 +89,7 @@ private:
     void startObservingStyleRecalc();
     void stopObservingStyleRecalc();
 
-    void addObservedDOMTimer(const DOMTimer&);
+    void addObservedDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     void removeObservedDOMTimer(const DOMTimer&);
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
@@ -97,14 +97,18 @@ private:
     void setShouldObserveStyleRecalc(bool shouldObserve) { m_shouldObserveStyleRecalc = shouldObserve; }
     bool shouldObserveStyleRecalc() const { return m_shouldObserveStyleRecalc; }
 
-    void setObservedContentChange(WKContentChange);
-    void resetObservedContentChange();
     bool isObservingContentChanges() const { return m_isObservingContentChanges; }
 
-    unsigned countOfObservedDOMTimers() const { return m_DOMTimerList.size(); }
     void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
-
     void clearTimersAndReportContentChange();
+
+    void setHasIndeterminateState();
+    void setHasVisibleChangeState();
+    void setHasNoChangeState();
+
+    bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
+    bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
+    bool hasDeterminateState() const;
 
     Page& m_page;
     HashSet<const DOMTimer*> m_DOMTimerList;
@@ -112,6 +116,22 @@ private:
     bool m_isObservingDOMTimerScheduling { false };
     bool m_isObservingContentChanges { false };
 };
+
+inline void ContentChangeObserver::setHasNoChangeState()
+{
+    WKSetObservedContentChange(WKContentNoChange);
+}
+
+inline void ContentChangeObserver::setHasIndeterminateState()
+{
+    ASSERT(!hasVisibleChangeState());
+    WKSetObservedContentChange(WKContentIndeterminateChange);
+}
+
+inline void ContentChangeObserver::setHasVisibleChangeState()
+{
+    WKSetObservedContentChange(WKContentVisibilityChange);
+}
 
 }
 #endif
