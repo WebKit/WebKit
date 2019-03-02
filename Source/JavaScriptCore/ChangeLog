@@ -1,3 +1,33 @@
+2019-03-01  Christopher Reid  <chris.reid@sony.com>
+
+        [PlayStation] Upstream playstation's remote inspector server
+        https://bugs.webkit.org/show_bug.cgi?id=193806
+
+        Reviewed by Joseph Pecoraro.
+
+        Upstreaming PlayStation's Remote Inspector implementation.
+        It is using a JSON RPC protocol over TCP sockets.
+        This inspector implementation is planned to also support running on a WinCairo Client and Server.
+
+        * PlatformPlayStation.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * inspector/remote/RemoteConnectionToTarget.cpp: Renamed from Source/JavaScriptCore/inspector/remote/glib/RemoteConnectionToTargetGlib.cpp.
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/playstation/RemoteInspectorConnectionClient.h: Added.
+        * inspector/remote/playstation/RemoteInspectorConnectionClientPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorMessageParser.h: Added.
+        * inspector/remote/playstation/RemoteInspectorMessageParserPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorServer.h: Added.
+        * inspector/remote/playstation/RemoteInspectorServerPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorSocket.h: Added.
+        * inspector/remote/playstation/RemoteInspectorSocketClient.h: Added.
+        * inspector/remote/playstation/RemoteInspectorSocketClientPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorSocketPlayStation.cpp: Added.
+        * inspector/remote/playstation/RemoteInspectorSocketServer.h: Added.
+        * inspector/remote/playstation/RemoteInspectorSocketServerPlayStation.cpp: Added.
+
 2019-03-01  Saam Barati  <sbarati@apple.com>
 
         Create SPI to crash if a JSC VM is created
