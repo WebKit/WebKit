@@ -71,7 +71,6 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic) BOOL pageCacheEnabled WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 @property (nonatomic) BOOL suppressesConnectionTerminationOnSystemChange WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 @property (nonatomic, getter=isJITEnabled) BOOL JITEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL usesNetworkingDaemon WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

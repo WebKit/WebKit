@@ -130,9 +130,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 int XPCServiceMain(int, const char**);
 
-enum class AuxiliaryProcessType { Daemon, XPCService };
-void XPCEventHandler(xpc_connection_t, AuxiliaryProcessType);
-
 void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
 
 } // namespace WebKit

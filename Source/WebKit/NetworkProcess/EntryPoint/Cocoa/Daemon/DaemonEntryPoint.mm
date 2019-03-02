@@ -26,33 +26,11 @@
 #import "config.h"
 #import "DaemonEntryPoint.h"
 
-#import "XPCServiceEntryPoint.h"
-#import <wtf/spi/darwin/XPCSPI.h>
-
 namespace WebKit {
     
-int DaemonMain(int argc, const char** argv)
+int DaemonMain(int, const char**)
 {
-    if (argc < 2 || strcmp(argv[1], "WebKitNetworkingDaemon")) {
-        WTFLogAlways("Unexpected daemon parameters");
-        return EXIT_FAILURE;
-    }
-
-    xpc_connection_t listener = xpc_connection_create_mach_service("com.apple.WebKit.NetworkingDaemon", dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
-    
-    xpc_connection_set_event_handler(listener, ^(xpc_object_t peer) {
-        if (!peer || xpc_get_type(peer) != XPC_TYPE_CONNECTION) {
-            WTFLogAlways("Unexpected XPC object");
-            return;
-        }
-
-        XPCEventHandler(peer, AuxiliaryProcessType::Daemon);
-    });
-
-    xpc_connection_resume(listener);
-    CFRunLoopRun();
-
-    return EXIT_SUCCESS;
+    return 0;
 }
 
 }

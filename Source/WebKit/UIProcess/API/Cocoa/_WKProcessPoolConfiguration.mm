@@ -326,17 +326,6 @@
     _processPoolConfiguration->setJITEnabled(enabled);
 }
 
-- (BOOL)usesNetworkingDaemon
-{
-    return _processPoolConfiguration->usesNetworkingDaemon();
-}
-
-- (void)setUsesNetworkingDaemon:(BOOL)enabled
-{
-    _processPoolConfiguration->setUsesNetworkingDaemon(enabled);
-}
-
-
 - (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
 {
     _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);

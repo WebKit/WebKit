@@ -156,6 +156,8 @@ void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
 
+void xpc_connection_set_bootstrap(xpc_connection_t, xpc_object_t);
+xpc_object_t xpc_copy_bootstrap();
 void xpc_connection_set_oneshot_instance(xpc_connection_t, uuid_t instance);
 
 void xpc_array_append_value(xpc_object_t xarray, xpc_object_t value);

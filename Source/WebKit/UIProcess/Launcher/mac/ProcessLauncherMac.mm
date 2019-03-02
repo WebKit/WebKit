@@ -56,9 +56,6 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
         return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
-    case ProcessLauncher::ProcessType::NetworkDaemon:
-        ASSERT_NOT_REACHED();
-        return nullptr;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::ProcessType::Plugin32:
         return "com.apple.WebKit.Plugin.32";
@@ -98,16 +95,17 @@ void ProcessLauncher::launchProcess()
 {
     ASSERT(!m_xpcConnection);
 
-    if (m_launchOptions.processType == ProcessLauncher::ProcessType::NetworkDaemon)
-        m_xpcConnection = adoptOSObject(xpc_connection_create_mach_service("com.apple.WebKit.NetworkingDaemon", dispatch_get_main_queue(), 0));
-    else {
-        const char* name = m_launchOptions.customWebContentServiceBundleIdentifier.isNull() ? serviceName(m_launchOptions) : m_launchOptions.customWebContentServiceBundleIdentifier.data();
-        m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
+    const char* name;
+    if (!m_launchOptions.customWebContentServiceBundleIdentifier.isNull())
+        name = m_launchOptions.customWebContentServiceBundleIdentifier.data();
+    else
+        name = serviceName(m_launchOptions);
 
-        uuid_t uuid;
-        uuid_generate(uuid);
-        xpc_connection_set_oneshot_instance(m_xpcConnection.get(), uuid);
-    }
+    m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
+
+    uuid_t uuid;
+    uuid_generate(uuid);
+    xpc_connection_set_oneshot_instance(m_xpcConnection.get(), uuid);
 
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
@@ -138,6 +136,7 @@ void ProcessLauncher::launchProcess()
 #if PLATFORM(MAC)
     xpc_dictionary_set_string(initializationMessage.get(), "WebKitBundleVersion", [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
 #endif
+    xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
     if (shouldLeakBoost(m_launchOptions)) {
         auto preBootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
@@ -172,9 +171,8 @@ void ProcessLauncher::launchProcess()
     if (clientIdentifier.isNull())
         clientIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 
+    // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-
-    xpc_dictionary_set_value(bootstrapMessage.get(), "initialization-message", initializationMessage.get());
     
     if (m_client && !m_client->isJITEnabled())
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);

@@ -1,5 +1,38 @@
 2019-03-01  Alex Christensen  <achristensen@webkit.org>
 
+        Revert r241223, r241235, and r241287
+        https://bugs.webkit.org/show_bug.cgi?id=194427
+        <rdar://48045861>
+
+        This caused crashes, and feature design has evolved away from needing the daemon in this form.
+
+        * NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm:
+        (WebKit::DaemonMain):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        (WebKit::XPCServiceMain):
+        (WebKit::XPCEventHandler): Deleted.
+        (WebKit::XPCInitializationHandler): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration usesNetworkingDaemon]): Deleted.
+        (-[_WKProcessPoolConfiguration setUsesNetworkingDaemon:]): Deleted.
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName):
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::usesNetworkingDaemon const): Deleted.
+        * UIProcess/WebProcessPool.h:
+
+2019-03-01  Alex Christensen  <achristensen@webkit.org>
+
         Add setters on WKWebsiteDataStore for sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=195229
         <rdar://problem/48520362>
