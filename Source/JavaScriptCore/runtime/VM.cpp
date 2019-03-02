@@ -256,6 +256,7 @@ inline unsigned VM::nextID()
     }
 }
 
+static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType)
     : m_id(nextID())
@@ -330,6 +331,9 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_primitiveGigacageEnabled(IsWatched)
     , m_controlFlowProfilerEnabledCount(0)
 {
+    if (UNLIKELY(vmCreationShouldCrash))
+        CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
+
     interpreter = new Interpreter(*this);
     StackBounds stack = Thread::current().stack();
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
@@ -1313,6 +1317,11 @@ JSGlobalObject* VM::vmEntryGlobalObject(const CallFrame* callFrame) const
     }
     ASSERT(entryScope);
     return entryScope->globalObject();
+}
+
+void VM::setCrashOnVMCreation(bool shouldCrash)
+{
+    vmCreationShouldCrash = shouldCrash;
 }
 
 } // namespace JSC

@@ -1,3 +1,19 @@
+2019-03-01  Saam Barati  <sbarati@apple.com>
+
+        Create SPI to crash if a JSC VM is created
+        https://bugs.webkit.org/show_bug.cgi?id=195231
+        <rdar://problem/47717990>
+
+        Reviewed by Mark Lam.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setCrashOnVMCreation:]):
+        * API/JSVirtualMachinePrivate.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::setCrashOnVMCreation):
+        * runtime/VM.h:
+
 2019-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix FTL build on ARM32_64 by adding stubs for JSRopeString::offsetOfXXX

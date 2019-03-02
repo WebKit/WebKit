@@ -885,6 +885,8 @@ public:
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
 #endif // USE(CF)
 
+    static void setCrashOnVMCreation(bool);
+
     class DeferExceptionScope {
     public:
         DeferExceptionScope(VM& vm)

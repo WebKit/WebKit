@@ -73,6 +73,13 @@
 */
 + (NSUInteger)setNumberOfFTLCompilerThreads:(NSUInteger)numberOfThreads JSC_API_AVAILABLE(macosx(10.14), ios(12.0));
 
+/*!
+@method
+@abstract Allows embedders of JSC to specify that JSC should crash the process if a VM is created when unexpected.
+@param shouldCrash Sets process-wide state that indicates whether VM creation should crash or not.
+*/
++ (void)setCrashOnVMCreation:(BOOL)shouldCrash;
+
 #endif // ENABLE(DFG_JIT)
 
 @end
