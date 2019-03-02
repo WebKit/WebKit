@@ -26,11 +26,12 @@
 #include "config.h"
 
 #include "WTFStringUtilities.h"
-#include <wtf/text/StringConcatenate.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <cstddef>
 #include <cstdint>
 #include <unicode/uvernum.h>
+#include <wtf/HexNumber.h>
+#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace TestWebKitAPI {
 
@@ -154,6 +155,18 @@ TEST(WTF, StringConcatenate_FormattedDoubleFixedWidth)
     EXPECT_STREQ("hello -17890.500 world", makeString("hello ", FormattedNumber::fixedWidth(-17890.5, 3) , " world").utf8().data());
 
     EXPECT_STREQ("hello 0.000 world", makeString("hello ", FormattedNumber::fixedWidth(0.0, 3) , " world").utf8().data());
+}
+
+TEST(WTF, StringConcatenate_Pad)
+{
+    EXPECT_STREQ("", makeString(pad('x', 0, "")).utf8().data());
+    EXPECT_STREQ("x", makeString(pad('x', 1, "")).utf8().data());
+    EXPECT_STREQ("y", makeString(pad('x', 1, "y")).utf8().data());
+    EXPECT_STREQ("xy", makeString(pad('x', 2, "y")).utf8().data());
+
+    EXPECT_STREQ("xxxxxxxxxxxxxxx1E240", makeString(pad('x', 20, hex(123456))).utf8().data());
+    EXPECT_STREQ("xxxxxxxxxxxxxxx1E2400.000", makeString(pad('x', 20, hex(123456)), FormattedNumber::fixedWidth(0.f, 3)).utf8().data());
+    EXPECT_STREQ(" B32AF0071F9 id 1231232312313231 (0.000,0.000-0.000,0.000) 0.00KB", makeString(pad(' ', 12, hex(12312312312313)), " id ", 1231232312313231, " (", FormattedNumber::fixedWidth(0.f, 3), ',', FormattedNumber::fixedWidth(0.f, 3), '-', FormattedNumber::fixedWidth(0.f, 3), ',', FormattedNumber::fixedWidth(0.f, 3), ") ", FormattedNumber::fixedWidth(0.f, 2), "KB").utf8().data());
 }
 
 }

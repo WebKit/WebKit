@@ -1,3 +1,12 @@
+2019-03-01  Darin Adler  <darin@apple.com>
+
+        Finish removing String::format
+        https://bugs.webkit.org/show_bug.cgi?id=194893
+
+        Reviewed by Daniel Bates.
+'
+        * Tools/TestWebKitAPI/Tests/WTF/StringConcatenate.cpp: Add tests for pad().
+
 2019-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Add setters on WKWebsiteDataStore for sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier

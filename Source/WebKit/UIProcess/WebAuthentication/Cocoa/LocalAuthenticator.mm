@@ -400,8 +400,10 @@ void LocalAuthenticator::getAssertion()
 
         weakThis->continueGetAssertionAfterUserConsented(consent, context, credentialId, userhandle);
     };
+    NSData *idData = selectedCredentialAttributes[(id)kSecAttrApplicationTag];
+    StringView idStringView { static_cast<const LChar*>([idData bytes]), static_cast<unsigned>([idData length]) };
     m_connection->getUserConsent(
-        String::format("Log into %s with %s.", requestData().requestOptions.rpId.utf8().data(), selectedCredentialAttributes[(id)kSecAttrApplicationTag]),
+        makeString("Log into ", requestData().requestOptions.rpId, " with ", idStringView, '.'),
         (__bridge SecAccessControlRef)selectedCredentialAttributes[(id)kSecAttrAccessControl],
         WTFMove(callback));
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,3 +1,37 @@
+2019-03-01  Darin Adler  <darin@apple.com>
+
+        Finish removing String::format
+        https://bugs.webkit.org/show_bug.cgi?id=194893
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Assertions.cpp:
+        (WTF::createWithFormatAndArguments): Moved this here from WTFString.cpp.
+        (WTFLog): Use WTF::createWithFormatAndArguments instead of String::format.
+
+        * wtf/HexNumber.h: Deleted unneeded toString function.
+
+        * wtf/text/StringConcatenate.h: Got rid of unneeded forward declaration of
+        StringTypeAdapter, since that's now in Forward.h. Tweaked formatting of templates
+        a bit. Use function templates for writeTo functions rather than having two of each.
+        Removed unused toString functions. Optimized case where we use have a UChar* and
+        a length of zero to not force the result to be 16-bit. Also gets rid of a small
+        NO_RETURN_DUE_TO_CRASH mess that we don't need. Refactored constructors to use some
+        static member helper functions to compute string lengths. Added the pad function
+        and the PaddingSpecification struct template, so we can add padding to anything
+        we can turn into a string. Got rid of the special case overload for single
+        arguments, since it only worked for things that the String constructor can handle.
+        Instead we will now use StringTypeAdapter, which works for more types. Possibly
+        less optimal for some special cases, which we could specialize for later if we like.
+        * wtf/text/StringConcatenateNumbers.h: Ditto.
+        * wtf/text/StringOperators.h: Ditto.
+        * wtf/text/StringView.h: Ditto.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::createWithFormatAndArguments): Deleted.
+        (WTF::String::format): Deleted.
+        * wtf/text/WTFString.h: Deleted declaration of String::format.
+
 2019-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Revert r241223, r241235, and r241287

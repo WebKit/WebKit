@@ -1,3 +1,13 @@
+2019-02-20  Darin Adler  <darin@apple.com>
+
+        Finish removing String::format
+        https://bugs.webkit.org/show_bug.cgi?id=194893
+
+        Reviewed by Daniel Bates.
+
+        * FullscreenVideoController.cpp:
+        (timeToString): Use makeString and pad.
+
 2019-02-27  Simon Fraser  <simon.fraser@apple.com>
 
         Roll out r242014; it caused crashes in compositing logging (webkit.org/b/195141)

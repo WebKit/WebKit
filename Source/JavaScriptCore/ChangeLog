@@ -1,3 +1,14 @@
+2019-03-01  Darin Adler  <darin@apple.com>
+
+        Finish removing String::format
+        https://bugs.webkit.org/show_bug.cgi?id=194893
+
+        Reviewed by Daniel Bates.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::nameForRegister): Use makeString instead of String::format,
+        using the new "pad" function.
+
 2019-03-01  Christopher Reid  <chris.reid@sony.com>
 
         [PlayStation] Upstream playstation's remote inspector server
