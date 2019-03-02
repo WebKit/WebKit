@@ -28,13 +28,26 @@
 
 #include <wtf/NeverDestroyed.h>
 
+#if USE(WEB_THREAD)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 static const Seconds updateStateSoonInterval { 2_s };
 
+static bool shouldSuppressThreadSafetyCheck()
+{
+#if USE(WEB_THREAD)
+    return WebThreadIsEnabled();
+#else
+    return false;
+#endif
+}
+
 NetworkStateNotifier& NetworkStateNotifier::singleton()
 {
-    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(shouldSuppressThreadSafetyCheck() || isMainThread());
     static NeverDestroyed<NetworkStateNotifier> networkStateNotifier;
     return networkStateNotifier;
 }
