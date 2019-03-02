@@ -1539,7 +1539,7 @@ DOMPasteAccessRequestsEnabled:
 
 MouseEventsSimulationEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Mouse events simulation"
   humanReadableDescription: "Enable mouse events dispatch along with touch events on iOS"
   webcoreBinding: RuntimeEnabledFeatures

@@ -1,3 +1,13 @@
+2019-03-01  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Turn mouse event simulation on by default
+        https://bugs.webkit.org/show_bug.cgi?id=195218
+        <rdar://problem/48516794>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferences.yaml:
+
 2019-03-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         EnvironmentUtilities::stripValuesEndingWithString isn't thread-safe

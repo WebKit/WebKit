@@ -530,7 +530,7 @@ private:
     bool m_adClickAttributionEnabled { false };
 
 #if ENABLE(TOUCH_EVENTS)
-    bool m_mouseEventsSimulationEnabled { false };
+    bool m_mouseEventsSimulationEnabled { true };
     bool m_mousemoveEventHandlingPreventsDefaultEnabled { false };
 #endif
 
