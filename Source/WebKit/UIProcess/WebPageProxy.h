@@ -2312,7 +2312,6 @@ private:
     WebCore::ScrollPinningBehavior m_scrollPinningBehavior { WebCore::DoNotPin };
     Optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
-    uint64_t m_navigationID { 0 };
     ActivityStateChangeID m_currentActivityStateChangeID { ActivityStateChangeAsynchronous };
 
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
