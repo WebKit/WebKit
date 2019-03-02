@@ -1,3 +1,15 @@
+2019-03-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: don't enable breakpoints when source location changes
+        https://bugs.webkit.org/show_bug.cgi?id=195081
+        <rdar://problem/48422701>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._breakpointDisplayLocationDidChange):
+        (WI.DebuggerManager.prototype._breakpointEditablePropertyDidChange):
+
 2019-03-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage - Energy Impact Section

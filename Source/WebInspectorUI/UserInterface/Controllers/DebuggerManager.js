@@ -1034,15 +1034,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
 
         // Remove the breakpoint with its old id.
-        this._removeBreakpoint(breakpoint, breakpointRemoved.bind(this));
-
-        function breakpointRemoved()
-        {
+        this._removeBreakpoint(breakpoint, () => {
             // Add the breakpoint at its new lineNumber and get a new id.
+            this._restoringBreakpoints = true;
             this._setBreakpoint(breakpoint);
+            this._restoringBreakpoints = false;
 
             this.dispatchEventToListeners(WI.DebuggerManager.Event.BreakpointMoved, {breakpoint});
-        }
+        });
     }
 
     _breakpointDisabledStateDidChange(event)
@@ -1098,13 +1097,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
 
         // Remove the breakpoint with its old id.
-        this._removeBreakpoint(breakpoint, breakpointRemoved.bind(this));
-
-        function breakpointRemoved()
-        {
+        this._removeBreakpoint(breakpoint, () => {
             // Add the breakpoint with its new properties and get a new id.
+            this._restoringBreakpoints = true;
             this._setBreakpoint(breakpoint);
-        }
+            this._restoringBreakpoints = false;
+        });
     }
 
     _handleBreakpointActionsDidChange(event)
