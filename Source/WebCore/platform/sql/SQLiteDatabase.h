@@ -142,7 +142,8 @@ private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
     void enableAuthorizer(bool enable);
-    
+    void useWALJournalMode();
+
     int pageSize();
 
     void overrideUnauthorizedFunctions();

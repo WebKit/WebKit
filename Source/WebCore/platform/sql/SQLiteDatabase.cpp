@@ -125,6 +125,14 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;"_s).executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
 
+    if (openMode != OpenMode::ReadOnly)
+        useWALJournalMode();
+
+    return isOpen();
+}
+
+void SQLiteDatabase::useWALJournalMode()
+{
     {
         SQLiteStatement walStatement(*this, "PRAGMA journal_mode=WAL;"_s);
         if (walStatement.prepareAndStep() == SQLITE_ROW) {
@@ -145,8 +153,6 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
         } else
             LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
     }
-
-    return isOpen();
 }
 
 void SQLiteDatabase::close()
