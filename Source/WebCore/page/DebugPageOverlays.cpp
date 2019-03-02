@@ -152,10 +152,13 @@ static const HashMap<String, Color>& touchEventRegionColors()
         };
         static const MapEntry entries[] = {
             { "touchstart"_s, 191, 191, 63 },
-            { "touchmove"_s, 63, 191, 191 },
+            { "touchmove"_s, 80, 204, 245 },
             { "touchend"_s, 191, 63, 127 },
             { "touchforcechange"_s, 63, 63, 191 },
             { "wheel"_s, 255, 128, 0 },
+            { "mousedown"_s, 80, 245, 80 },
+            { "mousemove"_s, 245, 245, 80 },
+            { "mouseup"_s, 80, 245, 176 },
         };
         HashMap<String, Color> map;
         for (auto& entry : entries)
@@ -217,6 +220,21 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     context.setFillColor(m_color);
     context.fillRect(legendRect);
     drawRightAlignedText("passive listeners", context, font, legendRect.location());
+
+    legendRect.move(0, 30);
+    context.setFillColor(touchEventRegionColors().get("mousedown"));
+    context.fillRect(legendRect);
+    drawRightAlignedText("mousedown", context, font, legendRect.location());
+
+    legendRect.move(0, 30);
+    context.setFillColor(touchEventRegionColors().get("mousemove"));
+    context.fillRect(legendRect);
+    drawRightAlignedText("mousemove", context, font, legendRect.location());
+
+    legendRect.move(0, 30);
+    context.setFillColor(touchEventRegionColors().get("mouseup"));
+    context.fillRect(legendRect);
+    drawRightAlignedText("mouseup", context, font, legendRect.location());
 #else
     // On desktop platforms, the "wheel" region includes the non-fast scrollable region.
     context.setFillColor(touchEventRegionColors().get("wheel"));
@@ -225,7 +243,10 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
 #endif
 
     for (const auto& synchronousEventRegion : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions) {
-        Color regionColor = touchEventRegionColors().get(synchronousEventRegion.key);
+        Color regionColor(0, 0, 0, 64);
+        auto it = touchEventRegionColors().find(synchronousEventRegion.key);
+        if (it != touchEventRegionColors().end())
+            regionColor = it->value;
         drawRegion(context, synchronousEventRegion.value, regionColor, bounds);
     }
 

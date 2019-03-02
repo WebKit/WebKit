@@ -1,3 +1,16 @@
+2019-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Show mouse event regions in the overlay
+        https://bugs.webkit.org/show_bug.cgi?id=195227
+
+        Reviewed by Tim Horton.
+
+        Enhance event region overlays to show more kinds of events.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::touchEventRegionColors):
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+
 2019-03-01  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Check for pending style recalcs at the end of each timer run.
