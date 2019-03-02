@@ -1,3 +1,19 @@
+2019-03-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Public API headers are missing autocleanup definitions
+        https://bugs.webkit.org/show_bug.cgi?id=195211
+
+        Reviewed by Philippe Normand.
+
+        * PlatformWPE.cmake: List new API headers as installable.
+        * UIProcess/API/wpe/WebKitAutocleanups.h: Added. This is a copy of the header from the GTK
+        port, adapted to fit the WPE port.
+        * UIProcess/API/wpe/webkit.h: Add inclusion of WebKitAutocleanups.h
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebExtensionAutocleanups.h: Added. Also adapted
+        from the equivalent header of the GTK port.
+        * WebProcess/InjectedBundle/API/wpe/webkit-web-extension.h: Add inclusion of
+        WebKitWebExtensionAutocleanups.h
+
 2019-03-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove unused WebPageProxy::m_navigationID

@@ -40,6 +40,8 @@
 #include <wpe/WebKitWebPage.h>
 #include <wpe/WebKitWebProcessEnumTypes.h>
 
+#include <wpe/WebKitWebExtensionAutocleanups.h>
+
 #undef __WEBKIT_WEB_EXTENSION_H_INSIDE__
 
 #endif
