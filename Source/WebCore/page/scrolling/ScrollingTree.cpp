@@ -265,20 +265,19 @@ void ScrollingTree::notifyRelatedNodesAfterScrollPositionChange(ScrollingTreeScr
     notifyRelatedNodesRecursive(changedNode, changedNode, currentFrameLayoutViewport, deltaFromLastCommittedScrollPosition);
 }
 
-void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+void ScrollingTree::notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize cumulativeDelta)
 {
     currNode.relatedNodeScrollPositionDidChange(changedNode, layoutViewport, cumulativeDelta);
 
     if (!currNode.children())
         return;
     
-    auto deltaForChildren = cumulativeDelta;
     for (auto& child : *currNode.children()) {
         // Never need to cross frame boundaries, since scroll layer adjustments are isolated to each document.
         if (is<ScrollingTreeFrameScrollingNode>(child))
             continue;
 
-        notifyRelatedNodesRecursive(changedNode, *child, layoutViewport, deltaForChildren);
+        notifyRelatedNodesRecursive(changedNode, *child, layoutViewport, cumulativeDelta);
     }
 }
 

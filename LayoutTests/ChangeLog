@@ -1,3 +1,16 @@
+2019-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242132): Incorrect positioning with multiple position:fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=195246
+
+        Reviewed by Frederic Wang.
+
+        Test that uses eventSender to scroll (and is thus macOS-only).
+
+        * platform/ios-wk2/TestExpectations:
+        * scrollingcoordinator/mac/multiple-fixed-expected.html: Added.
+        * scrollingcoordinator/mac/multiple-fixed.html: Added.
+
 2019-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Datalist] fast/forms/datalist/datalist-child-validation.html crashes with a debug assertion in isValidFormControlElement()

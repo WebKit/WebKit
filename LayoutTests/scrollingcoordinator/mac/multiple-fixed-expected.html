@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        .fixed {
+            position: fixed;
+            width: 100%;
+            height: 100px;
+            background-color: green;
+        }
+        
+        .top {
+            top: 0;
+        }
+        .bottom {
+            bottom: 0;
+        }
+    </style>
+    <script>
+        function startTest()
+        {
+            document.scrollingElement.scrollTop = 2000;
+        }
+        
+        window.addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <div class="fixed top"></div>
+    <div class="fixed bottom"></div>
+</body>
+</html>

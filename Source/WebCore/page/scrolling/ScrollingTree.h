@@ -161,7 +161,7 @@ private:
 
     ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
-    void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta);
+    void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize cumulativeDelta);
 
     RefPtr<ScrollingTreeNode> m_rootNode;
 
