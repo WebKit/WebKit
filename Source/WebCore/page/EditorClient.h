@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+enum class DOMPasteAccessResponse : uint8_t;
+
 class DocumentFragment;
 class Element;
 class Frame;
@@ -97,7 +99,7 @@ public:
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 
-    virtual bool requestDOMPasteAccess() = 0;
+    virtual DOMPasteAccessResponse requestDOMPasteAccess(const String& originIdentifier) = 0;
 
     // Notify an input method that a composition was voluntarily discarded by WebCore, so that it could clean up too.
     // This function is not called when a composition is closed per a request from an input method.

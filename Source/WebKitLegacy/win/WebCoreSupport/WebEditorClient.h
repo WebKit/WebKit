@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebKit.h"
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
 
@@ -114,7 +115,7 @@ private:
     void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection&) final { }
     bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool) final { return false; }
 
-    bool requestDOMPasteAccess() final { return false; }
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
 
     WebCore::TextCheckerClient* textChecker() final { return this; }
 

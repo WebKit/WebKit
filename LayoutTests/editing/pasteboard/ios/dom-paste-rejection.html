@@ -10,12 +10,7 @@ body {
     margin: 0;
 }
 
-#copy, #editor {
-    text-align: center;
-}
-
 #copy {
-    font-size: 40px;
     width: 100%;
     height: 50px;
     border: 1px dashed black;
@@ -25,27 +20,28 @@ body {
     width: 100%;
     height: 100px;
     border: 1px dashed silver;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 <div id="editor" contenteditable></div>
-<div id="copy">Click here to copy</div>
+<iframe id="copy" src="data:text/html,<div id='copy' style='font-size: 40px; text-align: center;'>Click here to copy</div>
+    <script>
+    copy.addEventListener('click', () => {
+        getSelection().selectAllChildren(copy);
+        document.execCommand('Copy');
+        getSelection().removeAllRanges();
+    });
+    </script>"></iframe>
 <div id="description"></div>
 <div id="console"></div>
 <script>
 jsTestIsAsync = true;
 
-const copy = document.getElementById("copy");
 const editor = document.getElementById("editor");
 
 description("Verifies that a callout is shown when the page programmatically triggers paste, and that dismissing the callout prevents the paste from happening. To manually test, tap the text on the bottom, tap the editable area above, and then dismiss the resulting callout menu by scrolling or tapping elsewhere. The text 'Click here to copy' should <strong>not</strong> be pasted, and the callout bar should disappear.");
-
-copy.addEventListener("click", () => {
-    getSelection().selectAllChildren(copy);
-    document.execCommand("Copy");
-    getSelection().removeAllRanges();
-});
 
 editor.addEventListener("paste", event => shouldBeEqualToString("event.clipboardData.getData('text/plain')", "Click here to copy"));
 editor.addEventListener("click", event => {
@@ -59,14 +55,14 @@ editor.addEventListener("click", event => {
     editor.blur();
 });
 
-(async () => {
+addEventListener("load", async () => {
     if (!window.testRunner)
         return;
 
     await UIHelper.activateAt(160, 125);
     await triggerPasteMenuAfterTapAt(160, 50, false);
     finishJSTest();
-})();
+});
 </script>
 </body>
 </html>

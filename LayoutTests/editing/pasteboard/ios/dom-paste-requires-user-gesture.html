@@ -10,12 +10,7 @@ body {
     margin: 0;
 }
 
-#copy, #editor {
-    text-align: center;
-}
-
 #copy {
-    font-size: 40px;
     width: 100%;
     height: 50px;
     border: 1px dashed black;
@@ -25,36 +20,39 @@ body {
     width: 100%;
     height: 100px;
     border: 1px dashed silver;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 <div id="editor" contenteditable></div>
-<div id="copy">Click here to copy</div>
+<iframe id="copy" src="data:text/html,<div id='copy' style='font-size: 40px; text-align: center;'>Click here to copy</div>
+    <script>
+    copy.addEventListener('click', () => {
+        getSelection().selectAllChildren(copy);
+        document.execCommand('Copy');
+        getSelection().removeAllRanges();
+    });
+    </script>"></iframe>
 <div id="description"></div>
 <div id="console"></div>
 <script>
 jsTestIsAsync = true;
 
-const copy = document.getElementById("copy");
 const editor = document.getElementById("editor");
 
 description("Verifies that no callout is shown when the page programmatically triggers paste outside the scope of user interaction. This test requires WebKitTestRunner.");
 
-copy.addEventListener("click", () => {
-    getSelection().selectAllChildren(copy);
-    document.execCommand("Copy");
-    getSelection().removeAllRanges();
-});
+addEventListener("load", async () => {
+    UIHelper.activateAt(160, 125).then(() => {
+        editor.focus();
+        waitForPasteMenu().then(finishJSTest);
 
-UIHelper.activateAt(160, 125).then(() => {
-    editor.focus();
-    waitForPasteMenu().then(finishJSTest);
-
-    UIHelper.ensurePresentationUpdate().then(() => {
-        internals.withUserGesture(() => shouldBe("document.execCommand('Paste')", "true"));
-        shouldBe("document.execCommand('Paste')", "false");
-        shouldBeEqualToString("editor.textContent", "Click here to copy");
+        UIHelper.ensurePresentationUpdate().then(() => {
+            internals.withUserGesture(() => shouldBe("document.execCommand('Paste')", "true"));
+            shouldBe("document.execCommand('Paste')", "false");
+            shouldBeEqualToString("editor.textContent", "Click here to copy");
+        });
     });
 });
 </script>

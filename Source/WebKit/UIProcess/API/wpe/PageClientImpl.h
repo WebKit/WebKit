@@ -34,6 +34,10 @@ namespace WKWPE {
 class View;
 }
 
+namespace WebCore {
+enum class DOMPasteAccessResponse : uint8_t;
+}
+
 namespace WebKit {
 
 class ScrollGestureController;
@@ -146,7 +150,7 @@ private:
     void didFinishProcessingAllPendingMouseEvents() final { }
 
     IPC::Attachment hostFileDescriptor() final;
-    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&) final;
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 

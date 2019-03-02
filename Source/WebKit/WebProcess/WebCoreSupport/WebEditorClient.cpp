@@ -38,6 +38,7 @@
 #include "WebProcess.h"
 #include "WebUndoStep.h"
 #include <WebCore/ArchiveResource.h>
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -354,9 +355,9 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
 }
 
-bool WebEditorClient::requestDOMPasteAccess()
+WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(const String& originIdentifier)
 {
-    return m_page->requestDOMPasteAccess();
+    return m_page->requestDOMPasteAccess(originIdentifier);
 }
 
 #if PLATFORM(WIN)

@@ -1,3 +1,13 @@
+2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Programmatic paste access should be granted when copying and pasting within the same origin
+        https://bugs.webkit.org/show_bug.cgi?id=195053
+        <rdar://problem/48134710>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/WebEditorClient.h:
+
 2019-02-20  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

@@ -1,3 +1,67 @@
+2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Programmatic paste access should be granted when copying and pasting within the same origin
+        https://bugs.webkit.org/show_bug.cgi?id=195053
+        <rdar://problem/48134710>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for automatically granting programmatic pasteboard access when the pasteboard identifier of the
+        document requesting programmatic paste matches the identifier in the custom pasteboard data blob in the
+        UIPasteboard. To do this, we send the pasteboard identifier of the document requesting the DOM paste to the UI
+        process, and check this against the pasteboard identifiers for each item on the platform pasteboard. If all
+        items in the platform pasteboard match the given pasteboard identifier (since we don't support writing multiple
+        pasteboard items via bindings, this should only be a single item), we skip showing the paste callout and
+        immediately invoke the programmatic paste handler.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestDOMPasteAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add plumbing to deliver the pasteboard identifier to the client when requesting DOM paste.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (-[WKContentView _willHideMenu:]):
+        (-[WKContentView pasteForWebView:]):
+        (-[WKContentView _handleDOMPasteRequestWithResult:]):
+        (-[WKContentView _willPerformAction:sender:]):
+        (-[WKContentView _didPerformAction:sender:]):
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+        (allPasteboardItemOriginsMatchOrigin):
+        (-[WKContentView _requestDOMPasteAccessWithElementRect:originIdentifier:completionHandler:]):
+        (-[WKContentView _requestDOMPasteAccessWithElementRect:completionHandler:]): Deleted.
+
+        Bail early in the case where all items' pasteboard identifiers (read via custom pasteboard data) match. When
+        this happens, we only grant access for the current paste command, rather than granting access for the user
+        gesture token.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestDOMPasteAccess):
+        * UIProcess/win/PageClientImpl.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestDOMPasteAccess):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestDOMPasteAccess):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-02-27  Darin Adler  <darin@apple.com>
 
         Fixed makeString(float) to do shortest-form serialization without first converting to double

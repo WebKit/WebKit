@@ -36,6 +36,10 @@
 #include <gtk/gtk.h>
 #include <memory>
 
+namespace WebCore {
+enum class DOMPasteAccessPolicy : uint8_t;
+}
+
 namespace WebKit {
 
 class DrawingAreaProxy;
@@ -150,7 +154,7 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final { }
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&) final;
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;

@@ -139,6 +139,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
@@ -6440,13 +6441,11 @@ void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callba
     callback(wasGranted);
 }
 
-bool WebPage::requestDOMPasteAccess()
+WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(const String& originIdentifier)
 {
-    bool granted = false;
-    if (!sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(rectForElementAtInteractionLocation()), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(granted)))
-        return false;
-
-    return granted;
+    auto response = WebCore::DOMPasteAccessResponse::DeniedForGesture;
+    sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(rectForElementAtInteractionLocation(), originIdentifier), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(response));
+    return response;
 }
 
 void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double gamma)

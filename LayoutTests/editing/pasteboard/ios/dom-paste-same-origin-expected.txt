@@ -1,7 +1,7 @@
 Click here to copy
 Click here to copy
-
-Verifies that a callout is shown when the page programmatically triggers paste, and that tapping the callout allows the paste to happen. To manually test, tap the text on the bottom, tap the editable area above, and then select 'Paste' in the resulting callout menu. The text 'Click here to copy' should be pasted twice in the editable area.
+Click here to copy
+Verifies that programmatic paste is allowed when copied data is from the same origin. To manually test, tap the text on the bottom to programmatically copy, and then tap the editable area and check that the text is pasted twice.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

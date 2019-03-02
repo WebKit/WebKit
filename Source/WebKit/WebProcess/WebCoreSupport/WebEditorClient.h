@@ -28,6 +28,10 @@
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
 
+namespace WebCore {
+enum class DOMPasteAccessResponse : uint8_t;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -88,7 +92,7 @@ private:
     void registerRedoStep(WebCore::UndoStep&) final;
     void clearUndoRedoOperations() final;
 
-    bool requestDOMPasteAccess() final;
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String& originIdentifier) final;
 
     bool canCopyCut(WebCore::Frame*, bool defaultValue) const final;
     bool canPaste(WebCore::Frame*, bool defaultValue) const final;

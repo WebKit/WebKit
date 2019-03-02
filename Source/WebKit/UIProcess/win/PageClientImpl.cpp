@@ -33,6 +33,7 @@
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
 #include "WebView.h"
+#include <WebCore/DOMPasteAccess.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -367,9 +368,9 @@ HWND PageClientImpl::viewWidget()
     return m_view.window();
 }
 
-void PageClientImpl::requestDOMPasteAccess(const IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(const IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    completionHandler(false);
+    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
 } // namespace WebKit

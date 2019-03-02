@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DOMPasteAccessPolicy.h"
+#include "DOMPasteAccess.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>
@@ -65,7 +65,19 @@ public:
     }
 
     DOMPasteAccessPolicy domPasteAccessPolicy() const { return m_domPasteAccessPolicy; }
-    void didRequestDOMPasteAccess(bool granted) { m_domPasteAccessPolicy = granted ? DOMPasteAccessPolicy::Granted : DOMPasteAccessPolicy::Denied; }
+    void didRequestDOMPasteAccess(DOMPasteAccessResponse response)
+    {
+        switch (response) {
+        case DOMPasteAccessResponse::DeniedForGesture:
+            m_domPasteAccessPolicy = DOMPasteAccessPolicy::Denied;
+            break;
+        case DOMPasteAccessResponse::GrantedForCommand:
+            break;
+        case DOMPasteAccessResponse::GrantedForGesture:
+            m_domPasteAccessPolicy = DOMPasteAccessPolicy::Granted;
+            break;
+        }
+    }
     void resetDOMPasteAccess() { m_domPasteAccessPolicy = DOMPasteAccessPolicy::NotRequestedYet; }
 
 private:

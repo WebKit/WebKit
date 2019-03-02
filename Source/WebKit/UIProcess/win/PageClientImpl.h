@@ -34,6 +34,10 @@
 #include "WebPageProxy.h"
 #include <WebCore/IntSize.h>
 
+namespace WebCore {
+enum class DOMPasteAccessResponse : uint8_t;
+}
+
 namespace WebKit {
 
 class DrawingAreaProxy;
@@ -144,7 +148,7 @@ private:
 
     void didFinishProcessingAllPendingMouseEvents() final { }
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&) final;
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
     // Members of PageClientImpl class
     DefaultUndoController m_undoController;

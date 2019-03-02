@@ -30,6 +30,7 @@
 #include "CorrectionPanel.h"
 #include "PageClientImplCocoa.h"
 #include "WebFullScreenManagerProxy.h"
+#include <WebCore/DOMPasteAccess.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RetainPtr.h>
 
@@ -214,7 +215,7 @@ private:
     void willRecordNavigationSnapshot(WebBackForwardListItem&) override;
     void didRemoveNavigationGestureSnapshot() override;
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&& completion) final { completion(false); }
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion) final { completion(WebCore::DOMPasteAccessResponse::DeniedForGesture); }
 
     NSView *activeView() const;
     NSWindow *activeWindow() const;

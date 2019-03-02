@@ -1,4 +1,4 @@
-Click here to copy
+
 Verifies that no callout is shown when the page programmatically triggers paste on a timer after user interaction. To test manually, click the text on the bottom to copy, and then click the editable area above to trigger two programmatic pastes with the callout bar. Check that permissions for the first programmatic paste do not affect the second programmatic paste, since it is performed on a zero-delay timer.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

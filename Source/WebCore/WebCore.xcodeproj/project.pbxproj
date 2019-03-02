@@ -4950,7 +4950,7 @@
 		F48D2A7E2157182600C6752B /* FontAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A712156DC0A00C6752B /* FontAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F48D2AA52159740D00C6752B /* ColorCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2AA32159740D00C6752B /* ColorCocoa.h */; };
 		F49786881FF45FA500E060AB /* PasteboardItemInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F49786871FF45FA500E060AB /* PasteboardItemInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F4B422C4220C0568009E1E7D /* DOMPasteAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B422C2220C0000009E1E7D /* DOMPasteAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4B422C4220C0568009E1E7D /* DOMPasteAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4BFB9851E1DDF9B00862C24 /* DumpEditingHistory.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389831E1DDF2B0076B7EA /* DumpEditingHistory.js */; };
 		F4BFB9861E1DDF9B00862C24 /* EditingHistoryUtil.js in Copy Scripts */ = {isa = PBXBuildFile; fileRef = F48389841E1DDF2B0076B7EA /* EditingHistoryUtil.js */; };
 		F4D43D662188038B00ECECAC /* SerializedAttachmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15183,7 +15183,7 @@
 		F48D2AA42159740D00C6752B /* ColorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorCocoa.mm; sourceTree = "<group>"; };
 		F49786871FF45FA500E060AB /* PasteboardItemInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasteboardItemInfo.h; sourceTree = "<group>"; };
 		F49E98E421DEE6C1009AE55E /* EditAction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EditAction.cpp; sourceTree = "<group>"; };
-		F4B422C2220C0000009E1E7D /* DOMPasteAccessPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPasteAccessPolicy.h; sourceTree = "<group>"; };
+		F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMPasteAccess.h; sourceTree = "<group>"; };
 		F4D43D64218802E600ECECAC /* SerializedAttachmentData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedAttachmentData.h; sourceTree = "<group>"; };
 		F4D9817D2195FBF6008230FC /* ChangeListTypeCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeListTypeCommand.h; sourceTree = "<group>"; };
 		F4D9817E2195FBF6008230FC /* ChangeListTypeCommand.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ChangeListTypeCommand.cpp; sourceTree = "<group>"; };
@@ -27503,7 +27503,7 @@
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
 				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
-				F4B422C2220C0000009E1E7D /* DOMPasteAccessPolicy.h */,
+				F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */,
 				0F4966991DB408C100A274BB /* DOMPoint.h */,
 				0F49669A1DB408C100A274BB /* DOMPoint.idl */,
 				0F4966A21DB4091000A274BB /* DOMPointInit.h */,
@@ -29079,7 +29079,7 @@
 				A9C6E4E40D745E05006442E9 /* DOMMimeType.h in Headers */,
 				A9C6E4E80D745E18006442E9 /* DOMMimeTypeArray.h in Headers */,
 				1ACE53E80A8D18E70022947D /* DOMParser.h in Headers */,
-				F4B422C4220C0568009E1E7D /* DOMPasteAccessPolicy.h in Headers */,
+				F4B422C4220C0568009E1E7D /* DOMPasteAccess.h in Headers */,
 				7A54881714E432A1006AE05A /* DOMPatchSupport.h in Headers */,
 				A9C6E4EC0D745E2B006442E9 /* DOMPlugin.h in Headers */,
 				A9C6E4F00D745E38006442E9 /* DOMPluginArray.h in Headers */,

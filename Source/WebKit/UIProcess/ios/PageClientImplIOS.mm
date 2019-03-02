@@ -54,6 +54,7 @@
 #import "WebEditCommandProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKDownloadInternal.h"
+#import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
@@ -837,9 +838,9 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    [m_contentView _requestDOMPasteAccessWithElementRect:elementRect completionHandler:WTFMove(completionHandler)];
+    [m_contentView _requestDOMPasteAccessWithElementRect:elementRect originIdentifier:originIdentifier completionHandler:WTFMove(completionHandler)];
 }
 
 #if HAVE(PENCILKIT)

@@ -27,6 +27,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/DOMPasteAccess.h>
 #import <WebCore/EditorClient.h>
 #import <WebCore/TextCheckerClient.h>
 #import <WebCore/VisibleSelection.h>
@@ -80,7 +81,7 @@ private:
     void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
 
     void setInsertionPasteboard(const String&) final;
-    bool requestDOMPasteAccess() final { return false; }
+    WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String&) final { return WebCore::DOMPasteAccessResponse::DeniedForGesture; }
 
 #if USE(APPKIT)
     void uppercaseWord() final;

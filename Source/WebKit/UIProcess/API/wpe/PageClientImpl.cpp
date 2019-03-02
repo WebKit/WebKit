@@ -34,6 +34,7 @@
 #include "WebContextMenuProxy.h"
 #include "WebContextMenuProxyWPE.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -399,9 +400,9 @@ void PageClientImpl::beganExitFullScreen(const WebCore::IntRect& /* initialFrame
 
 #endif // ENABLE(FULLSCREEN_API)
 
-void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    completionHandler(false);
+    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
 } // namespace WebKit

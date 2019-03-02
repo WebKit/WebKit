@@ -1,3 +1,30 @@
+2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Programmatic paste access should be granted when copying and pasting within the same origin
+        https://bugs.webkit.org/show_bug.cgi?id=195053
+        <rdar://problem/48134710>
+
+        Reviewed by Ryosuke Niwa.
+
+        Plumb the document pasteboard identifier through the client when making a DOM paste access request. See WebKit
+        ChangeLog for more details.
+
+        Test: editing/pasteboard/ios/dom-paste-same-origin.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMPasteAccess.h: Renamed from Source/WebCore/dom/DOMPasteAccessPolicy.h.
+
+        Introduce DOMPasteAccessResponse, which is either DeniedForGesture, GrantedForCommand, or GrantedForGesture. In
+        particular, when pasteboard identifiers match, we only grant access for the current paste command, rather than
+        throughout the user gesture.
+
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureToken::didRequestDOMPasteAccess):
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::requestDOMPasteAccess):
+
 2019-02-27  Darin Adler  <darin@apple.com>
 
         Fixed makeString(float) to do shortest-form serialization without first converting to double

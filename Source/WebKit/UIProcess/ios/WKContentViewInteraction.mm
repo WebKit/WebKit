@@ -77,6 +77,7 @@
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/Color.h>
+#import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FontAttributeChanges.h>
@@ -890,7 +891,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #if ENABLE(POINTER_EVENTS)
     [self _resetPanningPreventionFlags];
 #endif
-    [self _handleDOMPasteRequestWithResult:NO];
+    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 - (void)_removeDefaultGestureRecognizers
@@ -1178,7 +1179,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     bool superDidResign = [super resignFirstResponder];
 
     if (superDidResign) {
-        [self _handleDOMPasteRequestWithResult:NO];
+        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
     }
 
@@ -1214,7 +1215,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
     _lastInteractionLocation = lastTouchEvent->locationInDocumentCoordinates;
     if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
-        [self _handleDOMPasteRequestWithResult:NO];
+        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
     }
 
@@ -2898,7 +2899,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_willHideMenu:(NSNotification *)notification
 {
-    [self _handleDOMPasteRequestWithResult:NO];
+    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 - (void)_didHideMenu:(NSNotification *)notification
@@ -2926,7 +2927,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)pasteForWebView:(id)sender
 {
-    if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:YES])
+    if (sender == UIMenuController.sharedMenuController && [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForGesture])
         return;
 
     _page->executeEditCommand("paste"_s);
@@ -3058,11 +3059,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     _page->storeSelectionForAccessibility(false);
 }
 
-- (BOOL)_handleDOMPasteRequestWithResult:(BOOL)allowPaste
+- (BOOL)_handleDOMPasteRequestWithResult:(WebCore::DOMPasteAccessResponse)response
 {
     if (auto pasteHandler = WTFMove(_domPasteRequestHandler)) {
         [self hideGlobalMenuController];
-        pasteHandler(allowPaste);
+        pasteHandler(response);
         return YES;
     }
     return NO;
@@ -3071,13 +3072,13 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (void)_willPerformAction:(SEL)action sender:(id)sender
 {
     if (action != @selector(paste:))
-        [self _handleDOMPasteRequestWithResult:NO];
+        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 - (void)_didPerformAction:(SEL)action sender:(id)sender
 {
     if (action == @selector(paste:))
-        [self _handleDOMPasteRequestWithResult:NO];
+        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 }
 
 // UIWKInteractionViewProtocol
@@ -4295,7 +4296,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent withCompletionHandler:(void (^)(::WebEvent *theEvent, BOOL wasHandled))completionHandler
 {
-    [self _handleDOMPasteRequestWithResult:NO];
+    [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
 
     _keyWebEventHandler = makeBlockPtr(completionHandler);
     _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent));
@@ -5035,11 +5036,41 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 #endif
 }
 
-- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const String& originIdentifier)
+{
+    if (originIdentifier.isEmpty())
+        return NO;
+
+    auto *indices = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [pasteboard numberOfItems])];
+    auto *allCustomData = [pasteboard dataForPasteboardType:@(WebCore::PasteboardCustomData::cocoaType()) inItemSet:indices];
+    if (!allCustomData.count)
+        return NO;
+
+    BOOL foundAtLeastOneMatchingIdentifier = NO;
+    for (NSData *data in allCustomData) {
+        if (!data.length)
+            continue;
+
+        auto buffer = WebCore::SharedBuffer::create(data);
+        if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin != originIdentifier)
+            return NO;
+
+        foundAtLeastOneMatchingIdentifier = YES;
+    }
+
+    return foundAtLeastOneMatchingIdentifier;
+}
+
+- (void)_requestDOMPasteAccessWithElementRect:(const WebCore::IntRect&)elementRect originIdentifier:(const String&)originIdentifier completionHandler:(CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&)completionHandler
 {
     if (auto existingCompletionHandler = std::exchange(_domPasteRequestHandler, WTFMove(completionHandler))) {
         ASSERT_NOT_REACHED();
-        existingCompletionHandler(false);
+        existingCompletionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
+    }
+
+    if (allPasteboardItemOriginsMatchOrigin(UIPasteboard.generalPasteboard, originIdentifier)) {
+        [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::GrantedForCommand];
+        return;
     }
 
     WebCore::IntRect menuControllerRect = elementRect;

@@ -34,6 +34,7 @@
 #include "ColorChooser.h"
 #include "ContextMenuClient.h"
 #include "CookieJar.h"
+#include "DOMPasteAccess.h"
 #include "DataListSuggestionPicker.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
@@ -189,7 +190,7 @@ private:
     void registerRedoStep(UndoStep&) final;
     void clearUndoRedoOperations() final { }
 
-    bool requestDOMPasteAccess() final { return false; }
+    DOMPasteAccessResponse requestDOMPasteAccess(const String&) final { return DOMPasteAccessResponse::DeniedForGesture; }
 
     bool canCopyCut(Frame*, bool defaultValue) const final { return defaultValue; }
     bool canPaste(Frame*, bool defaultValue) const final { return defaultValue; }

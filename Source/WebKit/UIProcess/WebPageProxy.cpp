@@ -131,6 +131,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BitmapImage.h>
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -5528,9 +5529,9 @@ void WebPageProxy::setNeedsPlainTextQuirk(bool needsPlainTextQuirk)
     m_needsPlainTextQuirk = needsPlainTextQuirk;
 }
 
-void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    m_pageClient->requestDOMPasteAccess(elementRect, WTFMove(completionHandler));
+    m_pageClient->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completionHandler));
 }
 
 // BackForwardList

@@ -681,9 +681,15 @@ bool Frame::requestDOMPasteAccess()
         if (!client)
             return false;
 
-        bool granted = client->requestDOMPasteAccess();
-        gestureToken->didRequestDOMPasteAccess(granted);
-        return granted;
+        auto response = client->requestDOMPasteAccess(m_doc->originIdentifierForPasteboard());
+        gestureToken->didRequestDOMPasteAccess(response);
+        switch (response) {
+        case DOMPasteAccessResponse::GrantedForCommand:
+        case DOMPasteAccessResponse::GrantedForGesture:
+            return true;
+        case DOMPasteAccessResponse::DeniedForGesture:
+            return false;
+        }
     }
     }
 

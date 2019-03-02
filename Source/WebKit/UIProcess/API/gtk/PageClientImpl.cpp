@@ -44,6 +44,7 @@
 #include "WebProcessPool.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/DOMPasteAccess.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
@@ -524,9 +525,9 @@ bool PageClientImpl::decidePolicyForInstallMissingMediaPluginsPermissionRequest(
 }
 #endif
 
-void PageClientImpl::requestDOMPasteAccess(const IntRect&, CompletionHandler<void(bool)>&& completionHandler)
+void PageClientImpl::requestDOMPasteAccess(const IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)
 {
-    completionHandler(false);
+    completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 }
 
 } // namespace WebKit

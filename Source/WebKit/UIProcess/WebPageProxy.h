@@ -182,6 +182,7 @@ class ValidationBubble;
 enum SelectionDirection : uint8_t;
 
 enum class AutoplayEvent : uint8_t;
+enum class DOMPasteAccessResponse : uint8_t;
 enum class LockBackForwardList : bool;
 enum class HasInsecureContent : bool;
 enum class NotificationDirection : uint8_t;
@@ -1669,7 +1670,7 @@ private:
     void setNeedsHiddenContentEditableQuirk(bool);
     void setNeedsPlainTextQuirk(bool);
 
-    void requestDOMPasteAccess(const WebCore::IntRect&, CompletionHandler<void(bool)>&&);
+    void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
 
     // Back/Forward list management
     void backForwardAddItem(BackForwardListItemState&&);

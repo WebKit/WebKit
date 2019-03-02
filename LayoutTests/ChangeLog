@@ -1,3 +1,27 @@
+2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Programmatic paste access should be granted when copying and pasting within the same origin
+        https://bugs.webkit.org/show_bug.cgi?id=195053
+        <rdar://problem/48134710>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adjust several existing DOM paste tests to copy text from a child frame that has a different origin as the main
+        frame, such that we'll trigger the paste callout menu when performing a programmatic paste. Also add a new
+        layout test that copies and programmatically pastes within the same document, to verify that no paste callout is
+        displayed and the paste is allowed.
+
+        * editing/pasteboard/ios/dom-paste-confirmation-expected.txt:
+        * editing/pasteboard/ios/dom-paste-confirmation.html:
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations-expected.txt:
+        * editing/pasteboard/ios/dom-paste-consecutive-confirmations.html:
+        * editing/pasteboard/ios/dom-paste-rejection-expected.txt:
+        * editing/pasteboard/ios/dom-paste-rejection.html:
+        * editing/pasteboard/ios/dom-paste-requires-user-gesture-expected.txt:
+        * editing/pasteboard/ios/dom-paste-requires-user-gesture.html:
+        * editing/pasteboard/ios/dom-paste-same-origin-expected.txt: Copied from LayoutTests/editing/pasteboard/ios/dom-paste-confirmation-expected.txt.
+        * editing/pasteboard/ios/dom-paste-same-origin.html: Copied from LayoutTests/editing/pasteboard/ios/dom-paste-confirmation.html.
+
 2019-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r242132): Incorrect positioning with multiple position:fixed elements

@@ -1,4 +1,4 @@
-Click here to copy
+
 Verifies that a callout is shown when the page programmatically triggers paste, and that dismissing the callout prevents the paste from happening. To manually test, tap the text on the bottom, tap the editable area above, and then dismiss the resulting callout menu by scrolling or tapping elsewhere. The text 'Click here to copy' should not be pasted, and the callout bar should disappear.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
