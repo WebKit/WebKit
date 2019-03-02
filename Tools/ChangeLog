@@ -1,3 +1,17 @@
+2019-03-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a system trace scope for event region building
+        https://bugs.webkit.org/show_bug.cgi?id=195226
+
+        Reviewed by Jon Lee.
+
+        This trace scope measures the time spend converting element rects into Region objects,
+        which can be large on some pages.
+
+        The value for "Display Refresh Dispatch to main thread" was wrong and I fixed it.
+
+        * Tracing/SystemTracePoints.plist:
+
 2019-03-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         EnvironmentUtilities::stripValuesEndingWithString isn't thread-safe

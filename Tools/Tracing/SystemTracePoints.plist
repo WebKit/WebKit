@@ -172,7 +172,7 @@
              </dict>
              <dict>
                  <key>Name</key>
-                 <string>Update touch event regions</string>
+                 <string>Update event rects</string>
                  <key>Type</key>
                  <string>Interval</string>
                  <key>Component</key>
@@ -202,7 +202,19 @@
                  <key>Component</key>
                  <string>47</string>
                  <key>Code</key>
+                 <string>5025</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Build event regions</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
                  <string>5026</string>
+                 <key>CodeEnd</key>
+                 <string>5027</string>
              </dict>
              <dict>
                  <key>Name</key>
