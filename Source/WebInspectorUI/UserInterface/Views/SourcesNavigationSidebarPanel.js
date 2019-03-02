@@ -94,6 +94,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._debuggerStepOutButtonItem.enabled = false;
 
         this._timelineRecordingWarningElement = null;
+        this._auditTestWarningElement = null;
         this._breakpointsDisabledWarningElement = null;
 
         this._pauseReasonTreeOutline = null;
@@ -256,6 +257,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._handleTimelineCapturingWillStart, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._handleTimelineCapturingStopped, this);
 
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
+        WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
+
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._handleCSSStyleSheetAdded, this);
 
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
@@ -315,8 +319,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (WI.debuggerManager.paused)
             this._handleDebuggerPaused();
 
-        if (WI.timelineManager.isCapturing() && WI.debuggerManager.breakpointsDisabledTemporarily)
-            this._handleTimelineCapturingWillStart();
+        if (WI.debuggerManager.breakpointsDisabledTemporarily) {
+            if (WI.timelineManager.isCapturing())
+                this._handleTimelineCapturingWillStart();
+
+            if (WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping)
+                this._handleAuditManagerTestScheduled();
+        }
 
         this._updateBreakpointsDisabledBanner();
     }
@@ -348,6 +357,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.DOMBreakpoint.removeEventListener(null, null, this);
         WI.consoleManager.removeEventListener(null, null, this);
         WI.timelineManager.removeEventListener(null, null, this);
+        WI.auditManager.removeEventListener(null, null, this);
         WI.cssManager.removeEventListener(null, null, this);
         WI.targetManager.removeEventListener(null, null, this);
         WI.notifications.removeEventListener(null, null, this);
@@ -925,9 +935,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._addIssue(issue);
     }
 
+    _updateTemporarilyDisabledBreakpointsButtons()
+    {
+        let breakpointsDisabledTemporarily = WI.debuggerManager.breakpointsDisabledTemporarily;
+        this._debuggerBreakpointsButtonItem.enabled = !breakpointsDisabledTemporarily;
+        this._debuggerPauseResumeButtonItem.enabled = !breakpointsDisabledTemporarily;
+    }
+
     _updateBreakpointsDisabledBanner()
     {
-        if (!WI.debuggerManager.breakpointsEnabled && !this._timelineRecordingWarningElement) {
+        if (!WI.debuggerManager.breakpointsEnabled && !this._timelineRecordingWarningElement && !this._auditTestWarningElement) {
             if (!this._breakpointsDisabledWarningElement) {
                 let enableBreakpointsButton = document.createElement("button");
                 enableBreakpointsButton.textContent = WI.UIString("Enable Breakpoints");
@@ -1607,8 +1624,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleTimelineCapturingWillStart(event)
     {
-        this._debuggerBreakpointsButtonItem.enabled = false;
-        this._debuggerPauseResumeButtonItem.enabled = false;
+        this._updateTemporarilyDisabledBreakpointsButtons();
 
         if (!this._timelineRecordingWarningElement) {
             let stopRecordingButton = document.createElement("button");
@@ -1629,12 +1645,44 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleTimelineCapturingStopped(event)
     {
-        this._debuggerBreakpointsButtonItem.enabled = true;
-        this._debuggerPauseResumeButtonItem.enabled = true;
+        this._updateTemporarilyDisabledBreakpointsButtons();
 
         if (this._timelineRecordingWarningElement) {
             this._timelineRecordingWarningElement.remove();
             this._timelineRecordingWarningElement = null;
+        }
+
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _handleAuditManagerTestScheduled(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
+
+        if (!this._auditTestWarningElement) {
+            let stopAuditButton = document.createElement("button");
+            stopAuditButton.textContent = WI.UIString("Stop Audit");
+            stopAuditButton.addEventListener("click", (event) => {
+                WI.auditManager.stop();
+            });
+
+            this._auditTestWarningElement = document.createElement("div");
+            this._auditTestWarningElement.classList.add("warning-banner");
+            this._auditTestWarningElement.append(WI.UIString("Debugger disabled during Audit"), document.createElement("br"), stopAuditButton);
+        }
+
+        this.contentView.element.insertBefore(this._auditTestWarningElement, this.contentView.element.firstChild);
+
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _handleAuditManagerTestCompleted(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
+
+        if (this._auditTestWarningElement) {
+            this._auditTestWarningElement.remove();
+            this._auditTestWarningElement = null;
         }
 
         this._updateBreakpointsDisabledBanner();

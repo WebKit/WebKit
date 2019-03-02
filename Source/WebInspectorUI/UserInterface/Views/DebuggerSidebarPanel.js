@@ -250,8 +250,13 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (WI.debuggerManager.paused)
             this._debuggerDidPause(null);
 
-        if (WI.timelineManager.isCapturing() && WI.debuggerManager.breakpointsDisabledTemporarily)
-            this._timelineCapturingWillStart(null);
+        if (WI.debuggerManager.breakpointsDisabledTemporarily) {
+            if (WI.timelineManager.isCapturing())
+                this._timelineCapturingWillStart();
+
+            if (WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping)
+                this._handleAuditManagerTestScheduled();
+        }
 
         this._updateBreakpointsDisabledBanner();
     }

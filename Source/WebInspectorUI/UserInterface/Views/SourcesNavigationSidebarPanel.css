@@ -62,6 +62,10 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.sidebar > .panel.navigation.sources > .content > .warning-banner + .warning-banner {
+    display: none;
+}
+
 .sidebar > .panel.navigation.sources > .content > .details-section {
     padding-bottom: 1px;
     font-size: 11px;
