@@ -1,3 +1,16 @@
+2019-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Datalist] fast/forms/datalist/datalist-child-validation.html crashes with a debug assertion in isValidFormControlElement()
+        https://bugs.webkit.org/show_bug.cgi?id=190620
+        <rdar://problem/19226679>
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-enables a crashing layout test. See WebCore ChangeLog for more details.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2019-03-01  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Check for pending style recalcs at the end of each timer run.
