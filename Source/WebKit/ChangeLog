@@ -1,5 +1,18 @@
 2019-03-01  Alex Christensen  <achristensen@webkit.org>
 
+        NetworkDataTask redirection should not keep alive its NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=194927
+
+        Reviewed by Darin Adler.
+
+        This should fix rdar://problem/47580502
+
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
+2019-03-01  Alex Christensen  <achristensen@webkit.org>
+
         Revert r241223, r241235, and r241287
         https://bugs.webkit.org/show_bug.cgi?id=194427
         <rdar://48045861>
