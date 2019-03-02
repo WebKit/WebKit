@@ -673,24 +673,24 @@ void Value::writeJSON(StringBuilder& output) const
         break;
     case Type::Double:
     case Type::Integer: {
-        NumberToLStringBuffer buffer;
         if (!std::isfinite(m_value.number)) {
             output.appendLiteral("null");
             return;
         }
-        DecimalNumber decimal = m_value.number;
+        DecimalNumber decimal { m_value.number };
+        NumberToStringBuffer buffer;
         unsigned length = 0;
-        if (decimal.bufferLengthForStringDecimal() > WTF::NumberToStringBufferLength) {
+        if (decimal.bufferLengthForStringDecimal() > sizeof(buffer)) {
             // Not enough room for decimal. Use exponential format.
-            if (decimal.bufferLengthForStringExponential() > WTF::NumberToStringBufferLength) {
+            if (decimal.bufferLengthForStringExponential() > sizeof(buffer)) {
                 // Fallback for an abnormal case if it's too little even for exponential.
                 output.appendLiteral("NaN");
                 return;
             }
-            length = decimal.toStringExponential(buffer, WTF::NumberToStringBufferLength);
+            length = decimal.toStringExponential(reinterpret_cast<LChar*>(&buffer[0]), sizeof(buffer));
         } else
-            length = decimal.toStringDecimal(buffer, WTF::NumberToStringBufferLength);
-        output.append(buffer, length);
+            length = decimal.toStringDecimal(reinterpret_cast<LChar*>(&buffer[0]), sizeof(buffer));
+        output.append(&buffer[0], length);
         break;
     }
     default:

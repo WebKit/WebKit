@@ -1,3 +1,41 @@
+2019-02-27  Darin Adler  <darin@apple.com>
+
+        Fixed makeString(float) to do shortest-form serialization without first converting to double
+        https://bugs.webkit.org/show_bug.cgi?id=195142
+
+        Reviewed by Daniel Bates.
+
+        * wtf/DecimalNumber.cpp: Removed unneeded includes.
+
+        * wtf/DecimalNumber.h: Removed unused constructors; over time we will be
+        deprecating DecimalNumber, so we should removed the unused parts. Also
+        marked the constructor explicit, removed types used only for arguments for
+        the constructors, and removed the sign, exponent, significand, and precision
+        member functions.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::writeJSON const): Updated for changes to DecimalNumber
+        switched from NumberToLStringBuffer to NumberToStringBuffer, and for use of
+        std::array instead of C arrays.
+
+        * wtf/dtoa.cpp: Removed unused dtoaRoundSF and dtoaRoundDP functions.
+        (WTF::dtoa): Updated to use std::array instead of C arrays.
+        (WTF::dtoaRoundSF): Removed.
+        (WTF::dtoaRoundDP): Removed.
+        (WTF::numberToString): Added an overload for float and updated to use std::array.
+        (WTF::formatStringTruncatingTrailingZerosIfNeeded): Updated to use std::array.
+        (WTF::numberToFixedPrecisionString): Ditto.
+        (WTF::numberToFixedWidthString): Ditto.
+
+        * wtf/dtoa.h: Changed arrays to be std::array instead of C arrays so the
+        array types will be checked. Removed dtoaRoundSF and dtoaRoundDP.
+        Added float overloads for numberToString, numberToFixedPrecisionString,
+        and numberToFixedWidthString. The only one of these that is called at this
+        time is numberToString, called by the floating point StringTypeAdapter in
+        StringConcatenateNummbers.h.
+
+        * wtf/text/StringConcatenateNumbers.h: Updated for std::array.
+
 2019-03-01  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

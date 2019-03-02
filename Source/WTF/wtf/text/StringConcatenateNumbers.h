@@ -69,7 +69,7 @@ public:
     StringTypeAdapter(FloatingPoint number)
     {
         numberToString(number, m_buffer);
-        m_length = std::strlen(m_buffer);
+        m_length = std::strlen(&m_buffer[0]);
     }
 
     unsigned length() const { return m_length; }
@@ -77,7 +77,7 @@ public:
     template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, buffer(), m_length); }
 
 private:
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(m_buffer); }
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
 
     NumberToStringBuffer m_buffer;
     unsigned m_length;
@@ -89,7 +89,7 @@ public:
     {
         FormattedNumber numberFormatter;
         numberToFixedPrecisionString(number, significantFigures, numberFormatter.m_buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
-        numberFormatter.m_length = std::strlen(numberFormatter.m_buffer);
+        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
         return numberFormatter;
     }
 
@@ -97,12 +97,12 @@ public:
     {
         FormattedNumber numberFormatter;
         numberToFixedWidthString(number, decimalPlaces, numberFormatter.m_buffer);
-        numberFormatter.m_length = std::strlen(numberFormatter.m_buffer);
+        numberFormatter.m_length = std::strlen(&numberFormatter.m_buffer[0]);
         return numberFormatter;
     }
 
     unsigned length() const { return m_length; }
-    const LChar* buffer() const { return reinterpret_cast<const LChar*>(m_buffer); }
+    const LChar* buffer() const { return reinterpret_cast<const LChar*>(&m_buffer[0]); }
 
 private:
     NumberToStringBuffer m_buffer;

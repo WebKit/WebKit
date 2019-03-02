@@ -3,7 +3,7 @@
  * The author of this software is David M. Gay.
  *
  * Copyright (c) 1991, 2000, 2001 by Lucent Technologies.
- * Copyright (C) 2002-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2019 Apple Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose without fee is hereby granted, provided that this entire notice
@@ -728,17 +728,9 @@ static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
  *       "uniformly" distributed input, the probability is
  *       something like 10^(k-15) that we must resort to the int32_t
  *       calculation.
- *
- * Note: 'leftright' translates to 'generate shortest possible string'.
  */
-template<bool roundingNone, bool roundingSignificantFigures, bool roundingDecimalPlaces, bool leftright>
-void dtoa(DtoaBuffer result, double dd, int ndigits, bool& signOut, int& exponentOut, unsigned& precisionOut)
+void dtoa(DtoaBuffer& result, double dd, bool& signOut, int& exponentOut, unsigned& precisionOut)
 {
-    // Exactly one rounding mode must be specified.
-    ASSERT(roundingNone + roundingSignificantFigures + roundingDecimalPlaces == 1);
-    // roundingNone only allowed (only sensible?) with leftright set.
-    ASSERT(!roundingNone || leftright);
-
     ASSERT(std::isfinite(dd));
 
     int bbits, b2, b5, be, dig, i, ieps, ilim = 0, ilim0, ilim1 = 0,
@@ -843,25 +835,10 @@ void dtoa(DtoaBuffer result, double dd, int ndigits, bool& signOut, int& exponen
         s5 = 0;
     }
 
-    if (roundingNone) {
-        ilim = ilim1 = -1;
-        i = 18;
-        ndigits = 0;
-    }
-    if (roundingSignificantFigures) {
-        if (ndigits <= 0)
-            ndigits = 1;
-        ilim = ilim1 = i = ndigits;
-    }
-    if (roundingDecimalPlaces) {
-        i = ndigits + k + 1;
-        ilim = i;
-        ilim1 = i - 1;
-        if (i <= 0)
-            i = 1;
-    }
+    ilim = ilim1 = -1;
+    i = 18;
 
-    s = s0 = result;
+    s = s0 = &result[0];
 
     if (ilim >= 0 && ilim <= Quick_max) {
         /* Try to get by with floating-point arithmetic. */
@@ -916,43 +893,22 @@ void dtoa(DtoaBuffer result, double dd, int ndigits, bool& signOut, int& exponen
                 goto noDigits;
             goto fastFailed;
         }
-        if (leftright) {
-            /* Use Steele & White method of only
-             * generating digits needed.
-             */
-            dval(&eps) = (0.5 / tens[ilim - 1]) - dval(&eps);
-            for (i = 0;;) {
-                L = (long int)dval(&u);
-                dval(&u) -= L;
-                *s++ = '0' + (int)L;
-                if (dval(&u) < dval(&eps))
-                    goto ret;
-                if (1. - dval(&u) < dval(&eps))
-                    goto bumpUp;
-                if (++i >= ilim)
-                    break;
-                dval(&eps) *= 10.;
-                dval(&u) *= 10.;
-            }
-        } else {
-            /* Generate ilim digits, then fix them up. */
-            dval(&eps) *= tens[ilim - 1];
-            for (i = 1;; i++, dval(&u) *= 10.) {
-                L = (int32_t)(dval(&u));
-                if (!(dval(&u) -= L))
-                    ilim = i;
-                *s++ = '0' + (int)L;
-                if (i == ilim) {
-                    if (dval(&u) > 0.5 + dval(&eps))
-                        goto bumpUp;
-                    if (dval(&u) < 0.5 - dval(&eps)) {
-                        while (*--s == '0') { }
-                        s++;
-                        goto ret;
-                    }
-                    break;
-                }
-            }
+        /* Use Steele & White method of only
+         * generating digits needed.
+         */
+        dval(&eps) = (0.5 / tens[ilim - 1]) - dval(&eps);
+        for (i = 0;;) {
+            L = (long int)dval(&u);
+            dval(&u) -= L;
+            *s++ = '0' + (int)L;
+            if (dval(&u) < dval(&eps))
+                goto ret;
+            if (1. - dval(&u) < dval(&eps))
+                goto bumpUp;
+            if (++i >= ilim)
+                break;
+            dval(&eps) *= 10.;
+            dval(&u) *= 10.;
         }
 fastFailed:
         s = s0;
@@ -966,13 +922,6 @@ fastFailed:
     if (be >= 0 && k <= Int_max) {
         /* Yes. */
         ds = tens[k];
-        if (ndigits < 0 && ilim <= 0) {
-            S.clear();
-            mhi.clear();
-            if (ilim < 0 || dval(&u) <= 5 * ds)
-                goto noDigits;
-            goto oneDigit;
-        }
         for (i = 1;; i++, dval(&u) *= 10.) {
             L = (int32_t)(dval(&u) / ds);
             dval(&u) -= L * ds;
@@ -1002,12 +951,10 @@ bumpUp:
     m5 = b5;
     mhi.clear();
     mlo.clear();
-    if (leftright) {
-        i = denorm ? be + (Bias + (P - 1) - 1 + 1) : 1 + P - bbits;
-        b2 += i;
-        s2 += i;
-        i2b(mhi, 1);
-    }
+    i = denorm ? be + (Bias + (P - 1) - 1 + 1) : 1 + P - bbits;
+    b2 += i;
+    s2 += i;
+    i2b(mhi, 1);
     if (m2 > 0 && s2 > 0) {
         i = m2 < s2 ? m2 : s2;
         b2 -= i;
@@ -1015,15 +962,12 @@ bumpUp:
         s2 -= i;
     }
     if (b5 > 0) {
-        if (leftright) {
-            if (m5 > 0) {
-                pow5mult(mhi, m5);
-                mult(b, mhi);
-            }
-            if ((j = b5 - m5))
-                pow5mult(b, j);
-        } else
-            pow5mult(b, b5);
+        if (m5 > 0) {
+            pow5mult(mhi, m5);
+            mult(b, mhi);
+        }
+        if ((j = b5 - m5))
+            pow5mult(b, j);
     }
     i2b(S, 1);
     if (s5 > 0)
@@ -1032,7 +976,7 @@ bumpUp:
     /* Check for special case that d is a normalized power of 2. */
 
     spec_case = 0;
-    if ((roundingNone || leftright) && (!word1(&u) && !(word0(&u) & Bndry_mask) && word0(&u) & (Exp_mask & ~Exp_msk1))) {
+    if ((!word1(&u) && !(word0(&u) & Bndry_mask) && word0(&u) & (Exp_mask & ~Exp_msk1))) {
         /* The special case */
         b2 += Log2P;
         s2 += Log2P;
@@ -1067,105 +1011,84 @@ bumpUp:
         if (cmp(b, S) < 0) {
             k--;
             multadd(b, 10, 0);    /* we botched the k estimate */
-            if (leftright)
-                multadd(mhi, 10, 0);
+            multadd(mhi, 10, 0);
             ilim = ilim1;
         }
     }
-    if (ilim <= 0 && roundingDecimalPlaces) {
-        if (ilim < 0)
-            goto noDigits;
-        multadd(S, 5, 0);
-        // For IEEE-754 unbiased rounding this check should be <=, such that 0.5 would flush to zero.
-        if (cmp(b, S) < 0)
-            goto noDigits;
-        goto oneDigit;
-    }
-    if (leftright) {
-        if (m2 > 0)
-            lshift(mhi, m2);
+    if (m2 > 0)
+        lshift(mhi, m2);
 
-        /* Compute mlo -- check for special case
-         * that d is a normalized power of 2.
+    /* Compute mlo -- check for special case
+     * that d is a normalized power of 2.
+     */
+
+    mlo = mhi;
+    if (spec_case)
+        lshift(mhi, Log2P);
+
+    for (i = 1;;i++) {
+        dig = quorem(b, S) + '0';
+        /* Do we yet have the shortest decimal string
+         * that will round to d?
          */
-
-        mlo = mhi;
-        if (spec_case)
-            lshift(mhi, Log2P);
-
-        for (i = 1;;i++) {
-            dig = quorem(b, S) + '0';
-            /* Do we yet have the shortest decimal string
-             * that will round to d?
-             */
-            j = cmp(b, mlo);
-            diff(delta, S, mhi);
-            j1 = delta.sign ? 1 : cmp(b, delta);
+        j = cmp(b, mlo);
+        diff(delta, S, mhi);
+        j1 = delta.sign ? 1 : cmp(b, delta);
 #ifdef DTOA_ROUND_BIASED
-            if (j < 0 || !j) {
+        if (j < 0 || !j) {
 #else
-            // FIXME: ECMA-262 specifies that equidistant results round away from
-            // zero, which probably means we shouldn't be on the unbiased code path
-            // (the (word1(&u) & 1) clause is looking highly suspicious). I haven't
-            // yet understood this code well enough to make the call, but we should
-            // probably be enabling DTOA_ROUND_BIASED. I think the interesting corner
-            // case to understand is probably "Math.pow(0.5, 24).toString()".
-            // I believe this value is interesting because I think it is precisely
-            // representable in binary floating point, and its decimal representation
-            // has a single digit that Steele & White reduction can remove, with the
-            // value 5 (thus equidistant from the next numbers above and below).
-            // We produce the correct answer using either codepath, and I don't as
-            // yet understand why. :-)
-            if (!j1 && !(word1(&u) & 1)) {
-                if (dig == '9')
-                    goto round9up;
-                if (j > 0)
-                    dig++;
-                *s++ = dig;
-                goto ret;
-            }
-            if (j < 0 || (!j && !(word1(&u) & 1))) {
+        // FIXME: ECMA-262 specifies that equidistant results round away from
+        // zero, which probably means we shouldn't be on the unbiased code path
+        // (the (word1(&u) & 1) clause is looking highly suspicious). I haven't
+        // yet understood this code well enough to make the call, but we should
+        // probably be enabling DTOA_ROUND_BIASED. I think the interesting corner
+        // case to understand is probably "Math.pow(0.5, 24).toString()".
+        // I believe this value is interesting because I think it is precisely
+        // representable in binary floating point, and its decimal representation
+        // has a single digit that Steele & White reduction can remove, with the
+        // value 5 (thus equidistant from the next numbers above and below).
+        // We produce the correct answer using either codepath, and I don't as
+        // yet understand why. :-)
+        if (!j1 && !(word1(&u) & 1)) {
+            if (dig == '9')
+                goto round9up;
+            if (j > 0)
+                dig++;
+            *s++ = dig;
+            goto ret;
+        }
+        if (j < 0 || (!j && !(word1(&u) & 1))) {
 #endif
-                if ((b.words()[0] || b.size() > 1) && (j1 > 0)) {
-                    lshift(b, 1);
-                    j1 = cmp(b, S);
-                    // For IEEE-754 round-to-even, this check should be (j1 > 0 || (!j1 && (dig & 1))),
-                    // but ECMA-262 specifies that equidistant values (e.g. (.5).toFixed()) should
-                    // be rounded away from zero.
-                    if (j1 >= 0) {
-                        if (dig == '9')
-                            goto round9up;
-                        dig++;
-                    }
+            if ((b.words()[0] || b.size() > 1) && (j1 > 0)) {
+                lshift(b, 1);
+                j1 = cmp(b, S);
+                // For IEEE-754 round-to-even, this check should be (j1 > 0 || (!j1 && (dig & 1))),
+                // but ECMA-262 specifies that equidistant values (e.g. (.5).toFixed()) should
+                // be rounded away from zero.
+                if (j1 >= 0) {
+                    if (dig == '9')
+                        goto round9up;
+                    dig++;
                 }
-                *s++ = dig;
-                goto ret;
-            }
-            if (j1 > 0) {
-                if (dig == '9') { /* possible if i == 1 */
-round9up:
-                    *s++ = '9';
-                    goto roundoff;
-                }
-                *s++ = dig + 1;
-                goto ret;
             }
             *s++ = dig;
-            if (i == ilim)
-                break;
-            multadd(b, 10, 0);
-            multadd(mlo, 10, 0);
-            multadd(mhi, 10, 0);
+            goto ret;
         }
-    } else {
-        for (i = 1;; i++) {
-            *s++ = dig = quorem(b, S) + '0';
-            if (!b.words()[0] && b.size() <= 1)
-                goto ret;
-            if (i >= ilim)
-                break;
-            multadd(b, 10, 0);
+        if (j1 > 0) {
+            if (dig == '9') { /* possible if i == 1 */
+round9up:
+                *s++ = '9';
+                goto roundoff;
+            }
+            *s++ = dig + 1;
+            goto ret;
         }
+        *s++ = dig;
+        if (i == ilim)
+            break;
+        multadd(b, 10, 0);
+        multadd(mlo, 10, 0);
+        multadd(mhi, 10, 0);
     }
 
     /* Round off last digit */
@@ -1200,39 +1123,28 @@ oneDigit:
     k++;
     goto ret;
 ret:
-    ASSERT(s > result);
+    ASSERT(s > &result[0]);
     *s = 0;
     exponentOut = k;
-    precisionOut = s - result;
+    precisionOut = s - &result[0];
 }
 
-void dtoa(DtoaBuffer result, double dd, bool& sign, int& exponent, unsigned& precision)
+const char* numberToString(float number, NumberToStringBuffer& buffer)
 {
-    // flags are roundingNone, leftright.
-    dtoa<true, false, false, true>(result, dd, 0, sign, exponent, precision);
+    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
+    double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortestSingle(number, &builder);
+    return builder.Finalize();
 }
 
-void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision)
+const char* numberToString(double d, NumberToStringBuffer& buffer)
 {
-    // flag is roundingSignificantFigures.
-    dtoa<false, true, false, false>(result, dd, ndigits, sign, exponent, precision);
-}
-
-void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision)
-{
-    // flag is roundingDecimalPlaces.
-    dtoa<false, false, true, false>(result, dd, ndigits, sign, exponent, precision);
-}
-
-const char* numberToString(double d, NumberToStringBuffer buffer)
-{
-    double_conversion::StringBuilder builder(buffer, NumberToStringBufferLength);
+    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToShortest(d, &builder);
     return builder.Finalize();
 }
 
-static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToStringBuffer buffer, double_conversion::StringBuilder& builder)
+static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToStringBuffer& buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();
     size_t decimalPointPosition = 0;
@@ -1270,14 +1182,14 @@ static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToSt
     return builder.Finalize();
 }
 
-const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer buffer, bool truncateTrailingZeros)
+const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool truncateTrailingZeros)
 {
     // Mimic sprintf("%.[precision]g", ...), but use dtoas rounding facilities.
     // "g": Signed value printed in f or e format, whichever is more compact for the given value and precision.
     // The e format is used only when the exponent of the value is less than –4 or greater than or equal to the
     // precision argument. Trailing zeros are truncated, and the decimal point appears only if one or more digits follow it.
     // "precision": The precision specifies the maximum number of significant digits printed.
-    double_conversion::StringBuilder builder(buffer, NumberToStringBufferLength);
+    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToPrecision(d, significantFigures, &builder);
     if (!truncateTrailingZeros)
@@ -1285,7 +1197,7 @@ const char* numberToFixedPrecisionString(double d, unsigned significantFigures, 
     return formatStringTruncatingTrailingZerosIfNeeded(buffer, builder);
 }
 
-const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer buffer)
+const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
     // Mimic sprintf("%.[precision]f", ...), but use dtoas rounding facilities.
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
@@ -1294,7 +1206,7 @@ const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToS
     // "precision": The precision value specifies the number of digits after the decimal point.
     // If a decimal point appears, at least one digit appears before it.
     // The value is rounded to the appropriate number of digits.    
-    double_conversion::StringBuilder builder(buffer, NumberToStringBufferLength);
+    double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToFixed(d, decimalPlaces, &builder);
     return builder.Finalize();
