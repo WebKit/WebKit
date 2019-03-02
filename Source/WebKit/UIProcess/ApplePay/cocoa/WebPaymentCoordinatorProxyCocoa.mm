@@ -506,13 +506,13 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
 #endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
-    auto& configuration = webPageProxy.websiteDataStore().configuration();
+    auto& websiteDataStore = webPageProxy.websiteDataStore();
 
-    if (!configuration.sourceApplicationBundleIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
-        [result setSourceApplicationBundleIdentifier:configuration.sourceApplicationBundleIdentifier()];
+    if (!websiteDataStore.sourceApplicationBundleIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
+        [result setSourceApplicationBundleIdentifier:websiteDataStore.sourceApplicationBundleIdentifier()];
 
-    if (!configuration.sourceApplicationSecondaryIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
-        [result setSourceApplicationSecondaryIdentifier:configuration.sourceApplicationSecondaryIdentifier()];
+    if (!websiteDataStore.sourceApplicationSecondaryIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
+        [result setSourceApplicationSecondaryIdentifier:websiteDataStore.sourceApplicationSecondaryIdentifier()];
 
 #if PLATFORM(IOS_FAMILY)
     if (!webPageProxy.process().processPool().configuration().ctDataConnectionServiceType().isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])

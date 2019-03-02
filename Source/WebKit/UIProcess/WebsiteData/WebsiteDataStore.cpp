@@ -98,6 +98,8 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_storageManager(StorageManager::create(m_configuration->localStorageDirectory()))
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
+    , m_sourceApplicationBundleIdentifier(m_configuration->sourceApplicationBundleIdentifier())
+    , m_sourceApplicationSecondaryIdentifier(m_configuration->sourceApplicationSecondaryIdentifier())
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
 #endif
@@ -2099,6 +2101,22 @@ API::HTTPCookieStore& WebsiteDataStore::cookieStore()
 
 void WebsiteDataStore::didCreateNetworkProcess()
 {
+}
+
+bool WebsiteDataStore::setSourceApplicationSecondaryIdentifier(String&& identifier)
+{
+    if (!m_allowedToSetApplicationIdentifiers)
+        return false;
+    m_sourceApplicationSecondaryIdentifier = WTFMove(identifier);
+    return true;
+}
+
+bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
+{
+    if (!m_allowedToSetApplicationIdentifiers)
+        return false;
+    m_sourceApplicationBundleIdentifier = WTFMove(identifier);
+    return true;
 }
 
 }

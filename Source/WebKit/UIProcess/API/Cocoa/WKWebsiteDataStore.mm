@@ -363,6 +363,28 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setProxyConfiguration((__bridge CFDictionaryRef)configuration);
 }
 
+- (NSString *)_sourceApplicationBundleIdentifier
+{
+    return _websiteDataStore->websiteDataStore().sourceApplicationBundleIdentifier();
+}
+
+- (void)_setSourceApplicationBundleIdentifier:(NSString *)identifier
+{
+    if (!_websiteDataStore->websiteDataStore().setSourceApplicationBundleIdentifier(identifier))
+        [NSException raise:NSGenericException format:@"_setSourceApplicationBundleIdentifier cannot be called after networking has begun"];
+}
+
+- (NSString *)_sourceApplicationSecondaryIdentifier
+{
+    return _websiteDataStore->websiteDataStore().sourceApplicationSecondaryIdentifier();
+}
+
+- (void)_setSourceApplicationSecondaryIdentifier:(NSString *)identifier
+{
+    if (!_websiteDataStore->websiteDataStore().setSourceApplicationSecondaryIdentifier(identifier))
+        [NSException raise:NSGenericException format:@"_setSourceApplicationSecondaryIdentifier cannot be called after networking has begun"];
+}
+
 - (NSDictionary *)_proxyConfiguration
 {
     return (__bridge NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();

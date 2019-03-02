@@ -1,3 +1,14 @@
+2019-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add setters on WKWebsiteDataStore for sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=195229
+        <rdar://problem/48520362>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2019-03-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add a system trace scope for event region building

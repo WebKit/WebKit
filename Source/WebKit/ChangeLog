@@ -1,3 +1,35 @@
+2019-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add setters on WKWebsiteDataStore for sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=195229
+        <rdar://problem/48520362>
+
+        Reviewed by Chris Dumez.
+
+        Just like _setBoundInterfaceIdentifier, we need a way to set these properties after instantiation of a WKWebsiteDataStore,
+        but we need to make sure we don't set it after the parameters have been copied to the NetworkProcess.
+
+        Functionality verified by manual testing.  See radar.
+        Added an API test that verifies the setter restrictions work as expected.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _sourceApplicationBundleIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationBundleIdentifier:]):
+        (-[WKWebsiteDataStore _sourceApplicationSecondaryIdentifier]):
+        (-[WKWebsiteDataStore _setSourceApplicationSecondaryIdentifier:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentRequest):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::setSourceApplicationSecondaryIdentifier):
+        (WebKit::WebsiteDataStore::setSourceApplicationBundleIdentifier):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::sourceApplicationBundleIdentifier):
+        (WebKit::WebsiteDataStore::sourceApplicationSecondaryIdentifier):
+
 2019-03-01  Antoine Quint  <graouts@apple.com>
 
         [iOS] Turn mouse event simulation on by default

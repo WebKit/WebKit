@@ -490,6 +490,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     if (m_websiteDataStore) {
         parameters.defaultDataStoreParameters.pendingCookies = copyToVector(m_websiteDataStore->websiteDataStore().pendingCookies());
         m_websiteDataStore->websiteDataStore().clearPendingCookies();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationBundleIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationSecondaryIdentifier();
+        m_websiteDataStore->websiteDataStore().finalizeApplicationIdentifiers();
     }
 
     parameters.cacheModel = cacheModel();
