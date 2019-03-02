@@ -1,3 +1,10 @@
+2019-03-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r242302.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-03-01  Alex Christensen  <achristensen@webkit.org>
 
         NetworkDataTask redirection should not keep alive its NetworkSession
