@@ -1,5 +1,65 @@
 2019-03-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: DOM, URL, and Event breakpoints don't grey out when all breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=195170
+        <rdar://problem/48478193>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        (WI.DOMBreakpointTreeElement.prototype.onattach):
+        (WI.DOMBreakpointTreeElement.prototype.ondetach):
+        (WI.DOMBreakpointTreeElement.prototype._updateStatus):
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        (WI.EventBreakpointTreeElement.prototype.onattach):
+        (WI.EventBreakpointTreeElement.prototype.ondetach):
+        (WI.EventBreakpointTreeElement.prototype._updateStatus):
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement):
+        (WI.URLBreakpointTreeElement.prototype.onattach):
+        (WI.URLBreakpointTreeElement.prototype.ondetach):
+        (WI.URLBreakpointTreeElement.prototype._updateStatus):
+        Remove the `"resolved"` class when the global "breakpoints enabled" state is changed.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDisabledStateChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointDisabledStateChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleURLBreakpointDisabledStateChanged): Added.
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._resolveEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype._resolveURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint.breakpointUpdated): Deleted.
+        (WI.DOMDebuggerManager.prototype._updateURLBreakpoint.breakpointUpdated): Deleted.
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint):
+        (WI.DOMBreakpoint.deserialize): Added.
+        (WI.DOMBreakpoint.prototype.set disabled):
+        (WI.DOMBreakpoint.prototype.set domNodeIdentifier):
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint.deserialize): Added.
+        (WI.EventBreakpoint.prototype.set disabled):
+        (WI.EventBreakpoint.fromPayload): Deleted.
+        * UserInterface/Models/URLBreakpoint.js:
+        (WI.URLBreakpoint.deserialize): Added.
+        (WI.URLBreakpoint.prototype.set disabled):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDisabledStateChanged): Added.
+        (WI.DOMTreeContentView.prototype._handleDOMBreakpointDOMNodeChanged): Added.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._handleDOMBreakpointResolvedStateChanged): Added.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDOMBreakpointResolvedStateChanged): Added.
+        Drive-by: rename all events with the name `*DidChange` to `*Changed`.
+        Drive-by: create static `deserialize` helper functions.
+
+2019-03-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: breakpoints should be disabled when an audit is running
         https://bugs.webkit.org/show_bug.cgi?id=195105
         <rdar://problem/48441373>

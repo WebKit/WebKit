@@ -25,13 +25,25 @@
 
 WI.URLBreakpoint = class URLBreakpoint extends WI.Object
 {
-    constructor(type, url, disabled)
+    constructor(type, url, {disabled} = {})
     {
+        console.assert(Object.values(WI.URLBreakpoint.Type).includes(type), type);
+        console.assert(typeof url === "string", url);
+
         super();
 
-        this._type = type || WI.URLBreakpoint.Type.Text;
-        this._url = url || "";
+        this._type = type;
+        this._url = url;
         this._disabled = disabled || false;
+    }
+
+    // Static
+
+    static deserialize(serializedInfo)
+    {
+        return new WI.URLBreakpoint(serializedInfo.type, serializedInfo.url, {
+            disabled: !!serializedInfo.disabled,
+        });
     }
 
     // Public
@@ -51,7 +63,7 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Object
 
         this._disabled = disabled;
 
-        this.dispatchEventToListeners(WI.URLBreakpoint.Event.DisabledStateDidChange);
+        this.dispatchEventToListeners(WI.URLBreakpoint.Event.DisabledStateChanged);
     }
 
     get serializableInfo()
@@ -70,8 +82,7 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Object
 };
 
 WI.URLBreakpoint.Event = {
-    DisabledStateDidChange: "url-breakpoint-disabled-state-did-change",
-    ResolvedStateDidChange: "url-breakpoint-resolved-state-did-change",
+    DisabledStateChanged: "url-breakpoint-disabled-state-changed",
 };
 
 WI.URLBreakpoint.Type = {

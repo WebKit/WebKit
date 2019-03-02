@@ -44,13 +44,9 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
         super(["breakpoint", "url", className], title, subtitle, breakpoint);
 
         this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
-        this.status.classList.add("status-image", "resolved");
+        this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
 
         this.tooltipHandledSeparately = true;
-
-        breakpoint.addEventListener(WI.URLBreakpoint.Event.DisabledStateDidChange, this._updateStatus, this);
-
-        this._updateStatus();
     }
 
     // Protected
@@ -59,6 +55,9 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
     {
         super.onattach();
 
+        this.representedObject.addEventListener(WI.URLBreakpoint.Event.DisabledStateChanged, this._updateStatus, this);
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus, this);
+
         this._boundStatusImageElementClicked = this._statusImageElementClicked.bind(this);
         this._boundStatusImageElementFocused = this._statusImageElementFocused.bind(this);
         this._boundStatusImageElementMouseDown = this._statusImageElementMouseDown.bind(this);
@@ -66,11 +65,16 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
         this.status.addEventListener("click", this._boundStatusImageElementClicked);
         this.status.addEventListener("focus", this._boundStatusImageElementFocused);
         this.status.addEventListener("mousedown", this._boundStatusImageElementMouseDown);
+
+        this._updateStatus();
     }
 
     ondetach()
     {
         super.ondetach();
+
+        this.representedObject.removeEventListener(null, null, this);
+        WI.debuggerManager.removeEventListener(null, null, this);
 
         this.status.removeEventListener("click", this._boundStatusImageElementClicked);
         this.status.removeEventListener("focus", this._boundStatusImageElementFocused);
@@ -143,6 +147,10 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
 
     _updateStatus()
     {
-        this.status.classList.toggle("disabled", this.representedObject.disabled);
+        if (!this.status)
+            return;
+
+        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName, this.representedObject.disabled);
+        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName, WI.debuggerManager.breakpointsEnabled);
     }
 };
