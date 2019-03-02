@@ -2076,7 +2076,7 @@ static RenderObject* rendererForView(WAKView* view)
     if ([array containsObject:wrapper])
         return YES;
     
-    // Explicity set that this is now an element (in case other logic tries to override).
+    // Explicitly set that this is now an element (in case other logic tries to override).
     [wrapper setValue:@YES forKey:@"isAccessibilityElement"];    
     [array addObject:wrapper];
     return YES;

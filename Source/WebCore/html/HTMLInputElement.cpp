@@ -165,11 +165,15 @@ HTMLInputElement::~HTMLInputElement()
 
     // Need to remove form association while this is still an HTMLInputElement
     // so that virtual functions are called correctly.
-    setForm(0);
-    // setForm(0) may register this to a document-level radio button group.
-    // We should unregister it to avoid accessing a deleted object.
+    setForm(nullptr);
+
+    // This is needed for a radio button that was not in a form, and also for
+    // a radio button that was in a form. The call to setForm(nullptr) above
+    // actually adds the button to the document groups in the latter case.
+    // That is inelegant, but harmless since we remove it here.
     if (isRadioButton())
         document().formController().radioButtonGroups().removeButton(*this);
+
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
         document().didRemoveEventTargetNode(*this);
@@ -1563,8 +1567,12 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
         oldDocument.unregisterForDocumentSuspensionCallbacks(*this);
         newDocument.registerForDocumentSuspensionCallbacks(*this);
     }
+
+    // We call this even for radio buttons in forms; it's harmless because the
+    // removeButton function is written to be safe for buttons not in any group.
     if (isRadioButton())
         oldDocument.formController().radioButtonGroups().removeButton(*this);
+
 #if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler) {
         oldDocument.didRemoveEventTargetNode(*this);
@@ -1892,12 +1900,12 @@ Vector<HTMLInputElement*> HTMLInputElement::radioButtonGroup() const
         return { };
     return buttons->groupMembers(*this);
 }
-    
+
 HTMLInputElement* HTMLInputElement::checkedRadioButtonForGroup() const
 {
     if (RadioButtonGroups* buttons = radioButtonGroups())
         return buttons->checkedButtonForGroup(name());
-    return 0;
+    return nullptr;
 }
 
 RadioButtonGroups* HTMLInputElement::radioButtonGroups() const
