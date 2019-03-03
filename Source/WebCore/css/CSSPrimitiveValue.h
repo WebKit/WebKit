@@ -330,8 +330,7 @@ private:
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
-    template<unsigned characterCount> ALWAYS_INLINE Ref<StringImpl> formatNumberValue(const char (&characters)[characterCount]) const;
-    NEVER_INLINE Ref<StringImpl> formatNumberValue(const char* suffix, unsigned suffixLength) const;
+    NEVER_INLINE String formatNumberValue(StringView) const;
 
     union {
         CSSPropertyID propertyID;

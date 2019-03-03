@@ -1,3 +1,14 @@
+2019-03-02  Darin Adler  <darin@apple.com>
+
+        Retire legacy dtoa function and DecimalNumber class
+        https://bugs.webkit.org/show_bug.cgi?id=195253
+
+        Reviewed by Daniel Bates.
+
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+        Rebaseline still-failing part of this test that dumps super-small numbers that are formatted
+        differently by the new code (exponential style).
+
 2019-03-01  Rob Buis  <rbuis@igalia.com>
 
         Adjust XMLHttpRequest Content-Type handling

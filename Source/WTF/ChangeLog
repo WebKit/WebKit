@@ -1,3 +1,40 @@
+2019-03-02  Darin Adler  <darin@apple.com>
+
+        Retire legacy dtoa function and DecimalNumber class
+        https://bugs.webkit.org/show_bug.cgi?id=195253
+
+        Reviewed by Daniel Bates.
+
+        * WTF.xcodeproj/project.pbxproj: Removed DecimalNumber.cpp/h.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/DecimalNumber.cpp: Removed.
+        * wtf/DecimalNumber.h: Removed.
+
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::Value::writeJSON const): Use
+        StringBuilder::appendECMAScriptNumber instead of custom logic
+        using the DecimalNumber class.
+
+        * wtf/dtoa.cpp:
+        (WTF::storeInc): Deleted.
+        (WTF::BigInt): Deleted.
+        (WTF::multadd): Deleted.
+        (WTF::hi0bits): Deleted.
+        (WTF::lo0bits): Deleted.
+        (WTF::i2b): Deleted.
+        (WTF::mult): Deleted.
+        (WTF::P5Node::P5Node): Deleted.
+        (WTF::pow5mult): Deleted.
+        (WTF::lshift): Deleted.
+        (WTF::cmp): Deleted.
+        (WTF::diff): Deleted.
+        (WTF::d2b): Deleted.
+        (WTF::quorem): Deleted.
+        (WTF::dtoa): Deleted.
+
+        * wtf/dtoa.h: Removed DtoaBuffer, dtoa, and NumberToStringBufferLength.
+
 2019-02-27  Darin Adler  <darin@apple.com>
 
         Fixed makeString(float) to do shortest-form serialization without first converting to double

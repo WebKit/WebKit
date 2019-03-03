@@ -1,3 +1,19 @@
+2019-03-02  Darin Adler  <darin@apple.com>
+
+        Retire legacy dtoa function and DecimalNumber class
+        https://bugs.webkit.org/show_bug.cgi?id=195253
+
+        Reviewed by Daniel Bates.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue const): Use makeString instead
+        of DecimalNumber. Also changed return type to String and use StringView and
+        removed special handling of literals.
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const): Removed an
+        unnecessary use of StringBuilder.
+
+        * css/CSSPrimitiveValue.h: Updated for changes to formatNumberValue.
+
 2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Cleanups in SoupNetworkSession

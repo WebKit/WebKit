@@ -45,7 +45,6 @@ set(WTF_PUBLIC_HEADERS
     DataLog.h
     DateMath.h
     DebugUtilities.h
-    DecimalNumber.h
     DeferrableRefCounted.h
     DeprecatedOptional.h
     Deque.h
@@ -351,7 +350,6 @@ set(WTF_SOURCES
     CurrentTime.cpp
     DataLog.cpp
     DateMath.cpp
-    DecimalNumber.cpp
     FastBitVector.cpp
     FastMalloc.cpp
     FilePrintStream.cpp

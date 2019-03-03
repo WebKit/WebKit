@@ -115,7 +115,6 @@
 		A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47275151A825A004123FF /* CurrentTime.cpp */; };
 		A8A4739E151A825B004123FF /* DataLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47277151A825A004123FF /* DataLog.cpp */; };
 		A8A473A0151A825B004123FF /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47279151A825A004123FF /* DateMath.cpp */; };
-		A8A473A2151A825B004123FF /* DecimalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4727B151A825A004123FF /* DecimalNumber.cpp */; };
 		A8A473A8151A825B004123FF /* bignum-dtoa.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A47282151A825A004123FF /* bignum-dtoa.cc */; };
 		A8A473AA151A825B004123FF /* bignum.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A47284151A825A004123FF /* bignum.cc */; };
 		A8A473AC151A825B004123FF /* cached-powers.cc in Sources */ = {isa = PBXBuildFile; fileRef = A8A47286151A825A004123FF /* cached-powers.cc */; };
@@ -496,8 +495,6 @@
 		A8A47278151A825A004123FF /* DataLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLog.h; sourceTree = "<group>"; };
 		A8A47279151A825A004123FF /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		A8A4727A151A825A004123FF /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
-		A8A4727B151A825A004123FF /* DecimalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecimalNumber.cpp; sourceTree = "<group>"; };
-		A8A4727C151A825A004123FF /* DecimalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecimalNumber.h; sourceTree = "<group>"; };
 		A8A4727E151A825A004123FF /* Deque.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
 		A8A47280151A825A004123FF /* DoublyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoublyLinkedList.h; sourceTree = "<group>"; };
 		A8A47282151A825A004123FF /* bignum-dtoa.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "bignum-dtoa.cc"; sourceTree = "<group>"; };
@@ -919,8 +916,6 @@
 				A8A47279151A825A004123FF /* DateMath.cpp */,
 				A8A4727A151A825A004123FF /* DateMath.h */,
 				996B17841EBA441C007E10EB /* DebugUtilities.h */,
-				A8A4727B151A825A004123FF /* DecimalNumber.cpp */,
-				A8A4727C151A825A004123FF /* DecimalNumber.h */,
 				0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */,
 				A561F30F1DF2642100FF675D /* DeprecatedOptional.h */,
 				A8A4727E151A825A004123FF /* Deque.h */,
@@ -1209,7 +1204,6 @@
 				7C137941222326C700D7A824 /* AUTHORS */,
 				A8A47288151A825A004123FF /* COPYING */,
 				A8A47292151A825A004123FF /* LICENSE */,
-				7C137943222326D500D7A824 /* README.md */,
 				A8A47282151A825A004123FF /* bignum-dtoa.cc */,
 				A8A47283151A825A004123FF /* bignum-dtoa.h */,
 				A8A47284151A825A004123FF /* bignum.cc */,
@@ -1225,6 +1219,7 @@
 				A8A47290151A825A004123FF /* fixed-dtoa.cc */,
 				A8A47291151A825A004123FF /* fixed-dtoa.h */,
 				7C137942222326D500D7A824 /* ieee.h */,
+				7C137943222326D500D7A824 /* README.md */,
 				A8A47294151A825A004123FF /* strtod.cc */,
 				A8A47295151A825A004123FF /* strtod.h */,
 				A8A47296151A825A004123FF /* utils.h */,
@@ -1517,7 +1512,6 @@
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
 				A8A473A0151A825B004123FF /* DateMath.cpp in Sources */,
-				A8A473A2151A825B004123FF /* DecimalNumber.cpp in Sources */,
 				1ACADD841884480100D8B71D /* DeprecatedSymbolsUsedBySafari.mm in Sources */,
 				A8A473AE151A825B004123FF /* diy-fp.cc in Sources */,
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,

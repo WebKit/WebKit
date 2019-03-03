@@ -1,3 +1,25 @@
+2019-03-02  Darin Adler  <darin@apple.com>
+
+        Retire legacy dtoa function and DecimalNumber class
+        https://bugs.webkit.org/show_bug.cgi?id=195253
+
+        Reviewed by Daniel Bates.
+
+        * fast/css/large-value-csstext-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        Updated expected value to expect exponential syntax for super-small numbers that are formatted
+        differently by the new code.
+
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt:
+        Rebaseline still-failing parts of these tests that dump super-small numbers that are formatted
+        differently by the new code. Still probably needs to be done for 4 other platforms.
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove some more unused 32-bit code
