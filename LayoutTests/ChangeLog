@@ -1,3 +1,12 @@
+2019-03-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=195261
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2019-03-02  Darin Adler  <darin@apple.com>
 
         Retire legacy dtoa function and DecimalNumber class

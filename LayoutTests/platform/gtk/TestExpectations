@@ -131,7 +131,6 @@ http/tests/contentextensions/domain-rules.html [ Failure ]
 http/tests/contentextensions/filters-with-quantifiers-combined.html [ Failure ]
 http/tests/contentextensions/injected-script-callback.html [ Failure ]
 http/tests/contentextensions/media-filtered.html [ Failure ]
-http/tests/contentextensions/reload-without-contentextensions.html [ Failure ]
 http/tests/contentextensions/subresource-redirect-blocked.html [ Failure ]
 http/tests/contentextensions/text-track-blocked.html [ Failure ]
 http/tests/contentextensions/top-url.html [ Failure ]
@@ -1335,10 +1334,10 @@ webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash ]
 webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
 
-webkit.org/b/194385 imported/w3c/web-platform-tests/service-workers/service-worker/clients-get.https.html [ Crash ]
-
 webkit.org/b/194630 accessibility/removed-anonymous-block-child-causes-crash.html [ Crash ]
 webkit.org/b/194630 accessibility/removed-continuation-element-causes-crash.html [ Crash ]
+
+webkit.org/b/195260 mathml/presentation/tokenElements-dynamic.html [ Crash ] 
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1516,6 +1515,7 @@ webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Pass ]
 
 # Tests showing flakiness in the bot
 Bug(GTK) editing/pasteboard/smart-paste-004.html [ Failure Pass ]
+Bug(GTK) editing/pasteboard/paste-pre-002.html [ Failure Pass ]
 Bug(GTK) editing/selection/5057506.html [ Failure Pass ]
 Bug(GTK) editing/selection/click-in-margins-inside-editable-div.html [ Failure Pass ]
 Bug(GTK) fast/dom/MutationObserver/database-callback-delivery.html [ Failure Pass ]
@@ -3364,8 +3364,6 @@ webkit.org/b/174460 fast/canvas/canvas-blend-image.html [ Failure ]
 webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
 
 webkit.org/b/174461 inspector/canvas/memory.html [ Failure ]
-webkit.org/b/174461 inspector/canvas/requestContent-2d.html [ Failure ]
-webkit.org/b/174461 inspector/canvas/requestContent-webgl.html [ Failure ]
 
 webkit.org/b/174609 accessibility/presentation-role-iframe.html [ Failure ]
 
@@ -3384,9 +3382,6 @@ webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failur
 webkit.org/b/175931 fast/canvas/webgl/no-info-log-for-simple-shaders.html [ Failure ]
 
 webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
-
-webkit.org/b/176025 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
-webkit.org/b/176025 inspector/canvas/recording-webgl.html [ Failure ]
 
 webkit.org/b/176648 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
 webkit.org/b/176648 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
@@ -3437,8 +3432,6 @@ webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 
-webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failure ]
-
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Pass Crash ]
@@ -3477,8 +3470,6 @@ webkit.org/b/184776 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/184776 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Failure ]
 
 webkit.org/b/184777 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]
-
-webkit.org/b/184778 inspector/canvas/setShaderProgramHighlighted.html [ Failure ]
 
 webkit.org/b/184779 transitions/clip-path-path-transitions.html [ Failure ]
 webkit.org/b/184779 transitions/clip-path-transitions.html [ Failure ]
@@ -3749,6 +3740,8 @@ webkit.org/b/195133 imported/w3c/web-platform-tests/mathml/relations/css-styling
 
 webkit.org/b/195134 inspector/cpu-profiler/threads.html [ Failure ]
 webkit.org/b/195134 inspector/cpu-profiler/tracking.html [ Failure ]
+
+webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
