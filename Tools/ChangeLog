@@ -1,3 +1,12 @@
+2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, remove accidentally-committed URLHelpers.cpp test
+
+        This test isn't built by any port and was committed in r240962 by mistake. See bug #174816
+        and bug #194272 for details.
+
+        * TestWebKitAPI/Tests/WTF/URLHelpers.cpp: Removed.
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove some more unused 32-bit code
