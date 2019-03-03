@@ -1,5 +1,25 @@
 2019-03-02  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Unexpectedly frequent flashing of DOM node attributes
+        https://bugs.webkit.org/show_bug.cgi?id=148049
+        <rdar://problem/22296830>
+
+        Reviewed by Joseph Pecoraro.
+
+        Save a timestamp of when the CSS animation began, so that if the attribute's node is replaced,
+        we can "resume" the CSS animation at the same point with the attribute's new node.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.attributeDidChange):
+        (WI.DOMTreeElement.prototype._buildAttributeDOM):
+        (WI.DOMTreeElement.prototype._createModifiedAnimation):
+        (WI.DOMTreeElement.prototype._markNodeChanged): Deleted.
+        (WI.DOMTreeElement.prototype._nodeChangedAnimationEnd): Deleted.
+        (WI.DOMTreeElement.prototype._fireDidChange): Deleted.
+
+2019-03-02  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: DOM, URL, and Event breakpoints don't grey out when all breakpoints are disabled
         https://bugs.webkit.org/show_bug.cgi?id=195170
         <rdar://problem/48478193>
