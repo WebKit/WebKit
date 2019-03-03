@@ -1,3 +1,22 @@
+2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wformat error in SharedBuffer::tryCreateArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=195004
+
+        Reviewed by Darin Adler.
+
+        Seems C++ has no format specifier appropriate for printing the result of sizeof. We should
+        just not try to print it. Anyway, that's easy in this case, because sizeof(char) is
+        guaranteed to be 1. This code was an attempt to be pedantic to account for mythical systems
+        with char larger than one byte, but perhaps it didn't realize sizeof always returns
+        multiples of char and so sizeof(char) is always one even on such mythical systems.
+
+        Note the sizeof(char) use two lines up is left since it's not clear that switching it to 1
+        would actually be more readable.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::tryCreateArrayBuffer const):
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove some more unused 32-bit code

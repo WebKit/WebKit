@@ -135,7 +135,7 @@ RefPtr<ArrayBuffer> SharedBuffer::tryCreateArrayBuffer() const
 {
     auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(static_cast<unsigned>(size()), sizeof(char));
     if (!arrayBuffer) {
-        WTFLogAlways("SharedBuffer::tryCreateArrayBuffer Unable to create buffer. Requested size was %zu x %lu\n", size(), sizeof(char));
+        WTFLogAlways("SharedBuffer::tryCreateArrayBuffer Unable to create buffer. Requested size was %zu\n", size());
         return nullptr;
     }
 
