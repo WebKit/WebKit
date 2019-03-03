@@ -1,3 +1,62 @@
+2019-03-03  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Untangle WebPageProxy and WebPaymentCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=195219
+        <rdar://problem/48518082>
+
+        Reviewed by Darin Adler.
+
+        Rather than having WebPaymentCoordinatorProxy know about WebPageProxy, give
+        WebPaymentCoordinatorProxy a client interface that WebPageProxy conforms to.
+
+        In a follow-on patch, WebPaymentCoordinatorProxy will have a non-WebPageProxy client.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy): Replaced use of
+        m_webPageProxy with m_client.
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::messageSenderConnection const): Implemented
+        IPC::MessageSender via m_client.
+        (WebKit::WebPaymentCoordinatorProxy::messageSenderDestinationID const): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard): Replaced use of
+        m_webPageProxy with m_client.
+        (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession): Called our own
+        MessageSender::send rather than going through m_webPageProxy.
+        (WebKit::WebPaymentCoordinatorProxy::validateMerchant): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didAuthorizePayment): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectShippingMethod): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectShippingContact): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectPaymentMethod): Ditto.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h: Defined the Client abstract class and
+        changed m_webPageProxy to m_client.
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard): Replaced use of
+        m_webPageProxy with m_client.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Renamed from toPKPaymentRequest.
+        (WebKit::toPKPaymentRequest): Renamed to WebPaymentCoordinatorProxy::platformPaymentRequest.
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Replaced use of m_webPageProxy
+        with m_client.
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Ditto.
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::messageReceiverMap): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::paymentCoordinatorConnection): Implemented WebPaymentCoordinatorProxy::Client.
+        (WebKit::WebPageProxy::paymentCoordinatorMessageReceiver): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorDestinationID): Ditto.
+        * UIProcess/WebPageProxy.h: Made WebPageProxy derive from WebPaymentCoordinatorProxy::Client.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorPresentingViewController): Implemented WebPaymentCoordinatorProxy::Client.
+        (WebKit::WebPageProxy::paymentCoordinatorCTDataConnectionServiceType): Ditto.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorPresentingWindow): Ditto.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove some more unused 32-bit code

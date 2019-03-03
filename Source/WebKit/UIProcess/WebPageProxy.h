@@ -160,7 +160,6 @@ class URLRequest;
 
 namespace IPC {
 class Decoder;
-class Connection;
 }
 
 namespace WebCore {
@@ -349,6 +348,9 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     , public WebCore::WebMediaSessionManagerClient
+#endif
+#if ENABLE(APPLE_PAY)
+    , public WebPaymentCoordinatorProxy::Client
 #endif
     , public WebPopupMenuProxy::Client
     , public IPC::MessageReceiver
@@ -1969,6 +1971,22 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
+#endif
+
+    // WebPaymentCoordinatorProxy::Client
+#if ENABLE(APPLE_PAY)
+    IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
+    IPC::MessageReceiverMap& paymentCoordinatorMessageReceiver(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) final;
+    uint64_t paymentCoordinatorDestinationID(const WebPaymentCoordinatorProxy&) final;
+#endif
+#if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
+    UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
+#endif
+#if ENABLE(APPLE_PAY) && PLATFORM(MAC)
+    NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;
 #endif
 
     WeakPtr<PageClient> m_pageClient;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
+    UIViewController *presentingViewController = m_client.paymentCoordinatorPresentingViewController(*this);
 
     if (!presentingViewController) {
         completionHandler(false);
@@ -49,7 +49,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
 
     ASSERT(!m_paymentAuthorizationViewController);
 
-    auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
     m_paymentAuthorizationViewController = adoptNS([PAL::allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:paymentRequest.get()]);
     if (!m_paymentAuthorizationViewController) {

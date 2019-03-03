@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPaymentCoordinatorProxyCocoa.h"
+#import "config.h"
+#import "WebPaymentCoordinatorProxyCocoa.h"
 
 #if ENABLE(APPLE_PAY)
 
@@ -264,7 +264,7 @@ bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.websiteDataStore().configuration().sourceApplicationSecondaryIdentifier(), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -442,7 +442,7 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
 }
 #endif
 
-RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
+RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
 
@@ -506,17 +506,18 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
 #endif
 
     // FIXME: Instead of using respondsToSelector, this should use a proper #if version check.
-    auto& websiteDataStore = webPageProxy.websiteDataStore();
+    auto& bundleIdentifier = m_client.paymentCoordinatorSourceApplicationBundleIdentifier(*this);
+    if (!bundleIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
+        [result setSourceApplicationBundleIdentifier:bundleIdentifier];
 
-    if (!websiteDataStore.sourceApplicationBundleIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationBundleIdentifier:)])
-        [result setSourceApplicationBundleIdentifier:websiteDataStore.sourceApplicationBundleIdentifier()];
-
-    if (!websiteDataStore.sourceApplicationSecondaryIdentifier().isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
-        [result setSourceApplicationSecondaryIdentifier:websiteDataStore.sourceApplicationSecondaryIdentifier()];
+    auto& secondaryIdentifier = m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this);
+    if (!secondaryIdentifier.isEmpty() && [result respondsToSelector:@selector(setSourceApplicationSecondaryIdentifier:)])
+        [result setSourceApplicationSecondaryIdentifier:secondaryIdentifier];
 
 #if PLATFORM(IOS_FAMILY)
-    if (!webPageProxy.process().processPool().configuration().ctDataConnectionServiceType().isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
-        [result setCTDataConnectionServiceType:webPageProxy.process().processPool().configuration().ctDataConnectionServiceType()];
+    auto& serviceType = m_client.paymentCoordinatorCTDataConnectionServiceType(*this);
+    if (!serviceType.isEmpty() && [result respondsToSelector:@selector(setCTDataConnectionServiceType:)])
+        [result setCTDataConnectionServiceType:serviceType];
 #endif
 
     return result;

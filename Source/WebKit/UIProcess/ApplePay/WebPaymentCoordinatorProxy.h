@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,17 +28,19 @@
 #if ENABLE(APPLE_PAY)
 
 #include "MessageReceiver.h"
+#include "MessageSender.h"
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPaymentCoordinatorProxyAdditions.h>
+#include <WebKitAdditions/WebPaymentCoordinatorProxyAdditions.h>
 #endif
 
 namespace IPC {
-class DataReference;
+class Connection;
+class MessageReceiverMap;
 }
 
 namespace WebCore {
@@ -52,15 +54,34 @@ class PaymentMethod;
 OBJC_CLASS NSObject;
 OBJC_CLASS NSWindow;
 OBJC_CLASS PKPaymentAuthorizationViewController;
+OBJC_CLASS PKPaymentRequest;
+OBJC_CLASS UIViewController;
 OBJC_CLASS WKPaymentAuthorizationViewControllerDelegate;
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class WebPaymentCoordinatorProxy : private IPC::MessageReceiver, public CanMakeWeakPtr<WebPaymentCoordinatorProxy> {
+class WebPaymentCoordinatorProxy : private IPC::MessageReceiver, private IPC::MessageSender, public CanMakeWeakPtr<WebPaymentCoordinatorProxy> {
 public:
-    explicit WebPaymentCoordinatorProxy(WebPageProxy&);
+    struct Client {
+        virtual ~Client() = default;
+
+        virtual IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) = 0;
+        virtual IPC::MessageReceiverMap& paymentCoordinatorMessageReceiver(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&) = 0;
+        virtual uint64_t paymentCoordinatorDestinationID(const WebPaymentCoordinatorProxy&) = 0;
+#if PLATFORM(IOS_FAMILY)
+        virtual UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) = 0;
+        virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
+#endif
+#if PLATFORM(MAC)
+        virtual NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) = 0;
+#endif
+    };
+
+    explicit WebPaymentCoordinatorProxy(Client&);
     ~WebPaymentCoordinatorProxy();
 
     void didCancelPaymentSession();
@@ -73,11 +94,15 @@ public:
     void hidePaymentUI();
 
 private:
-    // IPC::MessageReceiver.
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
-    // Message handlers.
+    // IPC::MessageSender
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
+
+    // Message handlers
     void availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&&);
     void canMakePayments(CompletionHandler<void(bool)>&&);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
@@ -108,8 +133,11 @@ private:
     void platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>&);
     void platformCompletePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>&);
     void platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>&);
+#if PLATFORM(COCOA)
+    RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
+#endif
 
-    WebPageProxy& m_webPageProxy;
+    Client& m_client;
 
     enum class State {
         // Idle - Nothing's happening.
@@ -132,7 +160,7 @@ private:
 
         // PaymentMethodSelected - Dispatching the paymentmethodselected event and waiting for a reply.
         PaymentMethodSelected,
-    } m_state;
+    } m_state { State::Idle };
 
     enum class MerchantValidationState {
         // Idle - Nothing's happening.
@@ -143,7 +171,7 @@ private:
 
         // ValidationComplete - A merchant session has been sent along to PassKit.
         ValidationComplete
-    } m_merchantValidationState;
+    } m_merchantValidationState { MerchantValidationState::Idle };
 
     RetainPtr<PKPaymentAuthorizationViewController> m_paymentAuthorizationViewController;
     RetainPtr<WKPaymentAuthorizationViewControllerDelegate> m_paymentAuthorizationViewControllerDelegate;

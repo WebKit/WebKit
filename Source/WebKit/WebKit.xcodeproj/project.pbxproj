@@ -10794,7 +10794,6 @@
 				2D913444212CF9F000128AFD /* NetscapePlugin.cpp in Sources */,
 				2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */,
 				2D913445212CF9F000128AFD /* NetscapePluginStream.cpp in Sources */,
-				6BD05866220CE8C2000BED5C /* NetworkAdClickAttribution.cpp in Sources */,
 				51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				52F060E11654318500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3283F /* NetworkMDNSRegisterMessageReceiver.cpp in Sources */,

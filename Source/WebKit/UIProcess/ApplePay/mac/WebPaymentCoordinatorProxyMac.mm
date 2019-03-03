@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = makeWeakPtr(*this);
@@ -58,6 +58,10 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
             return completionHandler(false);
         }
 
+        NSWindow *presentingWindow = paymentCoordinatorProxy->m_client.paymentCoordinatorPresentingWindow(*paymentCoordinatorProxy);
+        if (!presentingWindow)
+            return completionHandler(false);
+
         ASSERT(viewController);
 
         paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate = adoptNS([[WKPaymentAuthorizationViewControllerDelegate alloc] initWithPaymentCoordinatorProxy:*paymentCoordinatorProxy]);
@@ -75,7 +79,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
             paymentCoordinatorProxy->didReachFinalState();
         }];
 
-        [paymentCoordinatorProxy->m_webPageProxy.platformWindow() beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
+        [presentingWindow beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
 
         completionHandler(true);
     }).get()];
