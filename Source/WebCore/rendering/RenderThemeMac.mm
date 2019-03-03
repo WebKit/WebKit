@@ -87,13 +87,7 @@
 #import "HTMLMeterElement.h"
 #endif
 
-#if defined(__LP64__) && __LP64__
-#define HAVE_APPKIT_SERVICE_CONTROLS_SUPPORT 1
-#else
-#define HAVE_APPKIT_SERVICE_CONTROLS_SUPPORT 0
-#endif
-
-#if ENABLE(SERVICE_CONTROLS) && HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
+#if ENABLE(SERVICE_CONTROLS)
 
 // FIXME: This should go into an SPI.h file in the spi directory.
 #if USE(APPLE_INTERNAL_SDK)
@@ -2419,7 +2413,6 @@ String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font
 #if ENABLE(SERVICE_CONTROLS)
 NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
 {
-#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     if (!m_servicesRolloverButton) {
         m_servicesRolloverButton = [NSServicesRolloverButtonCell serviceRolloverButtonCellForStyle:NSSharingServicePickerStyleRollover];
         [m_servicesRolloverButton setBezelStyle:NSBezelStyleRoundedDisclosure];
@@ -2429,9 +2422,6 @@ NSServicesRolloverButtonCell* RenderThemeMac::servicesRolloverButtonCell() const
     }
 
     return m_servicesRolloverButton.get();
-#else
-    return nil;
-#endif
 }
 
 bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
@@ -2439,7 +2429,6 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
     if (paintInfo.phase != PaintPhase::BlockBackground)
         return true;
 
-#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     NSServicesRolloverButtonCell *cell = servicesRolloverButtonCell();
 
     LocalCurrentGraphicsContext localContext(paintInfo.context());
@@ -2450,26 +2439,17 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
     IntRect innerFrame(IntPoint(), rect.size());
     [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];
     [cell setControlView:nil];
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(rect);
-#endif
 
     return true;
 }
 
 IntSize RenderThemeMac::imageControlsButtonSize(const RenderObject&) const
 {
-#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     return IntSize(servicesRolloverButtonCell().cellSize);
-#else
-    return IntSize();
-#endif
 }
 
 IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
 {
-#if HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
     // FIXME: Currently the offsets will always be the same no matter what image rect you try with.
     // This may not always be true in the future.
     static const int dummyDimension = 100;
@@ -2477,9 +2457,6 @@ IntSize RenderThemeMac::imageControlsButtonPositionOffset() const
     NSRect bounds = [servicesRolloverButtonCell() rectForBounds:dummyImageRect preferredEdge:NSMinYEdge];
 
     return IntSize(dummyDimension - bounds.origin.x, bounds.origin.y);
-#else
-    return IntSize();
-#endif
 }
 #endif
 

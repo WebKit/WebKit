@@ -2558,7 +2558,6 @@ NSInteger WebViewImpl::spellCheckerDocumentTag()
 
 void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
 {
-#if defined(__LP64__)
     if (event == m_lastPressureEvent)
         return;
 
@@ -2572,7 +2571,6 @@ void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
     m_page->handleMouseEvent(webEvent);
 
     m_lastPressureEvent = event;
-#endif
 }
 
 #if ENABLE(FULLSCREEN_API)

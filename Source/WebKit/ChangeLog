@@ -1,3 +1,101 @@
+2019-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some more unused 32-bit code
+        https://bugs.webkit.org/show_bug.cgi?id=195255
+
+        Reviewed by Darin Adler.
+
+        * Platform/Module.cpp:
+        (WebKit::Module::Module):
+        * Platform/Module.h:
+        * Platform/cf/ModuleCF.cpp:
+        (WebKit::Module::unload):
+        (WebKit::Module::bundleResourceMap): Deleted.
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeShim):
+        (WebKit::PluginProcess::platformInitializeProcess):
+        (WebKit::shouldCallRealDebugger): Deleted.
+        (WebKit::isWindowActive): Deleted.
+        (WebKit::getCurrentEventButtonState): Deleted.
+        (WebKit::carbonWindowShown): Deleted.
+        (WebKit::carbonWindowHidden): Deleted.
+        (WebKit::openCFURLRef): Deleted.
+        (WebKit::isMallocTinyMemoryTag): Deleted.
+        (WebKit::shouldMapMemoryExecutable): Deleted.
+        * PluginProcess/mac/PluginProcessShim.h:
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimDebugger): Deleted.
+        (WebKit::shimGetCurrentEventButtonState): Deleted.
+        (WebKit::shimIsWindowActive): Deleted.
+        (WebKit::shimModalDialog): Deleted.
+        (WebKit::shimAlert): Deleted.
+        (WebKit::shimShowWindow): Deleted.
+        (WebKit::shimHideWindow): Deleted.
+        (WebKit::shimLSOpenCFURLRef): Deleted.
+        (WebKit::shimMachVMMap): Deleted.
+        * Shared/API/Cocoa/WKFoundation.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginArchitecture):
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::sizeForNumberType):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::mouseButtonForEvent):
+        (WebKit::globalPointForEvent):
+        (WebKit::pointForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageLoadFileReturningNavigation):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::pressureChangeWithEvent):
+        * UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm:
+        (WebKit::UIGamepadProvider::platformSetDefaultGamepadProvider):
+        * UIProcess/mac/ServicesController.mm:
+        (WebKit::ServicesController::ServicesController):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::isWindowActive const): Deleted.
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::setDrawingModel):
+        (WebKit::NetscapePlugin::setEventModel):
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::platformDestroy):
+        (WebKit::NetscapePlugin::platformGeometryDidChange):
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        (WebKit::NetscapePlugin::windowAndViewFramesChanged):
+        (WebKit::NetscapePlugin::sendComplexTextInput):
+        (): Deleted.
+        (WebKit::windowMap): Deleted.
+        (WebKit::NetscapePlugin::netscapePluginFromWindow): Deleted.
+        (WebKit::NetscapePlugin::windowRef const): Deleted.
+        (WebKit::NetscapePlugin::updateFakeWindowBounds): Deleted.
+        (WebKit::NetscapePlugin::buttonState): Deleted.
+        (WebKit::initializeEventRecord): Deleted.
+        (WebKit::anyMouseButtonIsDown): Deleted.
+        (WebKit::rightMouseButtonIsDown): Deleted.
+        (WebKit::modifiersForEvent): Deleted.
+        (WebKit::convertStringToKeyCodes): Deleted.
+        (WebKit::scriptCodeFromCurrentKeyboardInputSource): Deleted.
+        (WebKit::NetscapePlugin::nullEventTimerFired): Deleted.
+
 2019-03-02  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Introduce ContentChangeObserver::MouseMovedScope

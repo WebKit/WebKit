@@ -66,12 +66,6 @@ static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
         plugin.pluginArchitecture = CPU_TYPE_X86;
         return true;
     }
-#elif defined(__i386__)
-    // We only support 32-bit Intel plug-ins on 32-bit Intel.
-    if (architectures.contains(kCFBundleExecutableArchitectureI386)) {
-        plugin.pluginArchitecture = CPU_TYPE_X86;
-        return true;
-    }
 #endif
 
     return false;
@@ -299,27 +293,7 @@ void NetscapePluginModule::determineQuirks()
         // understand the parameter names specified in the <object> element that
         // embeds its plug-in. 
         m_pluginQuirks.add(PluginQuirks::WantsLowercaseParameterNames);
-
-#ifndef NP_NO_QUICKDRAW
-        // The AppleConnect plug-in uses QuickDraw but doesn't paint or receive events
-        // so we'll allow it to be instantiated even though we don't support QuickDraw.
-        m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
-#endif
     }
-
-#ifndef NP_NO_QUICKDRAW
-    if (plugin.bundleIdentifier == "com.microsoft.sharepoint.browserplugin") {
-        // The Microsoft SharePoint plug-in uses QuickDraw but doesn't paint or receive events
-        // so we'll allow it to be instantiated even though we don't support QuickDraw.
-        m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
-    }
-
-    if (plugin.bundleIdentifier == "com.jattesaker.macid2.NPPlugin") {
-        // The BankID plug-in uses QuickDraw but doesn't paint or receive events
-        // so we'll allow it to be instantiated even though we don't support QuickDraw.
-        m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
-    }
-#endif
 
     if (plugin.bundleIdentifier == "com.adobe.acrobat.pdfviewerNPAPI" || plugin.bundleIdentifier == "com.apple.testnetscapeplugin") {
         // The Adobe Reader plug-in wants wheel events.

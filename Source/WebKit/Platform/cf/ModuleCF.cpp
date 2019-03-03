@@ -50,11 +50,6 @@ void Module::unload()
     if (!m_bundle)
         return;
 
-#if !defined(__LP64__)
-    if (m_bundleResourceMap != -1)
-        CFBundleCloseBundleResourceMap(m_bundle.get(), m_bundleResourceMap);
-#endif
-
     // See the comment in Module.h for why we leak the bundle here.
     CFBundleRef unused = m_bundle.leakRef();
     (void)unused;
@@ -72,15 +67,5 @@ String Module::bundleIdentifier() const
 {
     return CFBundleGetIdentifier(m_bundle.get());
 }
-
-#if !defined(__LP64__)
-CFBundleRefNum Module::bundleResourceMap()
-{
-    if (m_bundleResourceMap == -1)
-        m_bundleResourceMap = CFBundleOpenBundleResourceMap(m_bundle.get());
-
-    return m_bundleResourceMap;
-}
-#endif
 
 }

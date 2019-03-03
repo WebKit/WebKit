@@ -89,10 +89,6 @@ NetscapePlugin::NetscapePlugin(Ref<NetscapePluginModule>&& pluginModule)
     , m_isComplexTextInputEnabled(false)
     , m_hasHandledAKeyDownEvent(false)
     , m_ignoreNextKeyUpEventCounter(0)
-#ifndef NP_NO_CARBON
-    , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
-    , m_npCGContext()
-#endif
 #endif
 {
     m_npp.ndata = this;

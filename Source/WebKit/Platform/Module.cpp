@@ -30,9 +30,6 @@ namespace WebKit {
 
 Module::Module(const String& path)
     : m_path(path)
-#if USE(CF) && !defined(__LP64__)
-    , m_bundleResourceMap(-1)
-#endif
 {
 }
 

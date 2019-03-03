@@ -44,13 +44,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#ifndef NP_NO_CARBON
-static const Seconds nullEventIntervalActive { 20_ms };
-
-static unsigned buttonStateFromLastMouseEvent;
-
-#endif
-
 NPError NetscapePlugin::setDrawingModel(NPDrawingModel drawingModel)
 {
     // The drawing model can only be set from NPP_New.
@@ -58,9 +51,6 @@ NPError NetscapePlugin::setDrawingModel(NPDrawingModel drawingModel)
         return NPERR_GENERIC_ERROR;
 
     switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw:
-#endif
         case NPDrawingModelCoreGraphics:
         case NPDrawingModelCoreAnimation:
             m_drawingModel = drawingModel;
@@ -80,9 +70,6 @@ NPError NetscapePlugin::setEventModel(NPEventModel eventModel)
         return NPERR_GENERIC_ERROR;
 
     switch (eventModel) {
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon:
-#endif
         case NPEventModelCocoa:
             m_eventModel = eventModel;
             break;
@@ -183,16 +170,6 @@ const MachSendRight& NetscapePlugin::compositingRenderServerPort()
     return controller()->compositingRenderServerPort();
 }
 
-#ifndef NP_NO_CARBON
-typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
-
-static WindowMap& windowMap()
-{
-    static NeverDestroyed<WindowMap> windowMap;
-    return windowMap;
-}
-#endif
-
 static void NSException_release(id, SEL)
 {
     // Do nothing.
@@ -214,83 +191,19 @@ void NetscapePlugin::platformPreInitialize()
 
 bool NetscapePlugin::platformPostInitialize()
 {
-    if (m_drawingModel == static_cast<NPDrawingModel>(-1)) {
-#ifndef NP_NO_QUICKDRAW
-        // Default to QuickDraw if the plugin did not specify a drawing model.
-        m_drawingModel = NPDrawingModelQuickDraw;
-#else
-        // QuickDraw is not available, so we can't default to it. Instead, default to CoreGraphics.
+    if (m_drawingModel == static_cast<NPDrawingModel>(-1))
         m_drawingModel = NPDrawingModelCoreGraphics;
-#endif
-    }
     
-    if (m_eventModel == static_cast<NPEventModel>(-1)) {
-        // If the plug-in did not specify a drawing model we default to Carbon when it is available.
-#ifndef NP_NO_CARBON
-        m_eventModel = NPEventModelCarbon;
-#else
+    if (m_eventModel == static_cast<NPEventModel>(-1))
         m_eventModel = NPEventModelCocoa;
-#endif // NP_NO_CARBON
-    }
-
-#if !defined(NP_NO_CARBON) && !defined(NP_NO_QUICKDRAW)
-    // The CA drawing model does not work with the Carbon event model.
-    if (m_drawingModel == NPDrawingModelCoreAnimation && m_eventModel == NPEventModelCarbon)
-        return false;
-    
-    // The Cocoa event model does not work with the QuickDraw drawing model.
-    if (m_eventModel == NPEventModelCocoa && m_drawingModel == NPDrawingModelQuickDraw)
-        return false;
-#endif
-    
-#ifndef NP_NO_QUICKDRAW
-    // Right now we don't support the QuickDraw drawing model at all
-    if (m_drawingModel == NPDrawingModelQuickDraw &&
-        !m_pluginModule->pluginQuirks().contains(PluginQuirks::AllowHalfBakedQuickDrawSupport))
-        return false;
-#endif
 
     updatePluginLayer();
-
-#ifndef NP_NO_CARBON
-    if (m_eventModel == NPEventModelCarbon) {
-        // Initialize the fake Carbon window.
-        ::Rect bounds = { 0, 0, 0, 0 };
-        CreateNewWindow(kDocumentWindowClass, kWindowNoTitleBarAttribute, &bounds, reinterpret_cast<WindowRef*>(&m_npCGContext.window));
-        ASSERT(m_npCGContext.window);
-
-        // FIXME: Disable the backing store.
-
-        m_npWindow.window = &m_npCGContext;
-
-        ASSERT(!windowMap().contains(windowRef()));
-        windowMap().set(windowRef(), this);
-
-        // Start the null event timer.
-        // FIXME: Throttle null events when the plug-in isn't visible on screen.
-        m_nullEventTimer.startRepeating(nullEventIntervalActive);
-    }
-#endif
 
     return true;
 }
 
 void NetscapePlugin::platformDestroy()
 {
-#ifndef NP_NO_CARBON
-    if (m_eventModel == NPEventModelCarbon) {
-        if (WindowRef window = windowRef()) {
-            // Destroy the fake Carbon window.
-            DisposeWindow(window);
-
-            ASSERT(windowMap().contains(window));
-            windowMap().remove(window);
-        }
-
-        // Stop the null event timer.
-        m_nullEventTimer.stop();
-    }
-#endif
 }
 
 bool NetscapePlugin::platformInvalidate(const IntRect&)
@@ -308,11 +221,6 @@ void NetscapePlugin::platformGeometryDidChange()
     case NPEventModelCocoa:
         // Nothing to do
         break;
-#ifndef NP_NO_CARBON
-    case NPEventModelCarbon:
-        updateFakeWindowBounds();
-        break;
-#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -333,102 +241,6 @@ static inline NPCocoaEvent initializeEvent(NPCocoaEventType type)
     
     return event;
 }
-
-#ifndef NP_NO_CARBON
-NetscapePlugin* NetscapePlugin::netscapePluginFromWindow(WindowRef windowRef)
-{
-    return windowMap().get(windowRef);
-}
-
-WindowRef NetscapePlugin::windowRef() const
-{
-    ASSERT(m_eventModel == NPEventModelCarbon);
-
-    return reinterpret_cast<WindowRef>(m_npCGContext.window);
-}
-
-void NetscapePlugin::updateFakeWindowBounds()
-{
-    double screenX, screenY;
-    bool didConvert = convertPoint(0, 0, NPCoordinateSpacePlugin, screenX, screenY, NPCoordinateSpaceFlippedScreen);
-    ASSERT_UNUSED(didConvert, didConvert);
-    
-    Rect bounds;
-    bounds.top = screenY;
-    bounds.left = screenX;
-    bounds.bottom = screenY + m_pluginSize.height();
-    bounds.right = screenX + m_pluginSize.width();
-    
-    ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
-}
-
-unsigned NetscapePlugin::buttonState()
-{
-    return buttonStateFromLastMouseEvent;
-}
-
-static inline EventRecord initializeEventRecord(EventKind eventKind)
-{
-    EventRecord eventRecord;
-
-    eventRecord.what = eventKind;
-    eventRecord.message = 0;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    eventRecord.when = TickCount();
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    eventRecord.where = Point();
-    eventRecord.modifiers = 0;
-
-    return eventRecord;
-}
-
-static bool anyMouseButtonIsDown(const WebEvent& event)
-{
-    if (event.type() == WebEvent::MouseDown)
-        return true;
-
-    if (event.type() == WebEvent::MouseMove && static_cast<const WebMouseEvent&>(event).button() != WebMouseEvent::NoButton)
-        return true;
-
-    return false;
-}
-
-static bool rightMouseButtonIsDown(const WebEvent& event)
-{
-    if (event.type() == WebEvent::MouseDown && static_cast<const WebMouseEvent&>(event).button() == WebMouseEvent::RightButton)
-        return true;
-    
-    if (event.type() == WebEvent::MouseMove && static_cast<const WebMouseEvent&>(event).button() == WebMouseEvent::RightButton)
-        return true;
-    
-    return false;
-}
-
-static EventModifiers modifiersForEvent(const WebEvent& event)
-{
-    EventModifiers modifiers = 0;
-
-    // We only want to set the btnState if a mouse button is _not_ down.
-    if (!anyMouseButtonIsDown(event))
-        modifiers |= btnState;
-
-    if (event.metaKey())
-        modifiers |= cmdKey;
-
-    if (event.shiftKey())
-        modifiers |= shiftKey;
-
-    if (event.altKey())
-        modifiers |= optionKey;
-
-    // Set controlKey if the control key is down or the right mouse button is down.
-    if (event.controlKey() || rightMouseButtonIsDown(event))
-        modifiers |= controlKey;
-
-    return modifiers;
-}
-
-#endif
 
 void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirtyRect, bool isSnapshot)
 {
@@ -451,21 +263,6 @@ void NetscapePlugin::platformPaint(GraphicsContext& context, const IntRect& dirt
             NPP_HandleEvent(&event);
             break;
         }
-
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            if (platformContext != m_npCGContext.context) {
-                m_npCGContext.context = platformContext;
-                callSetWindow();
-            }
-
-            EventRecord event = initializeEventRecord(updateEvt);
-            event.message = reinterpret_cast<unsigned long>(windowRef());
-            
-            NPP_HandleEvent(&event);
-            break;            
-        }
-#endif
 
         default:
             ASSERT_NOT_REACHED();
@@ -570,46 +367,6 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             return true;
         }
 
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            EventKind eventKind = nullEvent;
-
-            switch (mouseEvent.type()) {
-            case WebEvent::MouseDown:
-                eventKind = mouseDown;
-                buttonStateFromLastMouseEvent |= (1 << buttonNumber(mouseEvent.button()));
-                break;
-            case WebEvent::MouseUp:
-                eventKind = mouseUp;
-                buttonStateFromLastMouseEvent &= ~(1 << buttonNumber(mouseEvent.button()));
-                break;
-            case WebEvent::MouseMove:
-                eventKind = nullEvent;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-            }
-
-            EventRecord event = initializeEventRecord(eventKind);
-            event.modifiers = modifiersForEvent(mouseEvent);
-
-            double globalX;
-            double globalY;
-            if (!convertPoint(eventPositionInPluginCoordinates.x(), eventPositionInPluginCoordinates.y(), NPCoordinateSpacePlugin, globalX, globalY, NPCoordinateSpaceFlippedScreen))
-                ASSERT_NOT_REACHED();
-
-            event.where.h = globalX;
-            event.where.v = globalY;
-
-            NPP_HandleEvent(&event);
-
-            // Some plug-ins return false even if the mouse event has been handled.
-            // This leads to bugs such as <rdar://problem/9167611>. Work around this
-            // by always returning true.
-            return true;
-        }
-#endif
-
         default:
             ASSERT_NOT_REACHED();
     }
@@ -638,12 +395,6 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
             return NPP_HandleEvent(&event);
         }
 
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon:
-            // Carbon doesn't have wheel events.
-            break;
-#endif
-
         default:
             ASSERT_NOT_REACHED();
     }
@@ -661,15 +412,6 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEve
             return NPP_HandleEvent(&event);
         }
 
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            EventRecord eventRecord = initializeEventRecord(NPEventType_AdjustCursorEvent);
-            eventRecord.modifiers = modifiersForEvent(mouseEvent);
-            
-            return NPP_HandleEvent(&eventRecord);
-        }
-#endif
-
         default:
             ASSERT_NOT_REACHED();
     }
@@ -686,15 +428,6 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEve
             fillInCocoaEventFromMouseEvent(event, mouseEvent, IntPoint());
             return NPP_HandleEvent(&event);
         }
-
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            EventRecord eventRecord = initializeEventRecord(NPEventType_AdjustCursorEvent);
-            eventRecord.modifiers = modifiersForEvent(mouseEvent);
-            
-            return NPP_HandleEvent(&eventRecord);
-        }
-#endif
 
         default:
             ASSERT_NOT_REACHED();
@@ -814,29 +547,6 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         break;
     }
 
-#ifndef NP_NO_CARBON
-    case NPEventModelCarbon: {
-        EventKind eventKind = nullEvent;
-
-        switch (keyboardEvent.type()) {
-        case WebEvent::KeyDown:
-            eventKind = keyboardEvent.isAutoRepeat() ? autoKey : keyDown;
-            break;
-        case WebEvent::KeyUp:
-            eventKind = keyUp;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-
-        EventRecord event = initializeEventRecord(eventKind);
-        event.modifiers = modifiersForEvent(keyboardEvent);
-        event.message = keyboardEvent.nativeVirtualKeyCode() << 8 | keyboardEvent.macCharCode();
-        handled = NPP_HandleEvent(&event);
-        break;
-    }
-#endif
-
     default:
         ASSERT_NOT_REACHED();
     }
@@ -870,15 +580,6 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
             break;
         }
 
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            EventRecord event = initializeEventRecord(hasFocus ? NPEventType_GetFocusEvent : NPEventType_LoseFocusEvent);
-
-            NPP_HandleEvent(&event);
-            break;
-        }
-#endif
-            
         default:
             ASSERT_NOT_REACHED();
     }
@@ -902,22 +603,6 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
             NPP_HandleEvent(&event);
             break;
         }
-        
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon: {
-            HiliteWindow(windowRef(), hasFocus);
-            if (hasFocus)
-                SetUserFocusWindow(windowRef());
-
-            EventRecord event = initializeEventRecord(activateEvt);
-            event.message = reinterpret_cast<unsigned long>(windowRef());
-            if (hasFocus)
-                event.modifiers |= activeFlag;
-            
-            NPP_HandleEvent(&event);
-            break;
-        }
-#endif
 
         default:
             ASSERT_NOT_REACHED();
@@ -933,12 +618,6 @@ void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScre
         case NPEventModelCocoa:
             // Nothing to do.
             break;
-
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon:
-            updateFakeWindowBounds();
-            break;
-#endif
 
         default:
             ASSERT_NOT_REACHED();
@@ -958,58 +637,6 @@ uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const
     // Just return a dummy value; this is only called for in-process plug-ins, which we don't support on Mac.
     return static_cast<uint64_t>(reinterpret_cast<uintptr_t>(this));
 }
-
-
-#ifndef NP_NO_CARBON
-static bool convertStringToKeyCodes(StringView string, ScriptCode scriptCode, Vector<UInt8>& keyCodes)
-{
-    // Create the mapping.
-    UnicodeMapping mapping;
-
-    if (GetTextEncodingFromScriptInfo(scriptCode, kTextLanguageDontCare, kTextRegionDontCare, &mapping.otherEncoding) != noErr)
-        return false;
-
-    mapping.unicodeEncoding = CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kTextEncodingDefaultFormat);
-    mapping.mappingVersion = kUnicodeUseLatestMapping;
-
-    // Create the converter
-    UnicodeToTextInfo textInfo;
-
-    if (CreateUnicodeToTextInfo(&mapping, &textInfo) != noErr)
-        return false;
-
-    ByteCount inputLength = string.length() * sizeof(UniChar);
-    ByteCount inputRead;
-    ByteCount outputLength;
-    ByteCount maxOutputLength = string.length() * sizeof(UniChar);
-
-    Vector<UInt8> outputData(maxOutputLength);
-    OSStatus status = ConvertFromUnicodeToText(textInfo, inputLength, string.upconvertedCharacters(), kNilOptions, 0, 0, 0, 0, maxOutputLength, &inputRead, &outputLength, outputData.data());
-    
-    DisposeUnicodeToTextInfo(&textInfo);
-    
-    if (status != noErr)
-        return false;
-
-    keyCodes = WTFMove(outputData);
-    return true;
-}
-#endif
-
-#ifndef NP_NO_CARBON
-static ScriptCode scriptCodeFromCurrentKeyboardInputSource()
-{
-    ScriptCode scriptCode = smRoman;
-    auto inputSource = adoptCF(TISCopyCurrentKeyboardInputSource());
-
-    CFTypeRef scriptCodeNumber = TSMGetInputSourceProperty((TSMInputSourceRef)inputSource.get(), kTSMInputSourcePropertyScriptCode);
-    ASSERT(CFGetTypeID(scriptCodeNumber) == CFNumberGetTypeID());
-    if (scriptCodeNumber)
-        CFNumberGetValue((CFNumberRef)scriptCodeNumber, kCFNumberSInt16Type, &scriptCode);
-
-    return scriptCode;
-}
-#endif
 
 void NetscapePlugin::sendComplexTextInput(const String& textInput)
 {
@@ -1032,30 +659,6 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
         NPP_HandleEvent(&event);
         break;
     }
-#ifndef NP_NO_CARBON
-    case NPEventModelCarbon: {
-        ScriptCode scriptCode = scriptCodeFromCurrentKeyboardInputSource();
-        Vector<UInt8> keyCodes;
-
-        if (!convertStringToKeyCodes(textInput, scriptCode, keyCodes))
-            return;
-
-        // Set the script code as the keyboard script. Normally Carbon does this whenever the input source changes.
-        // However, this is only done for the process that has the keyboard focus. We cheat and do it here instead.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        SetScriptManagerVariable(smKeyScript, scriptCode);
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        
-        EventRecord event = initializeEventRecord(keyDown);
-        event.modifiers = 0;
-
-        for (auto& keyCode : keyCodes) {
-            event.message = keyCode;
-            NPP_HandleEvent(&event);
-        }
-        break;
-    }
-#endif
     default:
         ASSERT_NOT_REACHED();
     }
@@ -1165,27 +768,6 @@ void NetscapePlugin::updatePluginLayer()
         !m_isTransparent)
         makeCGLPresentLayerOpaque(m_pluginLayer.get());
 }
-
-#ifndef NP_NO_CARBON
-void NetscapePlugin::nullEventTimerFired()
-{
-    EventRecord event = initializeEventRecord(nullEvent);
-
-    event.message = 0;
-    CGPoint mousePosition;
-    HIGetMousePosition(kHICoordSpaceScreenPixel, 0, &mousePosition);
-    event.where.h = mousePosition.x;
-    event.where.v = mousePosition.y;
-
-    event.modifiers = GetCurrentKeyModifiers();
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (!Button())
-        event.modifiers |= btnState;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    NPP_HandleEvent(&event);
-}
-#endif
 
 } // namespace WebKit
 

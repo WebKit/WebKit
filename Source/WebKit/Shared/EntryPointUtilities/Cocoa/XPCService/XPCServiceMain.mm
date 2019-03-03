@@ -94,16 +94,6 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 
 int XPCServiceMain(int, const char**)
 {
-#if defined(__i386__)
-    // FIXME: This should only be done for the 32-bit plug-in XPC service so we rely on the fact that
-    // it's the only of the XPC services that are 32-bit. We should come up with a more targeted #if check.
-    @autoreleasepool {
-        // We must set the state of AppleMagnifiedMode before NSApplication initialization so that the value will be in
-        // place before Cocoa startup logic runs and caches the value.
-        [[NSUserDefaults standardUserDefaults] registerDefaults:@{ @"AppleMagnifiedMode" : @YES }];
-    }
-#endif
-
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 #if PLATFORM(IOS_FAMILY)
     auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");

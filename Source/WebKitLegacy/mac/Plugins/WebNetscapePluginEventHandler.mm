@@ -35,15 +35,11 @@
 std::unique_ptr<WebNetscapePluginEventHandler> WebNetscapePluginEventHandler::create(WebNetscapePluginView *pluginView)
 {
     switch ([pluginView eventModel]) {
-#ifndef NP_NO_CARBON
-        case NPEventModelCarbon:
-            return std::make_unique<WebNetscapePluginEventHandlerCarbon>(pluginView);
-#endif
-        case NPEventModelCocoa:
-            return std::make_unique<WebNetscapePluginEventHandlerCocoa>(pluginView);
-        default:
-            ASSERT_NOT_REACHED();
-            return nullptr;
+    case NPEventModelCocoa:
+        return std::make_unique<WebNetscapePluginEventHandlerCocoa>(pluginView);
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
 }
 

@@ -85,7 +85,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSWindowSPI.h
     spi/mac/PIPSPI.h
     spi/mac/QTKitSPI.h
-    spi/mac/QuickDrawSPI.h
     spi/mac/QuickLookMacSPI.h
     spi/mac/SpeechSynthesisSPI.h
     spi/mac/TelephonyUtilitiesSPI.h

@@ -75,7 +75,6 @@
 #import <WebKitLegacy/WebUIDelegate.h>
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -89,19 +88,9 @@
 using namespace WebCore;
 using namespace WebKit;
 
-static inline bool isDrawingModelQuickDraw(NPDrawingModel drawingModel)
-{
-#ifndef NP_NO_QUICKDRAW
-    return drawingModel == NPDrawingModelQuickDraw;
-#else
-    return false;
-#endif
-};
-
 @interface WebNetscapePluginView (Internal)
 - (NPError)_createPlugin;
 - (void)_destroyPlugin;
-- (NSBitmapImageRep *)_printedPluginBitmap;
 - (void)_redeliverStream;
 - (BOOL)_shouldCancelSrcStream;
 @end
@@ -155,22 +144,6 @@ private:
     TimerFunc m_timerFunc;
 };
 
-#ifndef NP_NO_QUICKDRAW
-
-// QuickDraw is not available in 64-bit
-
-typedef struct {
-    GrafPtr oldPort;
-    GDHandle oldDevice;
-    Point oldOrigin;
-    RgnHandle oldClipRegion;
-    RgnHandle oldVisibleRegion;
-    RgnHandle clipRegion;
-    BOOL forUpdate;
-} PortState_QD;
-
-#endif /* NP_NO_QUICKDRAW */
-
 typedef struct {
     CGContextRef context;
 } PortState_CG;
@@ -197,70 +170,6 @@ typedef struct {
 
 // MARK: EVENTS
 
-// The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
-// the entire window frame (or structure region to use the Carbon term) rather then just the window content.
-// We can remove this when <rdar://problem/4201099> is fixed.
-- (void)fixWindowPort
-{
-#ifndef NP_NO_QUICKDRAW
-    ASSERT(isDrawingModelQuickDraw(drawingModel));
-    
-    NSWindow *currentWindow = [self currentWindow];
-    if ([currentWindow isKindOfClass:objc_getClass("NSCarbonWindow")])
-        return;
-    
-    float windowHeight = [currentWindow frame].size.height;
-    NSView *contentView = [currentWindow contentView];
-    NSRect contentRect = [contentView convertRect:[contentView frame] toView:nil]; // convert to window-relative coordinates
-    
-    CGrafPtr oldPort;
-    GetPort(&oldPort);    
-    SetPort(GetWindowPort((WindowRef)[currentWindow windowRef]));
-    
-    MovePortTo(static_cast<short>(contentRect.origin.x), /* Flip Y */ static_cast<short>(windowHeight - NSMaxY(contentRect)));
-    PortSize(static_cast<short>(contentRect.size.width), static_cast<short>(contentRect.size.height));
-    
-    SetPort(oldPort);
-#endif
-}
-
-#ifndef NP_NO_QUICKDRAW
-static UInt32 getQDPixelFormatForBitmapContext(CGContextRef context)
-{
-    UInt32 byteOrder = CGBitmapContextGetBitmapInfo(context) & kCGBitmapByteOrderMask;
-    if (byteOrder == kCGBitmapByteOrderDefault)
-        switch (CGBitmapContextGetBitsPerPixel(context)) {
-            case 16:
-                byteOrder = kCGBitmapByteOrder16Host;
-                break;
-            case 32:
-                byteOrder = kCGBitmapByteOrder32Host;
-                break;
-        }
-    switch (byteOrder) {
-        case kCGBitmapByteOrder16Little:
-            return k16LE555PixelFormat;
-        case kCGBitmapByteOrder32Little:
-            return k32BGRAPixelFormat;
-        case kCGBitmapByteOrder16Big:
-            return k16BE555PixelFormat;
-        case kCGBitmapByteOrder32Big:
-            return k32ARGBPixelFormat;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-static inline void getNPRect(const CGRect& cgr, NPRect& npr)
-{
-    npr.top = static_cast<uint16_t>(cgr.origin.y);
-    npr.left = static_cast<uint16_t>(cgr.origin.x);
-    npr.bottom = static_cast<uint16_t>(CGRectGetMaxY(cgr));
-    npr.right = static_cast<uint16_t>(CGRectGetMaxX(cgr));
-}
-
-#endif
-
 static inline void getNPRect(const NSRect& nr, NPRect& npr)
 {
     npr.top = static_cast<uint16_t>(nr.origin.y);
@@ -283,28 +192,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
-    
-#ifndef NP_NO_QUICKDRAW
-    WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
-    ASSERT(windowRef);
-
-    // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
-    if (isDrawingModelQuickDraw(drawingModel)) {
-        // If drawing with QuickDraw, fix the window port so that it has the same bounds as the NSWindow's
-        // content view.  This makes it easier to convert between AppKit view and QuickDraw port coordinates.
-        [self fixWindowPort];
-        
-        ::Rect portBounds;
-        CGrafPtr port = GetWindowPort(windowRef);
-        GetPortBounds(port, &portBounds);
-
-        PixMap *pix = *GetPortPixMap(port);
-        boundsInWindow.origin.x += pix->bounds.left - portBounds.left;
-        boundsInWindow.origin.y += pix->bounds.top - portBounds.top;
-        visibleRectInWindow.origin.x += pix->bounds.left - portBounds.left;
-        visibleRectInWindow.origin.y += pix->bounds.top - portBounds.top;
-    }
-#endif
     
     window.type = NPWindowTypeWindow;
     window.x = (int32_t)boundsInWindow.origin.x; 
@@ -349,151 +236,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Save the port state, set up the port for entry into the plugin
     PortState portState;
     switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw: {
-            // Set up NS_Port.
-            ::Rect portBounds;
-            CGrafPtr port = GetWindowPort(windowRef);
-            GetPortBounds(port, &portBounds);
-            nPort.qdPort.port = port;
-            nPort.qdPort.portx = (int32_t)-boundsInWindow.origin.x;
-            nPort.qdPort.porty = (int32_t)-boundsInWindow.origin.y;
-            window.window = &nPort;
-
-            PortState_QD *qdPortState = (PortState_QD*)malloc(sizeof(PortState_QD));
-            portState = (PortState)qdPortState;
-            
-            GetGWorld(&qdPortState->oldPort, &qdPortState->oldDevice);    
-
-            qdPortState->oldOrigin.h = portBounds.left;
-            qdPortState->oldOrigin.v = portBounds.top;
-
-            qdPortState->oldClipRegion = NewRgn();
-            GetPortClipRegion(port, qdPortState->oldClipRegion);
-            
-            qdPortState->oldVisibleRegion = NewRgn();
-            GetPortVisibleRegion(port, qdPortState->oldVisibleRegion);
-            
-            RgnHandle clipRegion = NewRgn();
-            qdPortState->clipRegion = clipRegion;
-
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            CGContextRef currentContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-            ALLOW_DEPRECATED_DECLARATIONS_END
-            if (currentContext && CGContextGetType(currentContext) == kCGContextTypeBitmap) {
-                // We check for kCGContextTypeBitmap here, because if we just called CGBitmapContextGetData
-                // on any context, we'd log to the console every time. But even if currentContext is a
-                // kCGContextTypeBitmap, it still might not be a context we need to create a GWorld for; for example
-                // transparency layers will return true, but return 0 for CGBitmapContextGetData.
-                void* offscreenData = CGBitmapContextGetData(currentContext);
-                if (offscreenData) {
-                    // If the current context is an offscreen bitmap, then create a GWorld for it.
-                    ::Rect offscreenBounds;
-                    offscreenBounds.top = 0;
-                    offscreenBounds.left = 0;
-                    offscreenBounds.right = CGBitmapContextGetWidth(currentContext);
-                    offscreenBounds.bottom = CGBitmapContextGetHeight(currentContext);
-                    GWorldPtr newOffscreenGWorld;
-                    QDErr err = NewGWorldFromPtr(&newOffscreenGWorld,
-                        getQDPixelFormatForBitmapContext(currentContext), &offscreenBounds, 0, 0, 0,
-                        static_cast<char*>(offscreenData), CGBitmapContextGetBytesPerRow(currentContext));
-                    ASSERT(newOffscreenGWorld);
-                    ASSERT(!err);
-                    if (!err) {
-                        if (offscreenGWorld)
-                            DisposeGWorld(offscreenGWorld);
-                        offscreenGWorld = newOffscreenGWorld;
-
-                        SetGWorld(offscreenGWorld, NULL);
-
-                        port = offscreenGWorld;
-
-                        nPort.qdPort.port = port;
-                        boundsInWindow = [self bounds];
-                        
-                        // Generate a QD origin based on the current affine transform for currentContext.
-                        CGAffineTransform offscreenMatrix = CGContextGetCTM(currentContext);
-                        CGPoint origin = {0,0};
-                        CGPoint axisFlip = {1,1};
-                        origin = CGPointApplyAffineTransform(origin, offscreenMatrix);
-                        axisFlip = CGPointApplyAffineTransform(axisFlip, offscreenMatrix);
-                        
-                        // Quartz bitmaps have origins at the bottom left, but the axes may be inverted, so handle that.
-                        origin.x = offscreenBounds.left - origin.x * (axisFlip.x - origin.x);
-                        origin.y = offscreenBounds.bottom + origin.y * (axisFlip.y - origin.y);
-                        
-                        nPort.qdPort.portx = static_cast<int32_t>(-boundsInWindow.origin.x + origin.x);
-                        nPort.qdPort.porty = static_cast<int32_t>(-boundsInWindow.origin.y - origin.y);
-                        window.x = 0;
-                        window.y = 0;
-                        window.window = &nPort;
-
-                        // Use the clip bounds from the context instead of the bounds we created
-                        // from the window above.
-                        getNPRect(CGRectOffset(CGContextGetClipBoundingBox(currentContext), -origin.x, origin.y), window.clipRect);
-                    }
-                }
-            }
-
-            MacSetRectRgn(clipRegion,
-                window.clipRect.left + nPort.qdPort.portx, window.clipRect.top + nPort.qdPort.porty,
-                window.clipRect.right + nPort.qdPort.portx, window.clipRect.bottom + nPort.qdPort.porty);
-            
-            // Clip to the dirty region if drawing to a window. When drawing to another bitmap context, do not clip.
-            if ([NSGraphicsContext currentContext] == [[self currentWindow] graphicsContext]) {
-                // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
-                // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
-                if (forUpdate) {
-                    RgnHandle viewClipRegion = NewRgn();
-                    
-                    // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
-                    // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
-                    // knows about the true set of dirty rects.
-                    NSView *opaqueAncestor = [self opaqueAncestor];
-                    const NSRect *dirtyRects;
-                    NSInteger dirtyRectCount, dirtyRectIndex;
-                    [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
-
-                    for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
-                        NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
-                        if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
-                            // Create a region for this dirty rect
-                            RgnHandle dirtyRectRegion = NewRgn();
-                            SetRectRgn(dirtyRectRegion, static_cast<short>(NSMinX(dirtyRect)), static_cast<short>(NSMinY(dirtyRect)), static_cast<short>(NSMaxX(dirtyRect)), static_cast<short>(NSMaxY(dirtyRect)));
-                            
-                            // Union this dirty rect with the rest of the dirty rects
-                            UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
-                            DisposeRgn(dirtyRectRegion);
-                        }
-                    }
-                
-                    // Intersect the dirty region with the clip region, so that we only draw over dirty parts
-                    SectRgn(clipRegion, viewClipRegion, clipRegion);
-                    DisposeRgn(viewClipRegion);
-                }
-            }
-
-            // Switch to the port and set it up.
-            SetPort(port);
-            PenNormal();
-            ForeColor(blackColor);
-            BackColor(whiteColor);
-            SetOrigin(nPort.qdPort.portx, nPort.qdPort.porty);
-            SetPortClipRegion(nPort.qdPort.port, clipRegion);
-
-            if (forUpdate) {
-                // AppKit may have tried to help us by doing a BeginUpdate.
-                // But the invalid region at that level didn't include AppKit's notion of what was not valid.
-                // We reset the port's visible region to counteract what BeginUpdate did.
-                SetPortVisibleRegion(nPort.qdPort.port, clipRegion);
-                InvalWindowRgn(windowRef, clipRegion);
-            }
-            
-            qdPortState->forUpdate = forUpdate;
-            break;
-        }
-#endif /* NP_NO_QUICKDRAW */
-
         case NPDrawingModelCoreGraphics: {            
             if (![self canDraw]) {
                 portState = NULL;
@@ -509,15 +251,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             PortState_CG *cgPortState = (PortState_CG *)malloc(sizeof(PortState_CG));
             portState = (PortState)cgPortState;
             cgPortState->context = context;
-            
-#ifndef NP_NO_CARBON            
-            if (eventModel != NPEventModelCocoa) {
-                // Update the plugin's window/context
-                nPort.cgPort.window = windowRef;
-                nPort.cgPort.context = context;
-                window.window = &nPort.cgPort;
-            }                
-#endif /* NP_NO_CARBON */
 
             // Save current graphics context's state; will be restored by -restorePortState:
             CGContextSaveGState(context);
@@ -566,32 +299,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(portState);
     
     switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw: {
-            PortState_QD *qdPortState = (PortState_QD *)portState;
-            WindowRef windowRef = (WindowRef)[[self currentWindow] windowRef];
-            CGrafPtr port = GetWindowPort(windowRef);
-
-            SetPort(port);
-
-            if (qdPortState->forUpdate)
-                ValidWindowRgn(windowRef, qdPortState->clipRegion);
-
-            SetOrigin(qdPortState->oldOrigin.h, qdPortState->oldOrigin.v);
-
-            SetPortClipRegion(port, qdPortState->oldClipRegion);
-            if (qdPortState->forUpdate)
-                SetPortVisibleRegion(port, qdPortState->oldVisibleRegion);
-
-            DisposeRgn(qdPortState->oldClipRegion);
-            DisposeRgn(qdPortState->oldVisibleRegion);
-            DisposeRgn(qdPortState->clipRegion);
-
-            SetGWorld(qdPortState->oldPort, qdPortState->oldDevice);
-            break;
-        }
-#endif /* NP_NO_QUICKDRAW */
-        
         case NPDrawingModelCoreGraphics: {
             ASSERT([NSView focusView] == self);
             
@@ -640,26 +347,14 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     PortState portState = NULL;
     
-    if (isDrawingModelQuickDraw(drawingModel) || (drawingModel != NPDrawingModelCoreAnimation && eventIsDrawRect)) {
+    if (drawingModel != NPDrawingModelCoreAnimation && eventIsDrawRect) {
         // In CoreGraphics mode, the port state only needs to be saved/set when redrawing the plug-in view.
         // The plug-in is not allowed to draw at any other time.
         portState = [self saveAndSetNewPortStateForUpdate:eventIsDrawRect];
         // We may have changed the window, so inform the plug-in.
         [self setWindowIfNecessary];
     }
-    
-#if !defined(NDEBUG) && !defined(NP_NO_QUICKDRAW)
-    // Draw green to help debug.
-    // If we see any green we know something's wrong.
-    // Note that PaintRect() only works for QuickDraw plugins; otherwise the current QD port is undefined.
-    if (isDrawingModelQuickDraw(drawingModel) && eventIsDrawRect) {
-        ForeColor(greenColor);
-        const ::Rect bigRect = { -10000, -10000, 10000, 10000 };
-        PaintRect(&bigRect);
-        ForeColor(blackColor);
-    }
-#endif
-    
+
     // Temporarily retain self in case the plug-in view is released while sending an event. 
     [[self retain] autorelease];
 
@@ -877,17 +572,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NO;
     
     switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw:
-            if (nPort.qdPort.portx != lastSetPort.qdPort.portx)
-                return NO;
-            if (nPort.qdPort.porty != lastSetPort.qdPort.porty)
-                return NO;
-            if (nPort.qdPort.port != lastSetPort.qdPort.port)
-                return NO;
-        break;
-#endif /* NP_NO_QUICKDRAW */
-            
         case NPDrawingModelCoreGraphics:
             if (nPort.cgPort.window != lastSetPort.cgPort.window)
                 return NO;
@@ -905,23 +589,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
     
     return YES;
-}
-
--(void)tellQuickTimeToChill
-{
-#ifndef NP_NO_QUICKDRAW
-    ASSERT(isDrawingModelQuickDraw(drawingModel));
-    
-    // Make a call to the secret QuickDraw API that makes QuickTime calm down.
-    WindowRef windowRef = (WindowRef)[[self window] windowRef];
-    if (!windowRef) {
-        return;
-    }
-    CGrafPtr port = GetWindowPort(windowRef);
-    ::Rect bounds;
-    GetPortBounds(port, &bounds);
-    CallDrawingNotifications(port, &bounds, kBitsProc);
-#endif /* NP_NO_QUICKDRAW */
 }
 
 - (void)updateAndSetWindow
@@ -943,19 +610,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!_isStarted)
         return;
     
-#ifdef NP_NO_QUICKDRAW
     if (![self canDraw])
         return;
-#else
-    if (drawingModel == NPDrawingModelQuickDraw)
-        [self tellQuickTimeToChill];
-    else if (drawingModel == NPDrawingModelCoreGraphics && ![self canDraw] && _isFlash) {
-        // The Flash plug-in does not expect an NPP_SetWindow call from WebKit in this case.
-        // See Exception 2 above.
-        return;
-    }
-#endif // NP_NO_QUICKDRAW
-    
+
     BOOL didLockFocus = [NSView focusView] != self && [self lockFocusIfCanDraw];
 
     PortState portState = [self saveAndSetNewPortState];
@@ -995,13 +652,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 #ifndef NDEBUG
         switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-            case NPDrawingModelQuickDraw:
-                LOG(Plugins, "NPP_SetWindow (QuickDraw): %d, port=0x%08x, window.x:%d window.y:%d window.width:%d window.height:%d",
-                npErr, (int)nPort.qdPort.port, (int)window.x, (int)window.y, (int)window.width, (int)window.height);
-            break;
-#endif /* NP_NO_QUICKDRAW */
-            
             case NPDrawingModelCoreGraphics:
                 LOG(Plugins, "NPP_SetWindow (CoreGraphics): %d, window=%p, context=%p, window.x:%d window.y:%d window.width:%d window.height:%d window.clipRect size:%dx%d",
                 npErr, nPort.cgPort.window, nPort.cgPort.context, (int)window.x, (int)window.y, (int)window.width, (int)window.height, 
@@ -1053,35 +703,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NO;
     }
     
-    if (drawingModel == (NPDrawingModel)-1) {
-#ifndef NP_NO_QUICKDRAW
-        // Default to QuickDraw if the plugin did not specify a drawing model.
-        drawingModel = NPDrawingModelQuickDraw;
-#else
-        // QuickDraw is not available, so we can't default to it. Instead, default to CoreGraphics.
+    if (drawingModel == (NPDrawingModel)-1)
         drawingModel = NPDrawingModelCoreGraphics;
-#endif
-    }
 
-    if (eventModel == (NPEventModel)-1) {
-        // If the plug-in did not specify a drawing model we default to Carbon when it is available.
-#ifndef NP_NO_CARBON
-        eventModel = NPEventModelCarbon;
-#else
+    if (eventModel == (NPEventModel)-1)
         eventModel = NPEventModelCocoa;
-#endif // NP_NO_CARBON
-    }
 
-#ifndef NP_NO_CARBON
-    if (eventModel == NPEventModelCocoa && isDrawingModelQuickDraw(drawingModel)) {
-        LOG(Plugins, "Plugin can't use use Cocoa event model with QuickDraw drawing model: %@", _pluginPackage.get());
-        [self _destroyPlugin];
-        [_pluginPackage.get() close];
-        
-        return NO;
-    }        
-#endif // NP_NO_CARBON
-    
     if (drawingModel == NPDrawingModelCoreAnimation) {
         void *value = 0;
         if ([_pluginPackage.get() pluginFuncs]->getvalue(plugin, NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
@@ -1284,11 +911,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)fini
 {
-#ifndef NP_NO_QUICKDRAW
-    if (offscreenGWorld)
-        DisposeGWorld(offscreenGWorld);
-#endif
-
     for (unsigned i = 0; i < argsCount; i++) {
         free(cAttributes[i]);
         free(cValues[i]);
@@ -1330,22 +952,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     
     if ([NSGraphicsContext currentContextDrawingToScreen] || _isFlash)
         [self sendDrawRectEvent:rect];
-    else {
-        NSBitmapImageRep *printedPluginBitmap = [self _printedPluginBitmap];
-        if (printedPluginBitmap) {
-            // Flip the bitmap before drawing because the QuickDraw port is flipped relative
-            // to this view.
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-            ALLOW_DEPRECATED_DECLARATIONS_END
-            CGContextSaveGState(cgContext);
-            NSRect bounds = [self bounds];
-            CGContextTranslateCTM(cgContext, 0.0f, NSHeight(bounds));
-            CGContextScaleCTM(cgContext, 1.0f, -1.0f);
-            [printedPluginBitmap drawInRect:bounds];
-            CGContextRestoreGState(cgContext);
-        }
-    }
 }
 
 - (NPObject *)createPluginScriptableObject
@@ -1877,16 +1483,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     LOG(Plugins, "NPN_InvalidateRegion");
     NSRect invalidRect = NSZeroRect;
     switch (drawingModel) {
-#ifndef NP_NO_QUICKDRAW
-        case NPDrawingModelQuickDraw:
-        {
-            ::Rect qdRect;
-            GetRegionBounds((NPQDRegion)invalidRegion, &qdRect);
-            invalidRect = NSMakeRect(qdRect.left, qdRect.top, qdRect.right - qdRect.left, qdRect.bottom - qdRect.top);
-        }
-        break;
-#endif /* NP_NO_QUICKDRAW */
-        
         case NPDrawingModelCoreGraphics:
         {
             CGRect cgRect = CGPathGetBoundingBox((NPCGRegion)invalidRegion);
@@ -1958,14 +1554,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             return NPERR_NO_ERROR;
         }
 
-#ifndef NP_NO_QUICKDRAW
-        case NPNVsupportsQuickDrawBool:
-        {
-            *(NPBool *)value = TRUE;
-            return NPERR_NO_ERROR;
-        }
-#endif /* NP_NO_QUICKDRAW */
-        
         case NPNVsupportsCoreGraphicsBool:
         {
             *(NPBool *)value = TRUE;
@@ -1983,14 +1571,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             *(NPBool *)value = TRUE;
             return NPERR_NO_ERROR;
         }
-            
-#ifndef NP_NO_CARBON
-        case NPNVsupportsCarbonBool:
-        {
-            *(NPBool *)value = TRUE;
-            return NPERR_NO_ERROR;
-        }
-#endif /* NP_NO_CARBON */
 
         case NPNVsupportsCocoaBool:
         {
@@ -2030,9 +1610,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             NPDrawingModel newDrawingModel = (NPDrawingModel)(uintptr_t)value;
             switch (newDrawingModel) {
                 // Supported drawing models:
-#ifndef NP_NO_QUICKDRAW
-                case NPDrawingModelQuickDraw:
-#endif
                 case NPDrawingModelCoreGraphics:
                 case NPDrawingModelCoreAnimation:
                     drawingModel = newDrawingModel;
@@ -2056,9 +1633,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             NPEventModel newEventModel = (NPEventModel)(uintptr_t)value;
             switch (newEventModel) {
                 // Supported event models:
-#ifndef NP_NO_CARBON
-                case NPEventModelCarbon:
-#endif
                 case NPEventModelCocoa:
                     eventModel = newEventModel;
                     return NPERR_NO_ERROR;
@@ -2279,80 +1853,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
     free(plugin);
     plugin = NULL;
-}
-
-- (NSBitmapImageRep *)_printedPluginBitmap
-{
-#ifdef NP_NO_QUICKDRAW
-    return nil;
-#else
-    // Cannot print plugins that do not implement NPP_Print
-    if (![_pluginPackage.get() pluginFuncs]->print)
-        return nil;
-
-    // This NSBitmapImageRep will share its bitmap buffer with a GWorld that the plugin will draw into.
-    // The bitmap is created in 32-bits-per-pixel ARGB format, which is the default GWorld pixel format.
-    NSBitmapImageRep *bitmap = [[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                         pixelsWide:window.width
-                                                         pixelsHigh:window.height
-                                                         bitsPerSample:8
-                                                         samplesPerPixel:4
-                                                         hasAlpha:YES
-                                                         isPlanar:NO
-                                                         colorSpaceName:NSDeviceRGBColorSpace
-                                                         bitmapFormat:NSAlphaFirstBitmapFormat
-                                                         bytesPerRow:0
-                                                         bitsPerPixel:0] autorelease];
-    ASSERT(bitmap);
-    
-    // Create a GWorld with the same underlying buffer into which the plugin can draw
-    ::Rect printGWorldBounds;
-    SetRect(&printGWorldBounds, 0, 0, window.width, window.height);
-    GWorldPtr printGWorld;
-    if (NewGWorldFromPtr(&printGWorld,
-                         k32ARGBPixelFormat,
-                         &printGWorldBounds,
-                         NULL,
-                         NULL,
-                         0,
-                         (Ptr)[bitmap bitmapData],
-                         [bitmap bytesPerRow]) != noErr) {
-        LOG_ERROR("Could not create GWorld for printing");
-        return nil;
-    }
-    
-    /// Create NPWindow for the GWorld
-    NPWindow printNPWindow;
-    printNPWindow.window = &printGWorld; // Normally this is an NP_Port, but when printing it is the actual CGrafPtr
-    printNPWindow.x = 0;
-    printNPWindow.y = 0;
-    printNPWindow.width = window.width;
-    printNPWindow.height = window.height;
-    printNPWindow.clipRect.top = 0;
-    printNPWindow.clipRect.left = 0;
-    printNPWindow.clipRect.right = window.width;
-    printNPWindow.clipRect.bottom = window.height;
-    printNPWindow.type = NPWindowTypeDrawable; // Offscreen graphics port as opposed to a proper window
-    
-    // Create embed-mode NPPrint
-    NPPrint npPrint;
-    npPrint.mode = NP_EMBED;
-    npPrint.print.embedPrint.window = printNPWindow;
-    npPrint.print.embedPrint.platformPrint = printGWorld;
-    
-    // Tell the plugin to print into the GWorld
-    [self willCallPlugInFunction];
-    {
-        JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
-        [_pluginPackage.get() pluginFuncs]->print(plugin, &npPrint);
-    }
-    [self didCallPlugInFunction];
-
-    // Don't need the GWorld anymore
-    DisposeGWorld(printGWorld);
-        
-    return bitmap;
-#endif
 }
 
 - (void)_redeliverStream

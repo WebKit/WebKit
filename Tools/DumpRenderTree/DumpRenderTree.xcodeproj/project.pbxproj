@@ -61,7 +61,6 @@
 		141BF438096A455900E0753C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
-		1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */; };
 		1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1E4296141141C400388758 /* PrivateBrowsing.cpp */; };
 		1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */; };
 		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
@@ -263,7 +262,6 @@
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
-		1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SupportsCarbonEventModel.cpp; sourceTree = "<group>"; };
 		1A1E4296141141C400388758 /* PrivateBrowsing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsing.cpp; sourceTree = "<group>"; };
 		1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOpenInDestroyStream.cpp; sourceTree = "<group>"; };
 		1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = "<group>"; };
@@ -687,7 +685,6 @@
 				1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */,
 				1A31EB3713466AC100017372 /* ConvertPoint.cpp */,
 				520206CE1A0ADA5900AD5154 /* SetMuted.cpp */,
-				1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1117,7 +1114,6 @@
 				1A1E4298141141C400388758 /* PrivateBrowsing.cpp in Sources */,
 				520206CF1A0ADA5900AD5154 /* SetMuted.cpp in Sources */,
 				5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */,
-				1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */,
 				1AC6C84B0D07638600CD3161 /* TestObject.cpp in Sources */,
 				1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */,
 				00F048541A0C3C9A000244DB /* URLRedirect.cpp in Sources */,

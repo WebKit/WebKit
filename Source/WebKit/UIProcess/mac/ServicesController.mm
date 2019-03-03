@@ -53,7 +53,6 @@ ServicesController::ServicesController()
 {
     refreshExistingServices();
 
-#ifdef __LP64__
     auto refreshCallback = [this](NSArray *, NSError *) {
         // We coalese refreshes from the notification callbacks because they can come in small batches.
         refreshExistingServices(false);
@@ -63,7 +62,6 @@ ServicesController::ServicesController()
     m_extensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:extensionAttributes completion:refreshCallback];
     auto uiExtensionAttributes = @{ @"NSExtensionPointName" : @"com.apple.ui-services" };
     m_uiExtensionWatcher = [NSExtension beginMatchingExtensionsWithAttributes:uiExtensionAttributes completion:refreshCallback];
-#endif // __LP64__
 }
 
 static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items, WTF::Function<void(bool)>&& completionHandler)

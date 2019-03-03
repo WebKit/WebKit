@@ -29,7 +29,6 @@
 #include <wtf/FileSystem.h>
 
 namespace WebKit {
-using namespace WebCore;
 
 Vector<String> pluginsDirectories()
 {

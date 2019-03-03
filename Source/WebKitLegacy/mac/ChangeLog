@@ -1,3 +1,33 @@
+2019-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some more unused 32-bit code
+        https://bugs.webkit.org/show_bug.cgi?id=195255
+
+        Reviewed by Darin Adler.
+
+        * Plugins/WebNetscapePluginEventHandler.mm:
+        (WebNetscapePluginEventHandler::create):
+        * Plugins/WebNetscapePluginView.h:
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView restorePortState:]):
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebNetscapePluginView isNewWindowEqualToOldWindow]):
+        (-[WebNetscapePluginView updateAndSetWindow]):
+        (-[WebNetscapePluginView setWindowIfNecessary]):
+        (-[WebNetscapePluginView createPlugin]):
+        (-[WebNetscapePluginView fini]):
+        (-[WebNetscapePluginView drawRect:]):
+        (-[WebNetscapePluginView invalidateRegion:]):
+        (-[WebNetscapePluginView getVariable:value:]):
+        (-[WebNetscapePluginView setVariable:value:]):
+        (isDrawingModelQuickDraw): Deleted.
+        (-[WebNetscapePluginView fixWindowPort]): Deleted.
+        (getQDPixelFormatForBitmapContext): Deleted.
+        (-[WebNetscapePluginView tellQuickTimeToChill]): Deleted.
+        (-[WebNetscapePluginView _printedPluginBitmap]): Deleted.
+        * WebView/WebDelegateImplementationCaching.mm:
+
 2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Programmatic paste access should be granted when copying and pasting within the same origin

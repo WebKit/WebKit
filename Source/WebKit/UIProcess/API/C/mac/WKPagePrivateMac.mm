@@ -137,7 +137,6 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
     return webPageProxy->process().processPool().isURLKnownHSTSHost(WebKit::toImpl(url)->string(), privateBrowsingEnabled);
 }
 
-#if !TARGET_OS_IPHONE && (defined(__clang__) && defined(__APPLE__) && !defined(__i386__))
 WKNavigation *WKPageLoadURLRequestReturningNavigation(WKPageRef pageRef, WKURLRequestRef urlRequestRef)
 {
     auto resourceRequest = WebKit::toImpl(urlRequestRef)->resourceRequest();
@@ -148,7 +147,6 @@ WKNavigation *WKPageLoadFileReturningNavigation(WKPageRef pageRef, WKURLRef file
 {
     return WebKit::wrapper(WebKit::toImpl(pageRef)->loadFile(WebKit::toWTFString(fileURL), WebKit::toWTFString(resourceDirectoryURL)));
 }
-#endif
 
 #if PLATFORM(MAC)
 bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef pageRef)

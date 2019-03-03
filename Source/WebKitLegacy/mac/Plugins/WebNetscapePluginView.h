@@ -41,9 +41,6 @@ class WebNetscapePluginStream;
 class WebNetscapePluginEventHandler;
 
 typedef union PluginPort {
-#ifndef NP_NO_QUICKDRAW
-    NP_Port qdPort;
-#endif        
     NP_CGContext cgPort;
 } PluginPort;
 
@@ -73,11 +70,6 @@ typedef union PluginPort {
     PluginPort lastSetPort;
     NPDrawingModel drawingModel;
     NPEventModel eventModel;
-    
-#ifndef NP_NO_QUICKDRAW
-    // This is only valid when drawingModel is NPDrawingModelQuickDraw
-    GWorldPtr offscreenGWorld;
-#endif
 
     std::unique_ptr<WebNetscapePluginEventHandler> _eventHandler;
     

@@ -79,11 +79,7 @@ WebHistoryDelegateImplementationCache* WebViewGetHistoryDelegateImplementations(
 
 typedef float (*ObjCMsgSendFPRet)(id, SEL, ...);
 #if !PLATFORM(IOS_FAMILY)
-#if defined(__i386__)
-static const ObjCMsgSendFPRet objc_msgSend_float_return = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend_fpret);
-#else
 static const ObjCMsgSendFPRet objc_msgSend_float_return = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend);
-#endif
 #endif
 
 static inline id CallDelegate(WebView *self, id delegate, SEL selector)

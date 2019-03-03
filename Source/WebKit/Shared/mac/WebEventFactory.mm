@@ -72,9 +72,7 @@ static WebMouseEvent::Button mouseButtonForEvent(NSEvent *event)
     case NSEventTypeOtherMouseUp:
     case NSEventTypeOtherMouseDragged:
         return WebMouseEvent::MiddleButton;
-#if defined(__LP64__)
     case NSEventTypePressure:
-#endif
     case NSEventTypeMouseEntered:
     case NSEventTypeMouseExited:
         return currentMouseButton();
@@ -132,9 +130,7 @@ static int clickCountForEvent(NSEvent *event)
 static NSPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
-#if defined(__LP64__)
     case NSEventTypePressure:
-#endif
     case NSEventTypeLeftMouseDown:
     case NSEventTypeLeftMouseUp:
     case NSEventTypeLeftMouseDragged:
@@ -157,9 +153,7 @@ static NSPoint globalPointForEvent(NSEvent *event)
 static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
-#if defined(__LP64__)
     case NSEventTypePressure:
-#endif
     case NSEventTypeLeftMouseDown:
     case NSEventTypeLeftMouseUp:
     case NSEventTypeLeftMouseDragged:
@@ -341,7 +335,6 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     NSPoint globalPosition = globalPointForEvent(event);
 
     WebEvent::Type type = mouseEventTypeForEvent(event);
-#if defined(__LP64__)
     if ([event type] == NSEventTypePressure) {
         // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
         // event and lastPressureEvent to detect if this is MouseForceDown, MouseForceUp, or just MouseForceChanged.
@@ -352,7 +345,6 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
         else
             type = WebEvent::MouseForceChanged;
     }
-#endif
 
     WebMouseEvent::Button button = mouseButtonForEvent(event);
     unsigned short buttons = currentlyPressedMouseButtons();
@@ -365,12 +357,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     int eventNumber = [event eventNumber];
     int menuTypeForEvent = typeForEvent(event);
 
-    double force = 0;
-#if defined(__LP64__)
     int stage = [event type] == NSEventTypePressure ? event.stage : lastPressureEvent.stage;
     double pressure = [event type] == NSEventTypePressure ? event.pressure : lastPressureEvent.pressure;
-    force = pressure + stage;
-#endif
+    double force = pressure + stage;
 
     return WebMouseEvent(type, button, buttons, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp, force, WebMouseEvent::SyntheticClickType::NoTap, eventNumber, menuTypeForEvent);
 }

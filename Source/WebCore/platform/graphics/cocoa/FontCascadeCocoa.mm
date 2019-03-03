@@ -47,12 +47,6 @@ SOFT_LINK_CLASS(CoreUI, CUICatalog)
 SOFT_LINK_CLASS(CoreUI, CUIStyleEffectConfiguration)
 #endif
 
-#ifdef __LP64__
-#define URefCon void*
-#else
-#define URefCon UInt32
-#endif
-
 namespace WebCore {
 
 // Confusingly, even when CGFontRenderingGetFontSmoothingDisabled() returns true, CGContextSetShouldSmoothFonts() still impacts text

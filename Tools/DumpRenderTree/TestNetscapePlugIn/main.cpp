@@ -35,10 +35,6 @@
 #include <X11/Xutil.h>
 #endif
 
-#if !defined(NP_NO_CARBON) && defined(QD_HEADERS_ARE_PRIVATE) && QD_HEADERS_ARE_PRIVATE
-extern "C" void GlobalToLocal(Point*);
-#endif
-
 using namespace std;
 
 static bool getEntryPointsWasCalled;
@@ -145,29 +141,15 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
     if (browser->getvalue(instance, NPNVsupportsCoreAnimationBool, &supportsCoreAnimation) != NPERR_NO_ERROR)
         supportsCoreAnimation = false;
 
-#ifndef NP_NO_CARBON
-    NPBool supportsCarbon = false;
-#endif
     NPBool supportsCocoa = false;
-
-#ifndef NP_NO_CARBON
-    // A browser that doesn't know about NPNVsupportsCarbonBool is one that only supports Carbon event model.
-    if (browser->getvalue(instance, NPNVsupportsCarbonBool, &supportsCarbon) != NPERR_NO_ERROR)
-        supportsCarbon = true;
-#endif
 
     if (browser->getvalue(instance, NPNVsupportsCocoaBool, &supportsCocoa) != NPERR_NO_ERROR)
         supportsCocoa = false;
 
-    if (supportsCocoa) {
+    if (supportsCocoa)
         eventModel = NPEventModelCocoa;
-#ifndef NP_NO_CARBON
-    } else if (supportsCarbon) {
-        eventModel = NPEventModelCarbon;
-#endif
-    } else {
+    else
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
-    }
 
      browser->setvalue(instance, NPPVpluginEventModel, (void *)eventModel);
 #endif // XP_MACOSX
@@ -460,105 +442,6 @@ void NPP_Print(NPP instance, NPPrint *platformPrint)
 }
 
 #ifdef XP_MACOSX
-#ifndef NP_NO_CARBON
-static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* event)
-{
-    Point pt = { event->where.v, event->where.h };
-
-    switch (event->what) {
-        case nullEvent:
-            // these are delivered non-deterministically, don't log.
-            break;
-        case mouseDown:
-            if (obj->eventLogging) {
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                GlobalToLocal(&pt);
-                ALLOW_DEPRECATED_DECLARATIONS_END
-                pluginLog(instance, "mouseDown at (%d, %d)", pt.h, pt.v);
-            }
-            if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
-                executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
-            break;
-        case mouseUp:
-            if (obj->eventLogging) {
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-                GlobalToLocal(&pt);
-                ALLOW_DEPRECATED_DECLARATIONS_END
-                pluginLog(instance, "mouseUp at (%d, %d)", pt.h, pt.v);
-            }
-            break;
-        case keyDown:
-            if (obj->eventLogging)
-                pluginLog(instance, "keyDown '%c'", (char)(event->message & 0xFF));
-            if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
-                executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
-            break;
-        case keyUp:
-            if (obj->eventLogging)
-                pluginLog(instance, "keyUp '%c'", (char)(event->message & 0xFF));
-            if (obj->testKeyboardFocusForPlugins) {
-                obj->eventLogging = false;
-                obj->testKeyboardFocusForPlugins = FALSE;
-                executeScript(obj, "testRunner.notifyDone();");
-            }
-            break;
-        case autoKey:
-            if (obj->eventLogging)
-                pluginLog(instance, "autoKey '%c'", (char)(event->message & 0xFF));
-            break;
-        case updateEvt:
-            if (obj->eventLogging)
-                pluginLog(instance, "updateEvt");
-            break;
-        case diskEvt:
-            if (obj->eventLogging)
-                pluginLog(instance, "diskEvt");
-            break;
-        case activateEvt:
-            if (obj->eventLogging)
-                pluginLog(instance, "activateEvt");
-            break;
-        case osEvt:
-            if (!obj->eventLogging)
-                break;
-            printf("PLUGIN: osEvt - ");
-            switch ((event->message & 0xFF000000) >> 24) {
-                case suspendResumeMessage:
-                    printf("%s\n", (event->message & 0x1) ? "resume" : "suspend");
-                    break;
-                case mouseMovedMessage:
-                    printf("mouseMoved\n");
-                    break;
-                default:
-                    printf("%08lX\n", event->message);
-            }
-            break;
-        case kHighLevelEvent:
-            if (obj->eventLogging)
-                pluginLog(instance, "kHighLevelEvent");
-            break;
-        // NPAPI events
-        case NPEventType_GetFocusEvent:
-            if (obj->eventLogging)
-                pluginLog(instance, "getFocusEvent");
-            break;
-        case NPEventType_LoseFocusEvent:
-            if (obj->eventLogging)
-                pluginLog(instance, "loseFocusEvent");
-            break;
-        case NPEventType_AdjustCursorEvent:
-            if (obj->eventLogging)
-                pluginLog(instance, "adjustCursorEvent");
-            break;
-        default:
-            if (obj->eventLogging)
-                pluginLog(instance, "event %d", event->what);
-    }
-    
-    return 0;
-}
-#endif
-
 static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* event)
 {
     switch (event->type) {
@@ -758,11 +641,6 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
         return 1;
 
 #ifdef XP_MACOSX
-#ifndef NP_NO_CARBON
-    if (obj->eventModel == NPEventModelCarbon)
-        return handleEventCarbon(instance, obj, static_cast<EventRecord*>(event));
-#endif
-
     assert(obj->eventModel == NPEventModelCocoa);
     return handleEventCocoa(instance, obj, static_cast<NPCocoaEvent*>(event));
 #elif defined(MOZ_X11)

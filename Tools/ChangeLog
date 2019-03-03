@@ -1,3 +1,17 @@
+2019-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some more unused 32-bit code
+        https://bugs.webkit.org/show_bug.cgi?id=195255
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/SupportsCarbonEventModel.cpp: Removed.
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+        (NPP_HandleEvent):
+        (handleEventCarbon): Deleted.
+
 2019-03-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed follow-up to r242292. Keep EXPECT_STREQ in tests per Darin's request.

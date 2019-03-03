@@ -36,11 +36,7 @@
 
 WTF_EXTERN_C_BEGIN
 
-#ifdef __LP64__
 typedef double IOHIDFloat;
-#else
-typedef float IOHIDFloat;
-#endif
 
 enum {
     kIOHIDEventOptionNone = 0,

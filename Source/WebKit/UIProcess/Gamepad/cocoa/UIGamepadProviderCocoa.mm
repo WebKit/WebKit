@@ -49,13 +49,11 @@ void UIGamepadProvider::platformSetDefaultGamepadProvider()
 
 #if PLATFORM(IOS_FAMILY)
     GamepadProvider::setSharedProvider(GameControllerGamepadProvider::singleton());
-#elif defined(__LP64__)
+#else
     if (useGameControllerFramework)
         GamepadProvider::setSharedProvider(GameControllerGamepadProvider::singleton());
     else
         GamepadProvider::setSharedProvider(HIDGamepadProvider::singleton());
-#else
-    GamepadProvider::setSharedProvider(HIDGamepadProvider::singleton());
 #endif
 }
 

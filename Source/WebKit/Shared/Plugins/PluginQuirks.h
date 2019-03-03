@@ -72,12 +72,6 @@ public:
         // <rdar://problem/13003470> Adobe Flash has a bug where exceptions are released too early.
         LeakAllThrownNSExceptions,
 
-#ifndef NP_NO_QUICKDRAW
-        // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
-        // will never paint or receive events. Used by the AppleConnect plug-in.
-        AllowHalfBakedQuickDrawSupport,
-#endif
-
         // X11 specific quirks:
 #elif PLATFORM(X11)
         // Flash and npwrapper ask the browser about which GTK version does it use

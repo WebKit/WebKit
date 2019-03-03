@@ -26,7 +26,7 @@
 #import "config.h"
 #import "GameControllerGamepadProvider.h"
 
-#if ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))
+#if ENABLE(GAMEPAD)
 
 #import "GameControllerGamepad.h"
 #import "GamepadProviderClient.h"
@@ -176,4 +176,4 @@ void GameControllerGamepadProvider::inputNotificationTimerFired()
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))
+#endif // ENABLE(GAMEPAD)

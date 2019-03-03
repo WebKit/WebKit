@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))
+#if ENABLE(GAMEPAD)
 
 #include "PlatformGamepad.h"
 #include <wtf/RetainPtr.h>
@@ -66,4 +66,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD) && (defined(__LP64__) || PLATFORM(IOS_FAMILY))
+#endif // ENABLE(GAMEPAD)

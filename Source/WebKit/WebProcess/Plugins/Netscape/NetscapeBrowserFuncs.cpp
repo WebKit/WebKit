@@ -494,18 +494,6 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
         }
-
-#ifndef NP_NO_QUICKDRAW
-        case NPNVsupportsQuickDrawBool:
-            // We don't support the QuickDraw drawing model.
-            *(NPBool*)value = false;
-            break;
-#endif
-#ifndef NP_NO_CARBON
-       case NPNVsupportsCarbonBool:
-            *(NPBool*)value = true;
-            break;
-#endif
 #elif PLATFORM(X11)
         case NPNVxDisplay: {
             if (!npp)

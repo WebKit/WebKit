@@ -1,3 +1,0 @@
-
-This tests that WebKit correctly reports that the Carbon event model is supported.
-SUCCESS!

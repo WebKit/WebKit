@@ -514,17 +514,9 @@ static size_t sizeForNumberType(CFNumberType numberType)
     case kCFNumberCFIndexType:
         return sizeof(CFIndex);
     case kCFNumberNSIntegerType:
-#ifdef __LP64__
         return sizeof(long);
-#else
-        return sizeof(int);
-#endif
     case kCFNumberCGFloatType:
-#ifdef __LP64__
         return sizeof(double);
-#else
-        return sizeof(float);
-#endif
     }
 
     return 0;

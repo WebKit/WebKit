@@ -240,28 +240,7 @@ bool NetscapePluginModule::tryLoad()
     // reversed. Failing to follow this order results in crashes (e.g., in Silverlight on Mac and
     // in Flash and QuickTime on Windows).
 #if PLUGIN_ARCHITECTURE(MAC)
-#ifndef NP_NO_CARBON
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-    // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
-    ResFileRefNum currentResourceFile = CurResFile();
-    
-    ResFileRefNum pluginResourceFile = m_module->bundleResourceMap();
-    UseResFile(pluginResourceFile);
-
-#endif
-    bool result = initializeFuncPtr(netscapeBrowserFuncs()) == NPERR_NO_ERROR && getEntryPointsFuncPtr(&m_pluginFuncs) == NPERR_NO_ERROR;
-
-#ifndef NP_NO_CARBON
-    // Restore the resource file.
-    UseResFile(currentResourceFile);
-
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-#endif
-
-    return result;
+    return initializeFuncPtr(netscapeBrowserFuncs()) == NPERR_NO_ERROR && getEntryPointsFuncPtr(&m_pluginFuncs) == NPERR_NO_ERROR;
 #elif PLUGIN_ARCHITECTURE(UNIX)
     if (initializeFuncPtr(netscapeBrowserFuncs(), &m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
