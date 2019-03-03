@@ -147,7 +147,7 @@ void ContentChangeObserver::contentVisibilityDidChange()
     adjustObservedState(Event::ContentVisibilityChanged);
 }
 
-void ContentChangeObserver::startObservingContentChanges()
+void ContentChangeObserver::startObservingMouseMoved()
 {
     ASSERT(!hasPendingStyleRecalc(m_page));
     clearObservedDOMTimers();
@@ -156,7 +156,7 @@ void ContentChangeObserver::startObservingContentChanges()
     adjustObservedState(Event::ContentObservationStarted);
 }
 
-void ContentChangeObserver::stopObservingContentChanges()
+void ContentChangeObserver::stopObservingMouseMoved()
 {
     stopObservingDOMTimerScheduling();
     m_isObservingContentChanges = false;
@@ -285,6 +285,19 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
         || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
         m_contentChangeObserver->contentVisibilityDidChange();
+}
+
+ContentChangeObserver::MouseMovedScope::MouseMovedScope(Page* page)
+    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->startObservingMouseMoved();
+}
+
+ContentChangeObserver::MouseMovedScope::~MouseMovedScope()
+{
+    if (m_contentChangeObserver)
+        m_contentChangeObserver->stopObservingMouseMoved();
 }
 
 ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Page* page)

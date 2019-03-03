@@ -494,16 +494,13 @@ void EventHandler::mouseMoved(WebEvent *event)
     auto& document = *m_frame.document();
     // Ensure we start mouse move event dispatching on a clear tree.
     document.updateStyleIfNeeded();
-
-    auto& contentChangeObserver = document.page()->contentChangeObserver();
-    contentChangeObserver.startObservingContentChanges();
-
     CurrentEventScope scope(event);
-    event.wasHandled = mouseMoved(currentPlatformMouseEvent());
-
-    // Run style recalc to be able to capture content changes as the result of the mouse move event.
-    document.updateStyleIfNeeded();
-    contentChangeObserver.stopObservingContentChanges();
+    {
+        ContentChangeObserver::MouseMovedScope observingScope(document.page());
+        event.wasHandled = mouseMoved(currentPlatformMouseEvent());
+        // Run style recalc to be able to capture content changes as the result of the mouse move event.
+        document.updateStyleIfNeeded();
+    }
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

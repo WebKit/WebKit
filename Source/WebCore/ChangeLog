@@ -1,5 +1,26 @@
 2019-03-02  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Introduce ContentChangeObserver::MouseMovedScope
+        https://bugs.webkit.org/show_bug.cgi?id=195252
+        <rdar://problem/48539446>
+
+        Reviewed by Simon Fraser.
+
+        Scope the mouse-moved event to make the callsites less error-prone. 
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::startObservingMouseMoved):
+        (WebCore::ContentChangeObserver::stopObservingMouseMoved):
+        (WebCore::ContentChangeObserver::MouseMovedScope::MouseMovedScope):
+        (WebCore::ContentChangeObserver::MouseMovedScope::~MouseMovedScope):
+        (WebCore::ContentChangeObserver::startObservingContentChanges): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingContentChanges): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+
+2019-03-02  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Introduce ContentChangeObserver::adjustObservedState
         https://bugs.webkit.org/show_bug.cgi?id=195244
         <rdar://problem/48536737>

@@ -38,8 +38,6 @@ class ContentChangeObserver {
 public:
     ContentChangeObserver(Page&);
 
-    WEBCORE_EXPORT void startObservingContentChanges();
-    WEBCORE_EXPORT void stopObservingContentChanges();
     WEBCORE_EXPORT WKContentChange observedContentChange() const;
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
@@ -62,6 +60,14 @@ public:
         Visibility m_previousImplicitVisibility;
     };
 
+    class MouseMovedScope {
+    public:
+        WEBCORE_EXPORT MouseMovedScope(Page*);
+        WEBCORE_EXPORT ~MouseMovedScope();
+    private:
+        ContentChangeObserver* m_contentChangeObserver { nullptr };
+    };
+
     class StyleRecalcScope {
     public:
         StyleRecalcScope(Page*);
@@ -80,6 +86,9 @@ public:
     };
 
 private:
+    void startObservingMouseMoved();
+    void stopObservingMouseMoved();
+
     void startObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = true; }
     void stopObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = false; }
 

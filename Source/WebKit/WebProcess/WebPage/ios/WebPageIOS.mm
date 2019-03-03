@@ -541,18 +541,17 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     auto& mainframe = m_page->mainFrame();
     auto& contentChangeObserver = m_page->contentChangeObserver();
 
-    LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << nodeRespondingToClick << ") " << location);
-    contentChangeObserver.startObservingContentChanges();
-
     // FIXME: Pass caps lock state.
     bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
     bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
     bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
-    mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
-    mainframe.document()->updateStyleIfNeeded();
-
-    contentChangeObserver.stopObservingContentChanges();
+    {
+        LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << nodeRespondingToClick << ") " << location);
+        ContentChangeObserver::MouseMovedScope observingScope(m_page.get());
+        mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
+        mainframe.document()->updateStyleIfNeeded();
+    }
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
