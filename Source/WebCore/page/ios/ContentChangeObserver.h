@@ -44,7 +44,7 @@ public:
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
-    void didContentVisibilityChange();
+    void contentVisibilityDidChange();
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
@@ -89,12 +89,12 @@ private:
     void startObservingStyleRecalc();
     void stopObservingStyleRecalc();
 
-    void addObservedDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
+    void registerDOMTimer(const DOMTimer&);
+    void unregisterDOMTimer(const DOMTimer&);
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
-    void removeObservedDOMTimer(const DOMTimer&);
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
-    void setShouldObserveStyleRecalc(bool shouldObserve) { m_shouldObserveStyleRecalc = shouldObserve; }
+    void setShouldObserveStyleRecalc(bool);
     bool shouldObserveStyleRecalc() const { return m_shouldObserveStyleRecalc; }
 
     bool isObservingContentChanges() const { return m_isObservingContentChanges; }
@@ -109,6 +109,17 @@ private:
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasDeterminateState() const;
+
+    void notifyContentChangeIfNeeded();
+
+    enum class Event {
+        ContentObservationStarted,
+        InstalledDOMTimer,
+        RemovedDOMTimer,
+        StyleRecalcFinished,
+        ContentVisibilityChanged
+    };
+    void adjustObservedState(Event);
 
     Page& m_page;
     HashSet<const DOMTimer*> m_DOMTimerList;

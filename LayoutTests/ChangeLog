@@ -1,3 +1,14 @@
+2019-03-02  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Introduce ContentChangeObserver::adjustObservedState
+        https://bugs.webkit.org/show_bug.cgi?id=195244
+        <rdar://problem/48536737>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/visibility-change-happens-at-the-second-timer-expected.txt: Added.
+        * fast/events/touch/ios/visibility-change-happens-at-the-second-timer.html: Added.
+
 2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Programmatic paste access should be granted when copying and pasting within the same origin
