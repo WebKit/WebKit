@@ -106,6 +106,7 @@ Shared/AuxiliaryProcess.cpp @no-unify
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp @no-unify
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
+Shared/EditingRange.cpp
 Shared/EditorState.cpp
 Shared/FontInfo.cpp
 Shared/FrameInfoData.cpp

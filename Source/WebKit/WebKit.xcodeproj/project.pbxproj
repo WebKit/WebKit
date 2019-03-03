@@ -2723,6 +2723,7 @@
 		2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserStyleSheet.h; sourceTree = "<group>"; };
 		2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteTiledBacking.cpp; sourceTree = "<group>"; };
 		2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteTiledBacking.h; sourceTree = "<group>"; };
+		2D9CD5EE21FA75EE0029ACFA /* EditingRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingRange.cpp; sourceTree = "<group>"; };
 		2D9EA30C1A96CB59002D2807 /* WKPageInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageInjectedBundleClient.h; sourceTree = "<group>"; };
 		2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageInjectedBundleClient.h; sourceTree = "<group>"; };
 		2D9EA3101A96D9EB002D2807 /* WebPageInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageInjectedBundleClient.cpp; sourceTree = "<group>"; };
@@ -5026,6 +5027,7 @@
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
+				2D9CD5EE21FA75EE0029ACFA /* EditingRange.cpp */,
 				E105FE5318D7B9DE008F57A8 /* EditingRange.h */,
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,

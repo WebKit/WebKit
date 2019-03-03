@@ -5045,7 +5045,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 
     bool replacesText = false;
     if (replacementEditingRange.location != notFound) {
-        if (auto replacementRange = rangeFromEditingRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo))) {
+        if (auto replacementRange = EditingRange::toRange(frame, replacementEditingRange, static_cast<EditingRangeIsRelativeTo>(editingRangeIsRelativeTo))) {
             SetForScope<bool> isSelectingTextWhileInsertingAsynchronously(m_isSelectingTextWhileInsertingAsynchronously, suppressSelectionUpdate);
             frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
             replacesText = replacementEditingRange.length;
@@ -5066,49 +5066,25 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
 void WebPage::getMarkedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    RefPtr<Range> range = frame.editor().compositionRange();
-    size_t location;
-    size_t length;
-    if (!range || !TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), location, length)) {
-        location = notFound;
-        length = 0;
-    }
-
-    send(Messages::WebPageProxy::EditingRangeCallback(EditingRange(location, length), callbackID));
+    auto editingRange = EditingRange::fromRange(frame, frame.editor().compositionRange().get());
+    send(Messages::WebPageProxy::EditingRangeCallback(editingRange, callbackID));
 }
 
 void WebPage::getSelectedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-
-    size_t location;
-    size_t length;
-    RefPtr<Range> range = frame.selection().toNormalizedRange();
-    if (!range || !TextIterator::getLocationAndLengthFromRange(frame.selection().rootEditableElementOrDocumentElement(), range.get(), location, length)) {
-        location = notFound;
-        length = 0;
-    }
-
-    send(Messages::WebPageProxy::EditingRangeCallback(EditingRange(location, length), callbackID));
+    auto editingRange = EditingRange::fromRange(frame, frame.selection().toNormalizedRange().get());
+    send(Messages::WebPageProxy::EditingRangeCallback(editingRange, callbackID));
 }
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
 {
-    uint64_t index = notFound;
-
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point);
     Frame* frame = result.innerNonSharedNode() ? result.innerNodeFrame() : &m_page->focusController().focusedOrMainFrame();
     
     RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
-    if (range) {
-        size_t location;
-        size_t length;
-        if (TextIterator::getLocationAndLengthFromRange(frame->selection().rootEditableElementOrDocumentElement(), range.get(), location, length))
-            index = static_cast<uint64_t>(location);
-    }
-
-    send(Messages::WebPageProxy::UnsignedCallback(index, callbackID));
+    auto editingRange = EditingRange::fromRange(*frame, range.get());
+    send(Messages::WebPageProxy::UnsignedCallback(static_cast<uint64_t>(editingRange.location), callbackID));
 }
 
 void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
@@ -5116,7 +5092,7 @@ void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, 
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     IntRect result(IntPoint(0, 0), IntSize(0, 0));
     
-    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
+    RefPtr<Range> range = EditingRange::toRange(frame, editingRange);
     if (!range) {
         send(Messages::WebPageProxy::RectForCharacterRangeCallback(result, EditingRange(notFound, 0), callbackID));
         return;
@@ -5135,7 +5111,7 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
     if (frame.selection().selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
         if (replacementEditingRange.location != notFound) {
-            replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
+            replacementRange = EditingRange::toRange(frame, replacementEditingRange);
             if (replacementRange)
                 frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
         }
@@ -6122,45 +6098,6 @@ void WebPage::getSamplingProfilerOutput(CallbackID callbackID)
 #endif
 }
 
-RefPtr<WebCore::Range> WebPage::rangeFromEditingRange(WebCore::Frame& frame, const EditingRange& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
-{
-    ASSERT(range.location != notFound);
-
-    // Sanitize the input, because TextIterator::rangeFromLocationAndLength takes signed integers.
-    if (range.location > INT_MAX)
-        return 0;
-    int length;
-    if (range.length <= INT_MAX && range.location + range.length <= INT_MAX)
-        length = static_cast<int>(range.length);
-    else
-        length = INT_MAX - range.location;
-
-    if (editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot) {
-        // Our critical assumption is that this code path is called by input methods that
-        // concentrate on a given area containing the selection.
-        // We have to do this because of text fields and textareas. The DOM for those is not
-        // directly in the document DOM, so serialization is problematic. Our solution is
-        // to use the root editable element of the selection start as the positional base.
-        // That fits with AppKit's idea of an input context.
-        return TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), static_cast<int>(range.location), length);
-    }
-
-    ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::Paragraph);
-
-    const VisibleSelection& selection = frame.selection().selection();
-    RefPtr<Range> selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
-        return 0;
-
-    RefPtr<Range> paragraphRange = makeRange(startOfParagraph(selection.visibleStart()), selection.visibleEnd());
-    if (!paragraphRange)
-        return 0;
-
-    ContainerNode& rootNode = paragraphRange.get()->startContainer().treeScope().rootNode();
-    int paragraphStartIndex = TextIterator::rangeLength(Range::create(rootNode.document(), &rootNode, 0, &paragraphRange->startContainer(), paragraphRange->startOffset()).ptr());
-    return TextIterator::rangeFromLocationAndLength(&rootNode, paragraphStartIndex + static_cast<int>(range.location), length);
-}
-    
 void WebPage::didChangeScrollOffsetForFrame(Frame* frame)
 {
     if (!frame->isMainFrame())

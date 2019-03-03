@@ -1,3 +1,28 @@
+2019-03-02  Tim Horton  <timothy_horton@apple.com>
+
+        Move EditingRange <-> Range methods to EditingRange instead of WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=195201
+
+        Reviewed by Sam Weinig.
+
+        * Shared/EditingRange.h:
+        * Shared/EditingRange.cpp:
+        Also, modernize the coders.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync):
+        (WebKit::WebPage::getMarkedRangeAsync):
+        (WebKit::WebPage::getSelectedRangeAsync):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        (WebKit::WebPage::firstRectForCharacterRangeAsync):
+        (WebKit::WebPage::setCompositionAsync):
+        (WebKit::WebPage::rangeFromEditingRange): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::insertDictatedTextAsync):
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+
 2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Programmatic paste access should be granted when copying and pasting within the same origin

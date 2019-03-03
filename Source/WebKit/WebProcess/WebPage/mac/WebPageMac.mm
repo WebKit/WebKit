@@ -326,7 +326,7 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
     Ref<Frame> protector(frame);
 
     if (replacementEditingRange.location != notFound) {
-        RefPtr<Range> replacementRange = rangeFromEditingRange(frame, replacementEditingRange);
+        RefPtr<Range> replacementRange = EditingRange::toRange(frame, replacementEditingRange);
         if (replacementRange)
             frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
     }
@@ -348,7 +348,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    RefPtr<Range> range = rangeFromEditingRange(frame, editingRange);
+    RefPtr<Range> range = EditingRange::toRange(frame, editingRange);
     if (!range) {
         send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
         return;
