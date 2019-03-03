@@ -1,3 +1,10 @@
+2019-03-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed follow-up to r242292. Keep EXPECT_STREQ in tests per Darin's request.
+
+        * TestWebKitAPI/Tests/WebKit/EnvironmentUtilitiesTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-03-01  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

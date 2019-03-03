@@ -41,43 +41,43 @@ static String strip(StringView input)
 
 TEST(WebKit, StripEntriesEndingWith)
 {
-    EXPECT_EQ(strip(""), "");
-    EXPECT_EQ(strip(":"), ":");
-    EXPECT_EQ(strip("::"), "::");
-    EXPECT_EQ(strip(":::"), ":::");
-    EXPECT_EQ(strip("::::"), "::::");
-    EXPECT_EQ(strip(":::::"), ":::::");
+    EXPECT_STREQ(strip("").utf8().data(), "");
+    EXPECT_STREQ(strip(":").utf8().data(), ":");
+    EXPECT_STREQ(strip("::").utf8().data(), "::");
+    EXPECT_STREQ(strip(":::").utf8().data(), ":::");
+    EXPECT_STREQ(strip("::::").utf8().data(), "::::");
+    EXPECT_STREQ(strip(":::::").utf8().data(), ":::::");
 
-    EXPECT_EQ(strip(PROCESS_DYLIB), PROCESS_DYLIB);
-    EXPECT_EQ(strip(":" PROCESS_DYLIB), ":" PROCESS_DYLIB);
-    EXPECT_EQ(strip(PROCESS_DYLIB ":"), PROCESS_DYLIB ":");
-    EXPECT_EQ(strip(":" PROCESS_DYLIB ":"), ":" PROCESS_DYLIB ":");
+    EXPECT_STREQ(strip(PROCESS_DYLIB).utf8().data(), PROCESS_DYLIB);
+    EXPECT_STREQ(strip(":" PROCESS_DYLIB).utf8().data(), ":" PROCESS_DYLIB);
+    EXPECT_STREQ(strip(PROCESS_DYLIB ":").utf8().data(), PROCESS_DYLIB ":");
+    EXPECT_STREQ(strip(":" PROCESS_DYLIB ":").utf8().data(), ":" PROCESS_DYLIB ":");
 
-    EXPECT_EQ(strip("/" PROCESS_DYLIB), "");
-    EXPECT_EQ(strip(":/" PROCESS_DYLIB), "");
-    EXPECT_EQ(strip("/" PROCESS_DYLIB ":"), "");
-    EXPECT_EQ(strip(":/" PROCESS_DYLIB ":"), ":");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB).utf8().data(), "");
+    EXPECT_STREQ(strip(":/" PROCESS_DYLIB).utf8().data(), "");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB ":").utf8().data(), "");
+    EXPECT_STREQ(strip(":/" PROCESS_DYLIB ":").utf8().data(), ":");
 
-    EXPECT_EQ(strip(PROCESS_DYLIB "/"), PROCESS_DYLIB "/");
-    EXPECT_EQ(strip(":" PROCESS_DYLIB "/"), ":" PROCESS_DYLIB "/");
-    EXPECT_EQ(strip(PROCESS_DYLIB "/:"), PROCESS_DYLIB "/:");
-    EXPECT_EQ(strip(":" PROCESS_DYLIB "/:"), ":" PROCESS_DYLIB "/:");
+    EXPECT_STREQ(strip(PROCESS_DYLIB "/").utf8().data(), PROCESS_DYLIB "/");
+    EXPECT_STREQ(strip(":" PROCESS_DYLIB "/").utf8().data(), ":" PROCESS_DYLIB "/");
+    EXPECT_STREQ(strip(PROCESS_DYLIB "/:").utf8().data(), PROCESS_DYLIB "/:");
+    EXPECT_STREQ(strip(":" PROCESS_DYLIB "/:").utf8().data(), ":" PROCESS_DYLIB "/:");
 
-    EXPECT_EQ(strip("/" PROCESS_DYLIB "/"), "/" PROCESS_DYLIB "/");
-    EXPECT_EQ(strip(":/" PROCESS_DYLIB "/"), ":/" PROCESS_DYLIB "/");
-    EXPECT_EQ(strip("/" PROCESS_DYLIB "/:"), "/" PROCESS_DYLIB "/:");
-    EXPECT_EQ(strip(":/" PROCESS_DYLIB "/:"), ":/" PROCESS_DYLIB "/:");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB "/").utf8().data(), "/" PROCESS_DYLIB "/");
+    EXPECT_STREQ(strip(":/" PROCESS_DYLIB "/").utf8().data(), ":/" PROCESS_DYLIB "/");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB "/:").utf8().data(), "/" PROCESS_DYLIB "/:");
+    EXPECT_STREQ(strip(":/" PROCESS_DYLIB "/:").utf8().data(), ":/" PROCESS_DYLIB "/:");
 
-    EXPECT_EQ(strip("/Before.dylib:/" PROCESS_DYLIB), "/Before.dylib");
-    EXPECT_EQ(strip("/" PROCESS_DYLIB ":/After.dylib"), "/After.dylib");
-    EXPECT_EQ(strip("/Before.dylib:/" PROCESS_DYLIB ":/After.dylib"), "/Before.dylib:/After.dylib");
-    EXPECT_EQ(strip("/Before.dylib:/" PROCESS_DYLIB ":/Middle.dylib:/" PROCESS_DYLIB ":/After.dylib"), "/Before.dylib:/Middle.dylib:/After.dylib");
+    EXPECT_STREQ(strip("/Before.dylib:/" PROCESS_DYLIB).utf8().data(), "/Before.dylib");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB ":/After.dylib").utf8().data(), "/After.dylib");
+    EXPECT_STREQ(strip("/Before.dylib:/" PROCESS_DYLIB ":/After.dylib").utf8().data(), "/Before.dylib:/After.dylib");
+    EXPECT_STREQ(strip("/Before.dylib:/" PROCESS_DYLIB ":/Middle.dylib:/" PROCESS_DYLIB ":/After.dylib").utf8().data(), "/Before.dylib:/Middle.dylib:/After.dylib");
 
-    EXPECT_EQ(strip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB), "");
-    EXPECT_EQ(strip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB ":/" PROCESS_DYLIB), "");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB).utf8().data(), "");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB ":/" PROCESS_DYLIB).utf8().data(), "");
 
-    EXPECT_EQ(strip("/usr/lib/" PROCESS_DYLIB), "");
-    EXPECT_EQ(strip("/" PROCESS_DYLIB "/" PROCESS_DYLIB), "");
+    EXPECT_STREQ(strip("/usr/lib/" PROCESS_DYLIB).utf8().data(), "");
+    EXPECT_STREQ(strip("/" PROCESS_DYLIB "/" PROCESS_DYLIB).utf8().data(), "");
 }
 
 }
