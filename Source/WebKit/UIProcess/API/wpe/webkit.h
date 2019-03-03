@@ -82,6 +82,8 @@
 #include <wpe/WebKitWebsiteDataManager.h>
 #include <wpe/WebKitWindowProperties.h>
 
+#include <wpe/WebKitAutocleanups.h>
+
 #undef __WEBKIT_H_INSIDE__
 
 #endif /* __WEBKIT_H__ */
