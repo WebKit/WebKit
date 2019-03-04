@@ -1,3 +1,9 @@
+2019-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * dom/Document.h:
+
 2019-03-03  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Content observation should be limited to the current document.

@@ -873,7 +873,7 @@ public:
     // Called when <meta name="apple-mobile-web-app-orientations"> changes.
     void processWebAppOrientations();
 
-    ContentChangeObserver& contentChangeObserver();
+    WEBCORE_EXPORT ContentChangeObserver& contentChangeObserver();
 #endif
     
     void processViewport(const String& features, ViewportArguments::Type origin);
