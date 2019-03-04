@@ -1,3 +1,44 @@
+2019-03-04  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r242355. rdar://problem/48563891
+
+    [iOS] Fullscreen "stay in page" option breaks video playback
+    https://bugs.webkit.org/show_bug.cgi?id=195277
+    <rdar://problem/48537317>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add a LOG entry when playback is rejected due to media playback suspension.
+    
+    * html/MediaElementSession.cpp:
+    (WebCore::MediaElementSession::playbackPermitted const):
+    
+    Source/WebKit:
+    
+    Make sure we resume media playback when the user chooses "stay in page" from the deceptive
+    website warning dialog.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+    (-[WKFullScreenViewController _showPhishingAlert]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242355 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-04  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Fullscreen "stay in page" option breaks video playback
+            https://bugs.webkit.org/show_bug.cgi?id=195277
+            <rdar://problem/48537317>
+
+            Reviewed by Eric Carlson.
+
+            Add a LOG entry when playback is rejected due to media playback suspension.
+
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::playbackPermitted const):
+
 2019-03-01  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r242248. rdar://problem/48503712

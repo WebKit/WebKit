@@ -570,8 +570,10 @@ private:
     }];
 
     UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-        if (auto* page = [self._webView _page])
+        if (auto* page = [self._webView _page]) {
             page->resumeActiveDOMObjectsAndAnimations();
+            page->resumeAllMediaPlayback();
+        }
         _secheuristic.reset();
     }];
 
