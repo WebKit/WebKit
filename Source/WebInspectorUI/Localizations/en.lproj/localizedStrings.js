@@ -137,6 +137,7 @@ localizedStrings["Attributes"] = "Attributes";
 localizedStrings["Audit"] = "Audit";
 localizedStrings["Audit Error: %s"] = "Audit Error: %s";
 localizedStrings["Audit Warning: %s"] = "Audit Warning: %s";
+localizedStrings["Audit version: %s"] = "Audit version: %s";
 localizedStrings["Audits"] = "Audits";
 localizedStrings["Author Stylesheet"] = "Author Stylesheet";
 localizedStrings["Auto Increment"] = "Auto Increment";

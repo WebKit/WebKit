@@ -60,6 +60,14 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             contentPlaceholder.appendChild(importHelpElement);
         }
 
+        let versionContainer = contentView.element.appendChild(document.createElement("div"));
+        versionContainer.classList.add("audit-version");
+
+        let version = WI.AuditTestBase.Version;
+        if (InspectorBackend.domains.Audit)
+            version = Math.min(version, InspectorBackend.domains.Audit.VERSION);
+        versionContainer.textContent = WI.UIString("Audit version: %s").format(version);
+
         this.contentBrowser.showContentView(contentView);
     }
 
@@ -208,7 +216,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _updateNoAuditsPlaceholder()
     {
-        if (WI.auditManager.tests.length)
+        if (WI.auditManager.editing || WI.auditManager.tests.some((test) => !test.disabled))
             return;
 
         let contentPlaceholder = WI.createMessageTextView(WI.UIString("No Audits"));

@@ -49,6 +49,10 @@
     color: var(--glyph-color-disabled);
 }
 
+.sidebar > .panel.navigation.audit > .content > .message-text-view {
+    bottom: var(--navigation-bar-height);
+}
+
 .sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view {
     position: initial;
     border-bottom: 1px solid var(--border-color);
@@ -65,4 +69,16 @@
 .finish-editing-audits-placeholder.message-text-view .navigation-item-help .navigation-bar {
     padding: 0;
     vertical-align: 0.5px;
+}
+
+.audit-version {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: calc(var(--z-index-popover) + 1);
+    padding: 8px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--text-color-secondary);
 }
