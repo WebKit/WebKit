@@ -26,7 +26,7 @@
 #import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKBrowsingContextLoadDelegate.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 typedef void (^OnLoadBlock)(WKBrowsingContextController *);
 
@@ -41,4 +41,4 @@ typedef void (^OnLoadBlock)(WKBrowsingContextController *);
 
 @end
 
-#endif // WK_API_ENABLED
+#endif

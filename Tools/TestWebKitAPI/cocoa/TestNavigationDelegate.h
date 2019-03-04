@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -48,5 +46,3 @@
 - (void)_test_waitForDidStartProvisionalNavigation;
 - (void)_test_waitForDidFinishNavigation;
 @end
-
-#endif

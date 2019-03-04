@@ -27,7 +27,7 @@
 #import <WebKit/WKFoundation.h>
 
 // FIXME: Enable these tests on iOS 12 once rdar://problem/39475542 is resolved.
-#if WK_API_ENABLED && TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 120000
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 120000
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"

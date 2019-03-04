@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <wtf/Forward.h>
 
 @class WKWebView;
@@ -37,5 +35,3 @@
 - (id)initWithWebView:(WKWebView *)webView frameHandle:(_WKFrameHandle *)frameHandle urlString:(const String&)urlString;
 
 @end
-
-#endif

@@ -26,10 +26,6 @@
 #import <Availability.h>
 #import <TargetConditionals.h>
 
-#if !defined(WK_API_ENABLED)
-#define WK_API_ENABLED 1
-#endif
-
 #ifdef __cplusplus
 #define WK_EXTERN extern "C" __attribute__((visibility ("default")))
 #else

@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIIconLoadingClient.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -69,5 +67,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

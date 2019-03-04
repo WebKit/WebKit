@@ -29,8 +29,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigation", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA))
@@ -42,7 +40,5 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigation", macos(10.10, WK_MAC_TBA), i
 @property (readonly) NSURLResponse *response;
 
 @end
-
-#endif // WK_API_ENABLED
 
 #endif // defined(__OBJC__)

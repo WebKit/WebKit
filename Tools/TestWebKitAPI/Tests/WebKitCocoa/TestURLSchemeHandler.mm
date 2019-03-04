@@ -28,8 +28,6 @@
 
 #import <wtf/BlockPtr.h>
 
-#if WK_API_ENABLED
-
 @implementation TestURLSchemeHandler {
     BlockPtr<void(WKWebView *, id <WKURLSchemeTask>)> _startURLSchemeTaskHandler;
     BlockPtr<void(WKWebView *, id <WKURLSchemeTask>)> _stopURLSchemeTaskHandler;
@@ -68,5 +66,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

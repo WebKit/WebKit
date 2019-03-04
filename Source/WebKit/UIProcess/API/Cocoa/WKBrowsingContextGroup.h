@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKUserScriptInjectionTime.h>
 
@@ -62,5 +60,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKUserContentController and WKPreferences"
 @property BOOL privateBrowsingEnabled;
 
 @end
-
-#endif // WK_API_ENABLED

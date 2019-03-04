@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
@@ -38,5 +36,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKObject", macos(10.10, WK_MAC_TBA), ios(8
 @property(readonly) WKTypeRef object;
 
 @end
-
-#endif // WK_API_ENABLED

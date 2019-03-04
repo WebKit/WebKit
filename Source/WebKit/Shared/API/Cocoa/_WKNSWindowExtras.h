@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #if !TARGET_OS_IPHONE
 
 @interface NSWindow (WKExtras)
@@ -36,5 +34,3 @@
 @end
 
 #endif // !TARGET_OS_IPHONE
-
-#endif // WK_API_ENABLED

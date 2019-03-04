@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -357,5 +355,3 @@ TEST(WKWebViewEditActions, ModifyTextWritingDirection)
 #endif
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

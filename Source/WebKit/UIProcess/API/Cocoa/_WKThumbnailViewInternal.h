@@ -25,8 +25,6 @@
 
 #import "_WKThumbnailView.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(MAC)
 
 @interface _WKThumbnailView ()
@@ -37,5 +35,3 @@
 @end
 
 #endif // PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

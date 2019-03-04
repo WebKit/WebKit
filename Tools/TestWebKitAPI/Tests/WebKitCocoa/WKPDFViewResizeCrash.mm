@@ -31,8 +31,6 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool finishedDispatch;
 
 TEST(WebKit, WKPDFViewResizeCrash)
@@ -53,4 +51,3 @@ TEST(WebKit, WKPDFViewResizeCrash)
     TestWebKitAPI::Util::run(&finishedDispatch);
 }
 
-#endif

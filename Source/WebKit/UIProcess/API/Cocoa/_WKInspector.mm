@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKInspector.h"
 
-#if WK_API_ENABLED
-
 #import "WKWebViewInternal.h"
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
@@ -141,5 +139,3 @@
 }
 
 @end
-
-#endif

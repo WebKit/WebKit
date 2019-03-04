@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
+#if PLATFORM(COCOA)
 
 #import "NSFontPanelTesting.h"
 #import "PlatformUtilities.h"

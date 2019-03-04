@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "Test.h"
 #import <wtf/RetainPtr.h>
 
@@ -35,5 +33,3 @@ TEST(WKWebView, ServerTrustKVC)
     auto webView = adoptNS([[WKWebView alloc] init]);
     EXPECT_NULL([webView valueForKey:@"serverTrust"]);
 }
-
-#endif

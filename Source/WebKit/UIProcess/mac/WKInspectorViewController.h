@@ -27,7 +27,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 OBJC_CLASS WKWebView;
 
@@ -60,4 +60,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

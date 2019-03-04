@@ -32,7 +32,6 @@
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/text/CString.h>
 
-#if WK_API_ENABLED
 static inline Class wkNSURLClass()
 {
     static dispatch_once_t once;
@@ -42,18 +41,15 @@ static inline Class wkNSURLClass()
     });
     return wkNSURLClass;
 }
-#endif // WK_API_ENABLED
 
 WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 {
     if (!cfURL)
         return 0;
 
-#if WK_API_ENABLED
     // Since WKNSURL is an internal class with no subclasses, we can do a simple equality check.
     if (object_getClass((__bridge NSURL *)cfURL) == wkNSURLClass())
         return WebKit::toAPI(static_cast<API::URL*>(&[(WKNSURL *)(__bridge NSURL *)CFRetain(cfURL) _apiObject]));
-#endif
 
     CString urlBytes;
     WTF::getURLBytes(cfURL, urlBytes);

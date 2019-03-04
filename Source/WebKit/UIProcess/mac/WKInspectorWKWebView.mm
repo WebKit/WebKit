@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKInspectorWKWebView.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "WKInspectorPrivateMac.h"
 #import <wtf/WeakObjCPtr.h>

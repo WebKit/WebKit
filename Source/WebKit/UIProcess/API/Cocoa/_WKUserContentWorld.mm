@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKUserContentWorldInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation _WKUserContentWorld
 
 + (_WKUserContentWorld *)worldWithName:(NSString *)name
@@ -62,5 +60,3 @@
 }
 
 @end
-
-#endif

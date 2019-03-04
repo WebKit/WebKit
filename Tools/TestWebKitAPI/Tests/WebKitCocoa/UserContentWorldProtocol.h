@@ -25,13 +25,9 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @protocol UserContentWorldProtocol <NSObject>
 
 - (void)didObserveNormalWorld;
 - (void)didObserveWorldWithName:(NSString *)name;
 
 @end
-
-#endif

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestInspectorBar.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import <objc/runtime.h>
 #import <wtf/WeakObjCPtr.h>
@@ -166,4 +166,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

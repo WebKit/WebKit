@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageUIClient.h>
 #import <WebKit/WKDOMDocument.h>
@@ -71,5 +69,3 @@ void didClickAutoFillButton(WKBundlePageRef, WKBundleNodeHandleRef, WKTypeRef* u
 }
 
 @end
-
-#endif // WK_API_ENABLED

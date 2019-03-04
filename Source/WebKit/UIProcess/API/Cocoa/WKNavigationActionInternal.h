@@ -25,8 +25,6 @@
 
 #import "WKNavigationActionPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APINavigationAction.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::NavigationAction> {
     API::ObjectStorage<API::NavigationAction> _navigationAction;
 }
 @end
-
-#endif

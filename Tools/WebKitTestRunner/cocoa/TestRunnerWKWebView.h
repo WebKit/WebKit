@@ -25,8 +25,6 @@
 
 #import <WebKit/WebKit.h>
 
-#if WK_API_ENABLED
-
 @interface WKWebView(SpellChecking)
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 @end
@@ -65,5 +63,3 @@
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
 
 @end
-
-#endif // #if WK_API_ENABLED

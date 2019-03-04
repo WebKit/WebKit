@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKConnectionInternal.h"
 
-#if WK_API_ENABLED
-
 #import "ObjCObjectGraph.h"
 #import "WKRetainPtr.h"
 #import "WKSharedAPICast.h"
@@ -120,5 +118,3 @@ static void setUpClient(WKConnection *wrapper, WebKit::WebConnection& connection
 }
 
 @end
-
-#endif // WK_API_ENABLED

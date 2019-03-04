@@ -37,11 +37,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
-#if WK_API_ENABLED
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
 @end
-#endif
 
 using namespace WTR;
 
@@ -63,7 +61,6 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     : m_windowIsKey(true)
     , m_options(options)
 {
-#if WK_API_ENABLED
     // FIXME: Not sure this is the best place for this; maybe we should have API to set this so we can do it from TestController?
     if (m_options.useRemoteLayerTree)
         [[NSUserDefaults standardUserDefaults] setValue:@YES forKey:@"WebKit2UseRemoteLayerTreeDrawingArea"];
@@ -88,7 +85,6 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     else
         [m_window orderBack:nil];
     [m_window setReleasedWhenClosed:NO];
-#endif
 }
 
 void PlatformWebView::setWindowIsKey(bool isKey)
@@ -123,11 +119,7 @@ PlatformWindow PlatformWebView::keyWindow()
 
 WKPageRef PlatformWebView::page()
 {
-#if WK_API_ENABLED
     return [m_view _pageForTesting];
-#else
-    return nullptr;
-#endif
 }
 
 void PlatformWebView::focus()
@@ -198,29 +190,17 @@ void PlatformWebView::makeWebViewFirstResponder()
 
 bool PlatformWebView::drawsBackground() const
 {
-#if WK_API_ENABLED
     return [m_view _drawsBackground];
-#else
-    return false;
-#endif
 }
 
 void PlatformWebView::setDrawsBackground(bool drawsBackground)
 {
-#if WK_API_ENABLED
     [m_view _setDrawsBackground:drawsBackground];
-#else
-    UNUSED_PARAM(drawsBackground);
-#endif
 }
 
 void PlatformWebView::setEditable(bool editable)
 {
-#if WK_API_ENABLED
     m_view._editable = editable;
-#else
-    UNUSED_PARAM(editable);
-#endif
 }
 
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
@@ -244,9 +224,7 @@ void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
         [m_window _setWindowResolution:newScale];
     else
         [m_window _setWindowResolution:newScale displayIfChanged:YES];
-#if WK_API_ENABLED
     [m_view _setOverrideDeviceScaleFactor:newScale];
-#endif
 
     // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
     forceWindowFramesChanged();
@@ -265,9 +243,7 @@ void PlatformWebView::forceWindowFramesChanged()
 
 void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
 {
-#if WK_API_ENABLED
     [platformView() setAllowsBackForwardNavigationGestures:enabled];
-#endif
 }
 
 } // namespace WTR

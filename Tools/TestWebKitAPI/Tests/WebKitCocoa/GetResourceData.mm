@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "Test.h"

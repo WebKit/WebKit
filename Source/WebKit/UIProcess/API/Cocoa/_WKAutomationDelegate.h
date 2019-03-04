@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @class WKProcessPool;
 @class _WKAutomationSessionConfiguration;
 
@@ -38,5 +36,3 @@
 - (NSString *)_processPoolBrowserNameForAutomation:(WKProcessPool *)processPool WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 - (NSString *)_processPoolBrowserVersionForAutomation:(WKProcessPool *)processPool WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 @end
-
-#endif // WK_API_ENABLED

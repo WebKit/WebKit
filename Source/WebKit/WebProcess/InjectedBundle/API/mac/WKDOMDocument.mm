@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDOMDocument.h"
 
-#if WK_API_ENABLED
-
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
@@ -89,5 +87,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

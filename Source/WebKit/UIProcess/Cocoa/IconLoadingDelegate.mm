@@ -26,8 +26,6 @@
 #import "config.h"
 #import "IconLoadingDelegate.h"
 
-#if WK_API_ENABLED
-
 #include "WKNSData.h"
 #include "_WKIconLoadingDelegate.h"
 #include "_WKLinkIconParametersInternal.h"
@@ -102,5 +100,3 @@ void IconLoadingDelegate::IconLoadingClient::getLoadDecisionForIcon(const WebCor
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

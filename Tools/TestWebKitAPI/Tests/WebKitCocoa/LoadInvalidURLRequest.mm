@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -84,6 +82,4 @@ TEST(WebKit, LoadInvalidURLRequest)
 }
 
 } // namespace TestWebKitAPI
-
-#endif
 

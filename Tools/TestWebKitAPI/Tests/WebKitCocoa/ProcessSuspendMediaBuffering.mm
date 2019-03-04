@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -64,4 +64,4 @@ TEST(WebKit, ProcessSuspendMediaBuffering)
     ASSERT_TRUE(isElementAllowedToBuffer());
 }
 
-#endif // WK_API_ENABLED && WK_HAVE_C_SPI
+#endif // WK_HAVE_C_SPI

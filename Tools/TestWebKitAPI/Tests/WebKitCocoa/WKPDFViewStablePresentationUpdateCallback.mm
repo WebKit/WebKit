@@ -31,7 +31,7 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 TEST(WebKit, WKPDFViewStablePresentationUpdateCallback)
 {

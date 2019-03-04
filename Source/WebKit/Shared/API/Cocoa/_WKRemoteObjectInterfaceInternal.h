@@ -25,8 +25,6 @@
 
 #import "_WKRemoteObjectInterface.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/Forward.h>
 #import <wtf/HashSet.h>
 #import <wtf/Vector.h>
@@ -39,5 +37,3 @@
 - (const Vector<HashSet<CFTypeRef>>&)_allowedArgumentClassesForReplyBlockOfSelector:(SEL)selector;
 
 @end
-
-#endif // WK_API_ENABLED

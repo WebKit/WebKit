@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 typedef NS_OPTIONS(NSUInteger, WKDragDestinationAction) {
@@ -36,5 +34,3 @@ typedef NS_OPTIONS(NSUInteger, WKDragDestinationAction) {
     WKDragDestinationActionLoad    = 4,
     WKDragDestinationActionAny     = NSUIntegerMax
 } WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-
-#endif

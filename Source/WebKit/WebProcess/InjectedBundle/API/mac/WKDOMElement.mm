@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDOMElement.h"
 
-#if WK_API_ENABLED
-
 #import "WKDOMInternals.h"
 #import <WebCore/Element.h>
 
@@ -54,5 +52,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

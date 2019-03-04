@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNavigationResponseInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKFrameInfoInternal.h"
 
 @implementation WKNavigationResponse
@@ -81,6 +79,3 @@
 }
 
 @end
-
-
-#endif

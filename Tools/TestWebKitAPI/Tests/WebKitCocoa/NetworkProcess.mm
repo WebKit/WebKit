@@ -29,8 +29,6 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 TEST(WebKit, NetworkProcessEntitlements)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
@@ -44,7 +42,3 @@ TEST(WebKit, NetworkProcessEntitlements)
 #endif
     EXPECT_FALSE([pool _networkProcessHasEntitlementForTesting:@"test failure case"]);
 }
-
-#endif // WK_API_ENABLED
-
-

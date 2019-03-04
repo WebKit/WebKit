@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKScriptMessageInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKFrameInfo.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -50,7 +48,6 @@
     _name = adoptNS([name copy]);
 
     return self;
-
 }
 
 - (id)body
@@ -74,6 +71,3 @@
 }
 
 @end
-
-#endif
-

@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -59,5 +57,3 @@ TEST(WKWebView, ProvisionalURLNotChange)
 
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, "data:text/html,start");
 }
-
-#endif

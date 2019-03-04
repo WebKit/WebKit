@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -57,5 +55,3 @@ TEST(WKWebView, InitializingWebViewWithEphemeralStorageDoesNotLog)
         FAIL();
     }
 }
-
-#endif

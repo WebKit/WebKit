@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKFoundation.h>
@@ -105,5 +103,3 @@ TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
     cleanUp();
 }
 }
-
-#endif

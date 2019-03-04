@@ -38,8 +38,6 @@
 #import <wtf/Seconds.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 static bool gotFlag;
 static uint64_t observerCallbacks;
 static RetainPtr<WKHTTPCookieStore> globalCookieStore;
@@ -588,4 +586,3 @@ TEST(WebKit, WKHTTPCookieStoreWithoutProcessPoolWithPrewarming)
 }
 
 #endif // PLATFORM(MAC)
-#endif

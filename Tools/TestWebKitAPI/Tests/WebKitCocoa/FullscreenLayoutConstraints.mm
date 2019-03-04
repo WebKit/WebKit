@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>

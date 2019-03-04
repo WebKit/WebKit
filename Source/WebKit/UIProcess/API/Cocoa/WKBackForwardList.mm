@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKBackForwardListInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKBackForwardListItemInternal.h"
 #import "WKNSArray.h"
 
@@ -94,5 +92,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

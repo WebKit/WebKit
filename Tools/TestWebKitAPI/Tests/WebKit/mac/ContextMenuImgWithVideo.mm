@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -82,5 +80,3 @@ TEST(WebKit, ContextMenuImgWithVideo)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

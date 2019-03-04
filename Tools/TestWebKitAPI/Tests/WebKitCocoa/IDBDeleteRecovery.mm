@@ -35,8 +35,6 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 
@@ -82,5 +80,3 @@ TEST(IndexedDB, DeleteRecovery)
 
     EXPECT_WK_STREQ(@"Deleted database", [lastScriptMessage body]);
 }
-
-#endif

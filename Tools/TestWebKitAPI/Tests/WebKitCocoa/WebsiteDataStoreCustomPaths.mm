@@ -42,8 +42,6 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
@@ -477,5 +475,3 @@ TEST(WebKit, ApplicationIdentifiers)
     EXPECT_TRUE([websiteDataStore._sourceApplicationBundleIdentifier isEqualToString:@"otheridentifier"]);
     EXPECT_TRUE([[websiteDataStoreConfiguration sourceApplicationBundleIdentifier] isEqualToString:@"testidentifier"]);
 }
-
-#endif

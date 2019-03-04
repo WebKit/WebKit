@@ -31,8 +31,6 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 @interface NavigationActionTestDelegate : NSObject <WKNavigationDelegate>
 
 @property (nonatomic, readonly) WKNavigationAction *navigationAction;
@@ -177,5 +175,3 @@ TEST(WKNavigationAction, ShouldPerformDownload_DownloadAttribute_CrossOrigin)
     EXPECT_NOT_NULL(navigationDelegate.get().navigationAction);
     EXPECT_FALSE(navigationDelegate.get().navigationAction._shouldPerformDownload);
 }
-
-#endif // WK_API_ENABLED

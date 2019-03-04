@@ -759,10 +759,8 @@ public:
     NSWindow *platformWindow();
     void rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect);
 
-#if WK_API_ENABLED
     NSView *inspectorAttachmentView();
     _WKRemoteObjectRegistry *remoteObjectRegistry();
-#endif
 
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;

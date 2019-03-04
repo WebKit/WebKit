@@ -35,8 +35,6 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool loadedOrCrashed = false;
 static bool loaded = false;
 static bool webProcessCrashed = false;
@@ -168,5 +166,3 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
 }
 
 } // namespace TestWebKitAPI
-
-#endif

@@ -35,8 +35,6 @@ const static NSURL *targetUrl = [[NSURL alloc] initWithString:@"http://www.examp
 const static unsigned expectedModifierFlags = 0;
 const static int expectedButtonNumber = -1;
 
-#if WK_API_ENABLED
-
 const static int expectedWKButtonNumber = 0; // unlike DOM spec, 0 is the value for no button in Cocoa.
 
 @interface NavigationActionDelegate : NSObject <WKNavigationDelegate>
@@ -56,8 +54,6 @@ const static int expectedWKButtonNumber = 0; // unlike DOM spec, 0 is the value 
 }
 
 @end
-
-#endif
 
 @interface WebPolicyActionDelegate : NSObject <WebPolicyDelegate>
 @end
@@ -79,8 +75,6 @@ const static int expectedWKButtonNumber = 0; // unlike DOM spec, 0 is the value 
 
 namespace TestWebKitAPI {
 
-#if WK_API_ENABLED
-
 TEST(WebKit, IsNavigationActionTrusted)
 {
     @autoreleasepool {
@@ -96,8 +90,6 @@ TEST(WebKit, IsNavigationActionTrusted)
         Util::run(&didFinishTest);
     }
 }
-
-#endif
 
 TEST(WebKitLegacy, IsNavigationActionTrusted)
 {

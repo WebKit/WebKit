@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "EditingTestHarness.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -402,5 +400,3 @@ TEST(EditorStateTests, ObserveSelectionAttributeChanges)
 #endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

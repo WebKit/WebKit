@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKProcessGroupPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APINavigationData.h"
 #import "APIProcessPoolConfiguration.h"
 #import "ObjCObjectGraph.h"
@@ -247,5 +245,3 @@ IGNORE_WARNINGS_END
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-#endif // WK_API_ENABLED

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKUserContentControllerInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APISerializedScriptValue.h"
 #import "APIUserContentWorld.h"
 #import "InjectUserScriptImmediately.h"
@@ -247,6 +245,3 @@ private:
 }
 
 @end
-
-#endif
-

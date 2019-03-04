@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebViewInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIFormClient.h"
 #import "APIPageConfiguration.h"
 #import "APISerializedScriptValue.h"
@@ -7304,7 +7302,5 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 @end
-
-#endif // WK_API_ENABLED
 
 #undef RELEASE_LOG_IF_ALLOWED

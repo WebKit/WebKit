@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT)
 
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -132,4 +132,4 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT)

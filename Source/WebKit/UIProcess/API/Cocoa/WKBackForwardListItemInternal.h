@@ -25,8 +25,6 @@
 
 #import "WKBackForwardListItemPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebBackForwardListItem.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<WebBackForwardListItem> {
 @property (readonly) WebKit::WebBackForwardListItem& _item;
 
 @end
-
-#endif // WK_API_ENABLED

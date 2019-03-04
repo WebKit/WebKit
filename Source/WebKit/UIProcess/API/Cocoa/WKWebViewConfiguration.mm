@@ -27,8 +27,6 @@
 #import "WKWebViewConfigurationInternal.h"
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
-#if WK_API_ENABLED
-
 #import "APIPageConfiguration.h"
 #import "VersionChecks.h"
 #import "WKPreferences.h"
@@ -1102,5 +1100,3 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
-
-#endif // WK_API_ENABLED

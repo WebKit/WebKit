@@ -37,8 +37,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool wasPrompted = false;
 
 static bool receivedScriptMessage = false;
@@ -143,4 +141,3 @@ TEST_F(MediaCaptureDisabledTest, UnsecureContext)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "none");
 }
-#endif

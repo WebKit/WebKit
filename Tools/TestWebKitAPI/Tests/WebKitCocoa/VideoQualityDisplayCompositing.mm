@@ -30,8 +30,6 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 namespace TestWebKitAPI {
 
 TEST(VideoQualityDisplayCompositing, Enabled)
@@ -57,5 +55,3 @@ TEST(VideoQualityDisplayCompositing, Disabled)
 }
 
 }
-
-#endif

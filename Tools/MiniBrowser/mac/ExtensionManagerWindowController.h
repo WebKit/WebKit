@@ -25,12 +25,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#if WK_API_ENABLED
-
 @interface ExtensionManagerWindowController : NSWindowController {
     IBOutlet NSArrayController *arrayController;
 }
 
 @end
-
-#endif

@@ -37,8 +37,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool wasPrompted = false;
 
 static bool receivedScriptMessage = false;
@@ -130,4 +128,3 @@ TEST_F(MediaCaptureSimulateFailedSandbox, Test)
     loadTestAndWaitForMessage("allowed");
     EXPECT_TRUE(wasPrompted);
 }
-#endif

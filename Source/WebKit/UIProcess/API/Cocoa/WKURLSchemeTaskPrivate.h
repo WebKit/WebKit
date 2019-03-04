@@ -25,14 +25,9 @@
 
 #import <WebKit/WKURLSchemeTask.h>
 
-#if WK_API_ENABLED
-
 WK_API_AVAILABLE(macosx(10.13), ios(11.0))
 @protocol WKURLSchemeTaskPrivate <WKURLSchemeTask>
 
 - (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request;
 
 @end
-
-#endif
-

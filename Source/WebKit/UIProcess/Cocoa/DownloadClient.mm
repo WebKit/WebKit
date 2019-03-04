@@ -26,8 +26,6 @@
 #import "config.h"
 #import "DownloadClient.h"
 
-#if WK_API_ENABLED
-
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationChallengeProxy.h"
 #import "AuthenticationDecisionListener.h"
@@ -292,5 +290,3 @@ void DownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProx
 #endif
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

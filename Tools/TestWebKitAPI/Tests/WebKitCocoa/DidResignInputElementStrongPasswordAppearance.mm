@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "config.h"
-
-#if WK_API_ENABLED
 
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageUIClient.h>
@@ -75,6 +72,4 @@ void didResignInputElementStrongPasswordAppearance(WKBundlePageRef, WKBundleNode
 }
 
 @end
-
-#endif // WK_API_ENABLED
 

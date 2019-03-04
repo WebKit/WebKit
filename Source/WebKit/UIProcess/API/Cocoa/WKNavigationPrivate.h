@@ -25,10 +25,6 @@
 
 #import <WebKit/WKNavigation.h>
 
-#if WK_API_ENABLED
-
 @interface WKNavigation (WKPrivate)
 @property (nonatomic, readonly, copy) NSURLRequest *_request;
 @end
-
-#endif

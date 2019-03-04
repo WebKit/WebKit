@@ -111,9 +111,7 @@ private:
     void clearSafeBrowsingWarningIfForMainFrameNavigation() override;
     bool hasSafeBrowsingWarning() const override;
     
-#if WK_API_ENABLED
     bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) override;
-#endif
         
     WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
     WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
@@ -248,10 +246,8 @@ private:
     void didPerformDragOperation(bool handled) final;
 #endif
 
-#if WK_API_ENABLED
     NSView *inspectorAttachmentView() override;
     _WKRemoteObjectRegistry *remoteObjectRegistry() override;
-#endif
 
     void didFinishProcessingAllPendingMouseEvents() final;
 

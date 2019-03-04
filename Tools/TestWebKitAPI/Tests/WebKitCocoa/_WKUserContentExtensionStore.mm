@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
@@ -182,5 +180,3 @@ TEST_F(_WKUserContentExtensionStoreTest, NonExistingIdentifierRemove)
     }];
     TestWebKitAPI::Util::run(&doneRemoving);
 }
-
-#endif

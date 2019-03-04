@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NSFontPanelTesting.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import <objc/runtime.h>
 
@@ -150,4 +150,4 @@ static NSMenuItem *findMenuItemWithTitle(NSPopUpButton *button, NSString *title)
 
 @end
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

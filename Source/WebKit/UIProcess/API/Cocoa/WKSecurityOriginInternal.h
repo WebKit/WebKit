@@ -25,8 +25,6 @@
 
 #import "WKSecurityOrigin.h"
 
-#if WK_API_ENABLED
-
 #import "APISecurityOrigin.h"
 
 namespace WebKit {
@@ -42,5 +40,3 @@ template<> struct WrapperTraits<API::SecurityOrigin> {
     API::ObjectStorage<API::SecurityOrigin> _securityOrigin;
 }
 @end
-
-#endif

@@ -35,8 +35,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static bool receivedAtLeastOneOpenError;
 static bool receivedAtLeastOneDeleteError;
@@ -102,5 +100,3 @@ TEST(IndexedDB, DatabaseProcessKill)
     EXPECT_EQ(receivedAtLeastOneDeleteError, true);
     EXPECT_EQ(databaseErrorReceived, true);
 }
-
-#endif

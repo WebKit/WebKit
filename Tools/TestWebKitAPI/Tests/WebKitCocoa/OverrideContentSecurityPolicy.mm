@@ -29,8 +29,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 TEST(WKWebView, DISABLED_SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
 {
     @autoreleasepool {
@@ -77,5 +75,3 @@ TEST(WKWebView, SetOverrideContentSecurityPolicyForPageWithoutCSP)
         [webView waitForMessage:@"Subframe: B"];
     }
 }
-
-#endif

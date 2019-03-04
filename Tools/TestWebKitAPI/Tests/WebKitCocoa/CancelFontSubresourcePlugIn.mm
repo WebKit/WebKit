@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "UserContentWorldProtocol.h"
 #import <WebKit/WKConnection.h>
@@ -60,5 +58,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

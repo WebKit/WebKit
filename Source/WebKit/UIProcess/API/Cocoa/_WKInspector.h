@@ -26,8 +26,6 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @class WKWebView;
 @class _WKFrameHandle;
 
@@ -62,5 +60,3 @@ WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

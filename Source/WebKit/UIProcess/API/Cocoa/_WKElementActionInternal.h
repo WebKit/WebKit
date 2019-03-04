@@ -25,8 +25,6 @@
 
 #import "_WKElementAction.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(IOS_FAMILY)
 
 @class WKActionSheetAssistant;
@@ -41,5 +39,3 @@
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // WK_API_ENABLED

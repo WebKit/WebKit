@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <CoreGraphics/CGGeometry.h>
 #import <Foundation/Foundation.h>
 
@@ -58,5 +56,3 @@ WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

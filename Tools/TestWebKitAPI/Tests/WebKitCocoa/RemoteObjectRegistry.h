@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/_WKRemoteObjectInterface.h>
 
 @protocol BaseRemoteObjectProtocol <NSObject>
@@ -58,5 +56,3 @@ static inline _WKRemoteObjectInterface *remoteObjectInterface()
 
     return interface;
 }
-
-#endif

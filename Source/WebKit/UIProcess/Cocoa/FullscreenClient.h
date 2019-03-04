@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIFullscreenClient.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
@@ -84,5 +82,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::FullscreenClient) \
 static bool isType(const API::FullscreenClient& client) { return client.isType(API::FullscreenClient::WebKitType); } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // WK_API_ENABLED

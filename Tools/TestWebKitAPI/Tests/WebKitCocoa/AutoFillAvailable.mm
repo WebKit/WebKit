@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import <WebKit/WKBundleNodeHandlePrivate.h>
 #import <WebKit/WKBundlePagePrivate.h>
@@ -60,4 +60,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

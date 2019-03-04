@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKNSData.h"
 
-#if WK_API_ENABLED
-
 @implementation WKNSData {
     API::ObjectStorage<API::Data> _data;
 }
@@ -66,5 +64,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

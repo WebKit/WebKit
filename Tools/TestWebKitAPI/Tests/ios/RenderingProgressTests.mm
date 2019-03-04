@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #include "PlatformUtilities.h"
 #include "TestNavigationDelegate.h"
 #include "TestWKWebView.h"
@@ -97,5 +95,3 @@ TEST(RenderingProgressTests, FirstPaintWithSignificantArea)
 }
 
 #endif // PLATFORM(WATCHOS)
-
-#endif // WK_API_ENABLED

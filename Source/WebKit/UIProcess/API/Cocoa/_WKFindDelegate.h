@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @protocol _WKFindDelegate <NSObject>
@@ -38,5 +36,3 @@
 - (void)_webView:(WKWebView *)webView didFailToFindString:(NSString *)string;
 
 @end
-
-#endif

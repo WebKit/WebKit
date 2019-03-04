@@ -35,8 +35,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
-#if WK_API_ENABLED
-
 static bool finishedNavigation;
 
 @interface UserInitiatedActionInNavigationActionDelegate : NSObject <WKNavigationDelegate>
@@ -256,7 +254,5 @@ TEST_F(UserInitiatedActionTest, MailtoInLoopAfterLongTimer)
 
     TestWebKitAPI::Util::run(&finishedPolicy);
 }
-
-#endif
 
 #endif

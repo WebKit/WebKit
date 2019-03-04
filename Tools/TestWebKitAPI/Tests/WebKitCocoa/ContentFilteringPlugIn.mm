@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && ENABLE(CONTENT_FILTERING)
+#if ENABLE(CONTENT_FILTERING)
 
 #import "ContentFiltering.h"
 #import "MockContentFilterSettings.h"
@@ -129,4 +129,4 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
 
 @end
 
-#endif // WK_API_ENABLED && ENABLE(CONTENT_FILTERING)
+#endif // ENABLE(CONTENT_FILTERING)

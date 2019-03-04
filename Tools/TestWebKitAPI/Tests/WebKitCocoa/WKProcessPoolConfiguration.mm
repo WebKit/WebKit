@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
@@ -89,5 +87,3 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration pageCacheEnabled], [copy pageCacheEnabled]);
     EXPECT_EQ([configuration suppressesConnectionTerminationOnSystemChange], [copy suppressesConnectionTerminationOnSystemChange]);
 }
-
-#endif

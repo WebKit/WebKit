@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestFontOptions.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
 #import "ClassMethodSwizzler.h"
@@ -227,4 +227,4 @@ static TestFontOptions *sharedFontOptionsForTesting()
 
 @end
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

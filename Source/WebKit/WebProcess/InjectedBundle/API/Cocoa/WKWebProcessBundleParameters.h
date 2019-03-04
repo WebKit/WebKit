@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @interface WKWebProcessBundleParameters : NSObject
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
@@ -35,5 +33,3 @@
 - (void)setParametersForKeyWithDictionary:(NSDictionary *)dictionary;
 
 @end
-
-#endif

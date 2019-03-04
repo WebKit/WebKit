@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKNSWindowExtras.h"
 
-#if WK_API_ENABLED
-
 #if !TARGET_OS_IPHONE
 
 #import "_WKInspectorWindow.h"
@@ -42,5 +40,3 @@
 @end
 
 #endif // !TARGET_OS_IPHONE
-
-#endif // WK_API_ENABLED

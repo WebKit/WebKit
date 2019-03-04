@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKWebsiteDataStore.h>
 
 typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
@@ -47,5 +45,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataStore", macosx(10.10, 10.11),
 - (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)(void))completionHandler;
 
 @end
-
-#endif

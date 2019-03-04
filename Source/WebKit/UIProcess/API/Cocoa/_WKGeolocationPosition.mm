@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKGeolocationPositionInternal.h"
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
 
 #import <CoreLocation/CLLocation.h>
 
@@ -56,4 +56,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && TARGET_OS_IPHONE
+#endif // PLATFORM(IOS_FAMILY)

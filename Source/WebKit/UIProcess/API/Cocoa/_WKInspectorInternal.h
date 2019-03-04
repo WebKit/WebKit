@@ -25,8 +25,6 @@
 
 #import "_WKInspector.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebInspectorProxy.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<WebInspectorProxy> {
     API::ObjectStorage<WebKit::WebInspectorProxy> _inspector;
 }
 @end
-
-#endif // WK_API_ENABLED

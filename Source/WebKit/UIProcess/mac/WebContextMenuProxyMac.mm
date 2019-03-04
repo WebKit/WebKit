@@ -303,9 +303,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
     // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
 
-#if WK_API_ENABLED
     [item setIdentifier:_WKMenuItemIdentifierShareMenu];
-#endif
 
     return item;
 }
@@ -341,7 +339,6 @@ RetainPtr<NSMenu> WebContextMenuProxyMac::createContextMenuFromItems(const Vecto
 static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 {
     switch (action) {
-#if WK_API_ENABLED
     case ContextMenuItemTagCopy:
         return _WKMenuItemIdentifierCopy;
 
@@ -413,7 +410,6 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 
     case ContextMenuItemTagSpeechMenu:
         return _WKMenuItemIdentifierSpeechMenu;
-#endif
 
     default:
         return nil;

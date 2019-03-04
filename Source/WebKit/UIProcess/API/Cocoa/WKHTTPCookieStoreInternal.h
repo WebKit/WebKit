@@ -25,8 +25,6 @@
 
 #import "WKHTTPCookieStore.h"
 
-#if WK_API_ENABLED
-
 #import "APIHTTPCookieStore.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::HTTPCookieStore> {
     API::ObjectStorage<API::HTTPCookieStore> _cookieStore;
 }
 @end
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInFramePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WKWebProcessPlugInFrame.h"
 #import "WebFrame.h"
@@ -41,5 +39,3 @@ template<> struct WrapperTraits<WebFrame> {
 
 @interface WKWebProcessPlugInFrame () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

@@ -25,7 +25,7 @@
 
 #import "_WKHitTestResult.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
 #import "WKObject.h"

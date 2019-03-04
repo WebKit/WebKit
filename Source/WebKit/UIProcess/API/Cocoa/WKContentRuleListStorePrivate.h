@@ -25,8 +25,6 @@
 
 #import <WebKit/WKContentRuleListStore.h>
 
-#if WK_API_ENABLED
-
 @interface WKContentRuleListStore (WKPrivate)
 
 // For testing only.
@@ -44,5 +42,3 @@
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url;
 
 @end
-
-#endif

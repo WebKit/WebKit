@@ -38,8 +38,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -116,5 +114,3 @@ TEST(IndexedDB, IndexedDBTempFileSize)
     EXPECT_WK_STREQ(@"Success", string2.get());
     EXPECT_WK_STREQ(@"Success", string3.get()); 
 }
-
-#endif

@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
 #if PLATFORM(MAC)
 
 #import "InstanceMethodSwizzler.h"
@@ -55,5 +54,4 @@ TEST(WKWebView, DefaultNavigationDelegate)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-#endif
 #endif

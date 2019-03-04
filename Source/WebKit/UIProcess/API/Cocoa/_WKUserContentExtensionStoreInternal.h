@@ -25,8 +25,6 @@
 
 #import "_WKUserContentExtensionStorePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIContentRuleListStore.h"
 #import "WKObject.h"
 
@@ -37,5 +35,3 @@
     RetainPtr<WKContentRuleListStore> _contentRuleListStore;
 }
 @end
-
-#endif // WK_API_ENABLED

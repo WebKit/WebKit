@@ -30,7 +30,6 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
 static bool shouldAccept = true;
 static bool navigationComplete = false;
 static bool navigationFailed = false;
@@ -111,5 +110,3 @@ TEST(WebKit, PolicyForNavigationResponseCancelAsynchronously)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

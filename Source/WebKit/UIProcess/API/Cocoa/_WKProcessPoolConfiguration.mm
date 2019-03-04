@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 
 @implementation _WKProcessPoolConfiguration
@@ -396,5 +394,3 @@
 }
 
 @end
-
-#endif

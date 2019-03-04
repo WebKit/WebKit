@@ -103,8 +103,6 @@ TEST(WebKitLegacy, NavigatorLanguage)
         EXPECT_WK_STREQ([test objectAtIndex:1], languageForSystemLanguage(webView.get(), [test objectAtIndex:0]));
 }
 
-#if WK_API_ENABLED
-
 TEST(WKWebView, NavigatorLanguage)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -129,7 +127,5 @@ TEST(WKWebView, NavigatorLanguage)
 
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif
 
 } // namespace TestWebKitAPI

@@ -25,8 +25,6 @@
 
 #import "WKFrameInfoPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIFrameInfo.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::FrameInfo> {
     API::ObjectStorage<API::FrameInfo> _frameInfo;
 }
 @end
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -95,5 +93,3 @@ TEST(RunScriptAfterDocumentLoad, ExecutionOrderOfScriptsInDocument)
     EXPECT_WK_STREQ("Running async.js", [messages objectAtIndex:5]);
     EXPECT_WK_STREQ("async.js loaded", [messages objectAtIndex:6]);
 }
-
-#endif // WK_API_ENABLED

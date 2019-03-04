@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "AdditionalReadAccessAllowedURLsProtocol.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebProcessPlugIn.h>
@@ -70,5 +68,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

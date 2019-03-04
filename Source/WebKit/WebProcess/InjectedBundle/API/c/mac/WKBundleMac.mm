@@ -31,9 +31,5 @@
 
 id WKBundleGetParameters(WKBundleRef bundle)
 {
-#if WK_API_ENABLED
     return WebKit::toImpl(bundle)->bundleParameters();
-#else
-    return nil;
-#endif
 }

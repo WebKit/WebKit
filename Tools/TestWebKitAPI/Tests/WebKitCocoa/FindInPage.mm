@@ -31,7 +31,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY)
 
 typedef enum : NSUInteger {
     NSTextFinderAsynchronousDocumentFindOptionsBackwards = 1 << 0,
@@ -248,4 +248,4 @@ TEST(WebKit, FindAndReplace)
     EXPECT_WK_STREQ("hi hi", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
-#endif // WK_API_ENABLED && !PLATFORM(IOS_FAMILY)
+#endif // !PLATFORM(IOS_FAMILY)

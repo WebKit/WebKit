@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -279,5 +277,3 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
     TestWebKitAPI::Util::sleep(0.5);
     EXPECT_EQ(6U, callbackCount);
 }
-
-#endif // WK_API_ENABLED

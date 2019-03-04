@@ -26,8 +26,6 @@
 #import "config.h"
 #import "DiagnosticLoggingClient.h"
 
-#if WK_API_ENABLED
-
 #import "WKSharedAPICast.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 
@@ -90,5 +88,3 @@ void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::We
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

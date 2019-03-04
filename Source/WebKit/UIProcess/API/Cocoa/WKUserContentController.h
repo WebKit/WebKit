@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -88,5 +86,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

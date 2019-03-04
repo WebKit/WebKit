@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -78,4 +78,4 @@ TEST(WebKit, FirstResponderSuppression)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

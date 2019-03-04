@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWebsiteDataStore.h>
 
-#if WK_API_ENABLED
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class _WKWebsiteDataStoreConfiguration;
@@ -73,5 +71,3 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

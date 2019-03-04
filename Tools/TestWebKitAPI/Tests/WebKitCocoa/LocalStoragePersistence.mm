@@ -36,8 +36,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -103,6 +101,3 @@ TEST(WKWebView, LocalStorageEmptyString)
     RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
     EXPECT_WK_STREQ(@"", string2.get());
 }
-
-#endif
-

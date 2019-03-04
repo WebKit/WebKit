@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKShareSheet.h"
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -197,4 +197,4 @@
 
 @end
 
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

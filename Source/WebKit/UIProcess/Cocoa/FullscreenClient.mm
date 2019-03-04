@@ -26,8 +26,6 @@
 #import "config.h"
 #import "FullscreenClient.h"
 
-#if WK_API_ENABLED
-
 #import "_WKFullscreenDelegate.h"
 
 namespace WebKit {
@@ -104,5 +102,3 @@ void FullscreenClient::didExitFullscreen(WebPageProxy*)
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import "WKUserScriptPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIUserScript.h"
 
 namespace WebKit {
@@ -74,5 +72,3 @@ inline WKUserScriptInjectionTime toWKUserScriptInjectionTime(WebCore::UserScript
     API::ObjectStorage<API::UserScript> _userScript;
 }
 @end
-
-#endif

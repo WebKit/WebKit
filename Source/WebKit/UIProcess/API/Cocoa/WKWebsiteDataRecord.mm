@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebsiteDataRecordInternal.h"
 
-#if WK_API_ENABLED
-
 #import "_WKWebsiteDataSizeInternal.h"
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/HashSet.h>
@@ -158,5 +156,3 @@ static NSString *dataTypesToString(NSSet *dataTypes)
 }
 
 @end
-
-#endif

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWindowFeaturesInternal.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/WindowFeatures.h>
 #import <wtf/RetainPtr.h>
 
@@ -124,5 +122,3 @@
 }
 
 @end
-
-#endif

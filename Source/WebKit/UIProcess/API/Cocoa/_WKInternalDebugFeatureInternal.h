@@ -25,8 +25,6 @@
 
 #import "_WKInternalDebugFeature.h"
 
-#if WK_API_ENABLED
-
 #import "APIInternalDebugFeature.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::InternalDebugFeature> {
     API::ObjectStorage<API::InternalDebugFeature> _internalDebugFeature;
 }
 @end
-
-#endif

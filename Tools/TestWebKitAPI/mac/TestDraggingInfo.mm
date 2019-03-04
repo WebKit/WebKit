@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestDraggingInfo.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import "DragAndDropSimulator.h"
 #import "TestFilePromiseReceiver.h"
@@ -163,4 +163,4 @@ IGNORE_WARNINGS_END
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

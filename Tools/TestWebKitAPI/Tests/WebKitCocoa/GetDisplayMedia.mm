@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
@@ -187,5 +185,3 @@ TEST_F(GetDisplayMediaTest, PromptOnceAfterDenial)
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

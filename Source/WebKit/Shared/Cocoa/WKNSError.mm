@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSError.h"
 
-#if WK_API_ENABLED
-
 #import "APIError.h"
 
 @implementation WKNSError
@@ -45,5 +43,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

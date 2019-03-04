@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKReloadFrameErrorRecoveryAttempter.h"
 
-#if WK_API_ENABLED
-
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
 #import "WKWebViewInternal.h"
@@ -74,5 +72,3 @@
 }
 
 @end
-
-#endif

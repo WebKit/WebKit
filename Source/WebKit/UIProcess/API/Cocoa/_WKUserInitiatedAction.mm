@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKUserInitiatedActionInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation _WKUserInitiatedAction
 
 - (void)dealloc
@@ -60,5 +58,3 @@
 }
 
 @end
-
-#endif

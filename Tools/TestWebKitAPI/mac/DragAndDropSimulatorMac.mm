@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DragAndDropSimulator.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestDraggingInfo.h"
@@ -478,4 +478,4 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

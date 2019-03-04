@@ -79,9 +79,7 @@ void RemoteObjectRegistry::sendUnusedReply(uint64_t replyID)
 
 void RemoteObjectRegistry::invokeMethod(const RemoteObjectInvocation& invocation)
 {
-#if WK_API_ENABLED
     [m_remoteObjectRegistry _invokeMethod:invocation];
-#endif
 }
 
 void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& blockInvocation)
@@ -89,9 +87,7 @@ void RemoteObjectRegistry::callReplyBlock(uint64_t replyID, const UserData& bloc
     bool wasRemoved = m_pendingReplies.remove(replyID);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
-#if WK_API_ENABLED
     [m_remoteObjectRegistry _callReplyWithID:replyID blockInvocation:blockInvocation];
-#endif
 }
 
 void RemoteObjectRegistry::releaseUnusedReplyBlock(uint64_t replyID)
@@ -99,8 +95,6 @@ void RemoteObjectRegistry::releaseUnusedReplyBlock(uint64_t replyID)
     bool wasRemoved = m_pendingReplies.remove(replyID);
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 
-#if WK_API_ENABLED
     [m_remoteObjectRegistry _releaseReplyWithID:replyID];
-#endif
 }
 } // namespace WebKit

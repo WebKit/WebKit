@@ -28,7 +28,7 @@
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 
-#if WK_API_ENABLED && ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 static void waitForConditionWithLogging(BOOL(^condition)(), NSTimeInterval loggingTimeout, NSString *message, ...)
 {
@@ -135,4 +135,4 @@ TEST(DragAndDropTests, DragImageFileIntoFileUpload)
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
 }
 
-#endif // WK_API_ENABLED && ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKSecurityOriginInternal.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RefPtr.h>
@@ -69,5 +67,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

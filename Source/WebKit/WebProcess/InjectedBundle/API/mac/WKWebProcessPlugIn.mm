@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIArray.h"
 #import "WKConnectionInternal.h"
 #import "WKBundle.h"
@@ -140,5 +138,3 @@ static Ref<API::Array> createWKArray(NSArray *array)
 }
 
 @end
-
-#endif // WK_API_ENABLED

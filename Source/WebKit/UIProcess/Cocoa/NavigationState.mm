@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NavigationState.h"
 
-#if WK_API_ENABLED
-
 #import "APIFrameInfo.h"
 #import "APINavigationData.h"
 #import "APINavigationResponse.h"
@@ -1261,5 +1259,3 @@ void NavigationState::didSwapWebProcesses()
 }
 
 } // namespace WebKit
-
-#endif

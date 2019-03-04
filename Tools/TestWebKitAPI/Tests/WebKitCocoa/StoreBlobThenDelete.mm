@@ -35,8 +35,6 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 
@@ -123,5 +121,3 @@ TEST(IndexedDB, StoreBlobThenDelete)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }
-
-#endif

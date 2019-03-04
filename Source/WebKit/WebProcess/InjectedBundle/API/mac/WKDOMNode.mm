@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDOMNodePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleNodeHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKDOMInternals.h"
@@ -128,5 +126,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -29,8 +29,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
-#if WK_API_ENABLED
-
 @class _WKWebsitePolicies;
 
 #if !TARGET_OS_IPHONE
@@ -112,5 +110,3 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 #endif
 
 @end
-
-#endif

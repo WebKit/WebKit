@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AutomationClient.h"
 
-#if WK_API_ENABLED
-
 #if ENABLE(REMOTE_INSPECTOR)
 
 #import "WKProcessPool.h"
@@ -118,5 +116,3 @@ String AutomationClient::browserVersion() const
 } // namespace WebKit
 
 #endif // ENABLE(REMOTE_INSPECTOR)
-
-#endif // WK_API_ENABLED

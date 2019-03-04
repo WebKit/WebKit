@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDownloadProgress.h"
 
-#if WK_API_ENABLED
-
 #import "Download.h"
 #import <pal/spi/cocoa/NSProgressSPI.h>
 #import <wtf/BlockPtr.h>
@@ -137,5 +135,3 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
 }
 
 @end
-
-#endif // WK_API_ENABLED

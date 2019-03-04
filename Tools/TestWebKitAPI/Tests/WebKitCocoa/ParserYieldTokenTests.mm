@@ -26,8 +26,6 @@
 #include "config.h"
 #import "ParserYieldTokenTests.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -197,5 +195,3 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
     EXPECT_WK_STREQ("Running async script.", eventMessages[2]);
     EXPECT_WK_STREQ("Finished requesting async script.", eventMessages[3]);
 }
-
-#endif // WK_API_ENABLED

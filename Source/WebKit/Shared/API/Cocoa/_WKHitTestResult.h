@@ -25,7 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED && !TARGET_OS_IPHONE
+#if !TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 
@@ -47,4 +47,4 @@ WK_CLASS_AVAILABLE(macosx(10.12))
 
 @end
 
-#endif // WK_API_ENABLED
+#endif // !TARGET_OS_IPHONE

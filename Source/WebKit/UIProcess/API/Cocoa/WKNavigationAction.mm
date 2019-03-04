@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNavigationActionInternal.h"
 
-#if WK_API_ENABLED
-
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNavigationInternal.h"
@@ -213,5 +211,3 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEvent::Synthe
 }
 
 @end
-
-#endif

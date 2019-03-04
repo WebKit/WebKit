@@ -25,8 +25,6 @@
 
 #import "_WKRenderingProgressEvents.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/LayoutMilestone.h>
 
 static inline _WKRenderingProgressEvents renderingProgressEvents(OptionSet<WebCore::LayoutMilestone> milestones)
@@ -59,5 +57,3 @@ static inline _WKRenderingProgressEvents renderingProgressEvents(OptionSet<WebCo
 
     return events;
 }
-
-#endif

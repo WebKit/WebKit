@@ -25,10 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @protocol DidFirstMeaningfulPaintProtocol <NSObject>
 - (void)didFirstMeaningfulPaint;
 @end
-
-#endif

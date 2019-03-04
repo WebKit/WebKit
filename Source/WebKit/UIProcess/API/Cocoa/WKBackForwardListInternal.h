@@ -25,8 +25,6 @@
 
 #import "WKBackForwardList.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebBackForwardList.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<WebBackForwardList> {
 
 @interface WKBackForwardList () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

@@ -25,13 +25,9 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSInteger, _WKSameDocumentNavigationType) {
     _WKSameDocumentNavigationTypeAnchorNavigation,
     _WKSameDocumentNavigationTypeSessionStatePush,
     _WKSameDocumentNavigationTypeSessionStateReplace,
     _WKSameDocumentNavigationTypeSessionStatePop,
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
-
-#endif

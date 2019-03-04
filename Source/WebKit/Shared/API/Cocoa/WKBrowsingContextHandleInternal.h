@@ -25,8 +25,6 @@
 
 #import "WKBrowsingContextHandle.h"
 
-#if WK_API_ENABLED
-
 @interface WKBrowsingContextHandle ()
 
 @property (nonatomic, readonly, getter = _pageID) uint64_t pageID;
@@ -34,5 +32,3 @@
 - (id)_initWithPageID:(uint64_t)pageID;
 
 @end
-
-#endif // WK_API_ENABLED

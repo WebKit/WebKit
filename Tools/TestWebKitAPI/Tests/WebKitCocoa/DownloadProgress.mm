@@ -40,8 +40,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#if WK_API_ENABLED
-
 @class DownloadProgressTestProtocol;
 
 enum class DownloadStartType {
@@ -576,5 +574,3 @@ TEST(DownloadProgress, PublishProgressOnPartialDownload)
 
     [testRunner.get() tearDown];
 }
-
-#endif // WK_API_ENABLED

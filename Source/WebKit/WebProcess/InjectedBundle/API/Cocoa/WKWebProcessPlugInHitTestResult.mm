@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 
 @implementation WKWebProcessPlugInHitTestResult {
@@ -53,5 +51,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

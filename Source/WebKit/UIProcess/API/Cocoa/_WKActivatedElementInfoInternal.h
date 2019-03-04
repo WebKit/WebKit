@@ -28,8 +28,6 @@
 #endif
 #import "_WKActivatedElementInfo.h"
 
-#if WK_API_ENABLED
-
 namespace WebKit {
     class ShareableBitmap;
 }
@@ -46,5 +44,3 @@ namespace WebKit {
 @property (nonatomic, readonly) CGPoint _interactionLocation;
 
 @end
-
-#endif // WK_API_ENABLED

@@ -28,8 +28,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIAutomationSessionClient.h"
 #import <wtf/WeakObjCPtr.h>
 
@@ -80,7 +78,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif
 
 #endif // AutomationSessionClient_h

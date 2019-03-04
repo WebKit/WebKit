@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInScriptWorld.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleScriptWorld.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<InjectedBundleScriptWorld> {
 @property (readonly) WebKit::InjectedBundleScriptWorld& _scriptWorld;
 
 @end
-
-#endif // WK_API_ENABLED

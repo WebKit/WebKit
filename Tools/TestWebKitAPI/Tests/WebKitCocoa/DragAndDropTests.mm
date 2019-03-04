@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT)
 
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
@@ -209,4 +209,4 @@ TEST(DragAndDropTests, ColorInputEvents)
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
-#endif // WK_API_ENABLED && ENABLE(DRAG_SUPPORT)
+#endif // ENABLE(DRAG_SUPPORT)

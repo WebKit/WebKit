@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSUInteger, _WKLayoutMode) {
     _WKLayoutModeViewSize = 0,
     _WKLayoutModeFixedSize = 1,
@@ -38,5 +36,3 @@ typedef NS_ENUM(NSUInteger, _WKLayoutMode) {
     _WKLayoutModeDynamicSizeComputedFromMinimumDocumentSize = 4,
 
 } WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-
-#endif

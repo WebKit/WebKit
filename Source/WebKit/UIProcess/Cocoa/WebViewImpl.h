@@ -55,15 +55,12 @@ OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKSafeBrowsingWarning;
+OBJC_CLASS WKShareSheet;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
 OBJC_CLASS _WKRemoteObjectRegistry;
 OBJC_CLASS _WKThumbnailView;
-
-#if WK_API_ENABLED
-OBJC_CLASS WKShareSheet;
-#endif
 
 #if HAVE(TOUCH_BAR)
 OBJC_CLASS NSCandidateListTouchBarItem;
@@ -112,7 +109,7 @@ struct ShareDataWithParsedURL;
 
 - (void)_web_didChangeContentSize:(NSSize)newSize;
 
-#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT)
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 - (void)_web_didPerformDragOperation:(BOOL)handled;
 #endif
@@ -425,7 +422,6 @@ public:
     void setAcceleratedCompositingRootLayer(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
 
-#if WK_API_ENABLED
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
 
@@ -440,7 +436,6 @@ public:
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     WKBrowsingContextController *browsingContextController();
     ALLOW_DEPRECATED_DECLARATIONS_END
-#endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
     void draggedImage(NSImage *, CGPoint endPoint, NSDragOperation);
@@ -723,9 +718,7 @@ private:
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
     
-#if WK_API_ENABLED
     RetainPtr<WKShareSheet> _shareSheet;
-#endif
 
     RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
     RetainPtr<WKAccessibilitySettingsObserver> m_accessibilitySettingsObserver;
@@ -763,7 +756,6 @@ private:
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<NSView> m_layerHostingView;
 
-#if WK_API_ENABLED
     _WKThumbnailView *m_thumbnailView { nullptr };
 
     RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
@@ -771,7 +763,6 @@ private:
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<WKBrowsingContextController> m_browsingContextController;
     ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
     std::unique_ptr<ViewGestureController> m_gestureController;
     bool m_allowsBackForwardNavigationGestures { false };

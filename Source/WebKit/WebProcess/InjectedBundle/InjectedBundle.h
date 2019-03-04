@@ -157,7 +157,7 @@ public:
     void setWebAnimationsCSSIntegrationEnabled(bool);
     void dispatchPendingLoadRequests();
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
+#if PLATFORM(COCOA)
     WKWebProcessBundleParameters *bundleParameters();
 
     void extendClassesForParameterCoder(API::Array& classes);
@@ -174,7 +174,7 @@ private:
 
     std::unique_ptr<API::InjectedBundle::Client> m_client;
 
-#if PLATFORM(COCOA) && WK_API_ENABLED
+#if PLATFORM(COCOA)
     RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;
     RetainPtr<NSSet> m_classesForCoder;
 #endif

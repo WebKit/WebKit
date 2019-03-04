@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #if !TARGET_OS_IPHONE
 
 @class WKWebView;
@@ -65,5 +63,3 @@ WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 NS_ASSUME_NONNULL_END
 
 #endif // !TARGET_OS_IPHONE
-
-#endif // WK_API_ENABLED

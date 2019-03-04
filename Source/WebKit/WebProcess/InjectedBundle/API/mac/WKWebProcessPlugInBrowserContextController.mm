@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIData.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -707,5 +705,3 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 }
 
 @end
-
-#endif // WK_API_ENABLED

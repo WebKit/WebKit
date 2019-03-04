@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -328,4 +328,4 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
 }
 
 
-#endif // WK_API_ENABLED && PLATFORM(COCOA)
+#endif // PLATFORM(COCOA)

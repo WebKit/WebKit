@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -165,4 +165,4 @@ TEST(WebKit, WebGLPolicyNoDelegate)
     EXPECT_STREQ([alert UTF8String], "doing stuff with webgl context succeeded");
 }
 
-#endif // WK_API_ENABLED
+#endif // PLATFORM(MAC)

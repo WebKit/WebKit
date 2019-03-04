@@ -444,11 +444,7 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #if ENABLE(MANUAL_SANDBOXING)
     // Need to override the default, because service has a different bundle ID.
-#if WK_API_ENABLED
     NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-#else
-    NSBundle *webKit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-#endif
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
     sandboxParameters.setOverrideSandboxProfilePath([webKit2Bundle pathForResource:@"com.apple.WebKit.WebContent" ofType:@"sb"]);
 #else
@@ -588,7 +584,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
 
         bool shouldTransformObject(id object) const override
         {
-#if WK_API_ENABLED
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
 
@@ -596,13 +591,11 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
             ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
             return false;
         }
 
         RetainPtr<id> transformObject(id object) const override
         {
-#if WK_API_ENABLED
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
                 if (auto* webPage = m_webProcess.webPage(handle._pageID))
                     return wrapper(*webPage);
@@ -614,7 +607,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcess.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
             ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
             return object;
         }
 
@@ -629,7 +621,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
     struct Transformer final : ObjCObjectGraph::Transformer {
         bool shouldTransformObject(id object) const override
         {
-#if WK_API_ENABLED
             if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return true;
 
@@ -637,14 +628,11 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
             ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
             return false;
         }
 
         RetainPtr<id> transformObject(id object) const override
         {
-#if WK_API_ENABLED
             if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return controller.handle;
 
@@ -652,7 +640,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
             ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
             return object;
         }
     };

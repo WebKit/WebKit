@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 
 TEST(Copying, WKPreferences)
@@ -78,5 +76,3 @@ TEST(Copying, WKPreferences)
 #endif
 
 }
-
-#endif

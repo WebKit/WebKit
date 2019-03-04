@@ -25,8 +25,6 @@
 
 #import <WebKit/WKBrowsingContextController.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBase.h>
 
 typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
@@ -68,5 +66,3 @@ typedef NS_ENUM(NSUInteger, WKBrowsingContextPaginationMode) {
 @property (nonatomic, readonly) pid_t processIdentifier;
 
 @end
-
-#endif // WK_API_ENABLED

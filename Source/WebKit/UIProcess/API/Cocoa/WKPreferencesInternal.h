@@ -25,8 +25,6 @@
 
 #import "WKPreferencesPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebPreferences.h"
 
@@ -44,5 +42,3 @@ template<> struct WrapperTraits<WebPreferences> {
 }
 
 @end
-
-#endif

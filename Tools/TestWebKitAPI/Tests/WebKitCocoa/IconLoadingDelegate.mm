@@ -36,8 +36,6 @@
 #import <WebKit/_WKLinkIconParameters.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool doneWithIcons;
 static bool alreadyProvidedIconData;
 
@@ -299,5 +297,3 @@ TEST(IconLoading, IconLoadCancelledCallback2)
 
     TestWebKitAPI::Util::run(&iconCallbackCalled);
 }
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "_WKUserContentFilter.h"
 
-#if WK_API_ENABLED
-
 #import "APIContentRuleList.h"
 #import "WKObject.h"
 
@@ -37,5 +35,3 @@
     RetainPtr<WKContentRuleList> _contentRuleList;
 }
 @end
-
-#endif // WK_API_ENABLED

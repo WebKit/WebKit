@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -82,5 +80,3 @@ TEST(WebKit, AttrStyle)
     }];
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif // WK_API_ENABLED

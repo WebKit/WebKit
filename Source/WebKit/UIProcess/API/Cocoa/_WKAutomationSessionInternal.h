@@ -25,8 +25,6 @@
 
 #import "_WKAutomationSession.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebAutomationSession.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<WebAutomationSession> {
     API::ObjectStorage<WebKit::WebAutomationSession> _session;
 }
 @end
-
-#endif // WK_API_ENABLED

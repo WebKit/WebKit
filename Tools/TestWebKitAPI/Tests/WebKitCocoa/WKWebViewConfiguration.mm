@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -74,5 +72,3 @@ TEST(WebKit, ConfigurationGroupIdentifierIsCopied)
     auto configuationCopy = adoptNS([configuration copy]);
     EXPECT_STREQ([configuration _groupIdentifier].UTF8String, [configuationCopy _groupIdentifier].UTF8String);
 }
-
-#endif // WK_API_ENABLED

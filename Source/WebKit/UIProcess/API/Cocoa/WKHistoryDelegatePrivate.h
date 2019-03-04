@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @class WKNavigationData;
@@ -42,5 +40,3 @@
 - (void)_webView:(WKWebView *)webView didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL;
 
 @end
-
-#endif

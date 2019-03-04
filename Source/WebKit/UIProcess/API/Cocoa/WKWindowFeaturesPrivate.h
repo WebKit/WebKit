@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWindowFeatures.h>
 
-#if WK_API_ENABLED
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WKWindowFeatures (WKPrivate)
@@ -39,5 +37,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

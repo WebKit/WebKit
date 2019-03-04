@@ -35,8 +35,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
-#if WK_API_ENABLED
-
 static bool shouldCancelNavigation;
 static bool createdWebView;
 static bool decidedPolicy;
@@ -629,7 +627,5 @@ TEST(WebKit, DecidePolicyForNavigationActionFragment)
     [webView loadHTMLString:@"<script>window.location.href='#fragment';</script>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&done);
 }
-
-#endif
 
 #endif

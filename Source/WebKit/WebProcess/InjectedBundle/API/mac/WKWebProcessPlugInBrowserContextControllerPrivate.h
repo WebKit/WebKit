@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBase.h>
 
 @class WKBrowsingContextHandle;
@@ -52,5 +50,3 @@
 + (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
 
 @end
-
-#endif // WK_API_ENABLED

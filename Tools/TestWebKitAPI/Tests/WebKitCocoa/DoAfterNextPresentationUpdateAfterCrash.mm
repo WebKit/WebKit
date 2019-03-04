@@ -31,7 +31,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#if PLATFORM(IOS_FAMILY)
 
 TEST(WebKit, DoAfterNextPresentationUpdateAfterCrash)
 {

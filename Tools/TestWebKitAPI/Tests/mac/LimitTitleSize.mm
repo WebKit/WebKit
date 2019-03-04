@@ -68,8 +68,6 @@ TEST(WebKitLegacy, LimitTitleSize)
     TestWebKitAPI::Util::run(&didFinishLoad);
 }
 
-#if WK_API_ENABLED
-
 @interface LimitTitleSizeTestObserver : NSObject
 @end
 
@@ -96,5 +94,3 @@ TEST(WebKit, LimitTitleSize)
     TestWebKitAPI::Util::run(&waitUntilLongTitleReceived);
     [webView removeObserver:observer.get() forKeyPath:@"title"];
 }
-
-#endif // WK_API_ENABLED

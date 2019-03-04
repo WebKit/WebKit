@@ -25,8 +25,6 @@
 
 #import "_WKWebsiteDataStoreConfiguration.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebsiteDataStoreConfiguration.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<WebsiteDataStoreConfiguration> {
     API::ObjectStorage<WebKit::WebsiteDataStoreConfiguration> _configuration;
 }
 @end
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "_WKVisitedLinkStore.h"
 
-#if WK_API_ENABLED
-
 #import "VisitedLinkStore.h"
 #import "WKObject.h"
 
@@ -44,6 +42,3 @@ template<> struct WrapperTraits<VisitedLinkStore> {
 }
 
 @end
-
-#endif
-

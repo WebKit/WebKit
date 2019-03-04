@@ -26,7 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
 #import "PlatformUtilities.h"
@@ -654,5 +653,4 @@ TEST(_WKDownload, SystemPreviewUSDZBlobNaming)
     runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobWithUSDZExtensionDownloadDelegate alloc] init]).get(), originalURL);
 }
 
-#endif
 #endif

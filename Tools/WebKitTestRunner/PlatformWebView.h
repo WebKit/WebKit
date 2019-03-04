@@ -37,11 +37,7 @@ OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS WebKitTestRunnerWindow;
 typedef struct CGImage *CGImageRef;
 
-#if WK_API_ENABLED
 typedef TestRunnerWKWebView *PlatformWKView;
-#else
-typedef NSView *PlatformWKView;
-#endif
 typedef WebKitTestRunnerWindow *PlatformWindow;
 typedef RetainPtr<CGImageRef> PlatformImage;
 #elif defined(BUILDING_GTK__)

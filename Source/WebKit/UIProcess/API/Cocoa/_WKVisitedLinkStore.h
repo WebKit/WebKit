@@ -26,8 +26,6 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @interface _WKVisitedLinkStore : NSObject
 
@@ -38,5 +36,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 - (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 @end
-
-#endif

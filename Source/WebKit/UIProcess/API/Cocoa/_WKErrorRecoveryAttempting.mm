@@ -26,8 +26,4 @@
 #import "config.h"
 #import "_WKErrorRecoveryAttempting.h"
 
-#if WK_API_ENABLED
-
 NSString * const _WKRecoveryAttempterErrorKey = @"_WKRecoveryAttempterErrorKey";
-
-#endif // WK_API_ENABLED

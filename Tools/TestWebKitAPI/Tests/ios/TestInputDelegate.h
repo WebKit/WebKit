@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>

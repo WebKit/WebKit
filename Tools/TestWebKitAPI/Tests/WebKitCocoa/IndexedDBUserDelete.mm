@@ -38,8 +38,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -97,4 +95,3 @@ TEST(IndexedDB, IndexedDBUserDeleteBeforeLoading)
     readyToContinue = false;
     TestWebKitAPI::Util::run(&readyToContinue);
 }
-#endif

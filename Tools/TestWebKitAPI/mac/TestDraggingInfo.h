@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
 #import <AppKit/NSDragging.h>
 
@@ -47,4 +47,4 @@
 
 @end
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

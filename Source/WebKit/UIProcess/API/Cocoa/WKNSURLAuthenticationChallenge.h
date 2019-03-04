@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "AuthenticationChallengeProxy.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<AuthenticationChallengeProxy> {
 
 @interface WKNSURLAuthenticationChallenge : WKObject
 @end
-
-#endif // WK_API_ENABLED

@@ -28,8 +28,6 @@
 
 #import "APINavigation.h"
 
-#if WK_API_ENABLED
-
 @implementation WKNavigation {
     API::ObjectStorage<API::Navigation> _navigation;
 }
@@ -54,5 +52,3 @@
 }
 
 @end
-
-#endif

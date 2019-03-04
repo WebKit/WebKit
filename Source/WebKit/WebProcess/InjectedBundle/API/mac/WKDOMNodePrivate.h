@@ -26,12 +26,8 @@
 #import <WebKit/WKDOMNode.h>
 #import <WebKit/WKBase.h>
 
-#if WK_API_ENABLED
-
 @interface WKDOMNode (WKPrivate)
 
 - (WKBundleNodeHandleRef)_copyBundleNodeHandleRef;
 
 @end
-
-#endif // WK_API_ENABLED

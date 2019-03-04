@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInRangeHandle.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleRangeHandle.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<InjectedBundleRangeHandle> {
 @property (readonly) WebKit::InjectedBundleRangeHandle& _rangeHandle;
 
 @end
-
-#endif // WK_API_ENABLED

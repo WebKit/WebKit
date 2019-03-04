@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import <AppKit/AppKit.h>
 

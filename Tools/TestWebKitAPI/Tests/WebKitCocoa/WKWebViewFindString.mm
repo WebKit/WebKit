@@ -36,8 +36,6 @@
 #import "UIKitSPI.h"
 #endif
 
-#if WK_API_ENABLED
-
 static bool isDone;
 static bool focusDidStartInputSession;
 static const NSUInteger maxCount = 100;
@@ -173,5 +171,3 @@ TEST(WKWebViewFindString, DoNotFocusMatchWhenWebViewResigned)
 #endif
 
 } // namespace TestWebKitAPI
-
-#endif

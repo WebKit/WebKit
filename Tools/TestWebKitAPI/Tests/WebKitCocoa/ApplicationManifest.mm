@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && ENABLE(APPLICATION_MANIFEST)
+#if ENABLE(APPLICATION_MANIFEST)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -139,4 +139,4 @@ TEST(WebKit, ApplicationManifestDisplayMode)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && ENABLE(APPLICATION_MANIFEST)
+#endif // ENABLE(APPLICATION_MANIFEST)

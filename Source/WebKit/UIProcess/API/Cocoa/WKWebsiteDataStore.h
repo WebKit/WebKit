@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKWebsiteDataRecord.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -83,5 +81,3 @@ WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

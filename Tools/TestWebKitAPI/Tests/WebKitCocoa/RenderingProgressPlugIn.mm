@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "RenderingProgressProtocol.h"
 #import <WebKit/WKWebProcessPlugIn.h>
@@ -73,5 +71,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

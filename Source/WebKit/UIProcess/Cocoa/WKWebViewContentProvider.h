@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #if PLATFORM(IOS_FAMILY)
 
 #import <WebKit/WKPageLoadTypes.h>
@@ -69,6 +67,4 @@ struct UIEdgeInsets;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // WK_API_ENABLED
 

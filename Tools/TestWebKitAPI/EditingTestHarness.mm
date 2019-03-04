@@ -27,8 +27,6 @@
 #include "config.h"
 #include "EditingTestHarness.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebViewPrivate.h>
 
@@ -226,5 +224,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

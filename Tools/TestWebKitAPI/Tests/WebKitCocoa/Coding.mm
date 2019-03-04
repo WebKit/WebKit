@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
@@ -183,5 +181,3 @@ TEST(Coding, WKWebView_SameConfiguration)
     EXPECT_EQ(a.userContentController, b.userContentController);
     EXPECT_EQ(a.websiteDataStore, b.websiteDataStore);
 }
-
-#endif

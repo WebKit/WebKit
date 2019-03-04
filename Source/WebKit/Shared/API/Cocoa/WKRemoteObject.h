@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 @class _WKRemoteObjectInterface;
 @class _WKRemoteObjectRegistry;
 
@@ -35,5 +33,3 @@
 - (instancetype)_initWithObjectRegistry:(_WKRemoteObjectRegistry *)objectRegistry interface:(_WKRemoteObjectInterface *)interface;
 
 @end
-
-#endif // WK_API_ENABLED

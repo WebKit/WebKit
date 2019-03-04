@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WKBrowsingContextController.h>
@@ -102,5 +100,3 @@ TEST(WebKit, AlwaysRevalidatedURLSchemes)
         [NSURLProtocol unregisterClass:[AlwaysRevalidatedURLSchemeProtocol class]];
     }
 }
-
-#endif // WK_API_ENABLED

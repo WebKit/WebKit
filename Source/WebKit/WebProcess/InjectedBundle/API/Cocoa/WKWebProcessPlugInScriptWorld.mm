@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation WKWebProcessPlugInScriptWorld {
     API::ObjectStorage<WebKit::InjectedBundleScriptWorld> _world;
 }
@@ -81,5 +79,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

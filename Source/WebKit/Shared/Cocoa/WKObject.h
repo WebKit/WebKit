@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import <type_traits>
 #import <wtf/RefPtr.h>
 
@@ -106,5 +104,3 @@ using WebKit::wrapper;
 - (NSObject *)_web_createTarget NS_RETURNS_RETAINED;
 
 @end
-
-#endif // WK_API_ENABLED

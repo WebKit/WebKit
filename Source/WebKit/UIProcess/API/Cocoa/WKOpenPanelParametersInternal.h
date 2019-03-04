@@ -25,7 +25,7 @@
 
 #import "WKOpenPanelParametersPrivate.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "APIOpenPanelParameters.h"
 #import "WKObject.h"

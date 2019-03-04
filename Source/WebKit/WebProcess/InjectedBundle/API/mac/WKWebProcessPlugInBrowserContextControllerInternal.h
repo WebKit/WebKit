@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebPage.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<WebPage> {
 
 @interface WKWebProcessPlugInBrowserContextController () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

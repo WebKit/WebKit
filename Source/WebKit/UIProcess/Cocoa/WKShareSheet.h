@@ -25,7 +25,7 @@
 
 #import "WKAPICast.h"
 
-#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+#if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 @class WKWebView;
 @protocol WKShareSheetDelegate;
@@ -50,4 +50,4 @@ struct ShareDataWithParsedURL;
 - (void)shareSheetDidDismiss:(WKShareSheet *)shareSheet;
 @end
 
-#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV) && WK_API_ENABLED
+#endif // PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

@@ -53,8 +53,7 @@ bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected)
     return [expected isEqualToDictionary:result];
 }
 
-#if WK_API_ENABLED
 NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
-#endif
+
 } // namespace Util
 } // namespace TestWebKitAPI

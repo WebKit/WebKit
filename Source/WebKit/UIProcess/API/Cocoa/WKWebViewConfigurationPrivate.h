@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWebViewConfiguration.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBase.h>
 
 #if TARGET_OS_IPHONE
@@ -109,5 +107,3 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setUndoManagerAPIEnabled:) BOOL _undoManagerAPIEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif

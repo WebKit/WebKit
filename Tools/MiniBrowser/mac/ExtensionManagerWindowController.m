@@ -25,8 +25,6 @@
 
 #import "ExtensionManagerWindowController.h"
 
-#if WK_API_ENABLED
-
 #import "AppDelegate.h"
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
@@ -141,5 +139,3 @@
 }
 
 @end
-
-#endif

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @class _WKDownload;
@@ -48,5 +46,3 @@
 
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite WK_API_DEPRECATED_WITH_REPLACEMENT("_download:decideDestinationWithSuggestedFilename:completionHandler:", macosx(10.10, 10.13.4), ios(8.0, 11.3));
 @end
-
-#endif

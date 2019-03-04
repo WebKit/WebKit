@@ -104,7 +104,7 @@ public:
     void reset();
     void updateForNewPageProcess(WebPageProxy*);
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
     enum class InspectionTargetType { Local, Remote };
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType);
 
@@ -201,7 +201,7 @@ private:
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
     bool platformCanAttach(bool webProcessCanAttach);
 #else
     bool platformCanAttach(bool webProcessCanAttach) { return webProcessCanAttach; }
@@ -259,7 +259,7 @@ private:
 
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorViewController;
     RetainPtr<NSWindow> m_inspectorWindow;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_objCAdapter;

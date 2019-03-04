@@ -25,12 +25,8 @@
 
 #import "BrowserWindowController.h"
 
-#if WK_API_ENABLED
-
 @interface WK2BrowserWindowController : BrowserWindowController
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
 @end
-
-#endif // WK_API_ENABLED

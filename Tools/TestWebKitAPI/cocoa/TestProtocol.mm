@@ -57,16 +57,12 @@ static NSString *testScheme;
 {
     testScheme = [scheme retain];
     [NSURLProtocol registerClass:[self class]];
-#if WK_API_ENABLED
     [WKBrowsingContextController registerSchemeForCustomProtocol:testScheme];
-#endif
 }
 
 + (void)unregister
 {
-#if WK_API_ENABLED
     [WKBrowsingContextController unregisterSchemeForCustomProtocol:testScheme];
-#endif
     [NSURLProtocol unregisterClass:[self class]];
     [testScheme release];
     testScheme = nil;

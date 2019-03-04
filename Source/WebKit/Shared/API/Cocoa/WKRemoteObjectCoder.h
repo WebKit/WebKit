@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 namespace API {
 class Dictionary;
 }
@@ -44,5 +42,3 @@ class Dictionary;
 - (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary replyToSelector:(SEL)replyToSelector;
 
 @end
-
-#endif // WK_API_ENABLED

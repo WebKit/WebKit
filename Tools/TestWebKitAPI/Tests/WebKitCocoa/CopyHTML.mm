@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -87,4 +87,4 @@ TEST(CopyHTML, Sanitizes)
     EXPECT_FALSE(htmlInNativePasteboard.contains("dangerousCode"));
 }
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

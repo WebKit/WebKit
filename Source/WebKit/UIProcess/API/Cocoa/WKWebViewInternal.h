@@ -25,8 +25,6 @@
 
 #import "WKWebViewPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "SameDocumentNavigationType.h"
 #import "WKShareSheet.h"
 #import "WKWebViewConfiguration.h"
@@ -209,6 +207,4 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy&);
 @interface WKWebView (_WKWebViewPrintFormatter)
 @property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
 @end
-#endif
-
 #endif

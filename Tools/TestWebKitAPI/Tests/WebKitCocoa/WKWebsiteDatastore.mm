@@ -31,8 +31,6 @@
 #import <WebKit/WebKit.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 
 TEST(WKWebsiteDataStore, RemoveAndFetchData)
@@ -50,8 +48,3 @@ TEST(WKWebsiteDataStore, RemoveAndFetchData)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }
-
-#endif
-
-
-

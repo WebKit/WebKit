@@ -25,8 +25,6 @@
 
 #import "_WKProcessPoolConfiguration.h"
 
-#if WK_API_ENABLED
-
 #import "APIProcessPoolConfiguration.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::ProcessPoolConfiguration> {
     API::ObjectStorage<API::ProcessPoolConfiguration> _processPoolConfiguration;
 }
 @end
-
-#endif // WK_API_ENABLED

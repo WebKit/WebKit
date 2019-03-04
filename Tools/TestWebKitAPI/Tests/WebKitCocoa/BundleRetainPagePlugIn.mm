@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <wtf/RetainPtr.h>
 
@@ -41,5 +39,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIDownloadClient.h"
 #import "ProcessThrottler.h"
 #import <wtf/WeakObjCPtr.h>
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "TestFilePromiseReceiver.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "DragAndDropSimulator.h"
 #import <wtf/RetainPtr.h>
@@ -121,4 +121,4 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **
 
 @end
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

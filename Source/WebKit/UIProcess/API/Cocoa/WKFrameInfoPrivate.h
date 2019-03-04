@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFrameInfo.h>
 
-#if WK_API_ENABLED
-
 @class _WKFrameHandle;
 
 @interface WKFrameInfo (WKPrivate)
@@ -34,5 +32,3 @@
 @property (nonatomic, readonly, strong) _WKFrameHandle *_handle WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 @end
-
-#endif

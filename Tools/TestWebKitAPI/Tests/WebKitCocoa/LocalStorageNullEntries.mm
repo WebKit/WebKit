@@ -35,8 +35,6 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 
 @interface LocalStorageNullEntriesMessageHandler : NSObject <WKScriptMessageHandler>
@@ -84,5 +82,3 @@ TEST(WKWebView, LocalStorageNullEntries)
     [[NSFileManager defaultManager] removeItemAtURL:[targetURL URLByAppendingPathComponent:@"file__0.localstorage"] error:nil];
     [[NSFileManager defaultManager] removeItemAtURL:[targetURL URLByAppendingPathComponent:@"file__0.localstorage-shm"] error:nil];
 }
-
-#endif

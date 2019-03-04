@@ -25,8 +25,6 @@
 
 #import "_WKDownload.h"
 
-#if WK_API_ENABLED
-
 #import "DownloadProxy.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<DownloadProxy> {
 
 @interface _WKDownload () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

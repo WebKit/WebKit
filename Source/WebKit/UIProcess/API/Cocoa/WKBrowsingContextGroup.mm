@@ -27,8 +27,6 @@
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIArray.h"
 #import "APIString.h"
 #import "WKAPICast.h"
@@ -189,5 +187,3 @@ IGNORE_WARNINGS_END
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-#endif // WK_API_ENABLED

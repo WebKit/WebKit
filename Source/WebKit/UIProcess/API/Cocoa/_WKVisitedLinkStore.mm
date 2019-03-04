@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKVisitedLinkStoreInternal.h"
 
-#if WK_API_ENABLED
-
 #import "VisitedLinkStore.h"
 #import <WebCore/SharedStringHash.h>
 
@@ -89,5 +87,3 @@
 }
 
 @end
-
-#endif

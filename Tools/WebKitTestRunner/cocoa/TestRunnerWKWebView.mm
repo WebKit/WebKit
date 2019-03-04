@@ -45,8 +45,6 @@
 @end
 #endif
 
-#if WK_API_ENABLED
-
 @interface TestRunnerWKWebView () <WKUIDelegatePrivate> {
     RetainPtr<NSNumber> m_stableStateOverride;
     BOOL m_isInteractingWithFormControl;
@@ -285,5 +283,3 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS_FAMILY)
 
 @end
-
-#endif // WK_API_ENABLED

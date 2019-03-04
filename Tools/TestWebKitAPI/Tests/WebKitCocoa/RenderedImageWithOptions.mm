@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "RenderedImageWithOptionsProtocol.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
@@ -80,5 +78,3 @@ TEST(WebKit, NodeHandleRenderedImageWithWidth)
     runTestWithWidth(@720, { 720, 540 });
     runTestWithWidth(@721, { 721, 541 });
 }
-
-#endif // WK_API_ENABLED

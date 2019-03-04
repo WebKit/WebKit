@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSDictionary.h"
 
-#if WK_API_ENABLED
-
 #import "WKNSArray.h"
 
 using namespace WebKit;
@@ -89,5 +87,3 @@ using namespace WebKit;
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <WebKit/_WKVisitedLinkStore.h>
 #import <wtf/RetainPtr.h>
 
@@ -131,5 +129,3 @@ TEST(WebKit, VisitedLinkStore_AddAndRemove)
 }
 
 }
-
-#endif

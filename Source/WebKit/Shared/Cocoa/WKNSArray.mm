@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSArray.h"
 
-#if WK_API_ENABLED
-
 @implementation WKNSArray {
     API::ObjectStorage<API::Array> _array;
 }
@@ -67,5 +65,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"

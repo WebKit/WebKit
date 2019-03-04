@@ -25,8 +25,6 @@
 
 #import "_WKLinkIconParameters.h"
 
-#if WK_API_ENABLED
-
 namespace WebCore {
 struct LinkIcon;
 }
@@ -36,5 +34,3 @@ struct LinkIcon;
 - (instancetype)_initWithLinkIcon:(const WebCore::LinkIcon&)linkIcon;
 
 @end
-
-#endif

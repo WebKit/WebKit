@@ -25,8 +25,6 @@
 
 #import "_WKUserStyleSheet.h"
 
-#if WK_API_ENABLED
-
 #import "APIUserStyleSheet.h"
 
 namespace WebKit {
@@ -42,5 +40,3 @@ template<> struct WrapperTraits<API::UserStyleSheet> {
     API::ObjectStorage<API::UserStyleSheet> _userStyleSheet;
 }
 @end
-
-#endif

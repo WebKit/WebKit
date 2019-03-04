@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKURLSchemeTaskInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WebURLSchemeHandler.h"
 #import "WebURLSchemeTask.h"
 #import <WebCore/ResourceError.h>
@@ -110,5 +108,3 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 }
 
 @end
-
-#endif // #if WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -88,5 +86,3 @@ TEST(WebKit, TintColorAffectsInteractionColor)
 #endif
 
 } // namespace TestWebKitAPI
-
-#endif

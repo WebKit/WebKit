@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDOMRangePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleRangeHandle.h"
 #import "WKBundleAPICast.h"
 #import "WKDOMInternals.h"
@@ -153,5 +151,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

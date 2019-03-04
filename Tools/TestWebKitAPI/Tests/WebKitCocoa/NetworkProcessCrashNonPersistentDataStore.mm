@@ -31,8 +31,6 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool done;
 
 @interface CrashDelegate : NSObject <WKNavigationDelegate>
@@ -76,7 +74,3 @@ TEST(WebKit, NetworkProcessCrashNonPersistentDataStore)
     [webView loadRequest:[NSURLRequest requestWithURL:simple2]];
     TestWebKitAPI::Util::run(&done);
 }
-
-#endif // WK_API_ENABLED
-
-

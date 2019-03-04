@@ -28,8 +28,6 @@
 
 #import "_WKUserContentWorldInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation WKUserScript
 
 - (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
@@ -106,5 +104,3 @@
 }
 
 @end
-
-#endif

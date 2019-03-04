@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -113,5 +111,3 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif

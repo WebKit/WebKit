@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -71,4 +69,3 @@ TEST(WKWebView, DiagnosticLoggingDelegateAfterClose)
     EXPECT_EQ(nil, webView.get()._diagnosticLoggingDelegate);
 }
 
-#endif

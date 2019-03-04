@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSNumber.h"
 
-#if WK_API_ENABLED
-
 using namespace WebKit;
 
 @implementation WKNSNumber {
@@ -162,5 +160,3 @@ using namespace WebKit;
 }
 
 @end
-
-#endif // WK_API_ENABLED

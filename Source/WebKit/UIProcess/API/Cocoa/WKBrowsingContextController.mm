@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKBrowsingContextControllerInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIData.h"
 #import "APINavigation.h"
 #import "ObjCObjectGraph.h"
@@ -726,7 +724,7 @@ IGNORE_WARNINGS_END
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
-#if WK_API_ENABLED && !TARGET_OS_IPHONE
+#if PLATFORM(MAC)
     return _page->remoteObjectRegistry();
 #else
     return nil;
@@ -745,5 +743,3 @@ IGNORE_WARNINGS_END
 
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-#endif // WK_API_ENABLED

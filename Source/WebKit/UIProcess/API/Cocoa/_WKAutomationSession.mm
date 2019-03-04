@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKAutomationSessionInternal.h"
 
-#if WK_API_ENABLED
-
 #import "AutomationSessionClient.h"
 #import "WKAPICast.h"
 #import "WKProcessPool.h"
@@ -127,5 +125,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

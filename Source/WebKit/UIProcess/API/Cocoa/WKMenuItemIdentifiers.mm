@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKMenuItemIdentifiersPrivate.h"
 
-#if WK_API_ENABLED
-
 NSString * const _WKMenuItemIdentifierCopy = @"WKMenuItemIdentifierCopy";
 NSString * const _WKMenuItemIdentifierCopyImage = @"WKMenuItemIdentifierCopyImage";
 NSString * const _WKMenuItemIdentifierCopyLink = @"WKMenuItemIdentifierCopyLink";
@@ -53,5 +51,3 @@ NSString * const _WKMenuItemIdentifierToggleFullScreen = @"WKMenuItemIdentifierT
 
 NSString * const _WKMenuItemIdentifierShareMenu = @"WKMenuItemIdentifierShareMenu";
 NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechMenu";
-
-#endif

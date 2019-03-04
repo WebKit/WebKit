@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -210,5 +208,3 @@ TEST(WebKit, WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest_CrossOriginL
 #endif // WK_HAVE_C_SPI
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

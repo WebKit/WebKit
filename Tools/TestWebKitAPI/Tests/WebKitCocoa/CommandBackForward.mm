@@ -132,8 +132,6 @@ public:
     }
 };
 
-#if WK_API_ENABLED
-
 class WebKit2_CommandBackForwardTestWKWebView : public WebKit2_CommandBackForwardTest {
 public:
     RetainPtr<WKWebView> webView;
@@ -200,8 +198,6 @@ TEST_F(WebKit2_CommandBackForwardTestWKWebView, RTL)
 
     EXPECT_WK_STREQ([webView URL].path.lastPathComponent, @"simple2.html");
 }
-
-#endif
 
 TEST_F(WebKit2_CommandBackForwardTestWKView, LTR)
 {

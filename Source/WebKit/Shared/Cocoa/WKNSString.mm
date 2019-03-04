@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSString.h"
 
-#if WK_API_ENABLED
-
 #import "APIString.h"
 #import <wtf/RetainPtr.h>
 
@@ -59,5 +57,3 @@ using namespace WebKit;
 }
 
 @end
-
-#endif // WK_API_ENABLED

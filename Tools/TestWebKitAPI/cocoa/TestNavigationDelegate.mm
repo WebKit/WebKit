@@ -29,8 +29,6 @@
 #import "Utilities.h"
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 @implementation TestNavigationDelegate
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
@@ -134,5 +132,3 @@
 }
 
 @end
-
-#endif

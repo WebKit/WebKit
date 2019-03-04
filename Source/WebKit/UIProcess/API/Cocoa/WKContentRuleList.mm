@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKContentRuleListInternal.h"
 
-#if WK_API_ENABLED
-
 #include "WebCompiledContentRuleList.h"
 
 @implementation WKContentRuleList
@@ -52,5 +50,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

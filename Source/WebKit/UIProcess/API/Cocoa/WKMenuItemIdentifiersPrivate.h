@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKDeclarationSpecifiers.h>
 
@@ -55,5 +53,3 @@ WK_EXPORT extern NSString * const _WKMenuItemIdentifierToggleFullScreen WK_API_A
 
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierShareMenu WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierSpeechMenu WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-
-#endif

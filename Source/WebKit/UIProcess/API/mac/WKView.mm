@@ -74,8 +74,6 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 @implementation WKView
 IGNORE_WARNINGS_END
 
-#if WK_API_ENABLED
-
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
     return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:nil];
@@ -85,8 +83,6 @@ IGNORE_WARNINGS_END
 {
     return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? relatedView.pageRef : nil];
 }
-
-#endif // WK_API_ENABLED
 
 - (void)dealloc
 {
@@ -99,12 +95,10 @@ IGNORE_WARNINGS_END
     [super dealloc];
 }
 
-#if WK_API_ENABLED
 - (WKBrowsingContextController *)browsingContextController
 {
     return _data->_impl->browsingContextController();
 }
-#endif // WK_API_ENABLED
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
 {
@@ -898,7 +892,6 @@ IGNORE_WARNINGS_END
 
 - (void)maybeInstallIconLoadingClient
 {
-#if WK_API_ENABLED
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     class IconLoadingClient : public API::IconLoadingClient {
     public:
@@ -939,7 +932,6 @@ IGNORE_WARNINGS_END
 
     if ([self respondsToSelector:IconLoadingClient::delegateSelector()])
         _data->_impl->page().setIconLoadingClient(std::make_unique<IconLoadingClient>(self));
-#endif // WK_API_ENABLED
 }
 
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
@@ -958,7 +950,6 @@ IGNORE_WARNINGS_END
     return self;
 }
 
-#if WK_API_ENABLED
 - (void)_setThumbnailView:(_WKThumbnailView *)thumbnailView
 {
     _data->_impl->setThumbnailView(thumbnailView);
@@ -970,7 +961,6 @@ IGNORE_WARNINGS_END
         return nil;
     return _data->_impl->thumbnailView();
 }
-#endif // WK_API_ENABLED
 
 - (NSTextInputContext *)_web_superInputContext
 {
@@ -1054,7 +1044,7 @@ IGNORE_WARNINGS_END
     [self _didChangeContentSize:newSize];
 }
 
-#if ENABLE(DRAG_SUPPORT) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT)
 
 - (void)_web_didPerformDragOperation:(BOOL)handled
 {
@@ -1291,7 +1281,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     _data->_impl->setUnderlayColor(underlayColor);
 }
 
-#if WK_API_ENABLED
 - (NSView *)_inspectorAttachmentView
 {
     return _data->_impl->inspectorAttachmentView();
@@ -1301,7 +1290,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 {
     _data->_impl->setInspectorAttachmentView(newView);
 }
-#endif
 
 - (BOOL)_requiresUserActionForEditingControlsManager
 {

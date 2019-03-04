@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebsiteDataStoreInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIString.h"
 #import "CompletionHandlerCallChecker.h"
 #import "WKHTTPCookieStoreInternal.h"
@@ -471,5 +469,3 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 }
 
 @end
-
-#endif // WK_API_ENABLED

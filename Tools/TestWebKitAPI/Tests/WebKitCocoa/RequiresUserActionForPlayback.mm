@@ -36,8 +36,6 @@
 #import <UIKit/UIKit.h>
 #endif
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 
@@ -227,5 +225,3 @@ TEST_F(RequiresUserActionForPlaybackTest, DeprecatedRequiresUserActionForVideoBu
     testAudioOnly();
     EXPECT_WK_STREQ(@"playing", (NSString *)[lastScriptMessage body]);
 }
-
-#endif

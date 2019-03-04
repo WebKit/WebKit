@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -57,5 +55,3 @@ TEST(CancelLoading, CancelFontSubresource)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 }
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
@@ -111,5 +109,3 @@ TEST_F(AVFoundationPref, PrefTest)
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(COCOA)
-
-#endif // WK_API_ENABLED

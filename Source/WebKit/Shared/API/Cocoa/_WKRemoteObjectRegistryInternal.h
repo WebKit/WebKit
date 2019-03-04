@@ -25,8 +25,6 @@
 
 #import "_WKRemoteObjectRegistry.h"
 
-#if WK_API_ENABLED
-
 namespace IPC {
 class MessageSender;
 }
@@ -54,5 +52,3 @@ class WebPageProxy;
 - (void)_releaseReplyWithID:(uint64_t)replyID;
 
 @end
-
-#endif // WK_API_ENABLED

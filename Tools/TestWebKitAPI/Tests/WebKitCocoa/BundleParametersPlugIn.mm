@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
@@ -71,5 +69,3 @@ static NSString * const testParameter2 = @"TestParameter2";
 }
 
 @end
-
-#endif // WK_API_ENABLED

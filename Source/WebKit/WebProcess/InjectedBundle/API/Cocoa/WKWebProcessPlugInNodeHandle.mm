@@ -32,8 +32,6 @@
 #import <WebCore/IntRect.h>
 #import <WebKit/WebImage.h>
 
-#if WK_API_ENABLED
-
 @implementation WKWebProcessPlugInNodeHandle {
     API::ObjectStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;
 }
@@ -211,5 +209,3 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
 }
 
 @end
-
-#endif // WK_API_ENABLED

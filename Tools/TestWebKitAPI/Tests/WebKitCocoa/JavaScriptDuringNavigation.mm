@@ -30,8 +30,6 @@
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool navigationComplete;
 static size_t alerts;
 static bool receivedBothAlerts;
@@ -94,5 +92,3 @@ TEST(WebKit, JavaScriptDuringNavigation)
     [webView loadRequest:[NSURLRequest requestWithURL:secondURL.get()]];
     TestWebKitAPI::Util::run(&receivedBothAlerts);
 }
-
-#endif

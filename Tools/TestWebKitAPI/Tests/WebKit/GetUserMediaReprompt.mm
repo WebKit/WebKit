@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #if ENABLE(MEDIA_STREAM)
 
 #import "PlatformUtilities.h"
@@ -122,5 +120,3 @@ TEST(WebKit2, GetUserMediaReprompt)
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // WK_API_ENABLED

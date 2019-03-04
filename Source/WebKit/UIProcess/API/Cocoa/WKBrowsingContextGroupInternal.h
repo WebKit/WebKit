@@ -25,8 +25,6 @@
 
 #import "WKBrowsingContextGroup.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebPageGroup.h"
 
@@ -42,5 +40,3 @@ template<> struct WrapperTraits<WebPageGroup> {
 
 @interface WKBrowsingContextGroup () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "CompletionHandlerCallChecker.h"
 
-#if WK_API_ENABLED
-
 #import <mutex>
 #import <objc/runtime.h>
 #import <wtf/Ref.h>
@@ -101,5 +99,3 @@ Class CompletionHandlerCallChecker::classImplementingDelegateMethod() const
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

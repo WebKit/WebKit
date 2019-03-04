@@ -25,8 +25,6 @@
 
 #import <WebKit/_WKUserContentFilter.h>
 
-#if WK_API_ENABLED
-
 @class WKUserContentRuleList;
 
 @interface _WKUserContentFilter (WKPrivate)
@@ -34,5 +32,3 @@
 - (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
-
-#endif

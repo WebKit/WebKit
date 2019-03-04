@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "RenderingProgressProtocol.h"
 #import "Test.h"
@@ -73,5 +71,3 @@ TEST(RenderingProgress, FirstMeaningfulPaint)
 
     TestWebKitAPI::Util::run(&didObserveFirstMeaningfulPaint);
 }
-
-#endif

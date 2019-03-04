@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKDownloadInternal.h"
 
-#if WK_API_ENABLED
-
 #import "DownloadProxy.h"
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
@@ -93,5 +91,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKBackForwardListItem.h>
 
-#if WK_API_ENABLED
-
 @interface WKBackForwardListItem (WKPrivate)
 
 // For testing only.
@@ -35,5 +33,3 @@
 @property (nonatomic) CGPoint _scrollPosition WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif

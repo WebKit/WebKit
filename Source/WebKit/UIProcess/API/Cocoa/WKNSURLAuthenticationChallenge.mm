@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSURLAuthenticationChallenge.h"
 
-#if WK_API_ENABLED
-
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationDecisionListener.h"
 #import "WebCertificateInfo.h"
@@ -115,5 +113,3 @@ static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 }
 
 @end
-
-#endif // WK_API_ENABLED

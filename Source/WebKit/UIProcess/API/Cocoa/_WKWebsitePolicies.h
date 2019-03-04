@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSInteger, _WKWebsiteAutoplayPolicy) {
     _WKWebsiteAutoplayPolicyDefault,
     _WKWebsiteAutoplayPolicyAllow,
@@ -64,5 +62,3 @@ WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 @property (nonatomic) BOOL deviceOrientationEventEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif // WK_API_ENABLED

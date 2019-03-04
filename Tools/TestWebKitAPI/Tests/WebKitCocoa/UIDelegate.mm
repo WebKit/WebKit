@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -883,5 +881,3 @@ TEST(WebKit, DidNotHandleWheelEvent)
 #endif // RELIABLE_DID_NOT_HANDLE_WHEEL_EVENT
 
 #endif // PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

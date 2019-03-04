@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundle.h"
 #import "WKObject.h"
 
@@ -41,5 +39,3 @@ template<> struct WrapperTraits<InjectedBundle> {
 @interface WKWebProcessPlugInController () <WKObject>
 - (void)_setPrincipalClassInstance:(id <WKWebProcessPlugIn>)principalClassInstance;
 @end
-
-#endif // WK_API_ENABLED

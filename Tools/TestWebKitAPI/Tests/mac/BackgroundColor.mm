@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -119,5 +117,3 @@ TEST(WebKit, BackgroundColorCustomColorNoDrawsBackground)
 }
 
 } // namespace TestWebKitAPI
-
-#endif

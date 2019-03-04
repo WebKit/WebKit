@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKActivatedElementInfoInternal.h"
 
-#if WK_API_ENABLED
-
 #import "ShareableBitmap.h"
 #import <wtf/RetainPtr.h>
 
@@ -168,5 +166,3 @@
 #endif
 
 @end
-
-#endif // WK_API_ENABLED

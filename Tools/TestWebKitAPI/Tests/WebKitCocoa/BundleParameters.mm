@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -113,5 +111,3 @@ TEST(WebKit, BundleParameters)
         TestWebKitAPI::Util::run(&isDone);
     }
 }
-
-#endif // WK_API_ENABLED

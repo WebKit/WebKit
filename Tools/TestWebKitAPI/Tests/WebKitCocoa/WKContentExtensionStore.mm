@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKContentRuleList.h>
@@ -379,6 +377,3 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
     [webView reload];
     TestWebKitAPI::Util::run(&receivedAlert);
 }
-
-
-#endif

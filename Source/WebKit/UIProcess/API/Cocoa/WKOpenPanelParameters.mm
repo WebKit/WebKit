@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKOpenPanelParametersInternal.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "WKNSArray.h"
 

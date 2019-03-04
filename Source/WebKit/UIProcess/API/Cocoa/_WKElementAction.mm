@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKElementActionInternal.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(IOS_FAMILY)
 
 #import "GestureTypes.h"
@@ -175,5 +173,3 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // WK_API_ENABLED

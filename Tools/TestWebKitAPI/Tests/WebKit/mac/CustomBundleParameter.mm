@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI && WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
 #import "CustomBundleObject.h"
 #import "PlatformUtilities.h"

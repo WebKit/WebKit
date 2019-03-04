@@ -33,8 +33,6 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage = false;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 
@@ -74,5 +72,3 @@ TEST(WebKit, CookieAcceptPolicy)
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:originalCookieAcceptPolicy];
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
 }
-
-#endif

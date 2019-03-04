@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPreviewActionItemInternal.h"
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if PLATFORM(IOS_FAMILY)
 
 @implementation WKPreviewAction
 @synthesize identifier=_identifier;
@@ -53,4 +53,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && TARGET_OS_IPHONE
+#endif // PLATFORM(IOS_FAMILY)

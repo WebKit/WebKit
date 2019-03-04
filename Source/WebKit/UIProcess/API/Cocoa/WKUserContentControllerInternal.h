@@ -25,8 +25,6 @@
 
 #import "WKUserContentControllerPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebUserContentControllerProxy.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<WebUserContentControllerProxy> {
     API::ObjectStorage<WebKit::WebUserContentControllerProxy> _userContentControllerProxy;
 }
 @end
-
-#endif

@@ -26,8 +26,6 @@
 #import <WebKit/WKProcessPool.h>
 #import <WebKit/WKSecurityOrigin.h>
 
-#if WK_API_ENABLED
-
 @class WKWebView;
 @class _WKAutomationSession;
 @class _WKDownload;
@@ -123,5 +121,3 @@
 @property (nonatomic, getter=_isStorageAccessAPIEnabled, setter=_setStorageAccessAPIEnabled:) BOOL _storageAccessAPIEnabled WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 @end
-
-#endif

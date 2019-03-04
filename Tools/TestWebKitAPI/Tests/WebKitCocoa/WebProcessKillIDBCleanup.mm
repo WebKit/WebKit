@@ -38,8 +38,6 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
@@ -102,5 +100,3 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     EXPECT_WK_STREQ(@"Second open success", string5.get());
     EXPECT_WK_STREQ(@"Second WebView Transaction Started", string6.get());
 }
-
-#endif

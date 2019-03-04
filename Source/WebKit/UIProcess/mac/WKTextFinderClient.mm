@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKTextFinderClient.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "APIFindClient.h"
 #import "APIFindMatchesClient.h"

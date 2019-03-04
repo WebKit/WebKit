@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
@@ -144,5 +142,3 @@ TEST(WebKit, WKNavigationResponsePDFType)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif // WK_API_ENABLED

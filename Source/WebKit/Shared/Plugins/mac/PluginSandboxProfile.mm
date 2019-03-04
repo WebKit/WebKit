@@ -35,11 +35,7 @@ namespace WebKit {
 
 static NSString *pluginSandboxProfileDirectory()
 {
-#if WK_API_ENABLED
     NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-#else
-    NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-#endif
     return [[bundle resourcePath] stringByAppendingPathComponent:@"PlugInSandboxProfiles"];
 }
 

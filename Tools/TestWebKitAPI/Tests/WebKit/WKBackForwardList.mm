@@ -34,8 +34,6 @@
 #import <WebKit/_WKSessionState.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static NSString *loadableURL1 = @"data:text/html,no%20error%20A";
 static NSString *loadableURL2 = @"data:text/html,no%20error%20B";
 static NSString *loadableURL3 = @"data:text/html,no%20error%20C";
@@ -168,5 +166,3 @@ TEST(WKBackForwardList, WindowLocationAsyncPolicyDecision)
     TestWebKitAPI::Util::run(&done);
     EXPECT_STREQ(webView.get().backForwardList.currentItem.URL.absoluteString.UTF8String, simple.absoluteString.UTF8String);
 }
-
-#endif

@@ -25,12 +25,8 @@
 
 #import "WKErrorPrivate.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 #import "GenericCallback.h"
 
 RetainPtr<NSError> createNSError(WKErrorCode);
 NSString *localizedDescriptionForErrorCode(WKErrorCode);
-
-#endif

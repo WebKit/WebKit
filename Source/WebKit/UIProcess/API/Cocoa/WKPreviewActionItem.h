@@ -25,7 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
 
 #import <UIKit/UIViewController.h>
 

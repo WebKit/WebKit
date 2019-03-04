@@ -38,25 +38,17 @@ namespace WTR {
 
 void UIScriptController::setViewScale(double scale)
 {
-#if WK_API_ENABLED
     TestController::singleton().mainWebView()->platformView()._viewScale = scale;
-#else
-    UNUSED_PARAM(scale);
-#endif
 }
 
 void UIScriptController::setMinimumEffectiveWidth(double effectiveWidth)
 {
-#if WK_API_ENABLED
     TestController::singleton().mainWebView()->platformView()._minimumEffectiveDeviceWidth = effectiveWidth;
-#else
-    UNUSED_PARAM(effectiveWidth);
-#endif
 }
 
 void UIScriptController::setAllowsViewportShrinkToFit(bool allows)
 {
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
     TestController::singleton().mainWebView()->platformView()._allowsViewportShrinkToFit = allows;
 #else
     UNUSED_PARAM(allows);
@@ -65,9 +57,7 @@ void UIScriptController::setAllowsViewportShrinkToFit(bool allows)
 
 void UIScriptController::resignFirstResponder()
 {
-#if WK_API_ENABLED
     [TestController::singleton().mainWebView()->platformView() resignFirstResponder];
-#endif
 }
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
@@ -83,17 +73,12 @@ void UIScriptController::doAsyncTask(JSValueRef callback)
 
 void UIScriptController::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
 {
-#if WK_API_ENABLED
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
-#else
-    UNUSED_PARAM(resolved);
-#endif
 }
 
 void UIScriptController::removeViewFromWindow(JSValueRef callback)
 {
-#if WK_API_ENABLED
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
     // test pageoverlay/overlay-remove-reinsert-view.html to start failing consistently on iOS. It seems like
     // this warrants some more investigation.
@@ -113,14 +98,10 @@ void UIScriptController::removeViewFromWindow(JSValueRef callback)
         m_context->asyncTaskComplete(callbackID);
     }];
 #endif // PLATFORM(MAC)
-#else
-    UNUSED_PARAM(callback);
-#endif
 }
 
 void UIScriptController::addViewToWindow(JSValueRef callback)
 {
-#if WK_API_ENABLED
 #if PLATFORM(MAC)
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 #else
@@ -137,14 +118,10 @@ void UIScriptController::addViewToWindow(JSValueRef callback)
         m_context->asyncTaskComplete(callbackID);
     }];
 #endif // PLATFORM(MAC)
-#else
-    UNUSED_PARAM(callback);
-#endif
 }
 
 void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringRef valueRef)
 {
-#if WK_API_ENABLED
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     WKPreferences *preferences = webView.configuration.preferences;
 
@@ -152,41 +129,24 @@ void UIScriptController::overridePreference(JSStringRef preferenceRef, JSStringR
     String value = toWTFString(toWK(valueRef));
     if (preference == "WebKitMinimumFontSize")
         preferences.minimumFontSize = value.toDouble();
-#else
-    UNUSED_PARAM(preferenceRef);
-    UNUSED_PARAM(valueRef);
-#endif
 }
 
 void UIScriptController::findString(JSStringRef string, unsigned long options, unsigned long maxCount)
 {
-#if WK_API_ENABLED
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     [webView _findString:toWTFString(toWK(string)) options:options maxCount:maxCount];
-#else
-    UNUSED_PARAM(string);
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(maxCount);
-#endif
 }
 
 JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
-#if WK_API_ENABLED
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:toWTFString(toWK(interfaceItem))];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
-#else
-    UNUSED_PARAM(interfaceItem);
-    return nullptr;
-#endif
 }
 
 void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
 {
-#if WK_API_ENABLED
     TestController::singleton().setDefaultCalendarType((__bridge NSString *)adoptCF(JSStringCopyCFString(kCFAllocatorDefault, calendarIdentifier)).get());
-#endif
 }
 
 JSRetainPtr<JSStringRef> UIScriptController::lastUndoLabel() const

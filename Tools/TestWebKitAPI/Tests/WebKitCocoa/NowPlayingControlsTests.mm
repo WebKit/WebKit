@@ -31,7 +31,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 
-#if WK_API_ENABLED && (PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
+#if PLATFORM(IOS_FAMILY)
 
 @interface NowPlayingTestWebView : TestWKWebView
 @property (nonatomic, readonly) BOOL hasActiveNowPlayingSession;
@@ -238,4 +238,4 @@ TEST(NowPlayingControlsTests, DISABLED_NowPlayingControlsIOS)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && (PLATFORM(IOS_FAMILY) || __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201)
+#endif // PLATFORM(IOS_FAMILY)

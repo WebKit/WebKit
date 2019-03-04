@@ -25,8 +25,6 @@
 
 #import "_WKWebsitePolicies.h"
 
-#if WK_API_ENABLED
-
 #import "APIWebsitePolicies.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::WebsitePolicies> {
     API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
 }
 @end
-
-#endif

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 
 static void checkURLArgument(NSURL *url)
@@ -164,5 +162,3 @@ static void checkURLArgument(NSURL *url)
 }
 
 @end
-
-#endif

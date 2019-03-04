@@ -26,8 +26,6 @@
 #import "config.h"
 #import "APIObject.h"
 
-#if WK_API_ENABLED
-
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -402,5 +400,3 @@ API::Object* Object::unwrap(void* object)
 }
 
 } // namespace API
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKNavigationData.h>
@@ -41,5 +39,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKBackForwardList", macos(10.10, WK_MAC_TB
 - (void)browsingContextController:(WKBrowsingContextController *)browsingContextController didUpdateHistoryTitle:(NSString *)title forURL:(NSURL *)URL;
 
 @end
-
-#endif // WK_API_ENABLED

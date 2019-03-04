@@ -25,8 +25,6 @@
 
 #import "WK2BrowserWindowController.h"
 
-#if WK_API_ENABLED
-
 #import "AppDelegate.h"
 #import "AppKitCompatibilityDeclarations.h"
 #import "SettingsController.h"
@@ -795,5 +793,3 @@ static NSSet *dataTypes()
 }
 
 @end
-
-#endif // WK_API_ENABLED

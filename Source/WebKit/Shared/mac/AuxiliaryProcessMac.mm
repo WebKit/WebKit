@@ -491,12 +491,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
 
 static inline const NSBundle *webKit2Bundle()
 {
-#if WK_API_ENABLED
     const static NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-#else
-    const static NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
-#endif
-
     return bundle;
 }
 

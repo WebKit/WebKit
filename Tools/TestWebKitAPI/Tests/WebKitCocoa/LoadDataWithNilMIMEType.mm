@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "TestNavigationDelegate.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
@@ -38,5 +36,3 @@ TEST(WebKit, LoadDataWithNilMIMEType)
     [webView loadData:[@"test" dataUsingEncoding:NSUTF8StringEncoding] MIMEType:mimeType characterEncodingName:@"UTF-8" baseURL:[NSURL URLWithString:@"about:blank"]];
     [webView _test_waitForDidFinishNavigation];
 }
-
-#endif // WK_API_ENABLED

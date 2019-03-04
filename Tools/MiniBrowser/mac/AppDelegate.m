@@ -35,13 +35,10 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
-#import <WebKit/_WKProcessPoolConfiguration.h>
-#import <WebKit/_WKUserContentExtensionStore.h>
-
-#if WK_API_ENABLED
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInternalDebugFeature.h>
-#endif
+#import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKUserContentExtensionStore.h>
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -61,9 +58,7 @@ enum {
     self = [super init];
     if (self) {
         _browserWindowControllers = [[NSMutableSet alloc] init];
-#if WK_API_ENABLED
         _extensionManagerWindowController = [[ExtensionManagerWindowController alloc] init];
-#endif
     }
 
     return self;
@@ -74,10 +69,8 @@ enum {
     NSMenuItem *item = [[NSMenuItem alloc] init];
     [item setSubmenu:[[SettingsController shared] menu]];
 
-#if WK_API_ENABLED
     if ([[SettingsController shared] usesGameControllerFramework])
         [WKProcessPool _forceGameControllerFramework];
-#endif
 
     [[NSApp mainMenu] insertItem:[item autorelease] atIndex:[[NSApp mainMenu] indexOfItemWithTitle:@"Debug"]];
 
@@ -85,7 +78,6 @@ enum {
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
 
-#if WK_API_ENABLED
 static WKWebViewConfiguration *defaultConfiguration()
 {
     static WKWebViewConfiguration *configuration;
@@ -106,7 +98,6 @@ static WKWebViewConfiguration *defaultConfiguration()
         
         configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
 
-#if WK_API_ENABLED
         NSArray<_WKExperimentalFeature *> *experimentalFeatures = [WKPreferences _experimentalFeatures];
         for (_WKExperimentalFeature *feature in experimentalFeatures) {
             BOOL enabled;
@@ -126,7 +117,6 @@ static WKWebViewConfiguration *defaultConfiguration()
                 enabled = [feature defaultValue];
             [configuration.preferences _setEnabled:enabled forInternalDebugFeature:feature];
         }
-#endif
     }
 
     configuration.suppressesIncrementalRendering = [SettingsController shared].incrementalRenderingSuppressed;
@@ -138,8 +128,6 @@ WKPreferences *defaultPreferences()
 {
     return defaultConfiguration().preferences;
 }
-
-#endif
 
 - (BrowserWindowController *)createBrowserWindowController:(id)sender
 {
@@ -157,10 +145,8 @@ WKPreferences *defaultPreferences()
 
     if (!useWebKit2)
         controller = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
-#if WK_API_ENABLED
     else
         controller = [[WK2BrowserWindowController alloc] initWithConfiguration:defaultConfiguration()];
-#endif
 
     if (makeEditable)
         controller.editable = YES;
@@ -185,7 +171,6 @@ WKPreferences *defaultPreferences()
 
 - (IBAction)newPrivateWindow:(id)sender
 {
-#if WK_API_ENABLED
     WKWebViewConfiguration *privateConfiguraton = [defaultConfiguration() copy];
     privateConfiguraton.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
@@ -196,7 +181,6 @@ WKPreferences *defaultPreferences()
     [_browserWindowControllers addObject:controller];
 
     [controller loadURLString:[SettingsController shared].defaultURL];
-#endif
 }
 
 - (IBAction)newEditorWindow:(id)sender
@@ -314,12 +298,9 @@ WKPreferences *defaultPreferences()
 
 - (IBAction)showExtensionsManager:(id)sender
 {
-#if WK_API_ENABLED
     [_extensionManagerWindowController showWindow:sender];
-#endif
 }
 
-#if WK_API_ENABLED
 - (WKUserContentController *)userContentContoller
 {
     return defaultConfiguration().userContentController;
@@ -349,7 +330,5 @@ WKPreferences *defaultPreferences()
         NSLog(@"Did clear default store website data.");
     }];
 }
-
-#endif
 
 @end

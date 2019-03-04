@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKErrorInternal.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
@@ -78,5 +76,3 @@ RetainPtr<NSError> createNSError(WKErrorCode errorCode)
 
     return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
 }
-
-#endif

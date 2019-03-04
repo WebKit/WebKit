@@ -122,7 +122,7 @@ id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
 
 _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
 {
-#if WK_API_ENABLED && !TARGET_OS_IPHONE
+#if PLATFORM(MAC)
     return WebKit::toImpl(pageRef)->remoteObjectRegistry();
 #else
     return nil;
@@ -157,14 +157,14 @@ bool WKPageIsPlayingVideoInEnhancedFullscreen(WKPageRef pageRef)
 
 void WKPageSetFullscreenDelegate(WKPageRef page, id <_WKFullscreenDelegate> delegate)
 {
-#if WK_API_ENABLED && ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API)
     downcast<WebKit::FullscreenClient>(WebKit::toImpl(page)->fullscreenClient()).setDelegate(delegate);
 #endif
 }
 
 id <_WKFullscreenDelegate> WKPageGetFullscreenDelegate(WKPageRef page)
 {
-#if WK_API_ENABLED && ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API)
     return downcast<WebKit::FullscreenClient>(WebKit::toImpl(page)->fullscreenClient()).delegate().autorelease();
 #else
     return nil;

@@ -28,8 +28,6 @@
 #import "TestNavigationDelegate.h"
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool didFirstVisuallyNonEmptyLayout;
 static bool receivedMessage;
 
@@ -73,5 +71,3 @@ TEST(WebKit, FirstVisuallyNonEmptyMilestoneWithDeferredScript)
     TestWebKitAPI::Util::run(&receivedMessage);
     EXPECT_TRUE(didFirstVisuallyNonEmptyLayout);
 }
-
-#endif

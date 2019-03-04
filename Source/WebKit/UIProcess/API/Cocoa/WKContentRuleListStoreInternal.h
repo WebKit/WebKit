@@ -25,8 +25,6 @@
 
 #import "WKContentRuleListStorePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIContentRuleListStore.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::ContentRuleListStore> {
     API::ObjectStorage<API::ContentRuleListStore> _contentRuleListStore;
 }
 @end
-
-#endif // WK_API_ENABLED

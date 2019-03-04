@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -176,7 +176,7 @@ TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"new URL(imageElement.src).protocol"]);
 }
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)
 
 
 

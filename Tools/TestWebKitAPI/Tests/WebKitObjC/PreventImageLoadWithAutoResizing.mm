@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI && PLATFORM(MAC)
 
 #import "Test.h"
 
@@ -33,8 +33,6 @@
 #import "PlatformWebView.h"
 #import "TestBrowsingContextLoadDelegate.h"
 #import <WebKit/WKViewPrivate.h>
-
-#if WK_API_ENABLED && PLATFORM(MAC)
 
 static bool testFinished = false;
 
@@ -55,7 +53,5 @@ TEST(WebKit, PreventImageLoadWithAutoResizingTest)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED
 
 #endif

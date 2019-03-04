@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 WK_API_AVAILABLE(macosx(10.13), ios(11.3))
 @protocol _WKFullscreenDelegate <NSObject>
 
@@ -45,5 +43,3 @@ WK_API_AVAILABLE(macosx(10.13), ios(11.3))
 #endif
 
 @end
-
-#endif

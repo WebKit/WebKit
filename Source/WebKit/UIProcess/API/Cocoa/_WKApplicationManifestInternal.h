@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "APIApplicationManifest.h"
 #import "_WKApplicationManifest.h"
 
@@ -48,5 +46,3 @@ template<> struct WrapperTraits<API::ApplicationManifest> {
 @end
 
 #endif // ENABLE(APPLICATION_MANIFEST)
-
-#endif // WK_API_ENABLED

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKTypeRefWrapper.h"
 
-#if WK_API_ENABLED
-
 #import "WKRetainPtr.h"
 
 @interface WKTypeRefWrapper () {
@@ -57,5 +55,3 @@ IGNORE_WARNINGS_END
 }
 
 @end
-
-#endif // WK_API_ENABLED

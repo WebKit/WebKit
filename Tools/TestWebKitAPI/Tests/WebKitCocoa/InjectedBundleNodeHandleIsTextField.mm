@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKDOMDocument.h>
 #import <WebKit/WKDOMElement.h>
 #import <WebKit/WKDOMNodePrivate.h>
@@ -97,5 +95,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

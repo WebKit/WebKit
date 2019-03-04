@@ -34,8 +34,6 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 
-#if WK_API_ENABLED
-
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
 static RetainPtr<NSURL> redirectURL;
@@ -448,5 +446,3 @@ TEST(WKNavigation, ListItemAddedRemoved)
     TestWebKitAPI::Util::run(&isDone);
 }
 #endif // PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

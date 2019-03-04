@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -252,4 +252,4 @@ TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
     EXPECT_NE(0, candidateRect.origin.y);
 }
 
-#endif /* WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201 */
+#endif // PLATFORM(MAC)

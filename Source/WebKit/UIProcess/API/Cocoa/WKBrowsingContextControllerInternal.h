@@ -25,8 +25,6 @@
 
 #import "WKBrowsingContextControllerPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WebPageProxy.h"
 #import <wtf/WeakObjCPtr.h>
 
@@ -41,5 +39,3 @@
 - (instancetype)_initWithPageRef:(WKPageRef)pageRef;
 
 @end
-
-#endif // WK_API_ENABLED

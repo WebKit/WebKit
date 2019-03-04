@@ -27,7 +27,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED && WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI
 
 #import <WebKit/WKString.h>
 #import <objc/runtime.h>

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKProcessGroup.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBase.h>
 
 #if TARGET_OS_IPHONE
@@ -44,5 +42,3 @@
 #endif
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,11 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
 @interface _WKUserContentFilter : NSObject
 
 @end
-
-#endif // WK_API_ENABLED

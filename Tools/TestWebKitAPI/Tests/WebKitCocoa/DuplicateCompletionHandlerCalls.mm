@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WebKit.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesRef.h>
@@ -138,5 +136,3 @@ TEST(WebKit, DuplicateCompletionHandlerCalls)
 
     Util::run(&testFinished);
 }
-
-#endif // WK_API_ENABLED

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -82,4 +82,4 @@ TEST(WebKit, RunOpenPanelNonLatin1)
     
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

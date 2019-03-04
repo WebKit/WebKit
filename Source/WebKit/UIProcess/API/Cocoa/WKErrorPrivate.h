@@ -25,8 +25,6 @@
 
 #import <WebKit/WKError.h>
 
-#if WK_API_ENABLED
-
 WK_EXTERN NSString * const _WKLegacyErrorDomain WK_API_AVAILABLE(macosx(10.11), ios(8.3));
 
 typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
@@ -49,5 +47,3 @@ WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_API_AVA
 /*! @constant _WKJavaScriptExceptionSourceURLErrorKey Key in userInfo representing
  the exception source URL (as an NSURL) for WKErrorJavaScriptExceptionOccurred errors. */
 WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-
-#endif

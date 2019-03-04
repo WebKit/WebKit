@@ -25,8 +25,6 @@
 
 #import "_WKSessionState.h"
 
-#if WK_API_ENABLED
-
 #import "SessionState.h"
 
 @interface _WKSessionState () {
@@ -37,5 +35,3 @@
 - (instancetype)_initWithSessionState:(WebKit::SessionState)sessionState;
 
 @end
-
-#endif

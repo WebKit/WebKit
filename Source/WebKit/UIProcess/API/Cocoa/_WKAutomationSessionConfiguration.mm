@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKAutomationSessionConfiguration.h"
 
-#if WK_API_ENABLED
-
 @implementation _WKAutomationSessionConfiguration
 
 - (instancetype)init
@@ -52,5 +50,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

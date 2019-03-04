@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -154,5 +152,3 @@ TEST(UserContentWorld, IsolatedWorldPlugIn)
     TestWebKitAPI::Util::run(&didObserveNormalWorld);
     TestWebKitAPI::Util::run(&didObserveWorldWithName);
 }
-
-#endif

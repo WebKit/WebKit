@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 
@@ -73,5 +71,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 #endif
 
 @end
-
-#endif

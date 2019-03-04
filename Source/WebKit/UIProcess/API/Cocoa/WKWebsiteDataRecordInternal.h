@@ -25,8 +25,6 @@
 
 #import "WKWebsiteDataRecordPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIWebsiteDataRecord.h"
 #import "WKObject.h"
 #import <wtf/OptionSet.h>
@@ -142,5 +140,3 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     API::ObjectStorage<API::WebsiteDataRecord> _websiteDataRecord;
 }
 @end
-
-#endif

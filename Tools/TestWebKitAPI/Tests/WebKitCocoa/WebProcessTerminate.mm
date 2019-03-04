@@ -32,8 +32,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
-#if WK_API_ENABLED
-
 TEST(WebKit, WebProcessTerminate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -49,5 +47,3 @@ TEST(WebKit, WebProcessTerminate)
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_TRUE(pid != pid2);
 }
-
-#endif

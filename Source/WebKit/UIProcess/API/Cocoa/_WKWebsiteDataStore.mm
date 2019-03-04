@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKWebsiteDataStoreInternal.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataTypes) {
@@ -109,5 +107,3 @@ static RetainPtr<NSSet> toWKWebsiteDataTypes(_WKWebsiteDataTypes websiteDataType
 @end
 
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-#endif

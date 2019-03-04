@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -71,4 +71,4 @@ TEST(WKScrollViewTests, PositionFixedLayerAfterScrolling)
     EXPECT_TRUE(foundLayerForFixedNavigationBar);
 }
 
-#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

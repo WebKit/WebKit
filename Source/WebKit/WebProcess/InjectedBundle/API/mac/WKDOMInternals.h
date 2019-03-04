@@ -29,8 +29,6 @@
 #import <WebCore/Range.h>
 #import <wtf/HashMap.h>
 
-#if WK_API_ENABLED
-
 namespace WebCore {
 class Element;
 class Document;
@@ -116,5 +114,3 @@ WKDOMRange *toWKDOMRange(WebCore::Range*);
 NSArray *toNSArray(const Vector<WebCore::IntRect>&);
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

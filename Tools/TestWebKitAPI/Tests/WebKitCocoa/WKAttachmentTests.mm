@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if (PLATFORM(MAC) || PLATFORM(IOS)) && WK_API_ENABLED
+#if PLATFORM(MAC) || PLATFORM(IOS)
 
 #import "DragAndDropSimulator.h"
 #import "PencilKitTestSPI.h"
@@ -1965,4 +1965,4 @@ TEST(WKAttachmentTestsIOS, EditableImageAttachmentDataInvalidation)
 
 } // namespace TestWebKitAPI
 
-#endif // (PLATFORM(MAC) || PLATFORM(IOS)) && WK_API_ENABLED
+#endif // PLATFORM(MAC) || PLATFORM(IOS)

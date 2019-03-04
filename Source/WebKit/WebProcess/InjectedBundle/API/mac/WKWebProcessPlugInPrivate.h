@@ -25,12 +25,8 @@
 
 #import <WebKit/WKWebProcessPlugIn.h>
 
-#if WK_API_ENABLED
-
 @interface WKWebProcessPlugInController (Private)
 
 @property (readonly) WKBundleRef _bundleRef;
 
 @end
-
-#endif // WK_API_ENABLED

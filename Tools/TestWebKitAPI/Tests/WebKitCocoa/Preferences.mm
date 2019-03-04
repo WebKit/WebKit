@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "Test.h"
 #import "Utilities.h"
 #import <WebKit/WKFoundation.h>
@@ -115,5 +113,3 @@ TEST(WebKit, WebGLEnabled)
 }
 
 #endif // PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

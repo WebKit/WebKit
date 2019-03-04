@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @class _WKUserContentFilter;
 
 WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
@@ -49,5 +47,3 @@ typedef NS_ENUM(NSInteger, _WKUserContentExtensionStoreErrorCode) {
     _WKUserContentExtensionStoreErrorCompileFailed,
     _WKUserContentExtensionStoreErrorRemoveFailed,
 } WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-
-#endif // WK_API_ENABLED

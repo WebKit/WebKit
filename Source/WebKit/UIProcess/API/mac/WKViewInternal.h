@@ -31,12 +31,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-#if WK_API_ENABLED
 @class _WKThumbnailView;
 
 @interface WKView ()
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
 @end
-#endif
-
 #endif

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKWebsiteDataSizeInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKWebsiteDataRecordInternal.h"
 
 @implementation _WKWebsiteDataSize
@@ -60,5 +58,3 @@
 }
 
 @end
-
-#endif

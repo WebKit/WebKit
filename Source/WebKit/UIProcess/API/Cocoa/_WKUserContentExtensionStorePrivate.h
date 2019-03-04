@@ -25,8 +25,6 @@
 
 #import <WebKit/_WKUserContentExtensionStore.h>
 
-#if WK_API_ENABLED
-
 @class WKContentRuleListStore;
 
 @interface _WKUserContentExtensionStore (WKPrivate)
@@ -39,5 +37,3 @@
 @property (nonatomic, readonly) WKContentRuleListStore *_contentRuleListStore WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif

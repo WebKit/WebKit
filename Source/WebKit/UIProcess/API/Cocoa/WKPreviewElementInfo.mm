@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKPreviewElementInfoInternal.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 @implementation WKPreviewElementInfo
 

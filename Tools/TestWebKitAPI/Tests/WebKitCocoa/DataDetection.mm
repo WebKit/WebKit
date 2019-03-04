@@ -33,7 +33,7 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 @interface WKWebView (DataDetection)
 - (void)synchronouslyDetectDataWithTypes:(WKDataDetectorTypes)types;

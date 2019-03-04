@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -109,5 +107,3 @@ TEST(WebKit, ContentRuleListNotificationSubresource)
     TestWebKitAPI::Util::run(&receivedAlert);
     EXPECT_TRUE(receivedNotification);
 }
-
-#endif // WK_API_ENABLED

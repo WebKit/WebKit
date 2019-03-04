@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKThumbnailViewInternal.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(MAC)
 
 #import "ImageOptions.h"
@@ -293,5 +291,3 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 #endif // PLATFORM(MAC)
-
-#endif // WK_API_ENABLED

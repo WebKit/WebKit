@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKFrameHandleInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation _WKFrameHandle {
     API::ObjectStorage<API::FrameHandle> _frameHandle;
 }
@@ -103,5 +101,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

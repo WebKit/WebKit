@@ -27,8 +27,6 @@
 #import "WKContentRuleListInternal.h"
 #import "WKContentRuleListStoreInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIContentRuleListStore.h"
 #import "WKErrorInternal.h"
 #import <wtf/BlockPtr.h>
@@ -181,5 +179,3 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 }
 
 @end
-
-#endif // WK_API_ENABLED

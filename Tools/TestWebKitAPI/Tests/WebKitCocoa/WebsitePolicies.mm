@@ -50,8 +50,6 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #endif
 
-#if WK_API_ENABLED
-
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
 @end
@@ -1491,5 +1489,3 @@ TEST(WebKit, WebsitePoliciesDataStore)
     [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
     TestWebKitAPI::Util::run(&done);
 }
-
-#endif // WK_API_ENABLED

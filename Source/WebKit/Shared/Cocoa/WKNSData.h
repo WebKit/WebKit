@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIData.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<API::Data> {
 
 @interface WKNSData : NSData <WKObject>
 @end
-
-#endif // WK_API_ENABLED

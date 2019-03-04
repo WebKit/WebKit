@@ -27,7 +27,7 @@
 
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
 
 @interface WKPreviewElementInfo () {
 @package
@@ -38,4 +38,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && TARGET_OS_IPHONE
+#endif // TARGET_OS_IPHONE

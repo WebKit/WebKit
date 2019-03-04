@@ -35,8 +35,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool done;
 static bool willSubmitFormValuesCalled;
 
@@ -145,7 +143,5 @@ TEST(WebKit, FocusedElementInfo)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#endif // WK_API_ENABLED
 
 

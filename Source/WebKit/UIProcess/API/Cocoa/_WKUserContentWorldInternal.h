@@ -25,8 +25,6 @@
 
 #import "_WKUserContentWorld.h"
 
-#if WK_API_ENABLED
-
 #import "APIUserContentWorld.h"
 #import "WKObject.h"
 #import <wtf/Vector.h>
@@ -65,5 +63,3 @@ inline Vector<WTF::String> toStringVector(NSArray *input)
     API::ObjectStorage<API::UserContentWorld> _userContentWorld;
 }
 @end
-
-#endif

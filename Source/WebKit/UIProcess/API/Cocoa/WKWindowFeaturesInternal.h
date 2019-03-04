@@ -25,8 +25,6 @@
 
 #import "WKWindowFeaturesPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIWindowFeatures.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::WindowFeatures> {
     API::ObjectStorage<API::WindowFeatures> _windowFeatures;
 }
 @end
-
-#endif

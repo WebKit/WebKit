@@ -25,8 +25,6 @@
 
 #import "_WKUserInitiatedAction.h"
 
-#if WK_API_ENABLED
-
 #import "APIUserInitiatedAction.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::UserInitiatedAction> {
     API::ObjectStorage<API::UserInitiatedAction> _userInitiatedAction;
 }
 @end
-
-#endif

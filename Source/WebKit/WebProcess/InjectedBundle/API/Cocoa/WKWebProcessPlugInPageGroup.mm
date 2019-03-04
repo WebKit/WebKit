@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInPageGroupInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKBundlePageGroup.h"
 #import "WKAPICast.h"
 #import "WKNSString.h"
@@ -57,5 +55,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

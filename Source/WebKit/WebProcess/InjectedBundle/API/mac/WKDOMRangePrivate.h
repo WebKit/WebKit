@@ -26,12 +26,8 @@
 #import <WebKit/WKDOMRange.h>
 #import <WebKit/WKBase.h>
 
-#if WK_API_ENABLED
-
 @interface WKDOMRange (WKPrivate)
 
 - (WKBundleRangeHandleRef)_copyBundleRangeHandleRef;
 
 @end
-
-#endif // WK_API_ENABLED

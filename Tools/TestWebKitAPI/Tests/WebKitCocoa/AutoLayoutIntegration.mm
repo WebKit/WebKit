@@ -30,7 +30,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 static bool didInvalidateIntrinsicContentSize;
 static bool didEvaluateJavaScript;

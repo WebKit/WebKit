@@ -26,8 +26,6 @@
 #import "config.h"
 #import "AutomationSessionClient.h"
 
-#if WK_API_ENABLED
-
 #import "WKSharedAPICast.h"
 #import "WKWebViewInternal.h"
 #import "WebAutomationSession.h"
@@ -190,5 +188,3 @@ API::AutomationSessionClient::BrowsingContextPresentation AutomationSessionClien
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

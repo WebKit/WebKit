@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKApplicationManifestInternal.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
@@ -193,5 +191,3 @@ static NSString *nullableNSString(const WTF::String& string)
 #endif // ENABLE(APPLICATION_MANIFEST)
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import "WKConnection.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebConnection.h"
 
@@ -42,5 +40,3 @@ template<> struct WrapperTraits<WebConnection> {
 
 @interface WKConnection () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

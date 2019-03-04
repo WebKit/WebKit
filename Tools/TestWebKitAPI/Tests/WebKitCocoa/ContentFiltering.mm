@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "ContentFiltering.h"
 #import "MockContentFilterSettings.h"
 #import "PlatformUtilities.h"
@@ -432,5 +430,3 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
 #endif
     }
 }
-
-#endif // WK_API_ENABLED

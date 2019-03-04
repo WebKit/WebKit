@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBrowsingContextController.h>
 
@@ -61,5 +59,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate", macos(10.10, WK_MAC
 - (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.backForwardList", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @end
-
-#endif // WK_API_ENABLED

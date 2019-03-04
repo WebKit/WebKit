@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebViewConfigurationExtras.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -50,5 +48,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

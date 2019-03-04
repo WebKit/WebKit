@@ -37,8 +37,6 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
@@ -99,5 +97,3 @@ TEST(IndexedDB, StructuredCloneBackwardCompatibility)
 
     EXPECT_STREQ([getNextMessage().body UTF8String], "Pass");
 }
-
-#endif // WK_API_ENABLED

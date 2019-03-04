@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInNodeHandle.h>
@@ -50,5 +48,3 @@
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didAssociateFormControls:(NSArray *)elements;
 
 @end
-
-#endif // WK_API_ENABLED

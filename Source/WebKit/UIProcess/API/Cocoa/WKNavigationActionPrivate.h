@@ -25,8 +25,6 @@
 
 #import <WebKit/WKNavigationAction.h>
 
-#if WK_API_ENABLED
-
 @class WKNavigation;
 @class _WKUserInitiatedAction;
 
@@ -64,5 +62,3 @@ typedef NS_ENUM(NSInteger, WKSyntheticClickType) {
 @property (nonatomic, readonly) WKNavigation *_mainFrameNavigation WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKRemoteObject.h"
 
-#if WK_API_ENABLED
-
 #import "_WKRemoteObjectInterface.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <objc/runtime.h>
@@ -91,6 +89,3 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
 }
 
 @end
-
-#endif // WK_API_ENABLED
-

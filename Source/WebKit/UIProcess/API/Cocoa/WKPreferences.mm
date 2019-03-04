@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKPreferencesInternal.h"
 
-#if WK_API_ENABLED
-
 #import "APIArray.h"
 #import "PluginProcessManager.h"
 #import "WKNSArray.h"
@@ -1363,5 +1361,3 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 @end
-
-#endif // WK_API_ENABLED

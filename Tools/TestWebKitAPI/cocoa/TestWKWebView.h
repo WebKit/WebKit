@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if WK_API_ENABLED
-
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -104,6 +102,4 @@
 - (void)typeCharacter:(char)character;
 @end
 #endif
-
-#endif // WK_API_ENABLED
 

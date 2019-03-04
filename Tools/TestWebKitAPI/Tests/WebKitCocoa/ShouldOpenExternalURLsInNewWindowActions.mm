@@ -35,8 +35,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
-#if WK_API_ENABLED
-
 static bool createdWebView;
 static bool decidedPolicy;
 static bool finishedNavigation;
@@ -327,7 +325,5 @@ TEST(WebKit, IFrameWithSameOriginAsMainFramePropagates)
     ASSERT_TRUE(openAppLinks);
     ASSERT_TRUE(externalSchemes);
 };
-
-#endif
 
 #endif

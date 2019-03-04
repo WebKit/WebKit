@@ -33,8 +33,6 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool finishedNavigation = false;
 
 @interface DisableITPDuringNavigationDelegate : NSObject <WKNavigationDelegate>
@@ -203,6 +201,3 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
 
     TestWebKitAPI::Util::run(&finishedNavigation);
 }
-
-#endif
-

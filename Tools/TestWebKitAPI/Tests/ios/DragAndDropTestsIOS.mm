@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#if ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
 #import "DragAndDropSimulator.h"
@@ -2084,4 +2084,4 @@ TEST(DragAndDropTests, DataTransferSanitizeHTML)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY)

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -56,5 +54,3 @@ TEST(WebKit, JITEnabled)
     checkJITEnabled(WTFMove(webViewNoJIT), NO);
     checkJITEnabled(adoptNS([WKWebView new]), YES);
 }
-
-#endif

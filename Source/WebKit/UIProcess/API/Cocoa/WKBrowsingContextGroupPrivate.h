@@ -25,8 +25,6 @@
 
 #import <WebKit/WKBrowsingContextGroup.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKBase.h>
 
 @interface WKBrowsingContextGroup (Private)
@@ -34,5 +32,3 @@
 @property(readonly) WKPageGroupRef _pageGroupRef;
 
 @end
-
-#endif // WK_API_ENABLED

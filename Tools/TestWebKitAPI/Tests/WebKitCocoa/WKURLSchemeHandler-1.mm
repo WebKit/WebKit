@@ -37,8 +37,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 static bool done;
 
 @interface SchemeHandler : NSObject <WKURLSchemeHandler>
@@ -581,6 +579,4 @@ TEST(URLSchemeHandler, SyncXHRError)
     TestWebKitAPI::Util::run(&done);
 }
 
-
-#endif // WK_API_ENABLED
 

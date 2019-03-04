@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKWebsitePoliciesInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKWebsiteDataStoreInternal.h"
 
 @implementation _WKWebsitePolicies
@@ -240,5 +238,3 @@
 }
 
 @end
-
-#endif

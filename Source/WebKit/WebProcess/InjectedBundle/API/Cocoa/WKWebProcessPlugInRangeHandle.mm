@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleNodeHandle.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import <WebCore/DataDetection.h>
@@ -89,5 +87,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

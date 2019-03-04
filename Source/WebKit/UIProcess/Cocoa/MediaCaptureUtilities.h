@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "WKWebViewPrivate.h"
 #import <WebCore/MediaProducer.h>
 
@@ -37,5 +35,3 @@ namespace WebKit {
 _WKMediaCaptureState toWKMediaCaptureState(WebCore::MediaProducer::MediaStateFlags);
 
 } // namespace WebKit
-
-#endif

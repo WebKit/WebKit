@@ -57,8 +57,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 @interface WKProcessPool ()
 - (WKContextRef)_contextForTesting;
 @end
@@ -5468,5 +5466,3 @@ TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)
 }
 
 #endif
-
-#endif // WK_API_ENABLED

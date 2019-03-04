@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"

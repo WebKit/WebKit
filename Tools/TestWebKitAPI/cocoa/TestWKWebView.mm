@@ -26,8 +26,6 @@
 #import "config.h"
 #import "TestWKWebView.h"
 
-#if WK_API_ENABLED
-
 #import "ClassMethodSwizzler.h"
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
@@ -582,5 +580,3 @@ static UICalloutBar *suppressUICalloutBar()
 
 @end
 #endif
-
-#endif // WK_API_ENABLED

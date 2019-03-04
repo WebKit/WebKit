@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIString.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<API::String> {
 
 @interface WKNSString : WKObject <NSCopying>
 @end
-
-#endif // WK_API_ENABLED

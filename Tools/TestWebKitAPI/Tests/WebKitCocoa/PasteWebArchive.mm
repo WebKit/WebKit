@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -240,7 +240,7 @@ TEST(PasteWebArchive, StripsMSOListWhenMissingMSOHTMLElement)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)
 
 
 

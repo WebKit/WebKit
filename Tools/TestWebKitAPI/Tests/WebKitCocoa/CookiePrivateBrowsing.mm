@@ -32,8 +32,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedAlert;
 
 @interface CookiePrivateBrowsingDelegate : NSObject <WKUIDelegate>
@@ -70,5 +68,3 @@ TEST(WebKit, CookiePrivateBrowsing)
     [view2 loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&receivedAlert);
 }
-
-#endif

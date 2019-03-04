@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebKit.h>
@@ -69,5 +67,3 @@ TEST(WKWebView, LoadFileThenReload)
 
     TestWebKitAPI::Util::run(&done);
 }
-
-#endif // WK_API_ENABLED

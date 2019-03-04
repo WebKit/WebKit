@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSURL.h"
 
-#if WK_API_ENABLED
-
 #import "APIURL.h"
 #import "WKAPICast.h"
 #import "WKURLCF.h"
@@ -47,5 +45,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

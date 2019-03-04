@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if WK_API_ENABLED
-
 #import "TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 
@@ -67,5 +65,3 @@
 - (BOOL)latestEditorStateContains:(NSDictionary<NSString *, id> *)entries;
 
 @end
-
-#endif // WK_API_ENABLED

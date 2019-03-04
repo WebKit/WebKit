@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKHTTPCookieStoreInternal.h"
 
-#if WK_API_ENABLED
-
 #import "HTTPCookieAcceptPolicy.h"
 #import <WebCore/Cookie.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -131,5 +129,3 @@ private:
 }
 
 @end
-
-#endif

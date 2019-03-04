@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKObject.h"
 
-#if WK_API_ENABLED
-
 #import "APIObject.h"
 
 @interface NSObject ()
@@ -261,5 +259,3 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 }
 
 @end
-
-#endif // WK_API_ENABLED

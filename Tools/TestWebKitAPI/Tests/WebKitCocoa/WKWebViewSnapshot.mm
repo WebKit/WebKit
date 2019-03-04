@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -414,5 +412,3 @@ TEST(WKWebView, SnapshotWithoutAfterScreenUpdates)
     
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif

@@ -28,8 +28,6 @@
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKProcessGroup.h>
 
-#if WK_API_ENABLED
-
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @protocol WKBrowsingContextHistoryDelegate;
@@ -136,5 +134,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(
 @property CGFloat pageZoom;
 
 @end
-
-#endif // WK_API_ENABLED

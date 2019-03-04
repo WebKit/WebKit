@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
@@ -73,5 +71,3 @@ TEST(WebKit, ShouldGoToBackForwardListItem)
 }
 
 } // namespace TestWebKitAPI
-
-#endif

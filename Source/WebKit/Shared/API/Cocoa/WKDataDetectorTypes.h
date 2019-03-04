@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -60,5 +58,3 @@ typedef NS_OPTIONS(NSUInteger, WKDataDetectorTypes) {
 #endif
 
 NS_ASSUME_NONNULL_END
-
-#endif

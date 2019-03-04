@@ -27,8 +27,6 @@
 #import "WKWebViewConfigurationPrivate.h"
 #import <wtf/Ref.h>
 
-#if WK_API_ENABLED
-
 @class WKWebView;
 @class WKWebViewContentProviderRegistry;
 
@@ -41,5 +39,3 @@
 - (Ref<API::PageConfiguration>)copyPageConfiguration;
 
 @end
-
-#endif

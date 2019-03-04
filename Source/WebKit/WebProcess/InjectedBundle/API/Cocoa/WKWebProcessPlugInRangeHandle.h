@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit/WKDataDetectorTypes.h>
@@ -46,5 +44,3 @@ WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 #endif
 
 @end
-
-#endif // WK_API_ENABLED

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKBrowsingContextHandleInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation WKBrowsingContextHandle
 
 - (id)_initWithPageID:(uint64_t)pageID
@@ -74,5 +72,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

@@ -33,11 +33,7 @@ namespace WebKit {
 
 RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
 {
-#if WK_API_ENABLED
     return wrapper(WebKit::encodeLegacySessionState(sessionState));
-#else
-    return nullptr;
-#endif
 }
 
 bool decodeSessionState(NSData *data, SessionState& state)

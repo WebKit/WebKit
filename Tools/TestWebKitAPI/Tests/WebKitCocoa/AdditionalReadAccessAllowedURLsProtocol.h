@@ -25,10 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @protocol AdditionalReadAccessAllowedURLsProtocol <NSObject>
 - (void)readStringFromURL:(NSURL *)url completionHandler:(void (^)(NSString *string, NSError *error))completionHandler;
 @end
-
-#endif

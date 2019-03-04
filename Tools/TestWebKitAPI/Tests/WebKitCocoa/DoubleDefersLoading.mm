@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -129,6 +127,4 @@ TEST(WebKit, DoubleDefersLoading)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
-
-#endif // WK_API_ENABLED
 

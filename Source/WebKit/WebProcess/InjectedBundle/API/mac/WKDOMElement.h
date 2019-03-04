@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKDOMNode.h>
 
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
@@ -39,5 +37,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property(readonly) NSString *tagName;
 
 @end
-
-#endif // WK_API_ENABLED

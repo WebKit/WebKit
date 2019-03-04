@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 #import <WebKit/WKWebProcessPlugInNodeHandle.h>
 #import <WebKit/WKWebProcessPlugInRangeHandle.h>
@@ -65,5 +63,3 @@ WK_API_AVAILABLE(macosx(10.12.3), ios(10.3))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // WK_API_ENABLED

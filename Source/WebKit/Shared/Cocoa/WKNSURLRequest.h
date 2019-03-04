@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIURLRequest.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<API::URLRequest> {
 
 @interface WKNSURLRequest : WKObject <NSCopying>
 @end
-
-#endif // WK_API_ENABLED

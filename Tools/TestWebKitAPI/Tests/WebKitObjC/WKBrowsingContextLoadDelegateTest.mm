@@ -35,7 +35,7 @@
 
 #import "PlatformUtilities.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 namespace {
 
@@ -230,4 +230,4 @@ TEST_F(WKBrowsingContextLoadDelegateTest, SimpleLoadFail)
     [loadDelegate release];
 }
 
-#endif // WK_API_ENABLED
+#endif // PLATFORM(MAC)

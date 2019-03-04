@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -211,4 +211,4 @@ TEST(SnapshotStore, SnapshottingNullBackForwardItemShouldNotCrash)
     [webView _saveBackForwardSnapshotForItem:nil];
 }
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

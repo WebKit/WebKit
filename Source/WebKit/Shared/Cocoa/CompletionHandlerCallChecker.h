@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/Forward.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
@@ -52,5 +50,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

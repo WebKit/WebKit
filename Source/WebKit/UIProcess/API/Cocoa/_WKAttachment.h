@@ -27,8 +27,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, _WKAttachmentDisplayMode) {
@@ -67,5 +65,3 @@ WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif

@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
@@ -49,8 +47,8 @@ static bool testDone;
 }
 
 @end
-
 #endif
+
 #if PLATFORM(IOS_FAMILY)
 
 @interface DidScrollToFragmentScrollViewDelegate : NSObject <UIScrollViewDelegate>
@@ -94,5 +92,3 @@ TEST(WebKit, NoHistoryItemScrollToFragment)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

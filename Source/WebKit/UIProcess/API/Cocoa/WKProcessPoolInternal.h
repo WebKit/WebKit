@@ -25,8 +25,6 @@
 
 #import "WKProcessPoolPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "WebProcessPool.h"
 
@@ -51,5 +49,3 @@ template<> struct WrapperTraits<WebProcessPool> {
 @property(readonly) WKGeolocationProviderIOS *_geolocationProvider;
 #endif
 @end
-
-#endif // WK_API_ENABLED

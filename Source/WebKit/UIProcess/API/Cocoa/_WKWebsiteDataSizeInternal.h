@@ -25,8 +25,6 @@
 
 #import "_WKWebsiteDataSize.h"
 
-#if WK_API_ENABLED
-
 #import "WebsiteDataRecord.h"
 
 @interface _WKWebsiteDataSize () {
@@ -36,5 +34,3 @@
 - (instancetype)initWithSize:(const WebKit::WebsiteDataRecord::Size&)size;
 
 @end
-
-#endif

@@ -27,13 +27,9 @@
 
 #import <WebKit/WebKit.h>
 
-#if WK_API_ENABLED
-
 @interface TestURLSchemeHandler : NSObject <WKURLSchemeHandler>
 
 @property (nonatomic, copy) void (^startURLSchemeTaskHandler)(WKWebView *, id <WKURLSchemeTask>);
 @property (nonatomic, copy) void (^stopURLSchemeTaskHandler)(WKWebView *, id <WKURLSchemeTask>);
 
 @end
-
-#endif // WK_API_ENABLED

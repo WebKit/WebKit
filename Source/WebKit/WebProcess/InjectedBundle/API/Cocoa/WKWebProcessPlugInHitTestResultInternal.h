@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInHitTestResult.h"
 
-#if WK_API_ENABLED
-
 #import "WKObject.h"
 #import "InjectedBundleHitTestResult.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<InjectedBundleHitTestResult> {
 
 @interface WKWebProcessPlugInHitTestResult () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

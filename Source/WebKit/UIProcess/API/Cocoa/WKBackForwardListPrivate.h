@@ -25,8 +25,6 @@
 
 #import <WebKit/WKBackForwardList.h>
 
-#if WK_API_ENABLED
-
 @interface WKBackForwardList (WKPrivate)
 
 - (void)_removeAllItems;
@@ -35,5 +33,3 @@
 - (void)_clear;
 
 @end
-
-#endif

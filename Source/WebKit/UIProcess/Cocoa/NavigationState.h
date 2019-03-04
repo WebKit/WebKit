@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIHistoryClient.h"
 #import "APINavigationClient.h"
 #import "PageLoadState.h"
@@ -253,5 +251,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

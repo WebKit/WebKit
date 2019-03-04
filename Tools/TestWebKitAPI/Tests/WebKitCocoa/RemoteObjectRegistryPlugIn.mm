@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import <WebKit/WKWebProcessPlugIn.h>
@@ -91,5 +89,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

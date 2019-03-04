@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKSnapshotConfiguration.h"
 
-#if WK_API_ENABLED
-
 @implementation WKSnapshotConfiguration
 
 - (instancetype)init
@@ -59,5 +57,3 @@
 }
 
 @end
-
-#endif

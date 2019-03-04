@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKNSURLRequest.h"
 
-#if WK_API_ENABLED
-
 #import "WKNSURLExtras.h"
 
 @implementation WKNSURLRequest
@@ -50,5 +48,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

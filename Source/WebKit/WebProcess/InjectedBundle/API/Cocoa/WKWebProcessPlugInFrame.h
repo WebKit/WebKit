@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSContext.h>
@@ -57,5 +55,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 - (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
 @end
-
-#endif // WK_API_ENABLED

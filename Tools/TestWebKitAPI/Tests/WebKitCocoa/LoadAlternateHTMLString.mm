@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebViewPrivate.h>
@@ -154,5 +152,3 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorReload)
     WKBackForwardList *list = [webView backForwardList];
     EXPECT_EQ((NSUInteger)0, list.backList.count);
 }
-
-#endif

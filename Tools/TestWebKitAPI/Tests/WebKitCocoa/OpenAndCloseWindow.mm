@@ -33,8 +33,6 @@
 #import <WebKit/WKWindowFeaturesPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 @class OpenAndCloseWindowUIDelegate;
 @class OpenAndCloseWindowUIDelegateAsync;
 @class CheckWindowFeaturesUIDelegate;
@@ -284,5 +282,3 @@ TEST(WebKit, OpenWindowFeatures)
     EXPECT_FALSE([openWindowFeatures _fullscreenDisplay].boolValue);
     openWindowFeatures = nullptr;
 }
-
-#endif

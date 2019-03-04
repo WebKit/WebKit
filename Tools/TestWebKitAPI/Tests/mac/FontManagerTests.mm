@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Test.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
 #import "NSFontPanelTesting.h"
@@ -498,4 +498,4 @@ TEST(FontManagerTests, AddAndRemoveColorsUsingFontOptions)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI && PLATFORM(MAC)
 
 #import "Test.h"
 
@@ -35,8 +35,6 @@
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKProcessGroupPrivate.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED && PLATFORM(MAC)
 
 static bool testFinished;
 
@@ -200,7 +198,5 @@ TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED
 
 #endif

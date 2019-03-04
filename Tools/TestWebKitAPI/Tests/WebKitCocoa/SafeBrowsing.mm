@@ -443,4 +443,4 @@ TEST(SafeBrowsing, MissingFramework)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 }
 
-#endif // WK_API_ENABLED
+#endif // ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)) && !defined(__i386__) && !PLATFORM(IOSMAC)

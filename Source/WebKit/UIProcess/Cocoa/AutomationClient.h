@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #if ENABLE(REMOTE_INSPECTOR)
 
 #import "APIAutomationClient.h"
@@ -70,5 +68,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(REMOTE_INSPECTOR)
-
-#endif // WK_API_ENABLED

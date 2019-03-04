@@ -120,7 +120,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         }
     }
 
-#if WK_API_ENABLED
     if (parameters.bundleParameterData) {
         auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
 
@@ -137,7 +136,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         ASSERT(!m_bundleParameters);
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
     }
-#endif
     
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
@@ -154,7 +152,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return true;
     }
 
-#if WK_API_ENABLED
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
@@ -184,12 +181,8 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     }
 
     return true;
-#else
-    return false;
-#endif
 }
 
-#if WK_API_ENABLED
 WKWebProcessBundleParameters *InjectedBundle::bundleParameters()
 {
     // We must not return nil even if no parameters are currently set, in order to allow the client
@@ -233,11 +226,9 @@ NSSet* InjectedBundle::classesForCoder()
 
     return m_classesForCoder.get();
 }
-#endif
 
 void InjectedBundle::setBundleParameter(const String& key, const IPC::DataReference& value)
 {
-#if WK_API_ENABLED
     auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
 
     auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
@@ -254,12 +245,10 @@ void InjectedBundle::setBundleParameter(const String& key, const IPC::DataRefere
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:[NSDictionary dictionary]]);
 
     [m_bundleParameters setParameter:parameter forKey:key];
-#endif
 }
 
 void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
 {
-#if WK_API_ENABLED
     auto bundleParametersData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(value.data())) length:value.size() freeWhenDone:NO]);
 
     auto unarchiver = secureUnarchiverFromData(bundleParametersData.get());
@@ -280,7 +269,6 @@ void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
     }
 
     [m_bundleParameters setParametersForKeyWithDictionary:parameters];
-#endif
 }
 
 } // namespace WebKit

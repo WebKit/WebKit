@@ -28,8 +28,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIDiagnosticLoggingClient.h"
 #import <WebCore/DiagnosticLoggingResultType.h>
 #import <wtf/WeakObjCPtr.h>
@@ -66,8 +64,6 @@ private:
 };
 
 } // WebKit
-
-#endif // WK_API_ENABLED
 
 #endif // DiagnosticLoggingClient_h
 

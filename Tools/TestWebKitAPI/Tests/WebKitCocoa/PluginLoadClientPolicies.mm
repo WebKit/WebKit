@@ -37,8 +37,6 @@
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 TEST(WKProcessPool, resetPluginLoadClientPolicies)
 {
     auto processPool = adoptWK([[WKProcessPool alloc] init]);
@@ -130,7 +128,5 @@ TEST(WebKit, PluginLoadClientPoliciesWithNullHost)
 }
 
 #endif // WK_HAVE_C_SPI
-
-#endif // WK_API_ENABLED
 
 #endif // PLATFORM(MAC)

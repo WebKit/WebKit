@@ -25,8 +25,6 @@
 
 #import <WebKit/WKWebView.h>
 
-#if WK_API_ENABLED
-
 #import <WebKit/WKDataDetectorTypes.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKAttachment.h>
@@ -552,5 +550,3 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_processDidResumeForTesting;
 
 @end
-
-#endif

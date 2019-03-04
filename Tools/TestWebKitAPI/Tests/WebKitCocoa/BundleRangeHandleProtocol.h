@@ -25,11 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 @protocol BundleRangeHandleProtocol <NSObject>
 - (void)textFromBodyRange:(NSString *)text;
 - (void)bodyInnerHTMLAfterDetectingData:(NSString *)text;
 @end
-
-#endif

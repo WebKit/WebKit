@@ -39,8 +39,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-#if WK_API_ENABLED
-
 @interface WKWebView (TestingSecrets)
 + (size_t)_webURLSchemeTaskInstanceCount;
 + (size_t)_apiURLSchemeTaskInstanceCount;
@@ -159,5 +157,4 @@ TEST(URLSchemeHandler, Leaks3)
     runUntilTasksInFlight(0);
 }
 
-#endif // WK_API_ENABLED
 #endif // NDEBUG

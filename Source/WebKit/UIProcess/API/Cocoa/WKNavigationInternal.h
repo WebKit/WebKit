@@ -25,8 +25,6 @@
 
 #import "WKNavigationPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APINavigation.h"
 #import "WKObject.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<API::Navigation> {
 
 @interface WKNavigation () <WKObject>
 @end
-
-#endif

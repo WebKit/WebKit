@@ -26,8 +26,6 @@
 #import "config.h"
 #import "FindClient.h"
 
-#if WK_API_ENABLED
-
 #import "_WKFindDelegate.h"
 
 namespace WebKit {
@@ -70,5 +68,3 @@ void FindClient::didFailToFindString(WebPageProxy*, const String& string)
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

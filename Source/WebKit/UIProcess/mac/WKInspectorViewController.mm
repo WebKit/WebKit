@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKInspectorViewController.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "APINavigation.h"
 #import "VersionChecks.h"
@@ -266,4 +266,4 @@
 
 @end
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

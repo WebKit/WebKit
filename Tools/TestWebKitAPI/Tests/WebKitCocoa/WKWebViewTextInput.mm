@@ -25,7 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
@@ -44,5 +43,4 @@ TEST(WKWebView, ShouldHaveInputContextForEditableContent)
     EXPECT_NOT_NULL([webView inputContext]);
 }
 
-#endif
 #endif

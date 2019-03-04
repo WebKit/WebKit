@@ -25,8 +25,6 @@
 
 #import "WKURLSchemeTaskPrivate.h"
 
-#if WK_API_ENABLED
-
 #import "APIURLSchemeTask.h"
 #import "WKObject.h"
 
@@ -46,5 +44,3 @@ template<> struct WrapperTraits<API::URLSchemeTask> {
     API::ObjectStorage<API::URLSchemeTask> _urlSchemeTask;
 }
 @end
-
-#endif // WK_API_ENABLED

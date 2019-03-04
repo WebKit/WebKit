@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_HAVE_C_SPI
+#if WK_HAVE_C_SPI && PLATFORM(MAC)
 
 #import "JavaScriptTest.h"
 #import "Test.h"
@@ -39,8 +39,6 @@
 #import <WebKit/WKString.h>
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED && PLATFORM(MAC)
 
 static bool testFinished = false;
 
@@ -72,7 +70,5 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED
 
 #endif

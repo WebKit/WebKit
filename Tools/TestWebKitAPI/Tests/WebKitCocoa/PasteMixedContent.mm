@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
@@ -334,5 +332,3 @@ TEST(PasteMixedContent, CopyAndPasteWithCustomPasteboardDataOnly)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKFrameInfoInternal.h"
 
-#if WK_API_ENABLED
-
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
@@ -90,5 +88,3 @@
 }
 
 @end
-#endif
-

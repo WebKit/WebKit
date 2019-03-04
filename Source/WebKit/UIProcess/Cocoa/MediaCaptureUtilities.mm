@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MediaCaptureUtilities.h"
 
-#if WK_API_ENABLED
-
 namespace WebKit {
 
 _WKMediaCaptureState toWKMediaCaptureState(WebCore::MediaProducer::MediaStateFlags state)
@@ -46,5 +44,3 @@ _WKMediaCaptureState toWKMediaCaptureState(WebCore::MediaProducer::MediaStateFla
 }
 
 } // namespace WebKit
-
-#endif

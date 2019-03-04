@@ -32,7 +32,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#if PLATFORM(MAC)
 
 @interface WKWebView (WKWebViewAdditions)
 
@@ -468,4 +468,4 @@ TEST(VideoControlsManager, VideoControlsManagerPageWithEnormousVideo)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101201
+#endif // PLATFORM(MAC)

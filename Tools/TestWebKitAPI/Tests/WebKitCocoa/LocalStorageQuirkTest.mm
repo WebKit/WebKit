@@ -35,8 +35,6 @@
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 
@@ -121,5 +119,3 @@ TEST(WKWebView, LocalStorageQuirkDisabledAccessDenied)
     
     EXPECT_STREQ([(NSString *)[lastScriptMessage body] UTF8String], "FAIL");
 }
-
-#endif

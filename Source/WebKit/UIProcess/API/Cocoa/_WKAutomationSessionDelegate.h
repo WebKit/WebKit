@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
@@ -72,5 +70,3 @@ typedef NS_ENUM(NSInteger, _WKAutomationSessionBrowsingContextPresentation) {
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // WK_API_ENABLED

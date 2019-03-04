@@ -26,7 +26,7 @@
 #import "config.h"
 #import "RemoteWebInspectorProxy.h"
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 #import "RemoteWebInspectorProxyMessages.h"
 #import "RemoteWebInspectorUIMessages.h"

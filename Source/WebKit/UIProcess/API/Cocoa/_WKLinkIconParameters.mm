@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKLinkIconParametersInternal.h"
 
-#if WK_API_ENABLED
-
 #import <WebCore/LinkIcon.h>
 
 @implementation _WKLinkIconParameters {
@@ -94,5 +92,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

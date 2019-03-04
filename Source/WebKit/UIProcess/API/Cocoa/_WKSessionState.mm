@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKSessionStateInternal.h"
 
-#if WK_API_ENABLED
-
 #import "SessionStateCoding.h"
 
 @implementation _WKSessionState
@@ -61,5 +59,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

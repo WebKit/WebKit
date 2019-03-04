@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKRemoteObjectCoder.h"
 
-#if WK_API_ENABLED
-
 #import "APIArray.h"
 #import "APIData.h"
 #import "APIDictionary.h"
@@ -782,5 +780,3 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 }
 
 @end
-
-#endif // WK_API_ENABLED

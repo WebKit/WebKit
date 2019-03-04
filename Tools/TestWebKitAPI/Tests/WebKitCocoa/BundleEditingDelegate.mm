@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #if PLATFORM(MAC) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165384 REGRESSION: [ios-simulator] API test WebKit2.WKWebProcessPlugInEditingDelegate crashing
 
 #import "BundleEditingDelegateProtocol.h"
@@ -116,7 +114,5 @@ TEST(WebKit, WKWebProcessPlugInEditingDelegate)
 
     TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 }
-
-#endif
 
 #endif

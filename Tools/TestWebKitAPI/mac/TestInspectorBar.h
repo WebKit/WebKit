@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "AppKitSPI.h"
 
@@ -47,4 +47,4 @@
 - (void)chooseBackgroundColor:(NSColor *)color;
 @end
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

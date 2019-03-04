@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKAttachment.h"
 
-#if WK_API_ENABLED
-
 #import "APIAttachment.h"
 #import "WKErrorPrivate.h"
 #import "_WKAttachmentInternal.h"
@@ -168,5 +166,3 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 }
 
 @end
-
-#endif // WK_API_ENABLED

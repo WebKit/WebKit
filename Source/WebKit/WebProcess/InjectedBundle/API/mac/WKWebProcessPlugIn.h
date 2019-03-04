@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKBase.h>
 
@@ -53,5 +51,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (readonly) id parameters;
 
 @end
-
-#endif // WK_API_ENABLED

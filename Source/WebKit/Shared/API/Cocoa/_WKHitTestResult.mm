@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKHitTestResultInternal.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 @implementation _WKHitTestResult
 

@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInFrame.h"
 
-#if WK_API_ENABLED
-
 @class WKWebProcessPlugInBrowserContextController;
 
 @interface WKWebProcessPlugInFrame (WKPrivate)
@@ -43,5 +41,3 @@
 @property (nonatomic, readonly) WKWebProcessPlugInFrame *_parentFrame;
 
 @end
-
-#endif // WK_API_ENABLED

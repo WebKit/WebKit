@@ -26,8 +26,6 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import "BundleRangeHandleProtocol.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -78,5 +76,3 @@ TEST(WebKit, DISABLED_WKWebProcessPlugInRangeHandle)
     TestWebKitAPI::Util::run(&didGetBodyInnerHTMLAfterDetectingData);
 #endif
 }
-
-#endif

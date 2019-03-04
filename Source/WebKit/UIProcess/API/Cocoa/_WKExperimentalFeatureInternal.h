@@ -25,8 +25,6 @@
 
 #import "_WKExperimentalFeature.h"
 
-#if WK_API_ENABLED
-
 #import "APIExperimentalFeature.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<API::ExperimentalFeature> {
     API::ObjectStorage<API::ExperimentalFeature> _experimentalFeature;
 }
 @end
-
-#endif

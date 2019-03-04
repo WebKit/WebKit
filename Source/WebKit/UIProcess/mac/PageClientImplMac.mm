@@ -111,9 +111,6 @@ PageClientImpl::PageClientImpl(NSView* view, WKWebView *webView)
     , m_alternativeTextUIController(std::make_unique<AlternativeTextUIController>())
 #endif
 {
-#if !WK_API_ENABLED
-    ASSERT_UNUSED(m_webView, !m_webView);
-#endif
 }
 
 PageClientImpl::~PageClientImpl()
@@ -151,19 +148,13 @@ IntSize PageClientImpl::viewSize()
 
 NSView *PageClientImpl::activeView() const
 {
-#if WK_API_ENABLED
     return (m_impl && m_impl->thumbnailView()) ? (NSView *)m_impl->thumbnailView() : m_view;
-#else
-    return m_view;
-#endif
 }
 
 NSWindow *PageClientImpl::activeWindow() const
 {
-#if WK_API_ENABLED
     if (m_impl && m_impl->thumbnailView())
         return m_impl->thumbnailView().window;
-#endif
     if (m_impl && m_impl->targetWindowForMovePreparation())
         return m_impl->targetWindowForMovePreparation();
     return m_view.window;
@@ -418,16 +409,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 
 void PageClientImpl::pinnedStateWillChange()
 {
-#if WK_API_ENABLED
     [m_webView willChangeValueForKey:@"_pinnedState"];
-#endif
 }
 
 void PageClientImpl::pinnedStateDidChange()
 {
-#if WK_API_ENABLED
     [m_webView didChangeValueForKey:@"_pinnedState"];
-#endif
 }
     
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
@@ -585,13 +572,12 @@ void PageClientImpl::selectionDidChange()
 {
     m_impl->selectionDidChange();
 }
-#if WK_API_ENABLED
+
 bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
     m_impl->showShareSheet(shareData, WTFMove(completionHandler), m_webView.get().get());
     return true;
 }
-#endif
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
@@ -776,32 +762,20 @@ void PageClientImpl::navigationGestureDidBegin()
 {
     m_impl->dismissContentRelativeChildWindowsWithAnimation(true);
 
-#if WK_API_ENABLED
     if (auto webView = m_webView.get())
         NavigationState::fromWebPage(*webView->_page).navigationGestureDidBegin();
-#endif
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-#if WK_API_ENABLED
     if (auto webView = m_webView.get())
         NavigationState::fromWebPage(*webView->_page).navigationGestureWillEnd(willNavigate, item);
-#else
-    UNUSED_PARAM(willNavigate);
-    UNUSED_PARAM(item);
-#endif
 }
 
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-#if WK_API_ENABLED
     if (auto webView = m_webView.get())
         NavigationState::fromWebPage(*webView->_page).navigationGestureDidEnd(willNavigate, item);
-#else
-    UNUSED_PARAM(willNavigate);
-    UNUSED_PARAM(item);
-#endif
 }
 
 void PageClientImpl::navigationGestureDidEnd()
@@ -810,20 +784,14 @@ void PageClientImpl::navigationGestureDidEnd()
 
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
-#if WK_API_ENABLED
     if (auto webView = m_webView.get())
         NavigationState::fromWebPage(*webView->_page).willRecordNavigationSnapshot(item);
-#else
-    UNUSED_PARAM(item);
-#endif
 }
 
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
-#if WK_API_ENABLED
     if (auto webView = m_webView.get())
         NavigationState::fromWebPage(*webView->_page).navigationGestureSnapshotWasRemoved();
-#endif
 }
 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
@@ -862,9 +830,7 @@ void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigatio
 
 void PageClientImpl::handleControlledElementIDResponse(const String& identifier)
 {
-#if WK_API_ENABLED
     [m_webView _handleControlledElementIDResponse:nsStringFromWebCoreString(identifier)];
-#endif
 }
 
 void PageClientImpl::didChangeBackgroundColor()
@@ -941,7 +907,6 @@ void PageClientImpl::didPerformDragOperation(bool handled)
 
 #endif
 
-#if WK_API_ENABLED
 NSView *PageClientImpl::inspectorAttachmentView()
 {
     return m_impl->inspectorAttachmentView();
@@ -951,7 +916,6 @@ _WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
 {
     return m_impl->remoteObjectRegistry();
 }
-#endif
 
 void PageClientImpl::didFinishProcessingAllPendingMouseEvents()
 {

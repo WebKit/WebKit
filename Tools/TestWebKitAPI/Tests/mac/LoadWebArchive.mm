@@ -36,8 +36,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 static bool navigationComplete = false;
 static bool navigationFail = false;
 static String finalURL;
@@ -206,5 +204,3 @@ TEST(LoadWebArchive, DragNavigationReload)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // WK_API_ENABLED

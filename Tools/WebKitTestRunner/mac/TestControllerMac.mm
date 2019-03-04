@@ -120,7 +120,6 @@ void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& optio
 
 void TestController::configureContentExtensionForTest(const TestInvocation& test)
 {
-#if WK_API_ENABLED
     if (!test.urlContains("contentextensions/"))
         return;
 
@@ -150,7 +149,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
         doneCompiling = true;
     }];
     platformRunUntil(doneCompiling, noTimeout);
-#endif
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

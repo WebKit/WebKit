@@ -26,8 +26,6 @@
 #import "config.h"
 #import "TestWebsiteDataStoreDelegate.h"
 
-#if WK_API_ENABLED
-
 @implementation TestWebsiteDataStoreDelegate { }
 - (instancetype)init
 {
@@ -45,5 +43,3 @@
     _shouldAllowRaisingQuota = shouldAllowRaisingQuota;
 }
 @end
-
-#endif

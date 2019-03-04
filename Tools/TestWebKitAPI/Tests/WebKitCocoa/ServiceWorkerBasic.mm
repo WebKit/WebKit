@@ -45,8 +45,6 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
-#if WK_API_ENABLED
-
 struct ResourceInfo {
     RetainPtr<NSString> mimeType;
     const char* data;
@@ -1649,5 +1647,3 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         done = false;
     }
 }
-
-#endif // WK_API_ENABLED

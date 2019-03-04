@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 #import <WebKit/WKConnection.h>
 
@@ -57,5 +55,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKProcessPool", macos(10.10, WK_MAC_TBA), 
 @property (assign) id <WKProcessGroupDelegate> delegate;
 
 @end
-
-#endif // WK_API_ENABLED

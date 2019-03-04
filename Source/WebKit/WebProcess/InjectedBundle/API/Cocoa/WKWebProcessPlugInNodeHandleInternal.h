@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInNodeHandlePrivate.h"
 
-#if WK_API_ENABLED
-
 #import "InjectedBundleNodeHandle.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<> struct WrapperTraits<InjectedBundleNodeHandle> {
 @property (readonly) WebKit::InjectedBundleNodeHandle& _nodeHandle;
 
 @end
-
-#endif // WK_API_ENABLED

@@ -27,8 +27,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIContextMenuClient.h"
 #import "APIUIClient.h"
 #import <wtf/RetainPtr.h>
@@ -229,5 +227,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @class WKConnection;
@@ -46,5 +44,3 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("_WKRemoteObjectRegistry", macos(10.10, WK_
 @property (assign) id <WKConnectionDelegate> delegate;
 
 @end
-
-#endif // WK_API_ENABLED

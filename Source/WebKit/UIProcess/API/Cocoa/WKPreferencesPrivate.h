@@ -30,8 +30,6 @@
 
 #import <WebKit/WKPreferences.h>
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
     _WKStorageBlockingPolicyAllowAll,
     _WKStorageBlockingPolicyBlockThirdParty,
@@ -205,7 +203,5 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 #endif
 
 @end
-
-#endif
 
 #endif

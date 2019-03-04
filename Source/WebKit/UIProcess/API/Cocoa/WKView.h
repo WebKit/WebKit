@@ -42,8 +42,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(
     unsigned _unused;
 }
 
-#if WK_API_ENABLED
-
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
 
@@ -51,8 +49,6 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, WK_MAC_TBA), ios(
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(readonly) WKBrowsingContextController *browsingContextController;
 #pragma clang diagnostic pop
-
-#endif // WK_API_ENABLED
 
 @property BOOL drawsBackground;
 @property BOOL drawsTransparentBackground;

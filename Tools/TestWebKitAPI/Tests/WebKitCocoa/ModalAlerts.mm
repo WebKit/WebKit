@@ -33,8 +33,6 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 @class ModalAlertsUIDelegate;
 
 static bool isDone;
@@ -143,5 +141,3 @@ TEST(WebKit, ModalAlerts)
 
     TestWebKitAPI::Util::run(&isDone);
 }
-
-#endif

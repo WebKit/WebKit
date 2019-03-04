@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WKDOMTextIterator.h"
 
-#if WK_API_ENABLED
-
 #import "WKDOMInternals.h"
 #import "WKDOMRange.h"
 #import <WebCore/TextIterator.h>
@@ -88,5 +86,3 @@
 }
 
 @end
-
-#endif // WK_API_ENABLED

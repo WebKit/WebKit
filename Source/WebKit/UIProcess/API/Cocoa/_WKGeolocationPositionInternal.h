@@ -25,7 +25,7 @@
 
 #import "_WKGeolocationPosition.h"
 
-#if WK_API_ENABLED && TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
 
 #import "WebGeolocationPosition.h"
 
@@ -43,4 +43,4 @@ template<> struct WrapperTraits<WebGeolocationPosition> {
 }
 @end
 
-#endif // WK_API_ENABLED && TARGET_OS_IPHONE
+#endif // TARGET_OS_IPHONE

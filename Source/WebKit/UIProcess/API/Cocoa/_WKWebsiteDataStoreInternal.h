@@ -25,8 +25,6 @@
 
 #import "_WKWebsiteDataStore.h"
 
-#if WK_API_ENABLED
-
 #import <wtf/RetainPtr.h>
 
 @class WKWebsiteDataStore;
@@ -39,5 +37,3 @@
 - (instancetype)initWithDataStore:(WKWebsiteDataStore *)dataStore;
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APINumber.h"
 #import "WKObject.h"
 
@@ -43,5 +41,3 @@ template<typename NumberType, API::Object::Type APIObjectType> struct WrapperTra
     API::Object::Type _type;
 }
 @end
-
-#endif // WK_API_ENABLED

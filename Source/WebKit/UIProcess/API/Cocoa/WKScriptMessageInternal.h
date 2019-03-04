@@ -25,12 +25,8 @@
 
 #import "WKScriptMessage.h"
 
-#if WK_API_ENABLED
-
 @interface WKScriptMessage ()
 
 - (instancetype)_initWithBody:(id)body webView:(WKWebView *)webView frameInfo:(WKFrameInfo *)frameInfo name:(NSString *)name;
 
 @end
-
-#endif

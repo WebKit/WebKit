@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -110,5 +110,5 @@ TEST(CopyURL, MalformedURL)
     EXPECT_WK_STREQ(@"", readURLFromPasteboard());
 }
 
-#endif // WK_API_ENABLED && PLATFORM(MAC)
+#endif // PLATFORM(MAC)
 

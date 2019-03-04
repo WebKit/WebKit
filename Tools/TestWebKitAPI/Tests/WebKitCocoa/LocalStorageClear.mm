@@ -36,8 +36,6 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool readyToContinue;
 
 @interface LocalStorageClearMessageHandler : NSObject <WKScriptMessageHandler>
@@ -208,4 +206,3 @@ TEST(WKWebView, ClearAppCache)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }
-#endif

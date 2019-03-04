@@ -37,8 +37,6 @@
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
-
 static bool receivedScriptMessage;
 static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
@@ -112,5 +110,3 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     RetainPtr<NSString> string7 = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Deleted!", string7.get());
 }
-
-#endif

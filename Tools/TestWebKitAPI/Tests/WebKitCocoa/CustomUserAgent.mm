@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import <WebKit/WebKit.h>
@@ -64,5 +62,3 @@ TEST(CustomUserAgent, UpdateCachedNavigatorUserAgent)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
-
-#endif // WK_API_ENABLED

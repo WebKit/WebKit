@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -116,5 +116,5 @@ TEST(AccessibilityTests, StoreSelection)
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(IOS_FAMILY) && WK_API_ENABLED
+#endif // PLATFORM(IOS_FAMILY)
 

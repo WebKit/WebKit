@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TestInputDelegate.h"
 
-#if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import <wtf/BlockPtr.h>
 
@@ -68,4 +68,4 @@
 
 @end
 
-#endif // WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

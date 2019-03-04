@@ -26,8 +26,6 @@
 #import "config.h"
 #import "_WKInternalDebugFeatureInternal.h"
 
-#if WK_API_ENABLED
-
 @implementation _WKInternalDebugFeature
 
 - (void)dealloc
@@ -75,5 +73,3 @@
 }
 
 @end
-
-#endif

@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInPageGroup.h"
 
-#if WK_API_ENABLED
-
 #import "WKBase.h"
 #import "WebPageGroupProxy.h"
 
@@ -40,5 +38,3 @@ template<> struct WrapperTraits<WebPageGroupProxy> {
 
 @interface WKWebProcessPlugInPageGroup () <WKObject>
 @end
-
-#endif // WK_API_ENABLED

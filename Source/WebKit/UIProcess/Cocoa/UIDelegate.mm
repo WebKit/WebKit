@@ -26,8 +26,6 @@
 #import "config.h"
 #import "UIDelegate.h"
 
-#if WK_API_ENABLED
-
 #import "APIFrameInfo.h"
 #import "APIHitTestResult.h"
 #import "CompletionHandlerCallChecker.h"
@@ -1267,5 +1265,3 @@ void UIDelegate::UIClient::imageOrMediaDocumentSizeChanged(const WebCore::IntSiz
 }
 
 } // namespace WebKit
-
-#endif // WK_API_ENABLED

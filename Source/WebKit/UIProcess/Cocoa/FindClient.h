@@ -28,8 +28,6 @@
 
 #import "WKFoundation.h"
 
-#if WK_API_ENABLED
-
 #import "APIFindClient.h"
 #import <wtf/WeakObjCPtr.h>
 
@@ -63,7 +61,5 @@ private:
 };
     
 } // namespace WebKit
-
-#endif // WK_API_ENABLED
 
 #endif // FindClient_h

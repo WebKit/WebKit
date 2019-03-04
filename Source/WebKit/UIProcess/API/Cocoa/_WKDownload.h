@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @class WKWebView;
@@ -45,5 +43,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
-
-#endif // WK_API_ENABLED

@@ -25,8 +25,6 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if WK_API_ENABLED
-
 #import <Foundation/Foundation.h>
 
 @class _WKRemoteObjectInterface;
@@ -40,5 +38,3 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 - (id)remoteObjectProxyWithInterface:(_WKRemoteObjectInterface *)interface;
 
 @end
-
-#endif // WK_API_ENABLED

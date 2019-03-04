@@ -25,8 +25,6 @@
 
 #import "WKWebProcessPlugInNodeHandle.h"
 
-#if WK_API_ENABLED
-
 typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
     _WKAutoFillButtonTypeNone,
     _WKAutoFillButtonTypeCredentials,
@@ -43,5 +41,3 @@ typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
 - (_WKAutoFillButtonType)htmlInputElementLastAutoFillButtonType WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 @end
-
-#endif // WK_API_ENABLED

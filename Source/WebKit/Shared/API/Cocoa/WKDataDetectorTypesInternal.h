@@ -25,8 +25,6 @@
 
 #import "WKDataDetectorTypes.h"
 
-#if WK_API_ENABLED
-
 #if PLATFORM(IOS_FAMILY)
 
 #import <WebCore/DataDetection.h>
@@ -56,7 +54,5 @@ static inline WebCore::DataDetectorTypes fromWKDataDetectorTypes(uint64_t types)
 
     return static_cast<WebCore::DataDetectorTypes>(value);
 }
-
-#endif
 
 #endif

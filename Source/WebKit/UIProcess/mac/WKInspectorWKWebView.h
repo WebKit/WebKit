@@ -27,7 +27,7 @@
 
 #import <WebKit/WKWebView.h>
 
-#if PLATFORM(MAC) && WK_API_ENABLED
+#if PLATFORM(MAC)
 
 @protocol WKInspectorWKWebViewDelegate;
 
@@ -43,4 +43,4 @@
 - (void)inspectorWKWebViewDidMoveToWindow:(WKInspectorWKWebView *)webView;
 @end
 
-#endif // PLATFORM(MAC) && WK_API_ENABLED
+#endif // PLATFORM(MAC)

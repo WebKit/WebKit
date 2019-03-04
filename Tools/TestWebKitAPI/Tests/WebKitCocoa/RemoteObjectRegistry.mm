@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
-
 #import "PlatformUtilities.h"
 #import "RemoteObjectRegistry.h"
 #import "Test.h"
@@ -108,5 +106,3 @@ TEST(WebKit, RemoteObjectRegistry)
         TestWebKitAPI::Util::run(&isDone);
     }
 }
-
-#endif // WK_API_ENABLED
