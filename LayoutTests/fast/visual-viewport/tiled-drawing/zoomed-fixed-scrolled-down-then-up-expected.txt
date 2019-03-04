@@ -1,5 +1,6 @@
 
 (Frame scrolling node
+  (scroll position 40 460)
   (scrollable area size 785 585)
   (contents size 4016 4042)
   (requested scroll position 40 460)

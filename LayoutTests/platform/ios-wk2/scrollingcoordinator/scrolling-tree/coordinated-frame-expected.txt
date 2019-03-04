@@ -38,7 +38,8 @@
                 (horizontal scroll elasticity 1)
                 (vertical scroll elasticity 1)
                 (horizontal scrollbar mode 0)
-                (vertical scrollbar mode 0))
+                (vertical scrollbar mode 0)
+                (has enabled vertical scrollbar 1))
               (children 1
                 (Sticky node
                   (anchor edges: AnchorEdgeTop AnchorEdgeBottom)

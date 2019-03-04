@@ -1,3 +1,64 @@
+2019-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Share more code for updating the state of frame scrolling nodes
+        https://bugs.webkit.org/show_bug.cgi?id=195254
+
+        Reviewed by Antti Koivisto.
+
+        Responsibility for updating state on ScrollingStateFrameScrolling nodes was split between
+        AsyncScrollingCoordinator::frameViewLayoutUpdated(), which is called post-layout, and
+        RenderLayerCompositor. This patch gives that responsibility entirely to RenderLayerCompositor,
+        ensuring that we update frame scrolling nodes at the same time as the rest of the scrolling
+        state tree.
+        
+        We also share code between updating ScrollingStateFrameScrollingNodes and
+        ScrollingStateOverflowScrollingNodews, since both can be updated from a ScrollableArea.
+        Some minor cleanup of ScrollableArea is doing to help. For the first time, we're pushing
+        ScrollableAreaParameters for overflow scrolling nodes, allowing rubber-banding to work
+        on macOS.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+        (WebCore::AsyncScrollingCoordinator::setRectRelativeToParentNode):
+        (WebCore::AsyncScrollingCoordinator::setFrameScrollingNodeState):
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry):
+        (WebCore::AsyncScrollingCoordinator::setViewportConstraintedNodeConstraints):
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeGeometry): Deleted.
+        (WebCore::AsyncScrollingCoordinator::setViewportConstraintedNodeGeometry): Deleted.
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::setRectRelativeToParentNode):
+        (WebCore::ScrollingCoordinator::setScrollingNodeScrollableAreaGeometry):
+        (WebCore::ScrollingCoordinator::setFrameScrollingNodeState):
+        (WebCore::ScrollingCoordinator::setViewportConstraintedNodeConstraints):
+        (WebCore::ScrollingCoordinator::setScrollingNodeGeometry): Deleted.
+        (WebCore::ScrollingCoordinator::setViewportConstraintedNodeGeometry): Deleted.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::horizontalScrollbarMode const): Deleted.
+        (WebCore::ScrollView::verticalScrollbarMode const): Deleted.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::reachableTotalContentsSize const):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalScrollbarMode const):
+        (WebCore::ScrollableArea::verticalScrollbarMode const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::overhangAmount const):
+        (WebCore::RenderLayer::reachableTotalContentsSize const):
+        (WebCore::RenderLayer::scrollableContentsSize const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForViewportConstrainedRole):
+        (WebCore::RenderLayerCompositor::rootParentRelativeScrollableRect const):
+        (WebCore::RenderLayerCompositor::parentRelativeScrollableRect const):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForFrameHostingRole):
+        (WebCore::RenderLayerCompositor::computeFrameScrollingGeometry const): Deleted.
+        (WebCore::RenderLayerCompositor::computeFrameHostingGeometry const): Deleted.
+        (WebCore::RenderLayerCompositor::computeOverflowScrollingGeometry const): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2019-03-02  Darin Adler  <darin@apple.com>
 
         Retire legacy dtoa function and DecimalNumber class

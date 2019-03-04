@@ -1,6 +1,7 @@
 Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Right %
 
 (Frame scrolling node
+  (scroll position 800 0)
   (scrollable area size 800 585)
   (contents size 2008 585)
   (requested scroll position 800 0)

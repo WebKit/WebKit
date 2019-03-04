@@ -669,6 +669,11 @@ void ScrollableArea::scrollbarStyleChanged(ScrollbarStyle, bool)
     availableContentSizeChanged(AvailableSizeChangeReason::ScrollbarsChanged);
 }
 
+IntSize ScrollableArea::reachableTotalContentsSize() const
+{
+    return totalContentsSize();
+}
+
 IntSize ScrollableArea::totalContentsSize() const
 {
     IntSize totalContentsSize = contentsSize();

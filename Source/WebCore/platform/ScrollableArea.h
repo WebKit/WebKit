@@ -107,6 +107,9 @@ public:
     void setHorizontalScrollElasticity(ScrollElasticity scrollElasticity) { m_horizontalScrollElasticity = scrollElasticity; }
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
+    virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarAuto; }
+    virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarAuto; }
+
     bool inLiveResize() const { return m_inLiveResize; }
     WEBCORE_EXPORT virtual void willStartLiveResize();
     WEBCORE_EXPORT virtual void willEndLiveResize();
@@ -253,6 +256,7 @@ public:
 
     // The totalContentsSize() is equivalent to the contentsSize() plus the header and footer heights.
     WEBCORE_EXPORT IntSize totalContentsSize() const;
+    WEBCORE_EXPORT virtual IntSize reachableTotalContentsSize() const;
 
     virtual bool useDarkAppearance() const { return false; }
 

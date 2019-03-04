@@ -5,6 +5,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 
 (Frame scrolling node
+  (scroll position 0 580)
   (scrollable area size 785 600)
   (contents size 785 2908)
   (requested scroll position 0 580)

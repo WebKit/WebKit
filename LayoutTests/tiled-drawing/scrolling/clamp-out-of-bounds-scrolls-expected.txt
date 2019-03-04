@@ -79,6 +79,7 @@ Attempted scroll to 10000, 0
 Attempted scroll to 0, 10000
 
 (Frame scrolling node
+  (scroll position 4223 0)
   (scrollable area size 785 585)
   (contents size 5008 5021)
   (requested scroll position 0 4436)
@@ -100,6 +101,7 @@ Attempted scroll to 0, 10000
 Attempted scroll to 10000, 10000
 
 (Frame scrolling node
+  (scroll position 0 4436)
   (scrollable area size 785 585)
   (contents size 5008 5021)
   (requested scroll position 4223 4436)

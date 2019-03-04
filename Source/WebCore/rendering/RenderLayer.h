@@ -399,6 +399,7 @@ public:
 
     IntSize visibleSize() const override;
     IntSize contentsSize() const override;
+    IntSize reachableTotalContentsSize() const override;
 
     int scrollWidth() const;
     int scrollHeight() const;
@@ -419,7 +420,6 @@ public:
     void applyPostLayoutScrollPositionIfNeeded();
 
     ScrollOffset scrollOffset() const { return scrollOffsetFromPosition(m_scrollPosition); }
-    IntSize scrollableContentsSize() const;
 
     void availableContentSizeChanged(AvailableSizeChangeReason) override;
 

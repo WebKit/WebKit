@@ -24,7 +24,9 @@ Inner scrolling content
         (horizontal scroll elasticity 1)
         (vertical scroll elasticity 1)
         (horizontal scrollbar mode 0)
-        (vertical scrollbar mode 0))
+        (vertical scrollbar mode 0)
+        (has enabled horizontal scrollbar 1)
+        (has enabled vertical scrollbar 1))
       (children 1
         (Overflow scrolling node
           (scrollable area size 420 320)
@@ -34,7 +36,8 @@ Inner scrolling content
             (horizontal scroll elasticity 1)
             (vertical scroll elasticity 1)
             (horizontal scrollbar mode 0)
-            (vertical scrollbar mode 0))
+            (vertical scrollbar mode 0)
+            (has enabled vertical scrollbar 1))
         )
       )
     )

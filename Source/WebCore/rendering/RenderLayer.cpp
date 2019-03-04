@@ -2813,15 +2813,16 @@ IntSize RenderLayer::overhangAmount() const
 
     // FIXME: use maximumScrollOffset(), or just move this to ScrollableArea.
     ScrollOffset scrollOffset = scrollOffsetFromPosition(scrollPosition());
+    auto reachableSize = reachableTotalContentsSize();
     if (scrollOffset.y() < 0)
         stretch.setHeight(scrollOffset.y());
-    else if (scrollableContentsSize().height() && scrollOffset.y() > scrollableContentsSize().height() - visibleHeight())
-        stretch.setHeight(scrollOffset.y() - (scrollableContentsSize().height() - visibleHeight()));
+    else if (reachableSize.height() && scrollOffset.y() > reachableSize.height() - visibleHeight())
+        stretch.setHeight(scrollOffset.y() - (reachableSize.height() - visibleHeight()));
 
     if (scrollOffset.x() < 0)
         stretch.setWidth(scrollOffset.x());
-    else if (scrollableContentsSize().width() && scrollOffset.x() > scrollableContentsSize().width() - visibleWidth())
-        stretch.setWidth(scrollOffset.x() - (scrollableContentsSize().width() - visibleWidth()));
+    else if (reachableSize.width() && scrollOffset.x() > reachableSize.width() - visibleWidth())
+        stretch.setWidth(scrollOffset.x() - (reachableSize.width() - visibleWidth()));
 
     return stretch;
 #else
@@ -2948,7 +2949,7 @@ IntSize RenderLayer::contentsSize() const
     return IntSize(scrollWidth(), scrollHeight());
 }
 
-IntSize RenderLayer::scrollableContentsSize() const
+IntSize RenderLayer::reachableTotalContentsSize() const
 {
     IntSize contentsSize = this->contentsSize();
 

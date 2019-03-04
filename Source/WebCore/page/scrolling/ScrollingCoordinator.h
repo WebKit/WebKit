@@ -139,25 +139,10 @@ public:
     };
     virtual void setNodeLayers(ScrollingNodeID, const NodeLayers&) { }
 
-    struct ScrollingGeometry {
-        LayoutRect parentRelativeScrollableRect;
-        FloatSize scrollableAreaSize;
-        FloatSize contentSize;
-        FloatSize reachableContentSize; // Smaller than contentSize when overflow is hidden on one axis.
-        FloatPoint scrollPosition;
-        IntPoint scrollOrigin;
-#if ENABLE(CSS_SCROLL_SNAP)
-        Vector<LayoutUnit> horizontalSnapOffsets;
-        Vector<LayoutUnit> verticalSnapOffsets;
-        Vector<ScrollOffsetRange<LayoutUnit>> horizontalSnapOffsetRanges;
-        Vector<ScrollOffsetRange<LayoutUnit>> verticalSnapOffsetRanges;
-        unsigned currentHorizontalSnapPointIndex;
-        unsigned currentVerticalSnapPointIndex;
-#endif
-    };
-
-    virtual void setScrollingNodeGeometry(ScrollingNodeID, const ScrollingGeometry&) { }
-    virtual void setViewportConstraintedNodeGeometry(ScrollingNodeID, const ViewportConstraints&) { }
+    virtual void setRectRelativeToParentNode(ScrollingNodeID, const LayoutRect&) { }
+    virtual void setScrollingNodeScrollableAreaGeometry(ScrollingNodeID, ScrollableArea&) { }
+    virtual void setFrameScrollingNodeState(ScrollingNodeID, const FrameView&) { }
+    virtual void setViewportConstraintedNodeConstraints(ScrollingNodeID, const ViewportConstraints&) { }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
