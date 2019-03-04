@@ -78,13 +78,10 @@ ReflectObject::ReflectObject(VM& vm, Structure* structure)
 {
 }
 
-void ReflectObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void ReflectObject::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ownKeysPrivateName(), reflectObjectOwnKeys, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyDescriptorPrivateName(), reflectObjectGetOwnPropertyDescriptor, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, 2);
 }
 
 // ------------------------------ Functions --------------------------------

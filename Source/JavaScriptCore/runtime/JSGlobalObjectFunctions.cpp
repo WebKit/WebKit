@@ -839,6 +839,15 @@ EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState* exec)
     return JSValue::encode(jsBoolean(enumerable));
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncOwnKeys(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSObject* object = exec->argument(0).toObject(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include)));
+}
+
 #if ENABLE(INTL)
 EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(ExecState* exec)
 {

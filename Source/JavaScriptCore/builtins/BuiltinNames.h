@@ -64,13 +64,11 @@ namespace JSC {
     macro(ArrayBuffer) \
     macro(RegExp) \
     macro(Promise) \
-    macro(Reflect) \
     macro(InternalPromise) \
     macro(trunc) \
     macro(create) \
     macro(defineProperty) \
     macro(getPrototypeOf) \
-    macro(getOwnPropertyDescriptor) \
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
     macro(Set) \
@@ -81,7 +79,6 @@ namespace JSC {
     macro(BuiltinLog) \
     macro(BuiltinDescribe) \
     macro(homeObject) \
-    macro(templateRegistryKey) \
     macro(enqueueJob) \
     macro(hostPromiseRejectionTracker) \
     macro(promiseIsHandled) \

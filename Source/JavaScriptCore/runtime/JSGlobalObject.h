@@ -274,7 +274,6 @@ public:
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
 
 #if ENABLE(INTL)
-    WriteBarrier<IntlObject> m_intlObject;
     WriteBarrier<IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
     LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
