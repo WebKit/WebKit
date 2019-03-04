@@ -1,5 +1,12 @@
 2019-03-04  Claudio Saavedra  <csaavedra@igalia.com>
 
+        Fix typo in previous gardening commit
+
+        Unreviewed.
+        * platform/wpe/TestExpectations:
+
+2019-03-04  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE][EME] Mark two flaky EME tests
 
         Unreviewed gardening.
