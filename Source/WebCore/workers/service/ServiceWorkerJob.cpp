@@ -166,12 +166,14 @@ void ServiceWorkerJob::notifyFinished()
     m_client.jobFailedLoadingScript(*this, error, Exception { error.isAccessControl() ? SecurityError : TypeError, "Script load failed"_s });
 }
 
-void ServiceWorkerJob::cancelPendingLoad()
+bool ServiceWorkerJob::cancelPendingLoad()
 {
     if (!m_scriptLoader)
-        return;
+        return false;
+
     m_scriptLoader->cancel();
     m_scriptLoader = nullptr;
+    return true;
 }
 
 } // namespace WebCore

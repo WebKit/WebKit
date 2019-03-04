@@ -421,10 +421,6 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 #endif
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
-    auto guard = WTF::makeScopeExit([this, &job] {
-        destroyJob(job);
-    });
-
     if (job.data().type == ServiceWorkerJobType::Register)
         CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Registration job %" PRIu64 " succeeded", job.identifier().toUInt64());
     else {
@@ -432,32 +428,28 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Update job %" PRIu64 " succeeded", job.identifier().toUInt64());
     }
 
-    std::function<void()> notifyWhenResolvedIfNeeded;
-    if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
-        notifyWhenResolvedIfNeeded = [connection = m_swConnection, registrationKey = data.key]() mutable {
-            callOnMainThread([connection = WTFMove(connection), registrationKey = registrationKey.isolatedCopy()] {
-                connection->didResolveRegistrationPromise(registrationKey);
-            });
-        };
-    }
+    auto guard = WTF::makeScopeExit([this, &job] {
+        destroyJob(job);
+    });
 
-    if (isStopped()) {
-        if (notifyWhenResolvedIfNeeded)
-            notifyWhenResolvedIfNeeded();
+    auto notifyIfExitEarly = WTF::makeScopeExit([this, &data, &shouldNotifyWhenResolved] {
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+            notifyRegistrationIsSettled(data.key);
+    });
+
+    if (isStopped())
         return;
-    }
 
     auto promise = job.takePromise();
-    if (!promise) {
-        if (notifyWhenResolvedIfNeeded)
-            notifyWhenResolvedIfNeeded();
+    if (!promise)
         return;
-    }
 
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), notifyWhenResolvedIfNeeded = WTFMove(notifyWhenResolvedIfNeeded)](ScriptExecutionContext& context) mutable {
+    notifyIfExitEarly.release();
+
+    scriptExecutionContext()->postTask([this, protectedThis = RefPtr<ServiceWorkerContainer>(this), promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved](ScriptExecutionContext& context) mutable {
         if (isStopped() || !context.sessionID().isValid()) {
-            if (notifyWhenResolvedIfNeeded)
-                notifyWhenResolvedIfNeeded();
+            if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+                notifyRegistrationIsSettled(data.key);
             return;
         }
 
@@ -465,13 +457,21 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 
         CONTAINER_RELEASE_LOG_IF_ALLOWED("jobResolvedWithRegistration: Resolving promise for job %" PRIu64 ". Registration ID: %" PRIu64, jobIdentifier.toUInt64(), registration->identifier().toUInt64());
 
-        if (notifyWhenResolvedIfNeeded) {
-            promise->whenSettled([notifyWhenResolvedIfNeeded = WTFMove(notifyWhenResolvedIfNeeded)] {
-                notifyWhenResolvedIfNeeded();
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes) {
+            m_ongoingSettledRegistrations.add(++m_lastOngoingSettledRegistrationIdentifier, registration->data().key);
+            promise->whenSettled([this, protectedThis = WTFMove(protectedThis), identifier = m_lastOngoingSettledRegistrationIdentifier] {
+                notifyRegistrationIsSettled(m_ongoingSettledRegistrations.take(identifier));
             });
         }
 
         promise->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
+    });
+}
+
+void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey& registrationKey)
+{
+    callOnMainThread([connection = m_swConnection, registrationKey = registrationKey.isolatedCopy()] {
+        connection->didResolveRegistrationPromise(registrationKey);
     });
 }
 
@@ -639,9 +639,13 @@ void ServiceWorkerContainer::stop()
     m_readyPromise = nullptr;
     auto jobMap = WTFMove(m_jobMap);
     for (auto& ongoingJob : jobMap.values()) {
-        notifyFailedFetchingScript(*ongoingJob.job.get(), ResourceError { errorDomainWebKitInternal, 0, ongoingJob.job->data().scriptURL, "Job cancelled"_s, ResourceError::Type::Cancellation });
-        ongoingJob.job->cancelPendingLoad();
+        if (ongoingJob.job->cancelPendingLoad())
+            notifyFailedFetchingScript(*ongoingJob.job.get(), ResourceError { errorDomainWebKitInternal, 0, ongoingJob.job->data().scriptURL, "Job cancelled"_s, ResourceError::Type::Cancellation });
     }
+
+    auto registrationMap = WTFMove(m_ongoingSettledRegistrations);
+    for (auto& registration : registrationMap.values())
+        notifyRegistrationIsSettled(registration);
 }
 
 DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()

@@ -69,7 +69,7 @@ public:
 
     const DocumentOrWorkerIdentifier& contextIdentifier() { return m_contextIdentifier; }
 
-    void cancelPendingLoad();
+    bool cancelPendingLoad();
 
 private:
     // WorkerScriptLoaderClient

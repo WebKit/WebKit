@@ -114,6 +114,8 @@ private:
     void derefEventTarget() final;
     void stop() final;
 
+    void notifyRegistrationIsSettled(const ServiceWorkerRegistrationKey&);
+
     std::unique_ptr<ReadyPromise> m_readyPromise;
 
     NavigatorBase& m_navigator;
@@ -145,6 +147,10 @@ private:
 
     uint64_t m_lastPendingPromiseIdentifier { 0 };
     HashMap<uint64_t, std::unique_ptr<PendingPromise>> m_pendingPromises;
+
+    uint64_t m_lastOngoingSettledRegistrationIdentifier { 0 };
+    HashMap<uint64_t, ServiceWorkerRegistrationKey> m_ongoingSettledRegistrations;
+
 };
 
 } // namespace WebCore

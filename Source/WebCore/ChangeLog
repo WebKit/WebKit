@@ -1,3 +1,28 @@
+2019-03-04  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to correctly notify of end of a ServiceWorkerJob when the context is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=195195
+
+        Reviewed by Chris Dumez.
+
+        Before the patch, we were notifying that some jobs were finished too aggressively at context stop time.
+        This was confusing the Network Process.
+        Only notify such jobs that have pending loads.
+        Improve the tracking of jobs doing registration resolution to ensure the Network Process gets notified
+        in case of a registration promise being resolved but the settling callback being not yet called while the context is stopped.
+
+        Covered by existing tests not crashing anymore, in particular imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting.https.html.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::notifyRegistrationIsSettled):
+        (WebCore::ServiceWorkerContainer::stop):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::cancelPendingLoad):
+        * workers/service/ServiceWorkerJob.h:
+        (WebCore::ServiceWorkerJob::isLoading const):
+
 2019-03-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Improve our file picker
