@@ -101,6 +101,12 @@ AtomicString AtomicString::number(unsigned long long number)
     return numberToStringUnsigned<AtomicString>(number);
 }
 
+AtomicString AtomicString::number(float number)
+{
+    NumberToStringBuffer buffer;
+    return numberToString(number, buffer);
+}
+
 AtomicString AtomicString::number(double number)
 {
     NumberToStringBuffer buffer;

@@ -1,3 +1,26 @@
+2019-03-03  Darin Adler  <darin@apple.com>
+
+        Prepare to improve handling of conversion of float to strings
+        https://bugs.webkit.org/show_bug.cgi?id=195262
+
+        Reviewed by Daniel Bates.
+
+        * svg/dom/SVGAngle-expected.txt:
+        * svg/dom/SVGAngle.html:
+        * svg/dom/SVGLength-px-expected.txt:
+        * svg/dom/SVGLength-px-with-context-expected.txt:
+        * svg/dom/SVGLength-px-with-context.html:
+        * svg/dom/SVGLength-px.html:
+        Remove checks that depend on the precision and number of serialization.
+        The current tests depend on behavior that we'd like to change in the future and
+        some of them had already been updated since the behavior is different in different
+        web browsers. Tricky issue because of the mix of single and double precision in
+        the SVG engine and the JavaScript language, and straightforward to keep the tests
+        useful without this unnecessary dependency. Generally we check the units of the
+        result of valueAsString, and not the numeric result. Another idea would be to
+        check the numeric part of the result by converting it back to a number and
+        comparing it as a number rather than as a string.
+
 2019-03-04  Truitt Savell  <tsavell@apple.com>
 
         webkit.org/b/195210 resolve by r242308, unskipping tests.

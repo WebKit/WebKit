@@ -107,6 +107,7 @@ public:
     WTF_EXPORT_PRIVATE static AtomicString number(unsigned);
     WTF_EXPORT_PRIVATE static AtomicString number(unsigned long);
     WTF_EXPORT_PRIVATE static AtomicString number(unsigned long long);
+    WTF_EXPORT_PRIVATE static AtomicString number(float);
     WTF_EXPORT_PRIVATE static AtomicString number(double);
     // If we need more overloads of the number function, we can add all the others that String has, but these seem to do for now.
 

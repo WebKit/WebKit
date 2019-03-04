@@ -38,7 +38,7 @@ const char* numberToString(double d, NumberToStringBuffer& buffer)
     return builder.Finalize();
 }
 
-static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToStringBuffer& buffer, double_conversion::StringBuilder& builder)
+static inline void truncateTrailingZeros(NumberToStringBuffer& buffer, double_conversion::StringBuilder& builder)
 {
     size_t length = builder.position();
     size_t decimalPointPosition = 0;
@@ -49,7 +49,7 @@ static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToSt
 
     // No decimal separator found, early exit.
     if (decimalPointPosition == length)
-        return builder.Finalize();
+        return;
 
     size_t pastMantissa = decimalPointPosition + 1;
     for (; pastMantissa < length; ++pastMantissa) {
@@ -65,7 +65,7 @@ static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToSt
 
     // No trailing zeros found to strip.
     if (truncatedLength == pastMantissa)
-        return builder.Finalize();
+        return;
 
     // If we removed all trailing zeros, remove the decimal point as well.
     if (truncatedLength == decimalPointPosition + 1)
@@ -73,12 +73,18 @@ static inline const char* formatStringTruncatingTrailingZerosIfNeeded(NumberToSt
 
     // Truncate the mantissa, and return the final result.
     builder.RemoveCharacters(truncatedLength, pastMantissa);
-    return builder.Finalize();
 }
 
-const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool truncateTrailingZeros)
+const char* numberToFixedPrecisionString(float number, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
 {
-    // Mimic sprintf("%.[precision]g", ...), but use dtoas rounding facilities.
+    // For now, just call the double precision version.
+    // Do that here instead of at callers to pave the way to add a more efficient code path later.
+    return numberToFixedPrecisionString(static_cast<double>(number), significantFigures, buffer, shouldTruncateTrailingZeros);
+}
+
+const char* numberToFixedPrecisionString(double d, unsigned significantFigures, NumberToStringBuffer& buffer, bool shouldTruncateTrailingZeros)
+{
+    // Mimic sprintf("%.[precision]g", ...).
     // "g": Signed value printed in f or e format, whichever is more compact for the given value and precision.
     // The e format is used only when the exponent of the value is less than –4 or greater than or equal to the
     // precision argument. Trailing zeros are truncated, and the decimal point appears only if one or more digits follow it.
@@ -86,14 +92,21 @@ const char* numberToFixedPrecisionString(double d, unsigned significantFigures, 
     double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
     auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
     converter.ToPrecision(d, significantFigures, &builder);
-    if (!truncateTrailingZeros)
-        return builder.Finalize();
-    return formatStringTruncatingTrailingZerosIfNeeded(buffer, builder);
+    if (shouldTruncateTrailingZeros)
+        truncateTrailingZeros(buffer, builder);
+    return builder.Finalize();
+}
+
+const char* numberToFixedWidthString(float number, unsigned decimalPlaces, NumberToStringBuffer& buffer)
+{
+    // For now, just call the double precision version.
+    // Do that here instead of at callers to pave the way to add a more efficient code path later.
+    return numberToFixedWidthString(static_cast<double>(number), decimalPlaces, buffer);
 }
 
 const char* numberToFixedWidthString(double d, unsigned decimalPlaces, NumberToStringBuffer& buffer)
 {
-    // Mimic sprintf("%.[precision]f", ...), but use dtoas rounding facilities.
+    // Mimic sprintf("%.[precision]f", ...).
     // "f": Signed value having the form [ – ]dddd.dddd, where dddd is one or more decimal digits.
     // The number of digits before the decimal point depends on the magnitude of the number, and
     // the number of digits after the decimal point depends on the requested precision.

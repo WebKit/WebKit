@@ -454,7 +454,7 @@ String String::number(int number)
     return numberToStringSigned<String>(number);
 }
 
-String String::number(unsigned int number)
+String String::number(unsigned number)
 {
     return numberToStringUnsigned<String>(number);
 }
@@ -479,22 +479,34 @@ String String::number(unsigned long long number)
     return numberToStringUnsigned<String>(number);
 }
 
-String String::number(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
+String String::numberToStringFixedPrecision(float number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return String(numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros));
+    return numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
 }
 
-String String::numberToStringECMAScript(double number)
+String String::numberToStringFixedPrecision(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return String(numberToString(number, buffer));
+    return numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
+}
+
+String String::numberToStringShortest(float number)
+{
+    NumberToStringBuffer buffer;
+    return numberToString(number, buffer);
+}
+
+String String::numberToStringShortest(double number)
+{
+    NumberToStringBuffer buffer;
+    return numberToString(number, buffer);
 }
 
 String String::numberToStringFixedWidth(double number, unsigned decimalPlaces)
 {
     NumberToStringBuffer buffer;
-    return String(numberToFixedWidthString(number, decimalPlaces, buffer));
+    return numberToFixedWidthString(number, decimalPlaces, buffer);
 }
 
 int String::toIntStrict(bool* ok, int base) const

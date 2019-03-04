@@ -175,12 +175,20 @@ public:
     WTF_EXPORT_PRIVATE static String number(unsigned long);
     WTF_EXPORT_PRIVATE static String number(long long);
     WTF_EXPORT_PRIVATE static String number(unsigned long long);
+    // FIXME: Change number to be numberToStringShortest instead of numberToStringFixedPrecision.
+    static String number(float);
+    static String number(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
 
-    WTF_EXPORT_PRIVATE static String number(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
-
-    // Number to String conversion following the ECMAScript definition.
-    WTF_EXPORT_PRIVATE static String numberToStringECMAScript(double);
+    WTF_EXPORT_PRIVATE static String numberToStringShortest(float);
+    WTF_EXPORT_PRIVATE static String numberToStringShortest(double);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(float, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedPrecision(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
+
+    // FIXME: Delete in favor of the name numberToStringShortest or just number.
+    static String numberToStringECMAScript(float);
+    static String numberToStringECMAScript(double);
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
@@ -628,6 +636,28 @@ inline bool equalIgnoringASCIICase(const String& a, const char* b)
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
 {
     return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
+}
+
+inline String String::number(float number)
+{
+    return numberToStringFixedPrecision(number);
+}
+
+inline String String::number(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
+{
+    return numberToStringFixedPrecision(number, precision, policy);
+}
+
+inline String String::numberToStringECMAScript(float number)
+{
+    // FIXME: This preserves existing behavior but is not what we want.
+    // In the future, this should either be a compilation error or call numberToStringShortest without converting to double.
+    return numberToStringShortest(static_cast<double>(number));
+}
+
+inline String String::numberToStringECMAScript(double number)
+{
+    return numberToStringShortest(number);
 }
 
 inline namespace StringLiterals {

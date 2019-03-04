@@ -66,7 +66,7 @@ PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
 
 Check valid arguments for 'newValueSpecifiedUnits', that should only modify the 'valueAsString'
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, parseFloat(Math.PI.toFixed(5))) is undefined.
-PASS angle.valueAsString is "3.14159rad"
+PASS angle.valueAsString.slice(-3) is "rad"
 PASS angle.value.toFixed(1) is "180.0"
 PASS angle.valueInSpecifiedUnits.toFixed(5) is Math.PI.toFixed(5)
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
@@ -170,14 +170,14 @@ Now convert the GRAD value into a RAD value, and assure that all properties have
 PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD) is undefined.
 PASS angle.value.toFixed(1) is "180.0"
 PASS angle.valueInSpecifiedUnits.toFixed(5) is "3.14159"
-PASS angle.valueAsString is "3.14159rad"
+PASS angle.valueAsString.slice(-3) is "rad"
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
 
 Now try converting the RAD value into an unknown value, that should fail and throw
 PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN) threw exception NotSupportedError: The operation is not supported..
 PASS angle.value.toFixed(1) is "180.0"
 PASS angle.valueInSpecifiedUnits.toFixed(5) is "3.14159"
-PASS angle.valueAsString is "3.14159rad"
+PASS angle.valueAsString.slice(-3) is "rad"
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
 
 Now convert the RAD value into a DEG value, and assure that all properties have been synchronized

@@ -216,14 +216,25 @@ public:
     ALWAYS_INLINE void appendLiteral(const char (&characters)[characterCount]) { append(characters, characterCount - 1); }
 
     WTF_EXPORT_PRIVATE void appendNumber(int);
-    WTF_EXPORT_PRIVATE void appendNumber(unsigned int);
+    WTF_EXPORT_PRIVATE void appendNumber(unsigned);
     WTF_EXPORT_PRIVATE void appendNumber(long);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long);
     WTF_EXPORT_PRIVATE void appendNumber(long long);
     WTF_EXPORT_PRIVATE void appendNumber(unsigned long long);
-    WTF_EXPORT_PRIVATE void appendNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
-    WTF_EXPORT_PRIVATE void appendECMAScriptNumber(double);
+    // FIXME: Change appendNumber to be appendShortestFormNumber instead of appendFixedPrecisionNumber.
+    void appendNumber(float);
+    void appendNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+
+    WTF_EXPORT_PRIVATE void appendShortestFormNumber(float);
+    WTF_EXPORT_PRIVATE void appendShortestFormNumber(double);
+    WTF_EXPORT_PRIVATE void appendFixedPrecisionNumber(float, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE void appendFixedPrecisionNumber(double, unsigned precision = 6, TrailingZerosTruncatingPolicy = TruncateTrailingZeros);
+    WTF_EXPORT_PRIVATE void appendFixedWidthNumber(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE void appendFixedWidthNumber(double, unsigned decimalPlaces);
+
+    // FIXME: Delete in favor of the name appendShortestFormNumber or just appendNumber.
+    void appendECMAScriptNumber(float);
+    void appendECMAScriptNumber(double);
 
     String toString()
     {
@@ -380,6 +391,28 @@ ALWAYS_INLINE UChar* StringBuilder::getBufferCharacters<UChar>()
 {
     ASSERT(!m_is8Bit);
     return m_bufferCharacters16;
+}
+
+inline void StringBuilder::appendNumber(float number)
+{
+    appendFixedPrecisionNumber(number);
+}
+
+inline void StringBuilder::appendNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
+{
+    appendFixedPrecisionNumber(number, precision, policy);
+}
+
+inline void StringBuilder::appendECMAScriptNumber(float number)
+{
+    // FIXME: This preserves existing behavior but is not what we want.
+    // In the future, this should either be a compilation error or call appendShortestFormNumber without converting to double.
+    appendShortestFormNumber(static_cast<double>(number));
+}
+
+inline void StringBuilder::appendECMAScriptNumber(double number)
+{
+    appendShortestFormNumber(number);
 }
 
 template <typename CharType>

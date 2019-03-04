@@ -378,7 +378,7 @@ void StringBuilder::appendNumber(int number)
     numberToStringSigned<StringBuilder>(number, this);
 }
 
-void StringBuilder::appendNumber(unsigned int number)
+void StringBuilder::appendNumber(unsigned number)
 {
     numberToStringUnsigned<StringBuilder>(number, this);
 }
@@ -403,16 +403,34 @@ void StringBuilder::appendNumber(unsigned long long number)
     numberToStringUnsigned<StringBuilder>(number, this);
 }
 
-void StringBuilder::appendNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
+void StringBuilder::appendFixedPrecisionNumber(float number, unsigned precision, TrailingZerosTruncatingPolicy policy)
 {
     NumberToStringBuffer buffer;
-    append(numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros));
+    append(numberToFixedPrecisionString(number, precision, buffer, policy == TruncateTrailingZeros));
 }
 
-void StringBuilder::appendECMAScriptNumber(double number)
+void StringBuilder::appendFixedPrecisionNumber(double number, unsigned precision, TrailingZerosTruncatingPolicy policy)
+{
+    NumberToStringBuffer buffer;
+    append(numberToFixedPrecisionString(number, precision, buffer, policy == TruncateTrailingZeros));
+}
+
+void StringBuilder::appendShortestFormNumber(float number)
 {
     NumberToStringBuffer buffer;
     append(numberToString(number, buffer));
+}
+
+void StringBuilder::appendShortestFormNumber(double number)
+{
+    NumberToStringBuffer buffer;
+    append(numberToString(number, buffer));
+}
+
+void StringBuilder::appendFixedWidthNumber(float number, unsigned decimalPlaces)
+{
+    NumberToStringBuffer buffer;
+    append(numberToFixedWidthString(number, decimalPlaces, buffer));
 }
 
 void StringBuilder::appendFixedWidthNumber(double number, unsigned decimalPlaces)

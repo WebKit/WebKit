@@ -1,3 +1,49 @@
+2019-03-03  Darin Adler  <darin@apple.com>
+
+        Prepare to improve handling of conversion of float to strings
+        https://bugs.webkit.org/show_bug.cgi?id=195262
+
+        Reviewed by Daniel Bates.
+
+        * wtf/dtoa.cpp:
+        (WTF::truncateTrailingZeros): Renamed from
+        formatStringTruncatingTrailingZerosIfNeeded and removed the calls
+        to double_conversion::StringBuilder::Finalizer, since the caller
+        already does that.
+        (WTF::numberToFixedPrecisionString): Added an overload for float
+        and updated to use the new truncateTrailingZeros.
+        (WTF::numberToFixedWidthString): Added an overload for float.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::number): Added float overload. This is a
+        behavior change, but in all cases for the better. The old behavior
+        was to convert to double first and then do "shortest form"
+        conversion, and it's always better to just do that as float.
+        * wtf/text/AtomicString.h: Added float overload of AtomicString::number.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::appendFixedPrecisionNumber): Added float
+        overload.
+        (WTF::StringBuilder::appendShortestFormNumber): Renamed from
+        appendECMAScriptNumber and did the above.
+        (WTF::StringBuilder::appendFixedWidthNumber): Ditto.
+        * wtf/text/StringBuilder.h: Added overloads for float and
+        appendShortestFormNumber. The appendNumber and appendECMAScriptNumber
+        functions are now inlines in the header, since they are expressed
+        entirely in terms of the other functions.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::numberToStringFixedPrecision): Added float overload.
+        Removed unnecessary explicit conversion to String.
+        (WTF::String::numberToStringShortest): Renamed from
+        numberToStringECMAScript and did the above.
+        (WTF::String::numberToStringFixedWidth): Ditto.
+
+        * wtf/text/WTFString.h: Added overloads for float and
+        numberToStringShortest. The number and numberToStringECMAScript
+        functions are now inlines in the header, since they are expressed
+        entirely in terms of the other functions.
+
 2019-03-04  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Move WebPaymentCoordinatorProxy from Source/WebKit/UIProcess to Source/WebKit/Shared

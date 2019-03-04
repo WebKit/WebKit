@@ -93,7 +93,8 @@ debug("");
 debug("Convert from px to cm");
 shouldBeUndefined("length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_CM)");
 referenceValue = Number(2 * 2.54 / cssPixelsPerInch).toFixed(7);
-shouldBeEqualToString("length.valueAsString", referenceValue + "cm");
+// Exact result of valueAsString depends on precision, no trivial way to correctly test it, especially across engines.
+shouldBeEqualToString("length.valueAsString.slice(-2)", "cm");
 shouldBeEqualToString("length.valueInSpecifiedUnits.toFixed(7)", referenceValue);
 shouldBeEqualToString("length.value.toFixed(1)", "2.0");
 shouldBe("length.unitType", "SVGLength.SVG_LENGTHTYPE_CM");
@@ -106,7 +107,8 @@ debug("");
 debug("Convert from px to mm");
 shouldBeUndefined("length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_MM)");
 referenceValue = Number(2 * 25.4 / cssPixelsPerInch).toFixed(6);
-shouldBeEqualToString("length.valueAsString", referenceValue + "mm");
+// Exact result of valueAsString depends on precision, no trivial way to correctly test it, especially across engines.
+shouldBeEqualToString("length.valueAsString.slice(-2)", "mm");
 shouldBeEqualToString("length.valueInSpecifiedUnits.toFixed(6)", referenceValue);
 shouldBeEqualToString("length.value.toFixed(1)", "2.0");
 shouldBe("length.unitType", "SVGLength.SVG_LENGTHTYPE_MM");
@@ -119,7 +121,8 @@ debug("");
 debug("Convert from px to in");
 shouldBeUndefined("length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_IN)");
 referenceValue = Number(2 / cssPixelsPerInch).toFixed(7);
-shouldBeEqualToString("length.valueAsString", referenceValue + "in");
+// Exact result of valueAsString depends on precision, no trivial way to correctly test it, especially across engines.
+shouldBeEqualToString("length.valueAsString.slice(-2)", "in");
 shouldBeEqualToString("length.valueInSpecifiedUnits.toFixed(7)", referenceValue);
 shouldBeEqualToString("length.value.toFixed(1)", "2.0");
 shouldBe("length.unitType", "SVGLength.SVG_LENGTHTYPE_IN");

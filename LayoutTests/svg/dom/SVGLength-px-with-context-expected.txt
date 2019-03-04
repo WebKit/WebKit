@@ -21,7 +21,7 @@ Reset to 2px
 
 Convert from px to percentage
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE) is undefined.
-PASS length.valueAsString is "1.33333%"
+PASS length.valueAsString.slice(-1) is "%"
 PASS length.valueInSpecifiedUnits.toFixed(5) is "1.33333"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
@@ -30,7 +30,7 @@ Reset to 2px
 
 Convert from px to ems
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EMS) is undefined.
-PASS length.valueAsString is "0.166667em"
+PASS length.valueAsString.slice(-2) is "em"
 PASS length.valueInSpecifiedUnits.toFixed(6) is "0.166667"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_EMS
@@ -39,6 +39,7 @@ Reset to 2px
 
 Convert from px to exs
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EXS) is undefined.
+PASS length.valueAsString.slice(-2) is "ex"
 PASS length.valueInSpecifiedUnits.toFixed(1) is "0.2"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_EXS
@@ -47,7 +48,7 @@ Reset to 2px
 
 Convert from px to cm
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_CM) is undefined.
-PASS length.valueAsString is "0.0529167cm"
+PASS length.valueAsString.slice(-2) is "cm"
 PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0529167"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_CM
@@ -56,7 +57,7 @@ Reset to 2px
 
 Convert from px to mm
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_MM) is undefined.
-PASS length.valueAsString is "0.529167mm"
+PASS length.valueAsString.slice(-2) is "mm"
 PASS length.valueInSpecifiedUnits.toFixed(6) is "0.529167"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_MM
@@ -65,7 +66,7 @@ Reset to 2px
 
 Convert from px to in
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_IN) is undefined.
-PASS length.valueAsString is "0.0208333in"
+PASS length.valueAsString.slice(-2) is "in"
 PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0208333"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_IN
@@ -83,6 +84,7 @@ Reset to 2px
 
 Convert from px to pc
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PC) is undefined.
+PASS length.valueAsString.slice(-2) is "pc"
 PASS length.valueInSpecifiedUnits.toFixed(3) is "0.125"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PC

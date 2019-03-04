@@ -48,7 +48,7 @@ Reset to 2px
 
 Convert from px to cm
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_CM) is undefined.
-PASS length.valueAsString is "0.0529167cm"
+PASS length.valueAsString.slice(-2) is "cm"
 PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0529167"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_CM
@@ -57,7 +57,7 @@ Reset to 2px
 
 Convert from px to mm
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_MM) is undefined.
-PASS length.valueAsString is "0.529167mm"
+PASS length.valueAsString.slice(-2) is "mm"
 PASS length.valueInSpecifiedUnits.toFixed(6) is "0.529167"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_MM
@@ -66,7 +66,7 @@ Reset to 2px
 
 Convert from px to in
 PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_IN) is undefined.
-PASS length.valueAsString is "0.0208333in"
+PASS length.valueAsString.slice(-2) is "in"
 PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0208333"
 PASS length.value.toFixed(1) is "2.0"
 PASS length.unitType is SVGLength.SVG_LENGTHTYPE_IN
