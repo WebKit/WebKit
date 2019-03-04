@@ -1,3 +1,44 @@
+2019-03-04  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Decouple mouseMoved event and the "is observing content change" status.
+        https://bugs.webkit.org/show_bug.cgi?id=195286
+
+        Reviewed by Simon Fraser.
+
+        Now isObservingContentChanges returns true only when we are actively observing content change during timer firing and/or style recalculating.
+        This patch also renames a couple of functions to follow the didStart/didFinish pattern.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::domTimerExecuteDidStart):
+        (WebCore::ContentChangeObserver::domTimerExecuteDidFinish):
+        (WebCore::ContentChangeObserver::styleRecalcDidStart):
+        (WebCore::ContentChangeObserver::styleRecalcDidFinish):
+        (WebCore::ContentChangeObserver::mouseMovedDidStart):
+        (WebCore::ContentChangeObserver::mouseMovedDidFinish):
+        (WebCore::ContentChangeObserver::setShouldObserveNextStyleRecalc):
+        (WebCore::ContentChangeObserver::StyleChangeScope::StyleChangeScope):
+        (WebCore::ContentChangeObserver::MouseMovedScope::MouseMovedScope):
+        (WebCore::ContentChangeObserver::MouseMovedScope::~MouseMovedScope):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::StyleRecalcScope):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope):
+        (WebCore::ContentChangeObserver::DOMTimerScope::DOMTimerScope):
+        (WebCore::ContentChangeObserver::DOMTimerScope::~DOMTimerScope):
+        (WebCore::ContentChangeObserver::startObservingDOMTimerExecute): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerExecute): Deleted.
+        (WebCore::ContentChangeObserver::startObservingStyleRecalc): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalc): Deleted.
+        (WebCore::ContentChangeObserver::startObservingMouseMoved): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingMouseMoved): Deleted.
+        (WebCore::ContentChangeObserver::setShouldObserveStyleRecalc): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::setShouldObserveDOMTimerScheduling):
+        (WebCore::ContentChangeObserver::isObservingDOMTimerScheduling const):
+        (WebCore::ContentChangeObserver::isObservingStyleRecalc const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::startObservingDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerScheduling): Deleted.
+        (WebCore::ContentChangeObserver::shouldObserveStyleRecalc const): Deleted.
+
 2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Offer @makeTypeError instead of exposing @TypeError

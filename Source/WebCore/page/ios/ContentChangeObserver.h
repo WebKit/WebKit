@@ -86,27 +86,23 @@ public:
     };
 
 private:
-    void startObservingMouseMoved();
-    void stopObservingMouseMoved();
+    void mouseMovedDidStart();
+    void mouseMovedDidFinish();
 
-    void startObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = true; }
-    void stopObservingDOMTimerScheduling() { m_isObservingDOMTimerScheduling = false; }
-
-    void startObservingDOMTimerExecute(const DOMTimer&);
-    void stopObservingDOMTimerExecute(const DOMTimer&);
-
-    void startObservingStyleRecalc();
-    void stopObservingStyleRecalc();
-
+    void setShouldObserveDOMTimerScheduling(bool observe) { m_isObservingDOMTimerScheduling = observe; }
+    bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
+    void domTimerExecuteDidStart(const DOMTimer&);
+    void domTimerExecuteDidFinish(const DOMTimer&);
     void registerDOMTimer(const DOMTimer&);
     void unregisterDOMTimer(const DOMTimer&);
-    bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
-    void setShouldObserveStyleRecalc(bool);
-    bool shouldObserveStyleRecalc() const { return m_shouldObserveStyleRecalc; }
+    void styleRecalcDidStart();
+    void styleRecalcDidFinish();
+    void setShouldObserveNextStyleRecalc(bool);
+    bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_isObservingContentChanges; }
+    bool isObservingContentChanges() const { return m_domTimerisBeingExecuted || m_styleRecalcIsBeingExecuted; }
 
     void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
     void clearTimersAndReportContentChange();
@@ -132,9 +128,10 @@ private:
 
     Document& m_document;
     HashSet<const DOMTimer*> m_DOMTimerList;
-    bool m_shouldObserveStyleRecalc { false };
+    bool m_isObservingStyleRecalc { false };
+    bool m_styleRecalcIsBeingExecuted { false };
     bool m_isObservingDOMTimerScheduling { false };
-    bool m_isObservingContentChanges { false };
+    bool m_domTimerisBeingExecuted { false };
 };
 
 inline void ContentChangeObserver::setHasNoChangeState()

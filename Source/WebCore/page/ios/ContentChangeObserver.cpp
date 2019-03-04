@@ -66,46 +66,46 @@ void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
     notifyContentChangeIfNeeded();
 }
 
-void ContentChangeObserver::startObservingDOMTimerExecute(const DOMTimer& timer)
+void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
 
-    m_isObservingContentChanges = true;
+    m_domTimerisBeingExecuted = true;
 }
 
-void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
+void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
 
-    m_isObservingContentChanges = false;
+    m_domTimerisBeingExecuted = false;
     unregisterDOMTimer(timer);
-    setShouldObserveStyleRecalc(m_document.hasPendingStyleRecalc());
+    setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
     notifyContentChangeIfNeeded();
 }
 
-void ContentChangeObserver::startObservingStyleRecalc()
+void ContentChangeObserver::styleRecalcDidStart()
 {
-    if (!shouldObserveStyleRecalc())
+    if (!isObservingStyleRecalc())
         return;
     if (hasVisibleChangeState())
         return;
     LOG(ContentObservation, "startObservingStyleRecalc: start observing style recalc.");
 
-    m_isObservingContentChanges = true;
+    m_styleRecalcIsBeingExecuted = true;
 }
 
-void ContentChangeObserver::stopObservingStyleRecalc()
+void ContentChangeObserver::styleRecalcDidFinish()
 {
-    if (!shouldObserveStyleRecalc())
+    if (!isObservingStyleRecalc())
         return;
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
 
-    setShouldObserveStyleRecalc(false);
-    m_isObservingContentChanges = false;
+    m_styleRecalcIsBeingExecuted = false;
+    setShouldObserveNextStyleRecalc(false);
     adjustObservedState(Event::StyleRecalcFinished);
     notifyContentChangeIfNeeded();
 }
@@ -138,19 +138,17 @@ void ContentChangeObserver::contentVisibilityDidChange()
     adjustObservedState(Event::ContentVisibilityChanged);
 }
 
-void ContentChangeObserver::startObservingMouseMoved()
+void ContentChangeObserver::mouseMovedDidStart()
 {
     ASSERT(!m_document.hasPendingStyleRecalc());
     clearObservedDOMTimers();
-    startObservingDOMTimerScheduling();
-    m_isObservingContentChanges = true;
+    setShouldObserveDOMTimerScheduling(true);
     adjustObservedState(Event::ContentObservationStarted);
 }
 
-void ContentChangeObserver::stopObservingMouseMoved()
+void ContentChangeObserver::mouseMovedDidFinish()
 {
-    stopObservingDOMTimerScheduling();
-    m_isObservingContentChanges = false;
+    setShouldObserveDOMTimerScheduling(false);
 }
 
 WKContentChange ContentChangeObserver::observedContentChange() const
@@ -170,11 +168,11 @@ void ContentChangeObserver::unregisterDOMTimer(const DOMTimer& timer)
     adjustObservedState(Event::RemovedDOMTimer);
 }
 
-void ContentChangeObserver::setShouldObserveStyleRecalc(bool shouldObserve)
+void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
 {
     if (shouldObserve)
         LOG(ContentObservation, "Wait until next style recalc fires.");
-    m_shouldObserveStyleRecalc = shouldObserve;
+    m_isObservingStyleRecalc = shouldObserve;
 }
 
 bool ContentChangeObserver::hasDeterminateState() const
@@ -246,7 +244,7 @@ static Visibility elementImplicitVisibility(const Element& element)
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
     : m_contentChangeObserver(document.contentChangeObserver())
     , m_element(element)
-    , m_needsObserving(m_contentChangeObserver.isObservingContentChanges() && m_contentChangeObserver.observedContentChange() != WKContentVisibilityChange)
+    , m_needsObserving(m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState())
 {
     if (m_needsObserving) {
         m_previousDisplay = element.renderStyle() ? element.renderStyle()->display() : DisplayType::None;
@@ -283,23 +281,23 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 ContentChangeObserver::MouseMovedScope::MouseMovedScope(Document& document)
     : m_contentChangeObserver(document.contentChangeObserver())
 {
-    m_contentChangeObserver.startObservingMouseMoved();
+    m_contentChangeObserver.mouseMovedDidStart();
 }
 
 ContentChangeObserver::MouseMovedScope::~MouseMovedScope()
 {
-    m_contentChangeObserver.stopObservingMouseMoved();
+    m_contentChangeObserver.mouseMovedDidFinish();
 }
 
 ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Document& document)
     : m_contentChangeObserver(document.contentChangeObserver())
 {
-    m_contentChangeObserver.startObservingStyleRecalc();
+    m_contentChangeObserver.styleRecalcDidStart();
 }
 
 ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope()
 {
-    m_contentChangeObserver.stopObservingStyleRecalc();
+    m_contentChangeObserver.styleRecalcDidFinish();
 }
 
 ContentChangeObserver::DOMTimerScope::DOMTimerScope(Document* document, const DOMTimer& domTimer)
@@ -307,13 +305,13 @@ ContentChangeObserver::DOMTimerScope::DOMTimerScope(Document* document, const DO
     , m_domTimer(domTimer)
 {
     if (m_contentChangeObserver)
-        m_contentChangeObserver->startObservingDOMTimerExecute(m_domTimer);
+        m_contentChangeObserver->domTimerExecuteDidStart(m_domTimer);
 }
 
 ContentChangeObserver::DOMTimerScope::~DOMTimerScope()
 {
     if (m_contentChangeObserver)
-        m_contentChangeObserver->stopObservingDOMTimerExecute(m_domTimer);
+        m_contentChangeObserver->domTimerExecuteDidFinish(m_domTimer);
 }
 
 }
