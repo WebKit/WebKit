@@ -688,7 +688,7 @@ public:
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
     void cancelAutoscroll();
-    void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    void hardwareKeyboardAvailabilityChanged();
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
 #if ENABLE(DATA_INTERACTION)

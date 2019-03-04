@@ -937,7 +937,7 @@ public:
     bool platformPrefersTextLegibilityBasedZoomScaling() const;
     const WebCore::ViewportConfiguration& viewportConfiguration() const { return m_viewportConfiguration; }
 
-    void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
+    void hardwareKeyboardAvailabilityChanged();
 
     void updateStringForFind(const String&);
 #endif
@@ -1843,9 +1843,6 @@ private:
     OptionSet<LayerTreeFreezeReason> m_LayerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
-#if PLATFORM(IOS_FAMILY)
-    bool m_keyboardIsAttached { false };
-#endif
 };
 
 } // namespace WebKit

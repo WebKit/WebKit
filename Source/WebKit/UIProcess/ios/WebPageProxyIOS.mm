@@ -671,8 +671,6 @@ void WebPageProxy::applicationWillEnterForeground()
 {
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
     m_process->send(Messages::WebPage::ApplicationWillEnterForeground(isSuspendedUnderLock), m_pageID);
-    m_process->setKeyboardIsAttached([UIKeyboard isInHardwareKeyboardMode]);
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(m_process->keyboardIsAttached()), m_pageID);
 }
 
 void WebPageProxy::applicationWillResignActive()
@@ -1110,10 +1108,10 @@ void WebPageProxy::setIsScrollingOrZooming(bool isScrollingOrZooming)
         m_validationBubble->show();
 }
 
-void WebPageProxy::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+void WebPageProxy::hardwareKeyboardAvailabilityChanged()
 {
     updateCurrentModifierState();
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(keyboardIsAttached), m_pageID);
+    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(), m_pageID);
 }
 
 void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&& callback)

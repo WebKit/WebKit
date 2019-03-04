@@ -3303,9 +3303,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 {
     ASSERT(observer);
     WKWebView *webView = (__bridge WKWebView *)observer;
-    auto keyboardIsAttached = GSEventIsHardwareKeyboardAttached();
-    webView._page->process().setKeyboardIsAttached(keyboardIsAttached);
-    webView._page->hardwareKeyboardAvailabilityChanged(keyboardIsAttached);
+    webView._page->hardwareKeyboardAvailabilityChanged();
 }
 
 - (void)_windowDidRotate:(NSNotification *)notification

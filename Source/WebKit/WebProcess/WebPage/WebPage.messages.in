@@ -108,7 +108,7 @@ messages -> WebPage LegacyReceiver {
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
     RequestFocusedElementInformation(WebKit::CallbackID callbackID)
-    HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+    HardwareKeyboardAvailabilityChanged()
 #endif
 
     SetControlledByAutomation(bool controlled)
