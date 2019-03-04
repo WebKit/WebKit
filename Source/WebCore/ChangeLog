@@ -1,3 +1,58 @@
+2019-03-03  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Content observation should be limited to the current document.
+        https://bugs.webkit.org/show_bug.cgi?id=195256
+        <rdar://problem/48544402>
+
+        Move ContentChangeObserver from Page to Document.
+        It limits content observation to the target node's owner document.
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::m_contentChangeObserver):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::willDetachPage):
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects):
+        (WebCore::m_undoManager): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::contentChangeObserver):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::removeById):
+        (WebCore::DOMTimer::fired):
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::pointerLockController const):
+        (WebCore::Page::contentChangeObserver): Deleted.
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::ContentChangeObserver):
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::stopObservingDOMTimerExecute):
+        (WebCore::ContentChangeObserver::stopObservingStyleRecalc):
+        (WebCore::ContentChangeObserver::clearTimersAndReportContentChange):
+        (WebCore::ContentChangeObserver::startObservingMouseMoved):
+        (WebCore::ContentChangeObserver::hasDeterminateState const):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::notifyContentChangeIfNeeded):
+        (WebCore::ContentChangeObserver::StyleChangeScope::StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::MouseMovedScope::MouseMovedScope):
+        (WebCore::ContentChangeObserver::MouseMovedScope::~MouseMovedScope):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::StyleRecalcScope):
+        (WebCore::ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope):
+        (WebCore::ContentChangeObserver::DOMTimerScope::DOMTimerScope):
+        (WebCore::ContentChangeObserver::DOMTimerScope::~DOMTimerScope):
+        (WebCore::hasPendingStyleRecalc): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
 2019-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Share more code for updating the state of frame scrolling nodes

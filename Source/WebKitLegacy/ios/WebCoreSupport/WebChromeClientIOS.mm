@@ -184,9 +184,9 @@ void WebChromeClientIOS::setNeedsScrollNotifications(WebCore::Frame& frame, bool
 
 void WebChromeClientIOS::observedContentChange(WebCore::Frame& frame)
 {
-    if (!frame.page())
+    if (!frame.document())
         return;
-    [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:frame.page()->contentChangeObserver().observedContentChange() forFrame:kit(&frame)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() didObserveDeferredContentChange:frame.document()->contentChangeObserver().observedContentChange() forFrame:kit(&frame)];
 }
 
 static inline NSString *nameForViewportFitValue(ViewportFit value)

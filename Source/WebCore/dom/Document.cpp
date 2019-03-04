@@ -2051,7 +2051,7 @@ bool Document::updateStyleIfNeeded()
     }
 
 #if PLATFORM(IOS_FAMILY)
-    ContentChangeObserver::StyleRecalcScope observingScope(page());
+    ContentChangeObserver::StyleRecalcScope observingScope(*this);
 #endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
@@ -2383,7 +2383,9 @@ void Document::frameDestroyed()
 void Document::willDetachPage()
 {
     FrameDestructionObserver::willDetachPage();
-
+#if PLATFORM(IOS_FAMILY)
+    contentChangeObserver().willDetachPage();
+#endif
     if (domWindow() && frame())
         InspectorInstrumentation::frameWindowDiscarded(*frame(), domWindow());
 }
@@ -2632,8 +2634,7 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page())
-        page->contentChangeObserver().didSuspendActiveDOMObjects();
+    contentChangeObserver().didSuspendActiveDOMObjects();
 #endif
 }
 
@@ -8680,6 +8681,15 @@ void Document::updateTouchActionElements(Element& element, const RenderStyle& st
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
     }
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+ContentChangeObserver& Document::contentChangeObserver()
+{
+    if (!m_contentChangeObserver)
+        m_contentChangeObserver = std::make_unique<ContentChangeObserver>(*this);
+    return *m_contentChangeObserver; 
 }
 #endif
 

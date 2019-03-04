@@ -32,11 +32,11 @@
 namespace WebCore {
 
 class DOMTimer;
-class Page;
+class Document;
 
 class ContentChangeObserver {
 public:
-    ContentChangeObserver(Page&);
+    ContentChangeObserver(Document&);
 
     WEBCORE_EXPORT WKContentChange observedContentChange() const;
 
@@ -48,11 +48,11 @@ public:
 
     class StyleChangeScope {
     public:
-        StyleChangeScope(Page*, const Element&);
+        StyleChangeScope(Document&, const Element&);
         ~StyleChangeScope();
 
     private:
-        ContentChangeObserver* m_contentChangeObserver { nullptr };
+        ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
         bool m_needsObserving { false };
         DisplayType m_previousDisplay;
@@ -62,23 +62,23 @@ public:
 
     class MouseMovedScope {
     public:
-        WEBCORE_EXPORT MouseMovedScope(Page*);
+        WEBCORE_EXPORT MouseMovedScope(Document&);
         WEBCORE_EXPORT ~MouseMovedScope();
     private:
-        ContentChangeObserver* m_contentChangeObserver { nullptr };
+        ContentChangeObserver& m_contentChangeObserver;
     };
 
     class StyleRecalcScope {
     public:
-        StyleRecalcScope(Page*);
+        StyleRecalcScope(Document&);
         ~StyleRecalcScope();
     private:
-        ContentChangeObserver* m_contentChangeObserver { nullptr };
+        ContentChangeObserver& m_contentChangeObserver;
     };
 
     class DOMTimerScope {
     public:
-        DOMTimerScope(Page*, const DOMTimer&);
+        DOMTimerScope(Document*, const DOMTimer&);
         ~DOMTimerScope();
     private:
         ContentChangeObserver* m_contentChangeObserver { nullptr };
@@ -130,7 +130,7 @@ private:
     };
     void adjustObservedState(Event);
 
-    Page& m_page;
+    Document& m_document;
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_shouldObserveStyleRecalc { false };
     bool m_isObservingDOMTimerScheduling { false };

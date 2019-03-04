@@ -29,33 +29,21 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTimer.h"
+#include "Document.h"
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 
 namespace WebCore {
 
-static bool hasPendingStyleRecalc(const Page& page)
-{
-    for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document()) {
-            if (document->hasPendingStyleRecalc())
-                return true;
-        }
-    }
-    return false;
-}
-
-ContentChangeObserver::ContentChangeObserver(Page& page)
-    : m_page(page)
+ContentChangeObserver::ContentChangeObserver(Document& document)
+    : m_document(document)
 {
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
 {
-    if (!m_page.mainFrame().document())
-        return;
-    if (m_page.mainFrame().document()->activeDOMObjectsAreSuspended())
+    if (m_document.activeDOMObjectsAreSuspended())
         return;
     if (timeout > 250_ms || !singleShot)
         return;
@@ -95,7 +83,7 @@ void ContentChangeObserver::stopObservingDOMTimerExecute(const DOMTimer& timer)
 
     m_isObservingContentChanges = false;
     unregisterDOMTimer(timer);
-    setShouldObserveStyleRecalc(WebCore::hasPendingStyleRecalc(m_page));
+    setShouldObserveStyleRecalc(m_document.hasPendingStyleRecalc());
     notifyContentChangeIfNeeded();
 }
 
@@ -117,6 +105,7 @@ void ContentChangeObserver::stopObservingStyleRecalc()
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
 
     setShouldObserveStyleRecalc(false);
+    m_isObservingContentChanges = false;
     adjustObservedState(Event::StyleRecalcFinished);
     notifyContentChangeIfNeeded();
 }
@@ -128,7 +117,9 @@ void ContentChangeObserver::clearTimersAndReportContentChange()
     LOG_WITH_STREAM(ContentObservation, stream << "clearTimersAndReportContentChange: remove registered timers and report content change." << observedContentChange());
 
     clearObservedDOMTimers();
-    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+    ASSERT(m_document.page());
+    ASSERT(m_document.frame());
+    m_document.page()->chrome().client().observedContentChange(*m_document.frame());
 }
 
 void ContentChangeObserver::didSuspendActiveDOMObjects()
@@ -149,7 +140,7 @@ void ContentChangeObserver::contentVisibilityDidChange()
 
 void ContentChangeObserver::startObservingMouseMoved()
 {
-    ASSERT(!hasPendingStyleRecalc(m_page));
+    ASSERT(!m_document.hasPendingStyleRecalc());
     clearObservedDOMTimers();
     startObservingDOMTimerScheduling();
     m_isObservingContentChanges = true;
@@ -190,7 +181,7 @@ bool ContentChangeObserver::hasDeterminateState() const
 {
     if (hasVisibleChangeState())
         return true;
-    return observedContentChange() == WKContentNoChange && !hasObservedDOMTimer() && !hasPendingStyleRecalc(m_page);
+    return observedContentChange() == WKContentNoChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc();
 }
 
 void ContentChangeObserver::adjustObservedState(Event event)
@@ -207,7 +198,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
     case Event::RemovedDOMTimer:
     case Event::StyleRecalcFinished:
         // Demote to "no change" when there's no pending activity anymore.
-        if (observedContentChange() == WKContentIndeterminateChange && !hasObservedDOMTimer() && !hasPendingStyleRecalc(m_page))
+        if (observedContentChange() == WKContentIndeterminateChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc())
             setHasNoChangeState();
         break;
     case Event::ContentVisibilityChanged:
@@ -223,7 +214,9 @@ void ContentChangeObserver::notifyContentChangeIfNeeded()
         return;
     }
     LOG_WITH_STREAM(ContentObservation, stream << "notifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
-    m_page.chrome().client().observedContentChange(m_page.mainFrame());
+    ASSERT(m_document.page());
+    ASSERT(m_document.frame());
+    m_document.page()->chrome().client().observedContentChange(*m_document.frame());
 }
 
 
@@ -250,10 +243,10 @@ static Visibility elementImplicitVisibility(const Element& element)
     return Visibility::Visible;
 }
 
-ContentChangeObserver::StyleChangeScope::StyleChangeScope(Page* page, const Element& element)
-    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
+    : m_contentChangeObserver(document.contentChangeObserver())
     , m_element(element)
-    , m_needsObserving(m_contentChangeObserver && m_contentChangeObserver->isObservingContentChanges() && m_contentChangeObserver->observedContentChange() != WKContentVisibilityChange)
+    , m_needsObserving(m_contentChangeObserver.isObservingContentChanges() && m_contentChangeObserver.observedContentChange() != WKContentVisibilityChange)
 {
     if (m_needsObserving) {
         m_previousDisplay = element.renderStyle() ? element.renderStyle()->display() : DisplayType::None;
@@ -284,37 +277,33 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None)
         || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        m_contentChangeObserver->contentVisibilityDidChange();
+        m_contentChangeObserver.contentVisibilityDidChange();
 }
 
-ContentChangeObserver::MouseMovedScope::MouseMovedScope(Page* page)
-    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+ContentChangeObserver::MouseMovedScope::MouseMovedScope(Document& document)
+    : m_contentChangeObserver(document.contentChangeObserver())
 {
-    if (m_contentChangeObserver)
-        m_contentChangeObserver->startObservingMouseMoved();
+    m_contentChangeObserver.startObservingMouseMoved();
 }
 
 ContentChangeObserver::MouseMovedScope::~MouseMovedScope()
 {
-    if (m_contentChangeObserver)
-        m_contentChangeObserver->stopObservingMouseMoved();
+    m_contentChangeObserver.stopObservingMouseMoved();
 }
 
-ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Page* page)
-    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+ContentChangeObserver::StyleRecalcScope::StyleRecalcScope(Document& document)
+    : m_contentChangeObserver(document.contentChangeObserver())
 {
-    if (m_contentChangeObserver)
-        m_contentChangeObserver->startObservingStyleRecalc();
+    m_contentChangeObserver.startObservingStyleRecalc();
 }
 
 ContentChangeObserver::StyleRecalcScope::~StyleRecalcScope()
 {
-    if (m_contentChangeObserver)
-        m_contentChangeObserver->stopObservingStyleRecalc();
+    m_contentChangeObserver.stopObservingStyleRecalc();
 }
 
-ContentChangeObserver::DOMTimerScope::DOMTimerScope(Page* page, const DOMTimer& domTimer)
-    : m_contentChangeObserver(page ? &page->contentChangeObserver() : nullptr)
+ContentChangeObserver::DOMTimerScope::DOMTimerScope(Document* document, const DOMTimer& domTimer)
+    : m_contentChangeObserver(document ? &document->contentChangeObserver() : nullptr)
     , m_domTimer(domTimer)
 {
     if (m_contentChangeObserver)

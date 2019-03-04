@@ -1,3 +1,14 @@
+2019-03-03  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Content observation should be limited to the current document.
+        https://bugs.webkit.org/show_bug.cgi?id=195256
+        <rdar://problem/48544402>
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::observedContentChange):
+
 2019-02-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] clearContentChangeObservers should be internal to ContentChangeObserver class

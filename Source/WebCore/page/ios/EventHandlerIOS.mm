@@ -496,7 +496,7 @@ void EventHandler::mouseMoved(WebEvent *event)
     document.updateStyleIfNeeded();
     CurrentEventScope scope(event);
     {
-        ContentChangeObserver::MouseMovedScope observingScope(document.page());
+        ContentChangeObserver::MouseMovedScope observingScope(document);
         event.wasHandled = mouseMoved(currentPlatformMouseEvent());
         // Run style recalc to be able to capture content changes as the result of the mouse move event.
         document.updateStyleIfNeeded();

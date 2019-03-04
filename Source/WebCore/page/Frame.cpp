@@ -107,10 +107,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "ContentChangeObserver.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -842,11 +838,6 @@ void Frame::willDetachPage()
 
     if (page() && page()->scrollingCoordinator() && m_view)
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);
-
-#if PLATFORM(IOS_FAMILY)
-    if (auto* page = this->page())
-        page->contentChangeObserver().willDetachPage();
-#endif
 
     script().clearScriptObjects();
     script().updatePlatformScriptObjects();

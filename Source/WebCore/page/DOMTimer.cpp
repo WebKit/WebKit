@@ -222,8 +222,8 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
         nestedTimers->add(timer->m_timeoutId, *timer);
 #if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context) && downcast<Document>(context).page())
-        downcast<Document>(context).page()->contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
+    if (is<Document>(context))
+        downcast<Document>(context).contentChangeObserver().didInstallDOMTimer(*timer, timeout, singleShot);
 #endif
     return timer->m_timeoutId;
 }
@@ -237,10 +237,10 @@ void DOMTimer::removeById(ScriptExecutionContext& context, int timeoutId)
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context) && downcast<Document>(context).page()) {
+    if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
         if (auto* timer = document.findTimeout(timeoutId))
-            document.page()->contentChangeObserver().didRemoveDOMTimer(*timer);
+            document.contentChangeObserver().didRemoveDOMTimer(*timer);
     }
 #endif
 
@@ -343,7 +343,7 @@ void DOMTimer::fired()
         nestedTimers->startTracking();
 
 #if PLATFORM(IOS_FAMILY)
-    ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? downcast<Document>(context).page() : nullptr, *this);
+    ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? &downcast<Document>(context) : nullptr, *this);
 #endif
     m_action->execute(context);
 
