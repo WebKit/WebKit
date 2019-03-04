@@ -32,7 +32,7 @@
 namespace WebCore {
 String MIMETypeFromUTI(const String&);
 String MIMETypeFromUTITree(const String&);
-String UTIFromMIMEType(const String&);
+WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
 }
 

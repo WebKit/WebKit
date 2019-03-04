@@ -1,3 +1,15 @@
+2019-03-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Improve our file picker
+        https://bugs.webkit.org/show_bug.cgi?id=195284
+        <rdar://problem/45655856>
+
+        Reviewed by Tim Horton and Wenson Hsieh.
+
+        Export UTIUtilities.h so that it can be used from WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-03-04  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Decouple mouseMoved event and the "is observing content change" status.

@@ -1,3 +1,35 @@
+2019-03-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Improve our file picker
+        https://bugs.webkit.org/show_bug.cgi?id=195284
+        <rdar://problem/45655856>
+
+        Reviewed by Tim Horton and Wenson Hsieh.
+
+        Improve our file picker on iOS so that:
+        - Accepted file extensions specified in the HTML (e.g. <input type="file"> accept=".pdf">) are now
+          properly reflected in the file picker. Previously, we only we only supported MIME types in the
+          accept attribute that only Image / Video ones.
+        - If accepted types are specified in the HTML and not of them are Video or Image types, then bypass
+          the UIDocumentMenuViewController and show the file picker directly (as if the user had tapped on
+          "Browse..." on that menu). Other menu items such as "Take Photo or Video" and "Photo Library" do
+          not make sense if the page only accepts PDF files for example.
+
+        Things that we should do but are not fixed in this patch:
+        - Stop using UIDocumentMenuViewController entirely since it was deprecated in favor of using
+          UIDocumentPickerViewController directly.
+        - Add multiple selection support, which is supported both on the HTML side and in the
+          UIDocumentPickerViewController API.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (arrayContainsUTIThatConformsTo):
+        (-[WKFileUploadPanel dealloc]):
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        (UTIsForMIMETypes):
+        (-[WKFileUploadPanel _mediaTypesForPickerSourceType:]):
+        (-[WKFileUploadPanel _cameraButtonLabelAllowingPhoto:allowingVideo:]):
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+
 2019-03-04  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: ( r240978-r240985 ) [ iOS Release ] Layout Test imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm is crashing
