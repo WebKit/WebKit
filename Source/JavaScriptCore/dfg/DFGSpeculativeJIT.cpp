@@ -6897,6 +6897,17 @@ void SpeculativeJIT::compileGetGlobalThis(Node* node)
     cellResult(resultGPR, node);
 }
 
+bool SpeculativeJIT::canBeRope(Edge& edge)
+{
+    if (m_state.forNode(edge).isType(SpecStringIdent))
+        return false;
+    // If this value is LazyValue, it will be converted to JSString, and the result must be non-rope string.
+    String string = edge->tryGetString(m_graph);
+    if (!string.isNull())
+        return false;
+    return true;
+}
+
 void SpeculativeJIT::compileGetArrayLength(Node* node)
 {
     switch (node->arrayMode().type()) {
@@ -6934,15 +6945,21 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         GPRReg resultGPR = result.gpr();
         GPRReg tempGPR = temp.gpr();
 
+        bool needsRopeCase = canBeRope(node->child1());
+
         m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSString::offsetOfValue()), tempGPR);
-        auto isRope = m_jit.branchIfRopeStringImpl(tempGPR);
+        CCallHelpers::Jump isRope;
+        if (needsRopeCase)
+            isRope = m_jit.branchIfRopeStringImpl(tempGPR);
         m_jit.load32(MacroAssembler::Address(tempGPR, StringImpl::lengthMemoryOffset()), resultGPR);
-        auto done = m_jit.jump();
+        if (needsRopeCase) {
+            auto done = m_jit.jump();
 
-        isRope.link(&m_jit);
-        m_jit.load32(CCallHelpers::Address(baseGPR, JSRopeString::offsetOfLength()), resultGPR);
+            isRope.link(&m_jit);
+            m_jit.load32(CCallHelpers::Address(baseGPR, JSRopeString::offsetOfLength()), resultGPR);
 
-        done.link(&m_jit);
+            done.link(&m_jit);
+        }
         int32Result(resultGPR, node);
         break;
     }
@@ -13425,43 +13442,28 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     Allocator allocatorValue = allocatorForNonVirtualConcurrently<JSRopeString>(*m_jit.vm(), sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
     emitAllocateJSCell(resultGPR, JITAllocator::constant(allocatorValue), allocatorGPR, TrustedImmPtr(m_jit.graph().registerStructure(m_jit.vm()->stringStructure.get())), scratchGPR, slowPath);
 
-    m_jit.orPtr(TrustedImm32(JSString::isRopeInPointer), opGPRs[0], allocatorGPR);
-    m_jit.storePtr(allocatorGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber0()));
-
-    m_jit.move(opGPRs[1], scratchGPR);
-    m_jit.store32(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber1Lower()));
-    m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
-    m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber1Upper()));
-
-    if (numOpGPRs == 3) {
-        m_jit.move(opGPRs[2], scratchGPR);
-        m_jit.store32(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Lower()));
-        m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
-        m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Upper()));
-    } else {
-        m_jit.storeZero32(CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Lower()));
-        m_jit.storeZero16(CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2Upper()));
-    }
+    // This puts nullptr for the first fiber. It makes visitChildren safe even if this JSRopeString is discarded due to the speculation failure in the following path.
+    m_jit.storePtr(TrustedImmPtr(JSString::isRopeInPointer), CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber0()));
 
     {
         if (JSString* string = edges[0]->dynamicCastConstant<JSString*>(*m_jit.vm())) {
             m_jit.move(TrustedImm32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0), scratchGPR);
             m_jit.move(TrustedImm32(string->length()), allocatorGPR);
         } else {
-            bool canBeRope = !m_state.forNode(edges[0]).isType(SpecStringIdent);
+            bool needsRopeCase = canBeRope(edges[0]);
             m_jit.loadPtr(CCallHelpers::Address(opGPRs[0], JSString::offsetOfValue()), scratch2GPR);
             CCallHelpers::Jump isRope;
-            if (canBeRope)
+            if (needsRopeCase)
                 isRope = m_jit.branchIfRopeStringImpl(scratch2GPR);
 
             m_jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
             m_jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::lengthMemoryOffset()), allocatorGPR);
 
-            if (canBeRope) {
+            if (needsRopeCase) {
                 auto done = m_jit.jump();
 
                 isRope.link(&m_jit);
-                m_jit.load16(CCallHelpers::Address(opGPRs[0], JSRopeString::offsetOfFlags()), scratchGPR);
+                m_jit.load32(CCallHelpers::Address(opGPRs[0], JSRopeString::offsetOfFlags()), scratchGPR);
                 m_jit.load32(CCallHelpers::Address(opGPRs[0], JSRopeString::offsetOfLength()), allocatorGPR);
                 done.link(&m_jit);
             }
@@ -13484,23 +13486,23 @@ void SpeculativeJIT::compileMakeRope(Node* node)
                     CCallHelpers::Overflow,
                     TrustedImm32(string->length()), allocatorGPR));
         } else {
-            bool canBeRope = !m_state.forNode(edges[i]).isType(SpecStringIdent);
+            bool needsRopeCase = canBeRope(edges[i]);
             m_jit.loadPtr(CCallHelpers::Address(opGPRs[i], JSString::offsetOfValue()), scratch2GPR);
             CCallHelpers::Jump isRope;
-            if (canBeRope)
+            if (needsRopeCase)
                 isRope = m_jit.branchIfRopeStringImpl(scratch2GPR);
 
-            m_jit.and16(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
+            m_jit.and32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
             speculationCheck(
                 Uncountable, JSValueSource(), nullptr,
                 m_jit.branchAdd32(
                     CCallHelpers::Overflow,
                     CCallHelpers::Address(scratch2GPR, StringImpl::lengthMemoryOffset()), allocatorGPR));
-            if (canBeRope) {
+            if (needsRopeCase) {
                 auto done = m_jit.jump();
 
                 isRope.link(&m_jit);
-                m_jit.and16(CCallHelpers::Address(opGPRs[i], JSRopeString::offsetOfFlags()), scratchGPR);
+                m_jit.and32(CCallHelpers::Address(opGPRs[i], JSRopeString::offsetOfFlags()), scratchGPR);
                 m_jit.load32(CCallHelpers::Address(opGPRs[i], JSRopeString::offsetOfLength()), scratch2GPR);
                 speculationCheck(
                     Uncountable, JSValueSource(), nullptr,
@@ -13510,14 +13512,38 @@ void SpeculativeJIT::compileMakeRope(Node* node)
             }
         }
     }
-    m_jit.store16(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFlags()));
+
     if (!ASSERT_DISABLED) {
         CCallHelpers::Jump ok = m_jit.branch32(
             CCallHelpers::GreaterThanOrEqual, allocatorGPR, TrustedImm32(0));
         m_jit.abortWithReason(DFGNegativeStringLength);
         ok.link(&m_jit);
     }
-    m_jit.store32(allocatorGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfLength()));
+
+    static_assert(StringImpl::flagIs8Bit() == JSRopeString::is8BitInPointer, "");
+    m_jit.and32(TrustedImm32(StringImpl::flagIs8Bit()), scratchGPR);
+    m_jit.orPtr(opGPRs[0], scratchGPR);
+    m_jit.orPtr(TrustedImmPtr(JSString::isRopeInPointer), scratchGPR);
+    m_jit.storePtr(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber0()));
+
+    m_jit.move(opGPRs[1], scratchGPR);
+    m_jit.lshiftPtr(TrustedImm32(32), scratchGPR);
+    m_jit.orPtr(allocatorGPR, scratchGPR);
+    m_jit.storePtr(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber1()));
+
+    if (numOpGPRs == 2) {
+        m_jit.move(opGPRs[1], scratchGPR);
+        m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
+        m_jit.storePtr(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2()));
+    } else {
+        m_jit.move(opGPRs[1], scratchGPR);
+        m_jit.rshiftPtr(TrustedImm32(32), scratchGPR);
+        m_jit.move(opGPRs[2], scratch2GPR);
+        m_jit.lshiftPtr(TrustedImm32(16), scratch2GPR);
+        m_jit.orPtr(scratch2GPR, scratchGPR);
+        m_jit.storePtr(scratchGPR, CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber2()));
+    }
+
     auto isNonEmptyString = m_jit.branchTest32(CCallHelpers::NonZero, allocatorGPR);
 
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), jsEmptyString(&m_jit.graph().m_vm)), resultGPR);

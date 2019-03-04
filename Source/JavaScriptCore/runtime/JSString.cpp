@@ -114,7 +114,7 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
     
     uintptr_t pointer = thisObject->m_fiber;
     if (pointer & isRopeInPointer) {
-        if ((pointer & JSRopeString::stringMask) == JSRopeString::substringSentinel()) {
+        if (pointer & JSRopeString::isSubstringInPointer) {
             visitor.appendUnbarriered(static_cast<JSRopeString*>(thisObject)->fiber1());
             return;
         }

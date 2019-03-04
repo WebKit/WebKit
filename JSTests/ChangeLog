@@ -1,3 +1,12 @@
+2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Store bits for JSRopeString in 3 stores
+        https://bugs.webkit.org/show_bug.cgi?id=195234
+
+        Reviewed by Saam Barati.
+
+        * stress/null-rope-and-collectors.js: Added.
+
 2019-03-01  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Unskip test read-dead-bytecode-locals-in-must-have-handle-values2.js on ARM/MIPS

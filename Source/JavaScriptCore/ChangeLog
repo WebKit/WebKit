@@ -1,3 +1,41 @@
+2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Store bits for JSRopeString in 3 stores
+        https://bugs.webkit.org/show_bug.cgi?id=195234
+
+        Reviewed by Saam Barati.
+
+        This patch cleans up the initialization of JSRopeString fields in DFG and FTL.
+        Previously, we store some part of data separately. Instead, this patch calculates
+        the data first by bit operations and store calculated data with fewer stores.
+
+        This patch also cleans up is8Bit and isSubstring flags. We put them in lower bits
+        of the first fiber instead of the upper 16 bits. Since we only have 3 bit flags, (isRope, is8Bit, isSubstring),
+        we can put them into the lower 3 bits, they are always empty due to alignment.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl): A bit clean up of StringLength IC to give a chance of unnecessary mov removal.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::canBeRope):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::isRopeString):
+        (JSC::FTL::DFG::LowerDFGToB3::isNotRopeString):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        * runtime/JSString.h:
+        (JSC::JSString::is8Bit const):
+        (JSC::JSString::isSubstring const):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionCreateNullRopeString):
+        (JSC::JSDollarVM::finishCreation):
+
 2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         ITMLKit Inspector: Data Bindings / Associated Data for nodes

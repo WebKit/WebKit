@@ -6524,6 +6524,7 @@ private:
             numKids = 2;
         }
         
+        LBasicBlock emptyCase = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
@@ -6532,18 +6533,8 @@ private:
         LValue result = allocateCell(
             m_out.constIntPtr(allocator.localAllocator()), vm().stringStructure.get(), slowPath);
         
-        m_out.storePtr(m_out.bitOr(kids[0], m_out.constIntPtr(JSString::isRopeInPointer)), result, m_heaps.JSRopeString_fiber0);
-
-        m_out.store32(m_out.castToInt32(kids[1]), result, m_heaps.JSRopeString_fiber1Lower);
-        m_out.store32As16(m_out.castToInt32(m_out.lShr(kids[1], m_out.constInt32(32))), result, m_heaps.JSRopeString_fiber1Upper);
-
-        if (numKids == 3) {
-            m_out.store32(m_out.castToInt32(kids[2]), result, m_heaps.JSRopeString_fiber2Lower);
-            m_out.store32As16(m_out.castToInt32(m_out.lShr(kids[2], m_out.constInt32(32))), result, m_heaps.JSRopeString_fiber2Upper);
-        } else {
-            m_out.store32(m_out.int32Zero, result, m_heaps.JSRopeString_fiber2Lower);
-            m_out.store32As16(m_out.int32Zero, result, m_heaps.JSRopeString_fiber2Upper);
-        }
+        // This puts nullptr for the first fiber. It makes visitChildren safe even if this JSRopeString is discarded due to the speculation failure in the following path.
+        m_out.storePtr(m_out.constIntPtr(JSString::isRopeInPointer), result, m_heaps.JSRopeString_fiber0);
 
         auto getFlagsAndLength = [&] (Edge& edge, LValue child) {
             if (JSString* string = edge->dynamicCastConstant<JSString*>(vm())) {
@@ -6560,7 +6551,7 @@ private:
             m_out.branch(isRopeString(child, edge), unsure(ropeCase), unsure(notRopeCase));
 
             LBasicBlock lastNext = m_out.appendTo(ropeCase, notRopeCase);
-            ValueFromBlock flagsForRope = m_out.anchor(m_out.load16ZeroExt32(child, m_heaps.JSRopeString_flags));
+            ValueFromBlock flagsForRope = m_out.anchor(m_out.load32NonNegative(child, m_heaps.JSRopeString_flags));
             ValueFromBlock lengthForRope = m_out.anchor(m_out.load32NonNegative(child, m_heaps.JSRopeString_length));
             m_out.jump(continuation);
 
@@ -6591,14 +6582,29 @@ private:
             };
             flagsAndLength = mergeFlagsAndLength(edges[i], kids[i], flagsAndLength);
         }
-        m_out.store32As16(flagsAndLength.flags, result, m_heaps.JSRopeString_flags);
-        m_out.store32(flagsAndLength.length, result, m_heaps.JSRopeString_length);
+
+        m_out.storePtr(
+            m_out.bitOr(
+                m_out.bitOr(kids[0], m_out.constIntPtr(JSString::isRopeInPointer)),
+                m_out.bitAnd(m_out.constIntPtr(JSRopeString::is8BitInPointer), m_out.zeroExtPtr(flagsAndLength.flags))),
+            result, m_heaps.JSRopeString_fiber0);
+        m_out.storePtr(
+            m_out.bitOr(m_out.zeroExtPtr(flagsAndLength.length), m_out.shl(kids[1], m_out.constInt32(32))),
+            result, m_heaps.JSRopeString_fiber1);
+        if (numKids == 2)
+            m_out.storePtr(m_out.lShr(kids[1], m_out.constInt32(32)), result, m_heaps.JSRopeString_fiber2);
+        else
+            m_out.storePtr(m_out.bitOr(m_out.lShr(kids[1], m_out.constInt32(32)), m_out.shl(kids[2], m_out.constInt32(16))), result, m_heaps.JSRopeString_fiber2);
         
         mutatorFence();
-        ValueFromBlock fastResult = m_out.anchor(m_out.select(m_out.isZero32(flagsAndLength.length), weakPointer(jsEmptyString(&m_graph.m_vm)), result));
+        ValueFromBlock fastResult = m_out.anchor(result);
+        m_out.branch(m_out.isZero32(flagsAndLength.length), rarely(emptyCase), usually(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(emptyCase, slowPath);
+        ValueFromBlock emptyResult = m_out.anchor(weakPointer(jsEmptyString(&m_graph.m_vm)));
         m_out.jump(continuation);
         
-        LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+        m_out.appendTo(slowPath, continuation);
         LValue slowResultValue;
         VM& vm = this->vm();
         switch (numKids) {
@@ -6626,7 +6632,7 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, fastResult, slowResult));
+        setJSValue(m_out.phi(Int64, fastResult, emptyResult, slowResult));
     }
     
     void compileStringCharAt()
@@ -15680,6 +15686,11 @@ private:
                 if (value.isCell() && value.asCell()->type() == StringType && !asString(value)->isRope())
                     return m_out.booleanFalse;
             }
+            String value = edge->tryGetString(m_graph);
+            if (!value.isNull()) {
+                // If this value is LazyValue, it will be converted to JSString, and the result must be non-rope string.
+                return m_out.booleanFalse;
+            }
         }
 
         return m_out.testNonZeroPtr(m_out.loadPtr(string, m_heaps.JSString_value), m_out.constIntPtr(JSString::isRopeInPointer));
@@ -15693,6 +15704,11 @@ private:
             if (JSValue value = provenValue(edge)) {
                 if (value.isCell() && value.asCell()->type() == StringType && !asString(value)->isRope())
                     return m_out.booleanTrue;
+            }
+            String value = edge->tryGetString(m_graph);
+            if (!value.isNull()) {
+                // If this value is LazyValue, it will be converted to JSString, and the result must be non-rope string.
+                return m_out.booleanTrue;
             }
         }
 

@@ -577,6 +577,8 @@ public:
     bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecFullNumber); }
     bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
     bool isKnownNotOther(Node* node) { return !(m_state.forNode(node).m_type & SpecOther); }
+
+    bool canBeRope(Edge&);
     
     UniquedStringImpl* identifierUID(unsigned index)
     {

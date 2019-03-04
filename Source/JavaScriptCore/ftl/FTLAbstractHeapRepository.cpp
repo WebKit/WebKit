@@ -86,6 +86,7 @@ AbstractHeapRepository::AbstractHeapRepository()
     JSCell_typeInfoFlags.changeParent(&JSCell_usefulBytes);
     JSCell_cellState.changeParent(&JSCell_usefulBytes);
     JSRopeString_flags.changeParent(&JSRopeString_fiber0);
+    JSRopeString_length.changeParent(&JSRopeString_fiber1);
 
     RELEASE_ASSERT(!JSCell_freeListNext.offset());
 }
