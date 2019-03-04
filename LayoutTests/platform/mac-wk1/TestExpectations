@@ -677,11 +677,3 @@ webkit.org/b/194309 media/modern-media-controls/compact-media-controls/compact-m
 webkit.org/b/195098 pointerevents/mouse/over-enter-out-leave.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-capture.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html [ Failure ]
-
-webkit.org/b/195210 [ Debug ] storage/indexeddb/intversion-open-in-upgradeneeded-private.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/intversion-open-in-upgradeneeded.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/abort-requests-cancelled-private.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/abort-requests-cancelled.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/blocked-open-db-requests-private.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/odd-strings-private.html [ Skip ]
-webkit.org/b/195210 [ Debug ] storage/indexeddb/modern/blocked-open-db-requests.html [ Skip ]
