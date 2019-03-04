@@ -1,3 +1,14 @@
+2019-03-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Caret x-position in empty text area does not match text field
+        https://bugs.webkit.org/show_bug.cgi?id=195125
+        <rdar://problem/47161070>
+
+        Remove the word "use" in the added comment to make it read well.
+
+        * css/html.css:
+        (textarea):
+
 2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         ITMLKit Inspector: Data Bindings / Associated Data for nodes
