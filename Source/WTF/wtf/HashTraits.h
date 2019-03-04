@@ -39,11 +39,14 @@ template<bool isInteger, typename T> struct GenericHashTraitsBase;
 template<typename T> struct GenericHashTraitsBase<false, T> {
     // The emptyValueIsZero flag is used to optimize allocation of empty hash tables with zeroed memory.
     static const bool emptyValueIsZero = false;
-    
+
     // The hasIsEmptyValueFunction flag allows the hash table to automatically generate code to check
     // for the empty value when it can be done with the equality operator, but allows custom functions
     // for cases like String that need them.
     static const bool hasIsEmptyValueFunction = false;
+
+    // Used by WeakPtr to indicate that the value may become deleted without being explicitly removed.
+    static const bool hasIsReleasedWeakValueFunction = false;
 
     // The starting table size. Can be overridden when we know beforehand that
     // a hash table will have at least N entries.
@@ -192,7 +195,7 @@ template<typename P> struct HashTraits<RefPtr<P>> : SimpleClassHashTraits<RefPtr
     }
 };
 
-template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
+template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
     static const bool emptyValueIsZero = true;
     static Ref<P> emptyValue() { return HashTableEmptyValue; }
 
@@ -215,6 +218,8 @@ template<typename P> struct HashTraits<Ref<P>> : SimpleClassHashTraits<Ref<P>> {
     static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? WTF::nullopt : Optional<Ref<P>>(WTFMove(value)); }
 };
 
+template<typename P> struct HashTraits<Ref<P>> : RefHashTraits<P> { };
+
 template<> struct HashTraits<String> : SimpleClassHashTraits<String> {
     static const bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const String&);
@@ -234,6 +239,18 @@ template<typename Traits> struct HashTraitsEmptyValueChecker<Traits, false> {
 template<typename Traits, typename T> inline bool isHashTraitsEmptyValue(const T& value)
 {
     return HashTraitsEmptyValueChecker<Traits, Traits::hasIsEmptyValueFunction>::isEmptyValue(value);
+}
+
+template<typename Traits, bool hasIsReleasedWeakValueFunction> struct HashTraitsReleasedWeakValueChecker;
+template<typename Traits> struct HashTraitsReleasedWeakValueChecker<Traits, true> {
+    template<typename T> static bool isReleasedWeakValue(const T& value) { return Traits::isReleasedWeakValue(value); }
+};
+template<typename Traits> struct HashTraitsReleasedWeakValueChecker<Traits, false> {
+    template<typename T> static bool isReleasedWeakValue(const T&) { return false; }
+};
+template<typename Traits, typename T> inline bool isHashTraitsReleasedWeakValue(const T& value)
+{
+    return HashTraitsReleasedWeakValueChecker<Traits, Traits::hasIsReleasedWeakValueFunction>::isReleasedWeakValue(value);
 }
 
 template<typename Traits, typename T>

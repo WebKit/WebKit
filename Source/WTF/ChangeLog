@@ -1,3 +1,73 @@
+2019-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=195152
+
+        Reviewed by Antti Koivisto.
+
+        Added WeakHashSet which is a HashSet of WeakPtr. When the object pointed by WeakPtr is deleted,
+        WeakHashSet treats the key to be no longer in the set. That is, WeakHashSet::contains returns false
+        and const_iterator skips such a WeakPtr in the set.
+
+        We decided not to make HashSet<WeahPtr<T>> work because it involves weird semantics such as making
+        find(X) delete the table entry as remove(find(X)) would be a no-op otherwise as find(X) would return
+        necessarily need to return HashSet<WeakPtr<T>>::end().
+
+        Furthermore, we cannot determine the true size of this set in O(1) because the objected pointed by
+        some of WeakPtr in the set may have already been deleted. This has implications that we can't have
+        size(), isEmpty(), random(), etc... as O(1) operation.
+
+        WeakHashSet is implemented as HashSet<WeakReference<T>>. HashTable::rehash has been updated to delete
+        WeakReference<T>'s whose m_ptr has become null, and HashTable::expand first deletes any such entry
+        before deciding an actual expansion is needed. This is accomplished via newly added hash trait,
+        hasIsReleasedWeakValueFunction, and HashTraits<Ref<WeakReference<T>>>::isReleasedWeakValue which
+        returns true for when WeakReference<T> pointed by Ref<WeakReference<T>> has null m_ptr, not to be
+        confused with Ref<WeakReference<T>> itself pointing to a null WeakReference<T>.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/HashSet.h:
+        (WTF::HashSet<T, U, V>::checkConsistency const): Added.
+        * wtf/HashTable.h:
+        (WTF::HashTable::isReleasedWeakBucket): Added.
+        (WTF::HashTable::expand): Delete WeakReference<T> with null m_ptr first. This updates m_keyCount
+        and may make mustRehashInPlace() return true.
+        (WTF::HashTable::deleteReleasedWeakBuckets): Added.
+        (WTF::HashTable::rehash): Delete WeakReference<T> with null m_ptr. Also refactored the code a bit
+        to avoid keep repeating oldTable[i].
+        * wtf/HashTraits.h:
+        (WTF::HashTraits<T>::isHashTraitsReleasedWeakValue): Added.
+        (WTF::RefHashTraits<T>): Extracted from HashTraits<Ref<P>> to share code with
+        HashTraits<Ref<WeakReference<T>>>.
+        (WTF::HashTraitsReleasedWeakValueChecker<Traits, hasIsReleasedWeakValueFunction>): Added.
+        (WTF::isHashTraitsReleasedWeakValue<Traits, hasIsReleasedWeakValueFunction>): Added.
+        * wtf/WeakHashSet.h: Added.
+        (WTF::WeakHashSet): Added.
+        (WTF::WeakHashSet::WeakHashSetConstIterator::WeakHashSetConstIterator):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::get const):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator* const):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator-> const):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator++):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::skipEmptyBuckets):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator== const):
+        (WTF::WeakHashSet::WeakHashSetConstIterator::operator!= const):
+        (WTF::WeakHashSet::WeakHashSet):
+        (WTF::WeakHashSet::begin const):
+        (WTF::WeakHashSet::end const):
+        (WTF::WeakHashSet::add):
+        (WTF::WeakHashSet::remove):
+        (WTF::WeakHashSet::contains const):
+        (WTF::WeakHashSet::capacity const):
+        (WTF::WeakHashSet::computeSize const): Deletes any WeakReference<T> with null m_ptr first.
+        (WTF::WeakHashSet::checkConsistency const):
+        (WTF::HashTraits<Ref<WeakReference<T>>>): Added. This hash traits triggers the new code in HashTable's
+        expand and rehash methods to delete WeakReference<T> with null m_ptr.
+        (WTF::HashTraits<Ref<WeakReference<T>>>::isReleasedWeakValue):
+        * wtf/WeakPtr.h:
+        (WTF::WeakReference::~WeakReference): Added so that we can keep track the number of live WeakReference
+        in API tests by template specializations.
+
 2019-03-03  Darin Adler  <darin@apple.com>
 
         Prepare to improve handling of conversion of float to strings

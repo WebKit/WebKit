@@ -424,6 +424,7 @@ namespace WTF {
         void clear();
 
         static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
+        static bool isReleasedWeakBucket(const ValueType& value) { return isHashTraitsReleasedWeakValue<KeyTraits>(Extractor::extract(value)); }
         static bool isDeletedBucket(const ValueType& value) { return KeyTraits::isDeletedValue(Extractor::extract(value)); }
         static bool isEmptyOrDeletedBucket(const ValueType& value) { return isEmptyBucket(value) || isDeletedBucket(value); }
 
@@ -468,6 +469,8 @@ namespace WTF {
         bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > KeyTraits::minimumTableSize; }
         ValueType* expand(ValueType* entry = nullptr);
         void shrink() { rehash(m_tableSize / 2, nullptr); }
+
+        void deleteReleasedWeakBuckets();
 
         ValueType* rehash(unsigned newTableSize, ValueType* entry);
         ValueType* reinsert(ValueType&&);
@@ -1178,6 +1181,9 @@ namespace WTF {
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::expand(ValueType* entry) -> ValueType*
     {
+        if (KeyTraits::hasIsReleasedWeakValueFunction)
+            deleteReleasedWeakBuckets();
+
         unsigned newSize;
         if (m_tableSize == 0)
             newSize = KeyTraits::minimumTableSize;
@@ -1187,6 +1193,19 @@ namespace WTF {
             newSize = m_tableSize * 2;
 
         return rehash(newSize, entry);
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deleteReleasedWeakBuckets()
+    {
+        for (unsigned i = 0; i < m_tableSize; ++i) {
+            auto& entry = m_table[i];
+            if (isReleasedWeakBucket(entry)) {
+                deleteBucket(entry);
+                ++m_deletedCount;
+                --m_keyCount;
+            }
+        }
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -1213,20 +1232,28 @@ namespace WTF {
 
         Value* newEntry = nullptr;
         for (unsigned i = 0; i != oldTableSize; ++i) {
-            if (isDeletedBucket(oldTable[i])) {
-                ASSERT(std::addressof(oldTable[i]) != entry);
+            auto& oldEntry = oldTable[i];
+            if (isDeletedBucket(oldEntry)) {
+                ASSERT(std::addressof(oldEntry) != entry);
                 continue;
             }
 
-            if (isEmptyBucket(oldTable[i])) {
-                ASSERT(std::addressof(oldTable[i]) != entry);
+            if (isEmptyBucket(oldEntry)) {
+                ASSERT(std::addressof(oldEntry) != entry);
                 oldTable[i].~ValueType();
                 continue;
             }
 
-            Value* reinsertedEntry = reinsert(WTFMove(oldTable[i]));
-            oldTable[i].~ValueType();
-            if (std::addressof(oldTable[i]) == entry) {
+            if (isReleasedWeakBucket(oldEntry)) {
+                ASSERT(std::addressof(oldEntry) != entry);
+                oldEntry.~ValueType();
+                --m_keyCount;
+                continue;
+            }
+
+            Value* reinsertedEntry = reinsert(WTFMove(oldEntry));
+            oldEntry.~ValueType();
+            if (std::addressof(oldEntry) == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;
             }
@@ -1381,11 +1408,12 @@ namespace WTF {
                 continue;
             }
 
-            const_iterator it = find(Extractor::extract(*entry));
+            auto& key = Extractor::extract(*entry);
+            const_iterator it = find(key);
             ASSERT(entry == it.m_position);
             ++count;
 
-            ValueCheck<Key>::checkConsistency(it->key);
+            ValueCheck<Key>::checkConsistency(key);
         }
 
         ASSERT(count == m_keyCount);

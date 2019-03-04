@@ -127,6 +127,8 @@ public:
     template<typename OtherCollection>
     bool operator!=(const OtherCollection&) const;
 
+    void checkConsistency() const;
+
 private:
     HashTableType m_impl;
 };
@@ -380,6 +382,12 @@ void HashSet<T, U, V>::add(std::initializer_list<std::reference_wrapper<const Va
 {
     for (auto& value : list)
         add(value);
+}
+
+template<typename T, typename U, typename V>
+inline void HashSet<T, U, V>::checkConsistency() const
+{
+    m_impl.checkTableConsistency();
 }
 
 } // namespace WTF

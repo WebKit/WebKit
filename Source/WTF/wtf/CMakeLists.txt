@@ -258,6 +258,7 @@ set(WTF_PUBLIC_HEADERS
     VectorTraits.h
     WTFSemaphore.h
     WallTime.h
+    WeakHashSet.h
     WeakPtr.h
     WeakRandom.h
     WindowsExtras.h

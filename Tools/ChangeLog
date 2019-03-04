@@ -1,3 +1,20 @@
+2019-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashSet
+        https://bugs.webkit.org/show_bug.cgi?id=195152
+
+        Reviewed by Antti Koivisto.
+
+        Added tests for WeakHashSet.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::Base): Moved.
+        (TestWebKitAPI::Derived::foo): Moved.
+        (WTF::WeakReference<TestWebKitAPI::Base>): Added to track the number of live WeakReference.
+        (WTF::WeakReference<TestWebKitAPI::Base>::WeakReference):
+        (WTF::WeakReference<TestWebKitAPI::Base>::~WeakReference):
+        (TestWebKitAPI::computeSizeOfWeakHashSet): Added.
+
 2019-03-04  Chris Dumez  <cdumez@apple.com>
 
         Do not share WebProcesses between private and regular sessions
