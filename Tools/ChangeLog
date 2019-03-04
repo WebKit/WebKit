@@ -1,3 +1,13 @@
+2019-03-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed follow-up to r242292.
+
+        By Darin's suggestion, adopt an approach that uses EXPECT_STREQ without scattering utf8().data() everywhere.
+
+        * TestWebKitAPI/Tests/WebKit/EnvironmentUtilitiesTest.cpp:
+        (TestWebKitAPI::testStrip): Renamed from strip.
+        (TestWebKitAPI::TEST):
+
 2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, remove accidentally-committed URLHelpers.cpp test
