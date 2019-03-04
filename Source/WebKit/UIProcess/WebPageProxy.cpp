@@ -128,6 +128,7 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
+#include "WebViewDidMoveToWindowObserver.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/BitmapImage.h>
@@ -8781,6 +8782,27 @@ uint64_t WebPageProxy::paymentCoordinatorDestinationID(const WebPaymentCoordinat
 }
 
 #endif
+
+void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
+{
+    auto result = m_webViewDidMoveToWindowObservers.add(&observer, makeWeakPtr(observer));
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void WebPageProxy::removeObserver(WebViewDidMoveToWindowObserver& observer)
+{
+    auto result = m_webViewDidMoveToWindowObservers.remove(&observer);
+    ASSERT_UNUSED(result, result);
+}
+
+void WebPageProxy::webViewDidMoveToWindow()
+{
+    for (const auto& observer : m_webViewDidMoveToWindowObservers) {
+        if (!observer.value)
+            continue;
+        observer.value->webViewDidMoveToWindow();
+    }
+}
 
 } // namespace WebKit
 

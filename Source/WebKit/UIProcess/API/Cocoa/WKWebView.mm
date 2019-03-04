@@ -2488,6 +2488,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)didMoveToWindow
 {
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
+    _page->webViewDidMoveToWindow();
 }
 
 - (void)setOpaque:(BOOL)opaque

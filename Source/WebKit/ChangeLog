@@ -1,3 +1,28 @@
+2019-03-03  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a WebViewDidMoveToWindowObserver for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=195223
+        <rdar://problem/48520161>
+
+        Reviewed by Darin Adler.
+
+        The load optimizer would only allow itself to optimize loads whenever the web view
+        who owns the page is (visible && focused), otherwises it will wait until the web view
+        becomes (visible && focused). Therefore, we need a way to notify the load optimizer
+        changes of statuses.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didMoveToWindow]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::addWebViewDidMoveToWindowObserver):
+        (WebKit::WebPageProxy::removeWebViewDidMoveToWindowObserver):
+        (WebKit::WebPageProxy::webViewDidMoveToWindow):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebViewDidMoveToWindowObserver.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-03  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Untangle WebPageProxy and WebPaymentCoordinatorProxy

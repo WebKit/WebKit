@@ -228,6 +228,7 @@ typedef HWND PlatformWidget;
 namespace WebKit {
 class DrawingAreaProxy;
 class EditableImageController;
+class GamepadData;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
@@ -263,7 +264,7 @@ class WebProcessProxy;
 class WebUserContentControllerProxy;
 class WebWheelEvent;
 class WebsiteDataStore;
-class GamepadData;
+class WebViewDidMoveToWindowObserver;
 
 struct AttributedString;
 struct ColorSpaceData;
@@ -1470,6 +1471,10 @@ public:
     void dumpAdClickAttribution(CompletionHandler<void(const String&)>&&);
     void clearAdClickAttribution(CompletionHandler<void()>&&);
 
+    void addObserver(WebViewDidMoveToWindowObserver&);
+    void removeObserver(WebViewDidMoveToWindowObserver&);
+    void webViewDidMoveToWindow();
+
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -2402,6 +2407,8 @@ private:
 #if HAVE(PENCILKIT)
     std::unique_ptr<EditableImageController> m_editableImageController;
 #endif
+
+    HashMap<WebViewDidMoveToWindowObserver*, WeakPtr<WebViewDidMoveToWindowObserver>> m_webViewDidMoveToWindowObservers;
 };
 
 } // namespace WebKit
