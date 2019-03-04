@@ -90,8 +90,7 @@ bool SettingsBase::defaultTextAutosizingEnabled()
 
 const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
 {
-    static NeverDestroyed<String> defaultMediaContentTypes { "video/mp4;codecs=hvc1:video/mp4;codecs=hev1" };
-    return defaultMediaContentTypes;
+    return emptyString();
 }
 
 } // namespace WebCore
