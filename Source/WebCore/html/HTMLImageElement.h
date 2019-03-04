@@ -185,6 +185,8 @@ private:
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
 
     RefPtr<EditableImageReference> m_editableImage;
+    WeakPtr<HTMLPictureElement> m_pictureElement;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     String m_pendingClonedAttachmentID;
 #endif

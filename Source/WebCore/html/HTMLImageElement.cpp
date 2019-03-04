@@ -67,9 +67,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLImageElement);
 
 using namespace HTMLNames;
 
-typedef HashMap<const HTMLImageElement*, WeakPtr<HTMLPictureElement>> PictureOwnerMap;
-static PictureOwnerMap* gPictureOwnerMap = nullptr;
-
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
     , m_imageLoader(*this)
@@ -454,25 +451,12 @@ void HTMLImageElement::updateEditableImage()
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const
 {
-    if (!gPictureOwnerMap || !gPictureOwnerMap->contains(this))
-        return nullptr;
-    auto result = gPictureOwnerMap->get(this);
-    if (!result)
-        gPictureOwnerMap->remove(this);
-    return result.get();
+    return m_pictureElement.get();
 }
     
 void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 {
-    if (!pictureElement) {
-        if (gPictureOwnerMap)
-            gPictureOwnerMap->remove(this);
-        return;
-    }
-    
-    if (!gPictureOwnerMap)
-        gPictureOwnerMap = new PictureOwnerMap();
-    gPictureOwnerMap->add(this, makeWeakPtr(*pictureElement));
+    m_pictureElement = makeWeakPtr(pictureElement);
 }
     
 unsigned HTMLImageElement::width(bool ignorePendingStylesheets)
