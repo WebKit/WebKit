@@ -106,11 +106,13 @@ void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
     m_layerFlushSchedulingEnabled = layerFlushingEnabled;
 
     if (m_layerFlushSchedulingEnabled) {
+        m_compositor->resume();
         scheduleLayerFlush();
         return;
     }
 
     cancelPendingLayerFlush();
+    m_compositor->suspend();
 }
 
 void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
@@ -248,11 +250,13 @@ void LayerTreeHost::sizeDidChange(const IntSize& size)
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;
+    m_compositor->suspend();
 }
 
 void LayerTreeHost::resumeRendering()
 {
     m_isSuspended = false;
+    m_compositor->resume();
     scheduleLayerFlush();
 }
 

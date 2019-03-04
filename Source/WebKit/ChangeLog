@@ -1,3 +1,25 @@
+2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CoordinatedGraphics] The compositing loop is still running even after exiting AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=195270
+
+        Reviewed by Don Olmstead.
+
+        Suspend the threaded compositor when the painting is paused or layer flush disabled, and resume it again when
+        painting is resumed and layer flush enabled.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::suspend): Increment the suspend counter and mark the scene as inactive if it was suspended.
+        (WebKit::ThreadedCompositor::resume): Decrement the suspend counter and mark the scene as active if it's now resumed.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::forceRepaint): Return early if layer tree state is frozen.
+        (WebKit::DrawingAreaCoordinatedGraphics::forceRepaintAsync): Ditto.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::setLayerFlushSchedulingEnabled): Call ThreadedCompositor::suspend()/resume().
+        (WebKit::LayerTreeHost::pauseRendering): Call ThreadedCompositor::suspend.
+        (WebKit::LayerTreeHost::resumeRendering): Call ThreadedCompositor::resume().
+
 2019-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Share more code between overflow and frame scrolling nodes, fixing overflow scrollbar display

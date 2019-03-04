@@ -175,6 +175,9 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
         return;
     }
 
+    if (m_layerTreeStateIsFrozen)
+        return;
+
     setNeedsDisplay();
     m_webPage.layoutIfNeeded();
     if (!m_layerTreeHost)
@@ -195,6 +198,9 @@ void DrawingAreaCoordinatedGraphics::forceRepaint()
 
 bool DrawingAreaCoordinatedGraphics::forceRepaintAsync(CallbackID callbackID)
 {
+    if (m_layerTreeStateIsFrozen)
+        return false;
+
     return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
 }
 
