@@ -62,7 +62,6 @@ TEST(WKProcessPool, InitialWarmedProcessUsed)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().processPool = pool.get();
-    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 

@@ -562,13 +562,6 @@ DrawingAreaProxy* WebPageProxy::provisionalDrawingArea() const
     return drawingArea();
 }
 
-void WebPageProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
-{
-    m_process->processPool().pageEndUsingWebsiteDataStore(*this);
-    m_websiteDataStore = websiteDataStore;
-    m_process->processPool().pageBeginUsingWebsiteDataStore(*this);
-}
-
 const API::PageConfiguration& WebPageProxy::configuration() const
 {
     return m_configuration.get();
@@ -593,7 +586,7 @@ bool WebPageProxy::isValid() const
 
 void WebPageProxy::notifyProcessPoolToPrewarm()
 {
-    m_process->processPool().didReachGoodTimeToPrewarm();
+    m_process->processPool().didReachGoodTimeToPrewarm(m_websiteDataStore);
 }
 
 void WebPageProxy::setPreferences(WebPreferences& preferences)
@@ -746,14 +739,14 @@ void WebPageProxy::reattachToWebProcess()
 
     RELEASE_LOG_IF_ALLOWED(Loading, "reattachToWebProcess: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
 
-    m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::Yes);
+    m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     auto& processPool = m_process->processPool();
     m_process = processPool.createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get());
     m_isValid = true;
 
-    m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::Yes);
+    m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     finishAttachingToWebProcess(IsProcessSwap::No);
@@ -814,13 +807,15 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     RELEASE_LOG_IF_ALLOWED(Loading, "swapToWebProcess: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
 
     m_process = WTFMove(process);
+    m_websiteDataStore = m_process->websiteDataStore();
+
     ASSERT(!m_drawingArea);
     setDrawingArea(WTFMove(drawingArea));
     ASSERT(!m_mainFrame);
     m_mainFrame = WTFMove(mainFrame);
     m_isValid = true;
 
-    m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::No);
+    m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     finishAttachingToWebProcess(IsProcessSwap::Yes);
@@ -1032,7 +1027,7 @@ void WebPageProxy::close()
     m_process->processPool().removeAllSuspendedPagesForPage(*this);
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
-    m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::Yes);
+    m_process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
@@ -2745,11 +2740,14 @@ private:
 
 void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, API::Navigation* navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, WebFrameProxy& frame, API::WebsitePolicies* policies, Ref<PolicyDecisionSender>&& sender)
 {
+    Ref<WebsiteDataStore> websiteDataStore = m_websiteDataStore.copyRef();
     Optional<WebsitePoliciesData> data;
     if (policies) {
         data = policies->data();
-        if (policies->websiteDataStore())
-            changeWebsiteDataStore(policies->websiteDataStore()->websiteDataStore());
+        if (policies->websiteDataStore() && &policies->websiteDataStore()->websiteDataStore() != websiteDataStore.ptr()) {
+            websiteDataStore = policies->websiteDataStore()->websiteDataStore();
+            processSwapRequestedByClient = ProcessSwapRequestedByClient::Yes;
+        }
     }
 
     if (navigation && !navigation->userContentExtensionsEnabled()) {
@@ -2776,7 +2774,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         }
     }
 
-    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation), sourceProcess = sourceProcess.copyRef(),
+    process().processPool().processForNavigation(*this, *navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, WTFMove(websiteDataStore), [this, protectedThis = makeRef(*this), policyAction, navigation = makeRef(*navigation), sourceProcess = sourceProcess.copyRef(),
         data = WTFMove(data), sender = WTFMove(sender), processSwapRequestedByClient] (Ref<WebProcessProxy>&& processForNavigation, SuspendedPageProxy* destinationSuspendedPage, const String& reason) mutable {
         // If the navigation has been destroyed, then no need to proceed.
         if (isClosed() || !navigationState().hasNavigation(navigation->navigationID())) {
@@ -2853,7 +2851,7 @@ void WebPageProxy::commitProvisionalPage(uint64_t frameID, uint64_t navigationID
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     auto* navigation = navigationState().navigation(m_provisionalPage->navigationID());
     bool didSuspendPreviousPage = navigation ? suspendCurrentPageIfPossible(*navigation, mainFrameIDInPreviousProcess, m_provisionalPage->processSwapRequestedByClient()) : false;
-    m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::No);
+    m_process->removeWebPage(*this, m_websiteDataStore.ptr() == &m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
 
     // There is no way we'll be able to return to the page in the previous page so close it.
     if (!didSuspendPreviousPage)
@@ -6904,10 +6902,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.paginationLineGridEnabled = m_paginationLineGridEnabled;
     parameters.userAgent = userAgent();
     parameters.itemStates = m_backForwardList->itemStates();
-    parameters.sessionID = sessionID();
+    parameters.sessionID = process.websiteDataStore().sessionID();
     parameters.userContentControllerID = m_userContentController->identifier();
     parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
-    parameters.websiteDataStoreID = m_websiteDataStore->identifier();
+    parameters.websiteDataStoreID = process.websiteDataStore().identifier();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient->canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_canRunModal;
     parameters.deviceScaleFactor = deviceScaleFactor();
@@ -6989,7 +6987,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    parameters.hasRegisteredServiceWorkers = process.processPool().mayHaveRegisteredServiceWorkers(m_websiteDataStore);
+    parameters.hasRegisteredServiceWorkers = process.processPool().mayHaveRegisteredServiceWorkers(process.websiteDataStore());
 #endif
 
     parameters.needsFontAttributes = m_needsFontAttributes;

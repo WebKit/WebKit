@@ -187,8 +187,8 @@ public:
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
-    void pageBeginUsingWebsiteDataStore(WebPageProxy&);
-    void pageEndUsingWebsiteDataStore(WebPageProxy&);
+    void pageBeginUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore&);
+    void pageEndUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore&);
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
@@ -306,7 +306,7 @@ public:
     WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore&); // Will return an existing one if limit is met.
 
     enum class MayCreateDefaultDataStore { No, Yes };
-    void prewarmProcess(MayCreateDefaultDataStore);
+    void prewarmProcess(WebsiteDataStore*, MayCreateDefaultDataStore);
 
     bool shouldTerminate(WebProcessProxy*);
 
@@ -455,7 +455,7 @@ public:
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
 #endif
 
-    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    void processForNavigation(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
     // SuspendedPageProxy management.
     void addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&&);
@@ -465,11 +465,11 @@ public:
     void removeSuspendedPage(SuspendedPageProxy&);
     bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy&) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
-    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&);
+    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&, WebsiteDataStore&);
 
     void clearSuspendedPages(AllowProcessCaching);
 
-    void didReachGoodTimeToPrewarm();
+    void didReachGoodTimeToPrewarm(WebsiteDataStore&);
 
     void didCollectPrewarmInformation(const String& registrableDomain, const WebCore::PrewarmInformation&);
 
@@ -499,7 +499,7 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
 
-    void processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
+    void processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&&);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
@@ -730,7 +730,7 @@ private:
     };
     Paths m_resolvedPaths;
 
-    HashMap<PAL::SessionID, HashSet<WebPageProxy*>> m_sessionToPagesMap;
+    HashMap<PAL::SessionID, HashSet<uint64_t>> m_sessionToPageIDsMap;
     RunLoop::Timer<WebProcessPool> m_serviceWorkerProcessesTerminationTimer;
 
 #if PLATFORM(IOS_FAMILY)
@@ -809,7 +809,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
     }
 
     if (!messageSent) {
-        prewarmProcess(MayCreateDefaultDataStore::No);
+        prewarmProcess(nullptr, MayCreateDefaultDataStore::No);
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
             process->send(std::forward<T>(message), 0);

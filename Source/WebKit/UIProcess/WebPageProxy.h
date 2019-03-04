@@ -377,7 +377,6 @@ public:
     WebNavigationState& navigationState() { return *m_navigationState.get(); }
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
-    void changeWebsiteDataStore(WebsiteDataStore&);
 
     void addPreviouslyVisitedPath(const String&);
 

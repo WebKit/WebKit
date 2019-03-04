@@ -1486,6 +1486,11 @@ TEST(WebKit, WebsitePoliciesDataStore)
     [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    auto pid1 = [cookieWebView _webProcessIdentifier];
+
     [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
     TestWebKitAPI::Util::run(&done);
+
+    EXPECT_NE(pid1, [cookieWebView _webProcessIdentifier]);
 }

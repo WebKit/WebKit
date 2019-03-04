@@ -126,10 +126,10 @@ public:
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     enum class BeginsUsingDataStore : bool { No, Yes };
-    void addExistingWebPage(WebPageProxy&, uint64_t pageID, BeginsUsingDataStore);
+    void addExistingWebPage(WebPageProxy&, BeginsUsingDataStore);
 
     enum class EndsUsingDataStore : bool { No, Yes };
-    void removeWebPage(WebPageProxy&, uint64_t pageID, EndsUsingDataStore);
+    void removeWebPage(WebPageProxy&, EndsUsingDataStore);
 
     void addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(!m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.add(&provisionalPage); }
     void removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.remove(&provisionalPage); }

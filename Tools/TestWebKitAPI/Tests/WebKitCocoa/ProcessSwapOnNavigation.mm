@@ -2625,6 +2625,80 @@ TEST(ProcessSwap, GoToSecondItemInBackHistory)
     EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
 }
 
+TEST(ProcessSwap, PrivateAndRegularSessionsShouldGetDifferentProcesses)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto privateWebViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [privateWebViewConfiguration setProcessPool:processPool.get()];
+    [privateWebViewConfiguration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [privateWebViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    auto regularWebViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [regularWebViewConfiguration setProcessPool:processPool.get()];
+    [regularWebViewConfiguration setWebsiteDataStore:[WKWebsiteDataStore defaultDataStore]];
+    [regularWebViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    auto regularWebView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:regularWebViewConfiguration.get()]);
+    [regularWebView1 setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [regularWebView1 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [regularWebView1 _close];
+    regularWebView1 = nil;
+
+    auto privateWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:privateWebViewConfiguration.get()]);
+    [privateWebView setNavigationDelegate:delegate.get()];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [privateWebView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto privateSessionWebkitPID = [privateWebView _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [privateWebView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto privateSessionApplePID = [privateWebView _webProcessIdentifier];
+    EXPECT_NE(privateSessionWebkitPID, privateSessionApplePID);
+
+    [privateWebView _close];
+    privateWebView = nil;
+
+    auto regularWebView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:regularWebViewConfiguration.get()]);
+    [regularWebView2 setNavigationDelegate:delegate.get()];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+    [regularWebView2 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto regularSessionGooglePID = [regularWebView2 _webProcessIdentifier];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [regularWebView2 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto regularSessionWebkitPID = [regularWebView2 _webProcessIdentifier];
+    EXPECT_NE(regularSessionGooglePID, regularSessionWebkitPID);
+    EXPECT_NE(privateSessionWebkitPID, regularSessionWebkitPID);
+}
+
 static const char* keepNavigatingFrameBytes = R"PSONRESOURCE(
 <body>
 <iframe id="testFrame1" src="about:blank"></iframe>

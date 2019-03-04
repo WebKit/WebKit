@@ -1,5 +1,65 @@
 2019-03-04  Chris Dumez  <cdumez@apple.com>
 
+        Do not share WebProcesses between private and regular sessions
+        https://bugs.webkit.org/show_bug.cgi?id=195189
+        <rdar://problem/48421064>
+
+        Reviewed by Alex Christensen.
+
+        Do not share WebProcesses between private and regular sessions. There are some privacy concerns.
+        Also, some of the WebsiteDataStore informations are passed via WebProcessCreationParameters (e.g.
+        ApplicationCache path) and cannot be updated later.
+
+        There were 2 cases where this could happen and that are fixed in the patch:
+        - A process may be prewarmed with a given website data store and then later on used for a page
+          associated with a different data store. We now prevent this. While this is not necessary for
+          privacy reasons, it is still useful because our code currently does not support well uses
+          different sessions inside a single WebProcess, as mentioned above.
+        - The client can force a WebsiteDataStore swap when responding to the decidePolicyForNavigationAction,
+          via the WebsitePolicies. To address the issue, we now force a process swap whenever the client
+          makes such a change.
+
+        As a result, WebProcessProxy::websiteDataStore() now makes sense and is always correct. It can
+        also only contains pages whose WebPageProxy::websiteDataStore() returns the same store.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextWarmInitialProcess):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _warmInitialProcess]):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::notifyProcessPoolToPrewarm):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::commitProvisionalPage):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::websiteDataStore):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::findReusableSuspendedPageProcess):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+
+2019-03-04  Chris Dumez  <cdumez@apple.com>
+
         [iOS] Improve our file picker
         https://bugs.webkit.org/show_bug.cgi?id=195284
         <rdar://problem/45655856>

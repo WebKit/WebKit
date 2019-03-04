@@ -349,22 +349,23 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     uint64_t pageID = generatePageID();
     Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
 
-    addExistingWebPage(webPage.get(), pageID, BeginsUsingDataStore::Yes);
+    addExistingWebPage(webPage.get(), BeginsUsingDataStore::Yes);
 
     return webPage;
 }
 
-void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID, BeginsUsingDataStore beginsUsingDataStore)
+void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
 {
-    ASSERT(!m_pageMap.contains(pageID));
-    ASSERT(!globalPageMap().contains(pageID));
+    ASSERT(!m_pageMap.contains(webPage.pageID()));
+    ASSERT(!globalPageMap().contains(webPage.pageID()));
     ASSERT(!m_isInProcessCache);
+    ASSERT(m_websiteDataStore.ptr() == &webPage.websiteDataStore());
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
-        m_processPool->pageBeginUsingWebsiteDataStore(webPage);
+        m_processPool->pageBeginUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
 
-    m_pageMap.set(pageID, &webPage);
-    globalPageMap().set(pageID, &webPage);
+    m_pageMap.set(webPage.pageID(), &webPage);
+    globalPageMap().set(webPage.pageID(), &webPage);
 
     updateBackgroundResponsivenessTimer();
 }
@@ -380,15 +381,15 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 }
 
-void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID, EndsUsingDataStore endsUsingDataStore)
+void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)
 {
-    auto* removedPage = m_pageMap.take(pageID);
+    auto* removedPage = m_pageMap.take(webPage.pageID());
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
-    removedPage = globalPageMap().take(pageID);
+    removedPage = globalPageMap().take(webPage.pageID());
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
 
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
-        m_processPool->pageEndUsingWebsiteDataStore(webPage);
+        m_processPool->pageEndUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
 
     updateBackgroundResponsivenessTimer();
 
