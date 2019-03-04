@@ -28,6 +28,10 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
+#import "RemoteScrollingCoordinatorProxy.h"
+#import "RemoteScrollingTree.h"
+#import "UIKitSPI.h"
+#import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIPanGestureRecognizer.h>
 #import <UIKit/UIScrollView.h>

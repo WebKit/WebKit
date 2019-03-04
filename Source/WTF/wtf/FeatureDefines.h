@@ -179,6 +179,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define ENABLE_MEDIA_SOURCE 0
 #endif
 
+#if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
+#define HAVE_PASSKIT_GRANULAR_ERRORS 1
+#endif
+
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple WATCHOS port --------- */
@@ -263,6 +267,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(ENABLE_MEDIA_SOURCE)
 #define ENABLE_MEDIA_SOURCE 1
+#endif
+
+#if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
+#define HAVE_PASSKIT_GRANULAR_ERRORS __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 #endif
 
 #endif /* PLATFORM(MAC) */

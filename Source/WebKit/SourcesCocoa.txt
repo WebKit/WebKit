@@ -113,6 +113,11 @@ Shared/API/Cocoa/WKMain.mm
 Shared/API/Cocoa/WKRemoteObject.mm
 Shared/API/Cocoa/WKRemoteObjectCoder.mm
 
+Shared/ApplePay/WebPaymentCoordinatorProxy.cpp
+Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm
+Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm
+Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
+
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
 Shared/FocusedElementInformation.cpp
@@ -214,8 +219,6 @@ UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WKImagePreviewViewController.mm
 UIProcess/WKInspectorHighlightView.mm
 
-UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp
-
 UIProcess/API/APIWebsiteDataRecord.cpp
 
 UIProcess/API/C/WKContextMenuListener.cpp
@@ -301,12 +304,6 @@ UIProcess/API/Cocoa/WKWebViewConfiguration.mm
 UIProcess/API/Cocoa/WKWindowFeatures.mm
 
 UIProcess/API/mac/WKView.mm
-
-UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm
-
-UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm
-
-UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
 
 UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm
 UIProcess/Authentication/cocoa/SecKeyProxyStore.mm

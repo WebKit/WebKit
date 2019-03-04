@@ -37,7 +37,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
@@ -66,7 +66,7 @@ SOFT_LINK_CONSTANT(PAL::PassKit, PKPaymentErrorDomain, NSString *);
 {
     _webPaymentCoordinatorProxy = nullptr;
     if (_paymentAuthorizedCompletion) {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
         _paymentAuthorizedCompletion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
 #else
         _paymentAuthorizedCompletion(PKPaymentAuthorizationStatusFailure);
@@ -114,11 +114,10 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     return result;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300) || PLATFORM(IOS_FAMILY)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
         return;
@@ -128,12 +127,10 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     _paymentAuthorizedCompletion = completion;
 
     _webPaymentCoordinatorProxy->didAuthorizePayment(WebCore::Payment(payment));
-#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod handler:(void (^)(PKPaymentRequestPaymentMethodUpdate *update))completion
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
@@ -142,11 +139,9 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     ASSERT(!_didSelectPaymentMethodCompletion);
     _didSelectPaymentMethodCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectPaymentMethod(WebCore::PaymentMethod(paymentMethod));
-#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
@@ -155,12 +150,10 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     ASSERT(!_didSelectShippingMethodCompletion);
     _didSelectShippingMethodCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectShippingMethod(toShippingMethod(shippingMethod));
-#endif
 }
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact handler:(void (^)(PKPaymentRequestShippingContactUpdate *update))completion
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
         completion(adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
         return;
@@ -169,12 +162,11 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
     ASSERT(!_didSelectShippingContactCompletion);
     _didSelectShippingContactCompletion = completion;
     _webPaymentCoordinatorProxy->didSelectShippingContact(WebCore::PaymentContact(contact));
-#endif
 }
 
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if !HAVE(PASSKIT_GRANULAR_ERRORS)
 
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus))completion
 {
@@ -261,9 +253,9 @@ bool WebPaymentCoordinatorProxy::platformCanMakePayments()
     return [PAL::getPKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
-void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
@@ -284,7 +276,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 #endif
 }
 
-void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
     auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
@@ -294,7 +286,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
     }).get()];
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
 static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     Vector<NSString *> result;
@@ -416,7 +408,7 @@ static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySes
     return result;
 }
     
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
     if (strings.isEmpty())
@@ -428,9 +420,7 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 
     return WTFMove(mutableSet);
 }
-#endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
 static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest::Requester requester)
 {
     switch (requester) {
@@ -457,7 +447,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     } else if (!linkIconURLs.isEmpty())
         [result setThumbnailURL:linkIconURLs[0]];
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setAPIType:toAPIType(paymentRequest.requester())];
 #endif
 
@@ -465,7 +455,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     [result setCurrencyCode:paymentRequest.currencyCode()];
     [result setBillingContact:paymentRequest.billingContact().pkContact()];
     [result setShippingContact:paymentRequest.shippingContact().pkContact()];
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setRequiredBillingContactFields:toPKContactFields(paymentRequest.requiredBillingContactFields()).get()];
     [result setRequiredShippingContactFields:toPKContactFields(paymentRequest.requiredShippingContactFields()).get()];
 #else
@@ -501,7 +491,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setApplicationData:applicationData.get()];
     }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     [result setSupportedCountries:toNSSet(paymentRequest.supportedCountries()).get()];
 #endif
 
@@ -523,7 +513,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     return result;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
 static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::PaymentAuthorizationStatus status)
 {
     switch (status) {
@@ -692,7 +682,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const Optional<W
 
     m_paymentAuthorizationViewControllerDelegate->_didReachFinalState = WebCore::isFinalStateResult(result);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto status = result ? result->status : WebCore::PaymentAuthorizationStatus::Success;
     auto pkPaymentAuthorizationResult = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:result ? toNSErrors(result->errors).get() : @[ ]]);
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(pkPaymentAuthorizationResult.get());
@@ -719,7 +709,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const O
     if (update)
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto pkShippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(pkShippingMethodUpdate.get());
 #else
@@ -728,7 +718,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const O
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion = nullptr;
 }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if !HAVE(PASSKIT_GRANULAR_ERRORS)
 static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const Optional<WebCore::ShippingContactUpdate>& update)
 {
     if (!update || update->errors.isEmpty())
@@ -771,7 +761,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const 
         m_paymentAuthorizationViewControllerDelegate->_shippingMethods = WTFMove(shippingMethods);
     }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto pkShippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(pkShippingContactUpdate.get());
 #else
@@ -788,7 +778,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Op
     if (update)
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
     auto pkPaymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(pkPaymentMethodUpdate.get());
 #else

@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "WebPaymentCoordinatorProxy.h"
 #import <WebCore/PaymentHeaders.h>
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
@@ -37,19 +38,19 @@
     RetainPtr<NSArray> _paymentSummaryItems;
     RetainPtr<NSArray> _shippingMethods;
 
-    BlockPtr<void (PKPaymentMerchantSession *, NSError *)> _sessionBlock;
+    BlockPtr<void(PKPaymentMerchantSession *, NSError *)> _sessionBlock;
 
     BOOL _didReachFinalState;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    BlockPtr<void (PKPaymentAuthorizationResult *)> _paymentAuthorizedCompletion;
-    BlockPtr<void (PKPaymentRequestPaymentMethodUpdate *)> _didSelectPaymentMethodCompletion;
-    BlockPtr<void (PKPaymentRequestShippingMethodUpdate *)> _didSelectShippingMethodCompletion;
-    BlockPtr<void (PKPaymentRequestShippingContactUpdate *)> _didSelectShippingContactCompletion;
+#if HAVE(PASSKIT_GRANULAR_ERRORS)
+    BlockPtr<void(PKPaymentAuthorizationResult *)> _paymentAuthorizedCompletion;
+    BlockPtr<void(PKPaymentRequestPaymentMethodUpdate *)> _didSelectPaymentMethodCompletion;
+    BlockPtr<void(PKPaymentRequestShippingMethodUpdate *)> _didSelectShippingMethodCompletion;
+    BlockPtr<void(PKPaymentRequestShippingContactUpdate *)> _didSelectShippingContactCompletion;
 #else
-    BlockPtr<void (PKPaymentAuthorizationStatus)> _paymentAuthorizedCompletion;
-    BlockPtr<void (NSArray *)> _didSelectPaymentMethodCompletion;
-    BlockPtr<void (PKPaymentAuthorizationStatus, NSArray *)> _didSelectShippingMethodCompletion;
-    BlockPtr<void (PKPaymentAuthorizationStatus, NSArray *, NSArray *)> _didSelectShippingContactCompletion;
+    BlockPtr<void(PKPaymentAuthorizationStatus)> _paymentAuthorizedCompletion;
+    BlockPtr<void(NSArray *)> _didSelectPaymentMethodCompletion;
+    BlockPtr<void(PKPaymentAuthorizationStatus, NSArray *)> _didSelectShippingMethodCompletion;
+    BlockPtr<void(PKPaymentAuthorizationStatus, NSArray *, NSArray *)> _didSelectShippingContactCompletion;
 #endif
 }
 

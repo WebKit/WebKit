@@ -29,7 +29,9 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
 #import "ScrollingTreeScrollingNodeDelegateIOS.h"
+#import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateScrollingNode.h>
+#import <WebCore/ScrollingTree.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ArgumentCodersCF.h"
+#import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
 #import "Encoder.h"
 #import "WebCoreArgumentCoders.h"

@@ -44,8 +44,8 @@ private:
     void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
     void commitStateAfterChildren(const WebCore::ScrollingStateNode&) override;
 
-    FloatPoint minimumScrollPosition() const override;
-    FloatPoint maximumScrollPosition() const override;
+    WebCore::FloatPoint minimumScrollPosition() const override;
+    WebCore::FloatPoint maximumScrollPosition() const override;
 
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;

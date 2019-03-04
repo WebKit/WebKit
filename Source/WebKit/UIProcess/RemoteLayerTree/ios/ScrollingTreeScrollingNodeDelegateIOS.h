@@ -66,7 +66,7 @@ public:
     void repositionScrollingLayers();
 
 #if ENABLE(POINTER_EVENTS)
-    Optional<TouchActionData> touchActionData() const;
+    Optional<WebCore::TouchActionData> touchActionData() const;
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*);
 #endif
 
