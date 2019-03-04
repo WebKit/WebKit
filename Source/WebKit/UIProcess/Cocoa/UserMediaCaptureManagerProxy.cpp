@@ -39,6 +39,8 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
+#define MESSAGE_CHECK_CONTEXTID(id) MESSAGE_CHECK_BASE(m_proxies.isValidKey(id), m_process.connection())
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -139,6 +141,8 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
 
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings& settings)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
+
     CaptureSourceOrError sourceOrError;
     switch (device.type()) {
     case WebCore::CaptureDevice::DeviceType::Microphone:
@@ -169,6 +173,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
 
 void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         iter->value->source().start();
@@ -176,6 +181,7 @@ void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
 
 void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         iter->value->source().stop();
@@ -183,11 +189,13 @@ void UserMediaCaptureManagerProxy::stopProducingData(uint64_t id)
 
 void UserMediaCaptureManagerProxy::end(uint64_t id)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     m_proxies.remove(id);
 }
 
 void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMediaSourceCapabilities& capabilities)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         capabilities = iter->value->source().capabilities();
@@ -195,6 +203,7 @@ void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMe
 
 void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         iter->value->source().setMuted(muted);
@@ -202,6 +211,7 @@ void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)
 
 void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)
 {
+    MESSAGE_CHECK_CONTEXTID(id);
     auto iter = m_proxies.find(id);
     if (iter == m_proxies.end())
         return;
@@ -220,5 +230,7 @@ void UserMediaCaptureManagerProxy::clear()
 }
 
 }
+
+#undef MESSAGE_CHECK_CONTEXTID
 
 #endif

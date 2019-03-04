@@ -1,3 +1,61 @@
+2019-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Check contextIDs when handling WebContent messages
+        https://bugs.webkit.org/show_bug.cgi?id=195289
+        <rdar://problem/48475870>
+
+        Reviewed by Alex Christensen.
+
+        The WebContent process is untrusted because it handles arbitrary markup and javascript from untrusted sources.
+        We should handle its messages with suspicion, and make sure the arguments are valid and usable before honoring them.
+
+        This patch hardens the message passing layer by performing MESSAGE_CHECK in places that had been overlooked.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionManagerProxy::setUpPlaybackControlsManagerWithID):
+        (WebKit::PlaybackSessionManagerProxy::currentTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::bufferedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::seekableRangesVectorChanged):
+        (WebKit::PlaybackSessionManagerProxy::canPlayFastReverseChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged):
+        (WebKit::PlaybackSessionManagerProxy::audioMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged):
+        (WebKit::PlaybackSessionManagerProxy::externalPlaybackPropertiesChanged):
+        (WebKit::PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged):
+        (WebKit::PlaybackSessionManagerProxy::mutedChanged):
+        (WebKit::PlaybackSessionManagerProxy::volumeChanged):
+        (WebKit::PlaybackSessionManagerProxy::durationChanged):
+        (WebKit::PlaybackSessionManagerProxy::playbackStartedTimeChanged):
+        (WebKit::PlaybackSessionManagerProxy::rateChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureSupportedChanged):
+        (WebKit::PlaybackSessionManagerProxy::pictureInPictureActiveChanged):
+        (WebKit::PlaybackSessionManagerProxy::handleControlledElementIDResponse const):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        (WebKit::UserMediaCaptureManagerProxy::startProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::stopProducingData):
+        (WebKit::UserMediaCaptureManagerProxy::end):
+        (WebKit::UserMediaCaptureManagerProxy::capabilities):
+        (WebKit::UserMediaCaptureManagerProxy::setMuted):
+        (WebKit::UserMediaCaptureManagerProxy::applyConstraints):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideo):
+        (WebKit::VideoFullscreenManagerProxy::setVideoDimensions):
+        (WebKit::VideoFullscreenManagerProxy::enterFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode):
+        (WebKit::VideoFullscreenManagerProxy::setInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideoContentLayer):
+        (WebKit::VideoFullscreenManagerProxy::cleanupFullscreen):
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        (WebKit::VideoFullscreenManagerProxy::preparedToExitFullscreen):
+        * UIProcess/ios/EditableImageController.mm:
+        (WebKit::EditableImageController::didCreateEditableImage):
+        (WebKit::EditableImageController::didDestroyEditableImage):
+        (WebKit::EditableImageController::associateWithAttachment):
+
 2019-03-04  Alex Christensen  <achristensen@webkit.org>
 
         Fix crashes when NetworkResourceLoader/NetworkLoadChecker are destroyed during HTTPS upgrade check

@@ -121,6 +121,8 @@
 
 #endif
 
+#define MESSAGE_CHECK_CONTEXTID(contextID) MESSAGE_CHECK_BASE(m_contextMap.isValidKey(contextId), m_page->process().connection())
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -468,6 +470,8 @@ void VideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
 
 void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
+
     ASSERT(videoLayerID);
     RefPtr<VideoFullscreenModelContext> model;
     RefPtr<PlatformVideoFullscreenInterface> interface;
@@ -504,16 +508,20 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint
 
 void VideoFullscreenManagerProxy::setHasVideo(uint64_t contextId, bool hasVideo)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).hasVideoChanged(hasVideo);
 }
 
 void VideoFullscreenManagerProxy::setVideoDimensions(uint64_t contextId, const FloatSize& videoDimensions)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
+
     auto& interface = ensureInterface(contextId);
     interface.enterFullscreen();
 
@@ -531,6 +539,8 @@ void VideoFullscreenManagerProxy::enterFullscreen(uint64_t contextId)
 
 void VideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore::IntRect finalRect)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
+
     ASSERT(m_contextMap.contains(contextId));
     if (!m_contextMap.contains(contextId))
         return;
@@ -547,6 +557,7 @@ void VideoFullscreenManagerProxy::exitFullscreen(uint64_t contextId, WebCore::In
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).exitFullscreenWithoutAnimationToMode(targetMode);
 }
 #endif
@@ -555,11 +566,13 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
 
 void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).setInlineRect(inlineRect, visible);
 }
 
 void VideoFullscreenManagerProxy::setHasVideoContentLayer(uint64_t contextId, bool value)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).setHasVideoContentLayer(value);
 }
 
@@ -579,11 +592,13 @@ NO_RETURN_DUE_TO_ASSERT void VideoFullscreenManagerProxy::setHasVideoContentLaye
 
 void VideoFullscreenManagerProxy::cleanupFullscreen(uint64_t contextId)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).cleanupFullscreen();
 }
 
 void VideoFullscreenManagerProxy::preparedToReturnToInline(uint64_t contextId, bool visible, WebCore::IntRect inlineRect)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     m_page->fullscreenMayReturnToInline();
 
 #if PLATFORM(IOS_FAMILY)
@@ -597,6 +612,7 @@ void VideoFullscreenManagerProxy::preparedToReturnToInline(uint64_t contextId, b
 
 void VideoFullscreenManagerProxy::preparedToExitFullscreen(uint64_t contextId)
 {
+    MESSAGE_CHECK_CONTEXTID(contextId);
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
@@ -696,5 +712,7 @@ void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(uint64_t contextId
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK_CONTEXTID
 
 #endif // PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
