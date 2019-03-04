@@ -33,10 +33,8 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebWheelEventWin.cpp
     Shared/win/WebEventFactory.cpp
 
-    UIProcess/AcceleratedDrawingAreaProxy.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
-    UIProcess/DrawingAreaProxyImpl.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebGrammarDetail.cpp
     UIProcess/WebViewportAttributes.cpp
@@ -49,6 +47,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/C/win/WKView.cpp
 
     UIProcess/API/win/APIWebsiteDataStoreWin.cpp
+
+    UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
 
@@ -78,11 +78,10 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp
     WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp
 
-    WebProcess/WebPage/AcceleratedDrawingArea.cpp
     WebProcess/WebPage/AcceleratedSurface.cpp
-    WebProcess/WebPage/DrawingAreaImpl.cpp
 
     WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+    WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
     WebProcess/WebPage/win/WebInspectorUIWin.cpp
@@ -115,6 +114,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
     "${WEBKIT_DIR}/UIProcess/API/win"
+    "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/Plugins/win"
     "${WEBKIT_DIR}/UIProcess/win"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"

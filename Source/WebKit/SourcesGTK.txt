@@ -107,10 +107,8 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp @no-unify
 
-UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp
-UIProcess/DrawingAreaProxyImpl.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp @no-unify
@@ -208,6 +206,8 @@ UIProcess/API/gtk/WebKitWebViewGtk.cpp @no-unify
 UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
 UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
+
+UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
@@ -401,14 +401,12 @@ WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp
 
 WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
 
-WebProcess/WebPage/AcceleratedDrawingArea.cpp
 WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
 WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
-
-WebProcess/WebPage/DrawingAreaImpl.cpp
 
 WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
 

@@ -98,7 +98,6 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp
 
-UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/WebGrammarDetail.cpp
@@ -182,6 +181,8 @@ UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
 UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp
 
+UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
+
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 
@@ -241,10 +242,10 @@ WebProcess/WebCoreSupport/wpe/WebContextMenuClientWPE.cpp
 WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
 WebProcess/WebCoreSupport/wpe/WebPopupMenuWPE.cpp
 
-WebProcess/WebPage/AcceleratedDrawingArea.cpp
 WebProcess/WebPage/AcceleratedSurface.cpp
 
 WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
+WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
 WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp

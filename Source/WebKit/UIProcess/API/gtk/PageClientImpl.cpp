@@ -28,7 +28,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
-#include "DrawingAreaProxyImpl.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -64,7 +64,7 @@ PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    return std::make_unique<DrawingAreaProxyImpl>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), process);
+    return std::make_unique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), process);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
@@ -94,7 +94,7 @@ WebCore::FloatPoint PageClientImpl::viewScrollPosition()
 
 WebCore::IntSize PageClientImpl::viewSize()
 {
-    auto* drawingArea = static_cast<DrawingAreaProxyImpl*>(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->drawingArea());
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->drawingArea());
     return drawingArea ? drawingArea->size() : IntSize();
 }
 

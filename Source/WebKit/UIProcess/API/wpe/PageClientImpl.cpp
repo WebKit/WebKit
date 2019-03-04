@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
-#include "AcceleratedDrawingAreaProxy.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "ScrollGestureController.h"
@@ -59,7 +59,7 @@ IPC::Attachment PageClientImpl::hostFileDescriptor()
 
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    return std::make_unique<AcceleratedDrawingAreaProxy>(m_view.page(), process);
+    return std::make_unique<DrawingAreaProxyCoordinatedGraphics>(m_view.page(), process);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)

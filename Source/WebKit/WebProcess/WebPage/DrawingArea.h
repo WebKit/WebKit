@@ -86,7 +86,6 @@ public:
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
     virtual bool layerFlushThrottlingIsActive() const { return false; }
-    virtual LayerTreeHost* layerTreeHost() const { return 0; }
 
     virtual void setPaintingEnabled(bool) { }
     virtual void updatePreferences(const WebPreferencesStore&) { }
@@ -142,11 +141,8 @@ public:
 
     virtual void layerHostDidFlushLayers() { }
 
-#if USE(COORDINATED_GRAPHICS)
-    virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
-#endif
-
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
 

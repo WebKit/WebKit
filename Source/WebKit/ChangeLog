@@ -1,3 +1,114 @@
+2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [CoordinatedGraphics] Unify DrawingArea classes
+        https://bugs.webkit.org/show_bug.cgi?id=195167
+
+        Reviewed by Žan Doberšek.
+
+        Add DrawingAreaProxyCoordinatedGraphics and DrawingAreaCoordinatedGraphics.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * Shared/DrawingAreaInfo.h:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::viewSize):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseUnrealize):
+        (webkitWebViewBaseDraw):
+        (webkitWebViewBaseSizeAllocate):
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        (webkitWebViewBasePageClosed):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp: Removed.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp: Added.
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::paint):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::sizeDidChange):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::waitForBackingStoreUpdateOnNextPaint):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::update):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::incorporateUpdate):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing const):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::backingStoreStateDidChange):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::waitForAndDispatchDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::discardBackingStore):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::setNativeSurfaceHandleForCompositing):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::DrawingMonitor):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::~DrawingMonitor):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::webViewDrawCallback):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::stop):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw):
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing):
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h: Renamed from Source/WebKit/UIProcess/AcceleratedDrawingAreaProxy.h.
+        * UIProcess/DrawingAreaProxyImpl.cpp: Removed.
+        * UIProcess/DrawingAreaProxyImpl.h: Removed.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::update):
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint):
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp: Removed.
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp: Added.
+        (WebKit::DrawingAreaCoordinatedGraphics::DrawingAreaCoordinatedGraphics):
+        (WebKit::DrawingAreaCoordinatedGraphics::~DrawingAreaCoordinatedGraphics):
+        (WebKit::DrawingAreaCoordinatedGraphics::setNeedsDisplay):
+        (WebKit::DrawingAreaCoordinatedGraphics::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaCoordinatedGraphics::scroll):
+        (WebKit::DrawingAreaCoordinatedGraphics::forceRepaint):
+        (WebKit::DrawingAreaCoordinatedGraphics::forceRepaintAsync):
+        (WebKit::DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen):
+        (WebKit::DrawingAreaCoordinatedGraphics::updatePreferences):
+        (WebKit::DrawingAreaCoordinatedGraphics::mainFrameContentSizeChanged):
+        (WebKit::DrawingAreaCoordinatedGraphics::deviceOrPageScaleFactorChanged):
+        (WebKit::DrawingAreaCoordinatedGraphics::didChangeViewportAttributes):
+        (WebKit::DrawingAreaCoordinatedGraphics::graphicsLayerFactory):
+        (WebKit::DrawingAreaCoordinatedGraphics::setRootCompositingLayer):
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleCompositingLayerFlush):
+        (WebKit::DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers):
+        (WebKit::DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor):
+        (WebKit::DrawingAreaCoordinatedGraphics::setNativeSurfaceHandleForCompositing):
+        (WebKit::DrawingAreaCoordinatedGraphics::destroyNativeSurfaceHandleForCompositing):
+        (WebKit::DrawingAreaCoordinatedGraphics::activityStateDidChange):
+        (WebKit::DrawingAreaCoordinatedGraphics::attachViewOverlayGraphicsLayer):
+        (WebKit::DrawingAreaCoordinatedGraphics::updateBackingStoreState):
+        (WebKit::DrawingAreaCoordinatedGraphics::didUpdate):
+        (WebKit::DrawingAreaCoordinatedGraphics::sendDidUpdateBackingStoreState):
+        (WebKit::DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingModeSoon):
+        (WebKit::DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingModeNow):
+        (WebKit::DrawingAreaCoordinatedGraphics::discardPreviousLayerTreeHost):
+        (WebKit::DrawingAreaCoordinatedGraphics::suspendPainting):
+        (WebKit::DrawingAreaCoordinatedGraphics::resumePainting):
+        (WebKit::DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingMode):
+        (WebKit::DrawingAreaCoordinatedGraphics::exitAcceleratedCompositingMode):
+        (WebKit::DrawingAreaCoordinatedGraphics::scheduleDisplay):
+        (WebKit::DrawingAreaCoordinatedGraphics::displayTimerFired):
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+        (WebKit::shouldPaintBoundsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.h: Renamed from Source/WebKit/WebProcess/WebPage/AcceleratedDrawingArea.h.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::layerFlushThrottlingIsActive const):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: Removed.
+        * WebProcess/WebPage/DrawingAreaImpl.h: Removed.
+
 2019-03-03  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Content observation should be limited to the current document.

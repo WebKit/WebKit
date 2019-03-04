@@ -393,6 +393,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/gtk"
     "${WEBKIT_DIR}/UIProcess/API/glib"
     "${WEBKIT_DIR}/UIProcess/API/gtk"
+    "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols/soup"
     "${WEBKIT_DIR}/UIProcess/Plugins/gtk"
     "${WEBKIT_DIR}/UIProcess/glib"

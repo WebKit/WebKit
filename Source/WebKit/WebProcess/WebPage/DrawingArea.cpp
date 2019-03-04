@@ -37,10 +37,8 @@
 #if PLATFORM(COCOA)
 #include "RemoteLayerTreeDrawingArea.h"
 #include "TiledCoreAnimationDrawingArea.h"
-#elif PLATFORM(WPE)
-#include "AcceleratedDrawingArea.h"
-#else
-#include "DrawingAreaImpl.h"
+#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+#include "DrawingAreaCoordinatedGraphics.h"
 #endif
 
 namespace WebKit {
@@ -56,13 +54,9 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 #endif
     case DrawingAreaTypeRemoteLayerTree:
         return std::make_unique<RemoteLayerTreeDrawingArea>(webPage, parameters);
-#else
-    case DrawingAreaTypeImpl:
-#if PLATFORM(WPE)
-        return std::make_unique<AcceleratedDrawingArea>(webPage, parameters);
-#else
-        return std::make_unique<DrawingAreaImpl>(webPage, parameters);
-#endif
+#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    case DrawingAreaTypeCoordinatedGraphics:
+        return std::make_unique<DrawingAreaCoordinatedGraphics>(webPage, parameters);
 #endif
     }
 
