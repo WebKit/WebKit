@@ -440,10 +440,15 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::s_xdgToplevelListener 
         wpe_view_backend_dispatch_set_size(window.backend(), width, height);
 
         bool isFocused = false;
-        void* p;
-        wl_array_for_each(p, states)
-        {
-            uint32_t state = *static_cast<uint32_t*>(p);
+        // FIXME: It would be nice if the following loop could use
+        // wl_array_for_each, but at the time of writing it relies on
+        // GCC specific extension to work properly:
+        // https://gitlab.freedesktop.org/wayland/wayland/issues/34
+        uint32_t* pos = static_cast<uint32_t*>(states->data);
+        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
+
+        for (; pos < end; pos++) {
+            uint32_t state = *pos;
 
             switch (state) {
             case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:

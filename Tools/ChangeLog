@@ -1,3 +1,14 @@
+2019-03-04  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Inline wl_array_for_each to workaround C++ compatibility issue
+        https://bugs.webkit.org/show_bug.cgi?id=194898
+
+        Reviewed by Žan Doberšek.
+
+        * wpe/backends/WindowViewBackend.cpp: wl_array_for_each relies on
+        a GCC extension that permits arithmetic on void* pointer. Inline
+        the macro until this issue is fixed upstream.
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Rid the world of WK_API_ENABLED
