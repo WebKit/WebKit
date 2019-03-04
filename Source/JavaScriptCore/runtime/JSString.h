@@ -569,7 +569,7 @@ public:
         newString->finishCreation(vm);
         ASSERT(!newString->length());
         ASSERT(newString->isRope());
-        ASSERT(fiber0() == nullptr);
+        ASSERT(newString->fiber0() == nullptr);
         return newString;
     }
 
