@@ -383,6 +383,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
         return;
     }
 
+    networkDataTask->setShouldExtendTaskLifetime(true);
     completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
 }
 
