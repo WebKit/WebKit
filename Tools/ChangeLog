@@ -1,3 +1,15 @@
+2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLib] Returning G_TYPE_OBJECT from a constructor does not work
+        https://bugs.webkit.org/show_bug.cgi?id=195206
+
+        Reviewed by Žan Doberšek.
+
+        Add a new test case.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (testJSCClass):
+
 2019-03-04  Charlie Turner  <cturner@igalia.com>
 
         [WPE] Inline wl_array_for_each to workaround C++ compatibility issue

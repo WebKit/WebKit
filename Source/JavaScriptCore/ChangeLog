@@ -1,3 +1,15 @@
+2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLib] Returning G_TYPE_OBJECT from a constructor does not work
+        https://bugs.webkit.org/show_bug.cgi?id=195206
+
+        Reviewed by Žan Doberšek.
+
+        We are freeing the newly created object before returning from the constructor.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::construct):
+
 2019-03-02  Darin Adler  <darin@apple.com>
 
         Retire legacy dtoa function and DecimalNumber class
