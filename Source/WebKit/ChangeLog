@@ -1,3 +1,14 @@
+2019-03-04  Brady Eidson  <beidson@apple.com>
+
+        Correctly handle sandbox extensions when the same WKWebView loads multiple file:// URLs.
+        <rdar://problem/47820581> and https://bugs.webkit.org/show_bug.cgi?id=195291
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::shouldReuseCommittedSandboxExtension): Only retain the previous sandbox extension if the file URL
+          we're currently loading is functionally equivalent to the previous one.
+
 2019-03-04  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy userAgentForURL injected bundle SPI

@@ -4412,7 +4412,7 @@ static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
     if (!documentLoader || !provisionalDocumentLoader)
         return false;
 
-    if (documentLoader->url().isLocalFile() && provisionalDocumentLoader->url().isLocalFile())
+    if (documentLoader->url().isLocalFile() && provisionalDocumentLoader->url().isLocalFile() && equalIgnoringQueryAndFragment(documentLoader->url(), provisionalDocumentLoader->url()))
         return true;
 
     return false;
