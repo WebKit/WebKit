@@ -1,3 +1,10 @@
+2019-03-04  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][EME] Mark two flaky EME tests
+
+        Unreviewed gardening.
+        * platform/wpe/TestExpectations:
+
 2019-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Share more code for updating the state of frame scrolling nodes
