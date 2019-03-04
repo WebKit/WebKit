@@ -1370,11 +1370,11 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
 
 String WebFrameLoaderClient::userAgent(const URL& url)
 {
-    WebPage* webPage = m_frame->page();
+    auto* webPage = m_frame->page();
     if (!webPage)
         return String();
 
-    return webPage->userAgent(m_frame, url);
+    return webPage->userAgent(url);
 }
 
 String WebFrameLoaderClient::overrideContentSecurityPolicy() const

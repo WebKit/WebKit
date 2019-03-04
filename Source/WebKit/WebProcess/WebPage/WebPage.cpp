@@ -3164,23 +3164,12 @@ void WebPage::show()
 
 String WebPage::userAgent(const URL& webCoreURL) const
 {
-    return userAgent(nullptr, webCoreURL);
-}
-
-String WebPage::userAgent(WebFrame* frame, const URL& webcoreURL) const
-{
-    if (frame) {
-        String userAgent = m_loaderClient->userAgentForURL(*frame, webcoreURL);
-        if (!userAgent.isEmpty())
-            return userAgent;
-    }
-
-    String userAgent = platformUserAgent(webcoreURL);
+    String userAgent = platformUserAgent(webCoreURL);
     if (!userAgent.isEmpty())
         return userAgent;
     return m_userAgent;
 }
-    
+
 void WebPage::setUserAgent(const String& userAgent)
 {
     if (m_userAgent == userAgent)

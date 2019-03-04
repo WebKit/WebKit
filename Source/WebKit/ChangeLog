@@ -1,5 +1,30 @@
 2019-03-04  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy userAgentForURL injected bundle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=195222
+        <rdar://problem/46734147>
+
+        Reviewed by Darin Adler.
+
+        Drop legacy userAgentForURL injected bundle SPI. There are no longer any clients, and using
+        WebsitePolicies.customUserAgent is the way to go nowadays.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::willDestroyFrame):
+        (API::InjectedBundle::PageLoaderClient::userAgentForURL const): Deleted.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (setUpPageLoaderClient):
+        (userAgentForURL): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::userAgentForURL const): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userAgent const):
+
+2019-03-04  Chris Dumez  <cdumez@apple.com>
+
         Do not share WebProcesses between private and regular sessions
         https://bugs.webkit.org/show_bug.cgi?id=195189
         <rdar://problem/48421064>

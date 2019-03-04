@@ -95,7 +95,6 @@ public:
     virtual void featuresUsedInPage(WebKit::WebPage&, const Vector<WTF::String>&) { }
 
     virtual void willDestroyFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
-    virtual WTF::String userAgentForURL(WebKit::WebFrame&, const WTF::URL&) const { return WTF::String(); }
 
     virtual OptionSet<WebCore::LayoutMilestone> layoutMilestones() const { return { }; }
 };

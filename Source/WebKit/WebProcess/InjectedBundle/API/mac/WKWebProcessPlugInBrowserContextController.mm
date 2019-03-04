@@ -220,23 +220,6 @@ static void didHandleOnloadEventsForFrame(WKBundlePageRef page, WKBundleFrameRef
         [loadDelegate webProcessPlugInBrowserContextController:pluginContextController didHandleOnloadEventsForFrame:wrapper(*WebKit::toImpl(frame))];
 }
 
-static WKStringRef userAgentForURL(WKBundleFrameRef frame, WKURLRef url, const void* clientInfo)
-{
-    auto pluginContextController = (__bridge WKWebProcessPlugInBrowserContextController *)clientInfo;
-    auto loadDelegate = pluginContextController->_loadDelegate.get();
-    
-    if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:frame:userAgentForURL:)]) {
-        WKWebProcessPlugInFrame *newFrame = wrapper(*WebKit::toImpl(frame));
-        NSString *string = [loadDelegate webProcessPlugInBrowserContextController:pluginContextController frame:newFrame userAgentForURL:wrapper(*WebKit::toImpl(url))];
-        if (!string)
-            return nullptr;
-
-        return WKStringCreateWithCFString((__bridge CFStringRef)string);
-    }
-    
-    return nullptr;
-}
-
 static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *contextController, WebKit::WebPage& page)
 {
     WKBundlePageLoaderClientV10 client;
@@ -256,7 +239,6 @@ static void setUpPageLoaderClient(WKWebProcessPlugInBrowserContextController *co
     client.didRemoveFrameFromHierarchy = didRemoveFrameFromHierarchy;
     client.didHandleOnloadEventsForFrame = didHandleOnloadEventsForFrame;
     client.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;
-    client.userAgentForURL = userAgentForURL;
 
     client.didLayoutForFrame = didLayoutForFrame;
     client.didLayout = didReachLayoutMilestone;

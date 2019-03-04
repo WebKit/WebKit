@@ -353,16 +353,6 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage& page, const Vec
     return m_client.featuresUsedInPage(toAPI(&page), toAPI(API::Array::createStringArray(features).ptr()), m_client.base.clientInfo);
 }
 
-String InjectedBundlePageLoaderClient::userAgentForURL(WebFrame& frame, const URL& url) const
-{
-    if (!m_client.userAgentForURL)
-        return String();
-    WKStringRef userAgent = m_client.userAgentForURL(toAPI(&frame), toAPI(API::URL::create(url).ptr()), m_client.base.clientInfo);
-    if (!userAgent)
-        return String();
-    return toImpl(userAgent)->string();
-}
-
 OptionSet<WebCore::LayoutMilestone> InjectedBundlePageLoaderClient::layoutMilestones() const
 {
     if (m_client.layoutMilestones) {

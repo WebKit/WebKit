@@ -347,7 +347,6 @@ public:
     void didFinishLoad(WebFrame*);
     void show();
     String userAgent(const URL&) const;
-    String userAgent(WebFrame*, const URL&) const;
     String platformUserAgent(const URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
 

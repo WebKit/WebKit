@@ -62,7 +62,6 @@ typedef void (*WKBundlePageDidLayoutCallback)(WKBundlePageRef page, WKLayoutMile
 typedef void (*WKBundlePageFeaturesUsedInPageCallback)(WKBundlePageRef page, WKArrayRef featureStrings, const void *clientInfo);
 typedef void (*WKBundlePageWillLoadURLRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKBundlePageWillLoadDataRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKDataRef data, WKStringRef MIMEType, WKStringRef encodingName, WKURLRef unreachableURL, WKTypeRef userData, const void *clientInfo);
-typedef WKStringRef (*WKBundlePageUserAgentForURLCallback)(WKBundleFrameRef frame, WKURLRef url, const void *clientInfo);
 typedef WKLayoutMilestones (*WKBundlePageLayoutMilestonesCallback)(const void* clientInfo);
 
 typedef struct WKBundlePageLoaderClientBase {
@@ -463,7 +462,7 @@ typedef struct WKBundlePageLoaderClientV8 {
     void *                                                                  willDestroyFrame_unavailable;
     
     // Version 8
-    WKBundlePageUserAgentForURLCallback                                     userAgentForURL;
+    void*                                                                   userAgentForURL_unavailable;
 } WKBundlePageLoaderClientV8;
 
 typedef struct WKBundlePageLoaderClientV9 {
@@ -521,7 +520,7 @@ typedef struct WKBundlePageLoaderClientV9 {
     void *                                                                  willDestroyFrame_unavailable;
 
     // Version 8
-    WKBundlePageUserAgentForURLCallback                                     userAgentForURL;
+    void*                                                                   userAgentForURL_unavailable;
 
     // Version 9
     WKBundlePageWillInjectUserScriptForFrameCallback                        willInjectUserScriptForFrame;
@@ -582,7 +581,7 @@ typedef struct WKBundlePageLoaderClientV10 {
     void *                                                                  willDestroyFrame_unavailable;
 
     // Version 8
-    WKBundlePageUserAgentForURLCallback                                     userAgentForURL;
+    void*                                                                   userAgentForURL_unavailable;
 
     // Version 9
     WKBundlePageWillInjectUserScriptForFrameCallback                        willInjectUserScriptForFrame;

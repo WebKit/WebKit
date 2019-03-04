@@ -85,8 +85,6 @@ public:
 
     void featuresUsedInPage(WebPage&, const Vector<WTF::String>&) override;
 
-    WTF::String userAgentForURL(WebFrame&, const URL&) const override;
-
     OptionSet<WebCore::LayoutMilestone> layoutMilestones() const override;
 };
 
