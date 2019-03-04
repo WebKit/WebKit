@@ -1,3 +1,17 @@
+2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ITMLKit Inspector: Data Bindings / Associated Data for nodes
+        https://bugs.webkit.org/show_bug.cgi?id=195290
+        <rdar://problem/48304019>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getDataBindingsForNode):
+        (WebCore::InspectorDOMAgent::getAssociatedDataForNode):
+        Stub these for web pages, they will only be used for ITMLKit right now.
+
 2019-03-04  Daniel Bates  <dabates@apple.com>
 
         [iOS] Caret x-position in empty text area does not match text field

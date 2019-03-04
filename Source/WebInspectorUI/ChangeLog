@@ -1,3 +1,28 @@
+2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ITMLKit Inspector: Data Bindings / Associated Data for nodes
+        https://bugs.webkit.org/show_bug.cgi?id=195290
+        <rdar://problem/48304019>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New title and empty message strings.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.css:
+        (.sidebar > .panel.dom-node-details .details-section.dom-node-associated-data > .content .row):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.initialLayout):
+        (WI.DOMNodeDetailsSidebarPanel.prototype.layout):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshDataBindings):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshAssociatedData):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._attributesChanged):
+        New Node sections only enabled for ITMLKit `WI.sharedApp.hasExtraDomains`.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView):
+        Provide a way, like TreeElement/View to access the ObjectTreeView from an element.
+
 2019-03-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: protocol error on first open

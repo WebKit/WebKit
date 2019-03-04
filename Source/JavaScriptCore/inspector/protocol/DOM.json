@@ -69,6 +69,16 @@
             ]
         },
         {
+            "id": "DataBinding",
+            "type": "object",
+            "description": "Relationship between data that is associated with a node and the node itself.",
+            "properties": [
+                { "name": "binding", "type": "string", "description": "The binding key that is specified." },
+                { "name": "type", "optional": true, "type": "string", "description": "A more descriptive name for the type of binding that represents this paritcular data relationship" },
+                { "name": "value", "type": "string", "description": "The value that is resolved to with this data binding relationship." }
+            ]
+        },
+        {
             "id": "EventListener",
             "type": "object",
             "description": "A structure holding event listener properties.",
@@ -253,6 +263,26 @@
             "description": "Gets the list of builtin DOM event names.",
             "returns": [
                 { "name": "eventNames", "type": "array", "items": { "type": "string" } }
+            ]
+        },
+        {
+            "name": "getDataBindingsForNode",
+            "description": "Returns all data binding relationships between data that is associated with the node and the node itself.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get data bindings for." }
+            ],
+            "returns": [
+                { "name": "dataBindings", "type": "array", "items": { "$ref": "DataBinding"}, "description": "Array of binding relationships between data and node" }
+            ]
+        },
+        {
+            "name": "getAssociatedDataForNode",
+            "description": "Returns all data that has been associated with the node and is available for data binding.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get associated data for." }
+            ],
+            "returns": [
+                { "name": "associatedData", "type": "string", "optional": true, "description": "Associated data bound to this node. Sent as a JSON string." }
             ]
         },
         {

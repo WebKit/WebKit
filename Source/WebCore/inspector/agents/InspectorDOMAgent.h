@@ -127,6 +127,8 @@ public:
     void insertAdjacentHTML(ErrorString&, int nodeId, const String& position, const String& html) override;
     void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames) override;
+    void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray) override;
+    void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData) override;
     void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* objectGroup, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
     void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;

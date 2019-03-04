@@ -51,6 +51,7 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
             forceExpanding = true;
 
         this._element = document.createElement("div");
+        this._element.__objectTree = this;
         this._element.className = "object-tree";
 
         if (this._object.preview) {

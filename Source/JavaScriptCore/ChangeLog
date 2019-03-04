@@ -1,3 +1,13 @@
+2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ITMLKit Inspector: Data Bindings / Associated Data for nodes
+        https://bugs.webkit.org/show_bug.cgi?id=195290
+        <rdar://problem/48304019>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/protocol/DOM.json:
+
 2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make Reflect lazily-allocated by dropping @Reflect references from builtin JS
