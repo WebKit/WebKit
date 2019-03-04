@@ -1,3 +1,32 @@
+2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Offer @makeTypeError instead of exposing @TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=193858
+
+        Reviewed by Mark Lam.
+
+        Instead of exposing @TypeError, we expose @makeTypeError function.
+        And we make TypeError and Error lazily-allocated objects in non JIT environment.
+        In JIT environment, only TypeError becomes lazily-allocated since WebAssembly errors
+        touch Error prototype anyway. But we can make them lazy in a subsequent patch.
+
+        * builtins/AsyncFromSyncIteratorPrototype.js:
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorEnqueue):
+        * builtins/BuiltinNames.h:
+        * builtins/PromiseOperations.js:
+        (globalPrivate.createResolvingFunctions.resolve):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initializeErrorConstructor):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::errorPrototype const):
+        (JSC::JSGlobalObject::errorStructure const):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncMakeTypeError):
+        * runtime/JSGlobalObjectFunctions.h:
+
 2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLib] Returning G_TYPE_OBJECT from a constructor does not work

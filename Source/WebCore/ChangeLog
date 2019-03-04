@@ -1,3 +1,35 @@
+2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Offer @makeTypeError instead of exposing @TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=193858
+
+        Reviewed by Mark Lam.
+
+        Use @makeTypeError instead.
+
+        * Modules/mediastream/RTCPeerConnection.js:
+        * Modules/mediastream/RTCPeerConnectionInternals.js:
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (readableByteStreamControllerClose):
+        (readableByteStreamControllerPullInto):
+        * Modules/streams/ReadableStream.js:
+        (cancel):
+        (pipeTo):
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        (cancel):
+        (read):
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (cancel):
+        (read):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamReaderGenericRelease):
+        * Modules/streams/WritableStream.js:
+        (abort):
+        (close):
+        (write):
+        (getter.closed):
+        (getter.ready):
+
 2019-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Share more code between overflow and frame scrolling nodes, fixing overflow scrollbar display

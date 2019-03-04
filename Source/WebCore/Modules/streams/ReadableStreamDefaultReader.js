@@ -48,7 +48,7 @@ function cancel(reason)
         return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "cancel"));
 
     if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
-        return @Promise.@reject(new @TypeError("cancel() called on a reader owned by no readable stream"));
+        return @Promise.@reject(@makeTypeError("cancel() called on a reader owned by no readable stream"));
 
     return @readableStreamReaderGenericCancel(this, reason);
 }
@@ -60,7 +60,7 @@ function read()
     if (!@isReadableStreamDefaultReader(this))
         return @Promise.@reject(@makeThisTypeError("ReadableStreamDefaultReader", "read"));
     if (!@getByIdDirectPrivate(this, "ownerReadableStream"))
-        return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
+        return @Promise.@reject(@makeTypeError("read() called on a reader owned by no readable stream"));
 
     return @readableStreamDefaultReaderRead(this);
 }

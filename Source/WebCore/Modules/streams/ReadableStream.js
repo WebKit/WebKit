@@ -80,7 +80,7 @@ function cancel(reason)
         return @Promise.@reject(@makeThisTypeError("ReadableStream", "cancel"));
 
     if (@isReadableStreamLocked(this))
-        return @Promise.@reject(new @TypeError("ReadableStream is locked"));
+        return @Promise.@reject(@makeTypeError("ReadableStream is locked"));
 
     return @readableStreamCancel(this, reason);
 }
@@ -198,7 +198,7 @@ function pipeTo(destination)
     @Promise.prototype.@then.@call(destination.closed,
         function() {
             if (!closedPurposefully)
-                cancelSource(new @TypeError('destination is closing or closed and cannot be piped to anymore'));
+                cancelSource(@makeTypeError('destination is closing or closed and cannot be piped to anymore'));
         },
         cancelSource
     );

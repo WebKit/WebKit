@@ -79,7 +79,7 @@ function setLocalDescription(description)
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "setLocalDescription"));
 
     if (arguments.length < 1)
-        return @Promise.@reject(new @TypeError("Not enough arguments"));
+        return @Promise.@reject(@makeTypeError("Not enough arguments"));
 
     // FIXME 169644: According the spec, we should throw when receiving a RTCSessionDescription.
     const objectInfo = {
@@ -103,7 +103,7 @@ function setRemoteDescription(description)
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "setRemoteDescription"));
 
     if (arguments.length < 1)
-        return @Promise.@reject(new @TypeError("Not enough arguments"));
+        return @Promise.@reject(@makeTypeError("Not enough arguments"));
 
     // FIXME: According the spec, we should only expect RTCSessionDescriptionInit.
     const objectInfo = {
@@ -127,7 +127,7 @@ function addIceCandidate(candidate)
         return @Promise.@reject(@makeThisTypeError("RTCPeerConnection", "addIceCandidate"));
 
     if (arguments.length < 1)
-        return @Promise.@reject(new @TypeError("Not enough arguments"));
+        return @Promise.@reject(@makeTypeError("Not enough arguments"));
 
     const objectInfo = {
         "constructor": @RTCIceCandidate,

@@ -265,7 +265,7 @@ function asyncGeneratorEnqueue(generator, value, resumeMode)
     
     const promiseCapability = @newPromiseCapability(@Promise);
     if (!@isObject(generator) || typeof @getByIdDirectPrivate(generator, "asyncGeneratorSuspendReason") !== 'number') {
-        promiseCapability.@reject.@call(@undefined, new @TypeError('|this| should be an async generator'));
+        promiseCapability.@reject.@call(@undefined, @makeTypeError('|this| should be an async generator'));
         return promiseCapability.@promise;
     }
 

@@ -128,7 +128,6 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 
 #define FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(String, string, stringObject, StringObject, String, object) \
-    macro(Error, error, error, ErrorInstance, Error, object) \
     macro(Map, map, map, JSMap, Map, object) \
     macro(Set, set, set, JSSet, Set, object) \
     macro(JSPromise, promise, promise, JSPromise, Promise, object)
@@ -146,6 +145,7 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 #define FOR_EACH_LAZY_BUILTIN_TYPE(macro) \
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean, object) \
     macro(Date, date, date, DateInstance, Date, object) \
+    macro(Error, error, error, ErrorInstance, Error, object) \
     macro(Number, number, numberObject, NumberObject, Number, object) \
     macro(Symbol, symbol, symbolObject, SymbolObject, Symbol, object) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
@@ -631,7 +631,7 @@ public:
     JSObject* datePrototype() const { return m_dateStructure.prototype(this); }
     JSObject* symbolPrototype() const { return m_symbolObjectStructure.prototypeInitializedOnMainThread(this); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
-    ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
+    JSObject* errorPrototype() const { return m_errorStructure.prototype(this); }
     IteratorPrototype* iteratorPrototype() const { return m_iteratorPrototype.get(); }
     AsyncIteratorPrototype* asyncIteratorPrototype() const { return m_asyncIteratorPrototype.get(); }
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
@@ -692,7 +692,7 @@ public:
     Structure* dateStructure() const { return m_dateStructure.get(this); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(this); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
-    Structure* errorStructure() const { return m_errorStructure.get(); }
+    Structure* errorStructure() const { return m_errorStructure.get(this); }
     Structure* errorStructure(ErrorType errorType) const
     {
         switch (errorType) {

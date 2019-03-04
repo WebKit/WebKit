@@ -76,7 +76,7 @@ function objectOverload(objectArg, functionName, objectInfo, promiseMode)
     }
 
     if (!objectArgOk)
-        return @Promise.@reject(new @TypeError(`Argument 1 ('${objectInfo.argName}') to RTCPeerConnection.${functionName} must be an instance of ${objectInfo.argType}`));
+        return @Promise.@reject(@makeTypeError(`Argument 1 ('${objectInfo.argName}') to RTCPeerConnection.${functionName} must be an instance of ${objectInfo.argType}`));
 
     return promiseMode(objectArg);
 }

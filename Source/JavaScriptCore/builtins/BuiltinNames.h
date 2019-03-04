@@ -74,7 +74,6 @@ namespace JSC {
     macro(getOwnPropertyNames) \
     macro(ownKeys) \
     macro(Set) \
-    macro(TypeError) \
     macro(typedArrayLength) \
     macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \
@@ -143,6 +142,7 @@ namespace JSC {
     macro(regExpCreate) \
     macro(replaceUsingRegExp) \
     macro(replaceUsingStringSearch) \
+    macro(makeTypeError) \
     macro(mapBucket) \
     macro(mapBucketHead) \
     macro(mapBucketNext) \

@@ -70,7 +70,7 @@ function abort(reason)
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.abort method can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeTypeError("The WritableStream.abort method can only be used on instances of WritableStream"));
 
     const state = @getByIdDirectPrivate(this, "state");
     if (state === @streamClosed)
@@ -89,11 +89,11 @@ function close()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeTypeError("The WritableStream.close method can only be used on instances of WritableStream"));
 
     const state = @getByIdDirectPrivate(this, "state");
     if (state === @streamClosed || state === @streamClosing)
-        return @Promise.@reject(new @TypeError("Cannot close a WritableString that is closed or closing"));
+        return @Promise.@reject(@makeTypeError("Cannot close a WritableString that is closed or closing"));
 
     if (state === @streamErrored)
         return @Promise.@reject(@getByIdDirectPrivate(this, "storedError"));
@@ -113,11 +113,11 @@ function write(chunk)
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.write method can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeTypeError("The WritableStream.write method can only be used on instances of WritableStream"));
 
     const state = @getByIdDirectPrivate(this, "state");
     if (state === @streamClosed || state === @streamClosing)
-        return @Promise.@reject(new @TypeError("Cannot write on a WritableString that is closed or closing"));
+        return @Promise.@reject(@makeTypeError("Cannot write on a WritableString that is closed or closing"));
 
     if (state === @streamErrored)
         return @Promise.@reject(this.@storedError);
@@ -154,7 +154,7 @@ function closed()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.closed getter can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeTypeError("The WritableStream.closed getter can only be used on instances of WritableStream"));
 
     return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
 }
@@ -165,7 +165,7 @@ function ready()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(new @TypeError("The WritableStream.ready getter can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeTypeError("The WritableStream.ready getter can only be used on instances of WritableStream"));
 
     return @getByIdDirectPrivate(this, "readyPromiseCapability").@promise;
 }

@@ -30,7 +30,7 @@ function next(value)
     const promiseCapability = @newPromiseCapability(@Promise);
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
+        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
@@ -57,7 +57,7 @@ function return(value)
     const promiseCapability = @newPromiseCapability(@Promise);
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
+        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
@@ -81,7 +81,7 @@ function return(value)
         const returnResult = returnMethod.@call(syncIterator, value);
 
         if (!@isObject(returnResult)) {
-            promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator result interface is not an object.'));
+            promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator result interface is not an object.'));
             return promiseCapability.@promise;
         }
 
@@ -106,7 +106,7 @@ function throw(exception)
     const promiseCapability = @newPromiseCapability(@Promise);
 
     if (!@isObject(this) || !@isObject(@getByIdDirectPrivate(this, "syncIterator"))) {
-        promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator is not an object.'));
+        promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator is not an object.'));
         return promiseCapability.@promise;
     }
 
@@ -130,7 +130,7 @@ function throw(exception)
         const throwResult = throwMethod.@call(syncIterator, exception);
         
         if (!@isObject(throwResult)) {
-            promiseCapability.@reject.@call(@undefined, new @TypeError('Iterator result interface is not an object.'));
+            promiseCapability.@reject.@call(@undefined, @makeTypeError('Iterator result interface is not an object.'));
             return promiseCapability.@promise;
         }
         

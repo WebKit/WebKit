@@ -149,7 +149,7 @@ function readableByteStreamControllerClose(controller)
     var pendingPullIntos = @getByIdDirectPrivate(controller, "pendingPullIntos");
     if (pendingPullIntos.length > 0) {
         if (pendingPullIntos[0].bytesFilled > 0) {
-            const e = new @TypeError("Close requested while there remain pending bytes");
+            const e = @makeTypeError("Close requested while there remain pending bytes");
             @readableByteStreamControllerError(controller, e);
             throw e;
         }
@@ -648,7 +648,7 @@ function readableByteStreamControllerPullInto(controller, view)
             return @Promise.@resolve({ value: filledView, done: false });
         }
         if (@getByIdDirectPrivate(controller, "closeRequested")) {
-            const e = new @TypeError("Closing stream has been requested");
+            const e = @makeTypeError("Closing stream has been requested");
             @readableByteStreamControllerError(controller, e);
             return @Promise.@reject(e);
         }
