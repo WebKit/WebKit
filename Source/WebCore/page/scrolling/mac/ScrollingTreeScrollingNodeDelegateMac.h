@@ -31,11 +31,14 @@
 
 #include "ScrollController.h"
 
+OBJC_CLASS NSScrollerImp;
+
 namespace WebCore {
 
 class FloatPoint;
 class FloatSize;
 class IntPoint;
+class ScrollingStateScrollingNode;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
@@ -53,6 +56,9 @@ public:
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     bool isScrollSnapInProgress() const;
 #endif
+
+    void updateFromStateNode(const ScrollingStateScrollingNode&);
+    void updateScrollbarPainters();
 
     void deferTestsForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
     void removeTestDeferralForReason(WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReason) const override;
@@ -83,7 +89,12 @@ private:
     FloatSize viewportSize() const override;
 #endif
 
+    void releaseReferencesToScrollerImpsOnTheMainThread();
+
     ScrollController m_scrollController;
+
+    RetainPtr<NSScrollerImp> m_verticalScrollerImp;
+    RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
 };
 
 } // namespace WebCore

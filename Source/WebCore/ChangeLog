@@ -1,3 +1,82 @@
+2019-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Share more code between overflow and frame scrolling nodes, fixing overflow scrollbar display
+        https://bugs.webkit.org/show_bug.cgi?id=195258
+
+        Reviewed by Antti Koivisto.
+
+        This patch moves management of scrollbar layers and scrollbar painters ("NSScrollerImp") down to
+        ScrollingStateScrollingNode to be shared between frame and overflow nodes, allowing for
+        scrolling thread updates of overflow scrollbars. It also moves some scrolling tree-side code
+        to ScrollingTreeScrollingNodeDelegateMac to be shared between the "tree" nodes for overflow and frames.
+
+        Layers for scrollbars are given to scrolling state nodes via setNodeLayers() now, and
+        RenderLayerCompositor::updateScrollingNodeLayers() is added to provide a bottleneck to call that.
+        At some point AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange() should be relieved
+        of the responsibility of pushing scrollbar layers (but the scrolling state tree needs to hold
+        references to GraphicsLayers before that becomes safe).
+        
+        The actual fix that allows overflow scrollbars to show is the change in
+        AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange() that calls scrollableArea.*ScrollbarLayerDidChange()
+        for all ScrollableAreas. This ensures that the CALayer is pushed onto the NSScrollerImp.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange):
+        (WebCore::AsyncScrollingCoordinator::setNodeLayers):
+        (WebCore::AsyncScrollingCoordinator::setFrameScrollingNodeState):
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateFrameScrollingNode::setVerticalScrollbarLayer): Deleted.
+        (WebCore::ScrollingStateFrameScrollingNode::setHorizontalScrollbarLayer): Deleted.
+        (WebCore::ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setAllPropertiesChanged):
+        (WebCore::ScrollingStateScrollingNode::setHorizontalScrollbarLayer):
+        (WebCore::ScrollingStateScrollingNode::setVerticalScrollbarLayer):
+        (WebCore::ScrollingStateScrollingNode::setScrollerImpsFromScrollbars):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::horizontalScrollbarLayer const):
+        (WebCore::ScrollingStateScrollingNode::verticalScrollbarLayer const):
+        (WebCore::ScrollingStateScrollingNode::verticalScrollerImp const):
+        (WebCore::ScrollingStateScrollingNode::horizontalScrollerImp const):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::setOrClearLatchedNode):
+        (WebCore::ScrollingTree::handleWheelEvent):
+        * page/scrolling/mac/ScrollingStateScrollingNodeMac.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingStateFrameScrollingNodeMac.mm.
+        (WebCore::ScrollingStateScrollingNode::setScrollerImpsFromScrollbars):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::~ScrollingTreeFrameScrollingNodeMac): Deleted.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::releaseReferencesToScrollerImpsOnTheMainThread): Deleted.
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent):
+        (WebCore::ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::releaseReferencesToScrollerImpsOnTheMainThread):
+        * platform/ScrollbarThemeComposite.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeLayers):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForScrollingRole):
+        * rendering/RenderLayerCompositor.h:
+
 2019-03-04  Jer Noble  <jer.noble@apple.com>
 
         Remove HEVC as a codec requiring hardware support.

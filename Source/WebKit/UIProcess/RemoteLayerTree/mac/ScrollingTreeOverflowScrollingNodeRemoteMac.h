@@ -27,35 +27,29 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "ScrollingTreeOverflowScrollingNode.h"
-#include "ScrollingTreeScrollingNodeDelegateMac.h"
+#include <WebCore/ScrollingTreeOverflowScrollingNodeMac.h>
 
-OBJC_CLASS CALayer;
+namespace WebKit {
 
-namespace WebCore {
+class ScrollerPairMac;
 
-class WEBCORE_EXPORT ScrollingTreeOverflowScrollingNodeMac : public ScrollingTreeOverflowScrollingNode {
+class ScrollingTreeOverflowScrollingNodeRemoteMac : public WebCore::ScrollingTreeOverflowScrollingNodeMac {
 public:
-    static Ref<ScrollingTreeOverflowScrollingNodeMac> create(ScrollingTree&, ScrollingNodeID);
-    virtual ~ScrollingTreeOverflowScrollingNodeMac();
+    WEBCORE_EXPORT static Ref<ScrollingTreeOverflowScrollingNodeRemoteMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+    virtual ~ScrollingTreeOverflowScrollingNodeRemoteMac();
 
-protected:
-    ScrollingTreeOverflowScrollingNodeMac(ScrollingTree&, ScrollingNodeID);
-
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void commitStateAfterChildren(const ScrollingStateNode&) override;
-    
-    FloatPoint adjustedScrollPosition(const FloatPoint&, ScrollPositionClamp) const override;
-
-    void repositionScrollingLayers() override;
-    void repositionRelatedLayers() override;
-
-    ScrollingEventResult handleWheelEvent(const PlatformWheelEvent&) override;
+    bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
 
 private:
-    ScrollingTreeScrollingNodeDelegateMac m_delegate;
+    ScrollingTreeOverflowScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
+
+    void commitStateBeforeChildren(const WebCore::ScrollingStateNode&) override;
+    WebCore::ScrollingEventResult handleWheelEvent(const WebCore::PlatformWheelEvent&) override;
+    void repositionRelatedLayers() override;
+
+    std::unique_ptr<ScrollerPairMac> m_scrollerPair;
 };
 
-} // namespace WebKit
+}
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

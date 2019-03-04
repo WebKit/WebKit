@@ -80,10 +80,13 @@ bool ScrollingTree::shouldHandleWheelEventSynchronously(const PlatformWheelEvent
 
 void ScrollingTree::setOrClearLatchedNode(const PlatformWheelEvent& wheelEvent, ScrollingNodeID nodeID)
 {
-    if (wheelEvent.shouldConsiderLatching())
+    if (wheelEvent.shouldConsiderLatching()) {
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree " << this << " setOrClearLatchedNode: setting latched node " << nodeID);
         setLatchedNode(nodeID);
-    else if (wheelEvent.shouldResetLatching())
+    } else if (wheelEvent.shouldResetLatching()) {
+        LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree " << this << " setOrClearLatchedNode: clearing latched node (was " << latchedNode() << ")");
         clearLatchedNode();
+    }
 }
 
 ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -97,6 +100,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
     }
 
     if (hasLatchedNode()) {
+        LOG_WITH_STREAM(Scrolling, stream << " has latched node " << latchedNode());
         auto* node = nodeForID(latchedNode());
         if (is<ScrollingTreeScrollingNode>(node))
             return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);

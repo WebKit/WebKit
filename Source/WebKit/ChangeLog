@@ -1,3 +1,49 @@
+2019-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Share more code between overflow and frame scrolling nodes, fixing overflow scrollbar display
+        https://bugs.webkit.org/show_bug.cgi?id=195258
+
+        Reviewed by Antti Koivisto.
+
+        This patch moves management of scrollbar layers and scrollbar painters ("NSScrollerImp") down to
+        ScrollingStateScrollingNode to be shared between frame and overflow nodes, allowing for
+        scrolling thread updates of overflow scrollbars. It also moves some scrolling tree-side code
+        to ScrollingTreeScrollingNodeDelegateMac to be shared between the "tree" nodes for overflow and frames.
+
+        Layers for scrollbars are given to scrolling state nodes via setNodeLayers() now, and
+        RenderLayerCompositor::updateScrollingNodeLayers() is added to provide a bottleneck to call that.
+        At some point AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange() should be relieved
+        of the responsibility of pushing scrollbar layers (but the scrolling state tree needs to hold
+        references to GraphicsLayers before that becomes safe).
+        
+        The actual fix that allows overflow scrollbars to show is the change in
+        AsyncScrollingCoordinator::scrollableAreaScrollbarLayerDidChange() that calls scrollableArea.*ScrollbarLayerDidChange()
+        for all ScrollableAreas. This ensures that the CALayer is pushed onto the NSScrollerImp.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode):
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers):
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent):
+        * UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp: Copied from Source/WebKit/UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp.
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::create):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::ScrollingTreeOverflowScrollingNodeRemoteMac):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::~ScrollingTreeOverflowScrollingNodeRemoteMac):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::repositionRelatedLayers):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEvent):
+        (WebKit::ScrollingTreeOverflowScrollingNodeRemoteMac::handleMouseEvent):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-04  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Move WebPaymentCoordinatorProxy from Source/WebKit/UIProcess to Source/WebKit/Shared

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeComposite_h
-#define ScrollbarThemeComposite_h
+#pragma once
 
 #include "ScrollbarTheme.h"
 
@@ -71,4 +70,3 @@ public:
 };
 
 }
-#endif

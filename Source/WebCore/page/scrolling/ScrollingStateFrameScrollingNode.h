@@ -58,9 +58,6 @@ public:
         FooterHeight,
         HeaderLayer,
         FooterLayer,
-        VerticalScrollbarLayer,
-        HorizontalScrollbarLayer,
-        PainterForScrollbar,
         BehaviorForFixedElements,
         TopContentInset,
         FixedElementsLayoutRelativeToFrame,
@@ -125,24 +122,12 @@ public:
     const LayerRepresentation& footerLayer() const { return m_footerLayer; }
     WEBCORE_EXPORT void setFooterLayer(const LayerRepresentation&);
 
-    const LayerRepresentation& verticalScrollbarLayer() const { return m_verticalScrollbarLayer; }
-    WEBCORE_EXPORT void setVerticalScrollbarLayer(const LayerRepresentation&);
-
-    const LayerRepresentation& horizontalScrollbarLayer() const { return m_horizontalScrollbarLayer; }
-    WEBCORE_EXPORT void setHorizontalScrollbarLayer(const LayerRepresentation&);
-
     // These are more like Settings, and should probably move to the Scrolling{State}Tree itself.
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     WEBCORE_EXPORT void setFixedElementsLayoutRelativeToFrame(bool);
 
     bool asyncFrameOrOverflowScrollingEnabled() const { return m_asyncFrameOrOverflowScrollingEnabled; }
     void setAsyncFrameOrOverflowScrollingEnabled(bool);
-
-#if PLATFORM(MAC)
-    NSScrollerImp *verticalScrollerImp() const { return m_verticalScrollerImp.get(); }
-    NSScrollerImp *horizontalScrollerImp() const { return m_horizontalScrollerImp.get(); }
-#endif
-    void setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar);
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
@@ -158,13 +143,6 @@ private:
     LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;
-    LayerRepresentation m_verticalScrollbarLayer;
-    LayerRepresentation m_horizontalScrollbarLayer;
-
-#if PLATFORM(MAC)
-    RetainPtr<NSScrollerImp> m_verticalScrollerImp;
-    RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
-#endif
 
     EventTrackingRegions m_eventTrackingRegions;
     FloatPoint m_requestedScrollPosition;

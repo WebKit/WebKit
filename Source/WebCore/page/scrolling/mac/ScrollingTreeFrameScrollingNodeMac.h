@@ -45,8 +45,6 @@ public:
 protected:
     ScrollingTreeFrameScrollingNodeMac(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
-    void releaseReferencesToScrollerImpsOnTheMainThread();
-
     // ScrollingTreeNode member functions.
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
     void commitStateAfterChildren(const ScrollingStateNode&) override;
@@ -68,16 +66,14 @@ private:
     void currentScrollPositionChanged() override;
     void repositionScrollingLayers() override;
 
+    ScrollingTreeScrollingNodeDelegateMac m_delegate;
+
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;
     RetainPtr<CALayer> m_insetClipLayer;
     RetainPtr<CALayer> m_contentShadowLayer;
     RetainPtr<CALayer> m_headerLayer;
     RetainPtr<CALayer> m_footerLayer;
-    RetainPtr<NSScrollerImp> m_verticalScrollerImp;
-    RetainPtr<NSScrollerImp> m_horizontalScrollerImp;
-
-    ScrollingTreeScrollingNodeDelegateMac m_delegate;
     
     bool m_lastScrollHadUnfilledPixels { false };
     bool m_hadFirstUpdate { false };

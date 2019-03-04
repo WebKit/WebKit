@@ -50,14 +50,25 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #if ENABLE(CSS_SCROLL_SNAP)
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
 #endif
+#if PLATFORM(MAC)
+    , m_verticalScrollerImp(stateNode.verticalScrollerImp())
+    , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
+#endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_expectsWheelEventTestTrigger(stateNode.expectsWheelEventTestTrigger())
 {
     if (hasChangedProperty(ScrollContainerLayer))
         setScrollContainerLayer(stateNode.scrollContainerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
     if (hasChangedProperty(ScrolledContentsLayer))
         setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
+    if (hasChangedProperty(VerticalScrollbarLayer))
+        setVerticalScrollbarLayer(stateNode.verticalScrollbarLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
+
+    if (hasChangedProperty(HorizontalScrollbarLayer))
+        setHorizontalScrollbarLayer(stateNode.horizontalScrollbarLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode() = default;
@@ -83,6 +94,9 @@ void ScrollingStateScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(ExpectsWheelEventTestTrigger);
     setPropertyChangedBit(ScrollContainerLayer);
     setPropertyChangedBit(ScrolledContentsLayer);
+    setPropertyChangedBit(HorizontalScrollbarLayer);
+    setPropertyChangedBit(VerticalScrollbarLayer);
+    setPropertyChangedBit(PainterForScrollbar);
 
     ScrollingStateNode::setAllPropertiesChanged();
 }
@@ -239,6 +253,30 @@ void ScrollingStateScrollingNode::setScrolledContentsLayer(const LayerRepresenta
     m_scrolledContentsLayer = layerRepresentation;
     setPropertyChanged(ScrolledContentsLayer);
 }
+
+void ScrollingStateScrollingNode::setHorizontalScrollbarLayer(const LayerRepresentation& layer)
+{
+    if (layer == m_horizontalScrollbarLayer)
+        return;
+
+    m_horizontalScrollbarLayer = layer;
+    setPropertyChanged(HorizontalScrollbarLayer);
+}
+
+void ScrollingStateScrollingNode::setVerticalScrollbarLayer(const LayerRepresentation& layer)
+{
+    if (layer == m_verticalScrollbarLayer)
+        return;
+
+    m_verticalScrollbarLayer = layer;
+    setPropertyChanged(VerticalScrollbarLayer);
+}
+
+#if !PLATFORM(MAC)
+void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
+{
+}
+#endif
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {

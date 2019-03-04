@@ -29,9 +29,12 @@
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #import "Logging.h"
+#import "ScrollingStateScrollingNode.h"
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeScrollingNode.h"
+#import <QuartzCore/QuartzCore.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 
 namespace WebCore {
 
@@ -41,7 +44,19 @@ ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac(Scr
 {
 }
 
-ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac() = default;
+ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac()
+{
+    releaseReferencesToScrollerImpsOnTheMainThread();
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
+{
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::PainterForScrollbar)) {
+        releaseReferencesToScrollerImpsOnTheMainThread();
+        m_verticalScrollerImp = scrollingStateNode.verticalScrollerImp();
+        m_horizontalScrollerImp = scrollingStateNode.horizontalScrollerImp();
+    }
+}
 
 void ScrollingTreeScrollingNodeDelegateMac::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
 {
@@ -65,6 +80,24 @@ bool ScrollingTreeScrollingNodeDelegateMac::activeScrollSnapIndexDidChange() con
 
 bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseBegan) {
+        [m_verticalScrollerImp setUsePresentationValue:YES];
+        [m_horizontalScrollerImp setUsePresentationValue:YES];
+    }
+    if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded || wheelEvent.momentumPhase() == PlatformWheelEventPhaseCancelled) {
+        [m_verticalScrollerImp setUsePresentationValue:NO];
+        [m_horizontalScrollerImp setUsePresentationValue:NO];
+    }
+
+#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
+    if (scrollingNode().expectsWheelEventTestTrigger()) {
+        if (scrollingTree().shouldHandleWheelEventSynchronously(wheelEvent))
+            removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+        else
+            deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNode().scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
+    }
+#endif
+
     return m_scrollController.handleWheelEvent(wheelEvent);
 }
 
@@ -289,6 +322,43 @@ void ScrollingTreeScrollingNodeDelegateMac::removeTestDeferralForReason(WheelEve
     
     LOG(WheelEventTestTriggers, "   ScrollingTreeScrollingNodeDelegateMac::deferTestsForReason: ENDING deferral for %p because of %d", identifier, reason);
     scrollingTree().removeTestDeferralForReason(identifier, reason);
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarPainters()
+{
+    if (m_verticalScrollerImp || m_horizontalScrollerImp) {
+        auto scrollPosition = currentScrollPosition();
+
+        [CATransaction begin];
+        [CATransaction lock];
+
+        if ([m_verticalScrollerImp shouldUsePresentationValue]) {
+            float presentationValue;
+            float overhangAmount;
+            ScrollableArea::computeScrollbarValueAndOverhang(scrollPosition.y(), totalContentsSize().height(), scrollableAreaSize().height(), presentationValue, overhangAmount);
+            [m_verticalScrollerImp setPresentationValue:presentationValue];
+        }
+
+        if ([m_horizontalScrollerImp shouldUsePresentationValue]) {
+            float presentationValue;
+            float overhangAmount;
+            ScrollableArea::computeScrollbarValueAndOverhang(scrollPosition.x(), totalContentsSize().width(), scrollableAreaSize().width(), presentationValue, overhangAmount);
+            [m_horizontalScrollerImp setPresentationValue:presentationValue];
+        }
+
+        [CATransaction unlock];
+        [CATransaction commit];
+    }
+}
+
+void ScrollingTreeScrollingNodeDelegateMac::releaseReferencesToScrollerImpsOnTheMainThread()
+{
+    if (m_verticalScrollerImp || m_horizontalScrollerImp) {
+        // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
+        // on a non-main thread. rdar://problem/24535055
+        WTF::callOnMainThread([verticalScrollerImp = WTFMove(m_verticalScrollerImp), horizontalScrollerImp = WTFMove(m_horizontalScrollerImp)] {
+        });
+    }
 }
 
 } // namespace WebCore

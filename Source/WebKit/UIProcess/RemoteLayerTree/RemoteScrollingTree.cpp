@@ -39,6 +39,7 @@
 #include "ScrollingTreeOverflowScrollingNodeIOS.h"
 #else
 #include "ScrollingTreeFrameScrollingNodeRemoteMac.h"
+#include "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
 #endif
 
 namespace WebKit {
@@ -125,8 +126,7 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
 #if PLATFORM(IOS_FAMILY)
         return ScrollingTreeOverflowScrollingNodeIOS::create(*this, nodeID);
 #else
-        ASSERT_NOT_REACHED();
-        break;
+        return ScrollingTreeOverflowScrollingNodeRemoteMac::create(*this, nodeID);
 #endif
     case ScrollingNodeType::Fixed:
         return ScrollingTreeFixedNode::create(*this, nodeID);

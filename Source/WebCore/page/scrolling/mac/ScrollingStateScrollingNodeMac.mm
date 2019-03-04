@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingStateScrollingNode.h"
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
+void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verticalScrollbar, Scrollbar* horizontalScrollbar)
 {
     ScrollbarTheme& scrollbarTheme = ScrollbarTheme::theme();
     if (scrollbarTheme.isMockTheme())

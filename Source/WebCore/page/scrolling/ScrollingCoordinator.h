@@ -136,6 +136,8 @@ public:
         GraphicsLayer* counterScrollingLayer { nullptr };
         GraphicsLayer* insetClipLayer { nullptr };
         GraphicsLayer* rootContentsLayer { nullptr };
+        GraphicsLayer* horizontalScrollbarLayer { nullptr };
+        GraphicsLayer* verticalScrollbarLayer { nullptr };
     };
     virtual void setNodeLayers(ScrollingNodeID, const NodeLayers&) { }
 

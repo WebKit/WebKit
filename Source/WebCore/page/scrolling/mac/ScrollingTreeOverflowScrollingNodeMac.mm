@@ -51,9 +51,7 @@ ScrollingTreeOverflowScrollingNodeMac::~ScrollingTreeOverflowScrollingNodeMac() 
 void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
-    const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-    UNUSED_PARAM(scrollingStateNode);
-    // FIXME: Scroll snap data.
+    m_delegate.updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
 }
 
 void ScrollingTreeOverflowScrollingNodeMac::commitStateAfterChildren(const ScrollingStateNode& stateNode)
@@ -67,16 +65,6 @@ ScrollingEventResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(con
 {
     if (!canHaveScrollbars())
         return ScrollingEventResult::DidNotHandleEvent;
-
-
-#if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
-    if (expectsWheelEventTestTrigger()) {
-        if (scrollingTree().shouldHandleWheelEventSynchronously(wheelEvent))
-            m_delegate.removeTestDeferralForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
-        else
-            m_delegate.deferTestsForReason(reinterpret_cast<WheelEventTestTrigger::ScrollableAreaIdentifier>(scrollingNodeID()), WheelEventTestTrigger::ScrollingThreadSyncNeeded);
-    }
-#endif
 
     m_delegate.handleWheelEvent(wheelEvent);
 
@@ -99,6 +87,11 @@ void ScrollingTreeOverflowScrollingNodeMac::repositionScrollingLayers()
 {
     auto scrollPosition = currentScrollPosition();
     scrolledContentsLayer().position = -scrollPosition;
+}
+
+void ScrollingTreeOverflowScrollingNodeMac::repositionRelatedLayers()
+{
+    m_delegate.updateScrollbarPainters();
 }
 
 } // namespace WebCore

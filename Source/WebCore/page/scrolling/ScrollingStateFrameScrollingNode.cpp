@@ -46,10 +46,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStat
 
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateScrollingNode(stateNode, adoptiveTree)
-#if PLATFORM(MAC)
-    , m_verticalScrollerImp(stateNode.verticalScrollerImp())
-    , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
-#endif
     , m_eventTrackingRegions(stateNode.eventTrackingRegions())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_layoutViewport(stateNode.layoutViewport())
@@ -82,12 +78,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
 
     if (hasChangedProperty(FooterLayer))
         setFooterLayer(stateNode.footerLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
-
-    if (hasChangedProperty(VerticalScrollbarLayer))
-        setVerticalScrollbarLayer(stateNode.verticalScrollbarLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
-
-    if (hasChangedProperty(HorizontalScrollbarLayer))
-        setHorizontalScrollbarLayer(stateNode.horizontalScrollbarLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
 ScrollingStateFrameScrollingNode::~ScrollingStateFrameScrollingNode() = default;
@@ -111,9 +101,6 @@ void ScrollingStateFrameScrollingNode::setAllPropertiesChanged()
     setPropertyChangedBit(FooterHeight);
     setPropertyChangedBit(HeaderLayer);
     setPropertyChangedBit(FooterLayer);
-    setPropertyChangedBit(VerticalScrollbarLayer);
-    setPropertyChangedBit(HorizontalScrollbarLayer);
-    setPropertyChangedBit(PainterForScrollbar);
     setPropertyChangedBit(BehaviorForFixedElements);
     setPropertyChangedBit(TopContentInset);
     setPropertyChangedBit(FixedElementsLayoutRelativeToFrame);
@@ -270,24 +257,6 @@ void ScrollingStateFrameScrollingNode::setFooterLayer(const LayerRepresentation&
     setPropertyChanged(FooterLayer);
 }
 
-void ScrollingStateFrameScrollingNode::setVerticalScrollbarLayer(const LayerRepresentation& layer)
-{
-    if (layer == m_verticalScrollbarLayer)
-        return;
-
-    m_verticalScrollbarLayer = layer;
-    setPropertyChanged(VerticalScrollbarLayer);
-}
-
-void ScrollingStateFrameScrollingNode::setHorizontalScrollbarLayer(const LayerRepresentation& layer)
-{
-    if (layer == m_horizontalScrollbarLayer)
-        return;
-
-    m_horizontalScrollbarLayer = layer;
-    setPropertyChanged(HorizontalScrollbarLayer);
-}
-
 void ScrollingStateFrameScrollingNode::setFixedElementsLayoutRelativeToFrame(bool fixedElementsLayoutRelativeToFrame)
 {
     if (fixedElementsLayoutRelativeToFrame == m_fixedElementsLayoutRelativeToFrame)
@@ -305,12 +274,6 @@ void ScrollingStateFrameScrollingNode::setAsyncFrameOrOverflowScrollingEnabled(b
     m_asyncFrameOrOverflowScrollingEnabled = enabled;
     setPropertyChanged(AsyncFrameOrOverflowScrollingEnabled);
 }
-
-#if !PLATFORM(MAC)
-void ScrollingStateFrameScrollingNode::setScrollerImpsFromScrollbars(Scrollbar*, Scrollbar*)
-{
-}
-#endif
 
 void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
