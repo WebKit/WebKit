@@ -1,3 +1,14 @@
+2019-03-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix after r242163
+
+        This fixes WPE aftyer the backport for r242055 wrongly added a piece of code which is
+        needed only in trunk and depends on changes introduced by a patch that is not being
+        merged for 2.24.
+
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Remove unneeded code.
+
 2019-03-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Public API headers are missing autocleanup definitions

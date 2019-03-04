@@ -83,11 +83,6 @@ void WebProcessPool::platformInitialize()
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-#if PLATFORM(WPE)
-    parameters.hostClientFileDescriptor = wpe_renderer_host_create_client();
-    parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(wpe_loader_get_loaded_implementation_library_name());
-#endif
-
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
 
