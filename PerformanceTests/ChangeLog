@@ -1,3 +1,14 @@
+2019-03-04  Saam Barati  <sbarati@apple.com>
+
+        Add a detailed summary page for JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=195014
+
+        Rubber-stamped by Darin Adler.
+
+        * JetStream2/JetStream.css:
+        (a:link, a:visited):
+        * JetStream2/in-depth.html: Added.
+
 2019-02-08  Saam barati  <sbarati@apple.com>
 
         Update JetStream2 CLI to not print "ms" since we now just print the score values
