@@ -224,7 +224,9 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 {
     ResourceRequest originalRequest = request;
 
-    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto request) mutable {
+    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto request) mutable {
+        if (!weakThis)
+            return handler({ ResourceError { ResourceError::Type::Cancellation }});
 
         if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
             if (this->isRedirected()) {
@@ -238,7 +240,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
         }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-        this->processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
+        this->processContentExtensionRulesForLoad(WTFMove(request), [this, weakThis = WTFMove(weakThis), handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
             if (!result.has_value()) {
                 ASSERT(result.error().isCancellation());
                 handler(WTFMove(result.error()));
@@ -249,6 +251,8 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
                 return;
             }
 
+            if (!weakThis)
+                return handler({ ResourceError { ResourceError::Type::Cancellation }});
             this->continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(result.value().request), WTFMove(handler));
         });
 #else

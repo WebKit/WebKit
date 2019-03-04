@@ -1,3 +1,14 @@
+2019-03-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crashes when NetworkResourceLoader/NetworkLoadChecker are destroyed during HTTPS upgrade check
+        https://bugs.webkit.org/show_bug.cgi?id=195238
+        <rdar://problem/47598656>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+
 2019-03-04  Brady Eidson  <beidson@apple.com>
 
         Correctly handle sandbox extensions when the same WKWebView loads multiple file:// URLs.
