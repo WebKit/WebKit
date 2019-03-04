@@ -42,15 +42,19 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     initializeTarget(target)
     {
-        if (target.CanvasAgent)
+        if (target.CanvasAgent) {
             target.CanvasAgent.enable();
+
+            if (target.CanvasAgent.setRecordingAutoCaptureFrameCount && WI.settings.canvasRecordingAutoCaptureEnabled.value && WI.settings.canvasRecordingAutoCaptureFrameCount.value)
+                target.CanvasAgent.setRecordingAutoCaptureFrameCount(WI.settings.canvasRecordingAutoCaptureFrameCount.value);
+        }
     }
 
     // Static
 
     static supportsRecordingAutoCapture()
     {
-        return window.CanvasAgent && CanvasAgent.setRecordingAutoCaptureFrameCount;
+        return InspectorBackend.domains.CanvasAgent && InspectorBackend.domains.CanvasAgent.setRecordingAutoCaptureFrameCount;
     }
 
     // Public
@@ -97,14 +101,13 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         console.assert(!isNaN(count) && count >= 0);
 
-        return CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0)
-        .then(() => {
-            WI.settings.canvasRecordingAutoCaptureEnabled.value = enabled && count;
-            WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        for (let target of WI.targets) {
+            if (target.CanvasAgent)
+                target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
+        }
+
+        WI.settings.canvasRecordingAutoCaptureEnabled.value = enabled && count;
+        WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;
     }
 
     canvasAdded(canvasPayload)
