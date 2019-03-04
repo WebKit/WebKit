@@ -1,3 +1,15 @@
+2019-03-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        URLHelpers should use unorm2_quickCheck before converting to NFC
+        https://bugs.webkit.org/show_bug.cgi?id=194272
+
+        Reviewed by Darin Adler.
+
+        If the string is already in normalization form C, don't try to normalize it.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::toNormalizationFormC):
+
 2019-03-02  Darin Adler  <darin@apple.com>
 
         Retire legacy dtoa function and DecimalNumber class

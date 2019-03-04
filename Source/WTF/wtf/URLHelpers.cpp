@@ -775,27 +775,34 @@ static String createStringWithEscapedUnsafeCharacters(const String& sourceBuffer
 
 static String toNormalizationFormC(const String& string)
 {
-    auto sourceBuffer = string.charactersWithNullTermination();
+    Vector<UChar> sourceBuffer = string.charactersWithNullTermination();
     ASSERT(sourceBuffer.last() == '\0');
     sourceBuffer.removeLast();
 
-    String result;
-    Vector<UChar, urlBytesBufferLength> normalizedCharacters(sourceBuffer.size());
     UErrorCode uerror = U_ZERO_ERROR;
-    int32_t normalizedLength = 0;
     const UNormalizer2* normalizer = unorm2_getNFCInstance(&uerror);
-    if (!U_FAILURE(uerror)) {
-        normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedCharacters.size(), &uerror);
-        if (uerror == U_BUFFER_OVERFLOW_ERROR) {
-            uerror = U_ZERO_ERROR;
-            normalizedCharacters.resize(normalizedLength);
-            normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedLength, &uerror);
-        }
-        if (!U_FAILURE(uerror))
-            result = String(normalizedCharacters.data(), normalizedLength);
-    }
+    if (U_FAILURE(uerror))
+        return { };
 
-    return result;
+    UNormalizationCheckResult checkResult = unorm2_quickCheck(normalizer, sourceBuffer.data(), sourceBuffer.size(), &uerror);
+    if (U_FAILURE(uerror))
+        return { };
+
+    // No need to normalize if already normalized.
+    if (checkResult == UNORM_YES)
+        return string;
+
+    Vector<UChar, urlBytesBufferLength> normalizedCharacters(sourceBuffer.size());
+    auto normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedCharacters.size(), &uerror);
+    if (uerror == U_BUFFER_OVERFLOW_ERROR) {
+        uerror = U_ZERO_ERROR;
+        normalizedCharacters.resize(normalizedLength);
+        normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedLength, &uerror);
+    }
+    if (U_FAILURE(uerror))
+        return { };
+
+    return String(normalizedCharacters.data(), normalizedLength);
 }
 
 String userVisibleURL(const CString& url)
