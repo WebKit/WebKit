@@ -956,9 +956,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (!this._isCapturing)
             return;
 
-        if (WI.settings.timelinesAutoStop.value)
-            this._resetAutoRecordingMaxTimeTimeout();
-        else
+        if (WI.settings.timelinesAutoStop.value) {
+            if (this._mainResourceForAutoCapturing && !isNaN(this._mainResourceForAutoCapturing.parentFrame.loadEventTimestamp))
+                this._stopAutoRecordingSoon();
+            else
+                this._resetAutoRecordingMaxTimeTimeout();
+            this._resetAutoRecordingDeadTimeTimeout();
+        } else
             this.relaxAutoStop();
     }
 
