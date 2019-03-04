@@ -1,3 +1,17 @@
+2019-03-04  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Fullscreen "stay in page" option breaks video playback
+        https://bugs.webkit.org/show_bug.cgi?id=195277
+        <rdar://problem/48537317>
+
+        Reviewed by Eric Carlson.
+
+        Make sure we resume media playback when the user chooses "stay in page" from the deceptive
+        website warning dialog.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+
 2019-03-04  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Enable web process sandbox
