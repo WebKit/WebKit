@@ -1,3 +1,11 @@
+2019-03-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a followup after r242336
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::webViewDidMoveToWindow):
+        Copy the list of observers before iterating it to avoid observers modifying the list.
+
 2019-03-04  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r242222.

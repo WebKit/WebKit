@@ -8795,7 +8795,8 @@ void WebPageProxy::removeObserver(WebViewDidMoveToWindowObserver& observer)
 
 void WebPageProxy::webViewDidMoveToWindow()
 {
-    for (const auto& observer : m_webViewDidMoveToWindowObservers) {
+    auto observersCopy = m_webViewDidMoveToWindowObservers;
+    for (const auto& observer : observersCopy) {
         if (!observer.value)
             continue;
         observer.value->webViewDidMoveToWindow();
