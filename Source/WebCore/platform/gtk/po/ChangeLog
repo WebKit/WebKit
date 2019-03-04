@@ -1,3 +1,9 @@
+2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update POTFILES.in after r239627.
+
+        * POTFILES.in:
+
 2019-02-14  Milo Casagrande  <milo@milo.name>
 
         [l10n] Updated Italian translation of WebKitGTK+
