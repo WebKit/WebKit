@@ -64,13 +64,13 @@ async function runTest() {
     caretViewRect = null;
 
     await UIHelper.activateAndWaitForInputSessionAt(160, 40);
-    await waitForCaretViewRectToBecome(8, 165, 2, 14);
+    await waitForCaretViewRectToBecome(8, 165, 3, 14);
     shouldBeEqualToString("document.activeElement.id", "editor");
 
     document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();
     await UIHelper.activateAndWaitForInputSessionAt(160, 120);
-    await waitForCaretViewRectToBecome(18, 218, 2, 14);
+    await waitForCaretViewRectToBecome(18, 218, 3, 14);
     shouldBeEqualToString("document.activeElement.id", "frame");
     shouldBeEqualToString("frame.contentWindow.document.activeElement.id", "editor");
 

@@ -1,3 +1,28 @@
+2019-03-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Caret x-position in empty text area does not match text field
+        https://bugs.webkit.org/show_bug.cgi?id=195125
+        <rdar://problem/47161070>
+
+        Reviewed by Darin Adler.
+
+        Fix up User Agent styles for <textarea> on iOS such that they have the same left padding
+        width and same text-indent as <input type="text">. This makes the x-position of the caret
+        in an empty textarea match the position of the caret in an empty text field.
+
+        Test: fast/forms/textarea/ios/caret-x-position-in-textarea-matches-textfield.html
+
+        * css/html.css:
+        (textarea): For iOS Family, do not use the padding shorthand property. Instead explicitly specify
+        padding-top and padding-bottom to be 2px to keep our current behavior (because it looks reasonable)
+        and do not specify left and right padding so that we inherit the padding set earlier in this file.
+        (textarea::placeholder): Deleted. This was added to "try" to make fix up the position of the placeholder
+        text so as to match the position of the textarea's inner text and the position of a text field's inner
+        text. This fix up may have worked out visually when it was added, but based on the discovery of the
+        hardcoded 3px left and right padding (see below remark) it looks like it was always one pixel too short.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createInnerTextStyle): Remove hardcoded 3px left and right padding.
+
 2019-03-04  Youenn Fablet  <youenn@apple.com>
 
         Make sure to correctly notify of end of a ServiceWorkerJob when the context is stopped

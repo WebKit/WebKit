@@ -165,18 +165,18 @@ layer at (452,303) size 180x14
   RenderBlock {DIV} at (6,3) size 181x15
 layer at (452,326) size 180x14
   RenderBlock {DIV} at (6,3) size 181x15
-layer at (120,794) size 506x106 clip at (121,795) size 504x104
-  RenderTextControl {TEXTAREA} at (0,520) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 500x14
-layer at (120,1082) size 506x106 clip at (121,1083) size 504x104
-  RenderTextControl {TEXTAREA} at (0,808) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 500x14
-layer at (120,1213) size 506x106 clip at (121,1214) size 504x104
-  RenderTextControl {TEXTAREA} at (0,939) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 500x14
-layer at (120,1344) size 506x106 clip at (121,1345) size 504x104
-  RenderTextControl {TEXTAREA} at (0,1070) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 500x14
-layer at (120,1522) size 506x106 clip at (121,1523) size 504x104
-  RenderTextControl {TEXTAREA} at (0,1248) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 500x14
+layer at (120,794) size 513x106 clip at (121,795) size 511x104
+  RenderTextControl {TEXTAREA} at (0,520) size 513x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,3) size 501x14
+layer at (120,1082) size 513x106 clip at (121,1083) size 511x104
+  RenderTextControl {TEXTAREA} at (0,808) size 513x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,3) size 501x14
+layer at (120,1213) size 513x106 clip at (121,1214) size 511x104
+  RenderTextControl {TEXTAREA} at (0,939) size 513x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,3) size 501x14
+layer at (120,1344) size 513x106 clip at (121,1345) size 511x104
+  RenderTextControl {TEXTAREA} at (0,1070) size 513x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,3) size 501x14
+layer at (120,1522) size 513x106 clip at (121,1523) size 511x104
+  RenderTextControl {TEXTAREA} at (0,1248) size 513x107 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (6,3) size 501x14

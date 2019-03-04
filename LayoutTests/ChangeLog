@@ -1,3 +1,52 @@
+2019-03-04  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Caret x-position in empty text area does not match text field
+        https://bugs.webkit.org/show_bug.cgi?id=195125
+        <rdar://problem/47161070>
+
+        Reviewed by Darin Adler.
+
+        Update expected results due to changes in padding.
+
+        * TestExpectations: Remove some tests that are now passing.
+        * editing/selection/ios/show-selection-in-empty-overflow-hidden-document-expected.txt:
+        * editing/selection/ios/show-selection-in-empty-overflow-hidden-document.html:
+        * fast/forms/textarea/ios/caret-x-position-in-textarea-matches-textfield-expected.txt: Added.
+        * fast/forms/textarea/ios/caret-x-position-in-textarea-matches-textfield.html: Added.
+        * platform/ios-wk2/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/ios-wk2/editing/inserting/4960120-1-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/ios-wk2/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/ios-wk2/fast/block/margin-collapse/103-expected.txt:
+        * platform/ios-wk2/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/ios-wk2/fast/dynamic/008-expected.txt:
+        * platform/ios-wk2/fast/forms/basic-textareas-expected.txt:
+        * platform/ios-wk2/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-align-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/ios-wk2/fast/hidpi/resize-corner-hidpi-expected.txt:
+        * platform/ios-wk2/fast/overflow/overflow-x-y-expected.txt:
+        * platform/ios-wk2/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/ios-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/compositing/overflow/textarea-scroll-touch-expected.txt:
+        * platform/ios/fast/forms/form-element-geometry-expected.txt:
+        * platform/ios/fast/forms/linebox-overflow-in-textarea-padding-expected.txt:
+        * platform/ios/fast/forms/negativeLineHeight-expected.txt:
+        * platform/ios/fast/forms/text-control-intrinsic-widths-expected.txt:
+        * platform/ios/fast/forms/textarea-width-expected.txt:
+        * platform/ios/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/ios/fast/scrolling/ios/textarea-scroll-touch-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug194024-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug30692-expected.txt:
+
 2019-03-03  Darin Adler  <darin@apple.com>
 
         Prepare to improve handling of conversion of float to strings

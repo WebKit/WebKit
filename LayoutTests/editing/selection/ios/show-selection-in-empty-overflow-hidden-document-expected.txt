@@ -2,9 +2,9 @@ Verifies that native selection UI is not suppressed when the document element ha
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-Caret view rect became {{ 8, 165 }, { 2, 14 }}
+Caret view rect became {{ 8, 165 }, { 3, 14 }}
 PASS document.activeElement.id is "editor"
-Caret view rect became {{ 18, 218 }, { 2, 14 }}
+Caret view rect became {{ 18, 218 }, { 3, 14 }}
 PASS document.activeElement.id is "frame"
 PASS frame.contentWindow.document.activeElement.id is "editor"
 PASS successfullyParsed is true

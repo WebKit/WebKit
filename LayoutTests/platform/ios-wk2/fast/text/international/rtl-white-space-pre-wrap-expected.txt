@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
           text run at (150,34) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
 layer at (8,200) size 199x68 clip at (9,201) size 182x66 scrollHeight 72
   RenderTextControl {TEXTAREA} at (0,22) size 199x68 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 178x68
-      RenderText {#text} at (45,0) size 130x65
-        text run at (45,0) width 9 RTL: " "
-        text run at (53,0) width 122 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
-        text run at (79,34) width 96 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
+    RenderBlock {DIV} at (13,3) size 158x68
+      RenderText {#text} at (28,0) size 130x65
+        text run at (28,0) width 9 RTL: " "
+        text run at (36,0) width 122 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+        text run at (62,34) width 96 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"

@@ -1,0 +1,10 @@
+Tests that the x-coordinate of the caret in an empty textarea is identical to the x-coordinate of the caret in an empty text field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textAreaCaretRect.left is textFieldCaretRect.left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

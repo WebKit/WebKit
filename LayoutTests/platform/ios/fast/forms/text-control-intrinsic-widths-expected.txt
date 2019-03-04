@@ -18,17 +18,17 @@ size=500 clientWidth=3508
 size=1000 clientWidth=7004
 
 textarea
-cols=1 clientWidth=32
-cols=2 clientWidth=39
-cols=3 clientWidth=46
-cols=4 clientWidth=53
-cols=5 clientWidth=60
-cols=10 clientWidth=95
-cols=20 clientWidth=165
-cols=50 clientWidth=375
-cols=100 clientWidth=725
-cols=500 clientWidth=3522
-cols=1000 clientWidth=7019
+cols=1 clientWidth=33
+cols=2 clientWidth=40
+cols=3 clientWidth=47
+cols=4 clientWidth=54
+cols=5 clientWidth=61
+cols=10 clientWidth=96
+cols=20 clientWidth=166
+cols=50 clientWidth=376
+cols=100 clientWidth=726
+cols=500 clientWidth=3523
+cols=1000 clientWidth=7020
 
 Courier
 input
@@ -45,17 +45,17 @@ size=500 clientWidth=3312
 size=1000 clientWidth=6612
 
 textarea
-cols=1 clientWidth=32
-cols=2 clientWidth=39
-cols=3 clientWidth=45
-cols=4 clientWidth=52
-cols=5 clientWidth=59
-cols=10 clientWidth=92
-cols=20 clientWidth=158
-cols=50 clientWidth=356
-cols=100 clientWidth=686
-cols=500 clientWidth=3326
-cols=1000 clientWidth=6627
+cols=1 clientWidth=33
+cols=2 clientWidth=40
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=93
+cols=20 clientWidth=159
+cols=50 clientWidth=357
+cols=100 clientWidth=687
+cols=500 clientWidth=3327
+cols=1000 clientWidth=6628
 
 Helvetica
 input
@@ -72,17 +72,17 @@ size=500 clientWidth=3070
 size=1000 clientWidth=6129
 
 textarea
-cols=1 clientWidth=32
-cols=2 clientWidth=38
-cols=3 clientWidth=44
-cols=4 clientWidth=50
-cols=5 clientWidth=56
-cols=10 clientWidth=87
-cols=20 clientWidth=148
-cols=50 clientWidth=331
-cols=100 clientWidth=637
-cols=500 clientWidth=3084
-cols=1000 clientWidth=6143
+cols=1 clientWidth=33
+cols=2 clientWidth=39
+cols=3 clientWidth=45
+cols=4 clientWidth=51
+cols=5 clientWidth=57
+cols=10 clientWidth=88
+cols=20 clientWidth=149
+cols=50 clientWidth=332
+cols=100 clientWidth=638
+cols=500 clientWidth=3085
+cols=1000 clientWidth=6144
 
 Monaco
 input
@@ -99,17 +99,17 @@ size=500 clientWidth=3312
 size=1000 clientWidth=6612
 
 textarea
-cols=1 clientWidth=32
-cols=2 clientWidth=39
-cols=3 clientWidth=45
-cols=4 clientWidth=52
-cols=5 clientWidth=59
-cols=10 clientWidth=92
-cols=20 clientWidth=158
-cols=50 clientWidth=356
-cols=100 clientWidth=686
-cols=500 clientWidth=3326
-cols=1000 clientWidth=6627
+cols=1 clientWidth=33
+cols=2 clientWidth=40
+cols=3 clientWidth=46
+cols=4 clientWidth=53
+cols=5 clientWidth=60
+cols=10 clientWidth=93
+cols=20 clientWidth=159
+cols=50 clientWidth=357
+cols=100 clientWidth=687
+cols=500 clientWidth=3327
+cols=1000 clientWidth=6628
 
 Times
 input
@@ -126,17 +126,17 @@ size=500 clientWidth=2761
 size=1000 clientWidth=5511
 
 textarea
-cols=1 clientWidth=31
-cols=2 clientWidth=36
-cols=3 clientWidth=42
-cols=4 clientWidth=47
-cols=5 clientWidth=53
-cols=10 clientWidth=80
-cols=20 clientWidth=135
-cols=50 clientWidth=300
-cols=100 clientWidth=575
-cols=500 clientWidth=2775
-cols=1000 clientWidth=5525
+cols=1 clientWidth=32
+cols=2 clientWidth=37
+cols=3 clientWidth=43
+cols=4 clientWidth=48
+cols=5 clientWidth=54
+cols=10 clientWidth=81
+cols=20 clientWidth=136
+cols=50 clientWidth=301
+cols=100 clientWidth=576
+cols=500 clientWidth=2776
+cols=1000 clientWidth=5526
 
 Andale Mono
 input
@@ -153,17 +153,17 @@ size=500 clientWidth=2011
 size=1000 clientWidth=4011
 
 textarea
-cols=1 clientWidth=29
-cols=2 clientWidth=33
-cols=3 clientWidth=37
-cols=4 clientWidth=41
-cols=5 clientWidth=45
-cols=10 clientWidth=65
-cols=20 clientWidth=105
-cols=50 clientWidth=225
-cols=100 clientWidth=425
-cols=500 clientWidth=2025
-cols=1000 clientWidth=4025
+cols=1 clientWidth=30
+cols=2 clientWidth=34
+cols=3 clientWidth=38
+cols=4 clientWidth=42
+cols=5 clientWidth=46
+cols=10 clientWidth=66
+cols=20 clientWidth=106
+cols=50 clientWidth=226
+cols=100 clientWidth=426
+cols=500 clientWidth=2026
+cols=1000 clientWidth=4026
 
 Arial
 input
@@ -180,17 +180,17 @@ size=500 clientWidth=2511
 size=1000 clientWidth=5011
 
 textarea
-cols=1 clientWidth=30
-cols=2 clientWidth=35
-cols=3 clientWidth=40
-cols=4 clientWidth=45
-cols=5 clientWidth=50
-cols=10 clientWidth=75
-cols=20 clientWidth=125
-cols=50 clientWidth=275
-cols=100 clientWidth=525
-cols=500 clientWidth=2525
-cols=1000 clientWidth=5025
+cols=1 clientWidth=31
+cols=2 clientWidth=36
+cols=3 clientWidth=41
+cols=4 clientWidth=46
+cols=5 clientWidth=51
+cols=10 clientWidth=76
+cols=20 clientWidth=126
+cols=50 clientWidth=276
+cols=100 clientWidth=526
+cols=500 clientWidth=2526
+cols=1000 clientWidth=5026
 
 Comic Sans MS
 input
@@ -207,17 +207,17 @@ size=500 clientWidth=2011
 size=1000 clientWidth=4011
 
 textarea
-cols=1 clientWidth=29
-cols=2 clientWidth=33
-cols=3 clientWidth=37
-cols=4 clientWidth=41
-cols=5 clientWidth=45
-cols=10 clientWidth=65
-cols=20 clientWidth=105
-cols=50 clientWidth=225
-cols=100 clientWidth=425
-cols=500 clientWidth=2025
-cols=1000 clientWidth=4025
+cols=1 clientWidth=30
+cols=2 clientWidth=34
+cols=3 clientWidth=38
+cols=4 clientWidth=42
+cols=5 clientWidth=46
+cols=10 clientWidth=66
+cols=20 clientWidth=106
+cols=50 clientWidth=226
+cols=100 clientWidth=426
+cols=500 clientWidth=2026
+cols=1000 clientWidth=4026
 
 Courier New
 input
@@ -234,17 +234,17 @@ size=500 clientWidth=3511
 size=1000 clientWidth=7011
 
 textarea
-cols=1 clientWidth=32
-cols=2 clientWidth=39
-cols=3 clientWidth=46
-cols=4 clientWidth=53
-cols=5 clientWidth=60
-cols=10 clientWidth=95
-cols=20 clientWidth=165
-cols=50 clientWidth=375
-cols=100 clientWidth=725
-cols=500 clientWidth=3525
-cols=1000 clientWidth=7025
+cols=1 clientWidth=33
+cols=2 clientWidth=40
+cols=3 clientWidth=47
+cols=4 clientWidth=54
+cols=5 clientWidth=61
+cols=10 clientWidth=96
+cols=20 clientWidth=166
+cols=50 clientWidth=376
+cols=100 clientWidth=726
+cols=500 clientWidth=3526
+cols=1000 clientWidth=7026
 
 Georgia
 input
@@ -261,17 +261,17 @@ size=500 clientWidth=2511
 size=1000 clientWidth=5011
 
 textarea
-cols=1 clientWidth=30
-cols=2 clientWidth=35
-cols=3 clientWidth=40
-cols=4 clientWidth=45
-cols=5 clientWidth=50
-cols=10 clientWidth=75
-cols=20 clientWidth=125
-cols=50 clientWidth=275
-cols=100 clientWidth=525
-cols=500 clientWidth=2525
-cols=1000 clientWidth=5025
+cols=1 clientWidth=31
+cols=2 clientWidth=36
+cols=3 clientWidth=41
+cols=4 clientWidth=46
+cols=5 clientWidth=51
+cols=10 clientWidth=76
+cols=20 clientWidth=126
+cols=50 clientWidth=276
+cols=100 clientWidth=526
+cols=500 clientWidth=2526
+cols=1000 clientWidth=5026
 
 Times New Roman
 input
@@ -288,17 +288,17 @@ size=500 clientWidth=2011
 size=1000 clientWidth=4011
 
 textarea
-cols=1 clientWidth=29
-cols=2 clientWidth=33
-cols=3 clientWidth=37
-cols=4 clientWidth=41
-cols=5 clientWidth=45
-cols=10 clientWidth=65
-cols=20 clientWidth=105
-cols=50 clientWidth=225
-cols=100 clientWidth=425
-cols=500 clientWidth=2025
-cols=1000 clientWidth=4025
+cols=1 clientWidth=30
+cols=2 clientWidth=34
+cols=3 clientWidth=38
+cols=4 clientWidth=42
+cols=5 clientWidth=46
+cols=10 clientWidth=66
+cols=20 clientWidth=106
+cols=50 clientWidth=226
+cols=100 clientWidth=426
+cols=500 clientWidth=2026
+cols=1000 clientWidth=4026
 
 Trebuchet MS
 input
@@ -315,17 +315,17 @@ size=500 clientWidth=2511
 size=1000 clientWidth=5011
 
 textarea
-cols=1 clientWidth=30
-cols=2 clientWidth=35
-cols=3 clientWidth=40
-cols=4 clientWidth=45
-cols=5 clientWidth=50
-cols=10 clientWidth=75
-cols=20 clientWidth=125
-cols=50 clientWidth=275
-cols=100 clientWidth=525
-cols=500 clientWidth=2525
-cols=1000 clientWidth=5025
+cols=1 clientWidth=31
+cols=2 clientWidth=36
+cols=3 clientWidth=41
+cols=4 clientWidth=46
+cols=5 clientWidth=51
+cols=10 clientWidth=76
+cols=20 clientWidth=126
+cols=50 clientWidth=276
+cols=100 clientWidth=526
+cols=500 clientWidth=2526
+cols=1000 clientWidth=5026
 
 Verdana
 input
@@ -342,17 +342,17 @@ size=500 clientWidth=3011
 size=1000 clientWidth=6011
 
 textarea
-cols=1 clientWidth=31
-cols=2 clientWidth=37
-cols=3 clientWidth=43
-cols=4 clientWidth=49
-cols=5 clientWidth=55
-cols=10 clientWidth=85
-cols=20 clientWidth=145
-cols=50 clientWidth=325
-cols=100 clientWidth=625
-cols=500 clientWidth=3025
-cols=1000 clientWidth=6025
+cols=1 clientWidth=32
+cols=2 clientWidth=38
+cols=3 clientWidth=44
+cols=4 clientWidth=50
+cols=5 clientWidth=56
+cols=10 clientWidth=86
+cols=20 clientWidth=146
+cols=50 clientWidth=326
+cols=100 clientWidth=626
+cols=500 clientWidth=3026
+cols=1000 clientWidth=6026
 
 Webdings
 input
@@ -369,17 +369,17 @@ size=500 clientWidth=2011
 size=1000 clientWidth=4011
 
 textarea
-cols=1 clientWidth=29
-cols=2 clientWidth=33
-cols=3 clientWidth=37
-cols=4 clientWidth=41
-cols=5 clientWidth=45
-cols=10 clientWidth=65
-cols=20 clientWidth=105
-cols=50 clientWidth=225
-cols=100 clientWidth=425
-cols=500 clientWidth=2025
-cols=1000 clientWidth=4025
+cols=1 clientWidth=30
+cols=2 clientWidth=34
+cols=3 clientWidth=38
+cols=4 clientWidth=42
+cols=5 clientWidth=46
+cols=10 clientWidth=66
+cols=20 clientWidth=106
+cols=50 clientWidth=226
+cols=100 clientWidth=426
+cols=500 clientWidth=2026
+cols=1000 clientWidth=4026
 
 PASS successfullyParsed is true
 

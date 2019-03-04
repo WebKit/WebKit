@@ -550,13 +550,6 @@ RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style)
     textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
     textBlockStyle.setDisplay(DisplayType::Block);
-
-#if PLATFORM(IOS_FAMILY)
-    // We're adding three extra pixels of padding to line textareas up with text fields.  
-    textBlockStyle.setPaddingLeft(Length(3, Fixed));
-    textBlockStyle.setPaddingRight(Length(3, Fixed));
-#endif
-
     return textBlockStyle;
 }
 

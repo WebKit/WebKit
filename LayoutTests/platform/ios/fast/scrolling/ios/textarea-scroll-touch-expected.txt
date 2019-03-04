@@ -9,24 +9,24 @@
       (children 2
         (GraphicsLayer
           (position 18.00 18.00)
-          (bounds 206.00 126.00)
+          (bounds 234.00 126.00)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 204.00 124.00)
+              (bounds 232.00 124.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (bounds origin 0.00 50.00)
-                  (bounds 204.00 124.00)
+                  (bounds 232.00 124.00)
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=1 height=1)
                       (scrollOffset (0,50))
                       (anchor 0.00 0.00)
-                      (bounds 204.00 270.00)
+                      (bounds 232.00 270.00)
                       (drawsContent 1)
                     )
                   )
@@ -36,26 +36,26 @@
           )
         )
         (GraphicsLayer
-          (position 248.00 18.00)
-          (bounds 206.00 126.00)
+          (position 276.00 18.00)
+          (bounds 234.00 126.00)
           (opacity 0.40)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 204.00 124.00)
+              (bounds 232.00 124.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (bounds origin 0.00 50.00)
-                  (bounds 204.00 124.00)
+                  (bounds 232.00 124.00)
                   (children 1
                     (GraphicsLayer
                       (offsetFromRenderer width=1 height=1)
                       (scrollOffset (0,50))
                       (anchor 0.00 0.00)
-                      (bounds 204.00 270.00)
+                      (bounds 232.00 270.00)
                       (drawsContent 1)
                     )
                   )

@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (8,68) size 467x286 clip at (9,69) size 465x284
   RenderTextControl {TEXTAREA} at (0,20) size 467x286 [color=#333333] [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-    RenderBlock {DIV} at (3,3) size 461x42
-      RenderText {#text} at (3,0) size 454x28
-        text run at (3,0) width 454: "1234567890abcdefghijABCDEFGHIJ1234567890abcdefghijABCDEFGHIJ12345X7890abcde"
-        text run at (3,14) width 267: "fghijABCDEFGXIJ1234567890abcdefghijABCDEFGHIJ"
-        text run at (269,14) width 1: " "
-      RenderBR {BR} at (3,28) size 0x14
+    RenderBlock {DIV} at (6,3) size 455x42
+      RenderText {#text} at (0,0) size 454x28
+        text run at (0,0) width 454: "1234567890abcdefghijABCDEFGHIJ1234567890abcdefghijABCDEFGHIJ12345X7890abcde"
+        text run at (0,14) width 267: "fghijABCDEFGXIJ1234567890abcdefghijABCDEFGHIJ"
+        text run at (266,14) width 1: " "
+      RenderBR {BR} at (0,28) size 0x14

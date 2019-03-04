@@ -674,14 +674,20 @@ textarea {
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
+    padding: 2px;
 #else
     -webkit-nbsp-mode: space;
     -webkit-line-break: after-white-space;
+
+    /* On iOS we want to inherit the left and right padding for consistency with
+     other form controls (e.g. <input type="text">). We want to use override the
+     top and bottom padding to ensure we have a symmetric look for text areas. */
+    padding-top: 2px;
+    padding-bottom: 2px;
 #endif
     flex-direction: column;
     resize: auto;
     cursor: auto;
-    padding: 2px;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
@@ -820,10 +826,6 @@ input:disabled, textarea:disabled {
 
 input[readonly], textarea[readonly] {
     border-color: rgb(188, 188, 188);
-}
-
-textarea::placeholder {
-    text-indent: 2px;
 }
 #endif
 
