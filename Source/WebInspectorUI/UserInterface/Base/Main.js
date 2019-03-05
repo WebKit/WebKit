@@ -2260,19 +2260,25 @@ WI._downloadWebArchive = function(event)
     this.archiveMainFrame();
 };
 
+WI._reloadInspectedInspector = function()
+{
+    const options = {};
+    WI.runtimeManager.evaluateInInspectedWindow(`InspectorFrontendHost.reopen()`, options, function(){});
+};
+
 WI._reloadPage = function(event)
 {
     if (!window.PageAgent)
         return;
 
-    PageAgent.reload();
     event.preventDefault();
-};
 
-WI._reloadToolbarButtonClicked = function(event)
-{
-    // Reload page from origin if the button is clicked while the shift key is pressed down.
-    PageAgent.reload.invoke({ignoreCache: this.modifierKeys.shiftKey});
+    if (InspectorFrontendHost.inspectionLevel() > 1) {
+        WI._reloadInspectedInspector();
+        return;
+    }
+
+    PageAgent.reload();
 };
 
 WI._reloadPageFromOrigin = function(event)
@@ -2280,8 +2286,25 @@ WI._reloadPageFromOrigin = function(event)
     if (!window.PageAgent)
         return;
 
-    PageAgent.reload.invoke({ignoreCache: true});
     event.preventDefault();
+
+    if (InspectorFrontendHost.inspectionLevel() > 1) {
+        WI._reloadInspectedInspector();
+        return;
+    }
+
+    PageAgent.reload.invoke({ignoreCache: true});
+};
+
+WI._reloadToolbarButtonClicked = function(event)
+{
+    if (InspectorFrontendHost.inspectionLevel() > 1) {
+        WI._reloadInspectedInspector();
+        return;
+    }
+
+    // Reload page from origin if the button is clicked while the shift key is pressed down.
+    PageAgent.reload.invoke({ignoreCache: this.modifierKeys.shiftKey});
 };
 
 WI._updateReloadToolbarButton = function()

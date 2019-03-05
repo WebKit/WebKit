@@ -1,5 +1,19 @@
 2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Reload actions from second level inspector should properly reload the inspected inspector
+        https://bugs.webkit.org/show_bug.cgi?id=195306
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        Provide a better reload for a Nth level inspector.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (WI.runBootstrapOperations):
+        Simplify, should not need to check for InspectorFrontendHost.
+
+2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: MediaSource logging not initialized properly
         https://bugs.webkit.org/show_bug.cgi?id=195307
 
