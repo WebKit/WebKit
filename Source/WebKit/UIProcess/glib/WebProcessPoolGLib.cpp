@@ -73,6 +73,12 @@ static bool memoryPressureMonitorDisabled()
 
 void WebProcessPool::platformInitialize()
 {
+#if PLATFORM(GTK)
+    m_alwaysUsesComplexTextCodePath = true;
+#endif
+    if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
+        m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
+
 #if ENABLE(REMOTE_INSPECTOR)
     if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER"))
         initializeRemoteInspectorServer(address);
@@ -93,14 +99,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || cacheModel() == CacheModel::DocumentViewer;
     parameters.proxySettings = m_networkProxySettings;
-
-#if PLATFORM(GTK)
-    // This is misnamed. It can only be used to disable complex text.
-    parameters.shouldAlwaysUseComplexTextCodePath = true;
-    const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT");
-    if (forceComplexText && !strcmp(forceComplexText, "0"))
-        parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
-#endif
 
     if (memoryPressureMonitorDisabled())
         parameters.shouldSuppressMemoryPressureHandler = true;
