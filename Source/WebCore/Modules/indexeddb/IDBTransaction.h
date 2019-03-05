@@ -152,6 +152,8 @@ public:
 
     void visitReferencedObjectStores(JSC::SlotVisitor&) const;
 
+    WEBCORE_EXPORT static std::atomic<unsigned> numberOfIDBTransactions;
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest*);
 

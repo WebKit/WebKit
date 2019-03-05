@@ -1,0 +1,10 @@
+This test verifies that IDBTransaction objects are freed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.numberOfIDBTransactions() is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

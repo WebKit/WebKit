@@ -746,6 +746,7 @@ http/wpt/cross-origin-resource-policy/ [ Pass ]
 
 http/tests/navigation/useragent-reload.php [ Pass ]
 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Pass ]
+storage/indexeddb/IDBObject-leak.html [ Pass ]
 
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 
