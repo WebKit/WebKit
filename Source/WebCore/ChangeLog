@@ -1,3 +1,19 @@
+2019-02-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [MSVC] Fix compilation errors with lambdas in Service Workers
+        https://bugs.webkit.org/show_bug.cgi?id=194841
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        MSVC has problems with the scoping of `this` within a nested lambda. In these cases `this` is
+        referring to the enclosing lambda according to MSVC. This patch works around this behavior
+        through by using the `protectedThis` pattern in WebKit code.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+
 2019-02-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Enable support for CONTENT_EXTENSIONS

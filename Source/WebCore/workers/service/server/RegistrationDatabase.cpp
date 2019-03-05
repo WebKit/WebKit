@@ -133,7 +133,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     LOG(ServiceWorker, "ServiceWorker RegistrationDatabase opening file %s", fullFilename.utf8().data());
 
     String errorMessage;
-    auto scopeExit = makeScopeExit([&, errorMessage = &errorMessage] {
+    auto scopeExit = makeScopeExit([this, protectedThis = makeRef(*this), errorMessage = &errorMessage] {
         ASSERT_UNUSED(errorMessage, !errorMessage->isNull());
 
 #if RELEASE_LOG_DISABLED
@@ -143,7 +143,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 #endif
 
         m_database = nullptr;
-        callOnMainThread([protectedThis = makeRef(*this)] {
+        callOnMainThread([protectedThis = protectedThis.copyRef()] {
             protectedThis->databaseFailedToOpen();
         });
     });

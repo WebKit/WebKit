@@ -115,7 +115,7 @@ void ServiceWorkerClientFetch::didReceiveRedirectResponse(ResourceResponse&& res
         }
         response.setSource(ResourceResponse::Source::ServiceWorker);
 
-        m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
+        m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [this, protectedThis = protectedThis.copyRef()](ResourceRequest&& request) {
             if (!m_loader || request.isNull()) {
                 if (auto callback = WTFMove(m_callback))
                     callback(Result::Succeeded);
