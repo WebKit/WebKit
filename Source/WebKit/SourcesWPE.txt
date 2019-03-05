@@ -102,6 +102,7 @@ UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/WebGrammarDetail.cpp
+UIProcess/WebMemoryPressureHandler.cpp @no-unify
 UIProcess/WebViewportAttributes.cpp
 
 UIProcess/API/C/WKGrammarDetail.cpp

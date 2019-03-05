@@ -78,12 +78,8 @@ void WebProcessPool::platformInitialize()
         initializeRemoteInspectorServer(address);
 #endif
 
-#if PLATFORM(GTK)
-    // To enable this for WPE, we need WebMemoryPressureHandler to lose the
-    // hard dependency on ViewSnapshotStore.
     if (!memoryPressureMonitorDisabled())
         installMemoryPressureHandler();
-#endif
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
