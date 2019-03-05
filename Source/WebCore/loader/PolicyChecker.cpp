@@ -193,7 +193,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
          blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension), requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
 
         if (!responseIdentifier.isValidFor(requestIdentifier))
-            return;
+            return function({ }, nullptr, NavigationPolicyDecision::IgnoreLoad);
 
         m_delegateIsDecidingNavigationPolicy = false;
 
@@ -234,7 +234,7 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, Re
         requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
 
         if (!responseIdentifier.isValidFor(requestIdentifier))
-            return;
+            return function({ }, nullptr, { }, { }, ShouldContinue::No);
 
         switch (policyAction) {
         case PolicyAction::Download:

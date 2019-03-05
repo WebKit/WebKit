@@ -1,3 +1,14 @@
+2019-02-20  Alex Christensen  <achristensen@webkit.org>
+
+        Always call CompletionHandlers after r240909
+        https://bugs.webkit.org/show_bug.cgi?id=194823
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2019-02-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         drawImage() clears the canvas if it's the source of the image and globalCompositeOperation is "copy"
