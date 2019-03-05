@@ -111,6 +111,7 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesServiceWorkersCanHandle;
     bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
+    bool shouldEnableITPDatabase { false };
 };
 
 } // namespace WebKit

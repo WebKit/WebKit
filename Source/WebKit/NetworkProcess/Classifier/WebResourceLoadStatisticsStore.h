@@ -52,7 +52,7 @@ enum class ShouldSample : bool;
 namespace WebKit {
 
 class NetworkSession;
-class ResourceLoadStatisticsMemoryStore;
+class ResourceLoadStatisticsStore;
 class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
@@ -189,7 +189,7 @@ private:
 
     WeakPtr<NetworkSession> m_networkSession;
     Ref<WorkQueue> m_statisticsQueue;
-    std::unique_ptr<ResourceLoadStatisticsMemoryStore> m_memoryStore;
+    std::unique_ptr<ResourceLoadStatisticsStore> m_statisticsStore;
     std::unique_ptr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
 
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;

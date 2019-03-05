@@ -65,7 +65,7 @@ public:
     
     WEBCORE_EXPORT bool tableExists(const String&);
     void clearAllTables();
-    int runVacuumCommand();
+    WEBCORE_EXPORT int runVacuumCommand();
     int runIncrementalVacuumCommand();
     
     bool transactionInProgress() const { return m_transactionInProgress; }

@@ -76,7 +76,7 @@ public:
     String getColumnName(int col);
     SQLValue getColumnValue(int col);
     WEBCORE_EXPORT String getColumnText(int col);
-    double getColumnDouble(int col);
+    WEBCORE_EXPORT double getColumnDouble(int col);
     WEBCORE_EXPORT int getColumnInt(int col);
     WEBCORE_EXPORT int64_t getColumnInt64(int col);
     WEBCORE_EXPORT String getColumnBlobAsString(int col);

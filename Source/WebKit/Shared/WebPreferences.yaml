@@ -1379,6 +1379,14 @@ ItpDebugModeEnabled:
   humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
   webcoreBinding: RuntimeEnabledFeatures
 
+IsITPDatabaseEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ITP Database Backend"
+  humanReadableDescription: "Enable Intelligent Tracking Prevention Database Backend"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: internal
+
 ServiceWorkersEnabled:
   type: bool
   defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED

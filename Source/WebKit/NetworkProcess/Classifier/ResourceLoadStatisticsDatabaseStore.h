@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,38 +29,33 @@
 
 #include "ResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteStatement.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
-class KeyedDecoder;
-class KeyedEncoder;
+class SQLiteDatabase;
+class SQLiteStatement;
 struct ResourceLoadStatistics;
 }
 
 namespace WebKit {
 
-class ResourceLoadStatisticsPersistentStorage;
+class ResourceLoadStatisticsMemoryStore;
 
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
-class ResourceLoadStatisticsMemoryStore final : public ResourceLoadStatisticsStore {
+class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
 public:
-    ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&);
+    ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, const String& storageDirectoryPath);
 
-    void setPersistentStorage(ResourceLoadStatisticsPersistentStorage&);
+    void populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore&);
 
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
-
-    const HashMap<RegistrableDomain, WebCore::ResourceLoadStatistics>& data() const { return m_resourceStatisticsMap; }
-
-    std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
-    void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
-
-    void mergeStatistics(Vector<ResourceLoadStatistics>&&);
-    void processStatistics(const Function<void(const ResourceLoadStatistics&)>&) const;
 
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 
@@ -110,33 +105,100 @@ public:
     void setLastSeen(const RegistrableDomain&, Seconds) override;
 
 private:
-    static bool shouldBlockAndKeepCookies(const ResourceLoadStatistics&);
-    static bool shouldBlockAndPurgeCookies(const ResourceLoadStatistics&);
-    static bool hasUserGrantedStorageAccessThroughPrompt(const ResourceLoadStatistics&, const RegistrableDomain&);
-    bool hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics&) const;
-    bool wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const;
+    bool insertObservedDomain(const ResourceLoadStatistics&);
+    void insertDomainRelationships(const ResourceLoadStatistics&);
+    bool insertDomainRelationship(WebCore::SQLiteStatement&, unsigned domainID, const RegistrableDomain& topFrameDomain);
+    bool relationshipExists(WebCore::SQLiteStatement&, unsigned firstDomainID, const RegistrableDomain& secondDomain) const;
+    unsigned domainID(const RegistrableDomain&) const;
+#ifndef NDEBUG
+    bool confirmDomainDoesNotExist(const RegistrableDomain&) const;
+#endif
+    void updateLastSeen(const RegistrableDomain&, WallTime);
+    void setUserInteraction(const RegistrableDomain&, bool hadUserInteraction, WallTime);
+    Vector<RegistrableDomain> domainsToBlock() const;
+
+    struct PrevalentDomainData {
+        unsigned domainID;
+        RegistrableDomain registerableDomain;
+        WallTime mostRecentUserInteractionTime;
+        bool hadUserInteraction;
+        bool grandfathered;
+    };
+    Vector<PrevalentDomainData> prevalentDomains() const;
+    Vector<unsigned> findExpiredUserInteractions() const;
+    void clearExpiredUserInteractions();
+    void clearGrandfathering(Vector<unsigned>&&);
+    bool hasUserGrantedStorageAccessThroughPrompt(unsigned domainID, const RegistrableDomain&) const;
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
-    void setPrevalentResource(ResourceLoadStatistics&, ResourceLoadPrevalence);
-    unsigned recursivelyGetAllDomainsThatHaveRedirectedToThisDomain(const ResourceLoadStatistics&, HashSet<RedirectedToDomain>&, unsigned numberOfRecursiveCalls) const;
+
+    void reclassifyResources();
+    struct NotVeryPrevalentResources {
+        RegistrableDomain registerableDomain;
+        ResourceLoadPrevalence prevalence;
+        unsigned subresourceUnderTopFrameDomainsCount;
+        unsigned subresourceUniqueRedirectsToCount;
+        unsigned subframeUnderTopFrameDomainsCount;
+        unsigned topFrameUniqueRedirectsToCount;
+    };
+    HashMap<unsigned, NotVeryPrevalentResources> findNotVeryPrevalentResources();
+
+    bool predicateValueForDomain(WebCore::SQLiteStatement&, const RegistrableDomain&) const;
+
+    enum class CookieTreatmentResult { Allow, BlockAndKeep, BlockAndPurge };
+    CookieTreatmentResult cookieTreatmentForOrigin(const RegistrableDomain&) const;
+    
+    void setPrevalentResource(const RegistrableDomain&, ResourceLoadPrevalence);
+    unsigned recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain(unsigned primaryDomainID, StdSet<unsigned>& nonPrevalentRedirectionSources, unsigned numberOfRecursiveCalls);
+    void setDomainsAsPrevalent(StdSet<unsigned>&&);
     void grantStorageAccessInternal(SubFrameDomain&&, TopFrameDomain&&, Optional<FrameID>, PageID, bool userWasPromptedNowOrEarlier, CompletionHandler<void(bool)>&&);
-    void markAsPrevalentIfHasRedirectedToPrevalent(ResourceLoadStatistics&);
-    bool isPrevalentDueToDebugMode(ResourceLoadStatistics&);
+    void markAsPrevalentIfHasRedirectedToPrevalent();
     Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() override;
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded() override;
-    ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
+    enum class AddedRecord { No, Yes };
+    std::pair<AddedRecord, unsigned> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
     Vector<RegistrableDomain> registrableDomainsToRemoveWebsiteDataFor() override;
-    bool isMemoryStore() const final { return true; }
+    bool isDatabaseStore() const final { return true; }
 
-
-    WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
-    HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;
+    bool createSchema();
+    bool prepareStatements();
+    
+    const String m_storageDirectoryPath;
+    mutable WebCore::SQLiteDatabase m_database;
+    mutable WebCore::SQLiteStatement m_observedDomainCount;
+    WebCore::SQLiteStatement m_insertObservedDomainStatement;
+    WebCore::SQLiteStatement m_insertTopLevelDomainStatement;
+    mutable WebCore::SQLiteStatement m_domainIDFromStringStatement;
+    WebCore::SQLiteStatement m_storageAccessUnderTopFrameDomainsStatement;
+    WebCore::SQLiteStatement m_topFrameUniqueRedirectsTo;
+    mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsToExists;
+    WebCore::SQLiteStatement m_topFrameUniqueRedirectsFrom;
+    mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsFromExists;
+    WebCore::SQLiteStatement m_subframeUnderTopFrameDomains;
+    mutable WebCore::SQLiteStatement m_subframeUnderTopFrameDomainExists;
+    WebCore::SQLiteStatement m_subresourceUnderTopFrameDomains;
+    mutable WebCore::SQLiteStatement m_subresourceUnderTopFrameDomainExists;
+    WebCore::SQLiteStatement m_subresourceUniqueRedirectsTo;
+    mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsToExists;
+    WebCore::SQLiteStatement m_subresourceUniqueRedirectsFrom;
+    mutable WebCore::SQLiteStatement m_subresourceUniqueRedirectsFromExists;
+    WebCore::SQLiteStatement m_mostRecentUserInteractionStatement;
+    WebCore::SQLiteStatement m_updateLastSeenStatement;
+    WebCore::SQLiteStatement m_updatePrevalentResourceStatement;
+    mutable WebCore::SQLiteStatement m_isPrevalentResourceStatement;
+    WebCore::SQLiteStatement m_updateVeryPrevalentResourceStatement;
+    mutable WebCore::SQLiteStatement m_isVeryPrevalentResourceStatement;
+    WebCore::SQLiteStatement m_clearPrevalentResourceStatement;
+    mutable WebCore::SQLiteStatement m_hadUserInteractionStatement;
+    WebCore::SQLiteStatement m_updateGrandfatheredStatement;
+    mutable WebCore::SQLiteStatement m_isGrandfatheredStatement;
+    mutable WebCore::SQLiteStatement m_findExpiredUserInteractionStatement;
 };
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsMemoryStore)
-    static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isMemoryStore(); }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsDatabaseStore)
+    static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isDatabaseStore(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

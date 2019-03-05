@@ -35,15 +35,15 @@
 
 namespace WebKit {
 
-bool ResourceLoadStatisticsClassifierCocoa::classify(unsigned subresourceUnderTopFrameOriginsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameOriginsCount)
+bool ResourceLoadStatisticsClassifierCocoa::classify(unsigned subresourceUnderTopFrameDomainsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameOriginsCount)
 {
     if (!canUseCorePrediction())
-        return classifyWithVectorThreshold(subresourceUnderTopFrameOriginsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);
+        return classifyWithVectorThreshold(subresourceUnderTopFrameDomainsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameOriginsCount);
 
     Vector<svm_node> features;
 
-    if (subresourceUnderTopFrameOriginsCount)
-        features.append({1, static_cast<double>(subresourceUnderTopFrameOriginsCount)});
+    if (subresourceUnderTopFrameDomainsCount)
+        features.append({1, static_cast<double>(subresourceUnderTopFrameDomainsCount)});
     if (subresourceUniqueRedirectsToCount)
         features.append({2, static_cast<double>(subresourceUniqueRedirectsToCount)});
     if (subframeUnderTopFrameOriginsCount)

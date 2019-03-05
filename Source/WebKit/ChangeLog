@@ -1,3 +1,283 @@
+2019-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Use a SQLite database to hold the ResourceLoadStatistics data
+        https://bugs.webkit.org/show_bug.cgi?id=194867
+        <rdar://problem/24240854>
+
+        Reviewed by Chris Dumez.
+
+        The ResourceLoadStatistics database plist is inefficient. It requires more memory use
+        than it needs, and forces lots of looping and string comparisons to find information.
+
+        This problem has already been solved in the form of relational databases. We use them
+        elsewhere in WebKit, and should do so for this storage as well.
+
+        This patch creates an optional SQLite database to handle ITP operations.
+
+        1. It adds a new internal experimental feature flag to activate it. It requires the user
+           exit and restart the process to take effect.
+        2. It populates itself from the existing plist file (if it exists).
+        3. It stops using the plist in favor of the database.
+        4. It does queries and other operations using the database instead of the old hash table
+           implementation.
+
+        This patch refactors the exisiting ResourceLoadStatisticsMemoryStore class into a base
+        ResourceLoadStatisticsStore class, which ResourceLoadStatisticsMemoryStore is based on.
+        It adds a new ResourceLoadStatisticsDatabaseStore that is implemented in terms of SQL
+        operations.
+
+        These code changes should not have any impact on existing operations, and when enabled
+        should produce the same test results.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp: Added.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prepareStatements):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertObservedDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::relationshipExists const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationship):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::confirmDomainDoesNotExist const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainIDFromString const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationships):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::databaseIsEmpty const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::calculateAndSubmitTelemetry const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain):
+        (WebKit::buildList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::listToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findNotVeryPrevalentResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::reclassifyResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::classifyPrevalentResources):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::syncStorageIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::syncStorageImmediately):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logFrameNavigation):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logSubresourceLoading):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logSubresourceRedirect):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::predicateValueForDomain const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isVeryPrevalentResource const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isRegisteredAsSubresourceUnder const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isRegisteredAsSubFrameUnder const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isRegisteredAsRedirectingTo const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setGrandfathered):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isGrandfathered const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectTo):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForPrimaryDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clear):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieTreatmentForOrigin const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasUserGrantedStorageAccessThroughPrompt):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainsToBlock const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearBlockingStateForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::processStatistics const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::prevalentDomains const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findExpiredUserInteractions const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearExpiredUserInteractions):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearGrandfathering):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateLastSeen):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setLastSeen):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeAllStorageAccess):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h: Added.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isEmpty const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsMemoryStore::classifyPrevalentResources):
+        (WebKit::ResourceLoadStatisticsMemoryStore::syncStorageIfNeeded):
+        (WebKit::ResourceLoadStatisticsMemoryStore::syncStorageImmediately):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherDataForDomains):
+        (WebKit::domainsToString): Deleted.
+        (WebKit::OperatingDate::fromWallTime): Deleted.
+        (WebKit::OperatingDate::today): Deleted.
+        (WebKit::OperatingDate::secondsSinceEpoch const): Deleted.
+        (WebKit::OperatingDate::operator== const): Deleted.
+        (WebKit::OperatingDate::operator< const): Deleted.
+        (WebKit::OperatingDate::operator<= const): Deleted.
+        (WebKit::OperatingDate::OperatingDate): Deleted.
+        (WebKit::mergeOperatingDates): Deleted.
+        (WebKit::computeImportance): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::~ResourceLoadStatisticsMemoryStore): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setNotifyPagesWhenDataRecordsWereScanned): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setShouldClassifyResourcesBeforeDataRecordsRemoval): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setShouldSubmitTelemetry): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::processStatisticsAndDataRecords): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::grandfatherExistingWebsiteData): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setResourceLoadStatisticsDebugMode): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPrevalentResourceForDebugMode): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::scheduleStatisticsProcessingRequestIfNecessary): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::cancelPendingStatisticsProcessingRequest): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setTimeToLiveUserInteraction): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setMinimumTimeBetweenDataRecordsRemoval): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setGrandfatheringTime): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setCacheMaxAgeCap): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateCacheMaxAgeCap): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setAgeCapForClientSideCookies): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords const): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setDataRecordsBeingRemoved): Deleted.
+        (WebKit::debugLogDomainsInBatches): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::includeTodayAsOperatingDateIfNecessary): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasStatisticsExpired const): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setMaxStatisticsEntries): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPruneEntriesDownTo): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::resetParametersToDefaultValues): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::logTestingEvent): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::didCreateNetworkProcess): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        (WebKit::ResourceLoadStatisticsMemoryStore::data const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::isDebugModeEnabled const): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::store const): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setStorageAccessPromptsEnabled): Deleted.
+        (WebKit::ResourceLoadStatisticsMemoryStore::setDebugLogggingEnabled): Deleted.
+        (): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp: Added.
+        (WebKit::domainsToString):
+        (WebKit::OperatingDate::fromWallTime):
+        (WebKit::OperatingDate::today):
+        (WebKit::OperatingDate::secondsSinceEpoch const):
+        (WebKit::OperatingDate::operator== const):
+        (WebKit::OperatingDate::operator< const):
+        (WebKit::OperatingDate::operator<= const):
+        (WebKit::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+        (WebKit::ResourceLoadStatisticsStore::~ResourceLoadStatisticsStore):
+        (WebKit::ResourceLoadStatisticsStore::calculateAndSubmitTelemetry const):
+        (WebKit::ResourceLoadStatisticsStore::computeImportance):
+        (WebKit::ResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::ResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::ResourceLoadStatisticsStore::setShouldSubmitTelemetry):
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::ResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary):
+        (WebKit::ResourceLoadStatisticsStore::cancelPendingStatisticsProcessingRequest):
+        (WebKit::ResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::ResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::ResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebKit::ResourceLoadStatisticsStore::setCacheMaxAgeCap):
+        (WebKit::ResourceLoadStatisticsStore::updateCacheMaxAgeCap):
+        (WebKit::ResourceLoadStatisticsStore::setAgeCapForClientSideCookies):
+        (WebKit::ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap):
+        (WebKit::ResourceLoadStatisticsStore::shouldRemoveDataRecords const):
+        (WebKit::ResourceLoadStatisticsStore::setDataRecordsBeingRemoved):
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::clearBlockingStateForDomains):
+        (WebKit::ResourceLoadStatisticsStore::processStatistics const):
+        (WebKit::ResourceLoadStatisticsStore::statisticsEpirationTime const):
+        (WebKit::ResourceLoadStatisticsStore::mergeOperatingDates):
+        (WebKit::ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired const):
+        (WebKit::ResourceLoadStatisticsStore::setMaxStatisticsEntries):
+        (WebKit::ResourceLoadStatisticsStore::setPruneEntriesDownTo):
+        (WebKit::ResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        (WebKit::ResourceLoadStatisticsStore::logTestingEvent):
+        (WebKit::ResourceLoadStatisticsStore::removeAllStorageAccess):
+        (WebKit::ResourceLoadStatisticsStore::didCreateNetworkProcess):
+        (WebKit::ResourceLoadStatisticsStore::debugLogDomainsInBatches):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h: Copied from Source/WebKit/NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h.
+        (WebKit::OperatingDate::OperatingDate):
+        (WebKit::ResourceLoadStatisticsStore::isEmpty const):
+        (WebKit::ResourceLoadStatisticsStore::data const):
+        (WebKit::ResourceLoadStatisticsStore::isDebugModeEnabled const):
+        (WebKit::ResourceLoadStatisticsStore::store const):
+        (WebKit::ResourceLoadStatisticsStore::setStorageAccessPromptsEnabled):
+        (WebKit::ResourceLoadStatisticsStore::setDebugLogggingEnabled):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStoreCocoa.mm: Renamed from Source/WebKit/UIProcess/Cocoa/ResourceLoadStatisticsMemoryStoreCocoa.mm.
+        (WebKit::ResourceLoadStatisticsStore::registerUserDefaultsIfNeeded):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setShouldSubmitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::flushAndDestroyPersistentStore):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessUnderOpener):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::WebResourceLoadStatisticsStore::logWebSocketLoading):
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceLoading):
+        (WebKit::WebResourceLoadStatisticsStore::logSubresourceRedirect):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookieBlockingUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearBlockingStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsStore::setMaxStatisticsEntries):
+        (WebKit::WebResourceLoadStatisticsStore::setPruneEntriesDownTo):
+        (WebKit::WebResourceLoadStatisticsStore::resetParametersToDefaultValues):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Platform/classifier/ResourceLoadStatisticsClassifier.cpp:
+        (WebKit::ResourceLoadStatisticsClassifier::calculateResourcePrevalence):
+        * Platform/classifier/ResourceLoadStatisticsClassifier.h:
+        * Shared/WebPreferences.yaml:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-04  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Introduce fixed duration content observation

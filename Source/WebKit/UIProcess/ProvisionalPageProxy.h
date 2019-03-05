@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebPageProxyMessages.h"
 #include "WebsitePoliciesData.h"
 #include <wtf/WeakPtr.h>
 

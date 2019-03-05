@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,12 @@ ResourceLoadPrevalence ResourceLoadStatisticsClassifier::calculateResourcePreval
     auto subresourceUniqueRedirectsToCount = resourceStatistic.subresourceUniqueRedirectsTo.size();
     auto subframeUnderTopFrameDomainsCount = resourceStatistic.subframeUnderTopFrameDomains.size();
     auto topFrameUniqueRedirectsToCount = resourceStatistic.topFrameUniqueRedirectsTo.size();
-    
+
+    return calculateResourcePrevalence(subresourceUnderTopFrameDomainsCount, subresourceUniqueRedirectsToCount, subframeUnderTopFrameDomainsCount, topFrameUniqueRedirectsToCount, currentPrevalence);
+}
+
+ResourceLoadPrevalence ResourceLoadStatisticsClassifier::calculateResourcePrevalence(unsigned subresourceUnderTopFrameDomainsCount, unsigned subresourceUniqueRedirectsToCount, unsigned subframeUnderTopFrameDomainsCount, unsigned topFrameUniqueRedirectsToCount, ResourceLoadPrevalence currentPrevalence)
+{
     if (!subresourceUnderTopFrameDomainsCount
         && !subresourceUniqueRedirectsToCount
         && !subframeUnderTopFrameDomainsCount
