@@ -67,12 +67,6 @@ static bool urlRequiresChromeBrowser(const URL& url)
     if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
         return true;
 
-    // Washington Post decides the image type based on the user agent,
-    // giving image/jp2 with WebKitGTK+'s standard user agent.
-    // https://bugs.webkit.org/show_bug.cgi?id=181421
-    if (baseDomain == "washingtonpost.com")
-        return true;
-
     return false;
 }
 
