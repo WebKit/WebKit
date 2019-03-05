@@ -1,3 +1,19 @@
+2019-03-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use a SQLite database to hold the ResourceLoadStatistics data
+        https://bugs.webkit.org/show_bug.cgi?id=194867
+        <rdar://problem/24240854>
+
+        Unreviewed build fix for WinCairo.
+
+        ResourceLoadStatisticsDebug and RELEASE_LOG_INFO_IF are not
+        defined because WinCairo port defines RELEASE_LOG_DISABLED.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess): Enclosed RELEASE_LOG_INFO_IF with #if !RELEASE_LOG_DISABLED.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener): Ditto.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking): Ditto.
+
 2019-03-04  Brent Fulgham  <bfulgham@apple.com>
 
         Use a SQLite database to hold the ResourceLoadStatistics data
