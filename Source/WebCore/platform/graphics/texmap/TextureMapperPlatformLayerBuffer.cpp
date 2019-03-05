@@ -78,9 +78,10 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
         return;
     }
 
-    if (m_holePunchClient && m_extraFlags & TextureMapperGL::ShouldNotBlend) {
+    if (m_extraFlags & TextureMapperGL::ShouldNotBlend) {
         ASSERT(!m_texture);
-        m_holePunchClient->setVideoRectangle(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
+        if (m_holePunchClient)
+            m_holePunchClient->setVideoRectangle(enclosingIntRect(modelViewMatrix.mapRect(targetRect)));
         texmapGL.drawSolidColor(targetRect, modelViewMatrix, Color(0, 0, 0, 0), false);
         return;
     }
