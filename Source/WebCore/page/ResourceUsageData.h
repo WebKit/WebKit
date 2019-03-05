@@ -30,6 +30,8 @@
 #include <array>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
