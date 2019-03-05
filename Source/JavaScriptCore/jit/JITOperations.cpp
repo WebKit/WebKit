@@ -1806,7 +1806,9 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
+            RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            if (existingAtomicString) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get())) {
                     ASSERT(exec->bytecodeOffset());
                     if (byValInfo->stubInfo && byValInfo->cachedId.impl() != existingAtomicString)

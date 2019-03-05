@@ -1125,7 +1125,9 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
+            RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec);
+            CHECK_EXCEPTION();
+            if (existingAtomicString) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
                     RETURN_PROFILED(result);
             }

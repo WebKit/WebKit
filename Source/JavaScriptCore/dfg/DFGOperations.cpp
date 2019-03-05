@@ -689,7 +689,9 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
         } else if (property.isString()) {
             Structure& structure = *base->structure(vm);
             if (JSCell::canUseFastGetOwnProperty(structure)) {
-                if (RefPtr<AtomicStringImpl> existingAtomicString = asString(property)->toExistingAtomicString(exec)) {
+                RefPtr<AtomicStringImpl> existingAtomicString = asString(property)->toExistingAtomicString(exec);
+                RETURN_IF_EXCEPTION(scope, encodedJSValue());
+                if (existingAtomicString) {
                     if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
                         return JSValue::encode(result);
                 }
@@ -724,7 +726,9 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
     } else if (property.isString()) {
         Structure& structure = *base->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            if (RefPtr<AtomicStringImpl> existingAtomicString = asString(property)->toExistingAtomicString(exec)) {
+            RefPtr<AtomicStringImpl> existingAtomicString = asString(property)->toExistingAtomicString(exec);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (existingAtomicString) {
                 if (JSValue result = base->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
                     return JSValue::encode(result);
             }
@@ -1445,7 +1449,9 @@ EncodedJSValue JIT_OPERATION operationGetByValWithThis(ExecState* exec, EncodedJ
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
-            if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {
+            RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (existingAtomicString) {
                 if (JSValue result = baseValue.asCell()->fastGetOwnProperty(vm, structure, existingAtomicString.get()))
                     return JSValue::encode(result);
             }
