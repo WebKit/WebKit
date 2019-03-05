@@ -179,13 +179,14 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
     int op1 = bytecode.m_lhs.offset();
     int op2 = bytecode.m_rhs.offset();
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
+    bool disallowAllocation = false;
     if (isOperandConstantChar(op1)) {
         emitGetVirtualRegister(op2, regT0);
         addSlowCase(branchIfNotCell(regT0));
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
-        addJump(branch32(commute(condition), regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue()[0])), target);
+        addJump(branch32(commute(condition), regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue(disallowAllocation)[0])), target);
         return;
     }
     if (isOperandConstantChar(op2)) {
@@ -194,7 +195,7 @@ void JIT::emit_compareAndJump(const Instruction* instruction, RelationalConditio
         JumpList failures;
         emitLoadCharacterString(regT0, regT0, failures);
         addSlowCase(failures);
-        addJump(branch32(condition, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue()[0])), target);
+        addJump(branch32(condition, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue(disallowAllocation)[0])), target);
         return;
     }
     if (isOperandConstantInt(op2)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -337,6 +337,12 @@ void OSRExit::executeOSRExit(Context& context)
     ExecState* exec = context.fp<ExecState*>();
     ASSERT(&exec->vm() == &vm);
     auto& cpu = context.cpu;
+
+    if (validateDFGDoesGC) {
+        // We're about to exit optimized code. So, there's no longer any optimized
+        // code running that expects no GC.
+        vm.heap.setExpectDoesGC(true);
+    }
 
     if (vm.callFrameForCatch) {
         exec = vm.callFrameForCatch;
@@ -1387,6 +1393,13 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         default:
             break;
         }
+    }
+
+    if (validateDFGDoesGC) {
+        // We're about to exit optimized code. So, there's no longer any optimized
+        // code running that expects no GC. We need to set this before arguments
+        // materialization below (see emitRestoreArguments()).
+        jit.store8(CCallHelpers::TrustedImm32(true), vm.heap.addressOfExpectDoesGC());
     }
 
     // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This

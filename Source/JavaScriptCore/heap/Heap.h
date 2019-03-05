@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,13 @@ namespace DFG {
 class SpeculativeJIT;
 class Worklist;
 }
+
+#if !ASSERT_DISABLED
+#define ENABLE_DFG_DOES_GC_VALIDATION 1
+#else
+#define ENABLE_DFG_DOES_GC_VALIDATION 0
+#endif
+constexpr bool validateDFGDoesGC = ENABLE_DFG_DOES_GC_VALIDATION;
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
@@ -293,6 +300,16 @@ public:
     
     unsigned barrierThreshold() const { return m_barrierThreshold; }
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
+
+#if ENABLE(DFG_DOES_GC_VALIDATION)
+    bool expectDoesGC() const { return m_expectDoesGC; }
+    void setExpectDoesGC(bool value) { m_expectDoesGC = value; }
+    bool* addressOfExpectDoesGC() { return &m_expectDoesGC; }
+#else
+    bool expectDoesGC() const { UNREACHABLE_FOR_PLATFORM(); return true; }
+    void setExpectDoesGC(bool) { UNREACHABLE_FOR_PLATFORM(); }
+    bool* addressOfExpectDoesGC() { UNREACHABLE_FOR_PLATFORM(); return nullptr; }
+#endif
 
     // If true, the GC believes that the mutator is currently messing with the heap. We call this
     // "having heap access". The GC may block if the mutator is in this state. If false, the GC may
@@ -581,6 +598,9 @@ private:
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_collectionScope;
     Markable<CollectionScope, EnumMarkableTraits<CollectionScope>> m_lastCollectionScope;
     Lock m_raceMarkStackLock;
+#if ENABLE(DFG_DOES_GC_VALIDATION)
+    bool m_expectDoesGC { true };
+#endif
 
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
