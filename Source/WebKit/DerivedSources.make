@@ -131,6 +131,7 @@ MESSAGE_RECEIVERS = \
     RemoteWebInspectorUI \
     SecItemShimProxy \
     ServiceWorkerClientFetch \
+    ServiceWorkerFetchTask \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \

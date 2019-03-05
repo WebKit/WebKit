@@ -2189,48 +2189,6 @@ void NetworkProcess::createServerToContextConnection(const SecurityOriginData& s
         parentProcessConnection()->send(Messages::NetworkProcessProxy::EstablishWorkerContextConnectionToNetworkProcess(securityOrigin), 0);
 }
 
-void NetworkProcess::didFailFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const ResourceError& error)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFailFetch(fetchIdentifier, error);
-}
-
-void NetworkProcess::didNotHandleFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didNotHandleFetch(fetchIdentifier);
-}
-
-void NetworkProcess::didReceiveFetchRedirectResponse(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const WebCore::ResourceResponse& response)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchRedirectResponse(fetchIdentifier, response);
-}
-
-void NetworkProcess::didReceiveFetchResponse(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const WebCore::ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchResponse(fetchIdentifier, response, needsContinueDidReceiveResponseMessage);
-}
-
-void NetworkProcess::didReceiveFetchData(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const IPC::DataReference& data, int64_t encodedDataLength)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchData(fetchIdentifier, data, encodedDataLength);
-}
-
-void NetworkProcess::didReceiveFetchFormData(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, const IPC::FormDataReference& formData)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didReceiveFetchFormData(fetchIdentifier, formData);
-}
-
-void NetworkProcess::didFinishFetch(SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier)
-{
-    if (auto* connection = m_swServerConnections.get(serverConnectionIdentifier))
-        connection->didFinishFetch(fetchIdentifier);
-}
-
 void NetworkProcess::postMessageToServiceWorkerClient(const ServiceWorkerClientIdentifier& destinationIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     if (auto* connection = m_swServerConnections.get(destinationIdentifier.serverConnectionIdentifier))

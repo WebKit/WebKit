@@ -576,5 +576,5 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 
 // Derived Sources
-
 EditableImageControllerMessageReceiver.cpp
+ServiceWorkerFetchTaskMessageReceiver.cpp

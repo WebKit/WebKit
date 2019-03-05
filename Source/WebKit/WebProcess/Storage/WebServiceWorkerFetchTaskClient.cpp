@@ -55,7 +55,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveRedirection(const WebCore::Resou
 {
     if (!m_connection)
         return;
-    m_connection->send(Messages::NetworkProcess::DidReceiveFetchRedirectResponse { m_serverConnectionIdentifier, m_fetchIdentifier, response }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveRedirectResponse { response }, m_fetchIdentifier.toUInt64());
 
     cleanup();
 }
@@ -68,7 +68,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveResponse(const ResourceResponse&
     if (m_needsContinueDidReceiveResponseMessage)
         m_waitingForContinueDidReceiveResponseMessage = true;
 
-    m_connection->send(Messages::NetworkProcess::DidReceiveFetchResponse { m_serverConnectionIdentifier, m_fetchIdentifier, response, m_needsContinueDidReceiveResponseMessage }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveResponse { response, m_needsContinueDidReceiveResponseMessage }, m_fetchIdentifier.toUInt64());
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
@@ -84,7 +84,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
         return;
     }
 
-    m_connection->send(Messages::NetworkProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { buffer }, static_cast<int64_t>(buffer->size()) }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { { buffer }, static_cast<int64_t>(buffer->size()) }, m_fetchIdentifier.toUInt64());
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
@@ -101,7 +101,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     // For now and for the case of blobs, we read it there and send the data through IPC.
     URL blobURL = formData->asBlobURL();
     if (blobURL.isNull()) {
-        m_connection->send(Messages::NetworkProcess::DidReceiveFetchFormData { m_serverConnectionIdentifier, m_fetchIdentifier, IPC::FormDataReference { WTFMove(formData) } }, 0);
+        m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveFormData { IPC::FormDataReference { WTFMove(formData) } }, m_fetchIdentifier.toUInt64());
         return;
     }
 
@@ -129,7 +129,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveBlobChunk(const char* data, size
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkProcess::DidReceiveFetchData { m_serverConnectionIdentifier, m_fetchIdentifier, { reinterpret_cast<const uint8_t*>(data), size }, static_cast<int64_t>(size) }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { { reinterpret_cast<const uint8_t*>(data), size }, static_cast<int64_t>(size) }, m_fetchIdentifier.toUInt64());
 }
 
 void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
@@ -149,7 +149,7 @@ void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)
         return;
     }
 
-    m_connection->send(Messages::NetworkProcess::DidFailFetch { m_serverConnectionIdentifier, m_fetchIdentifier, error }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidFail { error }, m_fetchIdentifier.toUInt64());
 
     cleanup();
 }
@@ -164,7 +164,7 @@ void WebServiceWorkerFetchTaskClient::didFinish()
         return;
     }
 
-    m_connection->send(Messages::NetworkProcess::DidFinishFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidFinish { }, m_fetchIdentifier.toUInt64());
 
     cleanup();
 }
@@ -174,7 +174,7 @@ void WebServiceWorkerFetchTaskClient::didNotHandle()
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkProcess::DidNotHandleFetch { m_serverConnectionIdentifier, m_fetchIdentifier }, 0);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, m_fetchIdentifier.toUInt64());
 
     cleanup();
 }

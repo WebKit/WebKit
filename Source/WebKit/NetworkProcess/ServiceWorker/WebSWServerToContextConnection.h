@@ -29,7 +29,21 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "ServiceWorkerFetchTask.h"
 #include <WebCore/SWServerToContextConnection.h>
+
+namespace WebCore {
+struct FetchOptions;
+class ResourceRequest;
+}
+
+namespace IPC {
+class FormDataReference;
+}
+
+namespace PAL {
+class SessionID;
+}
 
 namespace WebKit {
 
@@ -50,6 +64,12 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void terminate();
+
+    void startFetch(PAL::SessionID, Ref<IPC::Connection>&&, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const IPC::FormDataReference&, const String&);
+    void cancelFetch(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
+    void continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, WebCore::ServiceWorkerIdentifier);
+
+    void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
     WebSWServerToContextConnection(NetworkProcess&, const WebCore::SecurityOriginData&, Ref<IPC::Connection>&&);
@@ -75,6 +95,8 @@ private:
     Ref<IPC::Connection> m_ipcConnection;
     Ref<NetworkProcess> m_networkProcess;
     
+    HashMap<ServiceWorkerFetchTask::Identifier, WebCore::FetchIdentifier> m_ongoingFetchIdentifiers;
+    HashMap<WebCore::FetchIdentifier, Ref<ServiceWorkerFetchTask>> m_ongoingFetches;
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit

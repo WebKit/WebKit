@@ -32,6 +32,7 @@
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkProcessMessages.h"
+#include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
@@ -225,12 +226,12 @@ void WebSWContextManagerConnection::startFetch(SWServerConnectionIdentifier serv
 {
     auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier);
     if (!serviceWorkerThreadProxy) {
-        m_connectionToNetworkProcess->send(Messages::NetworkProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
+        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier.toUInt64());
         return;
     }
 
     if (!isValidFetch(request, options, serviceWorkerThreadProxy->scriptURL(), referrer)) {
-        m_connectionToNetworkProcess->send(Messages::NetworkProcess::DidNotHandleFetch { serverConnectionIdentifier, fetchIdentifier }, 0);
+        m_connectionToNetworkProcess->send(Messages::ServiceWorkerFetchTask::DidNotHandle { }, fetchIdentifier.toUInt64());
         return;
     }
 

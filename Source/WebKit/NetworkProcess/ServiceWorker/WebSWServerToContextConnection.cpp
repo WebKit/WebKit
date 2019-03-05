@@ -28,7 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FormDataReference.h"
 #include "NetworkProcess.h"
+#include "ServiceWorkerFetchTask.h"
+#include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/ServiceWorkerContextData.h>
@@ -57,7 +60,9 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 
 void WebSWServerToContextConnection::connectionClosed()
 {
-    // FIXME: Do what here...?
+    auto fetches = WTFMove(m_ongoingFetches);
+    for (auto& fetch : fetches.values())
+        fetch->fail(ResourceError { errorDomainWebKitInternal, 0, { }, "Service Worker context closed"_s });
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& data, PAL::SessionID sessionID, const String& userAgent)
@@ -113,6 +118,59 @@ void WebSWServerToContextConnection::connectionMayNoLongerBeNeeded()
 void WebSWServerToContextConnection::terminate()
 {
     send(Messages::WebSWContextManagerConnection::TerminateProcess());
+}
+
+void WebSWServerToContextConnection::startFetch(PAL::SessionID sessionID, Ref<IPC::Connection>&& contentConnection, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ResourceRequest& request, const FetchOptions& options, const IPC::FormDataReference& data, const String& referrer)
+{
+    auto fetchIdentifier = FetchIdentifier::generate();
+    
+    m_ongoingFetches.add(fetchIdentifier, ServiceWorkerFetchTask::create(sessionID, WTFMove(contentConnection), serverConnectionIdentifier, contentFetchIdentifier));
+
+    ASSERT(!m_ongoingFetchIdentifiers.contains({serverConnectionIdentifier, contentFetchIdentifier}));
+    m_ongoingFetchIdentifiers.add({serverConnectionIdentifier, contentFetchIdentifier}, fetchIdentifier);
+
+    send(Messages::WebSWContextManagerConnection::StartFetch { serverConnectionIdentifier, serviceWorkerIdentifier, fetchIdentifier, request, options, data, referrer });
+}
+
+void WebSWServerToContextConnection::cancelFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    auto iterator = m_ongoingFetchIdentifiers.find({ serverConnectionIdentifier, contentFetchIdentifier });
+    if (iterator == m_ongoingFetchIdentifiers.end())
+        return;
+
+    send(Messages::WebSWContextManagerConnection::CancelFetch { serverConnectionIdentifier, serviceWorkerIdentifier, iterator->value });
+
+    m_ongoingFetches.remove(iterator->value);
+    m_ongoingFetchIdentifiers.remove(iterator);
+}
+
+void WebSWServerToContextConnection::continueDidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier contentFetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+{
+    auto iterator = m_ongoingFetchIdentifiers.find({ serverConnectionIdentifier, contentFetchIdentifier });
+    if (iterator == m_ongoingFetchIdentifiers.end())
+        return;
+    
+    send(Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { serverConnectionIdentifier, serviceWorkerIdentifier, iterator->value });
+}
+
+void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    auto iterator = m_ongoingFetches.find(makeObjectIdentifier<FetchIdentifierType>(decoder.destinationID()));
+    if (iterator == m_ongoingFetches.end())
+        return;
+    
+    bool shouldRemove = decoder.messageName() == Messages::ServiceWorkerFetchTask::DidFail::name()
+        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidNotHandle::name()
+        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidFinish::name()
+        || decoder.messageName() == Messages::ServiceWorkerFetchTask::DidReceiveRedirectResponse::name();
+
+    iterator->value->didReceiveMessage(connection, decoder);
+
+    if (shouldRemove) {
+        ASSERT(m_ongoingFetchIdentifiers.contains(iterator->value->identifier()));
+        m_ongoingFetchIdentifiers.remove(iterator->value->identifier());
+        m_ongoingFetches.remove(iterator);
+    }
 }
 
 } // namespace WebKit

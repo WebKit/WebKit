@@ -58,6 +58,7 @@ NetworkProcess/FileAPI/NetworkBlobRegistry.cpp
 
 NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
 
+NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify

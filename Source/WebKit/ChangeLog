@@ -1,5 +1,84 @@
 2019-03-05  Youenn Fablet  <youenn@apple.com>
 
+        Introduce ServiceWorkerFetchTask
+        https://bugs.webkit.org/show_bug.cgi?id=195130
+
+        Reviewed by Chris Dumez.
+
+        ServiceWorkerFetchTask is added to represent NetworkProcess side of an ongoing fetch intercepted by service worker.
+        This patch should not change existing behavior.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didFailFetch): Deleted.
+        (WebKit::NetworkProcess::didNotHandleFetch): Deleted.
+        (WebKit::NetworkProcess::didReceiveFetchRedirectResponse): Deleted.
+        (WebKit::NetworkProcess::didReceiveFetchResponse): Deleted.
+        (WebKit::NetworkProcess::didReceiveFetchData): Deleted.
+        (WebKit::NetworkProcess::didReceiveFetchFormData): Deleted.
+        (WebKit::NetworkProcess::didFinishFetch): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::cancelFetch):
+        (WebKit::WebSWServerConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::didReceiveFetchRedirectResponse): Deleted.
+        (WebKit::WebSWServerConnection::didReceiveFetchResponse): Deleted.
+        (WebKit::WebSWServerConnection::didReceiveFetchData): Deleted.
+        (WebKit::WebSWServerConnection::didReceiveFetchFormData): Deleted.
+        (WebKit::WebSWServerConnection::didFinishFetch): Deleted.
+        (WebKit::WebSWServerConnection::didFailFetch): Deleted.
+        (WebKit::WebSWServerConnection::didNotHandleFetch): Deleted.
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::connectionClosed):
+        (WebKit::WebSWServerToContextConnection::startFetch):
+        (WebKit::WebSWServerToContextConnection::cancelFetch):
+        (WebKit::WebSWServerToContextConnection::continueDidReceiveFetchResponse):
+        (WebKit::WebSWServerToContextConnection::didReceiveFetchTaskMessage):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::startFetch):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveRedirection):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveResponse):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveData):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveBlobChunk):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFail):
+        (WebKit::WebServiceWorkerFetchTaskClient::didFinish):
+        (WebKit::WebServiceWorkerFetchTaskClient::didNotHandle):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp: Added.
+        (WebKit::ServiceWorkerFetchTask::didReceiveRedirectResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveResponse):
+        (WebKit::ServiceWorkerFetchTask::didReceiveData):
+        (WebKit::ServiceWorkerFetchTask::didReceiveFormData):
+        (WebKit::ServiceWorkerFetchTask::didFinish):
+        (WebKit::ServiceWorkerFetchTask::didFail):
+        (WebKit::ServiceWorkerFetchTask::didNotHandle):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h: Added.
+        (WebKit::ServiceWorkerFetchTask::create):
+        (WebKit::ServiceWorkerFetchTask::Identifier::hash const):
+        (WebKit::ServiceWorkerFetchTask::identifier const):
+        (WebKit::ServiceWorkerFetchTask::ServiceWorkerFetchTask):
+        (WebKit::operator==):
+        (WTF::ServiceWorkerFetchTaskIdentifierHash::hash):
+        (WTF::ServiceWorkerFetchTaskIdentifierHash::equal):
+        (WTF::HashTraits<WebKit::ServiceWorkerFetchTask::Identifier>::emptyValue):
+        (WTF::HashTraits<WebKit::ServiceWorkerFetchTask::Identifier>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::ServiceWorkerFetchTask::Identifier>::isDeletedValue):
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in: Added.
+
+2019-03-05  Youenn Fablet  <youenn@apple.com>
+
         Rename requestCacheStorageSpace to requestStorageSpace
         https://bugs.webkit.org/show_bug.cgi?id=195282
 

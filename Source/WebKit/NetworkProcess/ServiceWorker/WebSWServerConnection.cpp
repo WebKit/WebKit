@@ -128,6 +128,7 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
 
 void WebSWServerConnection::cancelFetch(ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, FetchIdentifier fetchIdentifier)
 {
+    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("cancelFetch: %s", fetchIdentifier.loggingString().utf8().data());
     auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
     if (!worker || !worker->isRunning())
         return;
@@ -135,7 +136,7 @@ void WebSWServerConnection::cancelFetch(ServiceWorkerRegistrationIdentifier serv
     auto serviceWorkerIdentifier = worker->identifier();
     server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = makeWeakPtr(this), this, serviceWorkerIdentifier, fetchIdentifier](auto* contextConnection) mutable {
         if (weakThis && contextConnection)
-            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::CancelFetch { this->identifier(), serviceWorkerIdentifier, fetchIdentifier });
+            static_cast<WebSWServerToContextConnection&>(*contextConnection).cancelFetch(this->identifier(), fetchIdentifier, serviceWorkerIdentifier);
     });
 }
 
@@ -148,7 +149,7 @@ void WebSWServerConnection::continueDidReceiveFetchResponse(ServiceWorkerRegistr
     auto serviceWorkerIdentifier = worker->identifier();
     server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = makeWeakPtr(this), this, serviceWorkerIdentifier, fetchIdentifier](auto* contextConnection) mutable {
         if (weakThis && contextConnection)
-            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::ContinueDidReceiveFetchResponse { this->identifier(), serviceWorkerIdentifier, fetchIdentifier });
+            static_cast<WebSWServerToContextConnection&>(*contextConnection).continueDidReceiveFetchResponse(this->identifier(), fetchIdentifier, serviceWorkerIdentifier);
     });
 }
 
@@ -187,7 +188,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
 
             if (contextConnection) {
                 SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %s via service worker %s", fetchIdentifier.loggingString().utf8().data(), serviceWorkerIdentifier.loggingString().utf8().data());
-                sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::StartFetch { this->identifier(), serviceWorkerIdentifier, fetchIdentifier, request, options, formData, referrer });
+                static_cast<WebSWServerToContextConnection&>(*contextConnection).startFetch(m_sessionID, m_contentConnection.get(), this->identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer);
             } else {
                 SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %s DidNotHandle because failed to run service worker", fetchIdentifier.loggingString().utf8().data());
                 m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
@@ -241,44 +242,6 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     server().scheduleJob(WTFMove(jobData));
-}
-
-void WebSWServerConnection::didReceiveFetchRedirectResponse(FetchIdentifier fetchIdentifier, const ResourceResponse& response)
-{
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveRedirectResponse { response }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didReceiveFetchResponse(FetchIdentifier fetchIdentifier, const ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
-{
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didReceiveFetchData(FetchIdentifier fetchIdentifier, const IPC::DataReference& data, int64_t encodedDataLength)
-{
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveData { data, encodedDataLength }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didReceiveFetchFormData(FetchIdentifier fetchIdentifier, const IPC::FormDataReference& formData)
-{
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidReceiveFormData { formData }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didFinishFetch(FetchIdentifier fetchIdentifier)
-{
-    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("didFinishFetch: fetchIdentifier: %s", fetchIdentifier.loggingString().utf8().data());
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didFailFetch(FetchIdentifier fetchIdentifier, const ResourceError& error)
-{
-    SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("didFailFetch: fetchIdentifier: %s", fetchIdentifier.loggingString().utf8().data());
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFail { error }, fetchIdentifier.toUInt64());
-}
-
-void WebSWServerConnection::didNotHandleFetch(FetchIdentifier fetchIdentifier)
-{
-    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %s", fetchIdentifier.loggingString().utf8().data());
-    m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier.toUInt64());
 }
 
 void WebSWServerConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)

@@ -111,6 +111,7 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/NetworkResourceLoader.messages.in
     NetworkProcess/NetworkSocketStream.messages.in
 
+    NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
     NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
     NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 

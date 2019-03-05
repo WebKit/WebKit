@@ -24,6 +24,7 @@ $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkResourceLoader.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkSocketStream.messages.in
+$(PROJECT_DIR)/NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/cache/CacheStorageEngineConnection.messages.in

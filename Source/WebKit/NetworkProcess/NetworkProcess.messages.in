@@ -149,13 +149,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String cacheStorageDirectory, WebKit::SandboxExtension::Handle handle);
 
 #if ENABLE(SERVICE_WORKER)
-    DidNotHandleFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
-    DidFailFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceError error)
-    DidReceiveFetchRedirectResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response)
-    DidReceiveFetchResponse(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
-    DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::SharedBufferDataReference data, int64_t encodedDataLength)
-    DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, IPC::FormDataReference data)
-    DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier)
     PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
 
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, WebCore::SWServerConnectionIdentifier connectionIdentifier)

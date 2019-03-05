@@ -45,6 +45,7 @@
 #include "NetworkSocketStreamMessages.h"
 #include "PingLoad.h"
 #include "PreconnectTask.h"
+#include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebIDBConnectionToClient.h"
@@ -180,10 +181,17 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
             swConnection->didReceiveMessage(connection, decoder);
         return;
     }
-    
+
     if (decoder.messageReceiverName() == Messages::WebSWServerToContextConnection::messageReceiverName()) {
         if (auto* contextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
             contextConnection->didReceiveMessage(connection, decoder);
+            return;
+        }
+    }
+
+    if (decoder.messageReceiverName() == Messages::ServiceWorkerFetchTask::messageReceiverName()) {
+        if (auto* contextConnection = m_networkProcess->connectionToContextProcessFromIPCConnection(connection)) {
+            contextConnection->didReceiveFetchTaskMessage(connection, decoder);
             return;
         }
     }

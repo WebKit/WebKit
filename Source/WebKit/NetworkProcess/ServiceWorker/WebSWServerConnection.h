@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "ServiceWorkerFetchTask.h"
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
@@ -62,14 +63,6 @@ public:
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-
-    void didReceiveFetchRedirectResponse(WebCore::FetchIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveFetchResponse(WebCore::FetchIdentifier, const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
-    void didReceiveFetchData(WebCore::FetchIdentifier, const IPC::DataReference&, int64_t encodedDataLength);
-    void didReceiveFetchFormData(WebCore::FetchIdentifier, const IPC::FormDataReference&);
-    void didFinishFetch(WebCore::FetchIdentifier);
-    void didFailFetch(WebCore::FetchIdentifier, const WebCore::ResourceError&);
-    void didNotHandleFetch(WebCore::FetchIdentifier);
 
     void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin);
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
