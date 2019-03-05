@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,7 +249,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM* vm
                         break;
                     case F32:
                     case F64:
-                        arg = jsNumber(bitwise_cast<double>(buffer[argNum]));
+                        arg = jsNumber(purifyNaN(bitwise_cast<double>(buffer[argNum])));
                         break;
                     }
                     args.append(arg);

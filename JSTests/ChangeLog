@@ -1,3 +1,13 @@
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+        wasmToJS() should purify incoming NaNs.
+        https://bugs.webkit.org/show_bug.cgi?id=194807
+        <rdar://problem/48189132>
+
+        Reviewed by Saam Barati.
+
+        * wasm/regress/wasmToJS-should-purify-NaNs.js: Added.
+
 2019-02-26  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Repeat string created from Array.prototype.join() take too much memory
