@@ -661,8 +661,28 @@ RefPtr<MediaSourceClientGStreamerMSE> MediaPlayerPrivateGStreamerMSE::mediaSourc
     return m_mediaSourceClient;
 }
 
+void MediaPlayerPrivateGStreamerMSE::blockDurationChanges()
+{
+    ASSERT(isMainThread());
+    m_areDurationChangesBlocked = true;
+    m_shouldReportDurationWhenUnblocking = false;
+}
+
+void MediaPlayerPrivateGStreamerMSE::unblockDurationChanges()
+{
+    ASSERT(isMainThread());
+    if (m_shouldReportDurationWhenUnblocking) {
+        m_player->durationChanged();
+        m_playbackPipeline->notifyDurationChanged();
+        m_shouldReportDurationWhenUnblocking = false;
+    }
+
+    m_areDurationChangesBlocked = false;
+}
+
 void MediaPlayerPrivateGStreamerMSE::durationChanged()
 {
+    ASSERT(isMainThread());
     if (!m_mediaSourceClient) {
         GST_DEBUG("m_mediaSourceClient is null, doing nothing");
         return;
@@ -676,8 +696,11 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     // Avoid emiting durationchanged in the case where the previous duration was 0 because that case is already handled
     // by the HTMLMediaElement.
     if (m_mediaTimeDuration != previousDuration && m_mediaTimeDuration.isValid() && previousDuration.isValid()) {
-        m_player->durationChanged();
-        m_playbackPipeline->notifyDurationChanged();
+        if (!m_areDurationChangesBlocked) {
+            m_player->durationChanged();
+            m_playbackPipeline->notifyDurationChanged();
+        } else
+            m_shouldReportDurationWhenUnblocking = true;
         m_mediaSource->durationChanged(m_mediaTimeDuration);
     }
 }
