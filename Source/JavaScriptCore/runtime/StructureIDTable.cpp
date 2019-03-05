@@ -35,14 +35,14 @@ namespace JSC {
 
 StructureIDTable::StructureIDTable()
     : m_table(makeUniqueArray<StructureOrOffset>(s_initialSize))
+    , m_size(1)
     , m_capacity(s_initialSize)
 {
     // We pre-allocate the first offset so that the null Structure
     // can still be represented as the StructureID '0'.
-    table()[0].structure = nullptr;
+    table()[0].encodedStructureBits = 0;
 
     makeFreeListFromRange(1, m_capacity - 1);
-    ASSERT(m_size == m_capacity);
 }
 
 void StructureIDTable::makeFreeListFromRange(uint32_t first, uint32_t last)
@@ -95,11 +95,13 @@ void StructureIDTable::makeFreeListFromRange(uint32_t first, uint32_t last)
 
     m_firstFreeOffset = head;
     m_lastFreeOffset = tail;
-    m_size = m_capacity;
 }
 
 void StructureIDTable::resize(size_t newCapacity)
 {
+    if (newCapacity > s_maximumNumberOfStructures)
+        newCapacity = s_maximumNumberOfStructures;
+
     // Create the new table.
     auto newTable = makeUniqueArray<StructureOrOffset>(newCapacity);
 
@@ -128,22 +130,35 @@ void StructureIDTable::flushOldTables()
 
 StructureID StructureIDTable::allocateID(Structure* structure)
 {
-    if (!m_firstFreeOffset) {
-        RELEASE_ASSERT(m_capacity <= UINT_MAX);
-        if (m_size == m_capacity)
-            resize(m_capacity * 2);
+    if (UNLIKELY(!m_firstFreeOffset)) {
+        RELEASE_ASSERT(m_capacity <= s_maximumNumberOfStructures);
         ASSERT(m_size == m_capacity);
+        resize(m_capacity * 2);
+        ASSERT(m_size < m_capacity);
         ASSERT(m_firstFreeOffset);
     }
 
     ASSERT(m_firstFreeOffset != s_unusedID);
 
-    StructureID result = m_firstFreeOffset;
+    // entropyBits must not be zero. This ensures that if a corrupted
+    // structureID is encountered (with incorrect entropyBits), the decoded
+    // structure pointer for that ID will be always be a bad pointer with
+    // high bits set.
+    constexpr uint32_t entropyBitsMask = (1 << s_numberOfEntropyBits) - 1;
+    uint32_t entropyBits = m_weakRandom.getUint32() & entropyBitsMask;
+    if (UNLIKELY(!entropyBits)) {
+        constexpr uint32_t numberOfValuesToPickFrom = entropyBitsMask;
+        entropyBits = (m_weakRandom.getUint32() % numberOfValuesToPickFrom) + 1;
+    }
+
+    uint32_t structureIndex = m_firstFreeOffset;
     m_firstFreeOffset = table()[m_firstFreeOffset].offset;
     if (!m_firstFreeOffset)
         m_lastFreeOffset = 0;
 
-    table()[result].structure = structure;
+    StructureID result = (structureIndex << s_numberOfEntropyBits) | entropyBits;
+    table()[structureIndex].encodedStructureBits = encode(structure, result);
+    m_size++;
     ASSERT(!isNuked(result));
     return result;
 }
@@ -151,23 +166,25 @@ StructureID StructureIDTable::allocateID(Structure* structure)
 void StructureIDTable::deallocateID(Structure* structure, StructureID structureID)
 {
     ASSERT(structureID != s_unusedID);
-    RELEASE_ASSERT(table()[structureID].structure == structure);
-
+    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
+    ASSERT(structureIndex && structureIndex < s_maximumNumberOfStructures);
+    RELEASE_ASSERT(table()[structureIndex].encodedStructureBits == encode(structure, structureID));
+    m_size--;
     if (!m_firstFreeOffset) {
-        table()[structureID].offset = 0;
-        m_firstFreeOffset = structureID;
-        m_lastFreeOffset = structureID;
+        table()[structureIndex].offset = 0;
+        m_firstFreeOffset = structureIndex;
+        m_lastFreeOffset = structureIndex;
         return;
     }
 
     bool insertAtHead = m_weakRandom.getUint32() & 1;
     if (insertAtHead) {
-        table()[structureID].offset = m_firstFreeOffset;
-        m_firstFreeOffset = structureID;
+        table()[structureIndex].offset = m_firstFreeOffset;
+        m_firstFreeOffset = structureIndex;
     } else {
-        table()[structureID].offset = 0;
-        table()[m_lastFreeOffset].offset = structureID;
-        m_lastFreeOffset = structureID;
+        table()[structureIndex].offset = 0;
+        table()[m_lastFreeOffset].offset = structureIndex;
+        m_lastFreeOffset = structureIndex;
     }
 }
 

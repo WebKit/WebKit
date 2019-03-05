@@ -82,6 +82,8 @@ inline StructureID decontaminate(StructureID id)
 
 #if USE(JSVALUE64)
 
+using EncodedStructureBits = uintptr_t;
+
 class StructureIDTable {
     friend class LLIntOffsetsExtractor;
 public:
@@ -89,6 +91,7 @@ public:
 
     void** base() { return reinterpret_cast<void**>(&m_table); }
 
+    bool isValid(StructureID);
     Structure* get(StructureID);
     void deallocateID(Structure*, StructureID);
     StructureID allocateID(Structure*);
@@ -104,12 +107,14 @@ private:
     union StructureOrOffset {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        Structure* structure;
+        EncodedStructureBits encodedStructureBits;
         StructureID offset;
     };
 
     StructureOrOffset* table() const { return m_table.get(); }
-    
+    static Structure* decode(EncodedStructureBits, StructureID);
+    static EncodedStructureBits encode(Structure*, StructureID);
+
     static constexpr size_t s_initialSize = 512;
 
     Vector<UniqueArray<StructureOrOffset>> m_oldTables;
@@ -123,15 +128,48 @@ private:
 
     WeakRandom m_weakRandom;
 
-    static const StructureID s_unusedID = unusedPointer;
+    static constexpr StructureID s_unusedID = 0;
+
+public:
+    static constexpr uint32_t s_numberOfNukeBits = 1;
+    static constexpr uint32_t s_numberOfEntropyBits = 7;
+    static constexpr uint32_t s_entropyBitsShiftForStructurePointer = (sizeof(intptr_t) * 8) - s_numberOfEntropyBits;
+
+    static constexpr uint32_t s_maximumNumberOfStructures = 1 << (32 - s_numberOfEntropyBits - s_numberOfNukeBits);
 };
+
+ALWAYS_INLINE Structure* StructureIDTable::decode(EncodedStructureBits bits, StructureID structureID)
+{
+    return reinterpret_cast<Structure*>(bits ^ (static_cast<uintptr_t>(structureID) << s_entropyBitsShiftForStructurePointer));
+}
+
+ALWAYS_INLINE EncodedStructureBits StructureIDTable::encode(Structure* structure, StructureID structureID)
+{
+    return reinterpret_cast<EncodedStructureBits>(structure) ^ (static_cast<EncodedStructureBits>(structureID) << s_entropyBitsShiftForStructurePointer);
+}
 
 inline Structure* StructureIDTable::get(StructureID structureID)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(structureID);
     ASSERT_WITH_SECURITY_IMPLICATION(!isNuked(structureID));
-    ASSERT_WITH_SECURITY_IMPLICATION(structureID < m_capacity);
-    return table()[structureID].structure;
+    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
+    ASSERT_WITH_SECURITY_IMPLICATION(structureIndex < m_capacity);
+    return decode(table()[structureIndex].encodedStructureBits, structureID);
+}
+
+inline bool StructureIDTable::isValid(StructureID structureID)
+{
+    if (!structureID)
+        return false;
+    uint32_t structureIndex = structureID >> s_numberOfEntropyBits;
+    if (structureIndex >= m_capacity)
+        return false;
+#if CPU(ADDRESS64)
+    Structure* structure = decode(table()[structureIndex].encodedStructureBits, structureID);
+    if (reinterpret_cast<uintptr_t>(structure) >> s_entropyBitsShiftForStructurePointer)
+        return false;
+#endif
+    return true;
 }
 
 #else // not USE(JSVALUE64)
