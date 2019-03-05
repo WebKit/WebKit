@@ -224,6 +224,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static activateElementAndWaitForInputSession(element)
+    {
+        const x = element.offsetLeft + element.offsetWidth / 2;
+        const y = element.offsetTop + element.offsetHeight / 2;
+        return this.activateAndWaitForInputSessionAt(x, y);
+    }
+
     static activateFormControl(element)
     {
         if (!this.isWebKit2() || !this.isIOS())

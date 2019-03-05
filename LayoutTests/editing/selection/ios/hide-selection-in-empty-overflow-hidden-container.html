@@ -26,10 +26,9 @@ button {
 }
 </style>
 <script>
-addEventListener("load", runTest);
 jsTestIsAsync = true;
 
-async function runTest() {
+addEventListener("load", async () => {
     description("Verifies that native selection UI is suppressed when focusing a textarea that is completely hidden "
         + "underneath an empty container with <code>overflow: hidden;</code>. To manually test, tap the top button, "
         + "and then tap on the bottom button. In both cases, there should be no platform selection shown.");
@@ -64,9 +63,9 @@ async function runTest() {
 
     frame.contentWindow.document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();
-    document.querySelectorAll("button, #container").forEach(element => element.remove())
+    document.querySelectorAll("button, #container").forEach(element => element.remove());
     finishJSTest();
-}
+});
 </script>
 </head>
 <body>
@@ -76,7 +75,7 @@ async function runTest() {
 </button>
 <div id="container">
     <textarea id="editor"></textarea>
-    <iframe id="frame" srcdoc="<textarea id='editor'></textarea>" onload="runTest()"></iframe>
+    <iframe id="frame" srcdoc="<textarea id='editor'></textarea>"></iframe>
 </div>
 <div id="description"></div>
 <div id="console"></div>

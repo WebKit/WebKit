@@ -1,3 +1,27 @@
+2019-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native text selection UI is incorrectly suppressed in Microsoft Visio
+        https://bugs.webkit.org/show_bug.cgi?id=195178
+        <rdar://problem/48519394>
+
+        Reviewed by Darin Adler.
+
+        Currently, our heuristics for detecting hidden editable areas attempt to search for empty parent renderers with
+        "overflow: hidden". It does this by ascending the layer tree in search of renderers that have an empty content
+        size, and whose renderers' styles indicate that they have overflow: hidden in the X or Y directions. This fails
+        in the case where a child renderer is positioned out of flow, relative to one of its parent layers, since the
+        child will be visible, but we'll incorrectly believe that it is hidden. This leads to selection UI unexpectedly
+        disappearing in the online version of Microsoft Visio.
+
+        To fix this, we check whether the enclosing layer around the editable element has an empty clip rect; if the
+        element is inside of a subframe, we additionally walk up to each enclosing frame's layer and check if that
+        frame's layer has an empty clip rect.
+
+        Test: editing/selection/ios/do-not-hide-selection-in-visible-container.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isTransparentOrFullyClippedRespectingParentFrames const):
+
 2019-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         gPictureOwnerMap is unnecessary

@@ -1,0 +1,18 @@
+First field  Second field  Third field Fourth field 
+
+Verifies that native selection UI is not suppressed when focusing an input that is inside an empty container with `overflow: hidden`, but is positioned absolutely such that it is still visible. To manually verify, click on each of the four buttons to move focus into editable areas. After tapping the first and third buttons, you should not see a caret view; after tapping the second and fourth buttons, you should see a caret view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Waiting for caret to hide.
+PASS Caret was hidden.
+Waiting for caret to show.
+PASS Caret was shown.
+Waiting for caret to hide.
+PASS Caret was hidden.
+Waiting for caret to show.
+PASS Caret was shown.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

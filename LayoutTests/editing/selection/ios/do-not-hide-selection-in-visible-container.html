@@ -1,0 +1,105 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+.hidden {
+    height: 0;
+    overflow: hidden;
+}
+
+iframe {
+    width: 100px;
+    height: 44px;
+    position: absolute;
+    border: none;
+}
+
+#frame2 {
+    top: 100px;
+}
+
+#frame3 {
+    position: relative;
+}
+
+input {
+    position: fixed;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function ensureCaretIsVisible(isVisible)
+{
+    if (isVisible)
+        debug("Waiting for caret to show.");
+    else
+        debug("Waiting for caret to hide.");
+
+    let rect = null;
+    while (!rect || (!isVisible && rect.width && rect.height) || (isVisible && (!rect.width || !rect.height)))
+        rect = await UIHelper.getUICaretViewRect();
+
+    if (isVisible)
+        testPassed("Caret was shown.");
+    else
+        testPassed("Caret was hidden.");
+}
+
+addEventListener("load", async () => {
+    description("Verifies that native selection UI is not suppressed when focusing an input that is inside an empty container with `overflow: hidden`, but is positioned absolutely such that it is still visible. To manually verify, click on each of the four buttons to move focus into editable areas. After tapping the first and third buttons, you should not see a caret view; after tapping the second and fourth buttons, you should see a caret view.");
+
+    if (!window.testRunner)
+        return;
+
+    for (const testCase of [[first, false], [second, true], [third, false], [fourth, true]]) {
+        const [buttonToTap, expectedVisibility] = testCase;
+        await UIHelper.activateElementAndWaitForInputSession(buttonToTap);
+        await ensureCaretIsVisible(expectedVisibility);
+        document.activeElement.blur();
+    }
+
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body class="hidden">
+    <button id="first">First field</button>
+    <button id="second">Second field</button>
+    <button id="third">Third field</button>
+    <button id="fourth">Fourth field</button>
+    <iframe id="frame1" srcdoc="
+        <div style='overflow: hidden; height: 0; box-sizing: border-box; border: none; padding: 0;'>
+            <input></input>
+        </div>"></iframe>
+    <div class="hidden">
+        <iframe id="frame2" srcdoc="<input></input>"></iframe>
+        <iframe id="frame3" srcdoc="<input></input>"></iframe>
+        <input></input>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+<script>
+function createFrameFocusHandler(identifier) {
+    return (event) => {
+        const frame = document.getElementById(identifier);
+        frame.focus();
+        frame.contentDocument.querySelector("input").focus();
+        event.preventDefault();
+    };
+}
+
+first.addEventListener("click", createFrameFocusHandler("frame1"));
+second.addEventListener("click", createFrameFocusHandler("frame2"));
+third.addEventListener("click", createFrameFocusHandler("frame3"));
+fourth.addEventListener("click", event => {
+    document.querySelector("input").focus();
+    event.preventDefault();
+});
+</script>
+</html>

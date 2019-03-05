@@ -1,3 +1,33 @@
+2019-03-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Native text selection UI is incorrectly suppressed in Microsoft Visio
+        https://bugs.webkit.org/show_bug.cgi?id=195178
+        <rdar://problem/48519394>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test that focuses several different text fields and checks whether or not editing UI is shown:
+
+        1. A text field inside an overflow: hidden container, all within an absolutely positioned iframe, such that the
+        text field is not visible. The caret should be hidden.
+
+        2. A text field inside an absolutely positioned iframe, inside an overflow: hidden container, such that the
+        text field is visible. The caret should be visible.
+
+        3. A text field inside a relatively positioned iframe in an overflow: hidden container, such that the text field
+        is not visible. The caret should be hidden.
+
+        4. A text field that is position: fixed inside an overflow: hidden container, such that the text field is
+        visible. The caret should be visible.
+
+        * editing/selection/ios/do-not-hide-selection-in-visible-container-expected.txt: Added.
+        * editing/selection/ios/do-not-hide-selection-in-visible-container.html: Added.
+        * editing/selection/ios/hide-selection-in-empty-overflow-hidden-container.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.activateElementAndWaitForInputSession):
+
+        Add a convenience function in UIHelper that taps a given element and waits for the keyboard to show.
+
 2019-03-04  Daniel Bates  <dabates@apple.com>
 
         [iOS] Caret x-position in empty text area does not match text field
