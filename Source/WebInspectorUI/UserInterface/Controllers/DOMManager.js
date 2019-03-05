@@ -279,6 +279,9 @@ WI.DOMManager = class DOMManager extends WI.Object
     _setDocument(payload)
     {
         this._idToDOMNode = {};
+
+        for (let breakpoint of this._breakpointsForEventListeners.values())
+            WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
         this._breakpointsForEventListeners.clear();
 
         let newDocument = null;
@@ -652,8 +655,7 @@ WI.DOMManager = class DOMManager extends WI.Object
                 return;
             }
 
-            if (breakpoint)
-                WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
+            WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
         });
     }
 
