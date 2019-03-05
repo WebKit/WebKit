@@ -733,6 +733,7 @@ public:
 
     private:
         void setPendingProvisionalSandboxExtension(RefPtr<SandboxExtension>&&);
+        bool shouldReuseCommittedSandboxExtension(WebFrame*);
 
         RefPtr<SandboxExtension> m_pendingProvisionalSandboxExtension;
         RefPtr<SandboxExtension> m_provisionalSandboxExtension;
