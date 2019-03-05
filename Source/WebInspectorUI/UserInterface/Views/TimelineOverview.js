@@ -537,6 +537,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this.updateLayoutIfNeeded();
 
         this._dontUpdateScrollLeft = false;
+
+        this.element.classList.toggle("has-scrollbar", this._scrollContainerElement.clientHeight <= 1);
     }
 
     _handleWheelEvent(event)
@@ -582,6 +584,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         // Center the zoom around the mouse based on the remembered mouse position time.
         this.scrollStartTime = mousePositionTime - (mouseOffset * this.secondsPerPixel);
 
+        this.element.classList.toggle("has-scrollbar", this._scrollContainerElement.clientHeight <= 1);
+
         event.preventDefault();
         event.stopPropagation();
     }
@@ -599,6 +603,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._handlingGesture = true;
         this._gestureStartStartTime = mousePositionTime;
         this._gestureStartDurationPerPixel = this.secondsPerPixel;
+
+        this.element.classList.toggle("has-scrollbar", this._scrollContainerElement.clientHeight <= 1);
 
         event.preventDefault();
         event.stopPropagation();

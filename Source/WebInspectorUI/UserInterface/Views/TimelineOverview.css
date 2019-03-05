@@ -215,6 +215,10 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
     border-top: 1px solid hsla(0, 0%, 0%, 0.09);
 }
 
+.timeline-overview:not(.has-scrollbar) > .scroll-container {
+    pointer-events: none;
+}
+
 .timeline-overview > .scroll-container > .scroll-width-sizer {
     position: absolute;
     top: 0;
