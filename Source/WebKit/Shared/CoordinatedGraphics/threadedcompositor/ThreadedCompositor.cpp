@@ -156,13 +156,6 @@ void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scal
     m_compositingRunLoop->scheduleUpdate();
 }
 
-void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
-{
-    LockHolder locker(m_attributes.lock);
-    m_attributes.drawsBackground = drawsBackground;
-    m_compositingRunLoop->scheduleUpdate();
-}
-
 void ThreadedCompositor::updateViewport()
 {
     m_compositingRunLoop->scheduleUpdate();
@@ -194,8 +187,8 @@ void ThreadedCompositor::renderLayerTree()
     WebCore::IntSize viewportSize;
     WebCore::IntPoint scrollPosition;
     float scaleFactor;
-    bool drawsBackground;
     bool needsResize;
+
     Vector<WebCore::CoordinatedGraphicsState> states;
 
     {
@@ -203,7 +196,6 @@ void ThreadedCompositor::renderLayerTree()
         viewportSize = m_attributes.viewportSize;
         scrollPosition = m_attributes.scrollPosition;
         scaleFactor = m_attributes.scaleFactor;
-        drawsBackground = m_attributes.drawsBackground;
         needsResize = m_attributes.needsResize;
 
         states = WTFMove(m_attributes.states);
@@ -247,14 +239,11 @@ void ThreadedCompositor::renderLayerTree()
     viewportTransform.scale(scaleFactor);
     viewportTransform.translate(-scrollPosition.x(), -scrollPosition.y());
 
-    if (!drawsBackground) {
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     m_scene->applyStateChanges(states);
-    m_scene->paintToCurrentGLContext(viewportTransform, 1, FloatRect { FloatPoint { }, viewportSize },
-        Color::transparent, !drawsBackground, m_paintFlags);
+    m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_paintFlags);
 
     m_context->swapBuffers();
 

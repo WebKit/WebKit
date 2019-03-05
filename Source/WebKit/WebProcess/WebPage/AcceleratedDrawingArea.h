@@ -43,7 +43,6 @@ protected:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    void pageBackgroundTransparencyChanged() override;
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
     LayerTreeHost* layerTreeHost() const override { return m_layerTreeHost.get(); }

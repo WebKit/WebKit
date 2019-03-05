@@ -1133,11 +1133,16 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
     g_assert_false(webkit_web_view_is_playing_audio(test->m_webView));
 }
 
-#if PLATFORM(GTK)
 static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
+#define ColorType GdkRGBA
+#elif PLATFORM(WPE)
+#define ColorType WebKitColor
+#endif
+
     // White is the default background.
-    GdkRGBA rgba;
+    ColorType rgba;
     webkit_web_view_get_background_color(test->m_webView, &rgba);
     g_assert_cmpfloat(rgba.red, ==, 1);
     g_assert_cmpfloat(rgba.green, ==, 1);
@@ -1155,10 +1160,23 @@ static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(rgba.blue, ==, 0);
     g_assert_cmpfloat(rgba.alpha, ==, 0.5);
 
+#if PLATFORM(WPE)
+    ColorType color;
+    g_assert(webkit_color_parse(&color, "red"));
+    g_assert_cmpfloat(color.red, ==, 1);
+    webkit_web_view_set_background_color(test->m_webView, &color);
+    webkit_web_view_get_background_color(test->m_webView, &rgba);
+    g_assert_cmpfloat(rgba.red, ==, 1);
+    g_assert_cmpfloat(rgba.green, ==, 0);
+    g_assert_cmpfloat(rgba.blue, ==, 0);
+    g_assert_cmpfloat(rgba.alpha, ==, 1);
+#endif
+
     // The actual rendering can't be tested using unit tests, use
     // MiniBrowser --bg-color="<color-value>" for manually testing this API.
 }
 
+#if PLATFORM(GTK)
 static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html style='width: 325px; height: 615px'></html>", nullptr);
@@ -1363,8 +1381,8 @@ void beforeAll()
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-disallowed", testWebViewNotificationInitialPermissionDisallowed);
 #endif
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
-#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
 #endif
     WebViewTitleTest::add("WebKitWebView", "title-change", testWebViewTitleChange);

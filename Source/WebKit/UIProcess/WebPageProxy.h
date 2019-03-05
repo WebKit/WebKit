@@ -521,9 +521,6 @@ public:
 
     bool canShowMIMEType(const String& mimeType);
 
-    bool drawsBackground() const { return m_drawsBackground; }
-    void setDrawsBackground(bool);
-
     String currentURL() const;
 
     float topContentInset() const { return m_topContentInset; }
@@ -765,10 +762,11 @@ public:
 
 #if PLATFORM(GTK)
     PlatformWidget viewWidget();
-    const WebCore::Color& backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
     bool makeGLContextCurrent();
 #endif
+
+    const Optional<WebCore::Color>& backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(const Optional<WebCore::Color>&);
 
 #if PLATFORM(WIN)
     PlatformWidget viewWidget();
@@ -2109,8 +2107,6 @@ private:
 
     LayerHostingMode m_layerHostingMode { LayerHostingMode::InProcess };
 
-    bool m_drawsBackground { true };
-
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
 
@@ -2209,8 +2205,9 @@ private:
 
 #if PLATFORM(GTK)
     String m_accessibilityPlugID;
-    WebCore::Color m_backgroundColor { WebCore::Color::white };
 #endif
+
+    Optional<WebCore::Color> m_backgroundColor;
 
     unsigned m_pendingLearnOrIgnoreWordMessageCount { 0 };
 

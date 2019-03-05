@@ -24,6 +24,7 @@
 #include "WebKitScriptDialogImpl.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include <WebCore/Color.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/PlatformScreen.h>
@@ -360,4 +361,66 @@ GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManage
     g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(userContentManager), nullptr);
 
     return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "user-content-manager", userContentManager, nullptr));
+}
+
+/**
+ * webkit_web_view_set_background_color:
+ * @web_view: a #WebKitWebView
+ * @rgba: a #GdkRGBA
+ *
+ * Sets the color that will be used to draw the @web_view background before
+ * the actual contents are rendered. Note that if the web page loaded in @web_view
+ * specifies a background color, it will take precedence over the @rgba color.
+ * By default the @web_view background color is opaque white.
+ * Note that the parent window must have a RGBA visual and
+ * #GtkWidget:app-paintable property set to %TRUE for backgrounds colors to work.
+ *
+ * <informalexample><programlisting>
+ * static void browser_window_set_background_color (BrowserWindow *window,
+ *                                                  const GdkRGBA *rgba)
+ * {
+ *     WebKitWebView *web_view;
+ *     GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (window));
+ *     GdkVisual *rgba_visual = gdk_screen_get_rgba_visual (screen);
+ *
+ *     if (!rgba_visual)
+ *          return;
+ *
+ *     gtk_widget_set_visual (GTK_WIDGET (window), rgba_visual);
+ *     gtk_widget_set_app_paintable (GTK_WIDGET (window), TRUE);
+ *
+ *     web_view = browser_window_get_web_view (window);
+ *     webkit_web_view_set_background_color (web_view, rgba);
+ * }
+ * </programlisting></informalexample>
+ *
+ * Since: 2.8
+ */
+void webkit_web_view_set_background_color(WebKitWebView* webView, const GdkRGBA* rgba)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(rgba);
+
+    auto& page = *webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
+    page.setBackgroundColor(WebCore::Color(*rgba));
+}
+
+/**
+ * webkit_web_view_get_background_color:
+ * @web_view: a #WebKitWebView
+ * @rgba: (out): a #GdkRGBA to fill in with the background color
+ *
+ * Gets the color that is used to draw the @web_view background before
+ * the actual contents are rendered.
+ * For more information see also webkit_web_view_set_background_color()
+ *
+ * Since: 2.8
+ */
+void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(rgba);
+
+    auto& page = *webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
+    *rgba = page.backgroundColor().valueOr(WebCore::Color::white);
 }

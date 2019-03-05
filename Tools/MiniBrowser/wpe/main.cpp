@@ -43,6 +43,7 @@ static const char* contentFilter;
 static const char* cookiesFile;
 static const char* cookiesPolicy;
 static const char* proxy;
+const char* bgColor;
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -55,6 +56,7 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", nullptr },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
+    { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
 };
@@ -253,6 +255,10 @@ int main(int argc, char *argv[])
 
     if (ignoreTLSErrors)
         webkit_web_context_set_tls_errors_policy(webContext, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+
+    WebKitColor color;
+    if (bgColor && webkit_color_parse(&color, bgColor))
+        webkit_web_view_set_background_color(webView, &color);
 
     if (uriArguments) {
         GFile* file = g_file_new_for_commandline_arg(uriArguments[0]);

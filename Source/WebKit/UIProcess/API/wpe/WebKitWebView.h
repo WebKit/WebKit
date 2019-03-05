@@ -49,6 +49,7 @@
 #include <wpe/WebKitWebContext.h>
 #include <wpe/WebKitWebResource.h>
 #include <wpe/WebKitWebViewBackend.h>
+#include <wpe/WebKitColor.h>
 #include <wpe/WebKitWebViewSessionState.h>
 #include <wpe/WebKitWindowProperties.h>
 
@@ -516,6 +517,13 @@ webkit_web_view_add_frame_displayed_callback         (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_remove_frame_displayed_callback      (WebKitWebView               *web_view,
                                                       guint                        id);
+
+WEBKIT_API void
+webkit_web_view_set_background_color                 (WebKitWebView               *web_view,
+                                                      WebKitColor                 *color);
+WEBKIT_API void
+webkit_web_view_get_background_color                 (WebKitWebView               *web_view,
+                                                      WebKitColor                 *color);
 
 G_END_DECLS
 

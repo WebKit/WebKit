@@ -38,7 +38,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << store;
     encoder.encodeEnum(drawingAreaType);
     encoder << pageGroupData;
-    encoder << drawsBackground;
     encoder << isEditable;
     encoder << underlayColor;
     encoder << useFixedLayout;
@@ -125,6 +124,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << contentRuleLists;
 #endif
+    encoder << backgroundColor;
 }
 
 Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -143,8 +143,6 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!pageGroupData)
         return WTF::nullopt;
     parameters.pageGroupData = WTFMove(*pageGroupData);
-    if (!decoder.decode(parameters.drawsBackground))
-        return WTF::nullopt;
     if (!decoder.decode(parameters.isEditable))
         return WTF::nullopt;
     if (!decoder.decode(parameters.underlayColor))
@@ -361,6 +359,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     parameters.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
+
+    Optional<Optional<WebCore::Color>> backgroundColor;
+    decoder >> backgroundColor;
+    if (!backgroundColor)
+        return WTF::nullopt;
+    parameters.backgroundColor = WTFMove(*backgroundColor);
 
     return WTFMove(parameters);
 }

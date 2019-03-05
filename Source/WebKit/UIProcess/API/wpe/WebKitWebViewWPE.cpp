@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "WebKitColorPrivate.h"
 #include "WebKitWebViewPrivate.h"
 
 gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*)
@@ -177,4 +178,45 @@ WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBacken
         "backend", backend,
         "user-content-manager", userContentManager,
         nullptr));
+}
+
+/**
+ * webkit_web_view_set_background_color:
+ * @web_view: a #WebKitWebView
+ * @backgroundColor: a #WebKitColor
+ *
+ * Sets the color that will be used to draw the @web_view background before
+ * the actual contents are rendered. Note that if the web page loaded in @web_view
+ * specifies a background color, it will take precedence over the background color.
+ * By default the @web_view background color is opaque white.
+ *
+ * Since: 2.24
+ */
+void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* backgroundColor)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(backgroundColor);
+
+    auto& page = webkitWebViewGetPage(webView);
+    page.setBackgroundColor(webkitColorToWebCoreColor(backgroundColor));
+}
+
+/**
+ * webkit_web_view_get_background_color:
+ * @web_view: a #WebKitWebView
+ * @rgba: (out): a #WebKitColor to fill in with the background color
+ *
+ * Gets the color that is used to draw the @web_view background before the
+ * actual contents are rendered. For more information see also
+ * webkit_web_view_set_background_color().
+ *
+ * Since: 2.24
+ */
+void webkit_web_view_get_background_color(WebKitWebView* webView, WebKitColor* color)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    auto& page = webkitWebViewGetPage(webView);
+
+    auto& webCoreColor = page.backgroundColor();
+    webkitColorFillFromWebCoreColor(webCoreColor.valueOr(WebCore::Color::white), color);
 }

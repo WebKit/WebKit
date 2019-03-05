@@ -25,7 +25,7 @@ messages -> WebPage LegacyReceiver {
     SetActivityState(OptionSet<WebCore::ActivityState::Flag> activityState, WebKit::ActivityStateChangeID activityStateChangeID, Vector<WebKit::CallbackID> callbackIDs)
     SetLayerHostingMode(enum:uint8_t WebKit::LayerHostingMode layerHostingMode)
 
-    SetDrawsBackground(bool drawsBackground)
+    SetBackgroundColor(Optional<WebCore::Color> color)
 
     AddConsoleMessage(uint64_t frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
     SendCSPViolationReport(uint64_t frameID, URL reportURL, IPC::FormDataReference reportData)
