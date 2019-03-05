@@ -549,13 +549,22 @@ private:
 
 public:
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfLength(); } // 32byte width.
+    static ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
 #if CPU(ADDRESS64)
     static ptrdiff_t offsetOfFlags() { return offsetOfValue() + sizeof(uint16_t) * 3; } // 16byte width.
-    static ptrdiff_t offsetOfFiber0() { return offsetOfValue(); }
     static ptrdiff_t offsetOfFiber1Lower() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1Lower(); } // 32byte width.
     static ptrdiff_t offsetOfFiber1Upper() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber1Upper(); } // 16byte width.
     static ptrdiff_t offsetOfFiber2Lower() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2Lower(); } // 32byte width.
     static ptrdiff_t offsetOfFiber2Upper() { return OBJECT_OFFSETOF(JSRopeString, m_compactFibers) + CompactFibers::offsetOfFiber2Upper(); } // 16byte width.
+#elif USE(JSVALUE64)
+    // FIXME: This is an temporary workaround to make JSC built on ARM64_32. Once we start calculating bits before storing them to JSRopeString,
+    // we do not need to have such a detailed information as an offset. After that, what we only need is offsetOfFiber0, offsetOfFiber1, and offsetOfFiber2.
+    // https://bugs.webkit.org/show_bug.cgi?id=195234
+    static ptrdiff_t offsetOfFlags() { ASSERT_NOT_REACHED(); return 0; }
+    static ptrdiff_t offsetOfFiber1Lower() { ASSERT_NOT_REACHED(); return 0; }
+    static ptrdiff_t offsetOfFiber1Upper() { ASSERT_NOT_REACHED(); return 0; }
+    static ptrdiff_t offsetOfFiber2Lower() { ASSERT_NOT_REACHED(); return 0; }
+    static ptrdiff_t offsetOfFiber2Upper() { ASSERT_NOT_REACHED(); return 0; }
 #endif
 
     static constexpr unsigned s_maxInternalRopeLength = 3;
