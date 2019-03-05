@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "ScrollingStateFrameHostingNode.h"
+#include "ScrollingStateNode.h"
 
 namespace WebCore {
 
