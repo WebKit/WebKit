@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
@@ -45,17 +46,20 @@ public:
     RefPtr<WebProcessProxy> takeProcess(const String& registrableDomain, WebsiteDataStore&);
 
     void updateCapacity(WebProcessPool&);
-    unsigned capacity() { return m_capacity; }
+    unsigned capacity() const { return m_capacity; }
 
     unsigned size() const { return m_processesPerRegistrableDomain.size(); }
 
     void clear();
     void setApplicationIsActive(bool);
 
+    void clearAllProcessesForSession(PAL::SessionID);
+
 private:
     static Seconds cachedProcessLifetime;
     static Seconds clearingDelayAfterApplicationResignsActive;
 
+    bool canCacheProcess(WebProcessProxy&) const;
     void evictProcess(WebProcessProxy&);
     void platformInitialize();
     bool addProcess(const String& registrableDomain, Ref<WebProcessProxy>&&);

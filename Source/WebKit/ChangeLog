@@ -1,3 +1,27 @@
+2019-03-05  Chris Dumez  <cdumez@apple.com>
+
+        Drop cached WebProcesses for a given session when this session is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=195212
+        <rdar://problem/48301483>
+
+        Reviewed by Geoffrey Garen.
+
+        Drop cached WebProcesses for a give session when this session is destroyed. This way, when you close
+        your private browsing window, all the processes it used get cleared and it cannot leave any state
+        behind.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::canCacheProcess const):
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::clearAllProcessesForSession):
+        * UIProcess/WebProcessCache.h:
+        (WebKit::WebProcessCache::capacity const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::hasPagesUsingWebsiteDataStore const):
+        * UIProcess/WebProcessPool.h:
+
 2019-03-05  Brady Eidson  <beidson@apple.com>
 
         Correctly handle sandbox extensions when the same WKWebView loads multiple file:// URLs.

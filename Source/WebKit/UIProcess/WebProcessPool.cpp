@@ -1265,7 +1265,14 @@ void WebProcessPool::pageEndUsingWebsiteDataStore(uint64_t pageID, WebsiteDataSt
         // The last user of this non-default PAL::SessionID is gone, so clean it up in the child processes.
         if (networkProcess())
             networkProcess()->removeSession(sessionID);
+
+        m_webProcessCache->clearAllProcessesForSession(sessionID);
     }
+}
+
+bool WebProcessPool::hasPagesUsingWebsiteDataStore(WebsiteDataStore& dataStore) const
+{
+    return m_sessionToPageIDsMap.contains(dataStore.sessionID());
 }
 
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)

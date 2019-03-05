@@ -189,6 +189,7 @@ public:
 
     void pageBeginUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore&);
     void pageEndUsingWebsiteDataStore(uint64_t pageID, WebsiteDataStore&);
+    bool hasPagesUsingWebsiteDataStore(WebsiteDataStore&) const;
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 

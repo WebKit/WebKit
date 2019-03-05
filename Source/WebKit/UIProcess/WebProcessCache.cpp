@@ -44,6 +44,25 @@ WebProcessCache::WebProcessCache(WebProcessPool& processPool)
     platformInitialize();
 }
 
+bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
+{
+    if (!capacity())
+        return false;
+
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because we are under memory pressure", this, process.processIdentifier());
+        return false;
+    }
+
+    auto sessionID = process.websiteDataStore().sessionID();
+    if (sessionID != PAL::SessionID::defaultSessionID() && !process.processPool().hasPagesUsingWebsiteDataStore(process.websiteDataStore())) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because this session has been destroyed", this, process.processIdentifier());
+        return false;
+    }
+
+    return true;
+}
+
 bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&& process)
 {
     ASSERT(!registrableDomain.isEmpty());
@@ -51,18 +70,8 @@ bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
 
-    if (!capacity())
+    if (!canCacheProcess(process))
         return false;
-
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we are under memory pressure", this, process->processIdentifier());
-        return false;
-    }
-
-    if (m_processesPerRegistrableDomain.contains(registrableDomain)) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
-        return false;
-    }
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Checking if process %i is responsive before caching it...", this, process->processIdentifier());
     process->setIsInProcessCache(true);
@@ -85,13 +94,8 @@ bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcess
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
 
-    if (!capacity())
+    if (!canCacheProcess(process))
         return false;
-
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Not caching process %i because we are under memory pressure", this, process->processIdentifier());
-        return false;
-    }
 
     while (m_processesPerRegistrableDomain.size() >= capacity()) {
         auto it = m_processesPerRegistrableDomain.random();
@@ -99,15 +103,9 @@ bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcess
         m_processesPerRegistrableDomain.remove(it);
     }
 
-    auto addResult = m_processesPerRegistrableDomain.ensure(registrableDomain, [process = process.copyRef()]() mutable {
-        return std::make_unique<CachedProcess>(WTFMove(process));
-    });
-    if (!addResult.isNewEntry) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
-        return false;
-    }
-
+    m_processesPerRegistrableDomain.set(registrableDomain, std::make_unique<CachedProcess>(process.copyRef()));
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess: Adding process %i to WebProcess cache, cache size: [%u / %u]", this, process->processIdentifier(), size(), capacity());
+
     return true;
 }
 
@@ -162,6 +160,19 @@ void WebProcessCache::clear()
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::clear() evicting %u processes", this, m_processesPerRegistrableDomain.size());
     m_processesPerRegistrableDomain.clear();
+}
+
+void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
+{
+    Vector<String> keysToRemove;
+    for (auto& pair : m_processesPerRegistrableDomain) {
+        if (pair.value->process().websiteDataStore().sessionID() == sessionID) {
+            RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::clearAllProcessesForSession() evicting process %i because its session was destroyed", this, pair.value->process().processIdentifier());
+            keysToRemove.append(pair.key);
+        }
+    }
+    for (auto& key : keysToRemove)
+        m_processesPerRegistrableDomain.remove(key);
 }
 
 void WebProcessCache::setApplicationIsActive(bool isActive)
