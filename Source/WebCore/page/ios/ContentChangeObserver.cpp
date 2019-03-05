@@ -73,7 +73,7 @@ void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
 
-    m_domTimerisBeingExecuted = true;
+    m_domTimerIsBeingExecuted = true;
 }
 
 void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
@@ -82,7 +82,7 @@ void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
 
-    m_domTimerisBeingExecuted = false;
+    m_domTimerIsBeingExecuted = false;
     unregisterDOMTimer(timer);
     setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
     adjustObservedState(Event::EndedDOMTimerExecution);
@@ -140,6 +140,9 @@ void ContentChangeObserver::contentVisibilityDidChange()
 
 void ContentChangeObserver::mouseMovedDidStart()
 {
+#if !ASSERT_DISABLED
+    m_mouseMovedIsBeingDispatched = true;
+#endif
     ASSERT(!m_document.hasPendingStyleRecalc());
     clearObservedDOMTimers();
     setShouldObserveDOMTimerScheduling(true);
@@ -149,6 +152,9 @@ void ContentChangeObserver::mouseMovedDidStart()
 void ContentChangeObserver::mouseMovedDidFinish()
 {
     setShouldObserveDOMTimerScheduling(false);
+#if !ASSERT_DISABLED
+    m_mouseMovedIsBeingDispatched = false;
+#endif
 }
 
 WKContentChange ContentChangeObserver::observedContentChange() const
@@ -178,6 +184,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         LOG_WITH_STREAM(ContentObservation, stream << "notifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
+        ASSERT(isNotifyContentChangeAllowed());
         ASSERT(m_document.page());
         ASSERT(m_document.frame());
         m_document.page()->chrome().client().observedContentChange(*m_document.frame());

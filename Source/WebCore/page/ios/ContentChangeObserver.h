@@ -102,7 +102,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_domTimerisBeingExecuted || m_styleRecalcIsBeingExecuted; }
+    bool isObservingContentChanges() const { return m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted; }
 
     void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
     void clearTimersAndReportContentChange();
@@ -116,6 +116,9 @@ private:
     bool hasDeterminateState() const;
 
     bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc(); }
+#if !ASSERT_DISABLED
+    bool isNotifyContentChangeAllowed() const { return !m_mouseMovedIsBeingDispatched; }
+#endif
 
     enum class Event {
         StartedMouseMovedEventDispatching,
@@ -132,7 +135,10 @@ private:
     bool m_isObservingStyleRecalc { false };
     bool m_styleRecalcIsBeingExecuted { false };
     bool m_isObservingDOMTimerScheduling { false };
-    bool m_domTimerisBeingExecuted { false };
+    bool m_domTimerIsBeingExecuted { false };
+#if !ASSERT_DISABLED
+    bool m_mouseMovedIsBeingDispatched { false };
+#endif
 };
 
 inline void ContentChangeObserver::setHasNoChangeState()

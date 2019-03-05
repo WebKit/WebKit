@@ -1,3 +1,21 @@
+2019-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Assert on if notify content change is allowed
+        https://bugs.webkit.org/show_bug.cgi?id=195332
+        <rdar://problem/48603276>
+
+        Reviewed by Simon Fraser.
+
+        Assert we don't notify the client about the state change while in handleSyntheticClick().
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::domTimerExecuteDidStart):
+        (WebCore::ContentChangeObserver::domTimerExecuteDidFinish):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::isNotifyContentChangeAllowed const):
+
 2019-03-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGPathSegList.insertItemBefore() should fail if the newItem belongs to an animating animPathSegList
