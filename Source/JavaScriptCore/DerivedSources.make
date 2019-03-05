@@ -105,7 +105,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/MapPrototype.js \
     $(JavaScriptCore)/builtins/ModuleLoader.js \
     $(JavaScriptCore)/builtins/NumberConstructor.js \
-    $(JavaScriptCore)/builtins/NumberPrototype.js \
     $(JavaScriptCore)/builtins/ObjectConstructor.js \
     $(JavaScriptCore)/builtins/PromiseConstructor.js \
     $(JavaScriptCore)/builtins/PromiseOperations.js \

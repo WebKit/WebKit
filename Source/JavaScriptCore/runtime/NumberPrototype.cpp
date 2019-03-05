@@ -24,7 +24,8 @@
 
 #include "BigInteger.h"
 #include "Error.h"
-#include "JSCBuiltins.h"
+#include "IntlNumberFormat.h"
+#include "IntlObject.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -80,10 +81,6 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     setInternalValue(vm, jsNumber(0));
 
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, numberProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, NumberPrototypeToStringIntrinsic);
-#if ENABLE(INTL)
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-#endif // ENABLE(INTL)
-
     ASSERT(inherits(vm, info()));
 }
 
@@ -107,6 +104,13 @@ static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
     }
 
     return false;
+}
+
+static ALWAYS_INLINE EncodedJSValue throwVMToThisNumberError(ExecState* exec, ThrowScope& scope, JSValue thisValue)
+{
+    auto typeString = asString(jsTypeStringForValue(exec->vm(), exec->lexicalGlobalObject(), thisValue))->value(exec);
+    scope.assertNoException();
+    return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", typeString));
 }
 
 static ALWAYS_INLINE bool getIntegerArgumentInRange(ExecState* exec, int low, int high, int& result, bool& isUndefined)
@@ -408,7 +412,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
 
     double x;
     if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMTypeError(exec, scope);
+        return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
     // Perform ToInteger on the argument before remaining steps.
     int decimalPlacesInExponent;
@@ -445,7 +449,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 
     double x;
     if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMTypeError(exec, scope);
+        return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
     // Get the argument. 
     int decimalPlaces;
@@ -482,7 +486,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
 
     double x;
     if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMTypeError(exec, scope);
+        return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
     // Perform ToInteger on the argument before remaining steps.
     int significantFigures;
@@ -579,7 +583,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* state)
 
     double doubleValue;
     if (!toThisNumber(vm, state->thisValue(), doubleValue))
-        return throwVMTypeError(state, scope);
+        return throwVMToThisNumberError(state, scope, state->thisValue());
 
     auto radix = extractToStringRadixArgument(state, state->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -594,9 +598,17 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 
     double x;
     if (!toThisNumber(vm, exec->thisValue(), x))
-        return throwVMTypeError(exec, scope);
+        return throwVMToThisNumberError(exec, scope, exec->thisValue());
 
+#if ENABLE(INTL)
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, globalObject->intlObject()->numberFormatStructure());
+    numberFormat->initializeNumberFormat(*exec, exec->argument(0), exec->argument(1));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*exec, x)));
+#else
     return JSValue::encode(jsNumber(x).toString(exec));
+#endif
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
@@ -607,7 +619,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
     double x;
     JSValue thisValue = exec->thisValue();
     if (!toThisNumber(vm, thisValue, x))
-        return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", asString(jsTypeStringForValue(exec, thisValue))->value(exec)));
+        return throwVMToThisNumberError(exec, scope, exec->thisValue());
     return JSValue::encode(jsNumber(x));
 }
 

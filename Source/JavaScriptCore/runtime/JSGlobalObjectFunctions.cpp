@@ -31,6 +31,8 @@
 #include "Exception.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
+#include "IntlDateTimeFormat.h"
+#include "IntlObject.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -829,5 +831,21 @@ EncodedJSValue JSC_HOST_CALL globalFuncPropertyIsEnumerable(ExecState* exec)
     bool enumerable = object->getOwnPropertyDescriptor(exec, propertyName, descriptor) && descriptor.enumerable();
     return JSValue::encode(jsBoolean(enumerable));
 }
+
+#if ENABLE(INTL)
+EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->intlObject()->dateTimeFormatStructure());
+    dateTimeFormat->initializeDateTimeFormat(*exec, exec->argument(0), exec->argument(1));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    double value = exec->argument(2).toNumber(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->format(*exec, value)));
+}
+#endif
 
 } // namespace JSC

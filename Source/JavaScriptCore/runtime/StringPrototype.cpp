@@ -29,6 +29,7 @@
 #include "Error.h"
 #include "FrameTracers.h"
 #include "InterpreterInlines.h"
+#include "IntlCollator.h"
 #include "IntlObject.h"
 #include "JITCodeInlines.h"
 #include "JSArray.h"
@@ -143,12 +144,11 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring", stringProtoFuncSubstring, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("toLowerCase", stringProtoFuncToLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeToLowerCaseIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toUpperCase", stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("localeCompare", stringProtoFuncLocaleCompare, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 #if ENABLE(INTL)
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("localeCompare", stringPrototypeLocaleCompareCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase", stringProtoFuncToLocaleLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase", stringProtoFuncToLocaleUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 #else
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("localeCompare", stringProtoFuncLocaleCompare, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleLowerCase", stringProtoFuncToLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase", stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 #endif
@@ -1486,19 +1486,45 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
 {
+    // 13.1.1 String.prototype.localeCompare (that [, locales [, options ]]) (ECMA-402 2.0)
+    // http://ecma-international.org/publications/standards/Ecma-402.htm
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // 1. Let O be RequireObjectCoercible(this value).
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
-        return throwVMTypeError(exec, scope);
-    String s = thisValue.toWTFString(exec);
+        return throwVMTypeError(exec, scope, "String.prototype.localeCompare requires that |this| not be null or undefined"_s);
+
+    // 2. Let S be ToString(O).
+    // 3. ReturnIfAbrupt(S).
+    String string = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue a0 = exec->argument(0);
-    String str = a0.toWTFString(exec);
+    // 4. Let That be ToString(that).
+    // 5. ReturnIfAbrupt(That).
+    JSValue thatValue = exec->argument(0);
+    String that = thatValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(jsNumber(Collator().collate(s, str)));
+
+#if ENABLE(INTL)
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    JSValue locales = exec->argument(1);
+    JSValue options = exec->argument(2);
+    IntlCollator* collator = nullptr;
+    if (locales.isUndefined() && options.isUndefined()) {
+        collator = globalObject->defaultCollator(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    } else {
+        collator = IntlCollator::create(vm, globalObject->intlObject()->collatorStructure());
+        collator->initializeCollator(*exec, locales, options);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+    RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(*exec, string, that)));
+#else
+    return JSValue::encode(jsNumber(Collator().collate(string, that)));
+#endif
 }
 
 #if ENABLE(INTL)
