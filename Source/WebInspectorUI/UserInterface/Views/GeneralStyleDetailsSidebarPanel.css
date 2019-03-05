@@ -151,7 +151,6 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
     overflow-y: scroll;
 }
 
-/* FIXME: <https://webkit.org/b/152674> Elements with the "hidden" attribute still show up if "display: flex;" */
 .sidebar > .panel.details.css-style > .content ~ .class-list-container[hidden] {
     display: none;
 }
@@ -165,16 +164,6 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
     flex-grow: 1;
     height: 18px;
     margin: 0;
-
-    --panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start: 2px;
-}
-
-body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
-    margin-left: var(--panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start);
-}
-
-body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class > .class-name-input {
-    margin-right: var(--panel-details-css-style-content-class-list-container-new-class-class-name-input-margin-start);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle) {
