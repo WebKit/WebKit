@@ -32,9 +32,11 @@
 
 namespace bmalloc {
 
+class Heap;
+
 enum class ObjectType : unsigned char { Small, Large };
 
-ObjectType objectType(HeapKind, void*);
+ObjectType objectType(Heap&, void*);
 
 inline bool mightBeLarge(void* object)
 {

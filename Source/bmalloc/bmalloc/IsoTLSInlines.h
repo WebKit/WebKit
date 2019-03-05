@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Environment.h"
 #include "IsoHeapImpl.h"
 #include "IsoTLS.h"
 #include "bmalloc.h"
@@ -94,9 +95,8 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFa
         break;
     }
     
-    auto debugMallocResult = debugMalloc(Config::objectSize);
-    if (debugMallocResult.usingDebugHeap)
-        return debugMallocResult.ptr;
+    // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
     
     IsoTLS* tls = ensureHeapAndEntries(handle);
     
@@ -138,8 +138,8 @@ BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
         break;
     }
     
-    if (debugFree(p))
-        return;
+    // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
+    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
     
     RELEASE_BASSERT(handle.isInitialized());
     

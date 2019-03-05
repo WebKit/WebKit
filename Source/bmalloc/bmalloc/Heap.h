@@ -63,8 +63,6 @@ public:
     
     HeapKind kind() const { return m_kind; }
     
-    DebugHeap* debugHeap() { return m_debugHeap; }
-
     void allocateSmallBumpRanges(std::unique_lock<Mutex>&, size_t sizeClass,
         BumpAllocator&, BumpRangeCache&, LineCache&);
     void derefSmallLine(std::unique_lock<Mutex>&, Object, LineCache&);
@@ -145,7 +143,6 @@ private:
     Map<Chunk*, ObjectType, ChunkHash> m_objectTypes;
 
     Scavenger* m_scavenger { nullptr };
-    DebugHeap* m_debugHeap { nullptr };
 
     size_t m_footprint { 0 };
     size_t m_freeableMemory { 0 };

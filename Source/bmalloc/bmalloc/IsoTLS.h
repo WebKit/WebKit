@@ -103,16 +103,6 @@ private:
     
     BEXPORT static void determineMallocFallbackState();
     
-    static bool isUsingDebugHeap();
-    
-    struct DebugMallocResult {
-        void* ptr { nullptr };
-        bool usingDebugHeap { false };
-    };
-    
-    BEXPORT static DebugMallocResult debugMalloc(size_t);
-    BEXPORT static bool debugFree(void*);
-    
     IsoTLSEntry* m_lastEntry { nullptr };
     unsigned m_extent { 0 };
     unsigned m_capacity { 0 };

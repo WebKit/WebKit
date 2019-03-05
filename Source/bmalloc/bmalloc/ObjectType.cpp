@@ -32,14 +32,14 @@
 
 namespace bmalloc {
 
-ObjectType objectType(HeapKind kind, void* object)
+ObjectType objectType(Heap& heap, void* object)
 {
     if (mightBeLarge(object)) {
         if (!object)
             return ObjectType::Small;
 
         std::unique_lock<Mutex> lock(Heap::mutex());
-        if (PerProcess<PerHeapKind<Heap>>::getFastCase()->at(kind).isLarge(lock, object))
+        if (heap.isLarge(lock, object))
             return ObjectType::Large;
     }
     

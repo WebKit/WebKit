@@ -67,8 +67,7 @@ struct PrintTime {
 
 Scavenger::Scavenger(std::lock_guard<Mutex>&)
 {
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled())
-        return;
+    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
 
 #if BOS(DARWIN)
     auto queue = dispatch_queue_create("WebKit Malloc Memory Pressure Handler", DISPATCH_QUEUE_SERIAL);
