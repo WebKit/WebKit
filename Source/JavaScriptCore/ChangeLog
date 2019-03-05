@@ -1,3 +1,23 @@
+2019-02-27  Mark Lam  <mark.lam@apple.com>
+
+        The parser is failing to record the token location of new in new.target.
+        https://bugs.webkit.org/show_bug.cgi?id=195127
+        <rdar://problem/39645578>
+
+        Reviewed by Yusuke Suzuki.
+
+        Also adjust the token location for the following to be as shown:
+
+            new.target
+            ^
+            super
+            ^
+            import.meta
+            ^
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2019-02-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] mustHandleValues for dead bytecode locals should be ignored in DFG phases
