@@ -1609,15 +1609,12 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(const Instruction*, PatchableJump
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(ScopedArgumentsType));
     loadPtr(Address(base, ScopedArguments::offsetOfStorage()), scratch3);
-    xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratch3);
     slowCases.append(branch32(AboveOrEqual, property, Address(scratch3, ScopedArguments::offsetOfTotalLengthInStorage())));
     
     loadPtr(Address(base, ScopedArguments::offsetOfTable()), scratch);
-    xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratch);
     load32(Address(scratch, ScopedArgumentsTable::offsetOfLength()), scratch2);
     Jump overflowCase = branch32(AboveOrEqual, property, scratch2);
     loadPtr(Address(base, ScopedArguments::offsetOfScope()), scratch2);
-    xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratch2);
     loadPtr(Address(scratch, ScopedArgumentsTable::offsetOfArguments()), scratch);
     load32(BaseIndex(scratch, property, TimesFour), scratch);
     slowCases.append(branch32(Equal, scratch, TrustedImm32(ScopeOffset::invalidOffset)));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,9 +116,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
             // instance as the first JS argument when we're not using fast TLS to hold the
             // Wasm::Context*'s instance.
             jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(EncodedJSValue)), GPRInfo::argumentGPR2);
-            jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfPoisonedInstance()), GPRInfo::argumentGPR2);
-            jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstancePoison::key()), GPRInfo::argumentGPR0);
-            jit.xor64(GPRInfo::argumentGPR0, GPRInfo::argumentGPR2);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, JSWebAssemblyInstance::offsetOfInstance()), GPRInfo::argumentGPR2);
         }
 
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR2, Instance::offsetOfPointerToTopEntryFrame()), GPRInfo::argumentGPR0);
@@ -155,9 +153,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         // Wasm::Context*'s instance.
         if (!Context::useFastTLS()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextInstanceGPR);
-            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfPoisonedInstance()), wasmContextInstanceGPR);
-            jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstancePoison::key()), scratchReg);
-            jit.xor64(scratchReg, wasmContextInstanceGPR);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
             jsOffset += sizeof(EncodedJSValue);
         }
 

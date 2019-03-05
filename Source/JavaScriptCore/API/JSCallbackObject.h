@@ -27,11 +27,9 @@
 #ifndef JSCallbackObject_h
 #define JSCallbackObject_h
 
-#include "JSCPoison.h"
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
-#include <wtf/PoisonedUniquePtr.h>
 
 namespace JSC {
 
@@ -227,7 +225,7 @@ private:
     static EncodedJSValue staticFunctionGetter(ExecState*, EncodedJSValue, PropertyName);
     static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
-    WTF::PoisonedUniquePtr<JSCallbackObjectPoison, JSCallbackObjectData> m_callbackObjectData;
+    std::unique_ptr<JSCallbackObjectData> m_callbackObjectData;
     const ClassInfo* m_classInfo { nullptr };
 };
 

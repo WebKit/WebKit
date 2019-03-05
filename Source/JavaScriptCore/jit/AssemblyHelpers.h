@@ -1831,10 +1831,6 @@ public:
     // zero-extended. Also this does not clobber index, which is useful in the baseline JIT. This
     // permits length and result to be in the same register.
     void emitPreparePreciseIndexMask32(GPRReg index, GPRReg length, GPRReg result);
-    
-    void emitDynamicPoison(GPRReg base, GPRReg poisonValue);
-    void emitDynamicPoisonOnLoadedType(GPRReg base, GPRReg actualType, JSType expectedType);
-    void emitDynamicPoisonOnType(GPRReg base, GPRReg scratch, JSType expectedType);
 
 #if ENABLE(WEBASSEMBLY)
     void loadWasmContextInstance(GPRReg dst);

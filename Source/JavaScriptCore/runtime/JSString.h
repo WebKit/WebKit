@@ -222,8 +222,6 @@ private:
     // A string is represented either by a String or a rope of fibers.
     unsigned m_length { 0 };
     mutable uint16_t m_flags { 0 };
-    // The poison is strategically placed and holds a value such that the first
-    // 64 bits of JSString look like a double JSValue.
     mutable String m_value;
 
     friend class LLIntOffsetsExtractor;

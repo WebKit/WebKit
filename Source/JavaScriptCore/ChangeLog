@@ -1,5 +1,121 @@
 2019-02-26  Mark Lam  <mark.lam@apple.com>
 
+        Remove poisons in JSCPoison and uses of them.
+        https://bugs.webkit.org/show_bug.cgi?id=195082
+
+        Reviewed by Yusuke Suzuki.
+
+        Also removed unused poisoning code in WriteBarrier, AssemblyHelpers,
+        DFG::SpeculativeJIT, FTLLowerDFGToB3, and FTL::Output.
+
+        * API/JSAPIWrapperObject.h:
+        (JSC::JSAPIWrapperObject::wrappedObject):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/glib/JSAPIWrapperGlobalObject.h:
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionCommon):
+        (JSC::DFG::SpeculativeJIT::compileGetExecutable):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPoisonedPointer): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetExecutable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::weakPointer):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoison): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnLoadedType): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnType): Deleted.
+        (JSC::FTL::DFG::LowerDFGToB3::weakPoisonedPointer): Deleted.
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::weakPoisonedPointer): Deleted.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDynamicPoison): Deleted.
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnLoadedType): Deleted.
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnType): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * parser/UnlinkedSourceCode.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/CustomGetterSetter.h:
+        (JSC::CustomGetterSetter::getter const):
+        (JSC::CustomGetterSetter::setter const):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::getConstructData):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::nativeFunctionFor):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCPoison.cpp: Removed.
+        * runtime/JSCPoison.h: Removed.
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/JSString.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::hashFor const):
+        * runtime/NativeExecutable.h:
+        * runtime/Options.h:
+        * runtime/ScopedArguments.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::setSingleTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::map const):
+        (JSC::StructureTransitionTable::weakImpl const):
+        (JSC::StructureTransitionTable::setMap):
+        * runtime/WriteBarrier.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmInstance.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::materializeImportJSCell):
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
         wasmToJS() should purify incoming NaNs.
         https://bugs.webkit.org/show_bug.cgi?id=194807
         <rdar://problem/48189132>

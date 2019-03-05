@@ -48,7 +48,6 @@
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
 #include "JSCInlines.h"
-#include "JSCPoison.h"
 #include "ScratchRegisterAllocator.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"

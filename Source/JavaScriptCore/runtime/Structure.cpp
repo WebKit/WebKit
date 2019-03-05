@@ -84,7 +84,7 @@ inline void StructureTransitionTable::setSingleTransition(Structure* structure)
     if (WeakImpl* impl = this->weakImpl())
         WeakSet::deallocate(impl);
     WeakImpl* impl = WeakSet::allocate(structure, &singleSlotTransitionWeakOwner(), this);
-    m_data = PoisonedWeakImplPtr(impl).bits() | UsingSingleSlotFlag;
+    m_data = bitwise_cast<intptr_t>(impl) | UsingSingleSlotFlag;
 }
 
 bool StructureTransitionTable::contains(UniquedStringImpl* rep, unsigned attributes) const

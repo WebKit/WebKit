@@ -6869,8 +6869,6 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     
     m_jit.loadPtr(
         MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultRegs.payloadGPR());
-    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), resultRegs.payloadGPR());
-    
     m_jit.load32(
         MacroAssembler::Address(resultRegs.payloadGPR(), ScopedArguments::offsetOfTotalLengthInStorage()),
         scratchReg);
@@ -6882,7 +6880,6 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
     m_jit.emitPreparePreciseIndexMask32(propertyReg, scratchReg, indexMaskReg);
     
     m_jit.loadPtr(MacroAssembler::Address(baseReg, ScopedArguments::offsetOfTable()), scratchReg);
-    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratchReg);
     m_jit.load32(
         MacroAssembler::Address(scratchReg, ScopedArgumentsTable::offsetOfLength()), scratch2Reg);
     
@@ -6890,7 +6887,6 @@ void SpeculativeJIT::compileGetByValOnScopedArguments(Node* node)
         MacroAssembler::AboveOrEqual, propertyReg, scratch2Reg);
     
     m_jit.loadPtr(MacroAssembler::Address(baseReg, ScopedArguments::offsetOfScope()), scratch2Reg);
-    m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), scratch2Reg);
 
     m_jit.loadPtr(
         MacroAssembler::Address(scratchReg, ScopedArgumentsTable::offsetOfArguments()),
@@ -7040,8 +7036,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         
         m_jit.loadPtr(
             MacroAssembler::Address(baseReg, ScopedArguments::offsetOfStorage()), resultReg);
-        m_jit.xorPtr(TrustedImmPtr(ScopedArgumentsPoison::key()), resultReg);
-        
+
         speculationCheck(
             ExoticObjectMode, JSValueSource(), 0,
             m_jit.branchTest8(
@@ -7091,7 +7086,7 @@ void SpeculativeJIT::compileNewFunctionCommon(GPRReg resultGPR, RegisteredStruct
     emitAllocateJSObjectWithKnownSize<ClassType>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowPath, size);
     
     m_jit.storePtr(scopeGPR, JITCompiler::Address(resultGPR, JSFunction::offsetOfScopeChain()));
-    m_jit.storePtr(TrustedImmPtr::weakPoisonedPointer<JSFunctionPoison>(m_jit.graph(), executable), JITCompiler::Address(resultGPR, JSFunction::offsetOfExecutable()));
+    m_jit.storePtr(TrustedImmPtr::weakPointer(m_jit.graph(), executable), JITCompiler::Address(resultGPR, JSFunction::offsetOfExecutable()));
     m_jit.storePtr(TrustedImmPtr(nullptr), JITCompiler::Address(resultGPR, JSFunction::offsetOfRareData()));
     
     m_jit.mutatorFence(*m_jit.vm());
@@ -12116,9 +12111,6 @@ void SpeculativeJIT::compileGetExecutable(Node* node)
     GPRReg resultGPR = result.gpr();
     speculateCellType(node->child1(), functionGPR, SpecFunction, JSFunctionType);
     m_jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutable()), resultGPR);
-#if USE(JSVALUE64)
-    m_jit.xorPtr(JITCompiler::TrustedImmPtr(JSFunctionPoison::key()), resultGPR);
-#endif
     cellResult(resultGPR, node);
 }
 
@@ -12490,7 +12482,6 @@ void SpeculativeJIT::compileCreateThis(Node* node)
     slowPath.append(m_jit.branchIfNotFunction(calleeGPR));
     m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
     slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR));
-    m_jit.xorPtr(JITCompiler::TrustedImmPtr(JSFunctionPoison::key()), rareDataGPR);
     m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorGPR);
     m_jit.loadPtr(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureGPR);
 
@@ -12498,7 +12489,6 @@ void SpeculativeJIT::compileCreateThis(Node* node)
     emitAllocateJSObject(resultGPR, JITAllocator::variable(), allocatorGPR, structureGPR, butterfly, scratchGPR, slowPath);
 
     m_jit.loadPtr(JITCompiler::Address(calleeGPR, JSFunction::offsetOfRareData()), rareDataGPR);
-    m_jit.xorPtr(JITCompiler::TrustedImmPtr(JSFunctionPoison::key()), rareDataGPR);
     m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), inlineCapacityGPR);
     m_jit.emitInitializeInlineStorage(resultGPR, inlineCapacityGPR);
     m_jit.mutatorFence(*m_jit.vm());

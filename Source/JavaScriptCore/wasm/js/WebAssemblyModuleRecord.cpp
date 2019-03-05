@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,7 +224,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             auto* info = m_instance->instance().importFunctionInfo(import.kindIndex);
             info->targetInstance = calleeInstance;
             info->wasmEntrypointLoadLocation = entrypointLoadLocation;
-            m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(import.kindIndex)->set(vm, m_instance.get(), function);
+            m_instance->instance().importFunction<WriteBarrier<JSObject>>(import.kindIndex)->set(vm, m_instance.get(), function);
             break;
         }
 
@@ -338,7 +338,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
             if (exp.kindIndex < functionImportCount) {
                 unsigned functionIndex = exp.kindIndex;
-                JSObject* functionImport = m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(functionIndex)->get();
+                JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
                 if (isWebAssemblyHostFunction(vm, functionImport))
                     exportedValue = functionImport;
                 else {
@@ -419,7 +419,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         ASSERT(!signature.argumentCount());
         ASSERT(signature.returnType() == Wasm::Void);
         if (startFunctionIndexSpace < codeBlock->functionImportCount()) {
-            JSObject* startFunction = m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(startFunctionIndexSpace)->get();
+            JSObject* startFunction = m_instance->instance().importFunction<WriteBarrier<JSObject>>(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);
         } else {
             Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
@@ -520,7 +520,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             uint32_t functionIndex = element.functionIndices[i];
             Wasm::SignatureIndex signatureIndex = module.signatureIndexFromFunctionIndexSpace(functionIndex);
             if (functionIndex < codeBlock->functionImportCount()) {
-                JSObject* functionImport = m_instance->instance().importFunction<JSWebAssemblyInstance::PoisonedBarrier<JSObject>>(functionIndex)->get();
+                JSObject* functionImport = m_instance->instance().importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
                 if (isWebAssemblyHostFunction(vm, functionImport)) {
                     WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
                     // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.

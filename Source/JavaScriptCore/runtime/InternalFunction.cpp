@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004, 2007-2008, 2016-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -88,7 +88,7 @@ CallType InternalFunction::getCallData(JSCell* cell, CallData& callData)
 {
     auto* function = jsCast<InternalFunction*>(cell);
     ASSERT(function->m_functionForCall);
-    callData.native.function = function->m_functionForCall.unpoisoned();
+    callData.native.function = function->m_functionForCall;
     return CallType::Host;
 }
 
@@ -97,7 +97,7 @@ ConstructType InternalFunction::getConstructData(JSCell* cell, ConstructData& co
     auto* function = jsCast<InternalFunction*>(cell);
     if (function->m_functionForConstruct == callHostFunctionAsConstructor)
         return ConstructType::None;
-    constructData.native.function = function->m_functionForConstruct.unpoisoned();
+    constructData.native.function = function->m_functionForConstruct;
     return ConstructType::Host;
 }
 
