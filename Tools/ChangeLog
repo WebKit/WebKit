@@ -1,3 +1,14 @@
+2019-03-05  Youenn Fablet  <youenn@apple.com>
+
+        Rename requestCacheStorageSpace to requestStorageSpace
+        https://bugs.webkit.org/show_bug.cgi?id=195282
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.mm:
+        (-[TestWebsiteDataStoreDelegate requestStorageSpace:frameOrigin:quota:currentSize:spaceRequired:decisionHandler:]):
+        (-[TestWebsiteDataStoreDelegate requestCacheStorageSpace:frameOrigin:quota:currentSize:spaceRequired:decisionHandler:]): Deleted.
+
 2019-03-05  Brady Eidson  <beidson@apple.com>
 
         Correctly handle sandbox extensions when the same WKWebView loads multiple file:// URLs.

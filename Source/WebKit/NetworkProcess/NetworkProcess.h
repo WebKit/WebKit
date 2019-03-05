@@ -313,7 +313,7 @@ public:
     CacheStorage::Engine* findCacheEngine(const PAL::SessionID&);
     CacheStorage::Engine& ensureCacheEngine(const PAL::SessionID&, Function<Ref<CacheStorage::Engine>()>&&);
     void removeCacheEngine(const PAL::SessionID&);
-    void requestCacheStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
+    void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&&);
 
     NetworkBlobRegistry& networkBlobRegistry() override { return m_networkBlobRegistry; }
 

@@ -1159,7 +1159,7 @@ void NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExp
 }
 #endif
 
-void NetworkProcessProxy::requestCacheStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)
+void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t> quota)>&& completionHandler)
 {
     auto* store = websiteDataStoreFromSessionID(sessionID);
 
@@ -1168,7 +1168,7 @@ void NetworkProcessProxy::requestCacheStorageSpace(PAL::SessionID sessionID, con
         return;
     }
 
-    store->client().requestCacheStorageSpace(origin.topOrigin, origin.clientOrigin, quota, currentSize, spaceRequired, WTFMove(completionHandler));
+    store->client().requestStorageSpace(origin.topOrigin, origin.clientOrigin, quota, currentSize, spaceRequired, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

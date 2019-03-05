@@ -656,7 +656,7 @@ void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t quota, u
         callback({ });
         return;
     }
-    m_networkProcess->requestCacheStorageSpace(m_sessionID, origin, quota, currentSize, spaceRequired, WTFMove(callback));
+    m_networkProcess->requestStorageSpace(m_sessionID, origin, quota, currentSize, spaceRequired, WTFMove(callback));
 }
 
 } // namespace CacheStorage

@@ -47,19 +47,19 @@ class WebsiteDataStoreClient : public WebKit::WebsiteDataStoreClient {
 public:
     explicit WebsiteDataStoreClient(id <_WKWebsiteDataStoreDelegate> delegate)
         : m_delegate(delegate)
-        , m_hasRequestCacheStorageSpaceSelector([m_delegate.get() respondsToSelector:@selector(requestCacheStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:)])
+        , m_hasRequestStorageSpaceSelector([m_delegate.get() respondsToSelector:@selector(requestStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:)])
     {
     }
 
 private:
-    void requestCacheStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler) final
+    void requestStorageSpace(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(Optional<uint64_t>)>&& completionHandler) final
     {
-        if (!m_hasRequestCacheStorageSpaceSelector || !m_delegate) {
+        if (!m_hasRequestStorageSpaceSelector || !m_delegate) {
             completionHandler({ });
             return;
         }
 
-        auto checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.getAutoreleased(), @selector(requestCacheStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:));
+        auto checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.getAutoreleased(), @selector(requestStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:));
         auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long quota) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
@@ -70,11 +70,11 @@ private:
         URL mainFrameURL { URL(), topOrigin.toString() };
         URL frameURL { URL(), frameOrigin.toString() };
 
-        [m_delegate.getAutoreleased() requestCacheStorageSpace:mainFrameURL frameOrigin:frameURL quota:quota currentSize:currentSize spaceRequired:spaceRequired decisionHandler:decisionHandler.get()];
+        [m_delegate.getAutoreleased() requestStorageSpace:mainFrameURL frameOrigin:frameURL quota:quota currentSize:currentSize spaceRequired:spaceRequired decisionHandler:decisionHandler.get()];
     }
 
     WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > m_delegate;
-    bool m_hasRequestCacheStorageSpaceSelector { false };
+    bool m_hasRequestStorageSpaceSelector { false };
 };
 
 @implementation WKWebsiteDataStore
