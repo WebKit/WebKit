@@ -1,3 +1,18 @@
+2019-03-05  Youenn Fablet  <youenn@apple.com>
+
+        MockLibWebRTCPeerConnection is leaking some session description
+        https://bugs.webkit.org/show_bug.cgi?id=195315
+        <rdar://problem/47840038>
+
+        Reviewed by David Kilzer.
+
+        Make sure to release raw pointers given from WebCore to mock libwebrtc layer.
+        Covered by existing tests when run in leaks mode.
+
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::SetLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnection::SetRemoteDescription):
+
 2019-03-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242403.

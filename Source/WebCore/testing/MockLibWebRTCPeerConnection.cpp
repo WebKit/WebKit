@@ -164,7 +164,11 @@ public:
     virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription() = default;
 
 private:
-    void SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface*) final { releaseInNetworkThread(*this, *observer); }
+    void SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription) final
+    {
+        std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
+        releaseInNetworkThread(*this, *observer);
+    }
 };
 
 MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(const String& testCase)
@@ -207,8 +211,9 @@ rtc::scoped_refptr<webrtc::MediaStreamInterface> MockLibWebRTCPeerConnectionFact
     return new rtc::RefCountedObject<webrtc::MediaStream>(label);
 }
 
-void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface*)
+void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
 {
+    std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([this, observer] {
         observer->OnSuccess();
         gotLocalDescription();
@@ -217,6 +222,7 @@ void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescript
 
 void MockLibWebRTCPeerConnection::SetRemoteDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
 {
+    std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
         observer->OnSuccess();
     });
