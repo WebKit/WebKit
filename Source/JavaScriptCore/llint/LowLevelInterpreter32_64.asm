@@ -1788,9 +1788,9 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t0], StringType, .opSwitchCharFallThrough
-    bineq JSString::m_length[t0], 1, .opSwitchCharFallThrough
-    loadp JSString::m_value[t0], t0
-    btpz  t0, .opSwitchOnRope
+    loadp JSString::m_fiber[t0], t0
+    btpnz t0, isRopeInPointer, .opSwitchOnRope
+    bineq StringImpl::m_length[t0], 1, .opSwitchCharFallThrough
     loadp StringImpl::m_data8[t0], t1
     btinz StringImpl::m_hashAndFlags[t0], HashFlags8BitBuffer, .opSwitchChar8Bit
     loadh [t1], t0

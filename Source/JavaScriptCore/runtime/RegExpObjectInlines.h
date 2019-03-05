@@ -162,7 +162,7 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
     auto iterate = [&] () {
         size_t end = result.end;
         size_t length = end - result.start;
-        array->putDirectIndex(exec, arrayIndex++, JSRopeString::createSubstringOfResolved(vm, string, result.start, length));
+        array->putDirectIndex(exec, arrayIndex++, jsSubstringOfResolved(vm, string, result.start, length));
         if (UNLIKELY(scope.exception())) {
             hasException = true;
             return;

@@ -64,7 +64,7 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
-    macro(JSBigIntOrString_length, JSBigInt::offsetOfLength()) \
+    macro(JSBigInt_length, JSBigInt::offsetOfLength()) \
     macro(JSCell_cellState, JSCell::cellStateOffset()) \
     macro(JSCell_header, 0) \
     macro(JSCell_indexingTypeAndMisc, JSCell::indexingTypeAndMiscOffset()) \
@@ -88,9 +88,14 @@ namespace JSC { namespace FTL {
     macro(JSPropertyNameEnumerator_endGenericPropertyIndex, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_endStructurePropertyIndex, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_indexLength, JSPropertyNameEnumerator::indexedLengthOffset()) \
+    macro(JSRopeString_flags, JSRopeString::offsetOfFlags()) \
+    macro(JSRopeString_fiber0, JSRopeString::offsetOfFiber0()) \
+    macro(JSRopeString_length, JSRopeString::offsetOfLength()) \
+    macro(JSRopeString_fiber1Lower, JSRopeString::offsetOfFiber1Lower()) \
+    macro(JSRopeString_fiber1Upper, JSRopeString::offsetOfFiber1Upper()) \
+    macro(JSRopeString_fiber2Lower, JSRopeString::offsetOfFiber2Lower()) \
+    macro(JSRopeString_fiber2Upper, JSRopeString::offsetOfFiber2Upper()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
-    macro(JSString_flags, JSString::offsetOfFlags()) \
-    macro(JSString_value, JSString::offsetOfValue()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(RegExpObject_regExp, RegExpObject::offsetOfRegExp()) \
@@ -140,7 +145,6 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_storage, DirectArguments::storageOffset(), sizeof(EncodedJSValue)) \
     macro(JSLexicalEnvironment_variables, JSLexicalEnvironment::offsetOfVariables(), sizeof(EncodedJSValue)) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVectorContents, 0, sizeof(WriteBarrier<JSString>)) \
-    macro(JSRopeString_fibers, JSRopeString::offsetOfFibers(), sizeof(WriteBarrier<JSString>)) \
     macro(ScopedArguments_Storage_storage, 0, sizeof(EncodedJSValue)) \
     macro(WriteBarrierBuffer_bufferContents, 0, sizeof(JSCell*)) \
     macro(characters8, 0, sizeof(LChar)) \
@@ -180,8 +184,6 @@ public:
     AbstractHeap& JSCell_freeListNext;
     AbstractHeap& ArrayStorage_publicLength;
     AbstractHeap& ArrayStorage_vectorLength;
-    AbstractHeap& JSBigInt_length;
-    AbstractHeap& JSString_length;
     
 #define INDEXED_ABSTRACT_HEAP_DECLARATION(name, offset, size) IndexedAbstractHeap name;
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_DECLARATION)
@@ -190,6 +192,8 @@ public:
 #define NUMBERED_ABSTRACT_HEAP_DECLARATION(name) NumberedAbstractHeap name;
     FOR_EACH_NUMBERED_ABSTRACT_HEAP(NUMBERED_ABSTRACT_HEAP_DECLARATION)
 #undef NUMBERED_ABSTRACT_HEAP_DECLARATION
+
+    AbstractHeap& JSString_value;
 
     AbsoluteAbstractHeap absolute;
     

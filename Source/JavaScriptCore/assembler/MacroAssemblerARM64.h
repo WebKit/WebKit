@@ -1540,6 +1540,16 @@ public:
         m_assembler.strh(src, address.base, memoryTempRegister);
     }
 
+    void storeZero16(ImplicitAddress address)
+    {
+        store16(ARM64Registers::zr, address);
+    }
+
+    void storeZero16(BaseIndex address)
+    {
+        store16(ARM64Registers::zr, address);
+    }
+
     void store8(RegisterID src, BaseIndex address)
     {
         if (!address.offset && !address.scale) {

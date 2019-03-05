@@ -3,7 +3,7 @@ function assert(b) {
         throw new Error("bad!");
 }
 
-function returnRope() {
+function returnEmptyString() {
     function helper(r, s) {
         // I'm paranoid about RegExp matching constant folding.
         return s.match(r)[1];
@@ -11,7 +11,7 @@ function returnRope() {
     noInline(helper);
     return helper(/(b*)fo/, "fo");
 }
-noInline(returnRope);
+noInline(returnEmptyString);
 
 function lower(a) {
     return a.toLowerCase();
@@ -19,8 +19,8 @@ function lower(a) {
 noInline(lower);
 
 for (let i = 0; i < 10000; i++) {
-    let rope = returnRope();
-    assert(!rope.length);
-    assert(isRope(rope)); // Keep this test future proofed. If this stops returning a rope, we should try to find another way to return an empty rope.
-    lower(rope);
+    let notRope = returnEmptyString();
+    assert(!notRope.length);
+    assert(!isRope(notRope));
+    lower(notRope);
 }

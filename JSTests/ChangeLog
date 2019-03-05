@@ -1,3 +1,16 @@
+2019-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] sizeof(JSString) should be 16
+        https://bugs.webkit.org/show_bug.cgi?id=194375
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/make-rope.js: Added.
+        (makeRope):
+        * stress/to-lower-case-intrinsic-on-empty-rope.js: We no longer allow 0 length JSString except for jsEmptyString singleton per VM.
+        (returnRope.helper): Deleted.
+        (returnRope): Deleted.
+
 2019-02-27  Mark Lam  <mark.lam@apple.com>
 
         The parser is failing to record the token location of new in new.target.

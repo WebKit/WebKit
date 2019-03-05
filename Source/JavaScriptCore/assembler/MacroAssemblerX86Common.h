@@ -1348,6 +1348,16 @@ public:
         store32(TrustedImm32(0), address);
     }
 
+    void storeZero16(ImplicitAddress address)
+    {
+        store16(TrustedImm32(0), address);
+    }
+
+    void storeZero16(BaseIndex address)
+    {
+        store16(TrustedImm32(0), address);
+    }
+
     void store8(TrustedImm32 imm, Address address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
@@ -1434,7 +1444,7 @@ public:
         m_assembler.movw_im(static_cast<int16_t>(imm.m_value), address.offset, address.base, address.index, address.scale);
     }
 
-    void store16(TrustedImm32 imm, Address address)
+    void store16(TrustedImm32 imm, ImplicitAddress address)
     {
         m_assembler.movw_im(static_cast<int16_t>(imm.m_value), address.offset, address.base);
     }

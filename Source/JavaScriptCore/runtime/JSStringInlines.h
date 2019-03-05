@@ -29,11 +29,18 @@
 
 namespace JSC {
     
+inline JSString::~JSString()
+{
+    if (isRope())
+        return;
+    valueInternal().~String();
+}
+
 bool JSString::equal(ExecState* exec, JSString* other) const
 {
     if (isRope() || other->isRope())
         return equalSlowCase(exec, other);
-    return WTF::equal(*m_value.impl(), *other->m_value.impl());
+    return WTF::equal(*valueInternal().impl(), *other->valueInternal().impl());
 }
 
 template<typename StringType>
