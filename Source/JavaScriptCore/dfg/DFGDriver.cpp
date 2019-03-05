@@ -70,7 +70,7 @@ static FunctionWhitelist& ensureGlobalDFGWhitelist()
 
 static CompilationResult compileImpl(
     VM& vm, CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationMode mode,
-    unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
+    unsigned osrEntryBytecodeIndex, const Operands<Optional<JSValue>>& mustHandleValues,
     Ref<DeferredCompilationCallback>&& callback)
 {
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount())
@@ -116,7 +116,7 @@ static CompilationResult compileImpl(
 }
 #else // ENABLE(DFG_JIT)
 static CompilationResult compileImpl(
-    VM&, CodeBlock*, CodeBlock*, CompilationMode, unsigned, const Operands<JSValue>&,
+    VM&, CodeBlock*, CodeBlock*, CompilationMode, unsigned, const Operands<Optional<JSValue>>&,
     Ref<DeferredCompilationCallback>&&)
 {
     return CompilationFailed;
@@ -125,7 +125,7 @@ static CompilationResult compileImpl(
 
 CompilationResult compile(
     VM& vm, CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationMode mode,
-    unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues,
+    unsigned osrEntryBytecodeIndex, const Operands<Optional<JSValue>>& mustHandleValues,
     Ref<DeferredCompilationCallback>&& callback)
 {
     CompilationResult result = compileImpl(

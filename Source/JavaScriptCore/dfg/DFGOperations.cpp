@@ -3108,7 +3108,7 @@ static void triggerFTLReplacementCompile(VM* vm, CodeBlock* codeBlock, JITCode* 
     // We need to compile the code.
     compile(
         *vm, codeBlock->newReplacement(), codeBlock, FTLMode, UINT_MAX,
-        Operands<JSValue>(), ToFTLDeferredCompilationCallback::create());
+        Operands<Optional<JSValue>>(), ToFTLDeferredCompilationCallback::create());
 
     // If we reached here, the counter has not be reset. Do that now.
     jitCode->setOptimizationThresholdBasedOnCompilationResult(
@@ -3346,7 +3346,7 @@ static char* tierUpCommon(ExecState* exec, unsigned originBytecodeIndex, bool ca
 
     JITCode::TriggerReason* triggerAddress = &(triggerIterator->value);
 
-    Operands<JSValue> mustHandleValues;
+    Operands<Optional<JSValue>> mustHandleValues;
     unsigned streamIndex = jitCode->bytecodeIndexToStreamIndex.get(originBytecodeIndex);
     jitCode->reconstruct(
         exec, codeBlock, CodeOrigin(originBytecodeIndex), streamIndex, mustHandleValues);

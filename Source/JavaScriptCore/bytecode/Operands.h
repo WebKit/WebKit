@@ -220,7 +220,7 @@ public:
     T& operator[](size_t index) { return at(index); }
 
     bool isArgument(size_t index) const { return index < m_numArguments; }
-    bool isVariable(size_t index) const { return !isArgument(index); }
+    bool isLocal(size_t index) const { return !isArgument(index); }
     int operandForIndex(size_t index) const
     {
         if (index < numberOfArguments())

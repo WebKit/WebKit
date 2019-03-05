@@ -444,7 +444,7 @@ private:
                 continue;
             if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
                 continue;
-            const Operands<JSValue>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+            const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
             for (size_t i = 0; i < mustHandleValues.size(); ++i) {
                 int operand = mustHandleValues.operandForIndex(i);
                 Node* node = block->variablesAtHead.operand(operand);
@@ -456,8 +456,8 @@ private:
                     continue;
                 if (!TypeCheck::isValidToHoist(iter->value))
                     continue;
-                JSValue value = mustHandleValues[i];
-                if (!value || !value.isCell() || TypeCheck::isContravenedByValue(iter->value, value)) {
+                Optional<JSValue> value = mustHandleValues[i];
+                if (!value || !value.value() || !value.value().isCell() || TypeCheck::isContravenedByValue(iter->value, value.value())) {
                     TypeCheck::disableHoisting(iter->value);
                     continue;
                 }

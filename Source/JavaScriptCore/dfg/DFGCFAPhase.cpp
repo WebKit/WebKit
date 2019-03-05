@@ -163,10 +163,15 @@ private:
             dataLog("   Found must-handle block: ", *block, "\n");
         
         bool changed = false;
-        const Operands<JSValue>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+        const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
         for (size_t i = mustHandleValues.size(); i--;) {
             int operand = mustHandleValues.operandForIndex(i);
-            JSValue value = mustHandleValues[i];
+            Optional<JSValue> value = mustHandleValues[i];
+            if (!value) {
+                if (m_verbose)
+                    dataLog("   Not live in bytecode: ", VirtualRegister(operand), "\n");
+                continue;
+            }
             Node* node = block->variablesAtHead.operand(operand);
             if (!node) {
                 if (m_verbose)
@@ -175,12 +180,12 @@ private:
             }
             
             if (m_verbose)
-                dataLog("   Widening ", VirtualRegister(operand), " with ", value, "\n");
+                dataLog("   Widening ", VirtualRegister(operand), " with ", value.value(), "\n");
             
             AbstractValue& target = block->valuesAtHead.operand(operand);
-            changed |= target.mergeOSREntryValue(m_graph, value);
+            changed |= target.mergeOSREntryValue(m_graph, value.value());
             target.fixTypeForRepresentation(
-                m_graph, resultFor(node->variableAccessData()->flushFormat()));
+                m_graph, resultFor(node->variableAccessData()->flushFormat()), node);
         }
         
         if (changed || !block->cfaHasVisited) {

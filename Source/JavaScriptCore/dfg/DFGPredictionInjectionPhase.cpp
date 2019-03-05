@@ -70,15 +70,17 @@ public:
                 continue;
             if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
                 continue;
-            const Operands<JSValue>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+            const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
             for (size_t i = 0; i < mustHandleValues.size(); ++i) {
                 int operand = mustHandleValues.operandForIndex(i);
+                Optional<JSValue> value = mustHandleValues[i];
+                if (!value)
+                    continue;
                 Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;
                 ASSERT(node->accessesStack(m_graph));
-                node->variableAccessData()->predict(
-                    speculationFromValue(mustHandleValues[i]));
+                node->variableAccessData()->predict(speculationFromValue(value.value()));
             }
         }
         
