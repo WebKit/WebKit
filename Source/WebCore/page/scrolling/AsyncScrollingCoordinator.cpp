@@ -143,6 +143,8 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(FrameView& frameView)
         auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*node);
         frameScrollingNode.setExpectsWheelEventTestTrigger(page->expectsWheelEventTriggers());
     }
+#else
+    UNUSED_PARAM(frameView);
 #endif
 }
 
