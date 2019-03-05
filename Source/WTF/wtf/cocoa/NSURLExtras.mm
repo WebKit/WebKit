@@ -194,8 +194,13 @@ static NSData *dataWithUserTypedString(NSString *string)
     int inLength = [userTypedData length];
     if (!inLength)
         return nil;
+
+    Checked<int, RecordOverflow> mallocLength = inLength;
+    mallocLength *= 3; // large enough to %-escape every character
+    if (mallocLength.hasOverflowed())
+        return nil;
     
-    char* outBytes = static_cast<char *>(malloc(inLength * 3)); // large enough to %-escape every character
+    char* outBytes = static_cast<char *>(malloc(mallocLength.unsafeGet()));
     char* p = outBytes;
     int outLength = 0;
     for (int i = 0; i < inLength; i++) {
