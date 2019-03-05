@@ -278,6 +278,10 @@ public:
 #if ENABLE(INTL)
     WriteBarrier<IntlObject> m_intlObject;
     WriteBarrier<IntlCollator> m_defaultCollator;
+    LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
+    LazyProperty<JSGlobalObject, Structure> m_dateTimeFormatStructure;
+    LazyProperty<JSGlobalObject, Structure> m_pluralRulesStructure;
 #endif
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -588,7 +592,6 @@ public:
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
 
 #if ENABLE(INTL)
-    IntlObject* intlObject() const { return m_intlObject.get(); }
     IntlCollator* defaultCollator(ExecState*);
 #endif
 
@@ -766,6 +769,12 @@ public:
     Structure* webAssemblyWrapperFunctionStructure() const { return m_webAssemblyWrapperFunctionStructure.get(); }
     Structure* webAssemblyToJSCalleeStructure() const { return m_webAssemblyToJSCalleeStructure.get(); }
 #endif // ENABLE(WEBASSEMBLY)
+#if ENABLE(INTL)
+    Structure* collatorStructure() { return m_collatorStructure.get(this); }
+    Structure* numberFormatStructure() { return m_numberFormatStructure.get(this); }
+    Structure* dateTimeFormatStructure() { return m_dateTimeFormatStructure.get(this); }
+    Structure* pluralRulesStructure() { return m_pluralRulesStructure.get(this); }
+#endif // ENABLE(INTL)
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

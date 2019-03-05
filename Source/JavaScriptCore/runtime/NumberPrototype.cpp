@@ -602,7 +602,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
 
 #if ENABLE(INTL)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, globalObject->intlObject()->numberFormatStructure());
+    IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
     numberFormat->initializeNumberFormat(*exec, exec->argument(0), exec->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatNumber(*exec, x)));

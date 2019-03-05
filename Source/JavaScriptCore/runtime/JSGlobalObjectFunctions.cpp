@@ -839,7 +839,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncDateTimeFormat(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->intlObject()->dateTimeFormatStructure());
+    IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
     dateTimeFormat->initializeDateTimeFormat(*exec, exec->argument(0), exec->argument(1));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double value = exec->argument(2).toNumber(exec);

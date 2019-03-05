@@ -44,29 +44,18 @@ class IntlPluralRulesPrototype;
 class IntlObject final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static IntlObject* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Structure* collatorStructure() { return m_collatorStructure.get(this); }
-    Structure* numberFormatStructure() { return m_numberFormatStructure.get(this); }
-    Structure* dateTimeFormatStructure() { return m_dateTimeFormatStructure.get(this); }
-    Structure* pluralRulesStructure() { return m_pluralRulesStructure.get(this); }
-
 protected:
     void finishCreation(VM&);
 
 private:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
     IntlObject(VM&, Structure*);
-    LazyProperty<IntlObject, Structure> m_collatorStructure;
-    LazyProperty<IntlObject, Structure> m_numberFormatStructure;
-    LazyProperty<IntlObject, Structure> m_dateTimeFormatStructure;
-    LazyProperty<IntlObject, Structure> m_pluralRulesStructure;
 };
 
 String defaultLocale(ExecState&);

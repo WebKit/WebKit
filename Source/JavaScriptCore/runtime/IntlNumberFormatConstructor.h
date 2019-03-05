@@ -46,7 +46,7 @@ public:
 
     DECLARE_INFO;
 
-    Structure* numberFormatStructure(VM& vm) const { return globalObject(vm)->intlObject()->numberFormatStructure(); }
+    Structure* numberFormatStructure(VM& vm) const { return globalObject(vm)->numberFormatStructure(); }
 
 protected:
     void finishCreation(VM&, IntlNumberFormatPrototype*);
