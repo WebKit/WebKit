@@ -949,6 +949,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.mediaMIMETypes = process.mediaMIMETypes();
 #endif
 
+#if PLATFORM(WPE)
+    parameters.isServiceWorkerProcess = process.isServiceWorkerProcess();
+#endif
+
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 

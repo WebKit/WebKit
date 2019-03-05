@@ -1,3 +1,24 @@
+2019-03-05  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [WPE] Do not create a PlatformDisplay in the Service Worker process
+        https://bugs.webkit.org/show_bug.cgi?id=194830
+
+        Reviewed by Žan Doberšek.
+
+        It avoids opening the Wayland socket in this WPEWebProcess, which might cause issues
+        depending on the platform, and allocates unneeded resources.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h: Add new isServiceWorkerProcess parameter.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess): Set isServiceWorkerProcess parameter.
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): No implementationLibraryName and hostClientFileDescriptor for Service Worker.
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): No wpe_loader_init nor PlatformDisplayLibWPE for Service Worker.
+
 2019-03-04  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r242376.

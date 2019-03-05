@@ -200,6 +200,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(WPE)
+    bool isServiceWorkerProcess { false };
     IPC::Attachment hostClientFileDescriptor;
     CString implementationLibraryName;
 #endif

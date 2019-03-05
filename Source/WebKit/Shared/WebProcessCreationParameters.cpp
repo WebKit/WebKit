@@ -161,6 +161,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 
 #if PLATFORM(WPE)
+    encoder << isServiceWorkerProcess;
     encoder << hostClientFileDescriptor;
     encoder << implementationLibraryName;
 #endif
@@ -427,6 +428,8 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 #endif
 
 #if PLATFORM(WPE)
+    if (!decoder.decode(parameters.isServiceWorkerProcess))
+        return false;
     if (!decoder.decode(parameters.hostClientFileDescriptor))
         return false;
     if (!decoder.decode(parameters.implementationLibraryName))
