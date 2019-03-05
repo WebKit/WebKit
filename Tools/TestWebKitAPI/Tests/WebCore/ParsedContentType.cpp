@@ -149,6 +149,8 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("text/"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/\0"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/ "), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("{/}"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("x/x ;x=x"), "x/x;x=x");
     EXPECT_STREQ(serializeIfValid("text/plain"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain\0"), "text/plain");
     EXPECT_STREQ(serializeIfValid(" text/plain"), "text/plain");
@@ -156,11 +158,15 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("\ntext/plain"), "text/plain");
     EXPECT_STREQ(serializeIfValid("\rtext/plain"), "text/plain");
     EXPECT_STREQ(serializeIfValid("\btext/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("\x0Btext/plain"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("\u000Btext/plain"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/plain "), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain\t"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain\n"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain\r"), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain\b"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/plain\x0B"), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid("text/plain\u000B"), "NOTVALID");
     EXPECT_STREQ(serializeIfValid(" text/plain "), "text/plain");
     EXPECT_STREQ(serializeIfValid("\ttext/plain\t"), "text/plain");
     EXPECT_STREQ(serializeIfValid("\ntext/plain\n"), "text/plain");
@@ -236,11 +242,12 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("text/plain;test=\""), "text/plain;test=\"\"");
     EXPECT_STREQ(serializeIfValid("text/plain;test=\"value\"foo"), "text/plain;test=value");
     EXPECT_STREQ(serializeIfValid("text/plain;test=\"value\"foo;foo=bar"), "text/plain;test=value;foo=bar");
-    EXPECT_STREQ(serializeIfValid("text/plain;test=\"val\\ue\""), "text/plain;test=\"val\\ue\"");
+    EXPECT_STREQ(serializeIfValid("text/plain;test=\"val\\ue\""), "text/plain;test=value");
     EXPECT_STREQ(serializeIfValid("text/plain;test=\"val\\\"ue\""), "text/plain;test=\"val\\\"ue\"");
     EXPECT_STREQ(serializeIfValid("text/plain;test='value'"), "text/plain;test='value'");
     EXPECT_STREQ(serializeIfValid("text/plain;test='value"), "text/plain;test='value");
     EXPECT_STREQ(serializeIfValid("text/plain;test=value'"), "text/plain;test=value'");
+    EXPECT_STREQ(serializeIfValid("text/plain;test={value}"), "text/plain;test=\"{value}\"");
 }
 
 } // namespace TestWebKitAPI

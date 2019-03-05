@@ -40,8 +40,6 @@ enum class Mode {
     Rfc2045,
     MimeSniff
 };
-// <index, length>
-typedef std::pair<unsigned, unsigned> SubstringRange;
 WEBCORE_EXPORT bool isValidContentType(const String&, Mode = Mode::MimeSniff);
 
 // FIXME: add support for comments.
@@ -64,7 +62,7 @@ private:
     ParsedContentType(const ParsedContentType&) = delete;
     ParsedContentType& operator=(ParsedContentType const&) = delete;
     bool parseContentType(Mode);
-    void setContentType(const SubstringRange&, Mode);
+    void setContentType(StringView, Mode);
     void setContentTypeParameter(const String&, const String&, Mode);
 
     typedef HashMap<String, String> KeyValuePairs;
