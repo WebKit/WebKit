@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +32,6 @@ namespace JSC {
 // Let's keep the following list of poisons in alphabetical order just so it's easier to read.
 #define FOR_EACH_JSC_POISON(v) \
     v(ArrayPrototype) \
-    v(CodeBlock) \
-    v(GlobalData) \
-    v(JITCode) \
     v(JSAPIWrapperObject) \
     v(JSArrayBuffer) \
     v(JSCallbackObject) \
@@ -64,11 +61,6 @@ namespace JSC {
 
 FOR_EACH_JSC_POISON(DECLARE_POISON)
 #undef DECLARE_POISON
-
-struct ClassInfo;
-
-using PoisonedClassInfoPtr = Poisoned<GlobalDataPoison, const ClassInfo*>;
-using PoisonedMasmPtr = Poisoned<JITCodePoison, const void*>;
 
 void initializePoison();
 

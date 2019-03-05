@@ -546,7 +546,7 @@ public:
     std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
     
     JSCell* currentlyDestructingCallbackObject;
-    PoisonedClassInfoPtr currentlyDestructingCallbackObjectClassInfo;
+    const ClassInfo* currentlyDestructingCallbackObjectClassInfo { nullptr };
 
     AtomicStringTable* m_atomicStringTable;
     WTF::SymbolRegistry m_symbolRegistry;

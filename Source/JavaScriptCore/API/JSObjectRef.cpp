@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Kelvin W Sherlock (ksherlock@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -551,7 +551,7 @@ static const ClassInfo* classInfoPrivate(JSObject* jsObject)
     if (vm.currentlyDestructingCallbackObject != jsObject)
         return jsObject->classInfo(vm);
 
-    return vm.currentlyDestructingCallbackObjectClassInfo.unpoisoned();
+    return vm.currentlyDestructingCallbackObjectClassInfo;
 }
 
 void* JSObjectGetPrivate(JSObjectRef object)

@@ -1798,7 +1798,7 @@ public:
     {
         auto butterfly = TrustedImmPtr(nullptr);
         emitAllocateJSObject<ClassType>(vm, resultGPR, TrustedImmPtr(structure), butterfly, scratchGPR1, scratchGPR2, slowPath);
-        storePtr(TrustedImmPtr(PoisonedClassInfoPtr(structure->classInfo()).bits()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
+        storePtr(TrustedImmPtr(structure->classInfo()), Address(resultGPR, JSDestructibleObject::classInfoOffset()));
     }
     
     void emitInitializeInlineStorage(GPRReg baseGPR, unsigned inlineCapacity)

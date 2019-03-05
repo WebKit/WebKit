@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -228,7 +228,7 @@ private:
     static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
     WTF::PoisonedUniquePtr<JSCallbackObjectPoison, JSCallbackObjectData> m_callbackObjectData;
-    PoisonedClassInfoPtr m_classInfo;
+    const ClassInfo* m_classInfo { nullptr };
 };
 
 } // namespace JSC

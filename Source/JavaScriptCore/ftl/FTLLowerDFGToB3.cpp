@@ -5645,7 +5645,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowCase);
 
         LValue fastResultValue = allocateObject<StringObject>(structure, m_out.intPtrZero, slowCase);
-        m_out.storePtr(m_out.constIntPtr(PoisonedClassInfoPtr(StringObject::info()).bits()), fastResultValue, m_heaps.JSDestructibleObject_classInfo);
+        m_out.storePtr(m_out.constIntPtr(StringObject::info()), fastResultValue, m_heaps.JSDestructibleObject_classInfo);
         m_out.store64(string, fastResultValue, m_heaps.JSWrapperObject_internalValue);
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
@@ -12153,8 +12153,7 @@ private:
             LBasicBlock continuation = m_out.newBlock();
 
             LValue structure = loadStructure(cell);
-            LValue poisonedClassInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
-            LValue classInfo = m_out.bitXor(poisonedClassInfo, m_out.constInt64(GlobalDataPoison::key()));
+            LValue classInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
             ValueFromBlock otherAtStart = m_out.anchor(classInfo);
             m_out.jump(loop);
 
