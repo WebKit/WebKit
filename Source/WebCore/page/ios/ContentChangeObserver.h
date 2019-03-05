@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include "Timer.h"
 #include "WKContentObservation.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ class ContentChangeObserver {
 public:
     ContentChangeObserver(Document&);
 
+    WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
     WEBCORE_EXPORT WKContentChange observedContentChange() const;
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
@@ -102,7 +104,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_domTimerisBeingExecuted || m_styleRecalcIsBeingExecuted; }
+    bool isObservingContentChanges() const { return m_domTimerisBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
 
     void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
     void clearTimersAndReportContentChange();
@@ -117,16 +119,23 @@ private:
 
     void notifyContentChangeIfNeeded();
 
+    void stopDurationBasedContentObservation();
+
+    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || m_contentObservationTimer.isActive(); }
+
     enum class Event {
         ContentObservationStarted,
         InstalledDOMTimer,
         RemovedDOMTimer,
         StyleRecalcFinished,
-        ContentVisibilityChanged
+        ContentVisibilityChanged,
+        StartedFixedObservationTimeWindow,
+        EndedFixedObservationTimeWindow
     };
     void adjustObservedState(Event);
 
     Document& m_document;
+    Timer m_contentObservationTimer;
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_isObservingStyleRecalc { false };
     bool m_styleRecalcIsBeingExecuted { false };
