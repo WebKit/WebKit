@@ -1,3 +1,20 @@
+2019-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Bmalloc DebugHeap should have dump and scavenge features
+        https://bugs.webkit.org/show_bug.cgi?id=195305
+
+        Reviewed by Saam Barati.
+
+        As the same to bmalloc, bmalloc::DebugHeap should have scavenge feature to make it scavengable if we want.
+        We also add DebugHeap::dump feature which dumps system malloc data in the WebKit Malloc zone.
+
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::scavenge):
+        (bmalloc::DebugHeap::dump):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::scavenge):
+
 2019-02-23  Keith Miller  <keith_miller@apple.com>
 
         Add new mac target numbers

@@ -49,6 +49,9 @@ public:
     void* memalignLarge(size_t alignment, size_t);
     void freeLarge(void* base);
 
+    void scavenge();
+    void dump();
+
     static DebugHeap* tryGet();
 
 private:

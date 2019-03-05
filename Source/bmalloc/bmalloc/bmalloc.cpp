@@ -92,7 +92,9 @@ void scavenge()
 {
     scavengeThisThread();
 
-    if (!DebugHeap::tryGet())
+    if (DebugHeap* debugHeap = DebugHeap::tryGet())
+        debugHeap->scavenge();
+    else
         PerProcess<Scavenger>::get()->scavenge();
 }
 

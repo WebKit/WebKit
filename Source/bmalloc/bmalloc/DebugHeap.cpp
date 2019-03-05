@@ -74,6 +74,19 @@ void DebugHeap::free(void* object)
     malloc_zone_free(m_zone, object);
 }
 
+void DebugHeap::scavenge()
+{
+    // Currently |goal| does not affect on the behavior of malloc_zone_pressure_relief if (1) we only scavenge one zone and (2) it is not nanomalloc.
+    constexpr size_t goal = 0;
+    malloc_zone_pressure_relief(m_zone, goal);
+}
+
+void DebugHeap::dump()
+{
+    constexpr bool verbose = true;
+    malloc_zone_print(m_zone, verbose);
+}
+
 #else
 
 DebugHeap::DebugHeap(std::lock_guard<Mutex>&)
@@ -112,7 +125,15 @@ void DebugHeap::free(void* object)
 {
     ::free(object);
 }
-    
+
+void DebugHeap::scavenge()
+{
+}
+
+void DebugHeap::dump()
+{
+}
+
 #endif
 
 // FIXME: This looks an awful lot like the code in wtf/Gigacage.cpp for large allocation.
