@@ -1,3 +1,14 @@
+2019-03-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGPathSegList.insertItemBefore() should fail if the newItem belongs to an animating animPathSegList
+        https://bugs.webkit.org/show_bug.cgi?id=195333
+        <rdar://problem/48475802>
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGPathSegList-insert-from-animating-animPathSegList-expected.txt: Added.
+        * svg/dom/SVGPathSegList-insert-from-animating-animPathSegList.svg: Added.
+
 2019-03-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242403.
