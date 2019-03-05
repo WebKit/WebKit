@@ -203,7 +203,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     bool needsLayout = !frame.view() || frame.view()->needsLayout();
     bool requiresPostLayoutData = frame.editor().hasComposition();
 #if !PLATFORM(IOSMAC)
-    requiresPostLayoutData |= [UIKeyboard isInHardwareKeyboardMode];
+    requiresPostLayoutData |= m_keyboardIsAttached;
 #endif
     if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && needsLayout && !requiresPostLayoutData) {
         result.isMissingPostLayoutData = true;
@@ -3233,8 +3233,10 @@ String WebPage::platformUserAgent(const URL&) const
     return String();
 }
 
-void WebPage::hardwareKeyboardAvailabilityChanged()
+void WebPage::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
 {
+    m_keyboardIsAttached = keyboardIsAttached;
+
     if (auto* focusedFrame = m_page->focusController().focusedFrame())
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
