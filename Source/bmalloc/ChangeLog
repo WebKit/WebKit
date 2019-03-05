@@ -1,3 +1,17 @@
+2019-02-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r241789.
+        https://bugs.webkit.org/show_bug.cgi?id=194856
+
+        GuardMalloc crashes (Requested by yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "[bmalloc] bmalloc::Cache should not be instantiated if we are
+        using system malloc"
+        https://bugs.webkit.org/show_bug.cgi?id=194811
+        https://trac.webkit.org/changeset/241789
+
 2019-02-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] bmalloc::Cache should not be instantiated if we are using system malloc
