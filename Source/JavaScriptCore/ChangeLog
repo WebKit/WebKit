@@ -1,3 +1,78 @@
+2019-02-21  Mark Lam  <mark.lam@apple.com>
+
+        Add more doesGC() assertions.
+        https://bugs.webkit.org/show_bug.cgi?id=194911
+        <rdar://problem/48285723>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileOSRExit):
+        - Set expectDoesGC here because we no longer have to worry about missing store
+          barriers in optimized code after this point.  This will prevent false positive
+          assertion failures arising from functions called beneath compileOSRExit().
+
+        (JSC::DFG::OSRExit::compileExit):
+        - Add a comment to explain why the generated ramp needs to set expectDoesGC even
+          though compileOSRExit() also sets it.  Reason: compileOSRExit() is only called
+          for the first OSR from this code origin, the generated ramp is called for many
+          subsequents OSR exits from this code origin.
+
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        - Added a comment for the equivalent reason to the one above.
+
+        (JSC::FTL::compileFTLOSRExit):
+        - Set expectDoesGC here because we no longer have to worry about missing store
+          barriers in optimized code after this point.  This will prevent false positive
+          assertion failures arising from functions called beneath compileFTLOSRExit().
+
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspaceInlines.h:
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        - assert expectDoesGC.
+
+        * heap/DeferGC.h:
+        (JSC::DeferGC::~DeferGC):
+        - assert expectDoesGC.
+        - Also added WTF_FORBID_HEAP_ALLOCATION to DeferGC, DeferGCForAWhile, and DisallowGC
+          because all 3 should be stack allocated RAII objects.
+
+        * heap/GCDeferralContext.h:
+        * heap/GCDeferralContextInlines.h:
+        (JSC::GCDeferralContext::~GCDeferralContext):
+        - Added WTF_FORBID_HEAP_ALLOCATION.
+        - assert expectDoesGC.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectNow):
+        (JSC::Heap::collectAsync):
+        (JSC::Heap::collectSync):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/HeapInlines.h:
+        (JSC::Heap::acquireAccess):
+        (JSC::Heap::stopIfNecessary):
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryCreate):
+        * heap/LocalAllocatorInlines.h:
+        (JSC::LocalAllocator::allocate):
+        - conservatively assert expectDoesGC on these functions that may trigger a GC
+          though they don't always do.
+
+        * runtime/DisallowScope.h:
+        - DisallowScope should be stack allocated because it's an RAII object.
+
+        * runtime/JSCellInlines.h:
+        (JSC::tryAllocateCellHelper):
+        - Remove the expectDoesGC assertion because it is now covered by assertions in
+          CompleteSubspace, LargeAllocation, and LocalAllocator.
+
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        - assert expectDoesGC.
+
 2019-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use Fast Malloc as much as possible
