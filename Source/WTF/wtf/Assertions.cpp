@@ -74,6 +74,56 @@
 #include <unistd.h>
 #endif
 
+namespace WTF {
+
+WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char* format, va_list args)
+{
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+
+    ALLOW_NONLITERAL_FORMAT_BEGIN
+
+#if USE(CF) && !OS(WINDOWS)
+    if (strstr(format, "%@")) {
+        auto cfFormat = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, format, kCFStringEncodingUTF8));
+        auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
+        va_end(argsCopy);
+        return result.get();
+    }
+#endif
+
+    // Do the format once to get the length.
+#if COMPILER(MSVC)
+    int result = _vscprintf(format, args);
+#else
+    char ch;
+    int result = vsnprintf(&ch, 1, format, args);
+#endif
+
+    if (!result) {
+        va_end(argsCopy);
+        return emptyString();
+    }
+    if (result < 0) {
+        va_end(argsCopy);
+        return { };
+    }
+
+    Vector<char, 256> buffer;
+    unsigned length = result;
+    buffer.grow(length + 1);
+
+    // Now do the formatting again, guaranteed to fit.
+    vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
+    va_end(argsCopy);
+
+    ALLOW_NONLITERAL_FORMAT_END
+
+    return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), length);
+}
+
+}
+
 extern "C" {
 
 static void logToStderr(const char* buffer)
@@ -399,7 +449,7 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
     va_start(args, format);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
-    String loggingString = String::format(format, args);
+    String loggingString = WTF::createWithFormatAndArguments(format, args);
     ALLOW_NONLITERAL_FORMAT_END
 
     va_end(args);

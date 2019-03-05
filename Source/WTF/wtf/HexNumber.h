@@ -102,7 +102,6 @@ public:
     unsigned length() const { return m_buffer.length; }
     bool is8Bit() const { return true; }
     template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, characters(), length()); }
-    String toString() const { return { characters(), length() }; }
 
 private:
     const LChar* characters() const { return &*(m_buffer.characters.end() - length()); }

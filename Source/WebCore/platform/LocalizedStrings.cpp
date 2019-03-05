@@ -43,10 +43,7 @@
 
 namespace WebCore {
 
-// We can't use String::format for two reasons:
-//  1) It doesn't handle non-ASCII characters in the format string.
-//  2) It doesn't handle the %2$d syntax.
-// Note that because |format| is used as the second parameter to va_start, it cannot be a reference
+// Because |format| is used as the second parameter to va_start, it cannot be a reference
 // type according to section 18.7/3 of the C++ N1905 standard.
 String formatLocalizedString(String format, ...)
 {
@@ -73,10 +70,12 @@ String formatLocalizedString(String format, ...)
 }
 
 #if !USE(CF)
+
 String localizedString(const char* key)
 {
     return String::fromUTF8(key, strlen(key));
 }
+
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

@@ -35,7 +35,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -693,11 +693,11 @@ String DateComponents::toStringForTime(SecondFormat format) const
         FALLTHROUGH; // To None.
 #endif
     case None:
-        return String::format("%02d:%02d", m_hour, m_minute);
+        return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute));
     case Second:
-        return String::format("%02d:%02d:%02d", m_hour, m_minute, m_second);
+        return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute), ':', pad('0', 2, m_second));
     case Millisecond:
-        return String::format("%02d:%02d:%02d.%03d", m_hour, m_minute, m_second, m_millisecond);
+        return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute), ':', pad('0', 2, m_second), '.', pad('0', 3, m_millisecond));
     }
 }
 
@@ -705,19 +705,17 @@ String DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
     case Date:
-        return String::format("%04d-%02d-%02d", m_year, m_month + 1, m_monthDay);
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay));
     case DateTime:
-        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
-            + toStringForTime(format) + "Z"_str;
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format), 'Z');
     case DateTimeLocal:
-        return String::format("%04d-%02d-%02dT", m_year, m_month + 1, m_monthDay)
-            + toStringForTime(format);
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format));
     case Month:
-        return String::format("%04d-%02d", m_year, m_month + 1);
+        return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1));
     case Time:
         return toStringForTime(format);
     case Week:
-        return String::format("%04d-W%02d", m_year, m_week);
+        return makeString(pad('0', 4, m_year), "-W", pad('0', 2, m_week));
     case Invalid:
         break;
     }

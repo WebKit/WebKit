@@ -23,12 +23,11 @@
 
 namespace WTF {
 
-template<typename StringType1, typename StringType2>
-class StringAppend {
+template<typename StringType1, typename StringType2> class StringAppend {
 public:
     StringAppend(StringType1 string1, StringType2 string2)
-        : m_string1(string1)
-        , m_string2(string2)
+        : m_string1 { string1 }
+        , m_string2 { string2 }
     {
     }
 
@@ -85,18 +84,13 @@ template<typename StringType1, typename StringType2>
 class StringTypeAdapter<StringAppend<StringType1, StringType2>> {
 public:
     StringTypeAdapter<StringAppend<StringType1, StringType2>>(StringAppend<StringType1, StringType2>& buffer)
-        : m_buffer(buffer)
+        : m_buffer { buffer }
     {
     }
 
-    unsigned length() { return m_buffer.length(); }
-
-    bool is8Bit() { return m_buffer.is8Bit(); }
-
-    void writeTo(LChar* destination) { m_buffer.writeTo(destination); }
-    void writeTo(UChar* destination) { m_buffer.writeTo(destination); }
-
-    String toString() const { return m_buffer; }
+    unsigned length() const { return m_buffer.length(); }
+    bool is8Bit() const { return m_buffer.is8Bit(); }
+    template<typename CharacterType> void writeTo(CharacterType* destination) const { m_buffer.writeTo(destination); }
 
 private:
     StringAppend<StringType1, StringType2>& m_buffer;
