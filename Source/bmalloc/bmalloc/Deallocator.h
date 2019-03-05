@@ -33,7 +33,6 @@
 
 namespace bmalloc {
 
-class DebugHeap;
 class Heap;
 class Mutex;
 
@@ -58,7 +57,6 @@ private:
     Heap& m_heap;
     FixedVector<void*, deallocatorLogCapacity> m_objectLog;
     LineCache m_lineCache; // The Heap removes items from this cache.
-    DebugHeap* m_debugHeap;
 };
 
 inline bool Deallocator::deallocateFastCase(void* object)
