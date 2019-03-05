@@ -552,9 +552,6 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         mainframe.document()->updateStyleIfNeeded();
     }
 
-    const Seconds observationDuration = 32_ms;
-    respondingDocument.contentChangeObserver().startContentObservationForDuration(observationDuration);
-
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();
     m_pendingSyntheticClickModifiers = { };

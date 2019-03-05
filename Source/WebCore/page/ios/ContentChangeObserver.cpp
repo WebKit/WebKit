@@ -38,24 +38,7 @@ namespace WebCore {
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
-    , m_contentObservationTimer([this] { stopDurationBasedContentObservation(); })
 {
-}
-
-void ContentChangeObserver::startContentObservationForDuration(Seconds duration)
-{
-    if (hasVisibleChangeState())
-        return;
-    LOG_WITH_STREAM(ContentObservation, stream << "startContentObservationForDuration: start observing the content for " << duration.milliseconds() << "ms");
-    adjustObservedState(Event::StartedFixedObservationTimeWindow);
-    m_contentObservationTimer.startOneShot(duration);
-}
-
-void ContentChangeObserver::stopDurationBasedContentObservation()
-{
-    LOG_WITH_STREAM(ContentObservation, stream << "stopDurationBasedContentObservation: stop duration based content observing ");
-    adjustObservedState(Event::EndedFixedObservationTimeWindow);
-    notifyContentChangeIfNeeded();
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
@@ -196,7 +179,7 @@ bool ContentChangeObserver::hasDeterminateState() const
 {
     if (hasVisibleChangeState())
         return true;
-    return observedContentChange() == WKContentNoChange && !hasPendingActivity();
+    return observedContentChange() == WKContentNoChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc();
 }
 
 void ContentChangeObserver::adjustObservedState(Event event)
@@ -206,16 +189,14 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setHasNoChangeState();
         break;
     case Event::InstalledDOMTimer:
-    case Event::StartedFixedObservationTimeWindow:
         // Expecting a timer fire. Promote to an indeterminate state.
         ASSERT(!hasVisibleChangeState());
         setHasIndeterminateState();
         break;
     case Event::RemovedDOMTimer:
     case Event::StyleRecalcFinished:
-    case Event::EndedFixedObservationTimeWindow:
         // Demote to "no change" when there's no pending activity anymore.
-        if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
+        if (observedContentChange() == WKContentIndeterminateChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc())
             setHasNoChangeState();
         break;
     case Event::ContentVisibilityChanged:
