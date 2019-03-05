@@ -773,7 +773,7 @@ sub printNamesCppFile
         print F "\n\nconst WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags()\n";
         print F "{\n    static const WebCore::$parameters{namespace}QualifiedName* const $parameters{namespace}Tags[] = {\n";
         for my $name (sort keys %allTags) {
-            print F "        reinterpret_cast<const WebCore::$parameters{namespace}QualifiedName*>(&${name}Tag),\n";
+            print F "        &${name}Tag.get(),\n";
         }
         print F "    };\n";
         print F "    return $parameters{namespace}Tags;\n";
@@ -788,7 +788,7 @@ sub printNamesCppFile
         print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
         print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
         for my $name (sort keys %allAttrs) {
-            print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Attr),\n";
+            print F "        &${name}Attr.get(),\n";
         }
         print F "    };\n";
         print F "    return $parameters{namespace}Attrs;\n";
