@@ -48,11 +48,14 @@ public:
     using TimerNotificationCallback = RefPtr<WTF::SharedTask<TimerNotificationType>>;
 
     class Manager {
+        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(Manager);
 #if USE(CF)
         static void timerDidFireCallback(CFRunLoopTimerRef, void*);
 #else
         void timerDidFireCallback();
 #endif
+        Manager() = default;
 
         void timerDidFire();
 

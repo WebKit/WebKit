@@ -232,6 +232,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class DatabaseFrontendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DatabaseFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void didExecuteOptionalParameters(RefPtr<JSON::ArrayOf<String>> columnNames, const String* notes, const double* timestamp, RefPtr<JSON::Object> values, RefPtr<JSON::Value> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const String* screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* printColor);

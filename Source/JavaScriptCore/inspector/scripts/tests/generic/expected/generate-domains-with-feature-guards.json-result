@@ -322,6 +322,7 @@ class FrontendRouter;
 
 #if PLATFORM(WEB_EVENTS)
 class Network3FrontendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Network3FrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
     void resourceLoaded();

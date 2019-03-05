@@ -325,6 +325,7 @@ namespace Inspector {
 class FrontendRouter;
 
 class EventDomainFrontendDispatcher {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     EventDomainFrontendDispatcher(FrontendRouter& frontendRouter) : m_frontendRouter(frontendRouter) { }
         // Named after parameter 'parameter' while generating command/event eventWithEnumParameter.

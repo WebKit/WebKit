@@ -39,6 +39,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGTierUpThunkGenerator(const Abstr
 typedef MacroAssemblerCodeRef<JITThunkPtrTag> (*ThunkGenerator)(const AbstractLocker&);
 
 class Thunks {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(Thunks);
 public:
     static void initialize();
     static Thunks& singleton();
