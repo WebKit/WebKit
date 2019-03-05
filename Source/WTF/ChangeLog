@@ -1,3 +1,29 @@
+2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+        Remove remaining poisoning code.
+        https://bugs.webkit.org/show_bug.cgi?id=194138
+
+        Reviewed by Saam Barati.
+
+        This patch removes the instantiation of Poisoned variants of the various containers
+        but retains the ability of those containers to work with pointer traits.  This
+        allows us to use them with smart pointers in the future (just like we used to with
+        Poisoned values).  At minimum, this ability will be useful when we want to insert
+        an observer into the container storage type for debugging purposes, or to collect
+        statistics for profiling.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Bag.h:
+        * wtf/CMakeLists.txt:
+        * wtf/Platform.h:
+        * wtf/Poisoned.cpp: Removed.
+        * wtf/Poisoned.h: Removed.
+        * wtf/PoisonedUniquePtr.h: Removed.
+        * wtf/Ref.h:
+        * wtf/RefCountedArray.h:
+        * wtf/RefPtr.h:
+        * wtf/WTFAssertions.cpp:
+
 2019-02-26  Keith Miller  <keith_miller@apple.com>
 
         Code quality cleanup in NeverDestroyed

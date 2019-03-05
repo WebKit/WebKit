@@ -147,12 +147,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Optional.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/OptionSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ParkingLot.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/Poisoned.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/PoisonedRef.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/PoisonedRefPtr.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/PoisonedUniquePtr.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/PriorityQueue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RedBlackTree.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Ref.cpp

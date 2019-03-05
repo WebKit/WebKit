@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -271,14 +271,8 @@ inline bool is(const RefPtr<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-template<typename Poison, typename T> struct PoisonedPtrTraits;
-
-template<typename Poison, typename T>
-using PoisonedRefPtr = RefPtr<T, PoisonedPtrTraits<Poison, T>>;
-
 } // namespace WTF
 
-using WTF::PoisonedRefPtr;
 using WTF::RefPtr;
 using WTF::adoptRef;
 using WTF::makeRefPtr;
