@@ -69,7 +69,7 @@ void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicStri
     } else if (name == coordsAttr) {
         m_coords = parseHTMLListOfOfFloatingPointNumberValues(value.string());
         invalidateCachedRegion();
-    } else if (name == altAttr || name == accesskeyAttr) {
+    } else if (name == altAttr) {
         // Do nothing.
     } else
         HTMLAnchorElement::parseAttribute(name, value);

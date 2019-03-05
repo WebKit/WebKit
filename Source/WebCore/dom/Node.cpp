@@ -1008,21 +1008,15 @@ bool Node::isDescendantOf(const Node& other) const
 
 bool Node::isDescendantOrShadowDescendantOf(const Node* other) const
 {
-    if (!other) 
-        return false;
-    if (isDescendantOf(*other))
-        return true;
-    const Node* shadowAncestorNode = deprecatedShadowAncestorNode();
-    if (!shadowAncestorNode)
-        return false;
-    return shadowAncestorNode == other || shadowAncestorNode->isDescendantOf(*other);
+    // FIXME: This element's shadow tree's host could be inside another shadow tree.
+    // This function doesn't handle that case correctly. Maybe share code with
+    // the containsIncludingShadowDOM function?
+    return other && (isDescendantOf(*other) || other->contains(shadowHost()));
 }
 
 bool Node::contains(const Node* node) const
 {
-    if (!node)
-        return false;
-    return this == node || node->isDescendantOf(*this);
+    return this == node || (node && node->isDescendantOf(*this));
 }
 
 bool Node::containsIncludingShadowDOM(const Node* node) const
@@ -1039,7 +1033,7 @@ bool Node::containsIncludingHostElements(const Node* node) const
     while (node) {
         if (node == this)
             return true;
-        if (node->isDocumentFragment() && static_cast<const DocumentFragment*>(node)->isTemplateContent())
+        if (is<DocumentFragment>(*node) && downcast<DocumentFragment>(*node).isTemplateContent())
             node = static_cast<const TemplateContentDocumentFragment*>(node)->host();
         else
             node = node->parentOrShadowHostNode();
@@ -1137,14 +1131,6 @@ Element* Node::shadowHost() const
     if (ShadowRoot* root = containingShadowRoot())
         return root->host();
     return nullptr;
-}
-
-Node* Node::deprecatedShadowAncestorNode() const
-{
-    if (ShadowRoot* root = containingShadowRoot())
-        return root->host();
-
-    return const_cast<Node*>(this);
 }
 
 ShadowRoot* Node::containingShadowRoot() const

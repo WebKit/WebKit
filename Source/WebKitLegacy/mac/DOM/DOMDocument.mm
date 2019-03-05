@@ -574,8 +574,7 @@
 
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->getOverrideStyle(core(element), pseudoElement)));
+    return nil;
 }
 
 static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
@@ -787,7 +786,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element :(NSString *)pseudoElement
 {
-    return [self getOverrideStyle:element pseudoElement:pseudoElement];
+    return nil;
 }
 
 - (DOMXPathExpression *)createExpression:(NSString *)expression :(id <DOMXPathNSResolver>)resolver

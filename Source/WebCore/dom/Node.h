@@ -234,9 +234,6 @@ public:
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
-    // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
-    // Deprecated. Should use shadowHost() and check the return value.
-    WEBCORE_EXPORT Node* deprecatedShadowAncestorNode() const;
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
     bool isClosedShadowHidden(const Node&) const;

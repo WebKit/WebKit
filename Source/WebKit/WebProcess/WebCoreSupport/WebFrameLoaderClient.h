@@ -243,8 +243,6 @@ private:
     NSDictionary *dataDetectionContext() final;
 #endif
 
-    bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const final;
-
     void didChangeScrollOffset() final;
 
     bool allowScript(bool enabledPerSettings) final;

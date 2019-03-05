@@ -1782,12 +1782,6 @@ NSDictionary *WebFrameLoaderClient::dataDetectionContext()
 
 #endif // PLATFORM(COCOA)
 
-bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const
-{
-    notImplemented();
-    return false;
-}
-
 void WebFrameLoaderClient::didChangeScrollOffset()
 {
     WebPage* webPage = m_frame->page();

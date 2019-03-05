@@ -45,6 +45,7 @@
 #include "ChromeClient.h"
 #include "Comment.h"
 #include "CommonVM.h"
+#include "ComposedTreeIterator.h"
 #include "CompositionEvent.h"
 #include "ConstantPropertyMap.h"
 #include "ContentSecurityPolicy.h"
@@ -731,36 +732,35 @@ void Document::commonTeardown()
     clearScriptedAnimationController();
 }
 
-Element* Document::getElementByAccessKey(const String& key)
+Element* Document::elementForAccessKey(const String& key)
 {
     if (key.isEmpty())
         return nullptr;
-    // FIXME: Would be nice to use WTF::Optional on the map instead of using a
-    // separate boolean.
-    if (!m_accessKeyMapValid) {
-        buildAccessKeyMap(*this);
-        m_accessKeyMapValid = true;
-    }
-    return m_elementsByAccessKey.get(key.impl());
+    if (!m_accessKeyCache)
+        buildAccessKeyCache();
+    return m_accessKeyCache->get(key);
 }
 
-void Document::buildAccessKeyMap(TreeScope& scope)
+void Document::buildAccessKeyCache()
 {
-    // FIXME: Consider using composedTreeDescendants instead, obviating the need for
-    // recursion and the "scope" argument. Might be nice to have an Element-only version.
-    for (auto& element : descendantsOfType<Element>(scope.rootNode())) {
-        auto& accessKey = element.attributeWithoutSynchronization(accesskeyAttr);
-        if (!accessKey.isEmpty())
-            m_elementsByAccessKey.set(accessKey.impl(), &element);
-        if (auto* root = element.shadowRoot())
-            buildAccessKeyMap(*root);
-    }
+    m_accessKeyCache = std::make_unique<HashMap<String, Element*, ASCIICaseInsensitiveHash>>([this] {
+        HashMap<String, Element*, ASCIICaseInsensitiveHash> map;
+        for (auto& node : composedTreeDescendants(*this)) {
+            if (!is<Element>(node))
+                continue;
+            auto& element = downcast<Element>(node);
+            auto& key = element.attributeWithoutSynchronization(accesskeyAttr);
+            if (key.isEmpty())
+                continue;
+            map.add(key, &element);
+        }
+        return map;
+    }());
 }
 
-void Document::invalidateAccessKeyMap()
+void Document::invalidateAccessKeyCacheSlowCase()
 {
-    m_accessKeyMapValid = false;
-    m_elementsByAccessKey.clear();
+    m_accessKeyCache = nullptr;
 }
 
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
@@ -845,8 +845,8 @@ bool Document::hasManifest() const
 DocumentType* Document::doctype() const
 {
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->isDocumentTypeNode())
-            return static_cast<DocumentType*>(node);
+        if (is<DocumentType>(node))
+            return downcast<DocumentType>(node);
     }
     return nullptr;
 }
@@ -1817,9 +1817,6 @@ void Document::scheduleStyleRecalc()
         WKSetObservedContentChange(WKContentIndeterminateChange);
     }
 #endif
-
-    // FIXME: Why on earth is this here? This is clearly misplaced.
-    invalidateAccessKeyMap();
 
     auto shouldThrottleStyleRecalc = [&] {
         if (!view() || !view()->isVisuallyNonEmpty())
@@ -3743,7 +3740,7 @@ void Document::processFormatDetection(const String& features)
     // FIXME: Find a better place for this function.
     processFeaturesString(features, FeatureMode::Viewport, [this](StringView key, StringView value) {
         if (equalLettersIgnoringASCIICase(key, "telephone") && equalLettersIgnoringASCIICase(value, "no"))
-            setIsTelephoneNumberParsingAllowed(false);
+            m_isTelephoneNumberParsingAllowed = false;
     });
 }
 
@@ -3907,7 +3904,7 @@ Ref<Document> Document::cloneDocumentWithoutChildren() const
             return XMLDocument::createXHTML(nullptr, url());
         return XMLDocument::create(nullptr, url());
     }
-    return create(nullptr, url());
+    return create(url());
 }
 
 void Document::cloneDataFromDocument(const Document& other)
@@ -4845,11 +4842,6 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(FORCEUP_LISTENER);
     else if (eventType == eventNames().resizeEvent)
         addListenerType(RESIZE_LISTENER);
-}
-
-CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)
-{
-    return nullptr;
 }
 
 HTMLFrameOwnerElement* Document::ownerElement() const
@@ -5830,11 +5822,6 @@ void Document::clearSharedObjectPool()
 bool Document::isTelephoneNumberParsingEnabled() const
 {
     return settings().telephoneNumberParsingEnabled() && m_isTelephoneNumberParsingAllowed;
-}
-
-void Document::setIsTelephoneNumberParsingAllowed(bool isTelephoneNumberParsingAllowed)
-{
-    m_isTelephoneNumberParsingAllowed = isTelephoneNumberParsingAllowed;
 }
 
 bool Document::isTelephoneNumberParsingAllowed() const
@@ -7464,7 +7451,7 @@ Document& Document::ensureTemplateDocument()
     if (isHTMLDocument())
         m_templateDocument = HTMLDocument::create(nullptr, WTF::blankURL());
     else
-        m_templateDocument = Document::create(nullptr, WTF::blankURL());
+        m_templateDocument = create(WTF::blankURL());
 
     m_templateDocument->setContextDocument(contextDocument());
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
@@ -7542,22 +7529,22 @@ OptionSet<StyleColor::Options> Document::styleColorOptions(const RenderStyle* st
     return options;
 }
 
-void Document::didAssociateFormControl(Element* element)
+void Document::didAssociateFormControl(Element& element)
 {
-    if (!frame() || !frame()->page() || !frame()->page()->chrome().client().shouldNotifyOnFormChanges())
+    auto* page = this->page();
+    if (!page || !page->chrome().client().shouldNotifyOnFormChanges())
         return;
-    m_associatedFormControls.add(element);
+    m_associatedFormControls.add(&element);
     if (!m_didAssociateFormControlsTimer.isActive())
         m_didAssociateFormControlsTimer.startOneShot(0_s);
 }
 
 void Document::didAssociateFormControlsTimerFired()
 {
-    if (!frame() || !frame()->page())
-        return;
-
-    frame()->page()->chrome().client().didAssociateFormControls(copyToVector(m_associatedFormControls));
+    auto vector = copyToVector(m_associatedFormControls);
     m_associatedFormControls.clear();
+    if (auto* page = this->page())
+        page->chrome().client().didAssociateFormControls(vector);
 }
 
 void Document::setCachedDOMCookies(const String& cookies)

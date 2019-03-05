@@ -57,7 +57,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
 
     auto& mainFrame = page->mainFrame();
     mainFrame.loader().initForSynthesizedDocument({ });
-    auto document = Document::createNonRenderedPlaceholder(&mainFrame, data.scriptURL);
+    auto document = Document::createNonRenderedPlaceholder(mainFrame, data.scriptURL);
     document->createDOMWindow();
 
     document->mutableSettings().setStorageBlockingPolicy(storageBlockingPolicy);

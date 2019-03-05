@@ -1555,7 +1555,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     bool valueIsSameAsBefore = oldValue == newValue;
 
     if (!valueIsSameAsBefore) {
-        if (name == HTMLNames::idAttr) {
+        if (name == HTMLNames::accesskeyAttr)
+            document().invalidateAccessKeyCache();
+        else if (name == HTMLNames::classAttr)
+            classAttributeChanged(newValue);
+        else if (name == HTMLNames::idAttr) {
             AtomicString oldId = elementData()->idForStyleResolution();
             AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
             if (newId != oldId) {
@@ -1567,15 +1571,12 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
                 treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
             if (!newValue.isEmpty())
                 treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
-        } else if (name == classAttr)
-            classAttributeChanged(newValue);
-        else if (name == HTMLNames::nameAttr)
+        } else if (name == HTMLNames::nameAttr)
             elementData()->setHasNameAttribute(!newValue.isNull());
         else if (name == HTMLNames::pseudoAttr) {
             if (needsStyleInvalidation() && isInShadowTree())
                 invalidateStyleForSubtree();
-        }
-        else if (name == HTMLNames::slotAttr) {
+        } else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())
                     shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);

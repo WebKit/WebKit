@@ -307,10 +307,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         }
     } else if (name == multipleAttr)
         parseMultipleAttribute(value);
-    else if (name == accesskeyAttr) {
-        // FIXME: ignore for the moment.
-        //
-    } else
+    else
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 

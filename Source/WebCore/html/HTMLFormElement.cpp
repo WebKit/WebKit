@@ -129,7 +129,7 @@ Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(Insertion
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
-        document().didAssociateFormControl(this);
+        document().didAssociateFormControl(*this);
     return InsertedIntoAncestorResult::Done;
 }
 

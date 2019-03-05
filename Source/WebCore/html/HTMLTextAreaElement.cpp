@@ -193,8 +193,6 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const Atomic
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (name == accesskeyAttr) {
-        // ignore for the moment
     } else if (name == maxlengthAttr)
         maxLengthAttributeChanged(value);
     else if (name == minlengthAttr)

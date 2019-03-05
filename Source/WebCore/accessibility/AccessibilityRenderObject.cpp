@@ -1511,7 +1511,7 @@ const AtomicString& AccessibilityRenderObject::accessKey() const
     Node* node = m_renderer->node();
     if (!is<Element>(node))
         return nullAtom();
-    return downcast<Element>(*node).getAttribute(accesskeyAttr);
+    return downcast<Element>(*node).attributeWithoutSynchronization(accesskeyAttr);
 }
 
 VisibleSelection AccessibilityRenderObject::selection() const

@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,13 +35,12 @@ namespace WebCore {
 class Document;
 class DocumentParser;
 class Frame;
-class SecurityOrigin;
 class TextResourceDecoder;
 
 class DocumentWriter {
     WTF_MAKE_NONCOPYABLE(DocumentWriter);
 public:
-    explicit DocumentWriter(Frame*);
+    DocumentWriter() = default;
 
     // This is only called by ScriptController::executeIfJavaScriptURL
     // and always contains the result of evaluating a javascript: url.
@@ -54,7 +52,7 @@ public:
     void insertDataSynchronously(const String&); // For an internal use only to prevent the parser from yielding.
     WEBCORE_EXPORT void end();
 
-    void setFrame(Frame* frame) { m_frame = frame; }
+    void setFrame(Frame& frame) { m_frame = &frame; }
 
     WEBCORE_EXPORT void setEncoding(const String& encoding, bool userChosen);
 
@@ -62,7 +60,7 @@ public:
     void setMIMEType(const String& type) { m_mimeType = type; }
 
     // Exposed for DocumentParser::appendBytes.
-    TextResourceDecoder* createDecoderIfNeeded();
+    TextResourceDecoder& decoder();
     void reportDataReceived();
 
     void setDocumentWasLoadedAsPartOfNavigation();
@@ -71,22 +69,18 @@ private:
     Ref<Document> createDocument(const URL&);
     void clear();
 
-    Frame* m_frame;
+    Frame* m_frame { nullptr };
 
-    bool m_hasReceivedSomeData;
+    bool m_hasReceivedSomeData { false };
     String m_mimeType;
 
-    bool m_encodingWasChosenByUser;
+    bool m_encodingWasChosenByUser { false };
     String m_encoding;
     RefPtr<TextResourceDecoder> m_decoder;
     RefPtr<DocumentParser> m_parser;
 
-    enum WriterState {
-        NotStartedWritingState,
-        StartedWritingState,
-        FinishedWritingState,
-    };
-    WriterState m_state;
+    enum class State { NotStarted, Started, Finished };
+    State m_state { State::NotStarted };
 };
 
 } // namespace WebCore
