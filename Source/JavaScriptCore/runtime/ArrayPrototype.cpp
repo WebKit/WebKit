@@ -390,6 +390,7 @@ inline bool canUseFastJoin(const JSObject* thisObject)
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES:
     case ALL_DOUBLE_INDEXING_TYPES:
+    case ALL_UNDECIDED_INDEXING_TYPES:
         return true;
     default:
         break;
@@ -502,6 +503,21 @@ inline JSValue fastJoin(ExecState& state, JSObject* thisObject, StringView separ
             }
         }
         RELEASE_AND_RETURN(scope, joiner.join(state));
+    }
+    case ALL_UNDECIDED_INDEXING_TYPES: {
+        if (length && holesMustForwardToPrototype(vm, thisObject))
+            goto generalCase;
+        switch (separator.length()) {
+        case 0:
+            RELEASE_AND_RETURN(scope, jsEmptyString(&state));
+        case 1: {
+            if (length <= 1)
+                RELEASE_AND_RETURN(scope, jsEmptyString(&state));
+            if (separator.is8Bit())
+                RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters8()[0], length - 1));
+            RELEASE_AND_RETURN(scope, repeatCharacter(state, separator.characters16()[0], length - 1));
+        }
+        }
     }
     }
 

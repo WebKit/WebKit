@@ -1,3 +1,20 @@
+2019-02-26  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Repeat string created from Array.prototype.join() take too much memory
+        https://bugs.webkit.org/show_bug.cgi?id=193912
+
+        Reviewed by Saam Barati.
+
+        Added a test and a microbenchmark for corner cases of
+        Array.prototype.join() with an uninitialized array.
+
+        * microbenchmarks/array-prototype-join-uninitialized.js: Added.
+        * stress/array-prototype-join-uninitialized.js: Added.
+        (testArray):
+        (testABC):
+        (B):
+        (C):
+
 2019-02-22  Robin Morisset  <rmorisset@apple.com>
 
         DFGBytecodeParser should not declare that a node won't clobberExit if DFGFixupPhase can later declare it does clobberExit
