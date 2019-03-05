@@ -135,10 +135,8 @@ StructureID StructureIDTable::allocateID(Structure* structure)
         ASSERT(m_size == m_capacity);
         resize(m_capacity * 2);
         ASSERT(m_size < m_capacity);
-        ASSERT(m_firstFreeOffset);
+        RELEASE_ASSERT(m_firstFreeOffset);
     }
-
-    ASSERT(m_firstFreeOffset != s_unusedID);
 
     // entropyBits must not be zero. This ensures that if a corrupted
     // structureID is encountered (with incorrect entropyBits), the decoded

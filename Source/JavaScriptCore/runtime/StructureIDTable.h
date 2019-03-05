@@ -131,6 +131,25 @@ private:
     static constexpr StructureID s_unusedID = 0;
 
 public:
+    // 1. StructureID is encoded as:
+    //
+    //    ----------------------------------------------------------------
+    //    | 1 Nuke Bit | 24 StructureIDTable index bits | 7 entropy bits |
+    //    ----------------------------------------------------------------
+    //
+    //    The entropy bits are chosen at random and assigned when a StructureID
+    //    is allocated.
+    //
+    // 2. For each StructureID, the StructureIDTable stores encodedStructureBits
+    //    which are encoded from the structure pointer as such:
+    //
+    //    ----------------------------------------------------------------
+    //    | 7 entropy bits |                   57 structure pointer bits |
+    //    ----------------------------------------------------------------
+    //
+    //    The entropy bits here are the same 7 bits used in the encoding of the
+    //    StructureID for this structure entry in the StructureIDTable.
+
     static constexpr uint32_t s_numberOfNukeBits = 1;
     static constexpr uint32_t s_numberOfEntropyBits = 7;
     static constexpr uint32_t s_entropyBitsShiftForStructurePointer = (sizeof(intptr_t) * 8) - s_numberOfEntropyBits;
@@ -140,12 +159,12 @@ public:
 
 ALWAYS_INLINE Structure* StructureIDTable::decode(EncodedStructureBits bits, StructureID structureID)
 {
-    return reinterpret_cast<Structure*>(bits ^ (static_cast<uintptr_t>(structureID) << s_entropyBitsShiftForStructurePointer));
+    return bitwise_cast<Structure*>(bits ^ (static_cast<uintptr_t>(structureID) << s_entropyBitsShiftForStructurePointer));
 }
 
 ALWAYS_INLINE EncodedStructureBits StructureIDTable::encode(Structure* structure, StructureID structureID)
 {
-    return reinterpret_cast<EncodedStructureBits>(structure) ^ (static_cast<EncodedStructureBits>(structureID) << s_entropyBitsShiftForStructurePointer);
+    return bitwise_cast<EncodedStructureBits>(structure) ^ (static_cast<EncodedStructureBits>(structureID) << s_entropyBitsShiftForStructurePointer);
 }
 
 inline Structure* StructureIDTable::get(StructureID structureID)
