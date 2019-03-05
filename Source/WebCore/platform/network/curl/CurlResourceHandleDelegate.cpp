@@ -85,7 +85,7 @@ void CurlResourceHandleDelegate::curlDidSendData(CurlRequest& request, unsigned 
     client()->didSendData(&m_handle, bytesSent, totalBytesToBeSent);
 }
 
-static void handleCookieHeaders(ResourceHandleInternal* d, const CurlResponse& response)
+static void handleCookieHeaders(ResourceHandleInternal* d, const ResourceRequest& request, const CurlResponse& response)
 {
     static const auto setCookieHeader = "set-cookie: ";
 
@@ -94,7 +94,7 @@ static void handleCookieHeaders(ResourceHandleInternal* d, const CurlResponse& r
     for (const auto& header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
             const auto contents = header.right(header.length() - strlen(setCookieHeader));
-            cookieJar.setCookiesFromHTTPResponse(storageSession, response.url, contents);
+            cookieJar.setCookiesFromHTTPResponse(storageSession, request.firstPartyForCookies(), response.url, contents);
         }
     }
 }
@@ -112,7 +112,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, co
     m_response.setCertificateInfo(request.certificateInfo().isolatedCopy());
     m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
 
-    handleCookieHeaders(d(), receivedResponse);
+    handleCookieHeaders(d(), request.resourceRequest(), receivedResponse);
 
     if (m_response.shouldRedirect()) {
         m_handle.willSendRequest();

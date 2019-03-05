@@ -1,3 +1,13 @@
+2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement Cookie Accept Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=191645
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2019-03-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGPathSegList.insertItemBefore() should fail if the newItem belongs to an animating animPathSegList

@@ -27,15 +27,12 @@
 
 #include "CookieUtil.h"
 #include "Logging.h"
+#include "RegistrableDomain.h"
 #include "SQLiteFileSystem.h"
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-#include "PublicSuffix.h"
-#endif
 
 namespace WebCore {
 
@@ -61,6 +58,8 @@ namespace WebCore {
     "CREATE INDEX IF NOT EXISTS domain_index ON Cookie(domain);"
 #define CREATE_PATH_INDEX_SQL \
     "CREATE INDEX IF NOT EXISTS path_index ON Cookie(path);"
+#define CHECK_EXISTS_COOKIE_SQL \
+    "SELECT domain FROM Cookie WHERE ((domain = ?) OR (domain GLOB ?));"
 #define CHECK_EXISTS_HTTPONLY_COOKIE_SQL \
     "SELECT name FROM Cookie WHERE (name = ?) AND (domain = ?) AND (path = ?) AND (httponly = 1);"
 #define SET_COOKIE_SQL \
@@ -81,11 +80,6 @@ namespace WebCore {
 // - Add upgrade logic in verifySchemaVersion to migrate databases from the previous schema version
 static constexpr int schemaVersion = 1;
 
-
-void CookieJarDB::setEnabled(bool enable)
-{
-    m_isEnabled = enable;
-}
 
 CookieJarDB::CookieJarDB(const String& databasePath)
     : m_databasePath(databasePath)
@@ -162,6 +156,7 @@ bool CookieJarDB::openDatabase()
 
     // create prepared statements
     createPrepareStatement(SET_COOKIE_SQL);
+    createPrepareStatement(CHECK_EXISTS_COOKIE_SQL);
     createPrepareStatement(CHECK_EXISTS_HTTPONLY_COOKIE_SQL);
     createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_PATH_SQL);
     createPrepareStatement(DELETE_COOKIE_BY_NAME_DOMAIN_SQL);
@@ -309,23 +304,71 @@ bool CookieJarDB::isEnabled() const
     if (m_databasePath.isEmpty())
         return false;
 
-    return m_isEnabled;
+    return (m_acceptPolicy == CookieAcceptPolicy::Always || m_acceptPolicy == CookieAcceptPolicy::OnlyFromMainDocumentDomain || m_acceptPolicy == CookieAcceptPolicy::ExclusivelyFromMainDocumentDomain);
 }
 
-Optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session)
+bool CookieJarDB::checkCookieAcceptPolicy(const URL& firstParty, const URL& url)
+{
+    if (m_acceptPolicy == CookieAcceptPolicy::Always)
+        return true;
+
+    // See https://bugs.webkit.org/show_bug.cgi?id=193458#c0
+    if (m_acceptPolicy != CookieAcceptPolicy::OnlyFromMainDocumentDomain && m_acceptPolicy != CookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
+        return false;
+
+    if (firstParty.host() == url.host())
+        return true;
+
+    if (RegistrableDomain(firstParty).matches(url))
+        return true;
+
+    // third-party resources can read or write cookies if they have pre-existing cookies.
+    if (m_acceptPolicy == CookieAcceptPolicy::OnlyFromMainDocumentDomain && hasCookies(url))
+        return true;
+
+    return false;
+}
+
+bool CookieJarDB::hasCookies(const URL& url)
+{
+    String host = url.host().convertToASCIILowercase();
+    if (host.isEmpty())
+        return false;
+
+    if (isPublicSuffix(host))
+        return false;
+
+    RegistrableDomain registrableDomain { url };
+    auto& statement = preparedStatement(CHECK_EXISTS_COOKIE_SQL);
+
+    if (CookieUtil::isIPAddress(host) || !host.contains('.') || registrableDomain.isEmpty()) {
+        statement.bindText(1, host);
+        statement.bindNull(2);
+    } else {
+        statement.bindText(1, registrableDomain.string());
+        statement.bindText(2, String("*.") + registrableDomain.string());
+    }
+
+    return statement.step() == SQLITE_ROW;
+}
+
+Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
         return WTF::nullopt;
 
-    URL requestUrlObj({ }, requestUrl);
-    String requestHost(requestUrlObj.host().toString().convertToASCIILowercase());
-    String requestPath(requestUrlObj.path().convertToASCIILowercase());
-
+    String requestHost = requestUrl.host().convertToASCIILowercase();
     if (requestHost.isEmpty())
         return WTF::nullopt;
 
+    if (!checkCookieAcceptPolicy(firstParty, requestUrl))
+        return WTF::nullopt;
+
+    String requestPath = requestUrl.path();
     if (requestPath.isEmpty())
         requestPath = "/";
+
+    RegistrableDomain registrableDomain { requestUrl };
 
     const String sql =
         "SELECT name, value, domain, path, expires, httponly, secure, session FROM Cookie WHERE "\
@@ -346,26 +389,10 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, co
     pstmt->bindInt(3, session ? *session : -1);
     pstmt->bindText(4, requestHost);
 
-    if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.'))
+    if (CookieUtil::isIPAddress(requestHost) || !requestHost.contains('.') || registrableDomain.isEmpty())
         pstmt->bindNull(5);
-    else {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-        String topPrivateDomain = topPrivatelyControlledDomain(requestHost);
-        if (!topPrivateDomain.isEmpty())
-            pstmt->bindText(5, String("*.") + topPrivateDomain);
-        else
-            pstmt->bindNull(5);
-#else
-        // Fallback to glob for cookies under the second level domain e.g. *.domain.com
-        // This will return too many cookies under multilevel tlds such as *.co.uk, but they will get filtered out later.
-        size_t topLevelSeparator = requestHost.reverseFind('.');
-        size_t secondLevelSeparator = requestHost.reverseFind('.', topLevelSeparator-1);
-        String localDomain = secondLevelSeparator == notFound ? requestHost : requestHost.substring(secondLevelSeparator+1);
-
-        ASSERT(!localDomain.isEmpty());
-        pstmt->bindText(5, String("*.") + localDomain);
-#endif
-    }
+    else
+        pstmt->bindText(5, String("*.") + registrableDomain.string());
 
     if (!pstmt)
         return WTF::nullopt;
@@ -380,7 +407,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const String& requestUrl, co
         String cookieName = pstmt->getColumnText(0);
         String cookieValue = pstmt->getColumnText(1);
         String cookieDomain = pstmt->getColumnText(2).convertToASCIILowercase();
-        String cookiePath = pstmt->getColumnText(3).convertToASCIILowercase();
+        String cookiePath = pstmt->getColumnText(3);
         double cookieExpires = (double)pstmt->getColumnInt64(4) * 1000;
         bool cookieHttpOnly = (pstmt->getColumnInt(5) == 1);
         bool cookieSecure = (pstmt->getColumnInt(6) == 1);
@@ -424,18 +451,19 @@ bool CookieJarDB::hasHttpOnlyCookie(const String& name, const String& domain, co
     return statement.step() == SQLITE_ROW;
 }
 
-bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const String& host, CookieJarDB::Source source)
+bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, const URL& url, CookieJarDB::Source source)
 {
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (isPublicSuffix(cookie.domain))
         return false;
-#endif
 
     bool fromJavaScript = source == CookieJarDB::Source::Script;
     if (fromJavaScript && (cookie.httpOnly || hasHttpOnlyCookie(cookie.name, cookie.domain, cookie.path)))
         return false;
 
-    if (!CookieUtil::domainMatch(cookie.domain, host))
+    if (!CookieUtil::domainMatch(cookie.domain, url.host().convertToASCIILowercase()))
+        return false;
+
+    if (!checkCookieAcceptPolicy(firstParty, url))
         return false;
 
     return true;
@@ -461,7 +489,7 @@ bool CookieJarDB::setCookie(const Cookie& cookie)
     return checkSQLiteReturnCode(statement.step());
 }
 
-bool CookieJarDB::setCookie(const String& url, const String& body, CookieJarDB::Source source)
+bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String& body, CookieJarDB::Source source)
 {
     if (!isEnabled() || !m_database.isOpen())
         return false;
@@ -469,21 +497,17 @@ bool CookieJarDB::setCookie(const String& url, const String& body, CookieJarDB::
     if (url.isEmpty() || body.isEmpty())
         return false;
 
-    URL urlObj({ }, url);
-    String host(urlObj.host().toString());
-    String path(urlObj.path());
-
     auto cookie = CookieUtil::parseCookieHeader(body);
     if (!cookie)
         return false;
 
     if (cookie->domain.isEmpty())
-        cookie->domain = String(host);
+        cookie->domain = url.host().convertToASCIILowercase();
 
     if (cookie->path.isEmpty())
-        cookie->path = CookieUtil::defaultPathForURL(urlObj);
+        cookie->path = CookieUtil::defaultPathForURL(url);
 
-    if (!canAcceptCookie(*cookie, host, source))
+    if (!canAcceptCookie(*cookie, firstParty, url, source))
         return false;
 
     return setCookie(*cookie);

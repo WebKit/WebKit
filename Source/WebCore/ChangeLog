@@ -1,3 +1,47 @@
+2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement Cookie Accept Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=191645
+
+        Reviewed by Fujii Hironori.
+
+        Make Curl network layer respect to coookie accept policy.
+        This patch fixes tests below on TestRunner, but doesn't fix tests on DumpRenderTree.
+
+        Tests: http/tests/cookies/only-accept-first-party-cookies.html
+               http/tests/cookies/third-party-cookie-relaxing.html
+               http/tests/security/cookies/third-party-cookie-blocking-redirect.html
+               http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+               http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
+               http/tests/security/cookies/third-party-cookie-blocking.html
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookiesForSession):
+        (WebCore::CookieJarCurl::setCookiesFromDOM const):
+        (WebCore::CookieJarCurl::setCookiesFromHTTPResponse const):
+        (WebCore::CookieJarCurl::setCookieAcceptPolicy const):
+        (WebCore::CookieJarCurl::cookieAcceptPolicy const):
+        (WebCore::CookieJarCurl::getRawCookies const):
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::openDatabase):
+        (WebCore::CookieJarDB::isEnabled const):
+        (WebCore::CookieJarDB::checkCookieAcceptPolicy):
+        (WebCore::CookieJarDB::hasCookies):
+        (WebCore::CookieJarDB::searchCookies):
+        (WebCore::CookieJarDB::canAcceptCookie):
+        (WebCore::CookieJarDB::setCookie):
+        (WebCore::CookieJarDB::setEnabled): Deleted.
+        * platform/network/curl/CookieJarDB.h:
+        (WebCore::CookieJarDB::setAcceptPolicy):
+        (WebCore::CookieJarDB::acceptPolicy const):
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::parseCookieAttributes):
+        (WebCore::CookieUtil::parseCookieHeader):
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::handleCookieHeaders):
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+
 2019-03-05  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Assert on if notify content change is allowed

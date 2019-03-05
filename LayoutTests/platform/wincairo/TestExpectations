@@ -862,6 +862,7 @@ http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
 http/tests/cookies/http-get-cookie-set-in-js.html [ Pass Failure ]
 http/tests/cookies/multiple-cookies.html [ Pass Failure ]
 http/tests/cookies/multiple-redirect-and-set-cookie.php [ Pass Failure ]
+http/tests/cookies/only-accept-first-party-cookies.html [ Pass ]
 http/tests/cookies/private-cookie-storage.html [ Skip ]
 http/tests/cookies/same-site [ Skip ]
 http/tests/cookies/set-cookie-on-redirect.html [ Pass Failure ]
@@ -869,7 +870,6 @@ http/tests/cookies/simple-cookies-expired.html [ Pass Failure ]
 http/tests/cookies/simple-cookies-max-age.html [ Pass Failure ]
 http/tests/cookies/single-quoted-value.html [ Pass Failure ]
 http/tests/cookies/sync-xhr-set-cookie-invalidates-cache.html [ Pass Failure ]
-http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 
 [ Debug ] http/tests/cookies/js-get-and-set-http-only-cookie.html [ Skip ]
 
@@ -939,6 +939,10 @@ http/tests/quicklook [ Skip ]
 
 http/tests/security [ Skip ]
 http/tests/security/401-logout/401-logout.php [ Pass ]
+http/tests/security/cookies/third-party-cookie-blocking.html [ Pass ]
+http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Pass ]
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Pass ]
+http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
 
 http/tests/ssl [ Skip ]
 

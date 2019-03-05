@@ -79,7 +79,7 @@ private:
     void restartWithCredential(const WebCore::ProtectionSpace&, const WebCore::Credential&);
 
     void appendCookieHeader(WebCore::ResourceRequest&);
-    void handleCookieHeaders(const WebCore::CurlResponse&);
+    void handleCookieHeaders(const WebCore::ResourceRequest&, const WebCore::CurlResponse&);
 
     State m_state { State::Suspended };
 

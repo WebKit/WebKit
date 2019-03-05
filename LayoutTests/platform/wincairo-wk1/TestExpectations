@@ -12,5 +12,13 @@
 
 # Failures on WebKit Legacy
 
+# Cookie policy only supported in WK2.
+http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
+http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Skip ]
+http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Skip ]
+
 # There is not NetworkProcess in WK1, so it can't crash.
 http/tests/websocket/tests/hybi/network-process-crash-error.html [ Skip ]

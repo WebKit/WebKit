@@ -113,7 +113,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
         if (!isIPAddress(attributeValue) && !attributeValue.startsWith('.') && attributeValue.find('.') != notFound)
             attributeValue = "." + attributeValue;
 
-        result.domain = attributeValue;
+        result.domain = attributeValue.convertToASCIILowercase();
 
     } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
         bool ok;
@@ -150,7 +150,7 @@ Optional<Cookie> parseCookieHeader(const String& cookieLine)
 
     String cookieName;
     String cookieValue;
-    size_t assignmentPosition = cookieLine.find('=');
+    size_t assignmentPosition = cookiePair.find('=');
 
     // RFC6265 says to ignore cookies pairs with empty names or no assignment character
     // but browsers seem to treat this type of cookie string as the cookie value

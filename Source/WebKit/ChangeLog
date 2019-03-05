@@ -1,3 +1,18 @@
+2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Implement Cookie Accept Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=191645
+
+        Reviewed by Fujii Hironori.
+
+        * NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveResponse):
+        (WebKit::NetworkDataTaskCurl::handleCookieHeaders):
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2019-03-05  Youenn Fablet  <youenn@apple.com>
 
         Introduce ServiceWorkerFetchTask

@@ -36,6 +36,13 @@
 
 namespace WebCore {
 
+enum class CookieAcceptPolicy {
+    Always,
+    Never,
+    OnlyFromMainDocumentDomain,
+    ExclusivelyFromMainDocumentDomain
+};
+
 class CookieJarDB {
     WTF_MAKE_NONCOPYABLE(CookieJarDB);
 
@@ -44,12 +51,15 @@ public:
         Network,
         Script
     };
+
     void open();
     bool isEnabled() const;
-    void setEnabled(bool);
 
-    Optional<Vector<Cookie>> searchCookies(const String& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
-    bool setCookie(const String& url, const String& cookie, Source);
+    void setAcceptPolicy(CookieAcceptPolicy policy) { m_acceptPolicy = policy; }
+    CookieAcceptPolicy acceptPolicy() const { return m_acceptPolicy; }
+
+    Optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
+    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source);
     bool setCookie(const Cookie&);
 
     bool deleteCookie(const String& url, const String& name);
@@ -60,8 +70,7 @@ public:
     WEBCORE_EXPORT ~CookieJarDB();
 
 private:
-
-    bool m_isEnabled { true };
+    CookieAcceptPolicy m_acceptPolicy { CookieAcceptPolicy::Always };
     String m_databasePath;
 
     bool m_detectedDatabaseCorruption { false };
@@ -88,7 +97,9 @@ private:
 
     bool deleteCookieInternal(const String& name, const String& domain, const String& path);
     bool hasHttpOnlyCookie(const String& name, const String& domain, const String& path);
-    bool canAcceptCookie(const Cookie&, const String& host, CookieJarDB::Source);
+    bool canAcceptCookie(const Cookie&, const URL& firstParty, const URL&, CookieJarDB::Source);
+    bool checkCookieAcceptPolicy(const URL& firstParty, const URL&);
+    bool hasCookies(const URL&);
 
     SQLiteDatabase m_database;
     HashMap<String, std::unique_ptr<SQLiteStatement>> m_statements;

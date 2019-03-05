@@ -149,7 +149,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, const Cur
     m_response = ResourceResponse(receivedResponse);
     m_response.setDeprecatedNetworkLoadMetrics(request.networkLoadMetrics().isolatedCopy());
 
-    handleCookieHeaders(receivedResponse);
+    handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
     if (m_response.shouldRedirect()) {
         willPerformHTTPRedirection();
@@ -427,7 +427,7 @@ void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
 }
 
-void NetworkDataTaskCurl::handleCookieHeaders(const CurlResponse& response)
+void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& request, const CurlResponse& response)
 {
     static const auto setCookieHeader = "set-cookie: ";
 
@@ -436,7 +436,7 @@ void NetworkDataTaskCurl::handleCookieHeaders(const CurlResponse& response)
     for (auto header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
             String setCookieString = header.right(header.length() - strlen(setCookieHeader));
-            cookieJar.setCookiesFromHTTPResponse(storageSession, response.url, setCookieString);
+            cookieJar.setCookiesFromHTTPResponse(storageSession, request.firstPartyForCookies(), response.url, setCookieString);
         }
     }
 }
