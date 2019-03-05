@@ -1,3 +1,16 @@
+2019-03-05  Brady Eidson  <beidson@apple.com>
+
+        Correctly handle sandbox extensions when the same WKWebView loads multiple file:// URLs.
+        <rdar://problem/47820581> and https://bugs.webkit.org/show_bug.cgi?id=195291
+
+        Reviewed by Tim Horton.
+
+        Loading a file: URL into a WKWebView and then loading another file: url from a completely
+        different directory into that same WKWebView should work.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadFileURL.mm: Added.
+
 2019-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add WeakHashSet
