@@ -35,6 +35,12 @@ using namespace WebCore;
 static const Seconds swipeMinAnimationDuration = 100_ms;
 static const Seconds swipeMaxAnimationDuration = 400_ms;
 
+// This is derivative of the easing function at t=0
+static const double swipeAnimationDurationMultiplier = 3;
+
+static const double swipeCancelArea = 0.5;
+static const double swipeCancelVelocityThreshold = 0.001;
+
 static const double swipeOverlayShadowOpacity = 0.06;
 static const double swipeOverlayDimmingOpacity = 0.12;
 static const double swipeOverlayShadowWidth = 81;
@@ -135,14 +141,24 @@ void ViewGestureController::SwipeProgressTracker::reset()
 
 bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* event)
 {
+    // Don't allow scrolling while the next page is loading
+    if (m_state == State::Finishing)
+        return true;
+
+    // Stop current animation, if any
+    if (m_state == State::Animating) {
+        GtkWidget* widget = m_webPageProxy.viewWidget();
+        gtk_widget_remove_tick_callback(widget, m_tickCallbackID);
+        m_tickCallbackID = 0;
+
+        m_cancelled = false;
+        m_state = State::Pending;
+    }
+
     if (m_state == State::Pending) {
         m_viewGestureController.beginSwipeGesture(m_targetItem.get(), m_direction);
         m_state = State::Scrolling;
     }
-
-    // Don't allow scrolling during animation
-    if (m_state == State::Animating)
-        return true;
 
     if (m_state != State::Scrolling)
         return false;
@@ -152,11 +168,14 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
         return false;
     }
 
+    double deltaX = -event->delta_x / Scrollbar::pixelsPerLineStep();
+
     Seconds time = Seconds::fromMilliseconds(event->time);
-    m_velocity = -event->delta_x / (time - m_prevTime).milliseconds();
+    if (time != m_prevTime)
+        m_velocity = deltaX / (time - m_prevTime).milliseconds();
 
     m_prevTime = time;
-    m_progress -= event->delta_x / Scrollbar::pixelsPerLineStep();
+    m_progress += deltaX;
 
     bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
     float maxProgress = swipingLeft ? 1 : 0;
@@ -168,10 +187,22 @@ bool ViewGestureController::SwipeProgressTracker::handleEvent(GdkEventScroll* ev
     return true;
 }
 
-void ViewGestureController::SwipeProgressTracker::startAnimation()
+bool ViewGestureController::SwipeProgressTracker::shouldCancel()
 {
     bool swipingLeft = m_viewGestureController.isPhysicallySwipingLeft(m_direction);
-    m_cancelled = swipingLeft ? (m_velocity <= 0) : (m_velocity >= 0);
+
+    if (swipingLeft && m_velocity < 0)
+        return true;
+
+    if (!swipingLeft && m_velocity > 0)
+        return true;
+
+    return (abs(m_progress) < swipeCancelArea && abs(m_velocity) < swipeCancelVelocityThreshold);
+}
+
+void ViewGestureController::SwipeProgressTracker::startAnimation()
+{
+    m_cancelled = shouldCancel();
 
     m_state = State::Animating;
     m_viewGestureController.willEndSwipeGesture(*m_targetItem, m_cancelled);
@@ -180,10 +211,13 @@ void ViewGestureController::SwipeProgressTracker::startAnimation()
     if (m_cancelled)
         m_endProgress = 0;
     else
-        m_endProgress = swipingLeft ? 1 : -1;
+        m_endProgress = m_viewGestureController.isPhysicallySwipingLeft(m_direction) ? 1 : -1;
 
-    Seconds duration = Seconds::fromMilliseconds(std::abs((m_progress - m_endProgress) / m_velocity) * Scrollbar::pixelsPerLineStep());
-    duration = std::min(std::max(duration, swipeMinAnimationDuration), swipeMaxAnimationDuration);
+    Seconds duration = swipeMaxAnimationDuration;
+    if ((m_endProgress - m_progress) * m_velocity > 0) {
+        duration = Seconds::fromMilliseconds(std::abs((m_progress - m_endProgress) / m_velocity * swipeAnimationDurationMultiplier));
+        duration = clampTo<WTF::Seconds>(duration, swipeMinAnimationDuration, swipeMaxAnimationDuration);
+    }
 
     GtkWidget* widget = m_webPageProxy.viewWidget();
     m_startTime = Seconds::fromMicroseconds(gdk_frame_clock_get_frame_time(gtk_widget_get_frame_clock(widget)));
@@ -226,6 +260,7 @@ gboolean ViewGestureController::SwipeProgressTracker::onAnimationTick(GdkFrameCl
 
 void ViewGestureController::SwipeProgressTracker::endAnimation()
 {
+    m_state = State::Finishing;
     m_viewGestureController.endSwipeGesture(m_targetItem.get(), m_cancelled);
 }
 
