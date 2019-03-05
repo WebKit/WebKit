@@ -1331,13 +1331,15 @@ webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/sel
 
 webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash Pass ]
-webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash ]
+webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash Pass ]
 webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
 
 webkit.org/b/194630 accessibility/removed-anonymous-block-child-causes-crash.html [ Crash ]
 webkit.org/b/194630 accessibility/removed-continuation-element-causes-crash.html [ Crash ]
 
-webkit.org/b/195260 mathml/presentation/tokenElements-dynamic.html [ Crash ] 
+webkit.org/b/195260 mathml/presentation/tokenElements-dynamic.html [ Crash Pass ]
+
+webkit.org/b/195271 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-1.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -2145,7 +2147,7 @@ webkit.org/b/194381 editing/pasteboard/paste-4039777-fix.html [ Failure Pass ]
 webkit.org/b/194382 mathml/presentation/roots.xhtml [ Failure Pass ]
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ Failure Pass ]
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height.html [ Failure Pass ]
-webkit.org/b/194382 imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1.html [ ImageOnlyFailure Pass ]
+webkit.org/b/194382 imported/w3c/web-platform-tests/mathml/relations/css-styling/visibility-1.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/194382 mathml/presentation/multiscripts-noscripts.html [ ImageOnlyFailure Pass ]
 webkit.org/b/194382 mathml/presentation/scripts-horizontal-alignment.html [ ImageOnlyFailure Pass ]
 webkit.org/b/194382 mathml/presentation/scripts-underover.html [ ImageOnlyFailure Pass ]
