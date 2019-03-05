@@ -275,18 +275,8 @@ void WebIDBConnectionToClient::renameIndex(const IDBRequestData& request, uint64
     m_networkProcess->idbServer(m_sessionID).renameIndex(request, objectStoreIdentifier, indexIdentifier, newName);
 }
 
-void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, unsigned overwriteMode)
+void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode mode)
 {
-    if (overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::NoOverwrite)
-        && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::Overwrite)
-        && overwriteMode != static_cast<unsigned>(IndexedDB::ObjectStoreOverwriteMode::OverwriteForCursor)) {
-        // FIXME: This message from the WebProcess is corrupt.
-        // The Network Process should return early at this point, but can we also kill the bad WebProcess?
-        return;
-    }
-
-    IndexedDB::ObjectStoreOverwriteMode mode = static_cast<IndexedDB::ObjectStoreOverwriteMode>(overwriteMode);
-
     m_networkProcess->idbServer(m_sessionID).putOrAdd(request, key, value, mode);
 }
 
