@@ -25,7 +25,7 @@
 
 body .sidebar > .panel.navigation.timeline > .timelines-content li.item.cpu,
 body .timeline-overview > .graphs-container > .timeline-overview-graph.cpu {
-    height: 72px;
+    height: 60px;
 }
 
 .timeline-overview-graph.cpu {

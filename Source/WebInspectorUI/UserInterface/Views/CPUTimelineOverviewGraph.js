@@ -56,7 +56,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
 
     get height()
     {
-        return 72;
+        return 60;
     }
 
     reset()
@@ -113,7 +113,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         }
 
         let intervalWidth = (samplingRatePerSecond / secondsPerPixel);
-        const minimumDisplayHeight = 2;
+        const minimumDisplayHeight = 4;
 
         // Bars for each record.
         for (let record of visibleRecords) {

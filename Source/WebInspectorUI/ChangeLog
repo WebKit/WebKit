@@ -1,3 +1,23 @@
+2019-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline - Adjust sizes in timeline overview
+        https://bugs.webkit.org/show_bug.cgi?id=195313
+
+        Reviewed by Devin Rousso.
+
+        Reduce the height slightly to save some precious vertical space.
+        Also increase the size of the minimum bar height so that it doesn't
+        look like there are no events when there is low CPU.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (body .sidebar > .panel.navigation.timeline > .timelines-content li.item.cpu,):
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph.prototype.get height):
+        Reduce the CPU overview graph height to 60px.
+
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        Increase the minimum size of a column bar to 4px.
+
 2019-03-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reload actions from second level inspector should properly reload the inspected inspector
