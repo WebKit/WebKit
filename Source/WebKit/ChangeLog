@@ -1,3 +1,33 @@
+2019-03-05  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r242411. rdar://problem/47820581
+
+    Unreviewed, rolling out r242376.
+    
+    Broke some tests
+    
+    Reverted changeset:
+    
+    "Correctly handle sandbox extensions when the same WKWebView
+    loads multiple file:// URLs."
+    https://bugs.webkit.org/show_bug.cgi?id=195291
+    https://trac.webkit.org/changeset/242376
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242411 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-04  Brady Eidson  <beidson@apple.com>
+
+            Unreviewed, rolling out r242376.
+
+            Broke some tests
+
+            Reverted changeset:
+
+            "Correctly handle sandbox extensions when the same WKWebView
+            loads multiple file:// URLs."
+            https://bugs.webkit.org/show_bug.cgi?id=195291
+            https://trac.webkit.org/changeset/242376
+
 2019-03-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r242376. rdar://problem/47820581
