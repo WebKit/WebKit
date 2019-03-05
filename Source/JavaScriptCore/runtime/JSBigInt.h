@@ -236,7 +236,7 @@ private:
 
     inline Digit* dataStorage()
     {
-        return reinterpret_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
+        return bitwise_cast<Digit*>(reinterpret_cast<char*>(this) + offsetOfData());
     }
 
     Digit digit(unsigned);

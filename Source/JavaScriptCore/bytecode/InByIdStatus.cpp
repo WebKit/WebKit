@@ -58,6 +58,7 @@ InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map
     UNUSED_PARAM(map);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
+    UNUSED_PARAM(didExit);
 #endif
 
     return result;
