@@ -393,6 +393,7 @@ public:
 
     template<typename Func>
     void forEachSlotVisitor(const Func&);
+    unsigned numberOfSlotVisitors();
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 

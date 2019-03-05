@@ -259,8 +259,6 @@ private:
     MarkingConstraint* m_currentConstraint { nullptr };
     MarkingConstraintSolver* m_currentSolver { nullptr };
     
-    // Put padding here to mitigate false sharing between multiple SlotVisitors.
-    char padding[64];
 public:
 #if !ASSERT_DISABLED
     bool m_isCheckingForDefaultMarkViolation;

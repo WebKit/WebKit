@@ -275,10 +275,17 @@ inline void Heap::stopIfNecessary()
 template<typename Func>
 void Heap::forEachSlotVisitor(const Func& func)
 {
+    auto locker = holdLock(m_parallelSlotVisitorLock);
     func(*m_collectorSlotVisitor);
     func(*m_mutatorSlotVisitor);
     for (auto& slotVisitor : m_parallelSlotVisitors)
         func(*slotVisitor);
+}
+
+inline unsigned Heap::numberOfSlotVisitors()
+{
+    auto locker = holdLock(m_parallelSlotVisitorLock);
+    return m_parallelSlotVisitors.size() + 2; // m_collectorSlotVisitor and m_mutatorSlotVisitor
 }
 
 } // namespace JSC
