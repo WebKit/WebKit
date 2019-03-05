@@ -165,6 +165,7 @@ static void languageChanged(void*)
 
 AtomicString FontDescription::platformResolveGenericFamily(UScriptCode script, const AtomicString& locale, const AtomicString& familyName)
 {
+    ASSERT((locale.isNull() && script == USCRIPT_COMMON) || !locale.isNull());
     if (script == USCRIPT_COMMON)
         return nullAtom();
 
