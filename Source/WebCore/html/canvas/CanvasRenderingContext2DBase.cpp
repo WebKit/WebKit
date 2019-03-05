@@ -1643,8 +1643,15 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLCanvasElement& sou
         fullCanvasCompositedDrawImage(*buffer, dstRect, srcRect, state().globalComposite);
         didDrawEntireCanvas();
     } else if (state().globalComposite == CompositeCopy) {
-        clearCanvas();
-        c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        if (&sourceCanvas == &canvasBase()) {
+            if (auto copy = buffer->copyRectToBuffer(srcRect, ColorSpaceSRGB, *c)) {
+                clearCanvas();
+                c->drawImageBuffer(*copy, dstRect, { { }, srcRect.size() }, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+            }
+        } else {
+            clearCanvas();
+            c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        }
         didDrawEntireCanvas();
     } else {
         c->drawImageBuffer(*buffer, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
