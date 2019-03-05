@@ -289,7 +289,6 @@ asm (
     "ldr       r1, [r5, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n" // Result sp.
     "add       r2, r5, #" STRINGIZE_VALUE_OF(PROBE_SIZE + OUT_SIZE) "\n" // End of ProveContext + buffer.
     "cmp       r1, r2" "\n"
-    "it        ge" "\n"
     "bge     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineProbeStateIsSafe) "\n"
 
     // Allocate a safe place on the stack below the result stack pointer to stash the Probe::State.
@@ -308,7 +307,6 @@ asm (
     "str       r3, [r1], #4" "\n"
     "str       r4, [r1], #4" "\n"
     "cmp       r5, r7" "\n"
-    "it        lt" "\n"
     "blt     " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineCopyLoop) "\n"
 
     "mov       r5, sp" "\n"
@@ -357,7 +355,7 @@ asm (
     // All done with math i.e. won't trash the status register (apsr) and don't need
     // scratch registers (lr and ip) anymore. Restore apsr, lr, and ip.
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
-    "msr       APSR, ip" "\n"
+    "msr       APSR_nzcvq, ip" "\n"
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
 
