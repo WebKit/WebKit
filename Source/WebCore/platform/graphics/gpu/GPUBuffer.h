@@ -30,6 +30,7 @@
 #include "DeferrableTask.h"
 #include "GPUBufferUsage.h"
 #include <wtf/Function.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
@@ -70,12 +71,14 @@ public:
     static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, GPUBufferDescriptor&&);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
-    bool isTransferDst() const { return m_usage & GPUBufferUsage::TransferDst; }
-    bool isVertex() const { return m_usage & GPUBufferUsage::Vertex; }
-    bool isUniform() const { return m_usage & GPUBufferUsage::Uniform; }
-    bool isStorage() const { return m_usage & GPUBufferUsage::Storage; }
+    unsigned long byteLength() const { return m_byteLength; }
+    bool isTransferSource() const { return m_usage.contains(GPUBufferUsage::Flags::TransferSource); }
+    bool isTransferDestination() const { return m_usage.contains(GPUBufferUsage::Flags::TransferDestination); }
+    bool isVertex() const { return m_usage.contains(GPUBufferUsage::Flags::Vertex); }
+    bool isUniform() const { return m_usage.contains(GPUBufferUsage::Flags::Uniform); }
+    bool isStorage() const { return m_usage.contains(GPUBufferUsage::Flags::Storage); }
     bool isReadOnly() const;
-    bool isMappable() const { return m_usage & (GPUBufferUsage::MapWrite | GPUBufferUsage::MapRead); }
+    bool isMappable() const { return m_usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead }); }
     State state() const;
 
 #if USE(METAL)
@@ -104,16 +107,16 @@ private:
         PendingMappingCallback(MappingCallback&&);
     };
 
-    static bool validateBufferCreate(const GPUDevice&, const GPUBufferDescriptor&);
+    static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
 
-    GPUBuffer(PlatformBufferSmartPtr&&, const GPUBufferDescriptor&, Ref<GPUDevice>&&);
+    GPUBuffer(PlatformBufferSmartPtr&&, const GPUBufferDescriptor&, OptionSet<GPUBufferUsage::Flags>, Ref<GPUDevice>&&);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();
     void runMappingCallback();
 
-    bool isMapWrite() const { return m_usage & GPUBufferUsage::MapWrite; }
-    bool isMapRead() const { return m_usage & GPUBufferUsage::MapRead; }
+    bool isMapWrite() const { return m_usage.contains(GPUBufferUsage::Flags::MapWrite); }
+    bool isMapRead() const { return m_usage.contains(GPUBufferUsage::Flags::MapRead); }
     bool isMapWriteable() const { return isMapWrite() && state() == State::Unmapped; }
     bool isMapReadable() const { return isMapRead() && state() == State::Unmapped; }
 
@@ -129,7 +132,7 @@ private:
     DeferrableTask<Timer> m_mappingCallbackTask;
 
     unsigned long m_byteLength;
-    GPUBufferUsage::Flags m_usage;
+    OptionSet<GPUBufferUsage::Flags> m_usage;
     unsigned m_numScheduledCommandBuffers = 0;
 };
 

@@ -1,0 +1,112 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset="utf-8">
+<title>Basic Blitting</title>
+<meta name="assert" content="Blit operations copy a green canvas.">
+<link rel="match" href="blit-commands-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<body>
+<script src="js/webgpu-functions.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function loadImage() {
+    const image = new Image();
+    image.src = "resources/green-400.png";
+    image.onload = () => { test(image); }
+}
+
+async function test(image) {
+    const device = await getBasicDevice();
+
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = image.width;
+    canvas2d.height = image.height;
+    const context2d = canvas2d.getContext('2d');
+    context2d.drawImage(image, 0, 0);
+
+    const imageData = context2d.getImageData(0, 0, image.width, image.height);
+
+    const bufferDescriptor = {
+        size: imageData.data.byteLength,
+        usage: GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.TRANSFER_DST
+    };
+    const bufferA = device.createBuffer(bufferDescriptor);
+    bufferA.setSubData(0, imageData.data.buffer);
+
+    const bufferB = device.createBuffer(bufferDescriptor);
+    const bufferViewB = {
+        buffer: bufferB,
+        offset: 0,
+        rowPitch: 0,
+        imageHeight: 0
+    };
+
+    const textureSize = {
+        width: image.width,
+        height: image.height,
+        depth: 1
+    };
+    const textureDescriptor = {
+        size: textureSize,
+        arrayLayerCount: 1,
+        mipLevelCount: 1,
+        sampleCount: 1,
+        dimension: "2d",
+        format: "r8g8b8a8-unorm",
+        usage: GPUTextureUsage.TRANSFER_SRC | GPUTextureUsage.TRANSFER_DST
+    };
+    const textureA = device.createTexture(textureDescriptor);
+    const textureViewA = {
+        texture: textureA,
+        mipLevel: 0,
+        arrayLayer: 0,
+        origin: { x: 0, y: 0, z: 0 }
+    };
+
+    const textureB = device.createTexture(textureDescriptor);
+    const textureViewB = {
+        texture: textureB,
+        mipLevel: 0,
+        arrayLayer: 0,
+        origin: { x: 0, y: 0, z: 0 }
+    };
+
+    const readBufferDescriptor = {
+        size: imageData.data.byteLength,
+        usage: GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ
+    };
+    const readBuffer = device.createBuffer(readBufferDescriptor);
+    const readBufferView = {
+        buffer: readBuffer,
+        offset: 0,
+        rowPitch: 0,
+        imageHeight: 0
+    };
+
+    const commandBuffer = device.createCommandBuffer();
+    commandBuffer.copyBufferToBuffer(bufferA, 0, bufferB, 0, imageData.data.byteLength);
+    commandBuffer.copyBufferToTexture(bufferViewB, textureViewA, textureSize);
+    commandBuffer.copyTextureToTexture(textureViewA, textureViewB, textureSize);
+    commandBuffer.copyTextureToBuffer(textureViewB, readBufferView, textureSize);
+    device.getQueue().submit([commandBuffer]);
+
+    const resultContext = document.querySelector('canvas').getContext('2d');
+
+    await readBuffer.mapReadAsync().then(ab => {
+        const array = new Uint8ClampedArray(ab);
+        const resultImageData = new ImageData(array, image.width, image.height);
+
+        resultContext.putImageData(resultImageData, 0, 0);
+
+        readBuffer.unmap();
+    });
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+loadImage();
+</script>
+</body>

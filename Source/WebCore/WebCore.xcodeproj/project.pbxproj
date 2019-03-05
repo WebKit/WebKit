@@ -14136,6 +14136,8 @@
 		D0CAAE9C216824A7001C91C7 /* WebMetalComputeCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalComputeCommandEncoder.cpp; sourceTree = "<group>"; };
 		D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalBuffer.h; sourceTree = "<group>"; };
 		D0CAAE9E216824A8001C91C7 /* WebMetalCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandBuffer.cpp; sourceTree = "<group>"; };
+		D0CCA94922299F97006979B6 /* GPUOrigin3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUOrigin3D.h; sourceTree = "<group>"; };
+		D0CCA94A22299F97006979B6 /* GPUOrigin3D.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUOrigin3D.idl; sourceTree = "<group>"; };
 		D0D8648721B64CAA003C983C /* GPUBufferDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBufferDescriptor.h; sourceTree = "<group>"; };
 		D0D8648C21B70676003C983C /* WebGPUBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBuffer.h; sourceTree = "<group>"; };
 		D0D8648D21B70676003C983C /* WebGPUBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBuffer.cpp; sourceTree = "<group>"; };
@@ -26073,6 +26075,8 @@
 				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
 				D026F480220A2B7000AC5F49 /* GPUExtent3D.idl */,
 				D08AA02D220D0B9C0058C502 /* GPULoadOp.idl */,
+				D0CCA94922299F97006979B6 /* GPUOrigin3D.h */,
+				D0CCA94A22299F97006979B6 /* GPUOrigin3D.idl */,
 				D02C26922181416D00D818E4 /* GPURequestAdapterOptions.idl */,
 				D08AA031220D0CE60058C502 /* GPUStoreOp.idl */,
 				D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */,

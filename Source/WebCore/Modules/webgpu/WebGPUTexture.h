@@ -40,6 +40,8 @@ class WebGPUTexture : public RefCounted<WebGPUTexture> {
 public:
     static Ref<WebGPUTexture> create(RefPtr<GPUTexture>&&);
 
+    RefPtr<GPUTexture> texture() const { return m_texture; }
+
     RefPtr<WebGPUTextureView> createDefaultTextureView();
 
 private:

@@ -379,6 +379,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
+    $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \

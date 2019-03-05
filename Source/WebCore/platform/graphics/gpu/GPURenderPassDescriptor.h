@@ -43,7 +43,7 @@ struct GPURenderPassColorAttachmentDescriptorBase {
 };
 
 struct GPURenderPassColorAttachmentDescriptor final : GPURenderPassColorAttachmentDescriptorBase {
-    GPURenderPassColorAttachmentDescriptor(Ref<GPUTexture>&&, GPULoadOp, GPUStoreOp, GPUColor);
+    GPURenderPassColorAttachmentDescriptor(Ref<GPUTexture>&&, const GPURenderPassColorAttachmentDescriptorBase&);
 
     Ref<GPUTexture> attachment;
 };
@@ -57,7 +57,7 @@ struct GPURenderPassDepthStencilAttachmentDescriptorBase {
 };
 
 struct GPURenderPassDepthStencilAttachmentDescriptor final : GPURenderPassDepthStencilAttachmentDescriptorBase {
-    GPURenderPassDepthStencilAttachmentDescriptor(Ref<GPUTexture>&&, GPULoadOp, GPUStoreOp, float);
+    GPURenderPassDepthStencilAttachmentDescriptor(Ref<GPUTexture>&&, const GPURenderPassDepthStencilAttachmentDescriptorBase&);
 
     Ref<GPUTexture> attachment;
 };

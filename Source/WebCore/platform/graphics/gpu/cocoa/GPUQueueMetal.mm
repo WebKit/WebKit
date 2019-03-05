@@ -72,7 +72,11 @@ GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
 
 void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&& commandBuffers)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
     for (auto& commandBuffer : commandBuffers) {
+        if (commandBuffer->blitEncoder())
+            [commandBuffer->blitEncoder() endEncoding];
         // Prevent any buffer mapping callbacks from executing until command buffer is complete.
         for (auto& buffer : commandBuffer->usedBuffers()) {
             if (buffer->state() != GPUBuffer::State::Unmapped) {
@@ -84,6 +88,8 @@ void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&& commandBuffers)
 
         [commandBuffer->platformCommandBuffer() commit];
     }
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 String GPUQueue::label() const

@@ -1,3 +1,77 @@
+2019-03-04  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Blitting function prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=195224
+        <rdar://problem/48538902>
+
+        Reviewed by Dean Jackson.
+
+        Implement barebones GPUCommandBuffer::copy* prototypes while rounding out GPUTexture implementation details.
+
+        Test: webgpu/blit-commands.html
+
+        * Modules/webgpu/GPUOrigin3D.h: Added.
+        * Modules/webgpu/GPUOrigin3D.idl: Added.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Add copy view struct implementations.
+        (WebCore::WebGPUBufferCopyView::asGPUBufferCopyView const): Added.
+        (WebCore::WebGPUTextureCopyView::asGPUTextureCopyView const): Added.
+        (WebCore::WebGPUCommandBuffer::copyBufferToBuffer): Added.
+        (WebCore::WebGPUCommandBuffer::copyBufferToTexture): Added.
+        (WebCore::WebGPUCommandBuffer::copyTextureToBuffer): Added.
+        (WebCore::WebGPUCommandBuffer::copyTextureToTexture): Added.
+        * Modules/webgpu/WebGPUCommandBuffer.h: Add new functions and supporting structs.
+        * Modules/webgpu/WebGPUCommandBuffer.idl: Ditto.
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp: Refactor constructors to copy the entire base class.
+        (WebCore::GPURenderPassColorAttachmentDescriptor::GPURenderPassColorAttachmentDescriptor):
+        (WebCore::GPURenderPassDepthStencilAttachmentDescriptor::GPURenderPassDepthStencilAttachmentDescriptor):
+        (WebCore::WebGPURenderPassDescriptor::asGPURenderPassDescriptor const):
+        (WebCore::attachment): Deleted.
+        * Modules/webgpu/WebGPUTexture.h:
+        (WebCore::WebGPUTexture::texture const): Added.
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::byteLength const): Added.
+        (WebCore::GPUBuffer::isTransferSource const): Added.
+        (WebCore::GPUBuffer::isTransferDestination const): Renamed from isTransferDst. Refactored for OptionSet API.
+        (WebCore::GPUBuffer::isVertex const): Ditto.
+        (WebCore::GPUBuffer::isUniform const): Ditto.
+        (WebCore::GPUBuffer::isStorage const): Ditto.
+        (WebCore::GPUBuffer::isMappable const): Ditto.
+        (WebCore::GPUBuffer::isMapWrite const): Ditto.
+        (WebCore::GPUBuffer::isMapRead const): Ditto.
+        * platform/graphics/gpu/GPUBufferUsage.h: Refactored for better bit flag style.
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        (WebCore::GPUCommandBuffer::blitEncoder const): Added.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: 
+        * platform/graphics/gpu/GPUTexture.h: Cache usage flags for reference.
+        (WebCore::GPUTexture::isTransferSrc const): Added.
+        (WebCore::GPUTexture::isTransferDst const): Added.
+        (WebCore::GPUTexture::isOutputAttachment const): Added.
+        * platform/graphics/gpu/GPUTextureUsage.h: Refactor to match GPUBufferUsage.h.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage): Renamed from validateBufferCreate, refactored for OptionSet.
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::isReadOnly const):
+        (WebCore::GPUBuffer::setSubData): Add alignment check according to Metal docs.
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm: 
+        (WebCore::GPUCommandBuffer::create): No need to use this alias here.
+        (WebCore::GPUCommandBuffer::GPUCommandBuffer): Ditto.
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer): Added.
+        (WebCore::GPUCommandBuffer::copyBufferToTexture): Added.
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer): Added. 
+        (WebCore::GPUCommandBuffer::copyTextureToTexture): Added. 
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit): End encoding on the MTLCommandBuffer's blitCommandEncoder if it was used.
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::getNextTexture): Now provide usage flags to texture creation.
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::mtlTextureUsageForGPUTextureUsageFlags): Refactor validation.
+        (WebCore::tryCreateMtlTextureDescriptor): Ditto.
+        (WebCore::GPUTexture::tryCreate): Now provide usage flags to texture creation.
+        (WebCore::GPUTexture::create): Ditto.
+        (WebCore::GPUTexture::GPUTexture): Ditto.
+        (WebCore::GPUTexture::createDefaultTextureView): Ditto.
+
 2019-03-04  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Introduce fixed duration content observation

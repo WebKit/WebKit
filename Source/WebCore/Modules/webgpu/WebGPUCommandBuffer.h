@@ -29,15 +29,31 @@
 
 #include "GPUCommandBuffer.h"
 
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class WebGPUBuffer;
 class WebGPURenderPassEncoder;
+class WebGPUTexture;
 
+struct GPUExtent3D;
 struct WebGPURenderPassDescriptor;
+
+struct WebGPUBufferCopyView : GPUBufferCopyViewBase {
+    Optional<GPUBufferCopyView> asGPUBufferCopyView() const;
+
+    RefPtr<WebGPUBuffer> buffer;
+};
+
+struct WebGPUTextureCopyView : GPUTextureCopyViewBase {
+    Optional<GPUTextureCopyView> asGPUTextureCopyView() const;
+
+    RefPtr<WebGPUTexture> texture;
+};
 
 class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
@@ -46,6 +62,10 @@ public:
     const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
 
     RefPtr<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
+    void copyBufferToBuffer(const WebGPUBuffer&, unsigned long srcOffset, const WebGPUBuffer&, unsigned long dstOffset, unsigned long size);
+    void copyBufferToTexture(const WebGPUBufferCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
+    void copyTextureToBuffer(const WebGPUTextureCopyView&, const WebGPUBufferCopyView&, const GPUExtent3D&);
+    void copyTextureToTexture(const WebGPUTextureCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
 
 private:
     WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);

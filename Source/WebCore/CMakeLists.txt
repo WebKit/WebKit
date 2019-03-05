@@ -469,6 +469,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
     Modules/webgpu/GPUExtent3D.idl
     Modules/webgpu/GPULoadOp.idl
+    Modules/webgpu/GPUOrigin3D.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
     Modules/webgpu/GPUStoreOp.idl
     Modules/webgpu/GPUTextureDescriptor.idl

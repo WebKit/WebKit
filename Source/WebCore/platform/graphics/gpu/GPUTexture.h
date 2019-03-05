@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUTextureUsage.h"
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -44,17 +46,22 @@ using PlatformTextureSmartPtr = RetainPtr<MTLTexture>;
 
 class GPUTexture : public RefCounted<GPUTexture> {
 public:
-    static RefPtr<GPUTexture> tryCreate(const GPUDevice&, GPUTextureDescriptor&&);
-    static Ref<GPUTexture> create(PlatformTextureSmartPtr&&);
+    static RefPtr<GPUTexture> tryCreate(const GPUDevice&, const GPUTextureDescriptor&);
+    static Ref<GPUTexture> create(PlatformTextureSmartPtr&&, OptionSet<GPUTextureUsage::Flags>);
 
     PlatformTexture *platformTexture() const { return m_platformTexture.get(); }
+    bool isTransferSource() const { return m_usage.contains(GPUTextureUsage::Flags::TransferSource); }
+    bool isTransferDestination() const { return m_usage.contains(GPUTextureUsage::Flags::TransferDestination); }
+    bool isOutputAttachment() const { return m_usage.contains(GPUTextureUsage::Flags::OutputAttachment); }
 
     RefPtr<GPUTexture> createDefaultTextureView();
 
 private:
-    explicit GPUTexture(PlatformTextureSmartPtr&&);
+    explicit GPUTexture(PlatformTextureSmartPtr&&, OptionSet<GPUTextureUsage::Flags>);
 
     PlatformTextureSmartPtr m_platformTexture;
+
+    OptionSet<GPUTextureUsage::Flags> m_usage;
 };
 
 } // namespace WebCore

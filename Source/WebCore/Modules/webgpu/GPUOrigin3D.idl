@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,59 +25,12 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
-typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementedAs=WebGPUBufferCopyView
-] dictionary GPUBufferCopyView {
-    WebGPUBuffer buffer;
-    u64 offset;
-    u64 rowPitch;
-    u32 imageHeight;
-};
-
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementedAs=WebGPUTextureCopyView
-] dictionary GPUTextureCopyView {
-    WebGPUTexture texture;
-    u32 mipLevel;
-    u32 arrayLayer;
-    GPUOrigin3D origin;
-};
-
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
-
-    void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u64 srcOffset,
-        WebGPUBuffer dst,
-        u64 dstOffset,
-        u64 size);
-
-    void copyBufferToTexture(
-        GPUBufferCopyView source,
-        GPUTextureCopyView destination,
-        GPUExtent3D copySize);
-
-    void copyTextureToBuffer(
-        GPUTextureCopyView source,
-        GPUBufferCopyView destination,
-        GPUExtent3D copySize);
-
-    void copyTextureToTexture(
-        GPUTextureCopyView source,
-        GPUTextureCopyView destination,
-        GPUExtent3D copySize);
-
-    // Not Yet Implemented
-    // WebGPUComputePassEncoder beginComputePass();
+    EnabledAtRuntime=WebGPU
+] dictionary GPUOrigin3D {
+    u32 x;
+    u32 y;
+    u32 z;
 };

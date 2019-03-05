@@ -31,20 +31,20 @@
 
 namespace WebCore {
 
-using GPUBufferUsageFlags = unsigned long;
+using GPUBufferUsageFlags = unsigned;
 
 class GPUBufferUsage : public RefCounted<GPUBufferUsage> {
 public:
-    enum Flags : GPUBufferUsageFlags {
+    enum class Flags : GPUBufferUsageFlags {
         None = 0,
-        MapRead = 1,
-        MapWrite = 2,
-        TransferSrc = 4,
-        TransferDst = 8,
-        Index = 16,
-        Vertex = 32,
-        Uniform = 64,
-        Storage = 128
+        MapRead = 1 << 0,
+        MapWrite = 1 << 1,
+        TransferSource = 1 << 2,
+        TransferDestination = 1 << 3,
+        Index = 1 << 4,
+        Vertex = 1 << 5,
+        Uniform = 1 << 6,
+        Storage = 1 << 7,
     };
 };
 

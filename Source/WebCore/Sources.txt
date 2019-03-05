@@ -2775,6 +2775,7 @@ JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
 JSGPUExtent3D.cpp
 JSGPULoadOp.cpp
+JSGPUOrigin3D.cpp
 JSGPURequestAdapterOptions.cpp
 JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp

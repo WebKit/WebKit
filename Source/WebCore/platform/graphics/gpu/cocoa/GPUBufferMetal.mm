@@ -39,22 +39,22 @@
 
 namespace WebCore {
 
-static const auto readOnlyMask = GPUBufferUsage::Index | GPUBufferUsage::Vertex | GPUBufferUsage::Uniform | GPUBufferUsage::TransferSrc;
+static const auto readOnlyFlags = OptionSet<GPUBufferUsage::Flags> { GPUBufferUsage::Flags::Index, GPUBufferUsage::Flags::Vertex, GPUBufferUsage::Flags::Uniform, GPUBufferUsage::Flags::TransferSource };
 
 
-bool GPUBuffer::validateBufferCreate(const GPUDevice& device, const GPUBufferDescriptor& descriptor)
+bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUBuffer::create(): Invalid GPUDevice!");
         return false;
     }
 
-    if ((descriptor.usage & GPUBufferUsage::MapWrite) && (descriptor.usage & GPUBufferUsage::MapRead)) {
+    if (usage.containsAll({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })) {
         LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
         return false;
     }
 
-    if ((descriptor.usage & readOnlyMask) && (descriptor.usage & GPUBufferUsage::Storage)) {
+    if (usage.containsAny(readOnlyFlags) && (usage & GPUBufferUsage::Flags::Storage)) {
         LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both STORAGE and a read-only usage!");
         return false;
     }
@@ -64,7 +64,8 @@ bool GPUBuffer::validateBufferCreate(const GPUDevice& device, const GPUBufferDes
 
 RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescriptor&& descriptor)
 {
-    if (!validateBufferCreate(device.get(), descriptor))
+    auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
+    if (!validateBufferUsage(device.get(), usage))
         return nullptr;
 
     // FIXME: Metal best practices: Read-only one-time-use data less than 4 KB should not allocate a MTLBuffer and be used in [MTLCommandEncoder set*Bytes] calls instead.
@@ -72,7 +73,7 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescrip
     MTLResourceOptions resourceOptions = MTLResourceCPUCacheModeDefaultCache;
 
     // Mappable buffers use shared storage allocation.
-    resourceOptions |= (descriptor.usage & (GPUBufferUsage::MapWrite | GPUBufferUsage::MapRead)) ? MTLResourceStorageModeShared : MTLResourceStorageModePrivate;
+    resourceOptions |= usage.containsAny({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead }) ? MTLResourceStorageModeShared : MTLResourceStorageModePrivate;
 
     RetainPtr<MTLBuffer> mtlBuffer;
 
@@ -87,14 +88,14 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescrip
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor, WTFMove(device)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor, usage, WTFMove(device)));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, const GPUBufferDescriptor& descriptor, Ref<GPUDevice>&& device)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, const GPUBufferDescriptor& descriptor, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
     : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
     , m_byteLength(descriptor.size)
-    , m_usage(static_cast<GPUBufferUsage::Flags>(descriptor.usage))
+    , m_usage(usage)
 {
 }
 
@@ -105,7 +106,7 @@ GPUBuffer::~GPUBuffer()
 
 bool GPUBuffer::isReadOnly() const
 {
-    return m_usage & readOnlyMask;
+    return m_usage.containsAny(readOnlyFlags);
 }
 
 GPUBuffer::State GPUBuffer::state() const
@@ -120,17 +121,23 @@ GPUBuffer::State GPUBuffer::state() const
 
 void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
 {
-    if (!isTransferDst() || state() != State::Unmapped) {
+    if (!isTransferDestination() || state() != State::Unmapped) {
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
         return;
     }
+
+#if PLATFORM(MAC)
+    if (offset % 4 || data.byteLength() % 4) {
+        LOG(WebGPU, "GPUBuffer::setSubData(): Data must be aligned to a multiple of 4 bytes!");
+        return;
+    }
+#endif
+
     auto subDataLength = checkedSum<unsigned long>(data.byteLength(), offset);
     if (subDataLength.hasOverflowed() || subDataLength.unsafeGet() > m_byteLength) {
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid offset or data size!");
         return;
     }
-
-    // FIXME: Add alignment checks once specified.
 
     if (m_subDataBuffers.isEmpty()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS;

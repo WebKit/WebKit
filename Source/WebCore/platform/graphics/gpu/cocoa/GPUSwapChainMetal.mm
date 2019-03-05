@@ -117,7 +117,7 @@ RefPtr<GPUTexture> GPUSwapChain::getNextTexture()
         return nullptr;
     }
 
-    return GPUTexture::create(WTFMove(mtlTexture));
+    return GPUTexture::create(WTFMove(mtlTexture), GPUTextureUsage::Flags::OutputAttachment);
 }
 
 void GPUSwapChain::present()
