@@ -36,7 +36,7 @@ WI.Recording = class Recording extends WI.Object
         this._data = data;
         this._displayName = WI.UIString("Recording");
 
-        this._swizzle = [];
+        this._swizzle = null;
         this._actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
         this._visualActionIndexes = [];
         this._source = null;
@@ -295,6 +295,9 @@ WI.Recording = class Recording extends WI.Object
 
     async swizzle(index, type)
     {
+        if (!this._swizzle)
+            this._swizzle = {};
+
         if (typeof this._swizzle[index] !== "object")
             this._swizzle[index] = {};
 
@@ -530,6 +533,7 @@ WI.Recording = class Recording extends WI.Object
                 return;
         }
 
+        this._swizzle = null;
         this._processContext = null;
         this._processing = false;
     }

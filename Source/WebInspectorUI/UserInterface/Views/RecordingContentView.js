@@ -167,7 +167,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._sliderElement.min = 0;
         this._sliderElement.max = 0;
 
-        this.representedObject.addEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
+        if (!this.representedObject.ready)
+            this.representedObject.addEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
     }
 
     // Private
@@ -486,6 +487,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         this._sliderElement.max = this.representedObject.visualActionIndexes.length;
         this._updateSliderValue();
+
+        if (this.representedObject.ready)
+            this.representedObject.removeEventListener(null, null, this);
     }
 };
 

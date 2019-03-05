@@ -114,17 +114,15 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (recording === this._recording)
             return;
 
-        if (this._recording) {
-            this._recording.removeEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
-            this._recording.removeEventListener(WI.Recording.Event.StartProcessingFrame, this._handleRecordingStartProcessingFrame, this);
-        }
+        if (this._recording)
+            this._recording.removeEventListener(null, null, this);
 
         if (recording)
             this.canvas = recording.source;
 
         this._recording = recording;
 
-        if (this._recording) {
+        if (this._recording && !this._recording.ready) {
             this._recording.addEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
             this._recording.addEventListener(WI.Recording.Event.StartProcessingFrame, this._handleRecordingStartProcessingFrame, this);
         }
@@ -579,12 +577,16 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         console.assert(isInitialStateAction || this._recordingTreeOutline.children.lastValue instanceof WI.FolderTreeElement, "There should be a WI.FolderTreeElement for the frame for this action.");
         this._createRecordingActionTreeElement(action, index, isInitialStateAction ? this._recordingTreeOutline : this._recordingTreeOutline.children.lastValue);
 
-        if (this._recording.ready && !this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
-            this.action = this._recording.actions[0];
+        if (this._recording.ready) {
+            this._recording.removeEventListener(null, null, this);
 
-        if (action === this._recording.actions.lastValue && this._recordingProcessingOptionsContainer) {
-            this._recordingProcessingOptionsContainer.remove();
-            this._recordingProcessingOptionsContainer = null;
+            if (!this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol])
+                this.action = this._recording.actions[0];
+
+            if (this._recordingProcessingOptionsContainer) {
+                this._recordingProcessingOptionsContainer.remove();
+                this._recordingProcessingOptionsContainer = null;
+            }
         }
     }
 
