@@ -1,5 +1,42 @@
 2019-02-22  Robin Morisset  <rmorisset@apple.com>
 
+        DFGBytecodeParser should not declare that a node won't clobberExit if DFGFixupPhase can later declare it does clobberExit
+        https://bugs.webkit.org/show_bug.cgi?id=194953
+        <rdar://problem/47595253>
+
+        Reviewed by Saam Barati.
+
+        For each node that
+        (a) may or may not clobberExit depending on their arrayMode
+        (b) and get their arrayMode from profiling information in DFGBytecodeParser
+        (c) and can have their arrayMode refined by DFGFixupPhase,
+        We must make sure to be conservative in the DFGBytecodeParser and treat it as if it unconditionnally clobbered the exit.
+        Otherwise we will hit a validation failure after fixup if the next node was marked ExitValid and exits to the same semantic origin.
+
+        The list of nodes that fit (a) is:
+        - StringCharAt
+        - HasIndexProperty
+        - GetByVal
+        - PutByValDirect
+        - PutByVal
+        - PutByValAlias
+        - GetIndexedPropertyStorage
+
+        Out of these, the following also fit (b) and (c):
+        - HasIndexedProperty
+        - GetByVal
+        - PutByValDirect
+        - PutByVal
+
+        GetByVal already had "m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic."
+        So we just have to fix the other three the same way.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+
+2019-02-22  Robin Morisset  <rmorisset@apple.com>
+
         B3ReduceStrength: missing peephole optimizations for binary operations
         https://bugs.webkit.org/show_bug.cgi?id=194252
 
