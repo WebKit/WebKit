@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 9: Content blocker prevented frame displaying http://127.0.0.1:8000/inspector/network/contentextensions/blocked-websocket-crash.html from loading a resource from ws://127.0.0.1/
+Test opening inspector after a blocked WebSocket connection.
+
+
+== Running test suite: Network.BlockedRequests
+-- Running test case: Network.BlockedRequests.WebSocket
+PASS: Web Inspector initialized.
+

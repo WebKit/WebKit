@@ -613,6 +613,7 @@ fast/text/variations [ Pass ]
 
 # Content Extensions
 http/tests/contentextensions [ Pass ]
+http/tests/inspector/network/contentextensions [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. TESTS CRASHING
