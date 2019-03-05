@@ -182,11 +182,11 @@ void TextFieldInputType::handleClickEvent(MouseEvent&)
 }
 #endif
 
-void TextFieldInputType::handleKeydownEvent(KeyboardEvent& event)
+auto TextFieldInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
     if (!element()->focused())
-        return;
+        return ShouldCallBaseEventHandler::Yes;
 #if ENABLE(DATALIST_ELEMENT)
     const String& key = event.keyIdentifier();
     if (m_suggestionPicker && (key == "Enter" || key == "Up" || key == "Down")) {
@@ -195,9 +195,9 @@ void TextFieldInputType::handleKeydownEvent(KeyboardEvent& event)
     }
 #endif
     RefPtr<Frame> frame = element()->document().frame();
-    if (!frame || !frame->editor().doTextFieldCommandFromEvent(element(), &event))
-        return;
-    event.setDefaultHandled();
+    if (frame && frame->editor().doTextFieldCommandFromEvent(element(), &event))
+        event.setDefaultHandled();
+    return ShouldCallBaseEventHandler::Yes;
 }
 
 void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent& event)

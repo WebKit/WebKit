@@ -1,3 +1,34 @@
+2019-03-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should not scroll when checkbox, radio, submit, reset, or button is spacebar activated
+        https://bugs.webkit.org/show_bug.cgi?id=195281
+        <rdar://problem/48564347>
+
+        Reviewed by Simon Fraser.
+
+        Add some tests to ensure that we do not scroll when a checkbox, radio, submit, reset, or button
+        is spacebar activated.
+
+        * fast/events/ios/activating-button-should-not-scroll-page-expected.txt: Added.
+        * fast/events/ios/activating-button-should-not-scroll-page.html: Added.
+        * fast/events/ios/activating-checkbox-should-not-scroll-page-expected.txt: Added.
+        * fast/events/ios/activating-checkbox-should-not-scroll-page.html: Added.
+        * fast/events/ios/activating-radio-button-should-not-scroll-page-expected.txt: Added.
+        * fast/events/ios/activating-radio-button-should-not-scroll-page.html: Added.
+        * fast/events/ios/activating-reset-button-should-not-scroll-page-expected.txt: Added.
+        * fast/events/ios/activating-reset-button-should-not-scroll-page.html: Added.
+        * fast/events/ios/activating-submit-button-should-not-scroll-page-expected.txt: Added.
+        * fast/events/ios/activating-submit-button-should-not-scroll-page.html: Added.
+        * fast/events/ios/resources/press-spacebar-at-element-and-check-for-page-scroll.js: Added.
+        (done):
+        (handleInteraction.checkForScrollAndDone):
+        (handleInteraction):
+        (handleScroll):
+        (handleFocus):
+        (checkActivatingElementUsingSpacebarDoesNotScrollPage):
+        * platform/ios/TestExpectations: Skip the tests for now until ENABLE(FULL_KEYBOARD_ACCESS) is enabled
+        by default on iOS.
+
 2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement Cookie Accept Policy.

@@ -1,0 +1,10 @@
+Tests that activating a Reset button (focusing it and pressing the spacebar) does not cause the page to scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scrollY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

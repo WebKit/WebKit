@@ -51,7 +51,7 @@ private:
     float decorationWidth() const final;
     bool isSteppable() const final;
     StepRange createStepRange(AnyStepHandling) const final;
-    void handleKeydownEvent(KeyboardEvent&) final;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     Decimal parseToNumber(const String&, const Decimal&) const final;
     String serialize(const Decimal&) const final;
     String localizeValue(const String&) const final;

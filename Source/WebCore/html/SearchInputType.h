@@ -55,7 +55,7 @@ private:
     void destroyShadowSubtree() final;
     HTMLElement* resultsButtonElement() const final;
     HTMLElement* cancelButtonElement() const final;
-    void handleKeydownEvent(KeyboardEvent&) final;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void didSetValueByUserEdit() final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
     float decorationWidth() const final;

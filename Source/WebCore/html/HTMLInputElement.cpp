@@ -1169,8 +1169,8 @@ void HTMLInputElement::defaultEventHandler(Event& event)
 #endif
 
     if (is<KeyboardEvent>(event) && event.type() == eventNames().keydownEvent) {
-        m_inputType->handleKeydownEvent(downcast<KeyboardEvent>(event));
-        if (event.defaultHandled())
+        auto shouldCallBaseEventHandler = m_inputType->handleKeydownEvent(downcast<KeyboardEvent>(event));
+        if (event.defaultHandled() || shouldCallBaseEventHandler == InputType::ShouldCallBaseEventHandler::No)
             return;
     }
 

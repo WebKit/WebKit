@@ -1,3 +1,70 @@
+2019-03-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should not scroll when checkbox, radio, submit, reset, or button is spacebar activated
+        https://bugs.webkit.org/show_bug.cgi?id=195281
+        <rdar://problem/48564347>
+
+        Reviewed by Simon Fraser.
+
+        Do not call the base class's default event handler (HTMLTextFormControlElement::defaultEventHandler())
+        when WebCore sees a keydown of the spacebar as we consider such an event as handled.
+        Otherwise, calling the base class's default event handler ultimately gives the embedding
+        client a chance to wrongly handle the event. In the case of iOS, keydown of the spacebar
+        causes the page to scroll.
+
+        WebCore implements spacebar activation on keydown for form controls. For IE compatibility
+        WebCore does not mark such keydown events as handled so that a DOM keypress event will
+        be subsequently dispatched. The current logic only skips calling the base class's default
+        event handler if the DOM event was not marked handled. This is insufficient. We need to
+        know whether WebCore handled the event. If asking the input type to handle the key down
+        marks the DOM event as handled then, clearly, WebCore handled the event. However, if the
+        event is not marked as handled, but WebCore actually accounted for this event then we need
+        to know this so that we do not call the base class's default event handler and ultimately
+        the embedding client asking for an interpretation of the key event. Towards this, have
+        InputType::handleKeydownEvent() return a bit whether or not the base class's default
+        event handler should be invoked.
+
+        Tests: fast/events/ios/activating-button-should-not-scroll-page.html
+               fast/events/ios/activating-checkbox-should-not-scroll-page.html
+               fast/events/ios/activating-radio-button-should-not-scroll-page.html
+               fast/events/ios/activating-reset-button-should-not-scroll-page.html
+               fast/events/ios/activating-submit-button-should-not-scroll-page.html
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::handleKeydownEvent): Return ShouldCallBaseEventHandler::No
+        if WebCore handled the spacebar activation. Otherewise, return ShouldCallBaseEventHandler::Yes.
+        * html/BaseCheckableInputType.h:
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleKeydownEvent): Ditto.
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/BaseClickableWithKeyInputType.cpp:
+        (WebCore::BaseClickableWithKeyInputType::handleKeydownEvent): Keep our current behavior by returning ShouldCallBaseEventHandler::Yes.
+        * html/BaseClickableWithKeyInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Do not fallthrough and call the base class's default
+        event handler if the input type told us it handled the event regardless of whether the event was handled
+        from the perspective of the DOM.
+        * html/InputType.cpp:
+        (WebCore::InputType::handleKeydownEvent): Keep our current behavior by returning ShouldCallBaseEventHandler::Yes.
+        * html/InputType.h:
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::handleKeydownEvent):
+        * html/NumberInputType.h:
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        * html/RadioInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * html/RangeInputType.h:
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::handleKeydownEvent):
+        * html/SearchInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEvent):
+        * html/TextFieldInputType.h:
+        Keep our current behavior by returning ShouldCallBaseEventHandler::Yes.
+
 2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement Cookie Accept Policy.

@@ -195,11 +195,11 @@ void RangeInputType::disabledStateChanged()
     typedSliderThumbElement().hostDisabledStateChanged();
 }
 
-void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
+auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
     if (element()->isDisabledFormControl())
-        return;
+        return ShouldCallBaseEventHandler::Yes;
 
     const String& key = event.keyIdentifier();
 
@@ -207,7 +207,6 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
     ASSERT(current.isFinite());
 
     StepRange stepRange(createStepRange(RejectAny));
-
 
     // FIXME: We can't use stepUp() for the step value "any". So, we increase
     // or decrease the value by 1/100 of the value range. Is it reasonable?
@@ -238,7 +237,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
     else if (key == "End")
         newValue = isVertical ? stepRange.minimum() : stepRange.maximum();
     else
-        return; // Did not match any key binding.
+        return ShouldCallBaseEventHandler::Yes; // Did not match any key binding.
 
     newValue = stepRange.clampValue(newValue);
 
@@ -251,6 +250,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent& event)
     }
 
     event.setDefaultHandled();
+    return ShouldCallBaseEventHandler::Yes;
 }
 
 void RangeInputType::createShadowSubtree()

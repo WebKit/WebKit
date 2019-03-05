@@ -53,7 +53,7 @@ private:
 #if !PLATFORM(IOS_FAMILY)
     void handleMouseDownEvent(MouseEvent&) final;
 #endif
-    void handleKeydownEvent(KeyboardEvent&) final;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
     void createShadowSubtree() final;
     Decimal parseToNumber(const String&, const Decimal&) const final;

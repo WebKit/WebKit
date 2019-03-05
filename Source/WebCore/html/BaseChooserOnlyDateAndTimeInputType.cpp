@@ -113,10 +113,10 @@ void BaseChooserOnlyDateAndTimeInputType::closeDateTimeChooser()
         m_dateTimeChooser->endChooser();
 }
 
-void BaseChooserOnlyDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event)
+auto BaseChooserOnlyDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     ASSERT(element());
-    BaseClickableWithKeyInputType::handleKeydownEvent(*element(), event);
+    return BaseClickableWithKeyInputType::handleKeydownEvent(*element(), event);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::handleKeypressEvent(KeyboardEvent& event)

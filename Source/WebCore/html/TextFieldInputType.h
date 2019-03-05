@@ -53,7 +53,7 @@ class TextFieldInputType : public InputType, protected SpinButtonElement::SpinBu
 protected:
     explicit TextFieldInputType(HTMLInputElement&);
     virtual ~TextFieldInputType();
-    void handleKeydownEvent(KeyboardEvent&) override;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeydownEventForSpinButton(KeyboardEvent&);
 #if ENABLE(DATALIST_ELEMENT)
     void handleClickEvent(MouseEvent&) final;

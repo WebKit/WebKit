@@ -453,8 +453,9 @@ void InputType::handleDOMActivateEvent(Event&)
 {
 }
 
-void InputType::handleKeydownEvent(KeyboardEvent&)
+auto InputType::handleKeydownEvent(KeyboardEvent&) -> ShouldCallBaseEventHandler
 {
+    return ShouldCallBaseEventHandler::Yes;
 }
 
 void InputType::handleKeypressEvent(KeyboardEvent&)

@@ -44,7 +44,7 @@ private:
     bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleClickEvent(MouseEvent&) final;
-    void handleKeydownEvent(KeyboardEvent&) final;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     void handleKeyupEvent(KeyboardEvent&) final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool shouldSendChangeEventAfterCheckedChanged() final;

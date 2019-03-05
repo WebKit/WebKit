@@ -213,11 +213,12 @@ bool NumberInputType::isSteppable() const
     return true;
 }
 
-void NumberInputType::handleKeydownEvent(KeyboardEvent& event)
+auto NumberInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     handleKeydownEventForSpinButton(event);
     if (!event.defaultHandled())
-        TextFieldInputType::handleKeydownEvent(event);
+        return TextFieldInputType::handleKeydownEvent(event);
+    return ShouldCallBaseEventHandler::Yes;
 }
 
 Decimal NumberInputType::parseToNumber(const String& src, const Decimal& defaultValue) const

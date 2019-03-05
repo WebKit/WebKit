@@ -49,7 +49,7 @@ private:
     void detach() override;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     void handleDOMActivateEvent(Event&) override;
-    void handleKeydownEvent(KeyboardEvent&) override;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeypressEvent(KeyboardEvent&) override;
     void handleKeyupEvent(KeyboardEvent&) override;
     void accessKeyAction(bool sendMouseEvents) override;
