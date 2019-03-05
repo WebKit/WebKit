@@ -1,3 +1,22 @@
+2019-02-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove WatchpointSet creation for SymbolTable entries if VM::canUseJIT() returns false
+        https://bugs.webkit.org/show_bug.cgi?id=194891
+
+        Reviewed by Geoffrey Garen.
+
+        WatchpointSet in SymbolTable is used to fold the value into a constant in JIT tiers. And it is
+        not useful under the non-JIT mode. This patch avoids creation of WatchpointSet in SymbolTable
+        if VM::canUseJIT() returns false.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::addWatchpoint): Deleted.
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::isWatchable const):
+        (JSC::SymbolTableEntry::watchpointSet):
+
 2019-02-20  Mark Lam  <mark.lam@apple.com>
 
         Add code to validate expected GC activity modelled by doesGC() against what the runtime encounters.

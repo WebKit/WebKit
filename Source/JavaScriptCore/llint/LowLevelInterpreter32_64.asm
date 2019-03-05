@@ -2274,7 +2274,9 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         get(m_value, t0)
         loadConstantOrVariable(size, t0, t1, t2)
         loadp OpPutToScope::Metadata::m_watchpointSet[t5], t3
+        btpz t3, .noVariableWatchpointSet
         notifyWrite(t3, .pDynamic)
+    .noVariableWatchpointSet:
         loadp OpPutToScope::Metadata::m_operand[t5], t0
         storei t1, TagOffset[t0]
         storei t2, PayloadOffset[t0]
