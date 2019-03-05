@@ -198,6 +198,11 @@ struct WebProcessCreationParameters {
     WebCore::ScreenProperties screenProperties;
     bool useOverlayScrollbars { true };
 #endif
+
+#if PLATFORM(WPE)
+    IPC::Attachment hostClientFileDescriptor;
+    CString implementationLibraryName;
+#endif
 };
 
 } // namespace WebKit

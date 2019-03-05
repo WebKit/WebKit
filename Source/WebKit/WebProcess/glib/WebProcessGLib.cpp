@@ -35,6 +35,11 @@
 #include "WaylandCompositorDisplay.h"
 #endif
 
+#if PLATFORM(WPE)
+#include <WebCore/PlatformDisplayLibWPE.h>
+#include <wpe/wpe.h>
+#endif
+
 namespace WebKit {
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
@@ -44,6 +49,13 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
 {
+#if PLATFORM(WPE)
+    auto& implementationLibraryName = parameters.implementationLibraryName;
+    if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != '\0')
+        wpe_loader_init(parameters.implementationLibraryName.data());
+    RELEASE_ASSERT(is<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()));
+    downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).initialize(parameters.hostClientFileDescriptor.releaseFileDescriptor());
+#endif
 #if PLATFORM(WAYLAND)
     m_waylandCompositorDisplay = WaylandCompositorDisplay::create(parameters.waylandCompositorDisplayName);
 #endif
