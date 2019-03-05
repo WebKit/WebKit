@@ -54,6 +54,7 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
     LOG_WITH_STREAM(ContentObservation, stream << "didInstallDOMTimer: register this timer: (" << &timer << ") and observe when it fires.");
 
     registerDOMTimer(timer);
+    adjustObservedState(Event::InstalledDOMTimer);
 }
 
 void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
@@ -63,7 +64,7 @@ void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
     LOG_WITH_STREAM(ContentObservation, stream << "removeDOMTimer: remove registered timer (" << &timer << ")");
 
     unregisterDOMTimer(timer);
-    notifyContentChangeIfNeeded();
+    adjustObservedState(Event::RemovedDOMTimer);
 }
 
 void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
@@ -84,7 +85,7 @@ void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
     m_domTimerisBeingExecuted = false;
     unregisterDOMTimer(timer);
     setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
-    notifyContentChangeIfNeeded();
+    adjustObservedState(Event::EndedDOMTimerExecution);
 }
 
 void ContentChangeObserver::styleRecalcDidStart()
@@ -107,7 +108,6 @@ void ContentChangeObserver::styleRecalcDidFinish()
     m_styleRecalcIsBeingExecuted = false;
     setShouldObserveNextStyleRecalc(false);
     adjustObservedState(Event::StyleRecalcFinished);
-    notifyContentChangeIfNeeded();
 }
 
 void ContentChangeObserver::clearTimersAndReportContentChange()
@@ -143,7 +143,7 @@ void ContentChangeObserver::mouseMovedDidStart()
     ASSERT(!m_document.hasPendingStyleRecalc());
     clearObservedDOMTimers();
     setShouldObserveDOMTimerScheduling(true);
-    adjustObservedState(Event::ContentObservationStarted);
+    adjustObservedState(Event::StartedMouseMovedEventDispatching);
 }
 
 void ContentChangeObserver::mouseMovedDidFinish()
@@ -154,18 +154,6 @@ void ContentChangeObserver::mouseMovedDidFinish()
 WKContentChange ContentChangeObserver::observedContentChange() const
 {
     return WKObservedContentChange();
-}
-
-void ContentChangeObserver::registerDOMTimer(const DOMTimer& timer)
-{
-    m_DOMTimerList.add(&timer);
-    adjustObservedState(Event::InstalledDOMTimer);
-}
-
-void ContentChangeObserver::unregisterDOMTimer(const DOMTimer& timer)
-{
-    m_DOMTimerList.remove(&timer);
-    adjustObservedState(Event::RemovedDOMTimer);
 }
 
 void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
@@ -179,13 +167,24 @@ bool ContentChangeObserver::hasDeterminateState() const
 {
     if (hasVisibleChangeState())
         return true;
-    return observedContentChange() == WKContentNoChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc();
+    return observedContentChange() == WKContentNoChange && !hasPendingActivity();
 }
 
 void ContentChangeObserver::adjustObservedState(Event event)
 {
+    auto notifyContentChangeIfNeeded = [&] {
+        if (!hasDeterminateState()) {
+            LOG(ContentObservation, "notifyContentChangeIfNeeded: not in a determined state yet.");
+            return;
+        }
+        LOG_WITH_STREAM(ContentObservation, stream << "notifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
+        ASSERT(m_document.page());
+        ASSERT(m_document.frame());
+        m_document.page()->chrome().client().observedContentChange(*m_document.frame());
+    };
+
     switch (event) {
-    case Event::ContentObservationStarted:
+    case Event::StartedMouseMovedEventDispatching:
         setHasNoChangeState();
         break;
     case Event::InstalledDOMTimer:
@@ -195,28 +194,17 @@ void ContentChangeObserver::adjustObservedState(Event event)
         break;
     case Event::RemovedDOMTimer:
     case Event::StyleRecalcFinished:
+    case Event::EndedDOMTimerExecution:
         // Demote to "no change" when there's no pending activity anymore.
-        if (observedContentChange() == WKContentIndeterminateChange && !hasObservedDOMTimer() && !m_document.hasPendingStyleRecalc())
+        if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
             setHasNoChangeState();
+        notifyContentChangeIfNeeded();
         break;
     case Event::ContentVisibilityChanged:
         setHasVisibleChangeState();
         break;
     }
 }
-
-void ContentChangeObserver::notifyContentChangeIfNeeded()
-{
-    if (!hasDeterminateState()) {
-        LOG(ContentObservation, "notifyContentChangeIfNeeded: not in a determined state yet.");
-        return;
-    }
-    LOG_WITH_STREAM(ContentObservation, stream << "notifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
-    ASSERT(m_document.page());
-    ASSERT(m_document.frame());
-    m_document.page()->chrome().client().observedContentChange(*m_document.frame());
-}
-
 
 static Visibility elementImplicitVisibility(const Element& element)
 {

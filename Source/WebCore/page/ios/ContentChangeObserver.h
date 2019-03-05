@@ -93,8 +93,8 @@ private:
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
-    void registerDOMTimer(const DOMTimer&);
-    void unregisterDOMTimer(const DOMTimer&);
+    void registerDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
+    void unregisterDOMTimer(const DOMTimer& timer) { m_DOMTimerList.remove(&timer); }
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
     void styleRecalcDidStart();
@@ -115,12 +115,13 @@ private:
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasDeterminateState() const;
 
-    void notifyContentChangeIfNeeded();
+    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc(); }
 
     enum class Event {
-        ContentObservationStarted,
+        StartedMouseMovedEventDispatching,
         InstalledDOMTimer,
         RemovedDOMTimer,
+        EndedDOMTimerExecution,
         StyleRecalcFinished,
         ContentVisibilityChanged
     };

@@ -1,3 +1,28 @@
+2019-03-05  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Send content change notification through adjustObservedState
+        https://bugs.webkit.org/show_bug.cgi?id=195328
+        <rdar://problem/48601143>
+
+        Reviewed by Simon Fraser.
+
+        Have a dedicated place for the notification logic.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::stopDurationBasedContentObservation):
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::didRemoveDOMTimer):
+        (WebCore::ContentChangeObserver::domTimerExecuteDidFinish):
+        (WebCore::ContentChangeObserver::styleRecalcDidFinish):
+        (WebCore::ContentChangeObserver::mouseMovedDidStart):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::registerDOMTimer): Deleted.
+        (WebCore::ContentChangeObserver::unregisterDOMTimer): Deleted.
+        (WebCore::ContentChangeObserver::notifyContentChangeIfNeeded): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::registerDOMTimer):
+        (WebCore::ContentChangeObserver::unregisterDOMTimer):
+
 2019-03-05  Youenn Fablet  <youenn@apple.com>
 
         MockLibWebRTCPeerConnection is leaking some session description
