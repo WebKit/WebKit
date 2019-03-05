@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketNext(ExecState* exec)
             return JSValue::encode(bucket);
         bucket = bucket->next();
     }
-    return JSValue::encode(exec->vm().sentinelSetBucket.get());
+    return JSValue::encode(exec->vm().sentinelSetBucket());
 }
 
 EncodedJSValue JSC_HOST_CALL setPrivateFuncSetBucketKey(ExecState* exec)

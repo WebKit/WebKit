@@ -2892,7 +2892,7 @@ JSCell* JIT_OPERATION operationJSMapFindBucket(ExecState* exec, JSCell* map, Enc
     NativeCallFrameTracer tracer(&vm, exec);
     JSMap::BucketType** bucket = jsCast<JSMap*>(map)->findBucket(exec, JSValue::decode(key), hash);
     if (!bucket)
-        return vm.sentinelMapBucket.get();
+        return vm.sentinelMapBucket();
     return *bucket;
 }
 
@@ -2902,7 +2902,7 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     NativeCallFrameTracer tracer(&vm, exec);
     JSSet::BucketType** bucket = jsCast<JSSet*>(map)->findBucket(exec, JSValue::decode(key), hash);
     if (!bucket)
-        return vm.sentinelSetBucket.get();
+        return vm.sentinelSetBucket();
     return *bucket;
 }
 
@@ -2912,7 +2912,7 @@ JSCell* JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSVal
     NativeCallFrameTracer tracer(&vm, exec);
     auto* bucket = jsCast<JSSet*>(set)->addNormalized(exec, JSValue::decode(key), JSValue(), hash);
     if (!bucket)
-        return vm.sentinelSetBucket.get();
+        return vm.sentinelSetBucket();
     return bucket;
 }
 
@@ -2922,7 +2922,7 @@ JSCell* JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSVal
     NativeCallFrameTracer tracer(&vm, exec);
     auto* bucket = jsCast<JSMap*>(map)->addNormalized(exec, JSValue::decode(key), JSValue::decode(value), hash);
     if (!bucket)
-        return vm.sentinelMapBucket.get();
+        return vm.sentinelMapBucket();
     return bucket;
 }
 

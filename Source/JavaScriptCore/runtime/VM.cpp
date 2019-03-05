@@ -401,8 +401,11 @@ VM::VM(VMType vmType, HeapType heapType)
     bigIntStructure.set(*this, JSBigInt::createStructure(*this, 0, jsNull()));
     executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
-    sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
-    sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));
+    // Eagerly initialize constant cells since the concurrent compiler can access them.
+    if (canUseJIT()) {
+        sentinelMapBucket();
+        sentinelSetBucket();
+    }
 
     Thread::current().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
 
@@ -1283,6 +1286,23 @@ DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(evalExecutableSpace, destructibleCellHe
 DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType.get(), ModuleProgramExecutable)
 
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW
+
+
+JSCell* VM::sentinelSetBucketSlow()
+{
+    ASSERT(!m_sentinelSetBucket);
+    auto* sentinel = JSSet::BucketType::createSentinel(*this);
+    m_sentinelSetBucket.set(*this, sentinel);
+    return sentinel;
+}
+
+JSCell* VM::sentinelMapBucketSlow()
+{
+    ASSERT(!m_sentinelMapBucket);
+    auto* sentinel = JSMap::BucketType::createSentinel(*this);
+    m_sentinelMapBucket.set(*this, sentinel);
+    return sentinel;
+}
 
 JSGlobalObject* VM::vmEntryGlobalObject(const CallFrame* callFrame) const
 {

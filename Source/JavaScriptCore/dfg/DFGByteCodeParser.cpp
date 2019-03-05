@@ -2929,9 +2929,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
             Node* bucket = addToGraph(GetMapBucket, OpInfo(0), Edge(mapOrSet, useKind), Edge(normalizedKey), Edge(hash));
             JSCell* sentinel = nullptr;
             if (intrinsic == JSMapHasIntrinsic)
-                sentinel = m_vm->sentinelMapBucket.get();
+                sentinel = m_vm->sentinelMapBucket();
             else
-                sentinel = m_vm->sentinelSetBucket.get();
+                sentinel = m_vm->sentinelSetBucket();
 
             FrozenValue* frozenPointer = m_graph.freeze(sentinel);
             Node* invertedResult = addToGraph(CompareEqPtr, OpInfo(frozenPointer), bucket);

@@ -11792,10 +11792,10 @@ void SpeculativeJIT::compileGetMapBucketNext(Node* node)
     notBucket.link(&m_jit);
     JSCell* sentinel = nullptr;
     if (node->bucketOwnerType() == BucketOwnerType::Map)
-        sentinel = m_jit.vm()->sentinelMapBucket.get();
+        sentinel = m_jit.vm()->sentinelMapBucket();
     else {
         ASSERT(node->bucketOwnerType() == BucketOwnerType::Set);
-        sentinel = m_jit.vm()->sentinelSetBucket.get();
+        sentinel = m_jit.vm()->sentinelSetBucket();
     }
     m_jit.move(TrustedImmPtr::weakPointer(m_jit.graph(), sentinel), resultGPR);
     done.link(&m_jit);

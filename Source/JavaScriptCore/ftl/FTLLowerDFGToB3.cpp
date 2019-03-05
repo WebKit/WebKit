@@ -9744,9 +9744,9 @@ private:
         m_out.appendTo(notPresentInTable, continuation);
         ValueFromBlock notPresentResult;
         if (m_node->child1().useKind() == MapObjectUse)
-            notPresentResult = m_out.anchor(weakPointer(vm().sentinelMapBucket.get()));
+            notPresentResult = m_out.anchor(weakPointer(vm().sentinelMapBucket()));
         else if (m_node->child1().useKind() == SetObjectUse)
-            notPresentResult = m_out.anchor(weakPointer(vm().sentinelSetBucket.get()));
+            notPresentResult = m_out.anchor(weakPointer(vm().sentinelSetBucket()));
         else
             RELEASE_ASSERT_NOT_REACHED();
         m_out.jump(continuation);
@@ -9792,10 +9792,10 @@ private:
         m_out.appendTo(noBucket, hasBucket);
         ValueFromBlock noBucketResult;
         if (m_node->bucketOwnerType() == BucketOwnerType::Map)
-            noBucketResult = m_out.anchor(weakPointer(vm().sentinelMapBucket.get()));
+            noBucketResult = m_out.anchor(weakPointer(vm().sentinelMapBucket()));
         else {
             ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Set);
-            noBucketResult = m_out.anchor(weakPointer(vm().sentinelSetBucket.get()));
+            noBucketResult = m_out.anchor(weakPointer(vm().sentinelSetBucket()));
         }
         m_out.jump(continuation);
 
