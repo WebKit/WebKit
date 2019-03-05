@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-variable-frame-lengths-with-matching-durations</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    window.addEventListener('load', async event => {
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+
+        await waitFor(sourceBuffer, 'updateend');
+                            
+        samples = concatenateSamples([
+            makeASample(0, 0, 10, 1000, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(10, 10, 30, 1000, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(40, 40, 10, 1000, 1, SAMPLE_FLAG.NONE, 0)
+            ]);
+        
+        run('sourceBuffer.appendBuffer(samples)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 3);
+        bufferedSamples.forEach(consoleWrite);
+        endTest();
+
+    }, {once: true});
+    </script>
+</head>
+<body>
+    <div>This tests that variable frame lengths with matching frame durations will not be dropped.</div>
+    <video></video>
+</body>
+</html>

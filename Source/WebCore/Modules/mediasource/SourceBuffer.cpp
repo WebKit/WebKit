@@ -1547,8 +1547,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         // OR
         // ↳ If last decode timestamp for track buffer is set and the difference between decode timestamp and
         // last decode timestamp is greater than 2 times last frame duration:
+        MediaTime decodeDurationToCheck = trackBuffer.greatestDecodeDuration;
+
+        if (decodeDurationToCheck.isValid() && trackBuffer.lastFrameDuration.isValid()
+            && (trackBuffer.lastFrameDuration > decodeDurationToCheck))
+            decodeDurationToCheck = trackBuffer.lastFrameDuration;
+
         if (trackBuffer.lastDecodeTimestamp.isValid() && (decodeTimestamp < trackBuffer.lastDecodeTimestamp
-            || (trackBuffer.greatestDecodeDuration.isValid() && abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (trackBuffer.greatestDecodeDuration * 2)))) {
+            || (decodeDurationToCheck.isValid() && abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (decodeDurationToCheck * 2)))) {
 
             // 1.6.1:
             if (m_mode == AppendMode::Segments) {
