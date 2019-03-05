@@ -962,8 +962,8 @@ private:
 
             // Turn this: BitAnd(value, all-ones)
             // Into this: value.
-            if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
-                || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max()))) {
                 replaceWithIdentity(m_value->child(0));
                 break;
             }
@@ -984,6 +984,7 @@ private:
                 && !(m_value->child(1)->asInt32() & 0xffffff00)) {
                 m_value->child(0) = m_value->child(0)->child(0);
                 m_changed = true;
+                break;
             }
 
             // Turn this: BitAnd(SExt16(value), mask) where (mask & 0xffff0000) == 0
@@ -992,6 +993,7 @@ private:
                 && !(m_value->child(1)->asInt32() & 0xffff0000)) {
                 m_value->child(0) = m_value->child(0)->child(0);
                 m_changed = true;
+                break;
             }
 
             // Turn this: BitAnd(SExt32(value), mask) where (mask & 0xffffffff00000000) == 0
@@ -1002,6 +1004,7 @@ private:
                     m_index, ZExt32, m_value->origin(),
                     m_value->child(0)->child(0), m_value->child(0)->child(1));
                 m_changed = true;
+                break;
             }
 
             // Turn this: BitAnd(Op(value, constant1), constant2)
@@ -1023,7 +1026,40 @@ private:
                 default:
                     break;
                 }
+                break;
             }
+
+            // Turn this: BitAnd(BitXor(x1, allOnes), BitXor(x2, allOnes)
+            // Into this: BitXor(BitOr(x1, x2), allOnes)
+            // By applying De Morgan laws
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(1)->opcode() == BitXor
+                && ((m_value->type() == Int64
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max())
+                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                    || (m_value->type() == Int32
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())
+                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                Value* bitOr = m_insertionSet.insert<Value>(m_index, BitOr, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->child(0));
+                replaceWithNew<Value>(BitXor, m_value->origin(), bitOr, m_value->child(1)->child(1));
+                break;
+            }
+
+            // Turn this: BitAnd(BitXor(x, allOnes), c)
+            // Into this: BitXor(BitOr(x, ~c), allOnes)
+            // This is a variation on the previous optimization, treating c as if it were BitXor(~c, allOnes)
+            // It does not reduce the number of operations, but provides some normalization (we try to get BitXor by allOnes at the outermost point), and some chance to float Xors to a place where they might get eliminated.
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(1)->hasInt()
+                && ((m_value->type() == Int64
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                    || (m_value->type() == Int32
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                Value* bitOr = m_insertionSet.insert<Value>(m_index, BitOr, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1)));
+                replaceWithNew<Value>(BitXor, m_value->origin(), bitOr, m_value->child(0)->child(1));
+                break;
+            }
+
             break;
 
         case BitOr:
@@ -1064,11 +1100,45 @@ private:
 
             // Turn this: BitOr(value, all-ones)
             // Into this: all-ones.
-            if ((m_value->type() == Int64 && m_value->child(1)->isInt(0xffffffffffffffff))
-                || (m_value->type() == Int32 && m_value->child(1)->isInt(0xffffffff))) {
+            if ((m_value->type() == Int64 && m_value->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                || (m_value->type() == Int32 && m_value->child(1)->isInt(std::numeric_limits<uint32_t>::max()))) {
                 replaceWithIdentity(m_value->child(1));
                 break;
             }
+
+            // Turn this: BitOr(BitXor(x1, allOnes), BitXor(x2, allOnes)
+            // Into this: BitXor(BitAnd(x1, x2), allOnes)
+            // By applying De Morgan laws
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(1)->opcode() == BitXor
+                && ((m_value->type() == Int64
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max())
+                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                    || (m_value->type() == Int32
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())
+                        && m_value->child(1)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->child(0));
+                replaceWithNew<Value>(BitXor, m_value->origin(), bitAnd, m_value->child(1)->child(1));
+                break;
+            }
+
+            // Turn this: BitOr(BitXor(x, allOnes), c)
+            // Into this: BitXor(BitAnd(x, ~c), allOnes)
+            // This is a variation on the previous optimization, treating c as if it were BitXor(~c, allOnes)
+            // It does not reduce the number of operations, but provides some normalization (we try to get BitXor by allOnes at the outermost point), and some chance to float Xors to a place where they might get eliminated.
+            if (m_value->child(0)->opcode() == BitXor
+                && m_value->child(1)->hasInt()
+                && ((m_value->type() == Int64
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint64_t>::max()))
+                    || (m_value->type() == Int32
+                        && m_value->child(0)->child(1)->isInt(std::numeric_limits<uint32_t>::max())))) {
+                Value* bitAnd = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0), m_value->child(1)->bitXorConstant(m_proc, m_value->child(0)->child(1)));
+                replaceWithNew<Value>(BitXor, m_value->origin(), bitAnd, m_value->child(0)->child(1));
+                break;
+            }
+
+            if (handleBitAndDistributivity())
+                break;
 
             break;
 
@@ -1116,6 +1186,9 @@ private:
                 replaceWithIdentity(m_value->child(0));
                 break;
             }
+                
+            if (handleBitAndDistributivity())
+                break;
 
             break;
 
@@ -2208,6 +2281,70 @@ private:
             std::swap(m_value->child(0), m_value->child(1));
             m_changed = true;
         }
+    }
+
+    // For Op==BitOr or BitXor, turn any of these:
+    //      Op(BitAnd(x1, x2), BitAnd(x1, x3))
+    //      Op(BitAnd(x2, x1), BitAnd(x1, x3))
+    //      Op(BitAnd(x1, x2), BitAnd(x3, x1))
+    //      Op(BitAnd(x2, x1), BitAnd(x3, x1))
+    // Into this: BitAnd(Op(x2, x3), x1)
+    // And any of these:
+    //      Op(BitAnd(x1, x2), x1)
+    //      Op(BitAnd(x2, x1), x1)
+    //      Op(x1, BitAnd(x1, x2))
+    //      Op(x1, BitAnd(x2, x1))
+    // Into this: BitAnd(Op(x2, x1), x1)
+    // This second set is equivalent to doing x1 => BitAnd(x1, x1), and then applying the first set.
+    // It does not reduce the number of operations executed, but provides some useful normalization: we prefer to have BitAnd at the outermost, then BitXor, and finally BitOr at the innermost
+    bool handleBitAndDistributivity()
+    {
+        ASSERT(m_value->opcode() == BitOr || m_value->opcode() == BitXor);
+        Value* x1 = nullptr;
+        Value* x2 = nullptr;
+        Value* x3 = nullptr;
+        if (m_value->child(0)->opcode() == BitAnd && m_value->child(1)->opcode() == BitAnd) {
+            if (m_value->child(0)->child(0) == m_value->child(1)->child(0)) {
+                x1 = m_value->child(0)->child(0);
+                x2 = m_value->child(0)->child(1);
+                x3 = m_value->child(1)->child(1);
+            } else if (m_value->child(0)->child(1) == m_value->child(1)->child(0)) {
+                x1 = m_value->child(0)->child(1);
+                x2 = m_value->child(0)->child(0);
+                x3 = m_value->child(1)->child(1);
+            } else if (m_value->child(0)->child(0) == m_value->child(1)->child(1)) {
+                x1 = m_value->child(0)->child(0);
+                x2 = m_value->child(0)->child(1);
+                x3 = m_value->child(1)->child(0);
+            } else if (m_value->child(0)->child(1) == m_value->child(1)->child(1)) {
+                x1 = m_value->child(0)->child(1);
+                x2 = m_value->child(0)->child(0);
+                x3 = m_value->child(1)->child(0);
+            }
+        } else if (m_value->child(0)->opcode() == BitAnd) {
+            if (m_value->child(0)->child(0) == m_value->child(1)) {
+                x1 = x3 = m_value->child(1);
+                x2 = m_value->child(0)->child(1);
+            } else if (m_value->child(0)->child(1) == m_value->child(1)) {
+                x1 = x3 = m_value->child(1);
+                x2 = m_value->child(0)->child(0);
+            }
+        } else if (m_value->child(1)->opcode() == BitAnd) {
+            if (m_value->child(1)->child(0) == m_value->child(0)) {
+                x1 = x3 = m_value->child(0);
+                x2 = m_value->child(1)->child(1);
+            } else if (m_value->child(1)->child(1) == m_value->child(0)) {
+                x1 = x3 = m_value->child(0);
+                x2 = m_value->child(1)->child(0);
+            }
+        }
+        if (x1 != nullptr) {
+            ASSERT(x2 != nullptr && x3 != nullptr);
+            Value* bitOp = m_insertionSet.insert<Value>(m_index, m_value->opcode(), m_value->origin(), x2, x3);
+            replaceWithNew<Value>(BitAnd, m_value->origin(), bitOp, x1);
+            return true;
+        }
+        return false;
     }
 
     struct CanonicalizedComparison {
