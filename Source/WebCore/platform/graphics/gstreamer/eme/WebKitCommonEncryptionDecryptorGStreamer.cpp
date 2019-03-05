@@ -127,38 +127,13 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
             gst_structure_set_name(outgoingStructure.get(), gst_structure_get_string(outgoingStructure.get(), "original-media-type"));
 
             // Filter out the DRM related fields from the down-stream caps.
-            for (int j = 0; j < gst_structure_n_fields(incomingStructure); ++j) {
-                const gchar* fieldName = gst_structure_nth_field_name(incomingStructure, j);
-
-                if (g_str_has_prefix(fieldName, "protection-system")
-                    || g_str_has_prefix(fieldName, "original-media-type")
-                    || g_str_has_prefix(fieldName, "encryption-algorithm")
-                    || g_str_has_prefix(fieldName, "encoding-scope")
-                    || g_str_has_prefix(fieldName, "cipher-mode"))
-                    gst_structure_remove_field(outgoingStructure.get(), fieldName);
-            }
+            gst_structure_remove_fields(outgoingStructure.get(), "protection-system", "original-media-type", "encryption-algorithm", "encoding-scope", "cipher-mode", nullptr);
         } else {
             outgoingStructure = GUniquePtr<GstStructure>(gst_structure_copy(incomingStructure));
             // Filter out the video related fields from the up-stream caps,
             // because they are not relevant to the input caps of this element and
             // can cause caps negotiation failures with adaptive bitrate streams.
-            for (int index = gst_structure_n_fields(outgoingStructure.get()) - 1; index >= 0; --index) {
-                const gchar* fieldName = gst_structure_nth_field_name(outgoingStructure.get(), index);
-                GST_TRACE("Check field \"%s\" for removal", fieldName);
-
-                if (!g_strcmp0(fieldName, "base-profile")
-                    || !g_strcmp0(fieldName, "codec_data")
-                    || !g_strcmp0(fieldName, "height")
-                    || !g_strcmp0(fieldName, "framerate")
-                    || !g_strcmp0(fieldName, "level")
-                    || !g_strcmp0(fieldName, "pixel-aspect-ratio")
-                    || !g_strcmp0(fieldName, "profile")
-                    || !g_strcmp0(fieldName, "rate")
-                    || !g_strcmp0(fieldName, "width")) {
-                    gst_structure_remove_field(outgoingStructure.get(), fieldName);
-                    GST_TRACE("Removing field %s", fieldName);
-                }
-            }
+            gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
 
             gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId,
                 "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);

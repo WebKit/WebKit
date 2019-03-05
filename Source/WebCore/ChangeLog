@@ -1,3 +1,17 @@
+2019-02-25  Charlie Turner  <cturner@igalia.com>
+
+        [EME][GStreamer] Replace caps field loop with gst_structure_remove_fields
+        https://bugs.webkit.org/show_bug.cgi?id=194992
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Refactoring, no new tests.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformCaps): Simplify the code a little. The idea to use this
+        utility function came from a review upstream here:
+        https://gitlab.freedesktop.org/gstreamer/gst-devtools/merge_requests/67
+
 2019-02-25  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Batch player duration updates
