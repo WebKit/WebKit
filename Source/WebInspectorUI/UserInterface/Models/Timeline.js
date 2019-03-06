@@ -93,6 +93,24 @@ WI.Timeline = class Timeline extends WI.Object
         this.dispatchEventToListeners(WI.Timeline.Event.Refreshed);
     }
 
+    closestRecordTo(timestamp)
+    {
+        let lowerIndex = this._records.lowerBound(timestamp, (time, record) => time - record.endTime);
+
+        let recordBefore = this._records[lowerIndex - 1];
+        let recordAfter = this._records[lowerIndex];
+        if (!recordBefore && !recordAfter)
+            return null;
+        if (!recordBefore && recordAfter)
+            return recordAfter;
+        if (!recordAfter && recordBefore)
+            return recordBefore;
+
+        let before = Math.abs(recordBefore.endTime - timestamp);
+        let after = Math.abs(recordAfter.startTime - timestamp);
+        return (before < after) ? recordBefore : recordAfter;
+    }
+
     recordsOverlappingTimeRange(startTime, endTime)
     {
         let lowerIndex = this._records.lowerBound(startTime, (time, record) => time - record.endTime);

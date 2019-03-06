@@ -688,7 +688,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     _handleGraphsContainerClick(event)
     {
         // Set when a WI.TimelineRecordBar receives the "click" first and is about to be selected.
-        if (event.__timelineRecordBarClick)
+        if (event.__timelineRecordClickEventHandled)
             return;
 
         this._recordSelected(null, null);
@@ -766,7 +766,11 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             let startTime = firstRecord instanceof WI.RenderingFrameTimelineRecord ? firstRecord.frameIndex : firstRecord.startTime;
             let endTime = lastRecord instanceof WI.RenderingFrameTimelineRecord ? lastRecord.frameIndex : lastRecord.endTime;
 
-            if (startTime < this.selectionStartTime || endTime > this.selectionStartTime + this.selectionDuration) {
+            if (firstRecord instanceof WI.CPUTimelineRecord) {
+                let selectionPadding = WI.CPUTimelineOverviewGraph.samplingRatePerSecond * 2.25;
+                this.selectionStartTime = startTime - selectionPadding;
+                this.selectionDuration = endTime - startTime + (selectionPadding * 2);
+            } else if (startTime < this.selectionStartTime || endTime > this.selectionStartTime + this.selectionDuration) {
                 let selectionPadding = this.secondsPerPixel * 10;
                 this.selectionStartTime = startTime - selectionPadding;
                 this.selectionDuration = endTime - startTime + (selectionPadding * 2);

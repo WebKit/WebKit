@@ -774,7 +774,10 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
                 continue;
 
             // Clone the event to dispatch it on the new element.
-            newTarget.dispatchEvent(new event.constructor(event.type, event));
+            let newEvent = new event.constructor(event.type, event);
+            newTarget.dispatchEvent(newEvent);
+            if (newEvent.__timelineRecordClickEventHandled)
+                event.stop();
             return;
         }
     }

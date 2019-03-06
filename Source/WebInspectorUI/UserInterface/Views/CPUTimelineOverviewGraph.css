@@ -74,6 +74,13 @@ body[dir=rtl] .timeline-overview-graph.cpu > .stacked-column-chart {
     fill: var(--cpu-worker-thread-fill-color);
 }
 
+.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.selected {
+    fill: var(--selected-background-color) !important;
+    fill-opacity: 0.5;
+    stroke: var(--selected-background-color-active) !important;
+    stroke-opacity: 0.8;
+}
+
 /* LegacyCPUTimeline */
 .timeline-overview-graph.cpu > .column-chart > svg > rect {
     stroke: var(--cpu-stroke-color);

@@ -204,7 +204,10 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         return 36;
     }
 
-    get selected() { return this._selected; }
+    get selected()
+    {
+        return this._selected;
+    }
 
     set selected(x)
     {

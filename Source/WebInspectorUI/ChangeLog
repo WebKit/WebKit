@@ -1,5 +1,51 @@
 2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Allow clicking a bar in the overview to select a tight time range around it
+        https://bugs.webkit.org/show_bug.cgi?id=195321
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype.closestRecordTo):
+        Helper to get the closest record to a timestamp.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .stacked-column-chart):
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.selected):
+        Style a selected record with the active color.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph):
+        (WI.CPUTimelineOverviewGraph.prototype.get samplingRatePerSecond):
+        (WI.CPUTimelineOverviewGraph.prototype.reset):
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        (WI.CPUTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WI.CPUTimelineOverviewGraph.prototype._graphPositionForMouseEvent):
+        (WI.CPUTimelineOverviewGraph.prototype._handleGraphMouseClick):
+        A click in the overview which hits a rect triggers a selection of
+        the associated timeline record.
+
+        * UserInterface/Views/StackedColumnChart.js:
+        (WI.StackedColumnChart.prototype.addColumnSet):
+        (WI.StackedColumnChart.prototype.layout):
+        Allow setting an additional class name with a column set.
+        It will set the class name on each rect in that column.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._recordSelected):
+        When selecting a CPU record, make a selection range of 2 neighboring
+        columns in each direction.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler.prototype._handleClick):
+        When a sub-element has handled the click stop further event propagation.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph.prototype.get selected):
+        Drive-by style fix.
+
+2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: TimelineOverview clicks do not always behave as expected
         https://bugs.webkit.org/show_bug.cgi?id=195319
 
