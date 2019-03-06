@@ -1,5 +1,22 @@
 2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [SOUP] Cleanups in SoupNetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=195247
+
+        Reviewed by Daniel Bates.
+
+        This renames clientCertificates to allowedCertificates, since they are not client
+        certificates at all, but server certificates. It also adds a using statement to avoid
+        repeating the long type of the map, and avoids an unnecessary copy.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::allowedCertificates):
+        (WebCore::SoupNetworkSession::checkTLSErrors):
+        (WebCore::SoupNetworkSession::allowSpecificHTTPSCertificateForHost):
+        (WebCore::clientCertificates): Deleted.
+
+2019-03-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         -Wformat error in SharedBuffer::tryCreateArrayBuffer
         https://bugs.webkit.org/show_bug.cgi?id=195004
 
