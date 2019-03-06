@@ -1,4 +1,16 @@
 =================
+WebKitGTK 2.23.92
+=================
+
+What's new in WebKitGTK 2.23.92?
+
+  - Fix constructors returning a GObject in JSC GLib API.
+  - Do not scan NPAPI plugins when plugins are disabled in settings.
+  - Add WebKitUserContentFilterStore to the API docs.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Polish.
+
+=================
 WebKitGTK 2.23.91
 =================
 
