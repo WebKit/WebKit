@@ -1,3 +1,28 @@
+2019-03-06  Antti Koivisto  <antti@apple.com>
+
+        [iOS] Basic hit testing for content overlapping fast-scrollable overflow
+        https://bugs.webkit.org/show_bug.cgi?id=195360
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
+        Use new UIView subclass for tiled layer hosting (so we know they have content even when contents property is nil).
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (collectDescendantViewsAtPoint):
+
+        Factor collection step into a function.
+        Do basic skipping of event-transparent layers.
+
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+
+        To handle overlap cases, find the scroll view that has the deepest non-transparent view hit as its descendant.
+
+        (-[UIView _web_recursiveFindDescendantInteractibleViewAtPoint:withEvent:]): Deleted.
+
 2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move RenderObject::isTransparentOrFullyClippedRespectingParentFrames() to RenderLayer

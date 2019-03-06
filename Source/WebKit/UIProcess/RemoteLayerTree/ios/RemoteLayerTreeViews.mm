@@ -34,50 +34,63 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
+static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event)
+{
+    if (parent.clipsToBounds && ![parent pointInside:point withEvent:event])
+        return;
+
+    for (UIView *view in [parent subviews]) {
+        CGPoint subviewPoint = [view convertPoint:point fromView:parent];
+
+        // FIXME: This doesn't cover all possible cases yet.
+        auto isTransparent = [&] {
+            if ([view isKindOfClass:[WKTiledBackingView class]])
+                return false;
+            if (![view isKindOfClass:[WKCompositingView class]])
+                return false;
+            if (view.layer.contents)
+                return false;
+            return true;
+        }();
+
+        if (!isTransparent && [view pointInside:subviewPoint withEvent:event])
+            viewsAtPoint.append(view);
+
+        if (![view subviews])
+            return;
+
+        collectDescendantViewsAtPoint(viewsAtPoint, view, subviewPoint, event);
+    };
+}
+
 @interface UIView (WKHitTesting)
 - (UIView *)_web_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event;
 @end
 
 @implementation UIView (WKHitTesting)
 
-// UIView hit testing assumes that views should only hit test subviews that are entirely contained
-// in the view. This is not true of web content.
-// We only want to find views that allow native interaction here. Other views are ignored.
-- (UIView *)_web_recursiveFindDescendantInteractibleViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
-{
-    if (self.clipsToBounds && ![self pointInside:point withEvent:event])
-        return nil;
-
-    __block UIView *foundView = nil;
-    [[self subviews] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger idx, BOOL *stop) {
-        CGPoint subviewPoint = [view convertPoint:point fromView:self];
-
-        if (view.isUserInteractionEnabled && [view pointInside:subviewPoint withEvent:event]) {
-            if ([view conformsToProtocol:@protocol(WKNativelyInteractible)]) {
-                foundView = view;
-
-                if (![view subviews])
-                    return;
-
-                if (UIView *hitView = [view hitTest:subviewPoint withEvent:event])
-                    foundView = hitView;
-            } else if ([view isKindOfClass:[WKChildScrollView class]])
-                foundView = view;
-        }
-
-        if (![view subviews])
-            return;
-
-        if (UIView *hitView = [view _web_recursiveFindDescendantInteractibleViewAtPoint:subviewPoint withEvent:event])
-            foundView = hitView;
-    }];
-
-    return foundView;
-}
-
 - (UIView *)_web_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
 {
-    return [self _web_recursiveFindDescendantInteractibleViewAtPoint:point withEvent:event];
+    Vector<UIView *, 16> viewsAtPoint;
+    collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
+
+    for (auto i = viewsAtPoint.size(); i--;) {
+        auto *view = viewsAtPoint[i];
+        if (!view.isUserInteractionEnabled)
+            continue;
+
+        if ([view conformsToProtocol:@protocol(WKNativelyInteractible)]) {
+            CGPoint subviewPoint = [view convertPoint:point fromView:self];
+            return [view hitTest:subviewPoint withEvent:event];
+        }
+
+        if ([view isKindOfClass:[WKChildScrollView class]]) {
+            // See if the deepest view hit is actually a child of the scrollview.
+            if ([viewsAtPoint.last() isDescendantOfView:view])
+                return view;
+        }
+    }
+    return nil;
 }
 
 @end
@@ -94,6 +107,9 @@
     return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self.layer);
 }
 
+@end
+
+@implementation WKTiledBackingView
 @end
 
 @implementation WKTransformView

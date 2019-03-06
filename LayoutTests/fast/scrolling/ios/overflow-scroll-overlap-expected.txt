@@ -1,0 +1,14 @@
+Test that overlapped, nested and clipped scrollable areas are correctly targeted.
+
+case 1: Scrollable 1 
+case 2: 
+case 3: Scrollable 3 
+case 4: Scrollable 6 
+case 5: Scrollable 8 
+case 6: Scrollable 9 
+case 7: Scrollable 12 
+case 8: Scrollable 13 
+case 9: Scrollable 15 
+case 10: 
+case 11: 
+
