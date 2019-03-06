@@ -150,13 +150,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             let swatch = WI.RecordingActionTreeElement._createSwatchForColorParameters(colorParameters);
             if (swatch) {
                 let insertionIndex = recordingAction.parameters.indexOf(colorParameters[0]);
-                let parameterElement = parametersContainer.children[insertionIndex];
-                parametersContainer.insertBefore(swatch.element, parameterElement);
-
-                if (recordingAction.swizzleTypes[insertionIndex] === WI.Recording.Swizzle.String) {
-                    parameterElement.textContent = swatch.value.toString();
-                    parameterElement.classList.add("color");
-                }
+                parametersContainer.insertBefore(swatch.element, parametersContainer.children[insertionIndex]);
             }
         }
 
@@ -198,7 +192,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         case 1:
         case 2:
             if (typeof parameters[0] === "string")
-                color = WI.Color.fromString(parameters[0]);
+                color = WI.Color.fromString(parameters[0].trim());
             else if (!isNaN(parameters[0]))
                 rgb = WI.Color.normalized2rgb(parameters[0], parameters[0], parameters[0]);
             break;
