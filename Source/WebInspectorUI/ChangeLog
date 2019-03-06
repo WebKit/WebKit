@@ -1,3 +1,13 @@
+2019-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: recordsInTimeRange sometimes does not get the expected record when includeRecordBeforeStart
+        https://bugs.webkit.org/show_bug.cgi?id=195317
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Models/Timeline.js:
+        (WI.Timeline.prototype.recordsOverlappingTimeRange):
+
 2019-03-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: remove event listeners once a recording is ready
