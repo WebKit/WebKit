@@ -1,3 +1,15 @@
+2019-03-05  Daniel Bates  <dabates@apple.com>
+
+        Update expected API test result following r242379
+        (https://bugs.webkit.org/show_bug.cgi?id=195125)
+
+        Update expected x-coordinate of selection rect now that the left padding of
+        a textarea is sized in ems (so dependent on the font size) just like the left
+        padding of a text field.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2019-03-05  David Quesada  <david_quesada@apple.com>
 
         [WK2] It should be possible to follow links with 'download' attributes

@@ -414,7 +414,7 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:@"dragenter"]);
     EXPECT_TRUE([observedEventNames containsObject:@"dragover"]);
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
-    checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [simulator finalSelectionRects]);
+    checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 203, 990, 232) ], [simulator finalSelectionRects]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
