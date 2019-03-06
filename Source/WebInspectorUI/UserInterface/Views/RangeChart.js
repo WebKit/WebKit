@@ -36,8 +36,8 @@
 //
 //  <div class="range-chart">
 //      <svg viewBox="0 0 800 75">
-//          <rect width="<w>" height="100%" transform="translateX(<x>)" class="<class>" />
-//          <rect width="<w>" height="100%" transform="translateX(<x>)" class="<class>" />
+//          <rect width="<w>" height="100%" x="<x>" class="<class>" />
+//          <rect width="<w>" height="100%" x="<x>" class="<class>" />
 //          ...
 //      </svg>
 //  </div>
@@ -103,7 +103,7 @@ WI.RangeChart = class RangeChart extends WI.View
             let rect = this._svgElement.appendChild(createSVGElement("rect"));
             rect.setAttribute("width", width);
             rect.setAttribute("height", height);
-            rect.setAttribute("transform", `translate(${x}, 0)`);
+            rect.setAttribute("x", x);
             rect.classList.add(className);
         }
     }

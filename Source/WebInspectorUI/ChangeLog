@@ -1,3 +1,20 @@
+2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Simplify chart <rect>s with x/y attributes instead of transform(x, y)
+        https://bugs.webkit.org/show_bug.cgi?id=195352
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ColumnChart.js:
+        (WI.ColumnChart.prototype.layout):
+        (WI.ColumnChart):
+        * UserInterface/Views/RangeChart.js:
+        (WI.RangeChart.prototype.layout):
+        (WI.RangeChart):
+        * UserInterface/Views/StackedColumnChart.js:
+        (WI.StackedColumnChart.prototype.layout):
+        (WI.StackedColumnChart):
+
 2019-03-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: CSS Changes: only show changes for the given node

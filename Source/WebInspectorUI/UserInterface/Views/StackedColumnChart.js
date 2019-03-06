@@ -40,9 +40,9 @@
 //
 //  <div class="stacked-column-chart">
 //      <svg viewBox="0 0 800 75">
-//          <rect class="section-class-name-3" width="<w>" height="<h3>" transform="translate(<x>, <y>)" />
-//          <rect class="section-class-name-2" width="<w>" height="<h2>" transform="translate(<x>, <y>)" />
-//          <rect class="section-class-name-1" width="<w>" height="<h1>" transform="translate(<x>, <y>)" />
+//          <rect class="section-class-name-3" width="<w>" height="<h3>" x="<x>" y="<y>" />
+//          <rect class="section-class-name-2" width="<w>" height="<h2>" x="<x>" y="<y>" />
+//          <rect class="section-class-name-1" width="<w>" height="<h1>" x="<x>" y="<y>" />
 //          ...
 //      </svg>
 //  </div>
@@ -118,7 +118,8 @@ WI.StackedColumnChart = class StackedColumnChart extends WI.View
                 rect.classList.add(this._sections[i]);
                 rect.setAttribute("width", width);
                 rect.setAttribute("height", height);
-                rect.setAttribute("transform", `translate(${x}, ${y})`);
+                rect.setAttribute("x", x);
+                rect.setAttribute("y", y);
             }
         }
     }

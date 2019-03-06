@@ -34,8 +34,8 @@
 //
 //  <div class="column-chart">
 //      <svg viewBox="0 0 800 75">
-//          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
-//          <rect width="<w>" height="<h>" transform="translate(<x>, <y>)" />
+//          <rect width="<w>" height="<h>" x="<x>" y="<y>" />
+//          <rect width="<w>" height="<h>" x="<x>" y="<y>" />
 //          ...
 //      </svg>
 //  </div>
@@ -94,7 +94,8 @@ WI.ColumnChart = class ColumnChart extends WI.View
             let rect = this._svgElement.appendChild(createSVGElement("rect"));
             rect.setAttribute("width", width);
             rect.setAttribute("height", height);
-            rect.setAttribute("transform", `translate(${x}, ${y})`);
+            rect.setAttribute("x", x);
+            rect.setAttribute("y", y);
         }
     }
 };
