@@ -276,6 +276,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 @interface WKAutocorrectionContext : UIWKAutocorrectionContext
++ (WKAutocorrectionContext *)emptyAutocorrectionContext;
 + (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)context;
 @end
 
@@ -3579,6 +3580,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
+- (void)_invokePendingAutocorrectionContextHandler:(WKAutocorrectionContext *)context
+{
+    if (auto handler = WTFMove(_pendingAutocorrectionContextHandler))
+        handler(context);
+}
+
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler
 {
     if (!completionHandler) {
@@ -3588,7 +3595,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 #if USE(UIKIT_KEYBOARD_ADDITIONS)
     if ([self _disableAutomaticKeyboardUI]) {
-        completionHandler([WKAutocorrectionContext autocorrectionContextWithContext:(WebKit::WebAutocorrectionContext { })]);
+        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
         return;
     }
 #endif
@@ -3596,14 +3603,21 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // FIXME: Remove the synchronous call when <rdar://problem/16207002> is fixed.
     const bool useSyncRequest = true;
 
+    [self _invokePendingAutocorrectionContextHandler:WKAutocorrectionContext.emptyAutocorrectionContext];
+
+    _pendingAutocorrectionContextHandler = completionHandler;
+    _page->requestAutocorrectionContext();
+
     if (useSyncRequest) {
-        completionHandler([WKAutocorrectionContext autocorrectionContextWithContext:_page->autocorrectionContextSync()]);
+        _page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->pageID(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+        [self _invokePendingAutocorrectionContextHandler:WKAutocorrectionContext.emptyAutocorrectionContext];
         return;
     }
+}
 
-    _page->requestAutocorrectionContext([protectedSelf = retainPtr(self), completion = makeBlockPtr(completionHandler)] (auto& context, auto) {
-        completion([WKAutocorrectionContext autocorrectionContextWithContext:context]);
-    });
+- (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
+{
+    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithContext:context]];
 }
 
 // UIWebFormAccessoryDelegate
@@ -7409,6 +7423,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 @end
 
 @implementation WKAutocorrectionContext
+
++ (WKAutocorrectionContext *)emptyAutocorrectionContext
+{
+    return [self autocorrectionContextWithContext:WebKit::WebAutocorrectionContext { }];
+}
 
 + (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)webContext
 {

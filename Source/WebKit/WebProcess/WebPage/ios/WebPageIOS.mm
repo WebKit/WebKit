@@ -2157,14 +2157,9 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     return { WTFMove(contextBefore), WTFMove(markedText), WTFMove(selectedText), WTFMove(contextAfter), location, length };
 }
 
-void WebPage::requestAutocorrectionContext(CallbackID callbackID)
+void WebPage::requestAutocorrectionContext()
 {
-    send(Messages::WebPageProxy::AutocorrectionContextCallback(autocorrectionContext(), callbackID));
-}
-
-void WebPage::autocorrectionContextSync(CompletionHandler<void(WebAutocorrectionContext&&)>&& completionHandler)
-{
-    completionHandler(autocorrectionContext());
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
 }
 
 static HTMLAnchorElement* containingLinkElement(Element* element)

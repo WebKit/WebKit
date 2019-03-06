@@ -857,6 +857,11 @@ void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* ges
 }
 #endif
 
+void PageClientImpl::handleAutocorrectionContext(const WebAutocorrectionContext& context)
+{
+    [m_contentView _handleAutocorrectionContext:context];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

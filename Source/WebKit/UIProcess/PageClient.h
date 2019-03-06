@@ -130,6 +130,7 @@ enum class ContinueUnsafeLoad : bool { No, Yes };
 
 struct FocusedElementInformation;
 struct InteractionInformationAtPosition;
+struct WebAutocorrectionContext;
 struct WebHitTestResultData;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -394,6 +395,8 @@ public:
 
     virtual void enableInspectorNodeSearch() = 0;
     virtual void disableInspectorNodeSearch() = 0;
+
+    virtual void handleAutocorrectionContext(const WebAutocorrectionContext&) = 0;
 #endif
 
     // Auxiliary Client Creation

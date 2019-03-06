@@ -78,8 +78,7 @@ messages -> WebPage LegacyReceiver {
     RequestAutocorrectionData(String textForAutocorrection, WebKit::CallbackID callbackID)
     ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Delayed
-    RequestAutocorrectionContext(WebKit::CallbackID callbackID)
-    AutocorrectionContextSync() -> (struct WebKit::WebAutocorrectionContext context) Delayed
+    RequestAutocorrectionContext()
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects) Async
     GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Delayed
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)

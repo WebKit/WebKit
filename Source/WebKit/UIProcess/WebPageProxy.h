@@ -650,8 +650,8 @@ public:
     void requestAutocorrectionData(const String& textForAutocorrection, WTF::Function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>&&);
     void applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&&);
     bool applyAutocorrection(const String& correction, const String& originalText);
-    void requestAutocorrectionContext(Function<void(const WebAutocorrectionContext&, CallbackBase::Error)>&&);
-    WebAutocorrectionContext autocorrectionContextSync();
+    void requestAutocorrectionContext();
+    void handleAutocorrectionContext(const WebAutocorrectionContext&);
     void requestDictationContext(WTF::Function<void (const String&, const String&, const String&, CallbackBase::Error)>&&);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);

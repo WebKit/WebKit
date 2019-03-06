@@ -85,6 +85,7 @@ class NativeWebTouchEvent;
 class SmartMagnificationController;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
+struct WebAutocorrectionContext;
 }
 
 @class _UILookupGestureRecognizer;
@@ -318,6 +319,7 @@ struct WKAutoCorrectionData {
 
     BOOL _hasSetUpInteractions;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> _domPasteRequestHandler;
+    BlockPtr<void(UIWKAutocorrectionContext *)> _pendingAutocorrectionContextHandler;
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
@@ -464,6 +466,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(PENCILKIT)
 - (WKDrawingCoordinator *)_drawingCoordinator;
 #endif
+
+- (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context;
 
 @end
 

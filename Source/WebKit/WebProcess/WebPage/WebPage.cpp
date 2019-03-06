@@ -268,6 +268,7 @@
 #include "InteractionInformationAtPosition.h"
 #include "InteractionInformationRequest.h"
 #include "RemoteLayerTreeDrawingArea.h"
+#include "WebAutocorrectionContext.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/Icon.h>
 #include <pal/spi/cocoa/CoreTextSPI.h>
@@ -6373,6 +6374,13 @@ void WebPage::didCompleteShareSheet(bool wasGranted, ShareSheetCallbackID callba
 WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(const String& originIdentifier)
 {
     auto response = WebCore::DOMPasteAccessResponse::DeniedForGesture;
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: Computing and sending an autocorrection context is a workaround for the fact that autocorrection context
+    // requests on iOS are currently synchronous in the web process. This allows us to immediately fulfill pending
+    // autocorrection context requests in the UI process on iOS before handling the DOM paste request. This workaround
+    // should be removed once <rdar://problem/16207002> is resolved.
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+#endif
     sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(rectForElementAtInteractionLocation(), originIdentifier), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(response));
     return response;
 }

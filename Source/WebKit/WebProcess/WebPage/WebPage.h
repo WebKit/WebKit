@@ -641,8 +641,7 @@ public:
     void requestAutocorrectionData(const String& textForAutocorrection, CallbackID);
     void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
     void syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&&);
-    void requestAutocorrectionContext(CallbackID);
-    void autocorrectionContextSync(CompletionHandler<void(WebAutocorrectionContext&&)>&&);
+    void requestAutocorrectionContext();
     void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);

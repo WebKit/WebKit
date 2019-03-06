@@ -563,22 +563,14 @@ void WebPageProxy::requestDictationContext(WTF::Function<void (const String&, co
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
-void WebPageProxy::requestAutocorrectionContext(Function<void(const WebAutocorrectionContext&, CallbackBase::Error)>&& callback)
+void WebPageProxy::requestAutocorrectionContext()
 {
-    if (!isValid()) {
-        callback({ }, CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
-
-    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::RequestAutocorrectionContext(callbackID), m_pageID);
+    m_process->send(Messages::WebPage::RequestAutocorrectionContext(), m_pageID);
 }
 
-WebAutocorrectionContext WebPageProxy::autocorrectionContextSync()
+void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
 {
-    WebAutocorrectionContext context;
-    m_process->sendSync(Messages::WebPage::AutocorrectionContextSync(), Messages::WebPage::AutocorrectionContextSync::Reply(context), m_pageID);
-    return context;
+    pageClient().handleAutocorrectionContext(context);
 }
 
 void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const String&, const String&, CallbackBase::Error)>&& callbackFunction)

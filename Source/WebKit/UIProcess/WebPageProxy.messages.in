@@ -417,6 +417,7 @@ messages -> WebPageProxy {
     DisableInspectorNodeSearch()
 
     UpdateStringForFind(String findString)
+    HandleAutocorrectionContext(struct WebKit::WebAutocorrectionContext context)
 #endif
 
     DidChangeInspectorFrontendCount(uint64_t count)

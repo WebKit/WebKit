@@ -236,6 +236,8 @@ private:
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
 
+    void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
+
     void didFinishProcessingAllPendingMouseEvents() final { }
 
 #if HAVE(PENCILKIT)

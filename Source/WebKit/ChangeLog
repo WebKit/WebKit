@@ -1,3 +1,74 @@
+2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Frequent 1 second IPC deadlocks when showing a paste callout
+        https://bugs.webkit.org/show_bug.cgi?id=195354
+        <rdar://problem/48624675>
+
+        Reviewed by Tim Horton.
+
+        When triggering programmatic paste, we frequently hit deadlocks due to sync IPC going from the UI process to the
+        web process and vice versa. What happens in this scenario is that prior to triggering programmatic paste, the
+        page may try to move focus to a different element (e.g. a hidden editable area) before calling `execCommand`.
+        This causes us to send an ElementDidFocus message to the UI process, followed by RequestDOMPasteAccess.
+
+        However, upon receiving ElementDidFocus, we reload input views and (in the process) UIKit requests the
+        autocorrection context, which we implement in WebKit using a sync message to the web process due to
+        <rdar://problem/16207002> and its blocking bug <rdar://problem/48383001>. This means we'll end up in a state
+        where both the UI process and web process are blocked on each other waiting for a sync IPC response, and the UI
+        process is hung for a second until the IPC message times out.
+
+        Ideally, we should fix this by addressing <rdar://problem/16207002>. However, this requires potentially large
+        changes in UIKit (<rdar://problem/48383001>); for the time being, work around this deadlock by refactoring
+        synchronous autocorrection context requests such that they can be resolved by an out-of-band IPC response
+        (HandleAutocorrectionContext). Then prior to requesting DOM paste access, preemptively send a
+        HandleAutocorrectionContext message to the UI process to unblock any pending synchronous autocorrection context
+        requests.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleAutocorrectionContext):
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Make it possible for WKContentView to remember its current pending autocorrection context completion handler.
+        This is invoked and cleared out in `-_invokePendingAutocorrectionContextHandler:`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _invokePendingAutocorrectionContextHandler:]):
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        (-[WKContentView _handleAutocorrectionContext:]):
+
+        Handle an autocorrection context response. This is invoked when the web process either handles an autocorrection
+        context message, or when it preemptively sends an autocorrection context before requesting DOM paste access.
+
+        (+[WKAutocorrectionContext emptyAutocorrectionContext]):
+
+        Add a helper to create an empty autocorrection context.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::handleAutocorrectionContext):
+        (WebKit::WebPageProxy::autocorrectionContextSync): Deleted.
+
+        Removed this sync version, since we now only have requestAutocorrectionContext.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestDOMPasteAccess):
+
+        Send WebPageProxy::HandleAutocorrectionContext, and add a FIXME referencing <rdar://problem/16207002>.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Split AutocorrectionContextSync into RequestAutocorrectionContext and HandleAutocorrectionContext; additionally,
+        remove the existing RequestAutocorrectionContext message.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAutocorrectionContext):
+        (WebKit::WebPage::autocorrectionContextSync): Deleted.
+
 2019-03-06  Rob Buis  <rbuis@igalia.com>
 
         Consider supporting the `referrerpolicy` attribute.
