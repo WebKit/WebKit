@@ -1,3 +1,33 @@
+2019-03-06  Saam Barati  <sbarati@apple.com>
+
+        Air::reportUsedRegisters must padInterference
+        https://bugs.webkit.org/show_bug.cgi?id=195303
+        <rdar://problem/48270343>
+
+        Reviewed by Keith Miller.
+
+        reportUsedRegisters uses reg liveness to eliminate loads/moves into dead
+        registers. However, liveness can report incorrect results in certain 
+        scenarios when considering liveness at instruction boundaries. For example,
+        it can go wrong when an Inst has a LateUse of a register and the following
+        Inst has an EarlyDef of that same register. Such a scenario could lead us
+        to incorrectly say the register is not live-in to the first Inst. Pad
+        interference inserts Nops between such instruction boundaries that cause
+        this issue.
+        
+        The test with this patch fixes the issue in reportUsedRegisters. This patch
+        also conservatively makes it so that lowerAfterRegAlloc calls padInterference
+        since it also reasons about liveness.
+
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirPadInterference.h:
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/testb3.cpp:
+        (JSC::B3::testReportUsedRegistersLateUseNotDead):
+        (JSC::B3::run):
+
 2019-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI should not propagate AbstractValue relying on constant folding phase

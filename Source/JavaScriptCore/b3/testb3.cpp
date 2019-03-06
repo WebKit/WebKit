@@ -16723,6 +16723,53 @@ void testDemotePatchpointTerminal()
     validate(proc);
 }
 
+void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+    BasicBlock* root = proc.addBlock();
+
+    RegisterSet allRegs = RegisterSet::allGPRs();
+    allRegs.exclude(RegisterSet::stackRegisters());
+    allRegs.exclude(RegisterSet::reservedHardwareRegisters());
+
+    {
+        // Make every reg 42 (just needs to be a value other than 10).
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+        Value* const42 = root->appendNew<Const32Value>(proc, Origin(), 42);
+        for (Reg reg : allRegs)
+            patchpoint->append(const42, ValueRep::reg(reg));
+        patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams&) { });
+    }
+
+    {
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+        Value* const10 = root->appendNew<Const32Value>(proc, Origin(), 10);
+        for (Reg reg : allRegs)
+            patchpoint->append(const10, ValueRep::lateReg(reg));
+        patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            for (Reg reg : allRegs) {
+                auto done = jit.branch32(CCallHelpers::Equal, reg.gpr(), CCallHelpers::TrustedImm32(10));
+                jit.breakpoint();
+                done.link(&jit);
+            }
+        });
+    }
+
+    {
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
+        patchpoint->setGenerator([&] (CCallHelpers&, const StackmapGenerationParams& params) {
+            RELEASE_ASSERT(allRegs.contains(params[0].gpr()));
+        });
+    }
+
+    root->appendNewControlValue(proc, Return, Origin());
+
+    compileAndRun<void>(proc);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -18348,6 +18395,8 @@ void run(const char* filter)
         RUN(testTernarySubInstructionSelection(Identity, Int64, Air::Sub64));
         RUN(testTernarySubInstructionSelection(Trunc, Int32, Air::Sub32));
     }
+
+    RUN(testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead());
 
     if (tasks.isEmpty())
         usage();

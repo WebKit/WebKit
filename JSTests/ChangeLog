@@ -1,3 +1,13 @@
+2019-03-06  Saam Barati  <sbarati@apple.com>
+
+        Air::reportUsedRegisters must padInterference
+        https://bugs.webkit.org/show_bug.cgi?id=195303
+        <rdar://problem/48270343>
+
+        Reviewed by Keith Miller.
+
+        * stress/optional-def-arg-width-should-be-both-early-and-late-use.js: Added.
+
 2019-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] AI should not propagate AbstractValue relying on constant folding phase
