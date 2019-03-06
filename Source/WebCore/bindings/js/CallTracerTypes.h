@@ -58,7 +58,7 @@
 
 namespace WebCore {
 
-typedef Variant<
+using RecordCanvasActionVariant = Variant<
     CanvasDirection,
     CanvasFillRule,
     CanvasLineCap,
@@ -92,7 +92,7 @@ typedef Variant<
     RefPtr<HTMLVideoElement>,
 #endif
     RefPtr<ImageBitmap>,
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
     RefPtr<TypedOMCSSImageValue>,
 #endif
     RefPtr<ImageData>,
@@ -107,6 +107,6 @@ typedef Variant<
     int32_t,
     uint8_t,
     bool
-> RecordCanvasActionVariant;
+>;
 
 } // namespace WebCore
