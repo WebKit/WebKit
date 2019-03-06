@@ -1,3 +1,15 @@
+2019-03-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Sandbox call violation causes WebContent process to crash
+        https://bugs.webkit.org/show_bug.cgi?id=195379
+        <rdar://problem/48647263>
+
+        Reviewed by Brent Fulgham.
+
+        A new call needs to be added to the allow list in the WebContent process' sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-03-06  Antti Koivisto  <antti@apple.com>
 
         [iOS] Basic hit testing for content overlapping fast-scrollable overflow

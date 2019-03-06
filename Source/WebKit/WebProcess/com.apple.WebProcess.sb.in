@@ -969,6 +969,7 @@
         (syscall-number SYS_ulock_wake)
         (syscall-number SYS_work_interval_ctl)
         (syscall-number SYS_kdebug_typefilter)
+        (syscall-number SYS_memorystatus_control) ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
     )
 )
 
