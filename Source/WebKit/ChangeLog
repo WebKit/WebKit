@@ -1,3 +1,16 @@
+2019-03-05  Dean Jackson  <dino@apple.com>
+
+        Fix WKPasswordView compilation on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195344
+        <rdar://problem/48620066>
+
+        Reviewed by Dan Bates.
+
+        Use WebKitAdditions.
+
+        * UIProcess/ios/WKPasswordView.mm:
+        (-[WKPasswordView showInScrollView:]):
+
 2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Frequent 1 second IPC deadlocks when showing a paste callout
