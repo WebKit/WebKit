@@ -3002,6 +3002,9 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 {
     m_isSuspendedUnderLock = false;
     cancelMarkLayersVolatile();
+
+    // FIXME: In iOS, we sometimes never unset ProcessSuspended. See <rdar://problem/48538837>.
+    unfreezeLayerTree(LayerTreeFreezeReason::ProcessSuspended);
     unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];

@@ -1,3 +1,18 @@
+2019-03-06  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r238490): YouTube.com: Returning PiP to Safari after sleeping device loses page
+        https://bugs.webkit.org/show_bug.cgi?id=195364
+        <rdar://problem/48538837>
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure we unset the LayerTreeFreezeReason::ProcessSuspended layer tree freeze reason
+        when WebPage::applicationWillEnterForeground() is called. This restores pre-r238490
+        behavior and addresses the issue with PiP on youtube.com.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillEnterForeground):
+
 2019-03-05  Dean Jackson  <dino@apple.com>
 
         Fix WKPasswordView compilation on iOS
