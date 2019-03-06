@@ -1,5 +1,69 @@
 2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Statistics and Sources sections
+        https://bugs.webkit.org/show_bug.cgi?id=195202
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Base/Utilities.js:
+        (Map.prototype.getOrInitialize):
+        Helper to get and if not found initialize with a value.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > th):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.number):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.label):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .show-more):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter:hover):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .active):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .active + .active):
+        (@media (prefers-color-scheme: dark)):
+        Colors for the statistics sections.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView):
+        (WI.CPUTimelineView.prototype.reset):
+        (WI.CPUTimelineView.prototype.clear):
+        (WI.CPUTimelineView.prototype._clearStatistics):
+        (WI.CPUTimelineView.prototype._clearSources):
+        Updates for additional sections.
+        Include a cache of the statisiticsData so we can relayout parts of the UI and
+        avoid an entire UI update.
+
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype._layoutBreakdownChart):
+        (WI.CPUTimelineView.prototype._layoutStatisticsAndSources):
+        (WI.CPUTimelineView.prototype._layoutStatisticsSection.createEllipsisElement):
+        (WI.CPUTimelineView.prototype._layoutStatisticsSection):
+        (WI.CPUTimelineView.prototype._layoutSourcesSection.firstNonNativeCallFrame):
+        (WI.CPUTimelineView.prototype._layoutSourcesSection.keyForSourceCodeLocation):
+        (WI.CPUTimelineView.prototype._layoutSourcesSection.labelForLocation):
+        (WI.CPUTimelineView.prototype._layoutSourcesSection.createEllipsisElement):
+        (WI.CPUTimelineView.prototype._layoutSourcesSection):
+        Extract layouts into helper methods to avoid an enormous layout method.
+
+        (WI.CPUTimelineView.prototype._computeSamplingData.incrementTypeCount):
+        (WI.CPUTimelineView.prototype._computeSamplingData):
+        Compute additional data when going through script events.
+
+        (WI.CPUTimelineView.prototype._resetSourcesFilters):
+        (WI.CPUTimelineView.prototype._addSourcesFilter):
+        (WI.CPUTimelineView.prototype._removeSourcesFilter):
+        (WI.CPUTimelineView.prototype._updateSourcesFilters):
+        Helpers for updating the source filters.
+
+        (WI.CPUTimelineView.prototype._createTableRow):
+        (WI.CPUTimelineView.prototype._insertTableRow):
+        Helpers for creating rows in the statistics / sources tables.
+
+2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Simplify chart <rect>s with x/y attributes instead of transform(x, y)
         https://bugs.webkit.org/show_bug.cgi?id=195352
 

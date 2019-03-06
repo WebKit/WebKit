@@ -238,7 +238,7 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 .resource-link,
 .go-to-link {
-    color: hsl(0, 0%, 33%);
+    color: var(--link-text-color);
     text-decoration: underline;
     cursor: pointer;
     -webkit-user-select: none;
@@ -475,11 +475,6 @@ body[dir=rtl] .go-to-arrow {
 
     :focus .selected .go-to-arrow {
         filter: unset;
-    }
-
-    .resource-link,
-    .go-to-link {
-        color: var(--text-color-secondary);
     }
 
     .expand-list-button {

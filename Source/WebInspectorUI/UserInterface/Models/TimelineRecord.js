@@ -108,10 +108,9 @@ WI.TimelineRecord = class TimelineRecord extends WI.Object
             return null;
 
         // Return the first non-native code call frame as the initiator.
-        for (var i = 0; i < this._callFrames.length; ++i) {
-            if (this._callFrames[i].nativeCode)
-                continue;
-            return this._callFrames[i];
+        for (let frame of this._callFrames) {
+            if (!frame.nativeCode)
+                return frame;
         }
 
         return null;

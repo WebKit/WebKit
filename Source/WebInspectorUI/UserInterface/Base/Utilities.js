@@ -112,9 +112,24 @@ Object.defineProperty(Map.prototype, "take",
 {
     value(key)
     {
-        var deletedValue = this.get(key);
+        let deletedValue = this.get(key);
         this.delete(key);
         return deletedValue;
+    }
+});
+
+Object.defineProperty(Map.prototype, "getOrInitialize",
+{
+    value(key, initialValue)
+    {
+        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
+
+        let value = this.get(key);
+        if (value)
+            return value;
+
+        this.set(key, initialValue);
+        return initialValue;
     }
 });
 

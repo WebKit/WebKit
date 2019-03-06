@@ -45,9 +45,9 @@ body .timeline-view.cpu {
     width: 15px;
     height: 15px;
     -webkit-margin-start: 7px;
-    color: white;
     font-size: 12px;
-    background-color: darkgray;
+    color: var(--gray-foreground-color);
+    background-color: var(--gray-background-color);
     border-radius: 50%;
 }
 
@@ -318,13 +318,80 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
     font-size: 14px;
 }
 
-@media (prefers-color-scheme: dark) {
-    .timeline-view.cpu > .content .subtitle > .info {
-        background-color: gray;
-    }
+.timeline-view.cpu > .content > .overview > .chart > .container.stats {
+    padding: 0 5px;
+    white-space: nowrap;
+    -webkit-user-select: text;
+}
 
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table {
+    overflow: hidden;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > th {
+    text-align: end;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.number {
+    min-width: 25px;
+    padding: 0px 2px;
+    text-align: end;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table > tr > td.label {
+    text-align: start;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .show-more {
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .unknown {
+    color: var(--link-text-color);
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter-clear {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    font-size: 12px;
+    color: var(--gray-foreground-color);
+    background-color: var(--gray-background-color);
+    border-radius: 50%;
+    line-height: 12px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter {
+    padding: 0 6px 1px;
+    font-size: 10px;
+    background-color: hsl(0, 0%, 85%);
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table :matches(.filter, .filter-clear):hover {
+    opacity: 0.7;
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active {
+    color: var(--selected-foreground-color);
+    background-color: var(--selected-background-color);
+}
+
+.timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter.active + .filter.active {
+    -webkit-margin-start: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
     .timeline-view.cpu .gauge-chart:not(.empty) > svg > polygon.needle {
         fill: hsla(0, 0%, var(--foreground-lightness), 0.85);
         stroke: hsla(0, 0%, var(--foreground-lightness), 0.85);
+    }
+
+    .timeline-view.cpu > .content > .overview > .chart > .container.stats > table .filter {
+        background-color: hsl(0, 0%, 33%);
     }
 }

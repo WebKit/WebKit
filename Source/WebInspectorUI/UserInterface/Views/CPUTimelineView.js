@@ -35,6 +35,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this.element.classList.add("cpu");
 
+        this._statisticsData = null;
+        this._sectionLimit = CPUTimelineView.defaultSectionLimit;
+
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
     }
 
@@ -63,6 +66,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     static get mediumEnergyThreshold() { return 50; }
     static get highEnergyThreshold() { return 150; }
 
+    static get defaultSectionLimit() { return 5; }
+
     // Public
 
     shown()
@@ -83,6 +88,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     {
         super.reset();
 
+        this._resetSourcesFilters();
+
         this.clear();
     }
 
@@ -98,6 +105,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._energyChart.clear();
         this._energyChart.needsLayout();
         this._clearEnergyImpactText();
+
+        this._clearStatistics();
+        this._clearSources();
 
         function clearUsageView(view) {
             view.clear();
@@ -115,6 +125,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._removeWorkerThreadViews();
 
         this._mainThreadWorkIndicatorView.clear();
+
+        this._statisticsData = null;
+        this._sectionLimit = CPUTimelineView.defaultSectionLimit;
     }
 
     // Protected
@@ -145,7 +158,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             let chartSubtitleElement = chartElement.appendChild(document.createElement("div"));
             chartSubtitleElement.classList.add("subtitle");
             chartSubtitleElement.textContent = subtitle;
-            chartSubtitleElement.title = tooltip;
+            if (tooltip)
+                chartSubtitleElement.title = tooltip;
 
             let chartFlexContainerElement = chartElement.appendChild(document.createElement("div"));
             chartFlexContainerElement.classList.add("container");
@@ -189,8 +203,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let dividerElement = overviewElement.appendChild(document.createElement("div"));
         dividerElement.classList.add("divider");
 
-        let energyTooltip = WI.UIString("Estimated energy impact.")
-        let energyContainerElement = createChartContainer(overviewElement, WI.UIString("Energy Impact"), energyTooltip);
+        let energyContainerElement = createChartContainer(overviewElement, WI.UIString("Energy Impact"), WI.UIString("Estimated energy impact."));
         energyContainerElement.classList.add("energy");
 
         let energyChartElement = energyContainerElement.parentElement;
@@ -288,7 +301,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._threadsDetailsElement.open = WI.settings.cpuTimelineThreadDetailsExpanded.value;
         this._threadsDetailsElement.addEventListener("toggle", (event) => {
             WI.settings.cpuTimelineThreadDetailsExpanded.value = this._threadsDetailsElement.open;
-            this.updateLayout();
+            if (this._threadsDetailsElement.open)
+                this.updateLayout(WI.CPUTimelineView.LayoutReason.Internal);
         });
 
         let threadsSubtitleElement = this._threadsDetailsElement.appendChild(document.createElement("summary"));
@@ -312,6 +326,78 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this._workerViews = [];
 
+        this._sourcesFilter = {
+            timer: new Set,
+            event: new Set,
+            observer: new Set,
+        };
+
+        let bottomOverviewElement = contentElement.appendChild(document.createElement("div"));
+        bottomOverviewElement.classList.add("overview");
+
+        let statisticsContainerElement = createChartContainer(bottomOverviewElement, WI.UIString("Statistics"));
+        statisticsContainerElement.classList.add("stats");
+
+        this._statisticsTable = statisticsContainerElement.appendChild(document.createElement("table"));
+        this._statisticsRows = [];
+
+        {
+            let {headerCell, numberCell} = this._createTableRow(this._statisticsTable);
+            headerCell.textContent = WI.UIString("Script Entries:");
+            this._scriptEntriesNumberElement = numberCell;
+        }
+
+        this._clearStatistics();
+
+        let bottomDividerElement = bottomOverviewElement.appendChild(document.createElement("div"));
+        bottomDividerElement.classList.add("divider");
+
+        let sourcesContainerElement = createChartContainer(bottomOverviewElement, WI.UIString("Sources"));
+        sourcesContainerElement.classList.add("stats");
+
+        this._sourcesTable = sourcesContainerElement.appendChild(document.createElement("table"));
+        this._sourcesRows = [];
+
+        {
+            let {row, headerCell, numberCell, labelCell} = this._createTableRow(this._sourcesTable);
+            headerCell.textContent = WI.UIString("Filter:");
+            this._sourcesFilterRow = row;
+            this._sourcesFilterRow.hidden = true;
+            this._sourcesFilterNumberElement = numberCell;
+            this._sourcesFilterLabelElement = labelCell;
+
+            let filterClearElement = numberCell.appendChild(document.createElement("span"));
+            filterClearElement.className = "filter-clear";
+            filterClearElement.textContent = multiplicationSign;
+            filterClearElement.addEventListener("click", (event) => {
+                this._resetSourcesFilters();
+                this._layoutStatisticsAndSources();
+            });
+        }
+        {
+            let {row, headerCell, numberCell, labelCell} = this._createTableRow(this._sourcesTable);
+            headerCell.textContent = WI.UIString("Timers:");
+            this._timerInstallationsRow = row;
+            this._timerInstallationsNumberElement = numberCell;
+            this._timerInstallationsLabelElement = labelCell;
+        }
+        {
+            let {row, headerCell, numberCell, labelCell} = this._createTableRow(this._sourcesTable);
+            headerCell.textContent = WI.UIString("Event Handlers:");
+            this._eventHandlersRow = row;
+            this._eventHandlersNumberElement = numberCell;
+            this._eventHandlersLabelElement = labelCell;
+        }
+        {
+            let {row, headerCell, numberCell, labelCell} = this._createTableRow(this._sourcesTable);
+            headerCell.textContent = WI.UIString("Observer Handlers:");
+            this._observerHandlersRow = row;
+            this._observerHandlersNumberElement = numberCell;
+            this._observerHandlersLabelElement = labelCell;
+        }
+
+        this._clearSources();
+
         this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
     }
 
@@ -319,6 +405,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     {
         if (this.layoutReason === WI.View.LayoutReason.Resize)
             return;
+
+        if (this.layoutReason !== WI.CPUTimelineView.LayoutReason.Internal)
+            this._sectionLimit = CPUTimelineView.defaultSectionLimit;
 
         // Always update timeline ruler.
         this._timelineRuler.zeroTime = this.zeroTime;
@@ -345,37 +434,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             return;
         }
 
-        let samplingData = this._computeSamplingData(graphStartTime, visibleEndTime);
-        let nonIdleSamplesCount = samplingData.samples.length - samplingData.samplesIdle;
-        if (!nonIdleSamplesCount) {
-            this._breakdownChart.clear();
-            this._breakdownChart.needsLayout();
-            this._clearBreakdownLegend();
-        } else {
-            let percentScript = samplingData.samplesScript / nonIdleSamplesCount;
-            let percentLayout = samplingData.samplesLayout / nonIdleSamplesCount;
-            let percentPaint = samplingData.samplesPaint / nonIdleSamplesCount;
-            let percentStyle = samplingData.samplesStyle / nonIdleSamplesCount;
-
-            this._breakdownLegendScriptElement.textContent = `${Number.percentageString(percentScript)} (${samplingData.samplesScript})`;
-            this._breakdownLegendLayoutElement.textContent = `${Number.percentageString(percentLayout)} (${samplingData.samplesLayout})`;
-            this._breakdownLegendPaintElement.textContent = `${Number.percentageString(percentPaint)} (${samplingData.samplesPaint})`;
-            this._breakdownLegendStyleElement.textContent = `${Number.percentageString(percentStyle)} (${samplingData.samplesStyle})`;
-
-            this._breakdownChart.values = [percentScript * 100, percentLayout * 100, percentPaint * 100, percentStyle * 100];
-            this._breakdownChart.needsLayout();
-
-            let centerElement = this._breakdownChart.centerElement;
-            let samplesElement = centerElement.firstChild;
-            if (!samplesElement) {
-                samplesElement = centerElement.appendChild(document.createElement("div"));
-                samplesElement.classList.add("samples");
-                samplesElement.title = WI.UIString("Time spent on the main thread");
-            }
-
-            let millisecondsStringNoDecimal = WI.UIString("%.0fms").format(nonIdleSamplesCount);
-            samplesElement.textContent = millisecondsStringNoDecimal;
-        }
+        this._statisticsData = this._computeStatisticsData(graphStartTime, visibleEndTime);
+        this._layoutBreakdownChart();
+        this._layoutStatisticsAndSources();
 
         let dataPoints = [];
         let workersDataMap = new Map;
@@ -637,12 +698,359 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         let graphWidth = (graphEndTime - graphStartTime) / secondsPerPixel;
         let size = new WI.Size(graphWidth, CPUTimelineView.indicatorViewHeight);
-        this._mainThreadWorkIndicatorView.updateChart(samplingData.samples, size, visibleEndTime, xScaleIndicatorRange);
+        this._mainThreadWorkIndicatorView.updateChart(this._statisticsData.samples, size, visibleEndTime, xScaleIndicatorRange);
 
         this._layoutEnergyChart(average, visibleDuration);
     }
 
     // Private
+
+    _layoutBreakdownChart()
+    {
+        let {samples, samplesScript, samplesLayout, samplesPaint, samplesStyle, samplesIdle} = this._statisticsData;
+
+        let nonIdleSamplesCount = samples.length - samplesIdle;
+        if (!nonIdleSamplesCount) {
+            this._breakdownChart.clear();
+            this._breakdownChart.needsLayout();
+            this._clearBreakdownLegend();
+            return;
+        }
+
+        let percentScript = samplesScript / nonIdleSamplesCount;
+        let percentLayout = samplesLayout / nonIdleSamplesCount;
+        let percentPaint = samplesPaint / nonIdleSamplesCount;
+        let percentStyle = samplesStyle / nonIdleSamplesCount;
+
+        this._breakdownLegendScriptElement.textContent = `${Number.percentageString(percentScript)} (${samplesScript})`;
+        this._breakdownLegendLayoutElement.textContent = `${Number.percentageString(percentLayout)} (${samplesLayout})`;
+        this._breakdownLegendPaintElement.textContent = `${Number.percentageString(percentPaint)} (${samplesPaint})`;
+        this._breakdownLegendStyleElement.textContent = `${Number.percentageString(percentStyle)} (${samplesStyle})`;
+
+        this._breakdownChart.values = [percentScript * 100, percentLayout * 100, percentPaint * 100, percentStyle * 100];
+        this._breakdownChart.needsLayout();
+
+        let centerElement = this._breakdownChart.centerElement;
+        let samplesElement = centerElement.firstChild;
+        if (!samplesElement) {
+            samplesElement = centerElement.appendChild(document.createElement("div"));
+            samplesElement.classList.add("samples");
+            samplesElement.title = WI.UIString("Time spent on the main thread");
+        }
+
+        let millisecondsStringNoDecimal = WI.UIString("%.0fms").format(nonIdleSamplesCount);
+        samplesElement.textContent = millisecondsStringNoDecimal;
+    }
+
+    _layoutStatisticsAndSources()
+    {
+        this._layoutStatisticsSection();
+        this._layoutSourcesSection();
+    }
+
+    _layoutStatisticsSection()
+    {
+        let statistics = this._statisticsData;
+
+        this._clearStatistics();
+
+        this._scriptEntriesNumberElement.textContent = statistics.scriptEntries;
+
+        let createFilterElement = (type, name) => {
+            let span = document.createElement("span");
+            span.className = "filter";
+            span.textContent = name;
+            span.addEventListener("mouseup", (event) => {
+                if (span.classList.contains("active"))
+                    this._removeSourcesFilter(type, name);
+                else
+                    this._addSourcesFilter(type, name);
+
+                this._layoutStatisticsAndSources();
+            });
+
+            span.classList.toggle("active", this._sourcesFilter[type].has(name));
+
+            return span;
+        };
+
+        let expandAllSections = () => {
+            this._sectionLimit = Infinity;
+            this._layoutStatisticsAndSources();
+        };
+
+        function createEllipsisElement() {
+            let span = document.createElement("span");
+            span.className = "show-more";
+            span.role = "button";
+            span.textContent = ellipsis;
+            span.addEventListener("click", (event) => {
+                expandAllSections();
+            });
+            return span;
+        }
+
+        // Sort a Map of key => count values in descending order.
+        function sortMapByEntryCount(map) {
+            let entries = Array.from(map);
+            entries.sort((entryA, entryB) => entryB[1] - entryA[1]);
+            return new Map(entries);
+        }
+
+        if (statistics.timerTypes.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCount(statistics.timerTypes);
+            for (let [timerType, count] of sorted) {
+                let headerValue = i === 0 ? WI.UIString("Timers:") : "";
+                let timerTypeElement = createFilterElement("timer", timerType);
+                this._insertTableRow(this._statisticsTable, this._statisticsRows, {headerValue, numberValue: count, labelValue: timerTypeElement});
+
+                if (++i === this._sectionLimit && sorted.size > this._sectionLimit) {
+                    this._insertTableRow(this._statisticsTable, this._statisticsRows, {labelValue: createEllipsisElement()});
+                    break;
+                }
+            }
+        }
+
+        if (statistics.eventTypes.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCount(statistics.eventTypes);
+            for (let [eventType, count] of sorted) {
+                let headerValue = i === 0 ? WI.UIString("Events:") : "";
+                let eventTypeElement = createFilterElement("event", eventType);
+                this._insertTableRow(this._statisticsTable, this._statisticsRows, {headerValue, numberValue: count, labelValue: eventTypeElement});
+
+                if (++i === this._sectionLimit && sorted.size > this._sectionLimit) {
+                    this._insertTableRow(this._statisticsTable, this._statisticsRows, {labelValue: createEllipsisElement()});
+                    break;
+                }
+            }
+        }
+
+        if (statistics.observerTypes.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCount(statistics.observerTypes);
+            for (let [observerType, count] of sorted) {
+                let headerValue = i === 0 ? WI.UIString("Observers:") : "";
+                let observerTypeElement = createFilterElement("observer", observerType);
+                this._insertTableRow(this._statisticsTable, this._statisticsRows, {headerValue, numberValue: count, labelValue: observerTypeElement});
+
+                if (++i === this._sectionLimit && sorted.size > this._sectionLimit) {
+                    this._insertTableRow(this._statisticsTable, this._statisticsRows, {labelValue: createEllipsisElement()});
+                    break;
+                }
+            }
+        }
+    }
+
+    _layoutSourcesSection()
+    {
+        let statistics = this._statisticsData;
+
+        this._clearSources();
+
+        const unknownLocationKey = "unknown";
+
+        function keyForSourceCodeLocation(sourceCodeLocation) {
+            if (!sourceCodeLocation)
+                return unknownLocationKey;
+
+            return sourceCodeLocation.sourceCode.url + ":" + sourceCodeLocation.lineNumber + ":" + sourceCodeLocation.columnNumber;
+        }
+
+        function labelForLocation(key, sourceCodeLocation, functionName) {
+            if (key === unknownLocationKey) {
+                let span = document.createElement("span");
+                span.className = "unknown";
+                span.textContent = WI.UIString("Unknown Location");
+                return span;
+            }
+
+            const options = {
+                nameStyle: WI.SourceCodeLocation.NameStyle.Short,
+                columnStyle: WI.SourceCodeLocation.ColumnStyle.Shown,
+                dontFloat: true,
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            };
+            return WI.createSourceCodeLocationLink(sourceCodeLocation, options);
+        }
+
+        let timerFilters = this._sourcesFilter.timer;
+        let eventFilters = this._sourcesFilter.event;
+        let observerFilters = this._sourcesFilter.observer;
+        let hasFilters = (timerFilters.size || eventFilters.size || observerFilters.size);
+
+        let sectionLimit = this._sectionLimit;
+        if (isFinite(sectionLimit) && hasFilters)
+            sectionLimit = CPUTimelineView.defaultSectionLimit * 2;
+
+        let expandAllSections = () => {
+            this._sectionLimit = Infinity;
+            this._layoutStatisticsAndSources();
+        };
+
+        function createEllipsisElement() {
+            let span = document.createElement("span");
+            span.className = "show-more";
+            span.role = "button";
+            span.textContent = ellipsis;
+            span.addEventListener("click", (event) => {
+                expandAllSections();
+            });
+            return span;
+        }
+
+        let timerMap = new Map;
+        let eventHandlerMap = new Map;
+        let observerCallbackMap = new Map;
+        let seenTimers = new Set;
+
+        if (!hasFilters || timerFilters.size) {
+            // Aggregate timers on the location where the timers were installed.
+            // For repeating timers, this includes the total counts the interval fired in the selected time range.
+            for (let record of statistics.timerInstallationRecords) {
+                if (timerFilters.size) {
+                    if (record.eventType === WI.ScriptTimelineRecord.EventType.AnimationFrameRequested && !timerFilters.has("requestAnimationFrame"))
+                        continue;
+                    if (record.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled && !timerFilters.has("setTimeout"))
+                        continue;
+                }
+
+                let callFrame = record.initiatorCallFrame;
+                let sourceCodeLocation = callFrame ? callFrame.sourceCodeLocation : record.sourceCodeLocation;
+                let functionName = callFrame ? callFrame.functionName : "";
+                let key = keyForSourceCodeLocation(sourceCodeLocation);
+                let entry = timerMap.getOrInitialize(key, {sourceCodeLocation, functionName, count: 0, repeating: false});
+                if (record.details) {
+                    let timerIdentifier = record.details.timerId;
+                    let repeatingEntry = statistics.repeatingTimers.get(timerIdentifier);
+                    let count = repeatingEntry ? repeatingEntry.count : 1;
+                    entry.count += count;
+                    if (record.details.repeating)
+                        entry.repeating = true;
+                    seenTimers.add(timerIdentifier);
+                } else
+                    entry.count += 1;
+            }
+
+            // Aggregate repeating timers where we did not see the installation in the selected time range.
+            // This will use the source code location of where the timer fired, which is better than nothing.
+            if (!hasFilters || timerFilters.has("setTimeout")) {
+                for (let [timerId, repeatingEntry] of statistics.repeatingTimers) {
+                    if (seenTimers.has(timerId))
+                        continue;
+                    // FIXME: <https://webkit.org/b/195351> Web Inspector: CPU Usage Timeline - better resolution of installation source for repeated timers
+                    // We could have a map of all repeating timer installations in the whole recording
+                    // so that we can provide a function name for these repeating timers lacking an installation point.
+                    let sourceCodeLocation = repeatingEntry.record.sourceCodeLocation;
+                    let key = keyForSourceCodeLocation(sourceCodeLocation);
+                    let entry = timerMap.getOrInitialize(key, {sourceCodeLocation, count: 0, repeating: false});
+                    entry.count += repeatingEntry.count;
+                    entry.repeating = true;
+                }
+            }
+        }
+
+        if (!hasFilters || eventFilters.size) {
+            for (let record of statistics.eventHandlerRecords) {
+                if (eventFilters.size && !eventFilters.has(record.details))
+                    continue;
+                let sourceCodeLocation = record.sourceCodeLocation;
+                let key = keyForSourceCodeLocation(sourceCodeLocation);
+                let entry = eventHandlerMap.getOrInitialize(key, {sourceCodeLocation, count: 0});
+                entry.count += 1;
+            }
+        }
+
+        if (!hasFilters || observerFilters.size) {
+            for (let record of statistics.observerCallbackRecords) {
+                if (observerFilters.size && !observerFilters.has(record.details))
+                    continue;
+                let sourceCodeLocation = record.sourceCodeLocation;
+                let key = keyForSourceCodeLocation(record.sourceCodeLocation);
+                let entry = observerCallbackMap.getOrInitialize(key, {sourceCodeLocation, count: 0});
+                entry.count += 1;
+            }
+        }
+
+        const headerValue = "";
+
+        // Sort a Map of key => {count} objects in descending order.
+        function sortMapByEntryCountProperty(map) {
+            let entries = Array.from(map);
+            entries.sort((entryA, entryB) => entryB[1].count - entryA[1].count);
+            return new Map(entries);
+        }
+
+        if (timerMap.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCountProperty(timerMap);
+            for (let [key, entry] of sorted) {
+                let numberValue = entry.repeating ? WI.UIString("~%s", "Approximate Number", "Approximate count of events").format(entry.count) : entry.count;
+                let sourceCodeLocation = entry.callFrame ? entry.callFrame.sourceCodeLocation : entry.sourceCodeLocation;
+                let labelValue = labelForLocation(key, sourceCodeLocation);
+                let followingRow = this._eventHandlersRow;
+
+                let row;
+                if (i === 0) {
+                    row = this._timerInstallationsRow;
+                    this._timerInstallationsNumberElement.textContent = numberValue;
+                    this._timerInstallationsLabelElement.append(labelValue);
+                } else
+                    row = this._insertTableRow(this._sourcesTable, this._sourcesRows, {headerValue, numberValue, labelValue, followingRow});
+
+                if (entry.functionName)
+                    row.querySelector(".label").append(` ${enDash} ${entry.functionName}`);
+
+                if (++i === sectionLimit && sorted.size > sectionLimit) {
+                    this._insertTableRow(this._sourcesTable, this._sourcesRows, {labelValue: createEllipsisElement(), followingRow});
+                    break;
+                }
+            }
+        }
+
+        if (eventHandlerMap.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCountProperty(eventHandlerMap);
+            for (let [key, entry] of sorted) {
+                let numberValue = entry.count;
+                let labelValue = labelForLocation(key, entry.sourceCodeLocation);
+                let followingRow = this._observerHandlersRow;
+
+                if (i === 0) {
+                    this._eventHandlersNumberElement.textContent = numberValue;
+                    this._eventHandlersLabelElement.append(labelValue);
+                } else
+                    this._insertTableRow(this._sourcesTable, this._sourcesRows, {headerValue, numberValue, labelValue, followingRow});
+
+                if (++i === sectionLimit && sorted.size > sectionLimit) {
+                    this._insertTableRow(this._sourcesTable, this._sourcesRows, {labelValue: createEllipsisElement(), followingRow});
+                    break;
+                }
+            }
+        }
+
+        if (observerCallbackMap.size) {
+            let i = 0;
+            let sorted = sortMapByEntryCountProperty(observerCallbackMap);
+            for (let [key, entry] of sorted) {
+                let numberValue = entry.count;
+                let labelValue = labelForLocation(key, entry.sourceCodeLocation);
+
+                if (i === 0) {
+                    this._observerHandlersNumberElement.textContent = numberValue;
+                    this._observerHandlersLabelElement.append(labelValue);
+                } else
+                    this._insertTableRow(this._sourcesTable, this._sourcesRows, {headerValue, numberValue, labelValue});
+
+                if (++i === sectionLimit && sorted.size > sectionLimit) {
+                    this._insertTableRow(this._sourcesTable, this._sourcesRows, {labelValue: createEllipsisElement()});
+                    break;
+                }
+            }
+        }
+    }
 
     _layoutEnergyChart(average, visibleDuration)
     {
@@ -696,7 +1104,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         }
     }
 
-    _computeSamplingData(startTime, endTime)
+    _computeStatisticsData(startTime, endTime)
     {
         // Compute per-millisecond samples of what the main thread was doing.
         // We construct an array for every millisecond between the start and end time
@@ -717,23 +1125,78 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         const includeRecordBeforeStart = true;
 
+        function incrementTypeCount(map, key) {
+            let entry = map.get(key);
+            if (entry)
+                map.set(key, entry + 1);
+            else
+                map.set(key, 1);
+        }
+
+        let timerInstallationRecords = [];
+        let eventHandlerRecords = [];
+        let observerCallbackRecords = [];
+        let scriptEntries = 0;
+        let timerTypes = new Map;
+        let eventTypes = new Map;
+        let observerTypes = new Map;
+
+        let repeatingTimers = new Map;
+        let possibleRepeatingTimers = new Set;
+
         let scriptTimeline = this._recording.timelineForRecordType(WI.TimelineRecord.Type.Script);
         let scriptRecords = scriptTimeline ? scriptTimeline.recordsInTimeRange(startTime, endTime, includeRecordBeforeStart) : [];
         scriptRecords = scriptRecords.filter((record) => {
+            // Return true for event types that define script entries/exits.
+            // Return false for events with no time ranges or if they are contained in other events.
             switch (record.eventType) {
             case WI.ScriptTimelineRecord.EventType.ScriptEvaluated:
             case WI.ScriptTimelineRecord.EventType.APIScriptEvaluated:
+                scriptEntries++;
+                return true;
+
             case WI.ScriptTimelineRecord.EventType.ObserverCallback:
+                incrementTypeCount(observerTypes, record.details);
+                observerCallbackRecords.push(record);
+                scriptEntries++;
+                return true;
+
             case WI.ScriptTimelineRecord.EventType.EventDispatched:
+                incrementTypeCount(eventTypes, record.details);
+                eventHandlerRecords.push(record);
+                scriptEntries++;
+                return true;
+
             case WI.ScriptTimelineRecord.EventType.MicrotaskDispatched:
+                // Do not normally count this as a script entry, but they may have a time range
+                // that is not covered by script entry (queueMicrotask).
+                return true;
+
             case WI.ScriptTimelineRecord.EventType.TimerFired:
+                incrementTypeCount(timerTypes, "setTimeout");
+                if (possibleRepeatingTimers.has(record.details)) {
+                    let entry = repeatingTimers.get(record.details);
+                    if (entry)
+                        entry.count += 1;
+                    else
+                        repeatingTimers.set(record.details, {record, count: 1});
+                } else
+                    possibleRepeatingTimers.add(record.details);
+                scriptEntries++;
+                return true;
+
             case WI.ScriptTimelineRecord.EventType.AnimationFrameFired:
-                // These event types define script entry/exits.
+                incrementTypeCount(timerTypes, "requestAnimationFrame");
+                scriptEntries++;
                 return true;
 
             case WI.ScriptTimelineRecord.EventType.AnimationFrameRequested:
-            case WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
             case WI.ScriptTimelineRecord.EventType.TimerInstalled:
+                // These event types have no time range, or are contained by the others.
+                timerInstallationRecords.push(record);
+                return false;
+
+            case WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
             case WI.ScriptTimelineRecord.EventType.TimerRemoved:
             case WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
             case WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
@@ -844,6 +1307,14 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             samplesLayout,
             samplesPaint,
             samplesStyle,
+            scriptEntries,
+            timerTypes,
+            eventTypes,
+            observerTypes,
+            timerInstallationRecords,
+            eventHandlerRecords,
+            observerCallbackRecords,
+            repeatingTimers,
         };
     }
 
@@ -856,6 +1327,132 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             this.removeSubview(view);
 
         this._workerViews = [];
+    }
+
+    _resetSourcesFilters()
+    {
+        if (!this._sourcesFilter)
+            return;
+
+        this._sourcesFilterRow.hidden = true;
+        this._sourcesFilterLabelElement.removeChildren();
+
+        this._timerInstallationsRow.hidden = false;
+        this._eventHandlersRow.hidden = false;
+        this._observerHandlersRow.hidden = false;
+
+        this._sourcesFilter.timer.clear();
+        this._sourcesFilter.event.clear();
+        this._sourcesFilter.observer.clear();
+    }
+
+    _addSourcesFilter(type, name)
+    {
+        this._sourcesFilter[type].add(name);
+        this._updateSourcesFilters();
+    }
+
+    _removeSourcesFilter(type, name)
+    {
+        this._sourcesFilter[type].delete(name);
+        this._updateSourcesFilters();
+    }
+
+    _updateSourcesFilters()
+    {
+        let timerFilters = this._sourcesFilter.timer;
+        let eventFilters = this._sourcesFilter.event;
+        let observerFilters = this._sourcesFilter.observer;
+
+        if (!timerFilters.size && !eventFilters.size && !observerFilters.size) {
+            this._resetSourcesFilters();
+            return;
+        }
+
+        let createActiveFilterElement = (type, name) => {
+            let span = document.createElement("span");
+            span.className = "filter active";
+            span.textContent = name;
+            span.addEventListener("mouseup", (event) => {
+                this._removeSourcesFilter(type, name);
+                this._layoutStatisticsAndSources();
+            });
+            return span;
+        }
+
+        this._sourcesFilterRow.hidden = false;
+        this._sourcesFilterLabelElement.removeChildren();
+
+        for (let name of timerFilters)
+            this._sourcesFilterLabelElement.appendChild(createActiveFilterElement("timer", name));
+        for (let name of eventFilters)
+            this._sourcesFilterLabelElement.appendChild(createActiveFilterElement("event", name));
+        for (let name of observerFilters)
+            this._sourcesFilterLabelElement.appendChild(createActiveFilterElement("observer", name));
+
+        this._timerInstallationsRow.hidden = !timerFilters.size;
+        this._eventHandlersRow.hidden = !eventFilters.size;
+        this._observerHandlersRow.hidden = !observerFilters.size;
+    }
+
+    _createTableRow(table)
+    {
+        let row = table.appendChild(document.createElement("tr"));
+
+        let headerCell = row.appendChild(document.createElement("th"));
+
+        let numberCell = row.appendChild(document.createElement("td"));
+        numberCell.className = "number";
+
+        let labelCell = row.appendChild(document.createElement("td"));
+        labelCell.className = "label";
+
+        return {row, headerCell, numberCell, labelCell};
+    }
+
+    _insertTableRow(table, rowList, {headerValue, numberValue, labelValue, followingRow})
+    {
+        let {row, headerCell, numberCell, labelCell} = this._createTableRow(table);
+        rowList.push(row);
+
+        if (followingRow)
+            table.insertBefore(row, followingRow);
+
+        if (headerValue)
+            headerCell.textContent = headerValue;
+
+        if (numberValue)
+            numberCell.textContent = numberValue;
+
+        if (labelValue)
+            labelCell.append(labelValue);
+
+        return row;
+    }
+
+    _clearStatistics()
+    {
+        this._scriptEntriesNumberElement.textContent = emDash;
+
+        for (let row of this._statisticsRows)
+            row.remove();
+        this._statisticsRows = [];
+    }
+
+    _clearSources()
+    {
+        this._timerInstallationsNumberElement.textContent = emDash;
+        this._timerInstallationsLabelElement.textContent = "";
+
+        this._eventHandlersNumberElement.textContent = emDash;
+        this._eventHandlersLabelElement.textContent = "";
+
+        this._observerHandlersNumberElement.textContent = emDash;
+        this._observerHandlersLabelElement.textContent = "";
+
+        for (let row of this._sourcesRows)
+            row.remove();
+        this._sourcesRows = [];
     }
 
     _clearEnergyImpactText()
@@ -1007,6 +1604,10 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         this.dispatchEventToListeners(WI.TimelineView.Event.ScannerShow, {time});
     }
+};
+
+WI.CPUTimelineView.LayoutReason = {
+    Internal: Symbol("cpu-timeline-view-internal-layout"),
 };
 
 // NOTE: UI follows this order.

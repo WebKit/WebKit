@@ -1,0 +1,23 @@
+
+== Running test suite: Map
+-- Running test case: Map.fromObject
+PASS: Map from simple object should have size 2.
+PASS: Map from simple object should have keys: key1 and key2.
+PASS: Map from simple object should have values: value1 and value2.
+PASS: Map from empty object should be empty.
+
+-- Running test case: Map.prototype.take
+PASS: Map has `key`.
+PASS: Map has `key` => `value`.
+PASS: Map take `key` => `value`.
+PASS: Map does not have `key`.
+PASS: Map has `key` => `undefined`.
+PASS: Map take `doesNotExistKey` => `undefined`.
+
+-- Running test case: Map.prototype.getOrInitialize
+PASS: Map does not have `key`.
+PASS: Map should have initialized `key` with `value`.
+PASS: Map does have `key` => `value`.
+PASS: Map should get `key` with `value` without re-initializing.
+PASS: Map still has `key` => `value`.
+

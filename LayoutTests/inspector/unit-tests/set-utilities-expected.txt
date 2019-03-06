@@ -1,5 +1,5 @@
 
-== Running test suite: SetUtilities
+== Running test suite: Set
 -- Running test case: Set.prototype.intersects
 PASS: an empty set should not intersect another empty set.
 PASS: a non-empty set should not intersect an empty set.

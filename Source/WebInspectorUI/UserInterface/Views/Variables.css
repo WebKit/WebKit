@@ -50,6 +50,12 @@
     --background-color-content: white;
     --background-color-code: white;
 
+    /* Gray background with lighter foreground. In dark mode this is lighter. */
+    --gray-background-color: hsl(0, 0%, 66%);
+    --gray-foreground-color: white;
+
+    --link-text-color: hsl(0, 0%, 33%);
+
     --selected-foreground-color: white;
     --selected-secondary-text-color: hsla(0, 100%, 100%, 0.7);
     --selected-background-color: hsl(212, 92%, 54%);
@@ -214,6 +220,11 @@ body.window-inactive * {
 
         --background-color-content: hsl(0, 0%, 21%);
         --background-color-code: hsl(0, 0%, 21%);
+
+        --gray-background-color: hsl(0, 0%, 50%);
+        --gray-foreground-color: hsl(0, 0%, 33%);
+
+        --link-text-color: var(--text-color-secondary);
 
         --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
         --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
