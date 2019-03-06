@@ -215,6 +215,7 @@
     "web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-area-element/area_nohref.xhtml": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-area-element/test-area.xhtml": "skip", 
+    "web-platform-tests/html/semantics/embedded-content/the-canvas-element": "import", 
     "web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html": "skip", 
     "web-platform-tests/html/semantics/embedded-content/the-iframe-element": "import", 

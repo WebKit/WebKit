@@ -1,3 +1,15 @@
+2019-03-06  Frederic Wang  <fwang@igalia.com>
+
+        Update WPT tests for the canvas element
+        https://bugs.webkit.org/show_bug.cgi?id=195331
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.parse.whitespace.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.setAttribute.whitespace.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+
 2019-03-02  Darin Adler  <darin@apple.com>
 
         Retire legacy dtoa function and DecimalNumber class
