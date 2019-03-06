@@ -1,3 +1,32 @@
+2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move RenderObject::isTransparentOrFullyClippedRespectingParentFrames() to RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=195300
+
+        Reviewed by Simon Fraser.
+
+        Move isTransparentOrFullyClippedRespectingParentFrames() from RenderObject to RenderLayer, since this function
+        asks questions about RenderLayers rather than their renderers. No change in behavior.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::enclosingFrameRenderLayer):
+        (WebCore::parentLayerCrossFrame):
+
+        Some static helpers currently in RenderObject that walk up the layer hierarchy through subframes are redundant
+        with static helpers in RenderLayer. Now that isTransparentOrFullyClippedRespectingParentFrames exists in
+        RenderLayer, simply use this existing helper instead and split logic to grab the enclosing layer around the
+        owner element of a frame into a separate helper.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::enclosingFrameRenderLayer): Deleted.
+        (WebCore::parentLayerCrossingFrameBoundaries): Deleted.
+        (WebCore::RenderObject::isTransparentOrFullyClippedRespectingParentFrames const): Deleted.
+
+        Moved from RenderObject.
+
+        * rendering/RenderObject.h:
+
 2019-03-06  Sihui Liu  <sihui_liu@apple.com>
 
         Assertion Failed: m_databaseQueue.isKilled() in UniqueIDBDatabase::~UniqueIDBDatabase()

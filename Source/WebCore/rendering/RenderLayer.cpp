@@ -1652,20 +1652,25 @@ RenderLayer* RenderLayer::enclosingAncestorForPosition(PositionType position) co
     return curr;
 }
 
-static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer)
+static RenderLayer* enclosingFrameRenderLayer(const RenderLayer& layer)
 {
-    if (layer.parent())
-        return layer.parent();
-
-    HTMLFrameOwnerElement* ownerElement = layer.renderer().document().ownerElement();
+    auto* ownerElement = layer.renderer().document().ownerElement();
     if (!ownerElement)
         return nullptr;
 
-    RenderElement* ownerRenderer = ownerElement->renderer();
+    auto* ownerRenderer = ownerElement->renderer();
     if (!ownerRenderer)
         return nullptr;
 
     return ownerRenderer->enclosingLayer();
+}
+
+static RenderLayer* parentLayerCrossFrame(const RenderLayer& layer)
+{
+    if (auto* parent = layer.parent())
+        return parent;
+
+    return enclosingFrameRenderLayer(layer);
 }
 
 RenderLayer* RenderLayer::enclosingScrollableLayer() const
@@ -6592,6 +6597,25 @@ void RenderLayer::filterNeedsRepaint()
         element->invalidateStyleAndLayerComposition();
     }
     renderer().repaint();
+}
+
+bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
+{
+    static const double minimumVisibleOpacity = 0.01;
+
+    float currentOpacity = 1;
+    for (auto* layer = this; layer; layer = parentLayerCrossFrame(*layer)) {
+        currentOpacity *= layer->renderer().style().opacity();
+        if (currentOpacity < minimumVisibleOpacity)
+            return true;
+    }
+
+    for (auto* layer = this; layer; layer = enclosingFrameRenderLayer(*layer)) {
+        if (layer->selfClipRect().isEmpty())
+            return true;
+    }
+
+    return false;
 }
 
 TextStream& operator<<(TextStream& ts, const RenderLayer& layer)

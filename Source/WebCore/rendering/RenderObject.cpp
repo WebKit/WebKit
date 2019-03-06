@@ -1527,43 +1527,6 @@ void RenderObject::destroy()
     delete this;
 }
 
-static RenderLayer* enclosingFrameRenderLayer(RenderObject& renderObject)
-{
-    auto* owner = renderObject.frame().ownerElement();
-    if (!owner)
-        return nullptr;
-
-    auto* frameOwnerRenderer = owner->renderer();
-    return frameOwnerRenderer ? frameOwnerRenderer->enclosingLayer() : nullptr;
-}
-
-static RenderLayer* parentLayerCrossingFrameBoundaries(RenderLayer& layer)
-{
-    if (auto* parentLayer = layer.parent())
-        return parentLayer;
-
-    return enclosingFrameRenderLayer(layer.renderer());
-}
-
-bool RenderObject::isTransparentOrFullyClippedRespectingParentFrames() const
-{
-    static const double minimumVisibleOpacity = 0.01;
-
-    float currentOpacity = 1;
-    for (auto* layer = enclosingLayer(); layer; layer = parentLayerCrossingFrameBoundaries(*layer)) {
-        currentOpacity *= layer->renderer().style().opacity();
-        if (currentOpacity < minimumVisibleOpacity)
-            return true;
-    }
-
-    for (auto* layer = enclosingLayer(); layer; layer = enclosingFrameRenderLayer(layer->renderer())) {
-        if (layer->selfClipRect().isEmpty())
-            return true;
-    }
-
-    return false;
-}
-
 Position RenderObject::positionForPoint(const LayoutPoint& point)
 {
     // FIXME: This should just create a Position object instead (webkit.org/b/168566). 

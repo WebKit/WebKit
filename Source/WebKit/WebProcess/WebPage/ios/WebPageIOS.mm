@@ -179,6 +179,12 @@ static void computeEditableRootHasContentAndPlainText(const VisibleSelection& se
     data.hasPlainText = data.hasContent && hasAnyPlainText(Range::create(root->document(), VisiblePosition { startInEditableRoot }, VisiblePosition { lastPositionInNode(root) }));
 }
 
+static bool enclosingLayerIsTransparentOrFullyClipped(const RenderObject& renderer)
+{
+    auto* enclosingLayer = renderer.enclosingLayer();
+    return enclosingLayer && enclosingLayer->isTransparentOrFullyClippedRespectingParentFrames();
+}
+
 void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePostLayoutDataHint shouldIncludePostLayoutData) const
 {
     if (frame.editor().hasComposition()) {
@@ -246,9 +252,10 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
         if (m_focusedElement && m_focusedElement->renderer()) {
-            postLayoutData.focusedElementRect = view->contentsToRootView(m_focusedElement->renderer()->absoluteBoundingBoxRect());
-            postLayoutData.caretColor = m_focusedElement->renderer()->style().caretColor();
-            postLayoutData.elementIsTransparentOrFullyClipped = m_focusedElement->renderer()->isTransparentOrFullyClippedRespectingParentFrames();
+            auto& renderer = *m_focusedElement->renderer();
+            postLayoutData.focusedElementRect = view->contentsToRootView(renderer.absoluteBoundingBoxRect());
+            postLayoutData.caretColor = renderer.style().caretColor();
+            postLayoutData.elementIsTransparentOrFullyClipped = enclosingLayerIsTransparentOrFullyClipped(renderer);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
     }
@@ -1523,7 +1530,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
         return;
     }
 
-    if (!m_focusedElement || !m_focusedElement->renderer() || m_focusedElement->renderer()->isTransparentOrFullyClippedRespectingParentFrames()) {
+    if (!m_focusedElement || !m_focusedElement->renderer() || enclosingLayerIsTransparentOrFullyClipped(*m_focusedElement->renderer())) {
         reply({ });
         return;
     }
@@ -2489,7 +2496,7 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         auto& elementFrame = m_page->focusController().focusedOrMainFrame();
         information.elementRect = elementRectInRootViewCoordinates(*m_focusedElement, elementFrame);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
-        information.elementIsTransparentOrFullyClipped = renderer->isTransparentOrFullyClippedRespectingParentFrames();
+        information.elementIsTransparentOrFullyClipped = enclosingLayerIsTransparentOrFullyClipped(*renderer);
 
         bool inFixed = false;
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);

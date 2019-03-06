@@ -857,6 +857,8 @@ public:
     void simulateFrequentPaint() { SinglePaintFrequencyTracking { m_paintFrequencyTracker }; }
     bool paintingFrequently() const { return m_paintFrequencyTracker.paintingFrequently(); }
 
+    WEBCORE_EXPORT bool isTransparentOrFullyClippedRespectingParentFrames() const;
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
