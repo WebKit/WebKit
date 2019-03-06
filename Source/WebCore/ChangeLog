@@ -1,3 +1,16 @@
+2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [curl] Remove unnecessary file.
+        https://bugs.webkit.org/show_bug.cgi?id=195350
+
+        Reviewed by Fujii Hironori.
+
+        Removed unused file.
+
+        No new tests. No change in behavior.
+
+        * platform/network/curl/CookieJarCurlDatabase.cpp: Removed.
+
 2019-03-05  Eric Liang  <ericliang@apple.com>
 
         AX: Add remote search support for keyboard focusable element search type
