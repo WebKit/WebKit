@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='referrer' content='no-referrer-when-downgrade'>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of no-referrer-when-downgrade referrer policy when cross origin.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the full URL
+    shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http.html");
+    finishJSTest();
+}
+</script>
+<iframe src="http://localhost:8000/referrer-policy/resources/document.html"></iframe>
+</body>
+</html>

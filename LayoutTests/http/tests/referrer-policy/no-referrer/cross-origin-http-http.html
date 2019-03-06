@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='referrer' content='no-referrer'>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of no-referrer referrer policy when cross origin.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the empty string
+    shouldBeEqualToString("referrer", "");
+    finishJSTest();
+}
+</script>
+<iframe src="http://localhost:8000/referrer-policy/resources/document.html"></iframe>
+</body>
+</html>

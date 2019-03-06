@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='referrer' content='unsafe-url'>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of unsafe-url referrer policy when cross origin from HTTPS to HTTP.");
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setAllowDisplayOfInsecureContent(true);
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the full URL
+    shouldBeEqualToString("referrer", "https://127.0.0.1:8443/referrer-policy/unsafe-url/cross-origin-http.https.html");
+    finishJSTest();
+}
+</script>
+<iframe src="http://localhost:8000/referrer-policy/resources/document.html"></iframe>
+</body>
+</html>

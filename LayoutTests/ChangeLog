@@ -1,3 +1,38 @@
+2019-03-05  Rob Buis  <rbuis@igalia.com>
+
+        Add referrer-policy tests
+        https://bugs.webkit.org/show_bug.cgi?id=195269
+
+        Reviewed by Daniel Bates.
+
+        The tests in http/tests/referrer-policy do not test all referrer-policy
+        values, add the remaining values.
+
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer-when-downgrade/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy/no-referrer-when-downgrade/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer-when-downgrade/same-origin.html: Added.
+        * http/tests/referrer-policy/no-referrer/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy/no-referrer/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy/no-referrer/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy/no-referrer/same-origin.html: Added.
+        * http/tests/referrer-policy/origin/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy/origin/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy/origin/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy/origin/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy/origin/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy/origin/same-origin.html: Added.
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http-http-expected.txt: Added.
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html: Added.
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http.https-expected.txt: Added.
+        * http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html: Added.
+        * http/tests/referrer-policy/unsafe-url/same-origin-expected.txt: Added.
+        * http/tests/referrer-policy/unsafe-url/same-origin.html: Added.
+
 2019-03-05  Eric Liang  <ericliang@apple.com>
 
         AX: Add remote search support for keyboard focusable element search type
