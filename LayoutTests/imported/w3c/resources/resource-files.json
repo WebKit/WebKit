@@ -998,6 +998,8 @@
         "web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/document.open-03-frame.html",
         "web-platform-tests/html/semantics/document-metadata/the-base-element/example.html",
         "web-platform-tests/html/semantics/document-metadata/the-base-element/example2.html",
+        "web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/remove-cookie.html",
+        "web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/set-cookie.html",
         "web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-iframe.html",
         "web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-subdocument.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/change_child.html",

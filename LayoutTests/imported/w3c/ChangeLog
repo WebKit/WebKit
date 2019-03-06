@@ -1,3 +1,272 @@
+2019-03-06  Frederic Wang  <fwang@igalia.com>
+
+        Update WPT tests for the track element
+        https://bugs.webkit.org/show_bug.cgi?id=195358
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/003.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/004.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/005.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/006.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/007.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/008.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/009.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/010.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/011.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/012.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/013.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/014.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/015.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/016.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/017.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/018.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/019.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/020.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/021.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/022.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/023.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/024.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/025.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/026.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/027.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/028.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/029.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/030.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/031.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/032.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/033.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/034.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/035.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/036.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/037.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/038.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/039.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/040.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/041.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/042.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/043.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/044.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/045.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/046.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/common.js: Added.
+        (setup):
+        (window.otherOriginURL.string_appeared_here.location.pathname.replace):
+        (onload):
+        (setCrossDomainCookie):
+        (loadTrack.):
+        (loadTrack):
+        (removeLog):
+        (checkData):
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/cors-tester.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/remove-cookie.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/set-cookie.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-positioning-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-positioning.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-text-line-position-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-text-line-position.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment-ltr.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/bom.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-fast.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-gaps.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-html.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/class-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/class.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-id-error.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-id.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-no-id-error.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-no-id.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-cuetext.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-header.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-note.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-align-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-align.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-chrono-order.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-no-separation.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-overlapping.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/default-styles.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/degenerate-cues.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/empty-cue.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/entities-wrong.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/entities.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/interspersed-non-cue.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/iso2022jp3.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/large-timestamp.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/line-position-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/line-position.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/markup-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/markup.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/metadata-area.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/metadata.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/missed-cues.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-newline-at-eof.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-timings.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-webvtt.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning-ltr.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/settings-bad-separation.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/settings.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/simple-captions.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/sorted-dispatch.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timestamp-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timestamp.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-hour-error.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-hour.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-no-hour-errors.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-no-hour.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-whitespace.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/unsupported-markup.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/utf8.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign-ltr.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/voice-bad.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/voice.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/vp8-vorbis-webvtt.webm: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/webvtt-file.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/webvtt-rubbish.vtt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/src-empty-string.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-remove-cue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-track-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-track.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-addtrack-kind-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-addtrack-kind.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-change-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-change-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-css-cue-pseudo-class-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-css-cue-pseudo-class.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-empty-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-empty.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-inline-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-inline.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable-fragment.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-duration-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-duration.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp-events.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-line-doesnt-fit-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-line-doesnt-fit.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-transformed-video-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-transformed-video.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-missed.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-sorted-before-dispatch.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-default-attribute.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-delete-during-setup-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-delete-during-setup.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled-addcue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-dom-change-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-dom-change.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change-error.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-helpers.js: Added.
+        (enableAllTextTracks):
+        (assert_cues_equal):
+        (assert_cues_match):
+        (assert_cues_html_content):
+        (check_cues_from_track):
+        (assert_cue_fragment_as_textcontent):
+        (createFragment):
+        (cloneChildrenToFragment):
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-id-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-id.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-insert-after-load.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-large-timestamp.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-error-readyState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-element-readyState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-src-readyState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-src-readyState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-not-changed-by-new-track.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-triggers-loading.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-node-add-remove-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-node-add-remove.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-active-cue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-by-setting-innerHTML.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-insert-ready-state.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-quickly-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-quickly.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track-inband.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-selection-metadata-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-selection-metadata.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-text-track-cue-list.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-texttracks-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-texttracks.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-positioning-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-positioning.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-text-line-position-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-text-line-position.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-alignment.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-blank-lines.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-bom.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-class-markup.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-identifiers.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-no-id.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-recovery.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size-align.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-degenerate-cues.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-empty-cue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-entities.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-header-comment-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-header-comment.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-interspersed-non-cue.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-line-position-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-line-position.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-magic-header-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-magic-header.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-markup.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-newlines.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-no-timings.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-positioning.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-settings.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timestamp.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-hour-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-hour.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-no-hours-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-no-hours.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-whitespace.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-two-cue-layout-after-first-end-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-two-cue-layout-after-first-end.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-unsupported-markup.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-utf8-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-utf8.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-valign.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-voice.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/vtt-cue-float-precision-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/vtt-cue-float-precision.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/w3c-import.log:
+
 2019-03-06  Rob Buis  <rbuis@igalia.com>
 
         Consider supporting the `referrerpolicy` attribute.

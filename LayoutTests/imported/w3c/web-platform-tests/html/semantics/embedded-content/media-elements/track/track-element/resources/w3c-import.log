@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,78 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-positioning-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-positioning.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-text-line-position-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/align-text-line-position.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment-ltr.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/alignment.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/bom.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-fast.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-gaps.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions-html.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/captions.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/class-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/class.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-id-error.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-id.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-no-id-error.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-no-id.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-cuetext.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-header.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-recovery-note.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-align-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-align.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cue-size.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-chrono-order.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-no-separation.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues-overlapping.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/cues.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/default-styles.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/degenerate-cues.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/empty-cue.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/entities-wrong.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/entities.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/interspersed-non-cue.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/iso2022jp3.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/large-timestamp.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/line-position-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/line-position.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/markup-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/markup.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/metadata-area.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/metadata.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/missed-cues.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-newline-at-eof.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-timings.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/no-webvtt.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning-ltr.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/positioning.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/settings-bad-separation.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/settings.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/simple-captions.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/sorted-dispatch.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timestamp-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timestamp.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-hour-error.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-hour.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-no-hour-errors.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-no-hour.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/timings-whitespace.vtt
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.de.vtt
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.en.vtt
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.fr.vtt
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/unsupported-markup.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/utf8.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign-ltr.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/valign.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/voice-bad.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/voice.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/vp8-vorbis-webvtt.webm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/webvtt-file.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/webvtt-rubbish.vtt

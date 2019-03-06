@@ -1,0 +1,4 @@
+
+
+FAIL Cue alignment, line and text position from settings assert_equals: expected (string) "auto" but got (number) -1
+

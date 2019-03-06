@@ -1,0 +1,60 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/013.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/014.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/015.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/016.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/017.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/018.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/019.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/020.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/021.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/022.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/023.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/024.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/025.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/026.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/027.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/028.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/029.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/030.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/031.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/032.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/033.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/034.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/035.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/036.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/037.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/038.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/039.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/040.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/041.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/042.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/043.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/044.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/045.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cors/046.html

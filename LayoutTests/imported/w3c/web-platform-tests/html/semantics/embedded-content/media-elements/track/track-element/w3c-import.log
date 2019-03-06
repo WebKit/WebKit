@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -16,6 +16,100 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/src-clear-cues.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/src-empty-string.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-active-cues.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-remove-cue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-add-track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-addtrack-kind.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-change-event.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-css-cue-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-mutable.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-duration.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp-events.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-negative-timestamp.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-order.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-added.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-after-controls-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-empty-cue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-line-doesnt-fit-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-line-doesnt-fit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-transformed-video-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cue-rendering-transformed-video.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-exit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-missed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-pause-on-exit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-seeking.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-sorted-before-dispatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-data-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-default-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-delete-during-setup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled-addcue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-dom-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change-error.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-element-src-change.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-id.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-insert-after-load.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-large-timestamp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-error-readyState.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-element-readyState.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-load-from-src-readyState.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-not-changed-by-new-track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode-triggers-loading.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-node-add-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-active-cue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-by-setting-innerHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-insert-ready-state.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-quickly.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track-inband.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-remove-track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-selection-metadata.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-text-track-cue-list.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-texttracks.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-positioning.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-align-text-line-position.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-alignment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-blank-lines.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-bom.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-class-markup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-identifiers.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-no-id.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-recovery.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size-align.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-cue-size.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-degenerate-cues.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-empty-cue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-entities.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-header-comment.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-interspersed-non-cue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-line-position.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-magic-header.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-markup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-newlines.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-no-timings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-non-snap-to-lines.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-positioning.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-settings.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timestamp.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-hour.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-no-hours.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-timings-whitespace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-two-cue-layout-after-first-end-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-two-cue-layout-after-first-end.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-unsupported-markup.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-utf8.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-valign.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-voice.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/vtt-cue-float-precision.html
