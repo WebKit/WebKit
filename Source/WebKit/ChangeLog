@@ -1,3 +1,11 @@
+2019-03-06  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after r242503
+
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        ServiceWorker messages moved from network process to another
+        header, so it needs to be included.
+
 2019-03-05  David Quesada  <david_quesada@apple.com>
 
         [WK2] It should be possible to follow links with 'download' attributes

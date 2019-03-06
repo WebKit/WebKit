@@ -30,7 +30,7 @@
 
 #include "DataReference.h"
 #include "FormDataReference.h"
-#include "NetworkProcessMessages.h"
+#include "ServiceWorkerFetchTaskMessages.h"
 #include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
