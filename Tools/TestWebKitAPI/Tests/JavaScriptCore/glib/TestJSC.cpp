@@ -1589,6 +1589,14 @@ static JSCClassVTable fooVTable = {
     nullptr, nullptr, nullptr, nullptr
 };
 
+static GFile* createGFile(const char* path)
+{
+    GFile* file = g_file_new_for_path(path);
+    auto* checker = static_cast<LeakChecker*>(g_object_get_data(G_OBJECT(jsc_context_get_current()), "leak-checker"));
+    checker->watch(file);
+    return file;
+}
+
 static void testJSCClass()
 {
     {
@@ -2247,6 +2255,47 @@ static void testJSCClass()
         jsc_value_object_delete_property(foo.get(), "prop_throw_on_delete");
         g_assert_did_throw(exceptionHandler, didThrow);
         g_assert_true(jsc_context_get_exception(context.get()) == previousException.get());
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_object_set_data(G_OBJECT(context.get()), "leak-checker", &checker);
+        ExceptionHandler exceptionHandler(context.get());
+
+        JSCClass* jscClass = jsc_context_register_class(context.get(), "GFile", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(g_object_unref));
+        checker.watch(jscClass);
+
+        GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(jscClass, nullptr, G_CALLBACK(createGFile), nullptr, nullptr, G_TYPE_OBJECT, 1, G_TYPE_STRING));
+        checker.watch(constructor.get());
+        g_assert_true(jsc_value_is_constructor(constructor.get()));
+        jsc_class_add_method(jscClass, "getPath", G_CALLBACK(g_file_get_path), nullptr, nullptr, G_TYPE_STRING, 0, G_TYPE_NONE);
+
+        jsc_context_set_value(context.get(), jsc_class_get_name(jscClass), constructor.get());
+
+        GRefPtr<JSCValue> file = adoptGRef(jsc_context_evaluate(context.get(), "f = new GFile('.');", -1));
+        checker.watch(file.get());
+        g_assert_true(jsc_value_is_object(file.get()));
+        g_assert_true(jsc_value_object_is_instance_of(file.get(), jsc_class_get_name(jscClass)));
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "f instanceof GFile;", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        g_assert_true(jsc_value_object_has_property(file.get(), "getPath"));
+        GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_invoke_method(file.get(), "getPath", G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_string(value.get()));
+        GUniquePtr<char> resultString(jsc_value_to_string(value.get()));
+        GUniquePtr<char> currentDirectory(g_get_current_dir());
+        g_assert_cmpstr(resultString.get(), ==, currentDirectory.get());
+
+        GRefPtr<JSCValue> value2 = adoptGRef(jsc_context_evaluate(context.get(), "f.getPath('.');", -1));
+        checker.watch(value2.get());
+        g_assert_true(jsc_value_is_string(value2.get()));
+        resultString.reset(jsc_value_to_string(value2.get()));
+        g_assert_cmpstr(resultString.get(), ==, currentDirectory.get());
     }
 }
 

@@ -205,17 +205,15 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
     switch (g_type_fundamental(G_VALUE_TYPE(&returnValue))) {
     case G_TYPE_POINTER:
     case G_TYPE_OBJECT:
-        if (auto* ptr = returnValue.data[0].v_pointer) {
-            auto* retval = jscClassGetOrCreateJSWrapper(m_class.get(), ptr);
-            g_value_unset(&returnValue);
-            return toRef(retval);
-        }
+        if (auto* ptr = returnValue.data[0].v_pointer)
+            return toRef(jscClassGetOrCreateJSWrapper(m_class.get(), ptr));
         *exception = toRef(JSC::createTypeError(toJS(jsContext), "constructor returned null"_s));
         break;
     default:
         *exception = toRef(JSC::createTypeError(toJS(jsContext), makeString("invalid type ", g_type_name(G_VALUE_TYPE(&returnValue)), " returned by constructor")));
         break;
     }
+    g_value_unset(&returnValue);
     return nullptr;
 }
 
