@@ -1,3 +1,20 @@
+2019-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI should not propagate AbstractValue relying on constant folding phase
+        https://bugs.webkit.org/show_bug.cgi?id=195375
+
+        Reviewed by Saam Barati.
+
+        MakeRope rule in AI attempts to propagate the node, which will be produced after constant folding phase runs.
+        This is wrong since we do not guarantee that constant folding phase runs after AI runs (e.g. DFGSpeculativeJIT
+        and FTLLowerDFGToB3 run AI). This results in the bug that the value produced at runtime is different from the
+        proven constant value in AI. In the attached test, AI says the value is SpecStringIdent while the resulted value
+        at runtime is SpecStringVar, resulting in wrong MakeRope code. This patch removes the path propagating the node
+        relying on constant folding phase.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-03-05  Saam barati  <sbarati@apple.com>
 
         op_switch_char broken for rope strings after JSRopeString layout rewrite

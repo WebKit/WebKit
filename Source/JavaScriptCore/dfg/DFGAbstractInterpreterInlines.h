@@ -733,19 +733,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             ++numberOfRemovedChildren;
         }
 
-        if (numberOfRemovedChildren) {
+        if (numberOfRemovedChildren)
             m_state.setFoundConstants(true);
-            if (numberOfRemovedChildren == numberOfChildren) {
-                // Propagate the last child. This is the way taken in the constant folding phase.
-                setForNode(node, forNode(node->children.child(numberOfChildren - 1)));
-                break;
-            }
-            if ((numberOfRemovedChildren + 1) == numberOfChildren) {
-                ASSERT(nonEmptyIndex);
-                setForNode(node, forNode(node->children.child(nonEmptyIndex.value())));
-                break;
-            }
-        }
         setForNode(node, m_vm.stringStructure.get());
         break;
     }

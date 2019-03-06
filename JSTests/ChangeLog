@@ -1,3 +1,13 @@
+2019-03-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] AI should not propagate AbstractValue relying on constant folding phase
+        https://bugs.webkit.org/show_bug.cgi?id=195375
+
+        Reviewed by Saam Barati.
+
+        * stress/make-rope-should-not-propagate-constant-folded-value-in-ai.js: Added.
+        (let.array):
+
 2019-03-05  Saam barati  <sbarati@apple.com>
 
         op_switch_char broken for rope strings after JSRopeString layout rewrite
