@@ -839,7 +839,7 @@ void Session::fullscreenWindow(Function<void (CommandResult&&)>&& completionHand
 
         RefPtr<JSON::Object> parameters = JSON::Object::create();
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        parameters->setString("function"_s, EnterFullscreenJavaScript);
+        parameters->setString("function"_s, String(EnterFullscreenJavaScript, sizeof(EnterFullscreenJavaScript)));
         parameters->setArray("arguments"_s, JSON::Array::create());
         parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -1002,7 +1002,7 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, FindNodesJavaScript);
+        parameters->setString("function"_s, String(FindNodesJavaScript, sizeof(FindNodesJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         parameters->setBoolean("expectsImplicitCallbackArgument"_s, true);
         // If there's an implicit wait, use one second more as callback timeout.
@@ -1116,7 +1116,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, ElementAttributeJavaScript);
+        parameters->setString("function"_s, String(ElementAttributeJavaScript, sizeof(ElementAttributeJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1317,7 +1317,7 @@ void Session::isElementDisplayed(const String& elementID, Function<void (Command
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, ElementDisplayedJavaScript);
+        parameters->setString("function"_s, String(ElementDisplayedJavaScript, sizeof(ElementDisplayedJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1359,7 +1359,7 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, ElementAttributeJavaScript);
+        parameters->setString("function"_s, String(ElementAttributeJavaScript, sizeof(ElementAttributeJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1585,7 +1585,7 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
         parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, FormElementClearJavaScript);
+        parameters->setString("function"_s, String(FormElementClearJavaScript, sizeof(FormElementClearJavaScript)));
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError) {
