@@ -1,3 +1,12 @@
+2019-03-05  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK][l10n] Updated Polish translation of WebKitGTK for 2.24
+        https://bugs.webkit.org/show_bug.cgi?id=194859
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * pl.po:
+
 2019-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update POTFILES.in after r239627.
