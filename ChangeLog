@@ -1,3 +1,16 @@
+2019-03-06  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Enable additional experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=195363
+
+        Reviewed by Ross Kirsling.
+
+        Turn on ENABLE_APPLICATION_MANIFEST, ENABLE_FILTERS_LEVEL_2, ENABLE_CSS_PAINTING_API,
+        and ENABLE_VARIATION_FONTS. This will allow testing and development of these features
+        for Windows.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2019-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Enable CSS Typed OM
