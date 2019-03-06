@@ -217,6 +217,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         generalSettingsView.addSeparator();
 
+        generalSettingsView.addSetting(WI.UIString("CSS Changes:"), WI.settings.cssChangesPerNode, WI.UIString("Show only for selected node"));
+
+        generalSettingsView.addSeparator();
+
         const zoomLevels = [0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
         const zoomValues = zoomLevels.map((level) => [level, Number.percentageString(level, 0)]);
 

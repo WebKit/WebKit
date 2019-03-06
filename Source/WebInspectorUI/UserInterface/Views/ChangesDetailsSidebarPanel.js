@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DetailsSidebarPanel
+WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMDetailsSidebarPanel
 {
     constructor()
     {
@@ -36,11 +36,20 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.Deta
 
     inspect(objects)
     {
+        let inspectable = super.inspect(objects);
+
+        if (WI.settings.cssChangesPerNode.value)
+            return inspectable;
+
+        // Display Changes panel regardless of the selected DOM node.
         return true;
     }
 
     supportsDOMNode(nodeToInspect)
     {
+        if (WI.settings.cssChangesPerNode.value)
+            return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
+
         // Display Changes panel regardless of the selected DOM node.
         return true;
     }
@@ -73,6 +82,14 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.Deta
         this.element.removeChildren();
 
         let cssRules = WI.cssManager.modifiedCSSRules;
+
+        if (WI.settings.cssChangesPerNode.value) {
+            if (this.domNode) {
+                let styles = WI.cssManager.stylesForNode(this.domNode);
+                cssRules = cssRules.filter((cssRule) => styles.matchedRules.some((matchedRule) => cssRule.isEqualTo(matchedRule)));
+            } else
+                cssRules = [];
+        }
 
         this.element.classList.toggle("empty", !cssRules.length);
         if (!cssRules.length) {

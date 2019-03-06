@@ -1,5 +1,27 @@
 2019-03-06  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: CSS Changes: only show changes for the given node
+        https://bugs.webkit.org/show_bug.cgi?id=194608
+        <rdar://problem/48050206>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.inspect):
+        (WI.ChangesDetailsSidebarPanel.prototype.supportsDOMNode):
+        (WI.ChangesDetailsSidebarPanel.prototype.layout):
+        Make this panel a subclass of `WI.DOMDetailsSidebarPanel` so it has access to the selected
+        DOM node in the Elements tab.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        Create new general setting for controlling this change.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-03-06  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: color swatches aren't shown for valid inputs with leading/trailing whitespace
         https://bugs.webkit.org/show_bug.cgi?id=195298
 
