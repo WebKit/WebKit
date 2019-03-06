@@ -1,0 +1,7 @@
+
+PASS e.style['text-align-all'] = "auto" should not set the property value 
+PASS e.style['text-align-all'] = "start end" should not set the property value 
+PASS e.style['text-align-all'] = "left right" should not set the property value 
+PASS e.style['text-align-all'] = "center justify" should not set the property value 
+PASS e.style['text-align-all'] = "match-parent match-parent" should not set the property value 
+

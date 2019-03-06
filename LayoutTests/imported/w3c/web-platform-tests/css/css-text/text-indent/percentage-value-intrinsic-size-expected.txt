@@ -1,0 +1,12 @@
+Test passes if there is a filled green square.
+
+
+FAIL #container 1 assert_equals: 
+<div id="container" data-expected-width="50" style="position:relative; float:left; height:100px; background:green;">
+  <div id="foo" style="text-indent: 100%;">
+    <div data-offset-x="50" data-expected-width="50" style="display:inline-block; width:50px; height:100px; background:green;"></div>
+    <div style="width:50px;"></div>
+  </div>
+</div>
+width expected 50 but got 100
+

@@ -1,0 +1,5 @@
+
+PASS e.style['word-break'] = "normal" should set the property value 
+PASS e.style['word-break'] = "keep-all" should set the property value 
+PASS e.style['word-break'] = "break-all" should set the property value 
+

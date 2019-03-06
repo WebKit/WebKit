@@ -1,0 +1,5 @@
+
+PASS e.style['hyphens'] = "normal" should not set the property value 
+PASS e.style['hyphens'] = "none manual" should not set the property value 
+PASS e.style['hyphens'] = "auto auto" should not set the property value 
+

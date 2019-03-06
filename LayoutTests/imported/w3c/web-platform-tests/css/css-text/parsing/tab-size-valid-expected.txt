@@ -1,0 +1,7 @@
+
+PASS e.style['tab-size'] = "0" should set the property value 
+FAIL e.style['tab-size'] = "2.5" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['tab-size'] = "0px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['tab-size'] = "10px" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['tab-size'] = "calc(2em + 3ex)" should set the property value assert_not_equals: property should be set got disallowed value ""
+

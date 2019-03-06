@@ -1,0 +1,6 @@
+
+PASS e.style['line-break'] = "none" should not set the property value 
+PASS e.style['line-break'] = "auto loose" should not set the property value 
+PASS e.style['line-break'] = "strict normal" should not set the property value 
+PASS e.style['line-break'] = "anywhere anywhere" should not set the property value 
+

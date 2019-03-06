@@ -1,0 +1,5 @@
+
+PASS e.style['text-justify'] = "normal" should not set the property value 
+PASS e.style['text-justify'] = "auto none" should not set the property value 
+PASS e.style['text-justify'] = "inter-character inter-word" should not set the property value 
+

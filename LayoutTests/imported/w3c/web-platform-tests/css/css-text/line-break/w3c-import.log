@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -18,18 +18,46 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-002.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-021-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-021.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-022-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-022.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-023a-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-023a.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-023b-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-023b.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-024a-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-024a.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-024b-expected.xht
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-024b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-011-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-011.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-012-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-013-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-014.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-015-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-015.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-016a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-016a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-016b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-016b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-017a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-017a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-017b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-017b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-018-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-018.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-011-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-011.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-012-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-012.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-013-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-013.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-014-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-014.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-016a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-016a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-016b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-016b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-017a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-017a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-017b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-017b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-018-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-018.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-011-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-011.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-012-expected.xht
@@ -48,3 +76,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-017a.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-017b-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-017b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-018-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-018.xht

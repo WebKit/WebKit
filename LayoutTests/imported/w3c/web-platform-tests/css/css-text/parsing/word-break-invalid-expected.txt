@@ -1,0 +1,5 @@
+
+PASS e.style['word-break'] = "auto" should not set the property value 
+PASS e.style['word-break'] = "normal keep-all" should not set the property value 
+PASS e.style['word-break'] = "break-all break-all" should not set the property value 
+

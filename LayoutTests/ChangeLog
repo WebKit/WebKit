@@ -1,3 +1,15 @@
+2019-03-06  Javier Fernandez  <jfernandez@igalia.com>
+
+        Import new tests from the CSS Text 3 WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=195275
+
+        Reviewed by Myles C. Maxfield.
+
+        Imported new CSS Text tests from the WPT suite
+
+        * TestExpectations: Flag tests that are not passing right now.
+        * platform/gtk/TestExpectations: A few tests pass now.
+
 2019-03-06  Frederic Wang  <fwang@igalia.com>
 
         Update WPT tests for the track element

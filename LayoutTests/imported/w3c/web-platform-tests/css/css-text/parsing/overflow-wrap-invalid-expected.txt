@@ -1,0 +1,5 @@
+
+PASS e.style['overflow-wrap'] = "auto" should not set the property value 
+PASS e.style['overflow-wrap'] = "normal break-word" should not set the property value 
+PASS e.style['overflow-wrap'] = "anywhere anywhere" should not set the property value 
+

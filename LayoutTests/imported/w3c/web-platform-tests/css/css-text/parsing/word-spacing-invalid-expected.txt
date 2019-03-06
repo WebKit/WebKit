@@ -1,0 +1,5 @@
+
+PASS e.style['word-spacing'] = "auto" should not set the property value 
+FAIL e.style['word-spacing'] = "20%" should not set the property value assert_equals: expected "" but got "20%"
+PASS e.style['word-spacing'] = "normal 10px" should not set the property value 
+
