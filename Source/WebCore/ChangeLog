@@ -1,3 +1,48 @@
+2019-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Datalist] fast/forms/datalist/datalist-child-validation.html crashes with a debug assertion in isValidFormControlElement()
+        https://bugs.webkit.org/show_bug.cgi?id=190620
+        <rdar://problem/19226679>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixes and re-enables an existing layout test that is asserting on debug builds (and failing on release builds).
+        To understand why we hit this assertion, we first note several observations:
+
+            -   The validity of a form control (`isValid()`) depends on the value of `willValidate()`.
+            -   Both of these results are cached in member variables: `m_isValid` and `m_willValidate`, respectively.
+            -   `willValidate()` changes the cached value of `m_willValidate` if necessary, but `isValid()` uses the
+                cached value without update.
+
+        Now, consider the following scenario:
+
+            1.  Something changes in the DOM that changes the result of `willValidate()`. This can happen as a result of
+                several things:
+                a.  The form control changes readonly state
+                b.  The form control changes disabled state
+                c.  The form control is added to a datalist element
+                d.  The form control is removed from a datalist element
+            2.  Call `willValidate()`.
+            3.  Call `isValid()`.
+
+        In scenarios (a) - (c), we ensure that cached form control validity (`m_isValid`) is updated alongside
+        `m_willValidate` by invoking `setNeedsWillValidateCheck()`, such that the result of `isValid()` matches the
+        result of `m_isValid` in step (3). However, in the last scenario (d), we don't do this, which causes form
+        control validity to fall out of sync with the result of `isValid()`. To fix the bug, we update willValidate and
+        isValid when a form control is removed from an ancestor, only if one of its ancestors is a datalist element.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::insertedIntoAncestor):
+        (WebCore::HTMLFormControlElement::removedFromAncestor):
+
+        Make a couple of minor tweaks:
+          - Currently, we always invalidate `m_dataListAncestorState` by resetting the state to `Unknown` when the form
+            control is removed from an ancestor or inserted. Instead, we only need to reset it when the form control
+            already has an ancestor that is a datalist (in the case where it's being removed) or when the form control
+            does not yet have an ancestor (in the case where it is being added).
+          - If the form control was inside a datalist prior to removal, recompute its cached value of `m_willValidate`,
+            as well as its cached validity (`m_isValid`).
+
 2019-03-01  Darin Adler  <darin@apple.com>
 
         Finish removing String::format
