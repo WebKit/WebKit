@@ -49,7 +49,7 @@ enum class ReferrerPolicy : uint8_t {
     UnsafeUrl
 };
 
-enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader };
+enum class ReferrerPolicySource : uint8_t { MetaTag, HTTPHeader, ReferrerPolicyAttribute };
 Optional<ReferrerPolicy> parseReferrerPolicy(StringView, ReferrerPolicySource);
 
 }

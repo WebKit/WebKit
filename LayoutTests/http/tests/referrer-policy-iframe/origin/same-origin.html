@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of origin referrer policy when same origin.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the origin
+    shouldBeEqualToString("referrer", "http://127.0.0.1:8000/");
+    finishJSTest();
+}
+</script>
+<iframe src="http://127.0.0.1:8000/referrer-policy/resources/document.html" referrerpolicy="origin"></iframe>
+</body>
+</html>

@@ -355,6 +355,9 @@ public:
     void setMousemoveEventHandlingPreventsDefaultEnabled(bool isEnabled) { m_mousemoveEventHandlingPreventsDefaultEnabled = isEnabled; }
 #endif
     
+    bool referrerPolicyAttributeEnabled() const { return m_referrerPolicyAttributeEnabled; }
+    void setReferrerPolicyAttributeEnabled(bool isEnabled) { m_referrerPolicyAttributeEnabled = isEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -538,6 +541,8 @@ private:
 #endif
 
     bool m_isITPDatabaseEnabled { false };
+
+    bool m_referrerPolicyAttributeEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

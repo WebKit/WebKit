@@ -580,6 +580,10 @@ WK_EXPORT bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

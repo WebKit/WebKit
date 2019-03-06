@@ -1,3 +1,21 @@
+2019-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Consider supporting the `referrerpolicy` attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=179053
+
+        Reviewed by Darin Adler.
+
+        Add a runtime flag for referrerpolicy attribute.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences referrerPolicyAttributeEnabled]):
+        (-[WebPreferences setReferrerPolicyAttributeEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-03-03  Tim Horton  <timothy_horton@apple.com>
 
         Remove some more unused 32-bit code

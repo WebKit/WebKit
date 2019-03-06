@@ -318,7 +318,10 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
-    String referrerToUse = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), url, referrer);
+    ReferrerPolicy policy = ownerElement.referrerPolicy();
+    if (policy == ReferrerPolicy::EmptyString)
+        policy = document->referrerPolicy();
+    String referrerToUse = SecurityPolicy::generateReferrerHeader(policy, url, referrer);
 
     // Prevent initial empty document load from triggering load events.
     document->incrementLoadEventDelayCount();

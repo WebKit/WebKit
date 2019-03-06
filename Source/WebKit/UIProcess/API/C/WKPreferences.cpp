@@ -2109,3 +2109,13 @@ bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferences
 {
     return toImpl(preferencesRef)->captureVideoInUIProcessEnabled();
 }
+
+void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setReferrerPolicyAttributeEnabled(flag);
+}
+
+bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->referrerPolicyAttributeEnabled();
+}

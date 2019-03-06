@@ -1439,118 +1439,118 @@ PASS iframe.height: IDL set to "\0"
 PASS iframe.height: IDL set to null 
 PASS iframe.height: IDL set to object "test-toString" 
 PASS iframe.height: IDL set to object "test-valueOf" 
-FAIL iframe.referrerPolicy: typeof IDL attribute assert_equals: expected "string" but got "undefined"
-FAIL iframe.referrerPolicy: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to undefined assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to 7 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to 1.5 assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to true assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to false assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to object "[object Object]" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to NaN assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to -Infinity assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to null assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to object "test-toString" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to object "test-valueOf" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "no-referrer" assert_equals: IDL get expected (string) "no-referrer" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xno-referrer" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "no-referrer\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "o-referrer" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "NO-REFERRER" assert_equals: IDL get expected (string) "no-referrer" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "no-referrer-when-downgrade" assert_equals: IDL get expected (string) "no-referrer-when-downgrade" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xno-referrer-when-downgrade" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "no-referrer-when-downgrade\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "o-referrer-when-downgrade" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: IDL get expected (string) "no-referrer-when-downgrade" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "same-origin" assert_equals: IDL get expected (string) "same-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xsame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "same-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "ame-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "SAME-ORIGIN" assert_equals: IDL get expected (string) "same-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "origin" assert_equals: IDL get expected (string) "origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xorigin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "rigin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "ORIGIN" assert_equals: IDL get expected (string) "origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "strict-origin" assert_equals: IDL get expected (string) "strict-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xstrict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "strict-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "trict-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN" assert_equals: IDL get expected (string) "strict-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xorigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "rigin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "origin-when-cross-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xstrict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "trict-origin-when-cross-origin" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: IDL get expected (string) "strict-origin-when-cross-origin" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "unsafe-url" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "xunsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "unsafe-url\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "nsafe-url" assert_equals: IDL get expected (string) "" but got (undefined) undefined
-FAIL iframe.referrerPolicy: setAttribute() to "UNSAFE-URL" assert_equals: IDL get expected (string) "unsafe-url" but got (undefined) undefined
-FAIL iframe.referrerPolicy: IDL set to "" assert_equals: getAttribute() expected "" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to 7 assert_equals: getAttribute() expected "7" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to true assert_equals: getAttribute() expected "true" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to false assert_equals: getAttribute() expected "false" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to null assert_equals: IDL get expected (string) "" but got (object) null
-FAIL iframe.referrerPolicy: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to object "test-valueOf" assert_equals: getAttribute() expected "test-valueOf" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "no-referrer" assert_equals: getAttribute() expected "no-referrer" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xno-referrer" assert_equals: getAttribute() expected "xno-referrer" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "no-referrer\0" assert_equals: getAttribute() expected "no-referrer\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "o-referrer" assert_equals: getAttribute() expected "o-referrer" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "NO-REFERRER" assert_equals: getAttribute() expected "NO-REFERRER" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "no-referrer-when-downgrade" assert_equals: getAttribute() expected "no-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xno-referrer-when-downgrade" assert_equals: getAttribute() expected "xno-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" assert_equals: getAttribute() expected "no-referrer-when-downgrade\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "o-referrer-when-downgrade" assert_equals: getAttribute() expected "o-referrer-when-downgrade" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" assert_equals: getAttribute() expected "NO-REFERRER-WHEN-DOWNGRADE" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "same-origin" assert_equals: getAttribute() expected "same-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xsame-origin" assert_equals: getAttribute() expected "xsame-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "same-origin\0" assert_equals: getAttribute() expected "same-origin\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "ame-origin" assert_equals: getAttribute() expected "ame-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "SAME-ORIGIN" assert_equals: getAttribute() expected "SAME-ORIGIN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "origin" assert_equals: getAttribute() expected "origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xorigin" assert_equals: getAttribute() expected "xorigin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "origin\0" assert_equals: getAttribute() expected "origin\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "rigin" assert_equals: getAttribute() expected "rigin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "ORIGIN" assert_equals: getAttribute() expected "ORIGIN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "strict-origin" assert_equals: getAttribute() expected "strict-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xstrict-origin" assert_equals: getAttribute() expected "xstrict-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "strict-origin\0" assert_equals: getAttribute() expected "strict-origin\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "trict-origin" assert_equals: getAttribute() expected "trict-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "STRICT-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "origin-when-cross-origin" assert_equals: getAttribute() expected "origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xorigin-when-cross-origin" assert_equals: getAttribute() expected "xorigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "origin-when-cross-origin\0" assert_equals: getAttribute() expected "origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "rigin-when-cross-origin" assert_equals: getAttribute() expected "rigin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin" assert_equals: getAttribute() expected "strict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" assert_equals: getAttribute() expected "xstrict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" assert_equals: getAttribute() expected "strict-origin-when-cross-origin\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "trict-origin-when-cross-origin" assert_equals: getAttribute() expected "trict-origin-when-cross-origin" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" assert_equals: getAttribute() expected "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "unsafe-url" assert_equals: getAttribute() expected "unsafe-url" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "xunsafe-url" assert_equals: getAttribute() expected "xunsafe-url" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "unsafe-url\0" assert_equals: getAttribute() expected "unsafe-url\0" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "nsafe-url" assert_equals: getAttribute() expected "nsafe-url" but got "UNSAFE-URL"
-FAIL iframe.referrerPolicy: IDL set to "UNSAFE-URL" assert_equals: IDL get expected "unsafe-url" but got "UNSAFE-URL"
+PASS iframe.referrerPolicy: typeof IDL attribute 
+PASS iframe.referrerPolicy: IDL get with DOM attribute unset 
+PASS iframe.referrerPolicy: setAttribute() to "" 
+PASS iframe.referrerPolicy: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS iframe.referrerPolicy: setAttribute() to undefined 
+PASS iframe.referrerPolicy: setAttribute() to 7 
+PASS iframe.referrerPolicy: setAttribute() to 1.5 
+PASS iframe.referrerPolicy: setAttribute() to true 
+PASS iframe.referrerPolicy: setAttribute() to false 
+PASS iframe.referrerPolicy: setAttribute() to object "[object Object]" 
+PASS iframe.referrerPolicy: setAttribute() to NaN 
+PASS iframe.referrerPolicy: setAttribute() to Infinity 
+PASS iframe.referrerPolicy: setAttribute() to -Infinity 
+PASS iframe.referrerPolicy: setAttribute() to "\0" 
+PASS iframe.referrerPolicy: setAttribute() to null 
+PASS iframe.referrerPolicy: setAttribute() to object "test-toString" 
+PASS iframe.referrerPolicy: setAttribute() to object "test-valueOf" 
+PASS iframe.referrerPolicy: setAttribute() to "no-referrer" 
+PASS iframe.referrerPolicy: setAttribute() to "xno-referrer" 
+PASS iframe.referrerPolicy: setAttribute() to "no-referrer\0" 
+PASS iframe.referrerPolicy: setAttribute() to "o-referrer" 
+PASS iframe.referrerPolicy: setAttribute() to "NO-REFERRER" 
+PASS iframe.referrerPolicy: setAttribute() to "no-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: setAttribute() to "xno-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: setAttribute() to "no-referrer-when-downgrade\0" 
+PASS iframe.referrerPolicy: setAttribute() to "o-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: setAttribute() to "NO-REFERRER-WHEN-DOWNGRADE" 
+PASS iframe.referrerPolicy: setAttribute() to "same-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "xsame-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "same-origin\0" 
+PASS iframe.referrerPolicy: setAttribute() to "ame-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "SAME-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "origin" 
+PASS iframe.referrerPolicy: setAttribute() to "xorigin" 
+PASS iframe.referrerPolicy: setAttribute() to "origin\0" 
+PASS iframe.referrerPolicy: setAttribute() to "rigin" 
+PASS iframe.referrerPolicy: setAttribute() to "ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "strict-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "xstrict-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "strict-origin\0" 
+PASS iframe.referrerPolicy: setAttribute() to "trict-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "xorigin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "origin-when-cross-origin\0" 
+PASS iframe.referrerPolicy: setAttribute() to "rigin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "xstrict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "strict-origin-when-cross-origin\0" 
+PASS iframe.referrerPolicy: setAttribute() to "trict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: setAttribute() to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: setAttribute() to "unsafe-url" 
+PASS iframe.referrerPolicy: setAttribute() to "xunsafe-url" 
+PASS iframe.referrerPolicy: setAttribute() to "unsafe-url\0" 
+PASS iframe.referrerPolicy: setAttribute() to "nsafe-url" 
+PASS iframe.referrerPolicy: setAttribute() to "UNSAFE-URL" 
+PASS iframe.referrerPolicy: IDL set to "" 
+PASS iframe.referrerPolicy: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS iframe.referrerPolicy: IDL set to undefined 
+PASS iframe.referrerPolicy: IDL set to 7 
+PASS iframe.referrerPolicy: IDL set to 1.5 
+PASS iframe.referrerPolicy: IDL set to true 
+PASS iframe.referrerPolicy: IDL set to false 
+PASS iframe.referrerPolicy: IDL set to object "[object Object]" 
+PASS iframe.referrerPolicy: IDL set to NaN 
+PASS iframe.referrerPolicy: IDL set to Infinity 
+PASS iframe.referrerPolicy: IDL set to -Infinity 
+PASS iframe.referrerPolicy: IDL set to "\0" 
+PASS iframe.referrerPolicy: IDL set to null 
+PASS iframe.referrerPolicy: IDL set to object "test-toString" 
+PASS iframe.referrerPolicy: IDL set to object "test-valueOf" 
+PASS iframe.referrerPolicy: IDL set to "no-referrer" 
+PASS iframe.referrerPolicy: IDL set to "xno-referrer" 
+PASS iframe.referrerPolicy: IDL set to "no-referrer\0" 
+PASS iframe.referrerPolicy: IDL set to "o-referrer" 
+PASS iframe.referrerPolicy: IDL set to "NO-REFERRER" 
+PASS iframe.referrerPolicy: IDL set to "no-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: IDL set to "xno-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: IDL set to "no-referrer-when-downgrade\0" 
+PASS iframe.referrerPolicy: IDL set to "o-referrer-when-downgrade" 
+PASS iframe.referrerPolicy: IDL set to "NO-REFERRER-WHEN-DOWNGRADE" 
+PASS iframe.referrerPolicy: IDL set to "same-origin" 
+PASS iframe.referrerPolicy: IDL set to "xsame-origin" 
+PASS iframe.referrerPolicy: IDL set to "same-origin\0" 
+PASS iframe.referrerPolicy: IDL set to "ame-origin" 
+PASS iframe.referrerPolicy: IDL set to "SAME-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "origin" 
+PASS iframe.referrerPolicy: IDL set to "xorigin" 
+PASS iframe.referrerPolicy: IDL set to "origin\0" 
+PASS iframe.referrerPolicy: IDL set to "rigin" 
+PASS iframe.referrerPolicy: IDL set to "ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "strict-origin" 
+PASS iframe.referrerPolicy: IDL set to "xstrict-origin" 
+PASS iframe.referrerPolicy: IDL set to "strict-origin\0" 
+PASS iframe.referrerPolicy: IDL set to "trict-origin" 
+PASS iframe.referrerPolicy: IDL set to "STRICT-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "origin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "xorigin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "origin-when-cross-origin\0" 
+PASS iframe.referrerPolicy: IDL set to "rigin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "xstrict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "strict-origin-when-cross-origin\0" 
+PASS iframe.referrerPolicy: IDL set to "trict-origin-when-cross-origin" 
+PASS iframe.referrerPolicy: IDL set to "STRICT-ORIGIN-WHEN-CROSS-ORIGIN" 
+PASS iframe.referrerPolicy: IDL set to "unsafe-url" 
+PASS iframe.referrerPolicy: IDL set to "xunsafe-url" 
+PASS iframe.referrerPolicy: IDL set to "unsafe-url\0" 
+PASS iframe.referrerPolicy: IDL set to "nsafe-url" 
+PASS iframe.referrerPolicy: IDL set to "UNSAFE-URL" 
 PASS iframe.align: typeof IDL attribute 
 PASS iframe.align: IDL get with DOM attribute unset 
 PASS iframe.align: setAttribute() to "" 

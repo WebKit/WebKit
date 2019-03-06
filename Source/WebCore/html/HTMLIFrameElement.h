@@ -40,6 +40,10 @@ public:
     RenderIFrame* renderer() const;
     const String& allow() const { return m_allow; }
 
+    void setReferrerPolicyForBindings(const AtomicString&);
+    String referrerPolicyForBindings() const;
+    ReferrerPolicy referrerPolicy() const final;
+
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 

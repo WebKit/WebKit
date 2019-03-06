@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of strict-origin-when-cross-origin referrer policy when same origin.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the full URL because we are same-origin.
+    shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-iframe/strict-origin-when-cross-origin/same-origin.html");
+    finishJSTest();
+}
+</script>
+<iframe src="http://127.0.0.1:8000/referrer-policy/resources/document.html" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</body>
+</html>

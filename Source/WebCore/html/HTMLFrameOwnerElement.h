@@ -21,6 +21,7 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "ReferrerPolicy.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -59,6 +60,8 @@ public:
     void scheduleInvalidateStyleAndLayerComposition();
 
     virtual bool isURLAllowed(const URL&) const { return true; }
+
+    virtual ReferrerPolicy referrerPolicy() const { return ReferrerPolicy::EmptyString; }
 
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document&);

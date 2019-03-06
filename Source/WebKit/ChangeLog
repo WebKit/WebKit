@@ -1,3 +1,21 @@
+2019-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Consider supporting the `referrerpolicy` attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=179053
+
+        Reviewed by Darin Adler.
+
+        Add a runtime flag for referrerpolicy attribute.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetReferrerPolicyAttributeEnabled):
+        (WKPreferencesGetReferrerPolicyAttributeEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource): do not hardcode choosing
+        the document referrer policy.
+
 2019-03-06  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE build fix after r242503

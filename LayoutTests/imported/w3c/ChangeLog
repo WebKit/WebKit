@@ -1,3 +1,14 @@
+2019-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Consider supporting the `referrerpolicy` attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=179053
+
+        Reviewed by Darin Adler.
+
+        Update improved results.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+
 2019-03-06  Frederic Wang  <fwang@igalia.com>
 
         Update WPT tests for the canvas element

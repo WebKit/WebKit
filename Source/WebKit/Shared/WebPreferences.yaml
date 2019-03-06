@@ -1563,6 +1563,14 @@ MousemoveEventHandlingPreventsDefaultEnabled:
   category: internal
   condition: ENABLE(TOUCH_EVENTS)
 
+ReferrerPolicyAttributeEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Referrer Policy attribute"
+  humanReadableDescription: "Enable Referrer Policy attribute"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

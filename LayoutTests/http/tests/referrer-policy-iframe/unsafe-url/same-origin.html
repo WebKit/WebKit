@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests the behavior of unsafe-url referrer policy when same origin.");
+jsTestIsAsync = true;
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Should be the full URL
+    shouldBeEqualToString("referrer", "http://127.0.0.1:8000/referrer-policy-iframe/unsafe-url/same-origin.html");
+    finishJSTest();
+}
+</script>
+<iframe src="http://127.0.0.1:8000/referrer-policy/resources/document.html" referrerpolicy="unsafe-url"></iframe>
+</body>
+</html>

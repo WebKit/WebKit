@@ -4125,6 +4125,13 @@ webkit.org/b/189194 http/tests/referrer-policy/strict-origin-when-cross-origin/c
 webkit.org/b/189194 http/tests/referrer-policy/strict-origin/cross-origin-http.https.html [ Failure ]
 webkit.org/b/189194 http/tests/security/basic-auth-subresource.html [ Failure ]
 
+webkit.org/b/189194 http/tests/referrer-policy-iframe/strict-origin/same-origin.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http.https.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-iframe/strict-origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/189194 http/tests/referrer-policy-iframe/same-origin/cross-origin-http-http.html [ Failure ]
+
 webkit.org/b/189550 fast/text/variations/ipc2.html [ Skip ]
 
 webkit.org/b/189834 css-custom-properties-api/registerProperty.html [ Failure ]

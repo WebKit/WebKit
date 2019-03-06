@@ -1,3 +1,58 @@
+2019-03-06  Rob Buis  <rbuis@igalia.com>
+
+        Consider supporting the `referrerpolicy` attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=179053
+
+        Reviewed by Darin Adler.
+
+        This patch adds 'referrerpolicy' attribute support for iframe.
+        If set, the value is restricted to the ReferrerPolicy enum, and
+        if valid it is used for the subframe load.
+        If not set or invalid, the current behavior is kept.
+
+        Tests: http/tests/referrer-policy-iframe/no-referrer-when-downgrade/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/no-referrer-when-downgrade/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/no-referrer-when-downgrade/same-origin.html
+               http/tests/referrer-policy-iframe/no-referrer/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/no-referrer/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/no-referrer/same-origin.html
+               http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/origin-when-cross-origin/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/origin-when-cross-origin/same-origin.html
+               http/tests/referrer-policy-iframe/origin/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/origin/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/origin/same-origin.html
+               http/tests/referrer-policy-iframe/same-origin/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/same-origin/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/same-origin/same-origin.html
+               http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/strict-origin-when-cross-origin/same-origin.html
+               http/tests/referrer-policy-iframe/strict-origin/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/strict-origin/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/strict-origin/same-origin.html
+               http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http-http.html
+               http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http.https.html
+               http/tests/referrer-policy-iframe/unsafe-url/same-origin.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::HTMLFrameOwnerElement::referrerPolicy const):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::setReferrerPolicyForBindings):
+        (WebCore::HTMLIFrameElement::referrerPolicyForBindings const):
+        (WebCore::HTMLIFrameElement::referrerPolicy const):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLIFrameElement.idl:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::referrerPolicyAttributeEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setReferrerPolicyAttributeEnabled):
+        * platform/ReferrerPolicy.cpp:
+        (WebCore::parseReferrerPolicy):
+        * platform/ReferrerPolicy.h:
+
 2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [curl] Remove unnecessary file.
