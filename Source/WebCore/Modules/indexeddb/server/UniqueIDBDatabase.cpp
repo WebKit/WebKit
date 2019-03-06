@@ -55,7 +55,7 @@ using namespace JSC;
 namespace IDBServer {
 
 UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentifier& identifier)
-    : m_server(server)
+    : m_server(&server)
     , m_identifier(identifier)
     , m_operationAndTransactionTimer(*this, &UniqueIDBDatabase::operationAndTransactionTimerFired)
 {
@@ -245,7 +245,7 @@ void UniqueIDBDatabase::deleteBackingStore(const IDBDatabaseIdentifier& identifi
         m_backingStoreSupportsSimultaneousTransactions = false;
         m_backingStoreIsEphemeral = false;
     } else {
-        auto backingStore = m_server.createBackingStore(identifier);
+        auto backingStore = m_server->createBackingStore(identifier);
 
         IDBDatabaseInfo databaseInfo;
         auto error = backingStore->getOrEstablishDatabaseInfo(databaseInfo);
@@ -277,7 +277,7 @@ void UniqueIDBDatabase::scheduleShutdownForClose()
     m_operationAndTransactionTimer.stop();
 
     RELEASE_ASSERT(!m_owningPointerForClose);
-    m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
+    m_owningPointerForClose = m_server->closeAndTakeUniqueIDBDatabase(*this);
 
     notifyServerAboutClose(CloseState::Start);
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownForClose));
@@ -636,7 +636,7 @@ void UniqueIDBDatabase::openBackingStore(const IDBDatabaseIdentifier& identifier
     LOG(IndexedDB, "(db) UniqueIDBDatabase::openBackingStore (%p)", this);
 
     ASSERT(!m_backingStore);
-    m_backingStore = m_server.createBackingStore(identifier);
+    m_backingStore = m_server->createBackingStore(identifier);
     m_backingStoreSupportsSimultaneousTransactions = m_backingStore->supportsSimultaneousTransactions();
     m_backingStoreIsEphemeral = m_backingStore->isEphemeral();
 
@@ -1763,13 +1763,13 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
 void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
 {
     m_databaseQueue.append(WTFMove(task));
-    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTask));
+    m_server->postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTask));
 }
 
 void UniqueIDBDatabase::postDatabaseTaskReply(CrossThreadTask&& task)
 {
     m_databaseReplyQueue.append(WTFMove(task));
-    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTaskReply));
+    m_server->postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTaskReply));
 }
 
 void UniqueIDBDatabase::executeNextDatabaseTask()
@@ -1898,7 +1898,7 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     notifyServerAboutClose(CloseState::Start);
     // Otherwise, this database is still potentially active.
     // So we'll have it own itself and then perform a clean unconditional delete on the background thread.
-    m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
+    m_owningPointerForClose = m_server->closeAndTakeUniqueIDBDatabase(*this);
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performUnconditionalDeleteBackingStore));
 }
 
@@ -1976,9 +1976,9 @@ void UniqueIDBDatabase::notifyServerAboutClose(CloseState state)
     ASSERT(isMainThread());
 #if PLATFORM(IOS_FAMILY)
     if (state == CloseState::Start) 
-        m_server.closeDatabase(this);
+        m_server->closeDatabase(this);
     else
-        m_server.didCloseDatabase(this);
+        m_server->didCloseDatabase(this);
 #else
     UNUSED_PARAM(state);
 #endif

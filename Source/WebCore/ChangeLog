@@ -1,3 +1,35 @@
+2019-03-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Assertion Failed: m_databaseQueue.isKilled() in UniqueIDBDatabase::~UniqueIDBDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=195073
+        <rdar://problem/48285200>
+
+        Reviewed by Geoffrey Garen.
+
+        r240931 removed a retain cycle between IDBConnectionToServer and IDBConnectionToServerDelegate, so 
+        IDBConnectionToServerDelegate, or InProcessIDBServer would not live forever. When IDBDatabase is gone, 
+        InProcessIDBServer would schedule a notifification to IDBServer with databaseConnectionClosed. IDBServer would 
+        then notify UniqueIDBDatabase. When UniqueIDBDatabase finds all database connections are gone, it would acquires
+        its only reference pointer from IDBServer schedule and perform a shutdown that kills its database task queue.
+
+        The assertion failure tells us UniqueIDBDatabase was destructed at when IDBServer was destructed, which means 
+        UniqueIDBDatabase had not acquired its pointer. It's probably because UniqueIDBDatabase had unfinished tasks or
+        the operation timer function had not been executed. Since UniqueIDBDatabase needs to complete shutdown process,
+        we should make IDBServer live as long as UniqueIDBDatabase by keeping a reference pointer of IDBServer in 
+        UniqueIDBDatabase. 
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::openBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::notifyServerAboutClose):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        (WebCore::IDBServer::UniqueIDBDatabase::server):
+
 2019-03-06  Rob Buis  <rbuis@igalia.com>
 
         Consider supporting the `referrerpolicy` attribute.

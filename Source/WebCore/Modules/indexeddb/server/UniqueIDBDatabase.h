@@ -82,7 +82,7 @@ public:
     void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
 
     const IDBDatabaseInfo& info() const;
-    IDBServer& server() { return m_server; }
+    IDBServer& server() { return *m_server; }
     const IDBDatabaseIdentifier& identifier() const { return m_identifier; }
 
     void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback);
@@ -229,7 +229,7 @@ private:
 
     void notifyServerAboutClose(CloseState);
 
-    IDBServer& m_server;
+    RefPtr<IDBServer> m_server;
     IDBDatabaseIdentifier m_identifier;
     
     ListHashSet<RefPtr<ServerOpenDBRequest>> m_pendingOpenDBRequests;
