@@ -40,10 +40,10 @@ unsigned long calculateVertexBufferIndex(unsigned long index)
     return index + 8;
 }
 
-} // namespace Metal
+}
 
-} // namespace WHLSL
+}
 
-} // namespace WebCore
+}
 
 #endif // ENABLE(WEBGPU)

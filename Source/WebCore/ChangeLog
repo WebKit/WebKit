@@ -1,3 +1,96 @@
+2019-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Pack and unpack data at entry points and exit points
+        https://bugs.webkit.org/show_bug.cgi?id=193877
+
+        Reviewed by Dean Jackson.
+
+        This implements the bulk of the rest of the Metal code generation piece.
+        Specifically, this patch adds support for the packing and unpacking steps
+        at the beginning of the entry point functions and all returns from those
+        functions. It does this by creating an object, EntryPointScaffolding, that
+        knows how to emit all the helper types, packing / unpacking code, and the
+        function signature. This patch also accepts parts of the
+        PipelineStateDescriptor so we know the data layout we should be packing and
+        unpacking.
+
+        This is the last patch before enough of the compiler is present that we can
+        start testing it. The next patch will start porting the test suite.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        (WebCore::WHLSL::Metal::attributeForSemantic):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::EntryPointScaffolding):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mappedBindGroups const):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::builtInsSignature):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledInputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mangledOutputPath):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpackResourcesAndNamedBuiltIns):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::VertexEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::FragmentEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::ComputeEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::signature):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::ComputeEntryPointScaffolding::pack):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::helperTypes): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::signature): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::unpack): Deleted.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::pack): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::parameterVariables):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::toString):
+        (WebCore::WHLSL::Metal::FunctionDeclarationWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::FunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::generateNextVariableName):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::constantExpressionString):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::RenderFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::takeVertexMappedBindGroups):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::takeFragmentMappedBindGroups):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::ComputeFunctionDefinitionWriter):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::takeMappedBindGroups):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::sharedMetalFunctions):
+        (WebCore::WHLSL::Metal::metalFunctions):
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLMappedBindings.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp:
+        (WebCore::WHLSL::Metal::generateMetalCodeShared):
+        (WebCore::WHLSL::Metal::generateMetalCode):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h:
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::float2Type const):
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h: Added.
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp: Added.
+        (WebCore::WHLSL::prepareShared):
+        (WebCore::WHLSL::prepare):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h.
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp: Added.
+        (WebCore::WHLSL::findEntryPoint):
+        (WebCore::WHLSL::matchMode):
+        (WebCore::WHLSL::matchResources):
+        (WebCore::WHLSL::matchInputsOutputs):
+        (WebCore::WHLSL::isAcceptableFormat):
+        (WebCore::WHLSL::matchVertexAttributes):
+        (WebCore::WHLSL::matchColorAttachments):
+        (WebCore::WHLSL::matchDepthAttachment):
+        (WebCore::WHLSL::matchSemantics):
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.h: Copied from Source/WebCore/Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move RenderObject::isTransparentOrFullyClippedRespectingParentFrames() to RenderLayer

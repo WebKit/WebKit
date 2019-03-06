@@ -27,36 +27,25 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
-#include "WHLSLSemanticMatcher.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-class Program;
-
 namespace Metal {
 
-class TypeNamer;
-
-struct RenderMetalFunctions {
-    String metalSource;
-    MappedBindGroups vertexMappedBindGroups;
-    MappedBindGroups fragmentMappedBindGroups;
+struct MappedBindGroup {
+    unsigned argumentBufferIndex;
+    Vector<unsigned> bindingIndices;
 };
-RenderMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
 
-struct ComputeMetalFunctions {
-    String metalSource;
-    MappedBindGroups mappedBindGroups;
-};
-ComputeMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
+using MappedBindGroups = Vector<MappedBindGroup>; // Parallel to the input resource Layout.
 
-}
+} // namespace Metal
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
 #endif

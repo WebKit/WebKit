@@ -13431,6 +13431,12 @@
 		C234A9B621E92CC0003C984D /* WHLSLIntrinsics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLIntrinsics.h; sourceTree = "<group>"; };
 		C234A9B721E92CC1003C984D /* WHLSLIntrinsics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLIntrinsics.cpp; sourceTree = "<group>"; };
 		C2458E611FE8979E00594759 /* FontCacheCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontCacheCoreText.h; sourceTree = "<group>"; };
+		C24A57AF21FAD53F004C6DD1 /* WHLSLPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPipelineDescriptor.h; sourceTree = "<group>"; };
+		C24A57B221FB8DDA004C6DD1 /* WHLSLSemanticMatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLSemanticMatcher.cpp; sourceTree = "<group>"; };
+		C24A57B321FB8DDA004C6DD1 /* WHLSLSemanticMatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSemanticMatcher.h; sourceTree = "<group>"; };
+		C24A57BA21FEAFEA004C6DD1 /* WHLSLPrepare.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPrepare.cpp; sourceTree = "<group>"; };
+		C24A57BB21FEAFEA004C6DD1 /* WHLSLPrepare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPrepare.h; sourceTree = "<group>"; };
+		C24A57BE21FEC65C004C6DD1 /* WHLSLMappedBindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLMappedBindings.h; sourceTree = "<group>"; };
 		C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSet.cpp; sourceTree = "<group>"; };
 		C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSet.h; sourceTree = "<group>"; };
 		C280833C1C6DB194001451B6 /* FontFace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FontFace.idl; sourceTree = "<group>"; };
@@ -17217,6 +17223,7 @@
 				1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */,
 				1CECB3AF21F2B98400F44542 /* WHLSLFunctionWriter.cpp */,
 				1CECB3B221F2B98600F44542 /* WHLSLFunctionWriter.h */,
+				C24A57BE21FEC65C004C6DD1 /* WHLSLMappedBindings.h */,
 				1CECB3B521F50AC700F44542 /* WHLSLMetalCodeGenerator.cpp */,
 				1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */,
 				1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */,
@@ -25696,6 +25703,9 @@
 				C234A98C21E8883E003C984D /* WHLSLNameResolver.h */,
 				C21BF73721CD8A0200227979 /* WHLSLParser.cpp */,
 				C21BF73821CD8A0300227979 /* WHLSLParser.h */,
+				C24A57AF21FAD53F004C6DD1 /* WHLSLPipelineDescriptor.h */,
+				C24A57BA21FEAFEA004C6DD1 /* WHLSLPrepare.cpp */,
+				C24A57BB21FEAFEA004C6DD1 /* WHLSLPrepare.h */,
 				C21BF73A21CD8D7000227979 /* WHLSLProgram.h */,
 				1CA0C2E021EEB5F500A11860 /* WHLSLRecursionChecker.cpp */,
 				1CA0C2DE21EEB5F400A11860 /* WHLSLRecursionChecker.h */,
@@ -25704,6 +25714,8 @@
 				C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */,
 				C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */,
 				C234A99D21E910BD003C984D /* WHLSLResolvingType.h */,
+				C24A57B221FB8DDA004C6DD1 /* WHLSLSemanticMatcher.cpp */,
+				C24A57B321FB8DDA004C6DD1 /* WHLSLSemanticMatcher.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,
 				1CECB3A921F2B67300F44542 /* WHLSLStatementBehaviorChecker.cpp */,
 				1CECB3A821F2B67300F44542 /* WHLSLStatementBehaviorChecker.h */,

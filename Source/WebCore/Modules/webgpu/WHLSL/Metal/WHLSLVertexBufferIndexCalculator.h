@@ -35,10 +35,10 @@ namespace Metal {
 
 unsigned long calculateVertexBufferIndex(unsigned long);
 
-} // namespace Metal
+}
 
-} // namespace WHLSL
+}
 
-} // namespace WebCore
+}
 
 #endif // ENABLE(WEBGPU)

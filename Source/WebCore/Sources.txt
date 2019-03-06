@@ -324,6 +324,7 @@ Modules/webgpu/WHLSL/WHLSLNameResolver.cpp
 Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp
 Modules/webgpu/WHLSL/WHLSLRecursionChecker.cpp
 Modules/webgpu/WHLSL/WHLSLVisitor.cpp
+Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp
 Modules/webgpu/WHLSL/WHLSLLiteralTypeChecker.cpp
 Modules/webgpu/WHLSL/WHLSLHighZombieFinder.cpp
 Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp
@@ -346,6 +347,7 @@ Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteralType.cpp
 Modules/webgpu/WHLSL/AST/WHLSLTypeReference.cpp
 Modules/webgpu/WHLSL/AST/WHLSLIntegerLiteral.cpp
 Modules/webgpu/WHLSL/AST/WHLSLUnsignedIntegerLiteral.cpp
+Modules/webgpu/WHLSL/WHLSLPrepare.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUBindGroup.cpp
 Modules/webgpu/WebGPUBindGroupDescriptor.cpp

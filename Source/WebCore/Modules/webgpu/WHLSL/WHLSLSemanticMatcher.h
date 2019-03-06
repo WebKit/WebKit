@@ -27,8 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
-#include "WHLSLSemanticMatcher.h"
+#include "WHLSLGatherEntryPointItems.h"
+#include "WHLSLPipelineDescriptor.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -36,27 +37,29 @@ namespace WHLSL {
 
 class Program;
 
-namespace Metal {
-
-class TypeNamer;
-
-struct RenderMetalFunctions {
-    String metalSource;
-    MappedBindGroups vertexMappedBindGroups;
-    MappedBindGroups fragmentMappedBindGroups;
+struct MatchedRenderSemantics {
+    AST::FunctionDefinition* vertexShader;
+    AST::FunctionDefinition* fragmentShader;
+    EntryPointItems vertexShaderEntryPointItems;
+    EntryPointItems fragmentShaderEntryPointItems;
+    HashMap<Binding*, size_t> vertexShaderResourceMap;
+    HashMap<Binding*, size_t> fragmentShaderResourceMap;
+    HashMap<VertexAttribute*, size_t> matchedVertexAttributes;
+    HashMap<AttachmentDescriptor*, size_t> matchedColorAttachments;
 };
-RenderMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
 
-struct ComputeMetalFunctions {
-    String metalSource;
-    MappedBindGroups mappedBindGroups;
+Optional<MatchedRenderSemantics> matchSemantics(Program&, RenderPipelineDescriptor&);
+
+struct MatchedComputeSemantics {
+    AST::FunctionDefinition* shader;
+    EntryPointItems entryPointItems;
+    HashMap<Binding*, size_t> resourceMap;
 };
-ComputeMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
 
-}
+Optional<MatchedComputeSemantics> matchSemantics(Program&, ComputePipelineDescriptor&);
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(WEBGPU)

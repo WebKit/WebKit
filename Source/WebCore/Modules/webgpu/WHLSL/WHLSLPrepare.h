@@ -28,35 +28,30 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLMappedBindings.h"
-#include "WHLSLSemanticMatcher.h"
+#include "WHLSLPipelineDescriptor.h"
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-class Program;
-
-namespace Metal {
-
-class TypeNamer;
-
-struct RenderMetalFunctions {
+// FIXME: Generate descriptive error messages and return them here.
+struct RenderPrepareResult {
     String metalSource;
-    MappedBindGroups vertexMappedBindGroups;
-    MappedBindGroups fragmentMappedBindGroups;
+    Metal::MappedBindGroups vertexMappedBindGroups;
+    Metal::MappedBindGroups fragmentMappedBindGroups;
 };
-RenderMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
+Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor&);
 
-struct ComputeMetalFunctions {
+struct ComputePrepareResult {
     String metalSource;
-    MappedBindGroups mappedBindGroups;
+    Metal::MappedBindGroups mappedBindGroups;
 };
-ComputeMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
+Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor&);
 
-}
+} // namespace WHLSL
 
-}
+} // namespace WebCore
 
-}
-
-#endif
+#endif // ENABLE(WEBGPU)

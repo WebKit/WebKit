@@ -27,6 +27,12 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLMappedBindings.h"
+#include "WHLSLPipelineDescriptor.h"
+#include <wtf/HashMap.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 namespace WHLSL {
@@ -37,23 +43,132 @@ class FunctionDefinition;
 
 }
 
+struct EntryPointItems;
 class Intrinsics;
 
 namespace Metal {
 
-// FIXME: This needs to know about the pipeline state object to emit function prologues and epilogues.
+class TypeNamer;
+
 class EntryPointScaffolding {
 public:
-    EntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&);
+    EntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<String()>&& generateNextVariableName);
+    virtual ~EntryPointScaffolding() = default;
 
-    String helperTypes();
-    String signature();
-    String unpack();
-    String pack(const String& existingVariableName, const String& variableName);
+    virtual String helperTypes() = 0;
+    virtual String signature(String& functionName) = 0;
+    virtual String unpack() = 0;
+    virtual String pack(const String& existingVariableName, const String& variableName) = 0;
+
+    MappedBindGroups mappedBindGroups() const;
+    Vector<String>& parameterVariables() { return m_parameterVariables; }
+
+protected:
+    String resourceHelperTypes();
+    Optional<String> resourceSignature();
+    Optional<String> builtInsSignature();
+
+    String mangledInputPath(Vector<String>& path);
+    String mangledOutputPath(Vector<String>& path);
+    String unpackResourcesAndNamedBuiltIns();
+
+    AST::FunctionDefinition& m_functionDefinition;
+    Intrinsics& m_intrinsics;
+    TypeNamer& m_typeNamer;
+    EntryPointItems& m_entryPointItems;
+    HashMap<Binding*, size_t>& m_resourceMap;
+    Layout& m_layout;
+    std::function<String()> m_generateNextVariableName;
+
+    struct NamedBinding {
+        String elementName;
+        unsigned index;
+    };
+    struct NamedBindGroup {
+        String structName;
+        String variableName;
+        Vector<NamedBinding> namedBindings;
+        unsigned argumentBufferIndex;
+    };
+    Vector<NamedBindGroup> m_namedBindGroups; // Parallel to m_layout
+
+    struct NamedBuiltIn {
+        size_t indexInEntryPointItems;
+        String variableName;
+    };
+    Vector<NamedBuiltIn> m_namedBuiltIns;
+
+    Vector<String> m_parameterVariables;
+};
+
+class VertexEntryPointScaffolding : public EntryPointScaffolding {
+public:
+    VertexEntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<String()>&& generateNextVariableName, HashMap<VertexAttribute*, size_t>& matchedVertexAttributes);
+    virtual ~VertexEntryPointScaffolding() = default;
+
+    String helperTypes() override;
+    String signature(String& functionName) override;
+    String unpack() override;
+    String pack(const String& existingVariableName, const String& variableName) override;
 
 private:
-    AST::FunctionDefinition* m_functionDefinition;
-    Intrinsics* m_intrinsics;
+    HashMap<VertexAttribute*, size_t>& m_matchedVertexAttributes;
+    String m_stageInStructName;
+    String m_returnStructName;
+    String m_stageInParameterName;
+
+    struct NamedStageIn {
+        size_t indexInEntryPointItems;
+        String elementName;
+        unsigned attributeIndex;
+    };
+    Vector<NamedStageIn> m_namedStageIns;
+
+    struct NamedOutput {
+        String elementName;
+    };
+    Vector<NamedOutput> m_namedOutputs;
+};
+
+class FragmentEntryPointScaffolding : public EntryPointScaffolding {
+public:
+    FragmentEntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<String()>&& generateNextVariableName, HashMap<AttachmentDescriptor*, size_t>& matchedColorAttachments);
+    virtual ~FragmentEntryPointScaffolding() = default;
+
+    String helperTypes() override;
+    String signature(String& functionName) override;
+    String unpack() override;
+    String pack(const String& existingVariableName, const String& variableName) override;
+
+private:
+    String m_stageInStructName;
+    String m_returnStructName;
+    String m_stageInParameterName;
+
+    struct NamedStageIn {
+        size_t indexInEntryPointItems;
+        String elementName;
+        unsigned attributeIndex;
+    };
+    Vector<NamedStageIn> m_namedStageIns;
+
+    struct NamedOutput {
+        String elementName;
+    };
+    Vector<NamedOutput> m_namedOutputs;
+};
+
+class ComputeEntryPointScaffolding : public EntryPointScaffolding {
+public:
+    ComputeEntryPointScaffolding(AST::FunctionDefinition&, Intrinsics&, TypeNamer&, EntryPointItems&, HashMap<Binding*, size_t>& resourceMap, Layout&, std::function<String()>&& generateNextVariableName);
+    virtual ~ComputeEntryPointScaffolding() = default;
+
+    String helperTypes() override;
+    String signature(String& functionName) override;
+    String unpack() override;
+    String pack(const String& existingVariableName, const String& variableName) override;
+
+private:
 };
 
 }

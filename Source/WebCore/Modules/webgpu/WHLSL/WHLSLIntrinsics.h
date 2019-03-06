@@ -82,6 +82,12 @@ public:
         return *m_floatType;
     }
 
+    AST::NativeTypeDeclaration& float2Type() const
+    {
+        ASSERT(m_vectorFloat[0]);
+        return *m_vectorFloat[0];
+    }
+
     AST::NativeTypeDeclaration& float3Type() const
     {
         ASSERT(m_vectorFloat[1]);
