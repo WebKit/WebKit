@@ -108,7 +108,7 @@ public:
 
     bool wasUserInitiated() const { return !!m_lastNavigationAction.userGestureTokenIdentifier; }
 
-    bool shouldForceDownload() const { return !m_lastNavigationAction.downloadAttribute.isNull(); }
+    bool shouldPerformDownload() const { return !m_lastNavigationAction.downloadAttribute.isNull(); }
 
     bool isSystemPreview() const
     {

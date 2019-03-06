@@ -190,6 +190,7 @@
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
+#include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
 #include <WebCore/RunLoopObserver.h>
@@ -2756,7 +2757,12 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         data->contentBlockersEnabled = false;
     }
 
-    if (policyAction == PolicyAction::Use && navigation && (navigation->isSystemPreview() || navigation->shouldForceDownload()))
+#if PLATFORM(COCOA)
+    static const bool forceDownloadFromDownloadAttribute = !WebKit::linkedOnOrAfter(SDKVersion::FirstWhereDownloadAttributeDoesNotOverrideNavigationDelegate);
+#else
+    static const bool forceDownloadFromDownloadAttribute = true;
+#endif
+    if (policyAction == PolicyAction::Use && navigation && (navigation->isSystemPreview() || (forceDownloadFromDownloadAttribute && navigation->shouldPerformDownload())))
         policyAction = PolicyAction::Download;
 
     if (policyAction != PolicyAction::Use || !frame.isMainFrame() || !navigation) {

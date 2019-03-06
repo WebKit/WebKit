@@ -653,4 +653,86 @@ TEST(_WKDownload, SystemPreviewUSDZBlobNaming)
     runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobWithUSDZExtensionDownloadDelegate alloc] init]).get(), originalURL);
 }
 
+@interface DownloadAttributeTestDelegate : NSObject <WKNavigationDelegate, _WKDownloadDelegate>
+@property (nonatomic, readonly) bool didFinishNavigation;
+@property (nonatomic, readonly) bool didStartProvisionalNavigation;
+@property (nonatomic, readonly) bool downloadDidStart;
+@property (nonatomic) WKNavigationActionPolicy navigationActionPolicy;
+@end
+
+@implementation DownloadAttributeTestDelegate
+
+- (instancetype)init
+{
+    if ((self = [super init]))
+        _navigationActionPolicy = WKNavigationActionPolicyAllow;
+
+    return self;
+}
+
+- (void)waitForDidFinishNavigation
+{
+    TestWebKitAPI::Util::run(&_didFinishNavigation);
+    _didStartProvisionalNavigation = false;
+    _didFinishNavigation = false;
+}
+
+- (void)waitForDownloadDidStart
+{
+    TestWebKitAPI::Util::run(&_downloadDidStart);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    _didFinishNavigation = true;
+}
+
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    _didStartProvisionalNavigation = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    decisionHandler(_navigationActionPolicy);
+}
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    _downloadDidStart = true;
+}
+
+@end
+
+TEST(_WKDownload, DownloadAttributeDoesNotStartDownloads)
+{
+    auto delegate = adoptNS([[DownloadAttributeTestDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView configuration].processPool._downloadDelegate = delegate.get();
+
+    [webView loadHTMLString:@"<a id='link' href='data:,test' download>Click me!</a>" baseURL:nil];
+    [delegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_FALSE([delegate downloadDidStart]);
+}
+
+TEST(_WKDownload, StartDownloadWithDownloadAttribute)
+{
+    auto delegate = adoptNS([[DownloadAttributeTestDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView configuration].processPool._downloadDelegate = delegate.get();
+
+    [webView loadHTMLString:@"<a id='link' href='data:,test' download>Click me!</a>" baseURL:nil];
+    [delegate waitForDidFinishNavigation];
+
+    [delegate setNavigationActionPolicy:_WKNavigationActionPolicyDownload];
+    [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
+    [delegate waitForDownloadDidStart];
+    EXPECT_FALSE([delegate didStartProvisionalNavigation]);
+}
+
 #endif

@@ -421,7 +421,7 @@ private:
     void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef);
 
     static void decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
-    void decidePolicyForNavigationAction(WKFramePolicyListenerRef);
+    void decidePolicyForNavigationAction(WKNavigationActionRef, WKFramePolicyListenerRef);
 
     static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef, WKFramePolicyListenerRef, WKTypeRef, const void*);
     void decidePolicyForNavigationResponse(WKNavigationResponseRef, WKFramePolicyListenerRef);

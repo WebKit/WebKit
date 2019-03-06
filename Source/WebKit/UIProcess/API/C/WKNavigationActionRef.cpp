@@ -35,3 +35,8 @@ WKTypeID WKNavigationActionGetTypeID()
 {
     return toAPI(API::NavigationAction::APIType);
 }
+
+bool WKNavigationActionShouldPerformDownload(WKNavigationActionRef action)
+{
+    return toImpl(action)->shouldPerformDownload();
+}

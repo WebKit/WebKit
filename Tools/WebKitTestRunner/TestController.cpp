@@ -45,6 +45,7 @@
 #include <WebKit/WKIconDatabase.h>
 #include <WebKit/WKMockDisplay.h>
 #include <WebKit/WKMockMediaDevice.h>
+#include <WebKit/WKNavigationActionRef.h>
 #include <WebKit/WKNavigationResponseRef.h>
 #include <WebKit/WKNotification.h>
 #include <WebKit/WKNotificationManager.h>
@@ -2657,16 +2658,19 @@ void TestController::unavailablePluginButtonClicked(WKPageRef, WKPluginUnavailab
 
 void TestController::decidePolicyForNavigationAction(WKPageRef, WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(listener);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->decidePolicyForNavigationAction(navigationAction, listener);
 }
 
-void TestController::decidePolicyForNavigationAction(WKFramePolicyListenerRef listener)
+void TestController::decidePolicyForNavigationAction(WKNavigationActionRef navigationAction, WKFramePolicyListenerRef listener)
 {
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
+    WKRetainPtr<WKNavigationActionRef> retainedNavigationAction { navigationAction };
     const bool shouldIgnore { m_policyDelegateEnabled && !m_policyDelegatePermissive };
-    auto decisionFunction = [shouldIgnore, retainedListener]() {
+    auto decisionFunction = [shouldIgnore, retainedListener, retainedNavigationAction]() {
         if (shouldIgnore)
             WKFramePolicyListenerIgnore(retainedListener.get());
+        else if (WKNavigationActionShouldPerformDownload(retainedNavigationAction.get()))
+            WKFramePolicyListenerDownload(retainedListener.get());
         else
             WKFramePolicyListenerUse(retainedListener.get());
     };

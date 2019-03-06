@@ -1,3 +1,34 @@
+2019-03-05  David Quesada  <david_quesada@apple.com>
+
+        [WK2] It should be possible to follow links with 'download' attributes
+        https://bugs.webkit.org/show_bug.cgi?id=195145
+        rdar://problem/48462642
+
+        Reviewed by Alex Christensen.
+
+        When a link with a 'download' attribute is clicked and the navigation client
+        says to allow the navigation (i.e. provides PolicyAction::Use),
+        WebPageProxy::receivedNavigationPolicyDecision() should stop overriding this
+        decision and downloading the link instead. Instead, web view should honor the
+        policy chosen by the navigation delegate. This supports clients that want to
+        offer the user the ability to view, rather than download, the contents of
+        such links, which is permitted per the HTML spec.
+
+        This change is only made on Cocoa platforms for now since no other ports
+        expose an API on their navigation action to express whether the page intends
+        to download the linked resource.
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::shouldPerformDownload const):
+            Rename this to be in line with APINavigationAction's shouldPerformDownload()
+            for consistency. 'Force' seems like too strong of a word for this property
+            considering that 'forcing' the download isn't really an attribute inherent
+            to the navigation, but a behavior implemented by the web page proxy.
+        (API::Navigation::shouldForceDownload const): Deleted.
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2019-03-05  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Implement Cookie Accept Policy.
