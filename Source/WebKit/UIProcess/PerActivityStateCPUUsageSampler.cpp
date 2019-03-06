@@ -31,7 +31,6 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
-#include <wtf/DecimalNumber.h>
 
 namespace WebKit {
 using namespace WebCore;

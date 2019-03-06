@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2008, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,27 +20,27 @@
 
 #pragma once
 
-#include <unicode/utypes.h>
+#include <array>
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/StringView.h>
 
 namespace WTF {
 
-typedef char DtoaBuffer[80];
+using DtoaBuffer = std::array<char, 80>;
 
-WTF_EXPORT_PRIVATE void dtoa(DtoaBuffer result, double dd, bool& sign, int& exponent, unsigned& precision);
-WTF_EXPORT_PRIVATE void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
-WTF_EXPORT_PRIVATE void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
+WTF_EXPORT_PRIVATE void dtoa(DtoaBuffer& result, double dd, bool& sign, int& exponent, unsigned& precision);
 
-// Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
-const unsigned NumberToStringBufferLength = 96;
-typedef char NumberToStringBuffer[NumberToStringBufferLength];
-typedef LChar NumberToLStringBuffer[NumberToStringBufferLength];
+constexpr unsigned NumberToStringBufferLength = 96;
+using NumberToStringBuffer = std::array<char, NumberToStringBufferLength>;
 
-WTF_EXPORT_PRIVATE const char* numberToString(double, NumberToStringBuffer);
-WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
-WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer);
+WTF_EXPORT_PRIVATE const char* numberToString(float, NumberToStringBuffer&);
+WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer&);
+
+WTF_EXPORT_PRIVATE const char* numberToString(double, NumberToStringBuffer&);
+WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer&);
 
 double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
 double parseDouble(const UChar* string, size_t length, size_t& parsedLength);
@@ -72,11 +72,10 @@ inline double parseDouble(StringView string, size_t& parsedLength)
         return parseDouble(string.characters8(), string.length(), parsedLength);
     return parseDouble(string.characters16(), string.length(), parsedLength);
 }
-    
+
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
-using WTF::NumberToLStringBuffer;
 using WTF::numberToString;
 using WTF::numberToFixedPrecisionString;
 using WTF::numberToFixedWidthString;

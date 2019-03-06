@@ -29,7 +29,6 @@
 #include "AnimationUtilities.h"
 #include "HashTools.h"
 #include <wtf/Assertions.h>
-#include <wtf/DecimalNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
