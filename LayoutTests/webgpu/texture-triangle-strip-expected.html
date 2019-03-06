@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Reference File</title>
+<p>Pass if square canvas below is a 4 by 4 blue/green checkerboard.</p>
+<canvas width="400" height="400"></canvas>
+<script>
+const canvas = document.querySelector("canvas");
+const context = canvas.getContext('2d');
+
+context.fillStyle = 'rgb(0, 255, 0)';
+context.fillRect(0, 0, canvas.width, canvas.height);
+
+const numColumns = 4;
+const numRows = 4;
+context.beginPath();
+context.fillStyle = 'rgb(0, 0, 255)';
+for (let x = 0; x < numColumns; ++x) {
+    for (let y = 0; y < numRows; ++y) {
+        if (x % 2 == 0 && y % 2 == 0 || x % 2 == 1 && y % 2 == 1)
+            context.rect(
+                x * canvas.width / numColumns, 
+                y * canvas.height / numRows, 
+                canvas.width / numColumns, 
+                canvas.height / numRows
+                );
+    }
+}
+context.fill();
+</script>

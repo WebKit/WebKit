@@ -45,7 +45,7 @@ class GPUDevice;
 
 class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
-    static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, GPUBindGroupLayoutDescriptor&&);
+    static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, const GPUBindGroupLayoutDescriptor&);
 
     using BindingsMapType = HashMap<unsigned long long, GPUBindGroupLayoutBinding, WTF::IntHash<unsigned long long>, WTF::UnsignedWithZeroKeyHashTraits<unsigned long long>>;
     const BindingsMapType& bindingsMap() const { return m_bindingsMap; }

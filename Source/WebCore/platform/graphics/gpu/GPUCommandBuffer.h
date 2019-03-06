@@ -85,23 +85,32 @@ public:
 
     PlatformCommandBuffer* platformCommandBuffer() const { return m_platformCommandBuffer.get(); }
     const Vector<Ref<GPUBuffer>>& usedBuffers() const { return m_usedBuffers; }
+    const Vector<Ref<GPUTexture>>& usedTextures() const { return m_usedTextures; }
+    bool isEncodingPass() const { return m_isEncodingPass; }
+
+    void setIsEncodingPass(bool isEncoding) { m_isEncodingPass = isEncoding; }
 #if USE(METAL)
-    MTLBlitCommandEncoder *blitEncoder() const;
+    ~GPUCommandBuffer();
+    void endBlitEncoding();
 #endif
 
     void copyBufferToBuffer(Ref<GPUBuffer>&&, unsigned long srcOffset, Ref<GPUBuffer>&&, unsigned long dstOffset, unsigned long size);
-    void copyBufferToTexture(const GPUBufferCopyView&, const GPUTextureCopyView&, const GPUExtent3D&);
-    void copyTextureToBuffer(const GPUTextureCopyView&, const GPUBufferCopyView&, const GPUExtent3D&);
-    void copyTextureToTexture(const GPUTextureCopyView&, const GPUTextureCopyView&, const GPUExtent3D&);
+    void copyBufferToTexture(GPUBufferCopyView&&, GPUTextureCopyView&&, const GPUExtent3D&);
+    void copyTextureToBuffer(GPUTextureCopyView&&, GPUBufferCopyView&&, const GPUExtent3D&);
+    void copyTextureToTexture(GPUTextureCopyView&&, GPUTextureCopyView&&, const GPUExtent3D&);
 
     void useBuffer(Ref<GPUBuffer>&& buffer) { m_usedBuffers.append(WTFMove(buffer)); }
+    void useTexture(Ref<GPUTexture>&& texture) { m_usedTextures.append(WTFMove(texture)); }
 
 private:
     GPUCommandBuffer(PlatformCommandBufferSmartPtr&&);
 
     PlatformCommandBufferSmartPtr m_platformCommandBuffer;
     Vector<Ref<GPUBuffer>> m_usedBuffers;
+    Vector<Ref<GPUTexture>> m_usedTextures;
+    bool m_isEncodingPass = false;
 #if USE(METAL)
+    MTLBlitCommandEncoder *blitEncoder() const;
     mutable RetainPtr<MTLBlitCommandEncoder> m_blitEncoder;
 #endif
 };

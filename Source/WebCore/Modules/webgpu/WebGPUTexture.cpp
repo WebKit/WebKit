@@ -42,11 +42,30 @@ WebGPUTexture::WebGPUTexture(RefPtr<GPUTexture>&& texture)
 {
 }
 
-RefPtr<WebGPUTextureView> WebGPUTexture::createDefaultTextureView()
+Ref<WebGPUTextureView> WebGPUTexture::createDefaultTextureView()
 {
-    if (auto gpuTexture = m_texture->createDefaultTextureView())
-        return WebGPUTextureView::create(gpuTexture.releaseNonNull());
-    return nullptr;
+    if (!m_texture) {
+        LOG(WebGPU, "GPUTexture::createDefaultTextureView(): Invalid operation!");
+        return WebGPUTextureView::create(nullptr);
+    }
+
+    auto view = WebGPUTextureView::create(m_texture->tryCreateDefaultTextureView());
+    m_textureViews.append(view.copyRef());
+    return view;
+}
+
+void WebGPUTexture::destroy()
+{
+    if (!m_texture) {
+        LOG(WebGPU, "GPUTexture::destroy(): Invalid operation!");
+        return;
+    }
+    for (auto& view : m_textureViews)
+        view->destroy();
+    m_textureViews.clear();
+
+    m_texture->destroy();
+    m_texture = nullptr;
 }
 
 } // namespace WebCore

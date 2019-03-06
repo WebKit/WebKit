@@ -48,7 +48,7 @@ public:
 
     PlatformQueue* platformQueue() const { return m_platformQueue.get(); }
 
-    void submit(Vector<Ref<const GPUCommandBuffer>>&&);
+    void submit(Vector<Ref<GPUCommandBuffer>>&&);
 
     String label() const;
     void setLabel(const String&) const;

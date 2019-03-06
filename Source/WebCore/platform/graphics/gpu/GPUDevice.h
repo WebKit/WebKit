@@ -63,7 +63,7 @@ public:
     RefPtr<GPUBuffer> tryCreateBuffer(GPUBufferDescriptor&&);
     RefPtr<GPUTexture> tryCreateTexture(GPUTextureDescriptor&&) const;
 
-    RefPtr<GPUBindGroupLayout> tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor&&) const;
+    RefPtr<GPUBindGroupLayout> tryCreateBindGroupLayout(const GPUBindGroupLayoutDescriptor&) const;
     Ref<GPUPipelineLayout> createPipelineLayout(GPUPipelineLayoutDescriptor&&) const;
 
     RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;

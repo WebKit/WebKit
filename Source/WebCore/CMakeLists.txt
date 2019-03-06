@@ -462,6 +462,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdriver/NavigatorWebDriver.idl
 
     Modules/webgpu/DOMWindowWebGPU.idl
+    Modules/webgpu/GPUBindGroupLayoutBinding.idl
+    Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/GPUBufferDescriptor.idl
     Modules/webgpu/GPUBufferUsage.idl
     Modules/webgpu/GPUColor.idl
@@ -471,6 +473,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPULoadOp.idl
     Modules/webgpu/GPUOrigin3D.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
+    Modules/webgpu/GPUShaderStageBit.idl
     Modules/webgpu/GPUStoreOp.idl
     Modules/webgpu/GPUTextureDescriptor.idl
     Modules/webgpu/GPUTextureDimension.idl
@@ -482,8 +485,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUBindGroupBinding.idl
     Modules/webgpu/WebGPUBindGroupDescriptor.idl
     Modules/webgpu/WebGPUBindGroupLayout.idl
-    Modules/webgpu/WebGPUBindGroupLayoutBinding.idl
-    Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/WebGPUBuffer.idl
     Modules/webgpu/WebGPUBufferBinding.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
@@ -504,7 +505,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPURenderingContext.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl
-    Modules/webgpu/WebGPUShaderStageBit.idl
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureView.idl

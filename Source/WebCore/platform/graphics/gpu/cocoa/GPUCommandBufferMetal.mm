@@ -58,7 +58,7 @@ RefPtr<GPUCommandBuffer> GPUCommandBuffer::create(GPUDevice& device)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    buffer = retainPtr([mtlQueue commandBuffer]);
+    buffer = [mtlQueue commandBuffer];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -75,9 +75,24 @@ GPUCommandBuffer::GPUCommandBuffer(RetainPtr<MTLCommandBuffer>&& buffer)
 {
 }
 
+GPUCommandBuffer::~GPUCommandBuffer()
+{
+    endBlitEncoding();
+}
+
 MTLBlitCommandEncoder *GPUCommandBuffer::blitEncoder() const
 {
     return m_blitEncoder ? m_blitEncoder.get() : (m_blitEncoder = [m_platformCommandBuffer blitCommandEncoder]).get();
+}
+
+void GPUCommandBuffer::endBlitEncoding()
+{
+    if (!m_blitEncoder)
+        return;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_blitEncoder endEncoding];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    m_blitEncoder = nullptr;
 }
 
 void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, unsigned long srcOffset, Ref<GPUBuffer>&& dst, unsigned long dstOffset, unsigned long size)
@@ -117,7 +132,7 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, unsigned long sr
     useBuffer(WTFMove(dst));
 }
 
-void GPUCommandBuffer::copyBufferToTexture(const GPUBufferCopyView& srcBuffer, const GPUTextureCopyView& dstTexture, const GPUExtent3D& size)
+void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTextureCopyView&& dstTexture, const GPUExtent3D& size)
 {
     if (!srcBuffer.buffer->isTransferSource() || !dstTexture.texture->isTransferDestination()) {
         LOG(WebGPU, "GPUComandBuffer::copyBufferToTexture(): Invalid operation!");
@@ -151,10 +166,11 @@ void GPUCommandBuffer::copyBufferToTexture(const GPUBufferCopyView& srcBuffer, c
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    useBuffer(srcBuffer.buffer.copyRef());
+    useBuffer(WTFMove(srcBuffer.buffer));
+    useTexture(WTFMove(dstTexture.texture));
 }
 
-void GPUCommandBuffer::copyTextureToBuffer(const GPUTextureCopyView& srcTexture, const GPUBufferCopyView& dstBuffer, const GPUExtent3D& size)
+void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUBufferCopyView&& dstBuffer, const GPUExtent3D& size)
 {
     if (!srcTexture.texture->isTransferSource() || !dstBuffer.buffer->isTransferDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyTextureToBuffer(): Invalid operation!");
@@ -178,10 +194,11 @@ void GPUCommandBuffer::copyTextureToBuffer(const GPUTextureCopyView& srcTexture,
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    useBuffer(dstBuffer.buffer.copyRef());
+    useTexture(WTFMove(srcTexture.texture));
+    useBuffer(WTFMove(dstBuffer.buffer));
 }
 
-void GPUCommandBuffer::copyTextureToTexture(const GPUTextureCopyView& src, const GPUTextureCopyView& dst, const GPUExtent3D& size)
+void GPUCommandBuffer::copyTextureToTexture(GPUTextureCopyView&& src, GPUTextureCopyView&& dst, const GPUExtent3D& size)
 {
     if (!src.texture->isTransferSource() || !dst.texture->isTransferDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyTextureToTexture(): Invalid operation!");
@@ -204,6 +221,9 @@ void GPUCommandBuffer::copyTextureToTexture(const GPUTextureCopyView& src, const
         destinationOrigin:MTLOriginMake(dst.origin.x, dst.origin.y, dst.origin.z)];
 
     END_BLOCK_OBJC_EXCEPTIONS;
+
+    useTexture(WTFMove(src.texture));
+    useTexture(WTFMove(dst.texture));
 }
 
 } // namespace WebCore

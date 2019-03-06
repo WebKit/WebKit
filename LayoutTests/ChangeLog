@@ -1,3 +1,21 @@
+2019-03-06  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUTexture and GPUTextureView updates, and related GPUBindGroup updates
+        https://bugs.webkit.org/show_bug.cgi?id=195347
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/blit-commands.html:
+        * webgpu/resources/blue-checkered.png: Added.
+        * webgpu/texture-triangle-strip-expected.html: Added. Draw a reference for blue-checkered.png with Canvas2D.
+        * webgpu/texture-triangle-strip.html: Added. Draw blue-checkered.png as a texture on a Web GPU quad.
+
+        Renaming updates, no change in behavior:
+        * webgpu/bind-groups.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/pipeline-layouts.html:
+        * webgpu/render-pipelines.html:
+
 2019-03-06  Antti Koivisto  <antti@apple.com>
 
         [iOS] Basic hit testing for content overlapping fast-scrollable overflow

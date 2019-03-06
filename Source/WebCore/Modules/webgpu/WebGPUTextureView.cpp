@@ -28,16 +28,27 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUTexture.h"
+
 namespace WebCore {
 
-Ref<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
+Ref<WebGPUTextureView> WebGPUTextureView::create(RefPtr<GPUTexture>&& view)
 {
     return adoptRef(*new WebGPUTextureView(WTFMove(view)));
 }
 
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
+WebGPUTextureView::WebGPUTextureView(RefPtr<GPUTexture>&& view)
     : m_texture(WTFMove(view))
 {
+}
+
+void WebGPUTextureView::destroy()
+{
+    if (!m_texture)
+        return;
+
+    m_texture->destroy();
+    m_texture = nullptr;
 }
 
 } // namespace WebCore

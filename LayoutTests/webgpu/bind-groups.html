@@ -13,8 +13,8 @@ promise_test(async () => {
     // FIXME: Also test sampled texture bindings. 
     const bufferLayoutBinding = {
         binding: 1,
-        visibility: WebGPUShaderStageBit.VERTEX,
-        type: "storageBuffer"
+        visibility: GPUShaderStageBit.VERTEX,
+        type: "storage-buffer"
     };
 
     const bindGroupLayout = device.createBindGroupLayout({ bindings: [bufferLayoutBinding] });

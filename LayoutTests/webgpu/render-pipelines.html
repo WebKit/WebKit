@@ -43,7 +43,7 @@ promise_test(async () => {
     const device = await getBasicDevice();
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
-    const layoutBinding = { binding: 0, visibility: WebGPUShaderStageBit.VERTEX, type: "storageBuffer" };
+    const layoutBinding = { binding: 0, visibility: GPUShaderStageBit.VERTEX, type: "storage-buffer" };
     const bindGroupLayout = device.createBindGroupLayout({ bindings: [layoutBinding] });
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 

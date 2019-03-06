@@ -38,7 +38,7 @@ namespace WebCore {
 
 RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options)
 {
-    PlatformDeviceSmartPtr devicePtr;
+    RetainPtr<MTLDevice> devicePtr;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
@@ -48,7 +48,7 @@ RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options
         
         for (id <MTLDevice> device : devices.get()) {
             if (device.lowPower) {
-                devicePtr = retainPtr(device);
+                devicePtr = device;
                 break;
             }
         }
@@ -70,7 +70,7 @@ RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options
     return adoptRef(new GPUDevice(WTFMove(devicePtr)));
 }
 
-GPUDevice::GPUDevice(PlatformDeviceSmartPtr&& device)
+GPUDevice::GPUDevice(RetainPtr<MTLDevice>&& device)
     : m_platformDevice(WTFMove(device))
 {
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,28 +31,18 @@
 
 namespace WebCore {
 
-using GPUShaderStageFlags = unsigned long;
+using GPUShaderStageFlags = unsigned;
 
 class GPUShaderStageBit : public RefCounted<GPUShaderStageBit> {
 public:
-    static const GPUShaderStageFlags NONE = 0;
-    static const GPUShaderStageFlags VERTEX = 1;
-    static const GPUShaderStageFlags FRAGMENT = 2;
-    static const GPUShaderStageFlags COMPUTE = 4;
-};
-
-struct GPUBindGroupLayoutBinding {
-    enum class BindingType {
-        UniformBuffer,
-        Sampler,
-        SampledTexture,
-        StorageBuffer
+    enum Flags : GPUShaderStageFlags {
+        None = 0,
+        Vertex = 1 << 0,
+        Fragment = 1 << 1,
+        Compute = 1 << 2,
     };
-
-    unsigned long binding;
-    GPUShaderStageFlags visibility;
-    BindingType type;
 };
+
 
 } // namespace WebCore
 

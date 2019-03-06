@@ -38,14 +38,72 @@ namespace WebCore {
 
 void GPUProgrammablePassEncoder::endPass()
 {
-    if (!m_isEncoding)
-        return;
+    ASSERT(platformPassEncoder());
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [platformPassEncoder() endEncoding];
-    m_isEncoding = false;
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    m_commandBuffer->setIsEncodingPass(false);
 }
 
-void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBindingResource& resource, unsigned long index, const char* const functionName)
+void GPUProgrammablePassEncoder::setBindGroup(unsigned index, GPUBindGroup& bindGroup)
+{
+    const char* const functionName = "GPUProgrammablePassEncoder::setBindGroup()";
+
+    if (!platformPassEncoder()) {
+        LOG(WebGPU, "%s: Invalid operation: Encoding is ended!");
+        return;
+    }
+
+    const auto& vertexArgs = bindGroup.layout().vertexArguments();
+    const auto& fragmentArgs = bindGroup.layout().fragmentArguments();
+    // FIXME: Finish support for compute.
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    if (vertexArgs.buffer)
+        setVertexBuffer(vertexArgs.buffer.get(), 0, index);
+    if (fragmentArgs.buffer)
+        setFragmentBuffer(fragmentArgs.buffer.get(), 0, index);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    // Set each resource on each MTLArgumentEncoder it should be visible on.
+    const auto& bindingsMap = bindGroup.layout().bindingsMap();
+    for (const auto& binding : bindGroup.bindings()) {
+        auto iterator = bindingsMap.find(binding.binding);
+        if (iterator == bindingsMap.end()) {
+            LOG(WebGPU, "%s: GPUBindGroupBinding %lu not found in GPUBindGroupLayout!", functionName, binding.binding);
+            return;
+        }
+        auto bindGroupLayoutBinding = iterator->value;
+
+        switch (bindGroupLayoutBinding.type) {
+        // FIXME: Support more resource types.
+        case GPUBindGroupLayoutBinding::BindingType::UniformBuffer:
+        case GPUBindGroupLayoutBinding::BindingType::StorageBuffer: {
+            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::Flags::Vertex)
+                setResourceAsBufferOnEncoder(vertexArgs.encoder.get(), binding.resource, binding.binding, functionName);
+            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::Flags::Fragment)
+                setResourceAsBufferOnEncoder(fragmentArgs.encoder.get(), binding.resource, binding.binding, functionName);
+            break;
+        }
+        case GPUBindGroupLayoutBinding::BindingType::SampledTexture: {
+            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::Flags::Vertex)
+                setResourceAsTextureOnEncoder(vertexArgs.encoder.get(), binding.resource, binding.binding, functionName);
+            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::Flags::Fragment)
+                setResourceAsTextureOnEncoder(fragmentArgs.encoder.get(), binding.resource, binding.binding, functionName);
+            break;
+        }
+        default:
+            LOG(WebGPU, "%s: Resource type not yet implemented.", functionName);
+            return;
+        }
+    }
+}
+
+void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBindingResource& resource, unsigned index, const char* const functionName)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
@@ -79,51 +137,37 @@ void GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder(MTLArgumentEncoder
     m_commandBuffer->useBuffer(bufferRef.copyRef());
 }
 
-void GPUProgrammablePassEncoder::setBindGroup(unsigned long index, GPUBindGroup& bindGroup)
+void GPUProgrammablePassEncoder::setResourceAsTextureOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBindingResource& resource, unsigned index, const char* const functionName)
 {
-    const char* const functionName = "GPUProgrammablePassEncoder::setBindGroup()";
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
+    if (!argumentEncoder) {
+        LOG(WebGPU, "%s: No argument encoder for requested stage found!", functionName);
+        return;
+    }
 
-    const auto& vertexArgs = bindGroup.layout().vertexArguments();
-    const auto& fragmentArgs = bindGroup.layout().fragmentArguments();
-    // FIXME: Finish support for compute.
+    if (!WTF::holds_alternative<Ref<GPUTexture>>(resource)) {
+        LOG(WebGPU, "%s: Resource is not a texture type!", functionName);
+        return;
+    }
+
+    auto& textureRef = WTF::get<Ref<GPUTexture>>(resource);
+    auto mtlTexture = textureRef->platformTexture();
+
+    if (!mtlTexture) {
+        LOG(WebGPU, "%s: Invalid MTLTexture in GPUTextureView binding!", functionName);
+        return;
+    }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    if (vertexArgs.buffer)
-        setVertexBuffer(vertexArgs.buffer.get(), 0, index);
-    if (fragmentArgs.buffer)
-        setFragmentBuffer(fragmentArgs.buffer.get(), 0, index);
+    [argumentEncoder setTexture:mtlTexture atIndex:index];
+    useResource(mtlTexture, textureRef->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    // Set each resource on each MTLArgumentEncoder it should be visible on.
-    const auto& bindingsMap = bindGroup.layout().bindingsMap();
-    for (const auto& binding : bindGroup.bindings()) {
-        auto iterator = bindingsMap.find(binding.binding);
-        if (iterator == bindingsMap.end()) {
-            LOG(WebGPU, "%s: GPUBindGroupBinding %lu not found in GPUBindGroupLayout!", functionName, binding.binding);
-            return;
-        }
-        auto bindGroupLayoutBinding = iterator->value;
-
-        switch (bindGroupLayoutBinding.type) {
-        // FIXME: Support more resource types.
-        case GPUBindGroupLayoutBinding::BindingType::UniformBuffer:
-        case GPUBindGroupLayoutBinding::BindingType::StorageBuffer: {
-            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::VERTEX)
-                setResourceAsBufferOnEncoder(vertexArgs.encoder.get(), binding.resource, binding.binding, functionName);
-            if (bindGroupLayoutBinding.visibility & GPUShaderStageBit::FRAGMENT)
-                setResourceAsBufferOnEncoder(fragmentArgs.encoder.get(), binding.resource, binding.binding, functionName);
-            break;
-        }
-        default:
-            LOG(WebGPU, "%s: Resource type not yet implemented.", functionName);
-            return;
-        }
-    }
+    m_commandBuffer->useTexture(textureRef.copyRef());
 }
 
 } // namespace WebCore

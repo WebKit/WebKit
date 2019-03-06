@@ -35,6 +35,7 @@ namespace WebCore {
 GPUProgrammablePassEncoder::GPUProgrammablePassEncoder(Ref<GPUCommandBuffer>&& commandBuffer)
     : m_commandBuffer(WTFMove(commandBuffer))
 {
+    m_commandBuffer->setIsEncodingPass(true);
 }
 
 } // namespace WebCore

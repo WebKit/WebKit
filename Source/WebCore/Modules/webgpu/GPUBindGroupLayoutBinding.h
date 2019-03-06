@@ -22,28 +22,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef u32 WebGPUShaderStageFlags;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] enum WebGPUBindingType {
-    "uniformBuffer",
-    "sampler",
-    "sampledTexture",
-    "storageBuffer"
-    // TODO other binding types
+#if ENABLE(WEBGPU)
+
+#include "GPUShaderStageBit.h"
+
+namespace WebCore {
+
+struct GPUBindGroupLayoutBinding {
+    enum class BindingType {
+        UniformBuffer,
+        DynamicUniformBuffer,
+        Sampler,
+        SampledTexture,
+        StorageBuffer,
+        DynamicStorageBuffer
+    };
+
+    unsigned long binding;
+    GPUShaderStageFlags visibility;
+    BindingType type;
 };
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUBindGroupLayoutBinding {
-    u32 binding;
-    WebGPUShaderStageFlags visibility;
-    WebGPUBindingType type;
-};
+} // namespace WebCore
 
+#endif // ENABLE(WEBGPU)

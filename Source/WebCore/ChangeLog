@@ -1,3 +1,127 @@
+2019-03-06  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUTexture and GPUTextureView updates, and related GPUBindGroup updates
+        https://bugs.webkit.org/show_bug.cgi?id=195347
+
+        Reviewed by Dean Jackson.
+
+        Implement the ability to display image data as a GPUTexture in the rendering pipeline. Improve GPUTexture and 
+        GPUTextureView implementations. Rename various bind group classes to GPU* to match API.
+
+        Test: webgpu/texture-triangle-strip.html
+
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::WebGPUBindGroupDescriptor::asGPUBindGroupDescriptor const): Update to validate GPUTextureView resources.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: Move instead of copy the converted view objects.
+        (WebCore::WebGPUCommandBuffer::copyBufferToTexture):
+        (WebCore::WebGPUCommandBuffer::copyTextureToBuffer):
+        (WebCore::WebGPUCommandBuffer::copyTextureToTexture):
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        (WebCore::WebGPUCommandBuffer::commandBuffer const): No longer returns const so used resources can be registered on it.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroupLayout const): Rename WebGPUBindGroupLayoutDescriptor and replace unnecessary rvalue reference.
+        * Modules/webgpu/WebGPUDevice.h: Ditto.
+        * Modules/webgpu/WebGPUDevice.idl: Ditto.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * Modules/webgpu/WebGPUQueue.cpp:
+        (WebCore::WebGPUQueue::submit):
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp:
+        (WebCore::WebGPURenderPassDescriptor::asGPURenderPassDescriptor const):
+        * Modules/webgpu/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::~WebGPUTexture): Clean up any resources created for and from this WebGPUTexture.
+        (WebCore::WebGPUTexture::createDefaultTextureView): Now returns an empty object other than null on failure.
+        (WebCore::WebGPUTexture::destroy):
+        (WebCore::WebGPUTexture::destroyImpl):
+        * Modules/webgpu/WebGPUTexture.h: Keep a list of any views created from this texture.
+        * Modules/webgpu/WebGPUTexture.idl: Enable destroy.
+        * Modules/webgpu/WebGPUTextureView.cpp:
+        (WebCore::WebGPUTextureView::create):
+        (WebCore::WebGPUTextureView::WebGPUTextureView):
+        (WebCore::WebGPUTextureView::destroy):
+        * Modules/webgpu/WebGPUTextureView.h:
+        (WebCore::WebGPUTextureView::~WebGPUTextureView): Clean up any resources backing this WebGPUTextureView.
+        (WebCore::WebGPUTextureView::texture const):
+        (WebCore::WebGPUTextureView::texture): Deleted.
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        (WebCore::GPUCommandBuffer::usedTextures const): Keep a list of all texture resources that will be used by this command buffer on submit.
+        (WebCore::GPUCommandBuffer::isEncodingPass const): Added to prevent multiple pass encoders from being active on one command buffer.
+        (WebCore::GPUCommandBuffer::setIsEncodingPass):
+        (WebCore::GPUCommandBuffer::useTexture):
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBindGroupLayout const):
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUPipelineLayout.cpp:
+        (WebCore::GPUPipelineLayout::GPUPipelineLayout):
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.cpp:
+        (WebCore::GPUProgrammablePassEncoder::GPUProgrammablePassEncoder):
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        (WebCore::GPUProgrammablePassEncoder::setVertexBuffer):
+        (WebCore::GPUProgrammablePassEncoder::setFragmentBuffer):
+        (): Deleted.
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUTexture.h:
+        (WebCore::GPUTexture::isReadOnly const):
+        (WebCore::GPUTexture::destroy):
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::MTLDataTypeForBindingType):
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::create):
+        (WebCore::GPUCommandBuffer::~GPUCommandBuffer): Ensure blitEncoder is ended before releasing it.
+        (WebCore::GPUCommandBuffer::endBlitEncoding):
+        (WebCore::GPUCommandBuffer::copyBufferToTexture): Ensure textures are marked for usage before submission occurs.
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        (WebCore::GPUCommandBuffer::copyTextureToTexture):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::create):
+        (WebCore::GPUDevice::GPUDevice):
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::endPass):
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup): Now supports texture resources.
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder): Just moved.
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsTextureOnEncoder):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit): Ensures destroyed GPUTextures are not submitted.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::tryCreate): Ensure any other encoders are ended before attempting to activate a new one.
+        (WebCore::GPURenderPassEncoder::platformPassEncoder const):
+        (WebCore::GPURenderPassEncoder::endPass): Invalidates the MTLCommandEncoder upon success.
+        (WebCore::GPURenderPassEncoder::setPipeline):
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+        (WebCore::GPURenderPassEncoder::draw):
+        (WebCore::GPURenderPassEncoder::useResource):
+        (WebCore::GPURenderPassEncoder::setVertexBuffer):
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::getNextTexture):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::storageModeForPixelFormatAndSampleCount): 
+                Always create MTLStorageModePrivate textures on macOS, as Web GPU doesn't provide CPU access to textures anyway.
+        (WebCore::tryCreateMtlTextureDescriptor):
+        (WebCore::GPUTexture::create):
+        (WebCore::GPUTexture::GPUTexture):
+        (WebCore::GPUTexture::tryCreateDefaultTextureView): Renamed from createDefaultTextureView.
+
+        Update files and symbols in project:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/streams/WebGPUBindGroupLayoutDescriptor.h: Removed.
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h: Renamed from Source/WebCore/platform/graphics/gpu/GPUBindGroupLayoutBinding.h.
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUBindGroupLayoutBinding.idl.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPUBindGroupLayoutDescriptor.h.
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl.
+        * Modules/webgpu/GPUShaderStageBit.h: Renamed from Source/WebCore/Modules/webgpu/WebGPUShaderStageBit.h.
+        * Modules/webgpu/GPUShaderStageBit.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUShaderStageBit.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2019-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Pack and unpack data at entry points and exit points

@@ -54,9 +54,9 @@ RefPtr<GPUTexture> GPUDevice::tryCreateTexture(GPUTextureDescriptor&& descriptor
     return GPUTexture::tryCreate(*this, WTFMove(descriptor));
 }
 
-RefPtr<GPUBindGroupLayout> GPUDevice::tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const
+RefPtr<GPUBindGroupLayout> GPUDevice::tryCreateBindGroupLayout(const GPUBindGroupLayoutDescriptor& descriptor) const
 {
-    return GPUBindGroupLayout::tryCreate(*this, WTFMove(descriptor));
+    return GPUBindGroupLayout::tryCreate(*this, descriptor);
 }
 
 Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor) const

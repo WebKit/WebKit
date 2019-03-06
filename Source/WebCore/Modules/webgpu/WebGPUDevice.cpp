@@ -31,6 +31,7 @@
 #include "GPUBindGroup.h"
 #include "GPUBindGroupBinding.h"
 #include "GPUBindGroupDescriptor.h"
+#include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBufferBinding.h"
 #include "GPUBufferDescriptor.h"
 #include "GPUCommandBuffer.h"
@@ -41,7 +42,6 @@
 #include "Logging.h"
 #include "WebGPUBindGroup.h"
 #include "WebGPUBindGroupBinding.h"
-#include "WebGPUBindGroupDescriptor.h"
 #include "WebGPUBindGroupLayout.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUBufferBinding.h"
@@ -84,9 +84,9 @@ Ref<WebGPUTexture> WebGPUDevice::createTexture(GPUTextureDescriptor&& descriptor
     return WebGPUTexture::create(WTFMove(texture));
 }
 
-Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&& descriptor) const
+Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& descriptor) const
 {
-    auto layout = m_device->tryCreateBindGroupLayout(GPUBindGroupLayoutDescriptor { descriptor.bindings });
+    auto layout = m_device->tryCreateBindGroupLayout(descriptor);
     return WebGPUBindGroupLayout::create(WTFMove(layout));
 }
 

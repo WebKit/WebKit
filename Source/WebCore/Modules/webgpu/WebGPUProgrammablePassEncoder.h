@@ -41,7 +41,7 @@ public:
     virtual ~WebGPUProgrammablePassEncoder() = default;
 
     Ref<WebGPUCommandBuffer> endPass();
-    void setBindGroup(unsigned long, WebGPUBindGroup&) const;
+    void setBindGroup(unsigned, WebGPUBindGroup&) const;
     void setPipeline(Ref<WebGPURenderPipeline>&&);
 
 protected:

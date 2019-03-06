@@ -46,7 +46,7 @@ WebGPUQueue::WebGPUQueue(Ref<GPUQueue>&& queue)
 
 void WebGPUQueue::submit(Vector<RefPtr<WebGPUCommandBuffer>>&& buffers)
 {
-    auto gpuBuffers = buffers.map([] (const auto& buffer) -> Ref<const GPUCommandBuffer> {
+    auto gpuBuffers = buffers.map([] (auto& buffer) -> Ref<GPUCommandBuffer> {
         return buffer->commandBuffer();
     });
     m_queue->submit(WTFMove(gpuBuffers));

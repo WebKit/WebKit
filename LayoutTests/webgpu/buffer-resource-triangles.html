@@ -72,11 +72,11 @@ const bindingNums = {
     G: 5
 };
 
-function createUniformBufferBindGroupLayout(bindNum, stage = WebGPUShaderStageBit.VERTEX) {
+function createUniformBufferBindGroupLayout(bindNum, stage = GPUShaderStageBit.VERTEX) {
     return {
         binding: bindNum,
         visibility: stage,
-        type: "uniformBuffer"
+        type: "uniform-buffer"
     };
 }
 
@@ -157,7 +157,7 @@ async function test() {
     const layoutUR = createUniformBufferBindGroupLayout(bindingNums.UR);
     const layoutLL = createUniformBufferBindGroupLayout(bindingNums.LL);
     const layoutLR = createUniformBufferBindGroupLayout(bindingNums.LR);
-    const layoutG = createUniformBufferBindGroupLayout(bindingNums.G, WebGPUShaderStageBit.FRAGMENT);
+    const layoutG = createUniformBufferBindGroupLayout(bindingNums.G, GPUShaderStageBit.FRAGMENT);
 
     // WebGPUBindGroupLayouts
     const leftTriangleBGLayout = device.createBindGroupLayout({ bindings: [layoutUL, layoutUM, layoutLL, layoutG] });

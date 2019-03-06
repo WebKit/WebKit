@@ -82,18 +82,16 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
     return MTLTextureUsageUnknown;
 }
 
+#if !PLATFORM(MAC)
 static MTLStorageMode storageModeForPixelFormatAndSampleCount(MTLPixelFormat format, unsigned long samples)
 {
     // Depth, Stencil, DepthStencil, and Multisample textures must be allocated with the MTLStorageModePrivate resource option.
     if (format == MTLPixelFormatDepth32Float_Stencil8 || samples > 1)
         return MTLStorageModePrivate;
 
-#if PLATFORM(MAC)
-    return MTLStorageModeManaged;
-#else
     return MTLStorageModeShared;
-#endif
 }
+#endif
 
 static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char* const functionName, const GPUTextureDescriptor& descriptor, OptionSet<GPUTextureUsage::Flags> usage)
 {
@@ -117,7 +115,11 @@ static RetainPtr<MTLTextureDescriptor> tryCreateMtlTextureDescriptor(const char*
     if (!mtlUsage)
         return nullptr;
 
+#if PLATFORM(MAC)
+    auto storageMode = MTLStorageModePrivate;
+#else
     auto storageMode = storageModeForPixelFormatAndSampleCount(pixelFormat, descriptor.sampleCount);
+#endif
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -168,18 +170,18 @@ RefPtr<GPUTexture> GPUTexture::tryCreate(const GPUDevice& device, const GPUTextu
     return adoptRef(new GPUTexture(WTFMove(mtlTexture), usage));
 }
 
-Ref<GPUTexture> GPUTexture::create(PlatformTextureSmartPtr&& texture, OptionSet<GPUTextureUsage::Flags> usage)
+Ref<GPUTexture> GPUTexture::create(RetainPtr<MTLTexture>&& texture, OptionSet<GPUTextureUsage::Flags> usage)
 {
     return adoptRef(*new GPUTexture(WTFMove(texture), usage));
 }
 
-GPUTexture::GPUTexture(PlatformTextureSmartPtr&& texture, OptionSet<GPUTextureUsage::Flags> usage)
+GPUTexture::GPUTexture(RetainPtr<MTLTexture>&& texture, OptionSet<GPUTextureUsage::Flags> usage)
     : m_platformTexture(WTFMove(texture))
     , m_usage(usage)
 {
 }
 
-RefPtr<GPUTexture> GPUTexture::createDefaultTextureView()
+RefPtr<GPUTexture> GPUTexture::tryCreateDefaultTextureView()
 {
     RetainPtr<MTLTexture> texture;
 

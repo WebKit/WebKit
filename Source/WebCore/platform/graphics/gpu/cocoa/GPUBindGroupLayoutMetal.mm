@@ -45,7 +45,9 @@ static MTLDataType MTLDataTypeForBindingType(GPUBindGroupLayoutBinding::BindingT
     case GPUBindGroupLayoutBinding::BindingType::SampledTexture:
         return MTLDataTypeTexture;
     case GPUBindGroupLayoutBinding::BindingType::UniformBuffer:
+    case GPUBindGroupLayoutBinding::BindingType::DynamicUniformBuffer:
     case GPUBindGroupLayoutBinding::BindingType::StorageBuffer:
+    case GPUBindGroupLayoutBinding::BindingType::DynamicStorageBuffer:
         return MTLDataTypePointer;
     }
 }
@@ -85,7 +87,7 @@ static GPUBindGroupLayout::ArgumentEncoderBuffer tryCreateArgumentEncoderAndBuff
     return args;
 };
 
-RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device, GPUBindGroupLayoutDescriptor&& descriptor)
+RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device, const GPUBindGroupLayoutDescriptor& descriptor)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Invalid MTLDevice!");
@@ -97,7 +99,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
 
     for (const auto& binding : descriptor.bindings) {
         if (!bindingsMap.add(binding.binding, binding)) {
-            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Duplicate binding %lu found in WebGPUBindGroupLayoutDescriptor!", binding.binding);
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Duplicate binding %lu found in GPUBindGroupLayoutDescriptor!", binding.binding);
             return nullptr;
         }
 
@@ -115,11 +117,11 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
         mtlArgument.get().dataType = MTLDataTypeForBindingType(binding.type);
         mtlArgument.get().index = binding.binding;
 
-        if (binding.visibility & GPUShaderStageBit::VERTEX)
+        if (binding.visibility & GPUShaderStageBit::Flags::Vertex)
             appendArgumentToArray(vertexArgsArray, mtlArgument);
-        if (binding.visibility & GPUShaderStageBit::FRAGMENT)
+        if (binding.visibility & GPUShaderStageBit::Flags::Fragment)
             appendArgumentToArray(fragmentArgsArray, mtlArgument);
-        if (binding.visibility & GPUShaderStageBit::COMPUTE)
+        if (binding.visibility & GPUShaderStageBit::Flags::Compute)
             appendArgumentToArray(computeArgsArray, mtlArgument);
     }
 

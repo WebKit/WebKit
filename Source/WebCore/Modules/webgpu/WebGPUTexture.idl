@@ -30,9 +30,8 @@
     ImplementationLacksVTable
 ] interface WebGPUTexture {
     WebGPUTextureView createDefaultTextureView();
-/* Not Yet Implemented:
-    WebGPUTextureView createTextureView(WebGPUTextureViewDescriptor desc);
-
     void destroy();
-*/
+
+    // Not Yet Implemented:
+    // WebGPUTextureView createTextureView(WebGPUTextureViewDescriptor desc);
 };

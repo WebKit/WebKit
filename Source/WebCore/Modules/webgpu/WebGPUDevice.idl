@@ -34,7 +34,7 @@
     WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
 
-    WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
+    WebGPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
     WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
     WebGPUBindGroup createBindGroup(WebGPUBindGroupDescriptor descriptor);
 
@@ -50,7 +50,6 @@
     // readonly attribute WebGPUExtensions extensions;
     // readonly attribute WebGPULimits limits;
 
-    // WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
     // WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
 
     // WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);

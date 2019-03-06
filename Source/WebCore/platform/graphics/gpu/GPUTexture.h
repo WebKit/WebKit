@@ -53,8 +53,10 @@ public:
     bool isTransferSource() const { return m_usage.contains(GPUTextureUsage::Flags::TransferSource); }
     bool isTransferDestination() const { return m_usage.contains(GPUTextureUsage::Flags::TransferDestination); }
     bool isOutputAttachment() const { return m_usage.contains(GPUTextureUsage::Flags::OutputAttachment); }
+    bool isReadOnly() const { return m_usage.containsAny({ GPUTextureUsage::Flags::TransferSource, GPUTextureUsage::Flags::Sampled }); }
 
-    RefPtr<GPUTexture> createDefaultTextureView();
+    RefPtr<GPUTexture> tryCreateDefaultTextureView();
+    void destroy() { m_platformTexture = nullptr; }
 
 private:
     explicit GPUTexture(PlatformTextureSmartPtr&&, OptionSet<GPUTextureUsage::Flags>);

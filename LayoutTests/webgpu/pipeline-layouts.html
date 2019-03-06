@@ -9,16 +9,16 @@
 function createBindGroupLayoutBinding() {
     return {
         binding: 0,
-        visibility: WebGPUShaderStageBit.FRAGMENT | WebGPUShaderStageBit.VERTEX,
-        type: "storageBuffer"
+        visibility: GPUShaderStageBit.FRAGMENT | GPUShaderStageBit.VERTEX,
+        type: "storage-buffer"
     };
 }
 
 test(() => {
     const bindGroupLayoutDescriptor = { bindings: [createBindGroupLayoutBinding()] };
-    assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & WebGPUShaderStageBit.FRAGMENT, 0);
-    assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & WebGPUShaderStageBit.VERTEX, 0);
-    assert_equals(bindGroupLayoutDescriptor.bindings[0].type, "storageBuffer");
+    assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & GPUShaderStageBit.FRAGMENT, 0);
+    assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & GPUShaderStageBit.VERTEX, 0);
+    assert_equals(bindGroupLayoutDescriptor.bindings[0].type, "storage-buffer");
 }, "Create a basic WebGPUBindGroupLayoutDescriptor."); 
 
 promise_test(async () => {

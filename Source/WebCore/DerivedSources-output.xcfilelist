@@ -577,6 +577,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFontFaceSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGCObservation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutBinding.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutBinding.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
@@ -595,6 +599,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUStoreOp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUStoreOp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureDescriptor.cpp

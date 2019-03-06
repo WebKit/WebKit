@@ -36,7 +36,7 @@ Ref<GPUPipelineLayout> GPUPipelineLayout::create(GPUPipelineLayoutDescriptor&& d
 }
 
 GPUPipelineLayout::GPUPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor)
-    : m_bindGroupLayouts(descriptor.bindGroupLayouts)
+    : m_bindGroupLayouts(WTFMove(descriptor.bindGroupLayouts))
 {
 }
 

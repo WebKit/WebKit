@@ -108,7 +108,7 @@ RefPtr<GPUTexture> GPUSwapChain::getNextTexture()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     m_currentDrawable = retainPtr([m_platformSwapLayer nextDrawable]);
-    mtlTexture = retainPtr([m_currentDrawable texture]);
+    mtlTexture = [m_currentDrawable texture];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 

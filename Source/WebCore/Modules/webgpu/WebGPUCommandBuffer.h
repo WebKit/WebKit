@@ -59,7 +59,7 @@ class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
     static Ref<WebGPUCommandBuffer> create(Ref<GPUCommandBuffer>&&);
 
-    const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+    GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
 
     RefPtr<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
     void copyBufferToBuffer(const WebGPUBuffer&, unsigned long srcOffset, const WebGPUBuffer&, unsigned long dstOffset, unsigned long size);

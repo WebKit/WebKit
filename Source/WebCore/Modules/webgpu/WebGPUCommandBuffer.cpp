@@ -104,7 +104,7 @@ void WebGPUCommandBuffer::copyBufferToTexture(const WebGPUBufferCopyView& srcBuf
 
     // FIXME: Add Web GPU validation.
 
-    m_commandBuffer->copyBufferToTexture(*gpuBufferView, *gpuTextureView, size);
+    m_commandBuffer->copyBufferToTexture(WTFMove(*gpuBufferView), WTFMove(*gpuTextureView), size);
 }
 
 void WebGPUCommandBuffer::copyTextureToBuffer(const WebGPUTextureCopyView& srcTexture, const WebGPUBufferCopyView& dstBuffer, const GPUExtent3D& size)
@@ -117,7 +117,7 @@ void WebGPUCommandBuffer::copyTextureToBuffer(const WebGPUTextureCopyView& srcTe
 
     // FIXME: Add Web GPU validation.
 
-    m_commandBuffer->copyTextureToBuffer(*gpuTextureView, *gpuBufferView, size);
+    m_commandBuffer->copyTextureToBuffer(WTFMove(*gpuTextureView), WTFMove(*gpuBufferView), size);
 }
 
 void WebGPUCommandBuffer::copyTextureToTexture(const WebGPUTextureCopyView& src, const WebGPUTextureCopyView& dst, const GPUExtent3D& size)
@@ -130,7 +130,7 @@ void WebGPUCommandBuffer::copyTextureToTexture(const WebGPUTextureCopyView& src,
 
     // FIXME: Add Web GPU validation.
 
-    m_commandBuffer->copyTextureToTexture(*gpuSrcView, *gpuDstView, size);
+    m_commandBuffer->copyTextureToTexture(WTFMove(*gpuSrcView), WTFMove(*gpuDstView), size);
 }
 
 } // namespace WebCore

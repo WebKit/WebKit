@@ -70,13 +70,12 @@ GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
 {
 }
 
-void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&& commandBuffers)
+void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     for (auto& commandBuffer : commandBuffers) {
-        if (commandBuffer->blitEncoder())
-            [commandBuffer->blitEncoder() endEncoding];
+        commandBuffer->endBlitEncoding();
         // Prevent any buffer mapping callbacks from executing until command buffer is complete.
         for (auto& buffer : commandBuffer->usedBuffers()) {
             if (buffer->state() != GPUBuffer::State::Unmapped) {
@@ -84,6 +83,13 @@ void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&& commandBuffers)
                 return;
             }
             buffer->commandBufferCommitted(commandBuffer->platformCommandBuffer());
+        }
+        // Also ensure textures are still valid.
+        for (auto& texture : commandBuffer->usedTextures()) {
+            if (!texture->platformTexture()) {
+                LOG(WebGPU, "GPUQueue::submit(): Invalid GPUTexture set on a GPUCommandBuffer!");
+                return;
+            }
         }
 
         [commandBuffer->platformCommandBuffer() commit];

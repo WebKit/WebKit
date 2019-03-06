@@ -39,7 +39,7 @@ async function test(image) {
     const bufferViewB = {
         buffer: bufferB,
         offset: 0,
-        rowPitch: 0,
+        rowPitch: image.width * 4,
         imageHeight: 0
     };
 
@@ -81,7 +81,7 @@ async function test(image) {
     const readBufferView = {
         buffer: readBuffer,
         offset: 0,
-        rowPitch: 0,
+        rowPitch: image.width * 4,
         imageHeight: 0
     };
 
@@ -91,6 +91,10 @@ async function test(image) {
     commandBuffer.copyTextureToTexture(textureViewA, textureViewB, textureSize);
     commandBuffer.copyTextureToBuffer(textureViewB, readBufferView, textureSize);
     device.getQueue().submit([commandBuffer]);
+    bufferA.destroy();
+    bufferB.destroy();
+    textureA.destroy();
+    textureB.destroy();
 
     const resultContext = document.querySelector('canvas').getContext('2d');
 
@@ -100,7 +104,7 @@ async function test(image) {
 
         resultContext.putImageData(resultImageData, 0, 0);
 
-        readBuffer.unmap();
+        readBuffer.destroy();
     });
 
     if (window.testRunner)

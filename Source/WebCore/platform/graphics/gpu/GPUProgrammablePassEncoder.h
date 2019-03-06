@@ -49,28 +49,28 @@ class GPUProgrammablePassEncoder : public RefCounted<GPUProgrammablePassEncoder>
 public:
     virtual ~GPUProgrammablePassEncoder() = default;
 
-    void endPass();
-    void setBindGroup(unsigned long, GPUBindGroup&);
+    virtual void endPass();
+    void setBindGroup(unsigned, GPUBindGroup&);
     virtual void setPipeline(Ref<GPURenderPipeline>&&) = 0;
 
 protected:
     GPUProgrammablePassEncoder(Ref<GPUCommandBuffer>&&);
-    virtual PlatformProgrammablePassEncoder* platformPassEncoder() const = 0;
 
     GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+    virtual PlatformProgrammablePassEncoder* platformPassEncoder() const = 0;
 
 private:
 #if USE(METAL)
-    void setResourceAsBufferOnEncoder(MTLArgumentEncoder *, const GPUBindingResource&, unsigned long, const char* const);
-    virtual void useResource(MTLResource *, unsigned long) = 0;
+    void setResourceAsBufferOnEncoder(MTLArgumentEncoder *, const GPUBindingResource&, unsigned, const char* const);
+    void setResourceAsTextureOnEncoder(MTLArgumentEncoder *, const GPUBindingResource&, unsigned, const char* const);
+    virtual void useResource(MTLResource *, unsigned) = 0;
 
     // Render command encoder methods.
-    virtual void setVertexBuffer(MTLBuffer *, unsigned long, unsigned long) { }
-    virtual void setFragmentBuffer(MTLBuffer *, unsigned long, unsigned long) { }
+    virtual void setVertexBuffer(MTLBuffer *, unsigned, unsigned) { }
+    virtual void setFragmentBuffer(MTLBuffer *, unsigned, unsigned) { }
 #endif // USE(METAL)
 
     Ref<GPUCommandBuffer> m_commandBuffer;
-    bool m_isEncoding { true };
 };
 
 } // namespace WebCore

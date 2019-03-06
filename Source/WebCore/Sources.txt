@@ -2771,6 +2771,8 @@ JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUColor.cpp
+JSGPUBindGroupLayoutBinding.cpp
+JSGPUBindGroupLayoutDescriptor.cpp
 JSGPUBufferDescriptor.cpp
 JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp
@@ -2779,6 +2781,7 @@ JSGPUExtent3D.cpp
 JSGPULoadOp.cpp
 JSGPUOrigin3D.cpp
 JSGPURequestAdapterOptions.cpp
+JSGPUShaderStageBit.cpp
 JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
 JSGPUTextureDimension.cpp
@@ -3318,8 +3321,6 @@ JSWebGPUBindGroup.cpp
 JSWebGPUBindGroupBinding.cpp
 JSWebGPUBindGroupDescriptor.cpp
 JSWebGPUBindGroupLayout.cpp
-JSWebGPUBindGroupLayoutBinding.cpp
-JSWebGPUBindGroupLayoutDescriptor.cpp
 JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
 JSWebGPUCommandBuffer.cpp
@@ -3340,7 +3341,6 @@ JSWebGPURenderPipeline.cpp
 JSWebGPURenderPipelineDescriptor.cpp
 JSWebGPUShaderModule.cpp
 JSWebGPUShaderModuleDescriptor.cpp
-JSWebGPUShaderStageBit.cpp
 JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureView.cpp

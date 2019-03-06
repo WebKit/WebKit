@@ -31,6 +31,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -42,12 +43,14 @@ public:
 
     RefPtr<GPUTexture> texture() const { return m_texture; }
 
-    RefPtr<WebGPUTextureView> createDefaultTextureView();
+    Ref<WebGPUTextureView> createDefaultTextureView();
+    void destroy();
 
 private:
     explicit WebGPUTexture(RefPtr<GPUTexture>&&);
 
     RefPtr<GPUTexture> m_texture;
+    Vector<Ref<WebGPUTextureView>> m_textureViews;
 };
 
 } // namespace WebCore

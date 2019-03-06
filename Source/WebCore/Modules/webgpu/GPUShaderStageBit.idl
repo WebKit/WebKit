@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,10 @@ typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
+    DoNotCheckConstants,
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
-] interface WebGPUShaderStageBit {
+] interface GPUShaderStageBit {
     const u32 NONE = 0;
     const u32 VERTEX = 1;
     const u32 FRAGMENT = 2;

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="vertex-buffer-triangle-strip-expected.html">
+<p>Pass if square canvas below is a 4 by 4 blue/green checkerboard.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct VertexIn
+{
+    float4 position [[attribute(0)]];
+    float2 texCoords [[attribute(1)]];
+};
+
+struct VertexOut
+{
+    float4 position [[position]];
+    float2 texCoords;
+};
+
+vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
+{
+    VertexOut vOut;
+    vOut.position = vertexIn.position;
+    vOut.texCoords = vertexIn.texCoords;
+    return vOut;
+}
+
+struct Texture
+{
+    texture2d<float> image [[id(0)]];
+};
+
+fragment float4 fragment_main(VertexOut v [[stage_in]], const device Texture& t [[buffer(0)]])
+{
+    constexpr sampler s(coord::normalized, address::clamp_to_zero, filter::nearest);
+    return t.image.sample(s, v.texCoords);
+}
+`
+
+function createInputStateDescriptor() {
+    return {
+        indexFormat: WebGPUIndexFormat.UINT32,
+        attributes: [{
+            shaderLocation: 0,
+            inputSlot: 0,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+        }, {
+            shaderLocation: 1,
+            inputSlot: 1,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32
+        }],
+        inputs: [{
+            inputSlot: 0,
+            stride: 4 * 4,
+            stepMode: WebGPUInputStepMode.VERTEX
+        }, {
+            inputSlot: 1,
+            stride: 4 * 2,
+            stepMode: WebGPUInputStepMode.VERTEX
+        }]
+    }
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+
+    const vertexArray = new Float32Array([
+        // float4 xyzw
+        -1, 1, 0, 1,
+        -1, -1, 0, 1,
+        1, 1, 0, 1, 
+        1, -1, 0, 1
+    ]);
+    const vertexBuffer = device.createBuffer({ size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    vertexBuffer.setSubData(0, vertexArray.buffer);
+
+    const textureCoordArray = new Float32Array([
+        // float2 texCoords
+        0, 0,
+        0, 1,
+        1, 0,
+        1, 1
+    ]);
+    const textureCoordBuffer = device.createBuffer({ size: textureCoordArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    textureCoordBuffer.setSubData(0, textureCoordArray.buffer);
+
+    const inputStateDescriptor = createInputStateDescriptor();
+
+    // Load texture image
+    const image = new Image();
+    const imageLoadPromise = new Promise(resolve => { 
+        image.onload = () => resolve(); 
+        image.src = "resources/blue-checkered.png";
+    });
+    await Promise.resolve(imageLoadPromise);
+
+    // Convert image to data and fill GPUBuffer
+    const canvas2d = document.createElement("canvas");
+    canvas2d.width = image.width;
+    canvas2d.height = image.height;
+    const context2d = canvas2d.getContext("2d");
+    context2d.drawImage(image, 0, 0);
+    const imageData = context2d.getImageData(0, 0, image.width, image.height);
+
+    const textureBufferDescriptor = {
+        size: imageData.data.length,
+        usage: GPUBufferUsage.TRANSFER_SRC | GPUBufferUsage.TRANSFER_DST
+    };
+    const textureBuffer = device.createBuffer(textureBufferDescriptor);
+    textureBuffer.setSubData(0, imageData.data.buffer);
+
+    // Create GPUTexture
+    const textureSize = {
+        width: image.width,
+        height: image.height,
+        depth: 1
+    };
+
+    const textureDescriptor = {
+        size: { width: image.width, height: image.height, depth: 1 },
+        arrayLayerCount: 1,
+        mipLevelCount: 1,
+        sampleCount: 1,
+        dimension: "2d",
+        format: "r8g8b8a8-unorm",
+        usage: GPUTextureUsage.TRANSFER_DST | GPUTextureUsage.SAMPLED
+    };
+    const texture = device.createTexture(textureDescriptor);
+
+    // Bind texture to pipeline
+    const textureBindingNum = 0;
+    const bindGroupLayoutDescriptor = {
+        bindings: [{ binding: textureBindingNum, visibility: GPUShaderStageBit.FRAGMENT, type: "sampled-texture" }]
+    };
+    bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
+    const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+
+    const bindGroupDescriptor = {
+        layout: bindGroupLayout,
+        bindings: [{ binding: textureBindingNum, resource: texture.createDefaultTextureView() }]
+    };
+    const bindGroup = device.createBindGroup(bindGroupDescriptor);
+
+    // Pipeline and render
+    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor);
+    const commandBuffer = device.createCommandBuffer();
+
+    const bufferCopyView = {
+        buffer: textureBuffer,
+        offset: 0,
+        rowPitch: image.width * 4,
+        imageHeight: 0
+    };
+    const textureCopyView = {
+        texture: texture,
+        mipLevel: 0,
+        arrayLayer: 0,
+        origin: { x: 0, y: 0, z: 0 }
+    };
+    commandBuffer.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
+    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.setVertexBuffers(0, [vertexBuffer, textureCoordBuffer], [0, 0]);
+    passEncoder.draw(4, 1, 0, 0);
+    passEncoder.endPass();
+
+    const queue = device.getQueue();
+    queue.submit([commandBuffer]);
+    vertexBuffer.destroy();
+    textureCoordBuffer.destroy();
+    texture.destroy();
+    context.present();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+test();
+</script>

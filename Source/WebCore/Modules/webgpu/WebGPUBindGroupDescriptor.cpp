@@ -88,26 +88,32 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::asGPUBindGroupDescri
 
         const auto layoutBinding = iterator->value;
 
-        auto bindingResourceVisitor = WTF::makeVisitor([] (RefPtr<WebGPUTextureView> view) -> Optional<GPUBindingResource> {
-            // FIXME: Validate binding type with the texture's usage flags.
+        auto bindingResourceVisitor = WTF::makeVisitor([](const RefPtr<WebGPUTextureView>& view) -> Optional<GPUBindingResource> {
             if (!view)
                 return WTF::nullopt;
+            auto texture = view->texture();
+            if (!texture)
+                return WTF::nullopt;
 
-            return static_cast<GPUBindingResource>(view->texture());
+            return static_cast<GPUBindingResource>(texture.releaseNonNull());
         }, [&layoutBinding, functionName] (WebGPUBufferBinding bufferBinding) -> Optional<GPUBindingResource> {
-            if (!bufferBinding.buffer || !bufferBinding.buffer->buffer()) {
-                LOG(WebGPU, "%s: Invalid GPUBufferBinding for binding %lu in GPUBindGroupBindings!", functionName, layoutBinding.binding);
+            if (!bufferBinding.buffer)
                 return WTF::nullopt;
-            }
-            if (!validateBufferBindingType(bufferBinding.buffer->buffer().get(), layoutBinding, functionName))
+            auto buffer = bufferBinding.buffer->buffer();
+            if (!buffer)
                 return WTF::nullopt;
 
-            return static_cast<GPUBindingResource>(GPUBufferBinding { bufferBinding.buffer->buffer().releaseNonNull(), bufferBinding.offset, bufferBinding.size });
+            if (!validateBufferBindingType(buffer.get(), layoutBinding, functionName))
+                return WTF::nullopt;
+
+            return static_cast<GPUBindingResource>(GPUBufferBinding { buffer.releaseNonNull(), bufferBinding.offset, bufferBinding.size });
         });
 
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
-        if (!bindingResource)
+        if (!bindingResource) {
+            LOG(WebGPU, "%s: Invalid resource for binding %lu!", functionName, layoutBinding.binding);
             return WTF::nullopt;
+        }
 
         bindGroupBindings.uncheckedAppend(GPUBindGroupBinding { binding.binding, WTFMove(bindingResource.value()) });
     }

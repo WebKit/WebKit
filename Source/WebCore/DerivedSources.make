@@ -373,6 +373,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
+    $(WebCore)/Modules/webgpu/GPUBindGroupLayoutBinding.idl \
+    $(WebCore)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \
@@ -381,6 +383,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
     $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
+    $(WebCore)/Modules/webgpu/GPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDimension.idl \
@@ -392,8 +395,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayout.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutBinding.idl \
-    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
 	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
@@ -414,7 +415,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPURenderingContext.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModule.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
     $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
     $(WebCore)/Modules/webgpu/WebGPUTextureView.idl \
