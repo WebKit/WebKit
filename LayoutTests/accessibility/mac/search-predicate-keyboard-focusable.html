@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+<blockquote id="start">first blockquote level 1</blockquote>
+<form>
+<input type="text" /><br />
+<input type="checkbox" value="Checkbox" /> checkbox<br />
+<input type="submit" value="Submit" />
+<input type="text" role="combobox">
+</form>
+<img id="image" src="resources/cake.png" alt="Test">
+<h1>first heading level 1</h1>
+<a href="#image">link</a>
+<ol><li>list item</li></ol>
+<ul role="radiogroup"><li role="radio">radio button</li></ul>
+<table>
+<thead><tr><td>first table heading level 1</td></tr></thead>
+</table>
+<ul role="tree"><li role="treeitem">tree item</li></ul>
+
+<div id="group" style="overflow: scroll; width:100px; height:100px;">
+    <button id="button">test button 1</button><BR>
+</div>
+<button id="button">test button 2</button>
+
+<p id="description"></p>
+<div id="console"></div>
+
+</div>
+<script>
+    description("This tests AXKeyboardFocusableSearchKey gives the default focusable elements.");
+
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var containerElement = accessibilityController.focusedElement;
+        var resultElement = accessibilityController.accessibleElementById("start");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXTextField'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXCheckBox'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: Submit'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXComboBox'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXLink'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: test button 1'");
+
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, "AXKeyboardFocusableSearchKey", "", false);
+        shouldBe("resultElement.role", "'AXRole: AXButton'");
+        shouldBe("resultElement.title", "'AXTitle: test button 2'");
+    } else {
+        testFailed("Could not load accessibility controller");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

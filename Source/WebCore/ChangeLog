@@ -1,3 +1,21 @@
+2019-03-05  Eric Liang  <ericliang@apple.com>
+
+        AX: Add remote search support for keyboard focusable element search type
+        https://bugs.webkit.org/show_bug.cgi?id=195336
+
+        Reviewed by Chris Fleizach.
+
+        Added AXKeyboardFocusable search key to return default keyboard-focusable elements for accessibility.
+
+        Test: accessibility/mac/search-predicate-keyboard-focusable.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex):
+        (WebCore::AccessibilityObject::isKeyboardFocusable const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (createAccessibilitySearchKeyMap):
+
 2019-03-05  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Enable CSS Typed OM

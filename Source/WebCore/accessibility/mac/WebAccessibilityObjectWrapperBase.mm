@@ -166,6 +166,10 @@ using namespace HTMLNames;
 #define NSAccessibilityHighlightedSearchKey @"AXHighlightedSearchKey"
 #endif
 
+#ifndef NSAccessibilityKeyboardFocusableSearchKey
+#define NSAccessibilityKeyboardFocusableSearchKey @"AXKeyboardFocusableSearchKey"
+#endif
+
 #ifndef NSAccessibilityItalicFontSearchKey
 #define NSAccessibilityItalicFontSearchKey @"AXItalicFontSearchKey"
 #endif
@@ -695,6 +699,7 @@ static AccessibilitySearchKeyMap* createAccessibilitySearchKeyMap()
         { NSAccessibilityHeadingSameLevelSearchKey, AccessibilitySearchKey::HeadingSameLevel },
         { NSAccessibilityHeadingSearchKey, AccessibilitySearchKey::Heading },
         { NSAccessibilityHighlightedSearchKey, AccessibilitySearchKey::Highlighted },
+        { NSAccessibilityKeyboardFocusableSearchKey, AccessibilitySearchKey::KeyboardFocusable },
         { NSAccessibilityItalicFontSearchKey, AccessibilitySearchKey::ItalicFont },
         { NSAccessibilityLandmarkSearchKey, AccessibilitySearchKey::Landmark },
         { NSAccessibilityLinkSearchKey, AccessibilitySearchKey::Link },

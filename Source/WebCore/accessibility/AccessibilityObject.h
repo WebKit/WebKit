@@ -215,6 +215,7 @@ enum class AccessibilitySearchKey {
     Heading,
     Highlighted,
     ItalicFont,
+    KeyboardFocusable,
     Landmark,
     Link,
     List,
@@ -441,6 +442,7 @@ public:
     bool isSubscriptStyleGroup() const;
     bool isSuperscriptStyleGroup() const;
     bool isFigureElement() const;
+    bool isKeyboardFocusable() const;
     bool isSummary() const { return roleValue() == AccessibilityRole::Summary; }
     bool isOutput() const;
     

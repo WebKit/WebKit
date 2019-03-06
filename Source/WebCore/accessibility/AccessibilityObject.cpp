@@ -195,6 +195,9 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityO
     case AccessibilitySearchKey::Highlighted:
         return axObject->hasHighlighting();
             
+    case AccessibilitySearchKey::KeyboardFocusable:
+        return axObject->isKeyboardFocusable();
+        
     case AccessibilitySearchKey::ItalicFont:
         return axObject->hasItalicFont();
         
@@ -3491,6 +3494,13 @@ bool AccessibilityObject::isFigureElement() const
 {
     Node* node = this->node();
     return node && node->hasTagName(figureTag);
+}
+
+bool AccessibilityObject::isKeyboardFocusable() const
+{
+    if (auto element = this->element())
+        return element->isFocusable();
+    return false;
 }
 
 bool AccessibilityObject::isOutput() const
