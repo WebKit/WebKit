@@ -1,5 +1,20 @@
 2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: TimelineOverview clicks do not always behave as expected
+        https://bugs.webkit.org/show_bug.cgi?id=195319
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler.prototype._shouldIgnoreMicroMovement):
+        (WI.TimelineRuler.prototype._handleMouseDown):
+        (WI.TimelineRuler.prototype._handleMouseMove):
+        Ignore moves that haven't gone more than 4px. Once the threshold is
+        passed allow all moves. This improves the click behavior since
+        previously click would never re-dispatch if there was any movement.
+
+2019-03-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CPU Usage Timeline - Statistics and Sources sections
         https://bugs.webkit.org/show_bug.cgi?id=195202
 
