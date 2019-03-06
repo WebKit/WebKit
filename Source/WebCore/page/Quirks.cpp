@@ -66,8 +66,8 @@ bool Quirks::hasWebSQLSupportQuirk() const
     
     auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
     
-    m_hasWebSQLSupportQuirk = domain == "bostongloble.com"
-    || domain.endsWith(".bostongloble.com")
+    m_hasWebSQLSupportQuirk = domain == "bostonglobe.com"
+    || domain.endsWith(".bostonglobe.com")
     || domain == "latimes.com"
     || domain.endsWith(".latimes.com");
     
