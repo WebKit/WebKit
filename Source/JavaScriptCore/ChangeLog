@@ -1,3 +1,14 @@
+2019-03-02  Darin Adler  <darin@apple.com>
+
+        Retire legacy dtoa function and DecimalNumber class
+        https://bugs.webkit.org/show_bug.cgi?id=195253
+
+        Reviewed by Daniel Bates.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential): Removed dependency on NumberToStringBufferLength,
+        using NumberToStringBuffer instead. Also tweaked style of implementation a bit.
+
 2019-03-01  Darin Adler  <darin@apple.com>
 
         Finish removing String::format

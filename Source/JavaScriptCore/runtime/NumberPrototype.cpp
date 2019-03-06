@@ -428,14 +428,14 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return throwVMError(exec, scope, createRangeError(exec, "toExponential() argument must be between 0 and 20"_s));
 
     // Round if the argument is not undefined, always format as exponential.
-    char buffer[WTF::NumberToStringBufferLength];
-    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
+    NumberToStringBuffer buffer;
+    DoubleConversionStringBuilder builder { &buffer[0], sizeof(buffer) };
     const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
     builder.Reset();
     isUndefined
         ? converter.ToExponential(x, -1, &builder)
         : converter.ToExponential(x, decimalPlacesInExponent, &builder);
-    return JSValue::encode(jsString(exec, String(builder.Finalize())));
+    return JSValue::encode(jsString(exec, builder.Finalize()));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.

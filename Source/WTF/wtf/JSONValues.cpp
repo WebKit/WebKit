@@ -33,8 +33,6 @@
 #include "config.h"
 #include <wtf/JSONValues.h>
 
-#include <wtf/DecimalNumber.h>
-#include <wtf/dtoa.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -673,24 +671,10 @@ void Value::writeJSON(StringBuilder& output) const
         break;
     case Type::Double:
     case Type::Integer: {
-        if (!std::isfinite(m_value.number)) {
+        if (!std::isfinite(m_value.number))
             output.appendLiteral("null");
-            return;
-        }
-        DecimalNumber decimal { m_value.number };
-        NumberToStringBuffer buffer;
-        unsigned length = 0;
-        if (decimal.bufferLengthForStringDecimal() > sizeof(buffer)) {
-            // Not enough room for decimal. Use exponential format.
-            if (decimal.bufferLengthForStringExponential() > sizeof(buffer)) {
-                // Fallback for an abnormal case if it's too little even for exponential.
-                output.appendLiteral("NaN");
-                return;
-            }
-            length = decimal.toStringExponential(reinterpret_cast<LChar*>(&buffer[0]), sizeof(buffer));
-        } else
-            length = decimal.toStringDecimal(reinterpret_cast<LChar*>(&buffer[0]), sizeof(buffer));
-        output.append(&buffer[0], length);
+        else
+            output.appendECMAScriptNumber(m_value.number);
         break;
     }
     default:

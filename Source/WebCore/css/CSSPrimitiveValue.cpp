@@ -40,10 +40,10 @@
 #include "RGBColor.h"
 #include "Rect.h"
 #include "RenderStyle.h"
-#include <wtf/DecimalNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -934,26 +934,9 @@ ExceptionOr<Ref<RGBColor>> CSSPrimitiveValue::getRGBColorValue() const
     return RGBColor::create(m_value.color->rgb());
 }
 
-NEVER_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char* suffix, unsigned suffixLength) const
+NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
 {
-    DecimalNumber decimal(m_value.num);
-
-    unsigned bufferLength = decimal.bufferLengthForStringDecimal() + suffixLength;
-    LChar* buffer;
-    auto string = StringImpl::createUninitialized(bufferLength, buffer);
-
-    unsigned length = decimal.toStringDecimal(buffer, bufferLength);
-
-    for (unsigned i = 0; i < suffixLength; ++i)
-        buffer[length + i] = static_cast<LChar>(suffix[i]);
-
-    return string;
-}
-
-template <unsigned characterCount>
-ALWAYS_INLINE Ref<StringImpl> CSSPrimitiveValue::formatNumberValue(const char (&characters)[characterCount]) const
-{
-    return formatNumberValue(characters, characterCount - 1);
+    return makeString(m_value.num, suffix);
 }
 
 ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
@@ -1028,15 +1011,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return valueName(m_value.valueID);
     case CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID);
-    case CSS_ATTR: {
-        StringBuilder result;
-        result.reserveCapacity(6 + m_value.string->length());
-        result.appendLiteral("attr(");
-        result.append(String(m_value.string));
-        result.append(')');
-
-        return result.toString();
-    }
+    case CSS_ATTR:
+        return "attr(" + String(m_value.string) + ')';
     case CSS_COUNTER_NAME:
         return "counter(" + String(m_value.string) + ')';
     case CSS_COUNTER: {

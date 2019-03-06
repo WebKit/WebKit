@@ -27,12 +27,7 @@
 
 namespace WTF {
 
-using DtoaBuffer = std::array<char, 80>;
-
-WTF_EXPORT_PRIVATE void dtoa(DtoaBuffer& result, double dd, bool& sign, int& exponent, unsigned& precision);
-
-constexpr unsigned NumberToStringBufferLength = 96;
-using NumberToStringBuffer = std::array<char, NumberToStringBufferLength>;
+using NumberToStringBuffer = std::array<char, 96>;
 
 WTF_EXPORT_PRIVATE const char* numberToString(float, NumberToStringBuffer&);
 WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
