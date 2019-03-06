@@ -311,6 +311,8 @@ public:
         static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber1Upper); }
 
     private:
+        friend class LLIntOffsetsExtractor;
+
         uint32_t m_length { 0 };
         uint32_t m_fiber1Lower { 0 };
         uint16_t m_fiber1Upper { 0 };
@@ -350,6 +352,8 @@ public:
         static ptrdiff_t offsetOfFiber2() { return OBJECT_OFFSETOF(CompactFibers, m_fiber2); }
 
     private:
+        friend class LLIntOffsetsExtractor;
+
         uint32_t m_length { 0 };
         JSString* m_fiber1 { nullptr };
         JSString* m_fiber2 { nullptr };
@@ -438,6 +442,8 @@ public:
     }
 
 private:
+    friend class LLIntOffsetsExtractor;
+
     void convertToNonRope(String&&) const;
 
     void initializeIs8Bit(bool flag) const

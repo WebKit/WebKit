@@ -1,3 +1,13 @@
+2019-03-05  Saam barati  <sbarati@apple.com>
+
+        op_switch_char broken for rope strings after JSRopeString layout rewrite
+        https://bugs.webkit.org/show_bug.cgi?id=195339
+        <rdar://problem/48592545>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/switch-on-char-llint-rope.js: Added.
+
 2019-03-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Store bits for JSRopeString in 3 stores

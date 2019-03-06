@@ -1788,15 +1788,15 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t0], StringType, .opSwitchCharFallThrough
-    loadp JSString::m_fiber[t0], t0
-    btpnz t0, isRopeInPointer, .opSwitchOnRope
-    bineq StringImpl::m_length[t0], 1, .opSwitchCharFallThrough
-    loadp StringImpl::m_data8[t0], t1
-    btinz StringImpl::m_hashAndFlags[t0], HashFlags8BitBuffer, .opSwitchChar8Bit
-    loadh [t1], t0
+    loadp JSString::m_fiber[t0], t1
+    btpnz t1, isRopeInPointer, .opSwitchOnRope
+    bineq StringImpl::m_length[t1], 1, .opSwitchCharFallThrough
+    loadp StringImpl::m_data8[t1], t0
+    btinz StringImpl::m_hashAndFlags[t1], HashFlags8BitBuffer, .opSwitchChar8Bit
+    loadh [t0], t0
     jmp .opSwitchCharReady
 .opSwitchChar8Bit:
-    loadb [t1], t0
+    loadb [t0], t0
 .opSwitchCharReady:
     subi SimpleJumpTable::min[t2], t0
     biaeq t0, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchCharFallThrough
@@ -1809,6 +1809,9 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     jump(m_defaultOffset)
 
 .opSwitchOnRope:
+    bineq JSRopeString::m_compactFibers + JSRopeString::CompactFibers::m_length[t0], 1, .opSwitchCharFallThrough
+
+.opSwitchOnRopeChar:
     callSlowPath(_llint_slow_path_switch_char)
     nextInstruction()
 end)
