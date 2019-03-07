@@ -1,3 +1,39 @@
+2019-03-06  Saam Barati  <sbarati@apple.com>
+
+        JSScript should keep the cache file locked for the duration of its existence and should truncate the cache when it is out of date
+        https://bugs.webkit.org/show_bug.cgi?id=195186
+
+        Reviewed by Keith Miller.
+
+        This patch makes it so that JSScript will keep its bytecode cache file
+        locked as long as the JSScript is alive. This makes it obvious that it's
+        safe to update that file, as it will only be used in a single VM, across
+        all processes, at a single time. We may be able to extend this in the future
+        if we can atomically update it across VMs/processes. However, we're choosing
+        more restricted semantics now as it's always easier to extend these semantics
+        in the future opposed to having to support the more flexible behavior
+        up front.
+        
+        This patch also:
+        - Adds error messages if writing the cache fails. We don't expect this to
+          fail, but previously we would say we cached it even if write() fails.
+        - Removes the unused m_moduleKey field.
+        - Makes calling cacheBytecodeWithError with an already non-empty cache file fail.
+          In the future, we should extend this to just fill in the parts of the cache
+          that are not present. But we don't have the ability to do that yet, so we
+          just result in an error for now.
+
+        * API/JSScript.mm:
+        (-[JSScript dealloc]):
+        (-[JSScript readCache]):
+        (-[JSScript init]):
+        (-[JSScript writeCache:]):
+        * API/JSScriptInternal.h:
+        * API/tests/testapi.mm:
+        (testCacheFileIsExclusive):
+        (testCacheFileFailsWhenItsAlreadyCached):
+        (testObjectiveCAPI):
+
 2019-03-06  Christopher Reid  <chris.reid@sony.com>
 
         Followups to (r242306): Use LockHolder instead of std::lock_guard on Remote Inspector Locks

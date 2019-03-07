@@ -2159,6 +2159,67 @@ static void testProgramJSScriptException()
     }
 }
 
+static void testCacheFileIsExclusive()
+{
+    NSURL* cachePath = tempFile(@"foo.program.cache");
+
+    @autoreleasepool {
+        NSString *source = @"function foo() { return 42; } foo();";
+        NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+
+        JSScript *script1 = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script1);
+        checkResult(@"Should be able to cache the first file", [script1 cacheBytecodeWithError:nil]);
+
+        JSScript *script2 = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script2);
+        NSError* error = nil;
+        checkResult(@"Should NOT be able to cache the second file", ![script2 cacheBytecodeWithError:&error]);
+        checkResult(@"Should NOT be able to cache the second file has the correct error message", [[error description] containsString:@"Could not lock the bytecode cache file. It's likely another VM or process is already using it"]);
+    }
+
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
+    checkResult(@"Successfully removed cache file", removedAll);
+}
+
+static void testCacheFileFailsWhenItsAlreadyCached()
+{
+    NSURL* cachePath = tempFile(@"foo.program.cache");
+    NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
+    NSString *source = @"function foo() { return 42; } foo();";
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        checkResult(@"Should be able to cache the first file", [script cacheBytecodeWithError:nil]);
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        NSError* error = nil;
+        checkResult(@"Should not be able to cache the second time because the cache is already present", ![script cacheBytecodeWithError:&error]);
+        checkResult(@"Correct error message should be set", [[error description] containsString:@"Cache for JSScript is already non-empty. Can not override it."]);
+
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSC::Options::forceDiskCache() = true;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        checkResult(@"Result should be 42", [result isNumber] && [result toInt32] == 42);
+        JSC::Options::forceDiskCache() = false;
+    }
+
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
+    checkResult(@"Successfully removed cache file", removedAll);
+}
+
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
 
 + (instancetype)newContext;
@@ -2366,6 +2427,8 @@ void testObjectiveCAPI(const char* filter)
     RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(false));
     RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(true));
     RUN(testProgramJSScriptException());
+    RUN(testCacheFileIsExclusive());
+    RUN(testCacheFileFailsWhenItsAlreadyCached());
 
     RUN(testLoaderRejectsNilScriptURL());
     RUN(testLoaderRejectsFailedFetch());

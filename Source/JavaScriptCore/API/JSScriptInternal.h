@@ -44,6 +44,7 @@ class String;
 
 @interface JSScript(Internal)
 
+- (instancetype)init;
 - (unsigned)hash;
 - (const WTF::String&)source;
 - (nullable const JSC::CachedBytecode*)cachedBytecode;

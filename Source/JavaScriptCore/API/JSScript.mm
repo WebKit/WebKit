@@ -51,7 +51,7 @@
     RetainPtr<NSURL> m_cachePath;
     JSC::CachedBytecode m_cachedBytecode;
     JSC::Strong<JSC::JSSourceCode> m_jsSourceCode;
-    UniquedStringImpl* m_moduleKey;
+    int m_cacheFileDescriptor;
 }
 
 + (instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm
@@ -174,6 +174,10 @@ static JSScript *createError(NSString *message, NSError** error)
 {
     if (m_cachedBytecode.size() && !m_cachedBytecode.owned())
         munmap(const_cast<void*>(m_cachedBytecode.data()), m_cachedBytecode.size());
+
+    if (m_cacheFileDescriptor != -1)
+        close(m_cacheFileDescriptor);
+
     [super dealloc];
 }
 
@@ -182,26 +186,17 @@ static JSScript *createError(NSString *message, NSError** error)
     if (!m_cachePath)
         return;
 
-    int fd = open([m_cachePath path].UTF8String, O_RDONLY);
-    if (fd == -1)
+    m_cacheFileDescriptor = open([m_cachePath path].UTF8String, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0666);
+    if (m_cacheFileDescriptor == -1)
         return;
-
-    int rc = flock(fd, LOCK_SH | LOCK_NB);
-    if (rc) {
-        close(fd);
-        return;
-    }
 
     struct stat sb;
-    int res = fstat(fd, &sb);
+    int res = fstat(m_cacheFileDescriptor, &sb);
     size_t size = static_cast<size_t>(sb.st_size);
-    if (res || !size) {
-        close(fd);
+    if (res || !size)
         return;
-    }
 
-    void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
-    close(fd);
+    void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, m_cacheFileDescriptor, 0);
 
     JSC::CachedBytecode cachedBytecode { buffer, size };
 
@@ -210,6 +205,8 @@ static JSScript *createError(NSString *message, NSError** error)
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode, key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
         m_cachedBytecode = WTFMove(cachedBytecode);
+    else
+        ftruncate(m_cacheFileDescriptor, 0);
 }
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
@@ -238,6 +235,16 @@ static JSScript *createError(NSString *message, NSError** error)
 
 @implementation JSScript(Internal)
 
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    m_cacheFileDescriptor = -1;
+    return self;
+}
+
 - (unsigned)hash
 {
     return m_source.hash();
@@ -263,11 +270,16 @@ static JSScript *createError(NSString *message, NSError** error)
 
 - (BOOL)writeCache:(String&)error
 {
-    if (m_cachedBytecode.size())
-        return YES;
+    if (m_cachedBytecode.size()) {
+        error = "Cache for JSScript is already non-empty. Can not override it."_s;
+        return NO;
+    }
 
-    if (!m_cachePath) {
-        error = "No cache was path provided during construction of this JSScript."_s;
+    if (m_cacheFileDescriptor == -1) {
+        if (!m_cachePath)
+            error = "No cache was path provided during construction of this JSScript."_s;
+        else
+            error = "Could not lock the bytecode cache file. It's likely another VM or process is already using it."_s;
         return NO;
     }
 
@@ -287,18 +299,19 @@ static JSScript *createError(NSString *message, NSError** error)
         return NO;
     }
 
-    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_WRONLY, 0666);
-    if (fd == -1) {
-        error = makeString("Unable to open file: ", [m_cachePath path].UTF8String, " due to error: ", strerror(errno));
+    ssize_t bytesWritten = write(m_cacheFileDescriptor, m_cachedBytecode.data(), m_cachedBytecode.size());
+    if (bytesWritten == -1) {
+        error = makeString("Could not write cache file to disk: ", strerror(errno));
         return NO;
     }
-    int returnCode = flock(fd, LOCK_EX | LOCK_NB);
-    if (returnCode)
-        error = "Unable to lock the cache file; it may already be in use."_s;
-    else
-        write(fd, m_cachedBytecode.data(), m_cachedBytecode.size());
-    close(fd);
-    return !returnCode;
+
+    if (static_cast<size_t>(bytesWritten) != m_cachedBytecode.size()) {
+        ftruncate(m_cacheFileDescriptor, 0);
+        error = makeString("Could not write the full cache file to disk. Only wrote ", String::number(bytesWritten), " of the expected ", String::number(m_cachedBytecode.size()), " bytes.");
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)setSourceURL:(NSURL *)url
