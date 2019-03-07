@@ -1,3 +1,14 @@
+2019-03-06  Sam Weinig  <sam@webkit.org>
+
+        WebKitLegacy does not need to generate an export file for i386 anymore
+        https://bugs.webkit.org/show_bug.cgi?id=195380
+
+        Reviewed by Dan Bernstein.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        Update and simplify the "Generate Export Files" phase now that we don't need
+        separate export files for i386 and x86_64.
+
 2019-03-01  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused code in WebKitLegacy
