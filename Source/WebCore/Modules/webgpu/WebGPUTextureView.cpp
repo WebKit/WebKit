@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
-
 namespace WebCore {
 
 Ref<WebGPUTextureView> WebGPUTextureView::create(RefPtr<GPUTexture>&& view)
