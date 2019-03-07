@@ -1,3 +1,34 @@
+2019-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK] REGRESSION (r242132): Fixed position banners flicker and move when scrolling (Apple, Tesla, YouTube, Reddit)
+        https://bugs.webkit.org/show_bug.cgi?id=195396
+        rdar://problem/48518959
+
+        Reviewed by Antti Koivisto.
+        
+        r242132 introduced two issues that contributed to jumpiness of position:fixed layers when scrolling.
+        
+        First, ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling() would early return if the scroll position
+        hadn't changed. It also needs to check the supplied layoutViewport (if any), but in some cases running the
+        notifyRelatedNodesAfterScrollPositionChange() code is necessary even without a scroll position change:
+        if the web process has committed new scrolling tree state (e.g. with new fixed constraints) since
+        the last call, we have to run the layer positioning code to have fixed layers re-adjust their position relative
+        to the root. This was the primary bug fix.
+
+        Secondly, a layer tree commit can give ScrollingTreeFrameScrollingNode a new layout viewport, but we need to
+        adjust this by the scrolling tree's current scroll position in case it gets used before the next scroll.
+
+        Currently no way to test this, as it's very timing-dependent.
+
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch):
+        (WebCore::ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2019-03-07  Youenn Fablet  <youenn@apple.com>
 
         Introduce a quota manager for Cache API/Service Worker/IDB storage

@@ -72,14 +72,21 @@ void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::FixedElementsLayoutRelativeToFrame))
         m_fixedElementsLayoutRelativeToFrame = state.fixedElementsLayoutRelativeToFrame();
 
-    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::LayoutViewport))
+    if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::LayoutViewport)) {
         m_layoutViewport = state.layoutViewport();
+        updateViewportForCurrentScrollPosition({ });
+    }
 
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin))
         m_minLayoutViewportOrigin = state.minLayoutViewportOrigin();
 
     if (state.hasChangedProperty(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin))
         m_maxLayoutViewportOrigin = state.maxLayoutViewportOrigin();
+}
+
+bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
+{
+    return position == currentScrollPosition() && (!overrideLayoutViewport || overrideLayoutViewport.value() == m_layoutViewport);
 }
 
 FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale) const
