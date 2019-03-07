@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -98,11 +98,8 @@ namespace JSC {
     // Hence, there won't be any collision between jumpIDs and CompletionType enums.
     enum class CompletionType : int {
         Normal,
-        Break,
-        Continue,
-        Return,
         Throw,
-        
+        Return,
         NumberOfTypes
     };
 
@@ -125,17 +122,16 @@ namespace JSC {
         Ref<Label> targetLabel;
     };
 
-    struct FinallyContext {
+    class FinallyContext {
+    public:
         FinallyContext() { }
-        FinallyContext(FinallyContext* outerContext, Label& finallyLabel)
-            : m_outerContext(outerContext)
-            , m_finallyLabel(&finallyLabel)
-        {
-            ASSERT(m_jumps.isEmpty());
-        }
+        FinallyContext(BytecodeGenerator&, Label& finallyLabel);
 
         FinallyContext* outerContext() const { return m_outerContext; }
         Label* finallyLabel() const { return m_finallyLabel; }
+
+        RegisterID* completionTypeRegister() const { return m_completionRecord.typeRegister.get(); }
+        RegisterID* completionValueRegister() const { return m_completionRecord.valueRegister.get(); }
 
         uint32_t numberOfBreaksOrContinues() const { return m_numberOfBreaksOrContinues.unsafeGet(); }
         void incNumberOfBreaksOrContinues() { m_numberOfBreaksOrContinues++; }
@@ -157,6 +153,10 @@ namespace JSC {
         Checked<uint32_t, WTF::CrashOnOverflow> m_numberOfBreaksOrContinues;
         bool m_handlesReturns { false };
         Vector<FinallyJump> m_jumps;
+        struct {
+            RefPtr<RegisterID> typeRegister;
+            RefPtr<RegisterID> valueRegister;
+        } m_completionRecord;
     };
 
     struct ControlFlowScope {
@@ -165,10 +165,10 @@ namespace JSC {
             Label,
             Finally
         };
-        ControlFlowScope(Type type, int lexicalScopeIndex, FinallyContext&& finallyContext = FinallyContext())
+        ControlFlowScope(Type type, int lexicalScopeIndex, FinallyContext* finallyContext = nullptr)
             : type(type)
             , lexicalScopeIndex(lexicalScopeIndex)
-            , finallyContext(std::forward<FinallyContext>(finallyContext))
+            , finallyContext(finallyContext)
         { }
 
         bool isLabelScope() const { return type == Label; }
@@ -176,7 +176,7 @@ namespace JSC {
 
         Type type;
         int lexicalScopeIndex;
-        FinallyContext finallyContext;
+        FinallyContext* finallyContext;
     };
 
     class ForInContext : public RefCounted<ForInContext> {
@@ -364,6 +364,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(BytecodeGenerator);
 
         friend class BoundLabel;
+        friend class FinallyContext;
         friend class Label;
         friend class IndexedForInContext;
         friend class StructureForInContext;
@@ -875,7 +876,9 @@ namespace JSC {
         TryData* pushTry(Label& start, Label& handlerLabel, HandlerType);
         // End a try block. 'end' must have been emitted.
         void popTry(TryData*, Label& end);
-        void emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, TryData*);
+
+        void emitOutOfLineCatchHandler(RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData*);
+        void emitOutOfLineFinallyHandler(RegisterID* exceptionRegister, RegisterID* completionTypeRegister, TryData*);
 
     private:
         static const int CurrentLexicalScopeIndex = -2;
@@ -890,6 +893,8 @@ namespace JSC {
                 return OutermostLexicalScopeIndex;
             return size - 1;
         }
+
+        void emitOutOfLineExceptionHandler(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData*);
 
     public:
         void restoreScopeRegister();
@@ -929,43 +934,9 @@ namespace JSC {
         void emitDebugHook(ExpressionNode*);
         void emitWillLeaveCallFrameDebugHook();
 
-        class CompletionRecordScope {
-        public:
-            CompletionRecordScope(BytecodeGenerator& generator, bool needCompletionRecordRegisters = true)
-                : m_generator(generator)
-            {
-                if (needCompletionRecordRegisters && m_generator.allocateCompletionRecordRegisters())
-                    m_needToReleaseOnDestruction = true;
-            }
-            ~CompletionRecordScope()
-            {
-                if (m_needToReleaseOnDestruction)
-                    m_generator.releaseCompletionRecordRegisters();
-            }
-
-        private:
-            BytecodeGenerator& m_generator;
-            bool m_needToReleaseOnDestruction { false };
-        };
-
-        RegisterID* completionTypeRegister() const
+        void emitLoad(RegisterID* completionTypeRegister, CompletionType type)
         {
-            ASSERT(m_completionTypeRegister);
-            return m_completionTypeRegister.get();
-        }
-        RegisterID* completionValueRegister() const
-        {
-            ASSERT(m_completionValueRegister);
-            return m_completionValueRegister.get();
-        }
-
-        void emitSetCompletionType(CompletionType type)
-        {
-            emitLoad(completionTypeRegister(), JSValue(static_cast<int>(type)));
-        }
-        void emitSetCompletionValue(RegisterID* reg)
-        {
-            move(completionValueRegister(), reg);
+            emitLoad(completionTypeRegister, JSValue(static_cast<int>(type)));
         }
 
         template<typename CompareOp>
@@ -973,15 +944,11 @@ namespace JSC {
 
         bool emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label& jumpTarget);
         bool emitReturnViaFinallyIfNeeded(RegisterID* returnRegister);
-        void emitFinallyCompletion(FinallyContext&, RegisterID* completionTypeRegister, Label& normalCompletionLabel);
-
-    private:
-        bool allocateCompletionRecordRegisters();
-        void releaseCompletionRecordRegisters();
+        void emitFinallyCompletion(FinallyContext&, Label& normalCompletionLabel);
 
     public:
-        FinallyContext* pushFinallyControlFlowScope(Label& finallyLabel);
-        FinallyContext popFinallyControlFlowScope();
+        void pushFinallyControlFlowScope(FinallyContext&);
+        void popFinallyControlFlowScope();
 
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
@@ -1245,9 +1212,6 @@ namespace JSC {
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
         RegisterID* m_promiseCapabilityRegister { nullptr };
 
-        RefPtr<RegisterID> m_completionTypeRegister;
-        RefPtr<RegisterID> m_completionValueRegister;
-
         FinallyContext* m_currentFinallyContext { nullptr };
 
         SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
@@ -1314,10 +1278,9 @@ namespace JSC {
 
         CompactVariableMap::Handle m_cachedVariablesUnderTDZ;
 
-        using CatchEntry = std::tuple<TryData*, VirtualRegister, VirtualRegister>;
-        Vector<CatchEntry> m_catchesToEmit;
+        using CatchEntry = std::tuple<TryData*, VirtualRegister, VirtualRegister, VirtualRegister>;
+        Vector<CatchEntry> m_exceptionHandlersToEmit;
     };
-
 
 } // namespace JSC
 

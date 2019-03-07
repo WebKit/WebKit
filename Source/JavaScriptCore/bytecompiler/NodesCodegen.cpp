@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -3582,32 +3582,29 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLoad(dst, jsUndefined());
 
     ASSERT(m_catchBlock || m_finallyBlock);
-    BytecodeGenerator::CompletionRecordScope completionRecordScope(generator, m_finallyBlock);
 
     RefPtr<Label> catchLabel;
     RefPtr<Label> catchEndLabel;
-    RefPtr<Label> finallyViaThrowLabel;
     RefPtr<Label> finallyLabel;
     RefPtr<Label> finallyEndLabel;
-
-    Ref<Label> tryStartLabel = generator.newLabel();
-    generator.emitLabel(tryStartLabel.get());
+    Optional<FinallyContext> finallyContext;
 
     if (m_finallyBlock) {
-        finallyViaThrowLabel = generator.newLabel();
         finallyLabel = generator.newLabel();
         finallyEndLabel = generator.newLabel();
 
-        generator.pushFinallyControlFlowScope(*finallyLabel);
+        finallyContext.emplace(generator, *finallyLabel);
+        generator.pushFinallyControlFlowScope(finallyContext.value());
     }
     if (m_catchBlock) {
         catchLabel = generator.newLabel();
         catchEndLabel = generator.newLabel();
     }
 
-    Label& tryHandlerLabel = m_catchBlock ? *catchLabel : *finallyViaThrowLabel;
+    Ref<Label> tryLabel = generator.newEmittedLabel();
+    Label& tryHandlerLabel = m_catchBlock ? *catchLabel : *finallyLabel;
     HandlerType tryHandlerType = m_catchBlock ? HandlerType::Catch : HandlerType::Finally;
-    TryData* tryData = generator.pushTry(tryStartLabel.get(), tryHandlerLabel, tryHandlerType);
+    TryData* tryData = generator.pushTry(tryLabel.get(), tryHandlerLabel, tryHandlerType);
     TryData* finallyTryData = nullptr;
     if (!m_catchBlock && m_finallyBlock)
         finallyTryData = tryData;
@@ -3619,21 +3616,21 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     else
         generator.emitJump(*catchEndLabel);
 
-    Ref<Label> endTryLabel = generator.newEmittedLabel();
-    generator.popTry(tryData, endTryLabel.get());
+    Ref<Label> tryEndLabel = generator.newEmittedLabel();
+    generator.popTry(tryData, tryEndLabel.get());
 
     if (m_catchBlock) {
         // Uncaught exception path: the catch block.
         generator.emitLabel(*catchLabel);
         RefPtr<RegisterID> thrownValueRegister = generator.newTemporary();
-        RegisterID* unused = generator.newTemporary();
-        generator.emitCatch(unused, thrownValueRegister.get(), tryData);
+        RegisterID* completionTypeRegister = m_finallyBlock ? finallyContext->completionTypeRegister() : nullptr;
+        generator.emitOutOfLineCatchHandler(thrownValueRegister.get(), completionTypeRegister, tryData);
         generator.restoreScopeRegister();
 
         if (m_finallyBlock) {
             // If the catch block throws an exception and we have a finally block, then the finally
             // block should "catch" that exception.
-            finallyTryData = generator.pushTry(*catchLabel, *finallyViaThrowLabel, HandlerType::Finally);
+            finallyTryData = generator.pushTry(*catchLabel, *finallyLabel, HandlerType::Finally);
         }
 
         if (m_catchPattern) {
@@ -3652,9 +3649,9 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             generator.emitPopCatchScope(m_lexicalVariables);
 
         if (m_finallyBlock) {
-            generator.emitSetCompletionType(CompletionType::Normal);
+            generator.emitLoad(finallyContext->completionTypeRegister(), CompletionType::Normal);
             generator.emitJump(*finallyLabel);
-            generator.popTry(finallyTryData, *finallyViaThrowLabel);
+            generator.popTry(finallyTryData, *finallyLabel);
         }
 
         generator.emitLabel(*catchEndLabel);
@@ -3662,26 +3659,20 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     }
 
     if (m_finallyBlock) {
-        FinallyContext finallyContext = generator.popFinallyControlFlowScope();
+        generator.popFinallyControlFlowScope();
 
-        // Entry to the finally block for CompletionType::Throw.
-        generator.emitLabel(*finallyViaThrowLabel);
-        RegisterID* unused = generator.newTemporary();
-        generator.emitCatch(generator.completionValueRegister(), unused, finallyTryData);
-        generator.emitSetCompletionType(CompletionType::Throw);
+        // Entry to the finally block for CompletionType::Throw to be generated later.
+        generator.emitOutOfLineFinallyHandler(finallyContext->completionValueRegister(), finallyContext->completionTypeRegister(), finallyTryData);
 
         // Entry to the finally block for CompletionTypes other than Throw.
         generator.emitLabel(*finallyLabel);
         generator.restoreScopeRegister();
 
-        RefPtr<RegisterID> savedCompletionTypeRegister = generator.newTemporary();
-        generator.move(savedCompletionTypeRegister.get(), generator.completionTypeRegister());
-
         int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() + 1 : m_tryBlock->endOffset() + 1;
         generator.emitProfileControlFlow(finallyStartOffset);
         generator.emitNodeInTailPosition(m_finallyBlock);
 
-        generator.emitFinallyCompletion(finallyContext, savedCompletionTypeRegister.get(), *finallyEndLabel);
+        generator.emitFinallyCompletion(finallyContext.value(), *finallyEndLabel);
         generator.emitLabel(*finallyEndLabel);
         generator.emitProfileControlFlow(m_finallyBlock->endOffset() + 1);
     }

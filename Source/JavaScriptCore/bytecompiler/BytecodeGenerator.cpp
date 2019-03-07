@@ -183,6 +183,17 @@ void Variable::dump(PrintStream& out) const
         ", isLexicallyScoped = ", m_isLexicallyScoped, "}");
 }
 
+FinallyContext::FinallyContext(BytecodeGenerator& generator, Label& finallyLabel)
+    : m_outerContext(generator.m_currentFinallyContext)
+    , m_finallyLabel(&finallyLabel)
+{
+    ASSERT(m_jumps.isEmpty());
+    m_completionRecord.typeRegister = generator.newTemporary();
+    m_completionRecord.valueRegister = generator.newTemporary();
+    generator.emitLoad(completionTypeRegister(), CompletionType::Normal);
+    generator.moveEmptyValue(completionValueRegister());
+}
+
 ParserError BytecodeGenerator::generate()
 {
     m_codeBlock->setThisRegister(m_thisRegister.virtualRegister());
@@ -245,14 +256,23 @@ ParserError BytecodeGenerator::generate()
         emitUnreachable();
     }
 
-    for (auto& tuple : m_catchesToEmit) {
+    for (auto& tuple : m_exceptionHandlersToEmit) {
         Ref<Label> realCatchTarget = newLabel();
+        TryData* tryData = std::get<0>(tuple);
+
         OpCatch::emit(this, std::get<1>(tuple), std::get<2>(tuple));
         realCatchTarget->setLocation(*this, m_lastInstruction.offset());
+        if (std::get<3>(tuple).isValid()) {
+            RegisterID completionTypeRegister { std::get<3>(tuple) };
+            CompletionType completionType =
+                tryData->handlerType == HandlerType::Finally || tryData->handlerType == HandlerType::SynthesizedFinally
+                ? CompletionType::Throw
+                : CompletionType::Normal;
+            emitLoad(&completionTypeRegister, completionType);
+        }
         m_codeBlock->addJumpTarget(m_lastInstruction.offset());
 
 
-        TryData* tryData = std::get<0>(tuple);
         emitJump(tryData->target.get());
         tryData->target = WTFMove(realCatchTarget);
     }
@@ -788,8 +808,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         popTry(tryFormalParametersData, catchLabel.get());
 
         RefPtr<RegisterID> thrownValue = newTemporary();
-        RegisterID* unused = newTemporary();
-        emitCatch(unused, thrownValue.get(), tryFormalParametersData);
+        emitOutOfLineCatchHandler(thrownValue.get(), nullptr, tryFormalParametersData);
 
         // return promiseCapability.@reject(thrownValue)
         RefPtr<RegisterID> reject = emitGetById(newTemporary(), promiseCapabilityRegister(), m_vm->propertyNames->builtinNames().rejectPrivateName());
@@ -3513,17 +3532,16 @@ void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
     emitDebugHook(WillLeaveCallFrame, m_scopeNode->lastLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
 }
 
-FinallyContext* BytecodeGenerator::pushFinallyControlFlowScope(Label& finallyLabel)
+void BytecodeGenerator::pushFinallyControlFlowScope(FinallyContext& finallyContext)
 {
-    ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), FinallyContext(m_currentFinallyContext, finallyLabel));
+    ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), &finallyContext);
     m_controlFlowScopeStack.append(WTFMove(scope));
 
     m_finallyDepth++;
-    m_currentFinallyContext = &m_controlFlowScopeStack.last().finallyContext;
-    return m_currentFinallyContext;
+    m_currentFinallyContext = &finallyContext;
 }
 
-FinallyContext BytecodeGenerator::popFinallyControlFlowScope()
+void BytecodeGenerator::popFinallyControlFlowScope()
 {
     ASSERT(m_controlFlowScopeStack.size());
     ASSERT(m_controlFlowScopeStack.last().isFinallyScope());
@@ -3531,7 +3549,7 @@ FinallyContext BytecodeGenerator::popFinallyControlFlowScope()
     ASSERT(m_currentFinallyContext);
     m_currentFinallyContext = m_currentFinallyContext->outerContext();
     m_finallyDepth--;
-    return m_controlFlowScopeStack.takeLast().finallyContext;
+    m_controlFlowScopeStack.removeLast();
 }
 
 LabelScope* BytecodeGenerator::breakTarget(const Identifier& name)
@@ -3642,9 +3660,23 @@ void BytecodeGenerator::popTry(TryData* tryData, Label& end)
     m_tryContextStack.removeLast();
 }
 
-void BytecodeGenerator::emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, TryData* data)
+void BytecodeGenerator::emitOutOfLineCatchHandler(RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData* data)
 {
-    m_catchesToEmit.append(CatchEntry { data, exceptionRegister, thrownValueRegister });
+    RegisterID* unused = newTemporary();
+    emitOutOfLineExceptionHandler(unused, thrownValueRegister, completionTypeRegister, data);
+}
+
+void BytecodeGenerator::emitOutOfLineFinallyHandler(RegisterID* exceptionRegister, RegisterID* completionTypeRegister, TryData* data)
+{
+    RegisterID* unused = newTemporary();
+    ASSERT(completionTypeRegister);
+    emitOutOfLineExceptionHandler(exceptionRegister, unused, completionTypeRegister, data);
+}
+
+void BytecodeGenerator::emitOutOfLineExceptionHandler(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData* data)
+{
+    VirtualRegister completionTypeVirtualRegister = completionTypeRegister ? completionTypeRegister : VirtualRegister();
+    m_exceptionHandlersToEmit.append(CatchEntry { data, exceptionRegister, thrownValueRegister, completionTypeVirtualRegister });
 }
 
 void BytecodeGenerator::restoreScopeRegister(int lexicalScopeIndex)
@@ -3959,8 +3991,6 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     bool isForAwait = forLoopNode ? forLoopNode->isForAwait() : false;
     ASSERT(!isForAwait || (isForAwait && isAsyncFunctionParseMode(parseMode())));
 
-    CompletionRecordScope completionRecordScope(*this);
-
     RefPtr<RegisterID> subject = newTemporary();
     emitNode(subject.get(), subjectNode);
     RefPtr<RegisterID> iterator = isForAwait ? emitGetAsyncIterator(subject.get(), node) : emitGetIterator(subject.get(), node);
@@ -3974,7 +4004,8 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     Ref<Label> endCatchLabel = newLabel();
 
     // RefPtr<Register> iterator's lifetime must be longer than IteratorCloseContext.
-    FinallyContext* finallyContext = pushFinallyControlFlowScope(finallyLabel.get());
+    FinallyContext finallyContext(*this, finallyLabel.get());
+    pushFinallyControlFlowScope(finallyContext);
 
     {
         Ref<LabelScope> scope = newLabelScope(LabelScope::Loop);
@@ -4000,16 +4031,15 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 
             Ref<Label> finallyBodyLabel = newLabel();
             RefPtr<RegisterID> finallyExceptionRegister = newTemporary();
-            RegisterID* unused = newTemporary();
 
-            emitCatch(completionValueRegister(), unused, tryData);
-            emitSetCompletionType(CompletionType::Throw);
-            move(finallyExceptionRegister.get(), completionValueRegister());
+            emitOutOfLineFinallyHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
+            move(finallyExceptionRegister.get(), finallyContext.completionValueRegister());
             emitJump(finallyBodyLabel.get());
 
             emitLabel(finallyLabel.get());
             moveEmptyValue(finallyExceptionRegister.get());
 
+            // Finally fall through case.
             emitLabel(finallyBodyLabel.get());
             restoreScopeRegister();
 
@@ -4033,7 +4063,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitThrowTypeError("Iterator result interface is not an object."_s);
 
             emitLabel(finallyDone.get());
-            emitFinallyCompletion(*finallyContext, completionTypeRegister(), endCatchLabel.get());
+            emitFinallyCompletion(finallyContext, endCatchLabel.get());
 
             popTry(returnCallTryData, finallyDone.get());
 
@@ -4044,9 +4074,9 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             // the finally block. Otherwise, we'll let any new exception pass through.
             {
                 emitLabel(catchLabel.get());
+
                 RefPtr<RegisterID> exceptionRegister = newTemporary();
-                RegisterID* unused = newTemporary();
-                emitCatch(exceptionRegister.get(), unused, returnCallTryData);
+                emitOutOfLineFinallyHandler(exceptionRegister.get(), finallyContext.completionTypeRegister(), returnCallTryData);
                 // Since this is a synthesized catch block and we're guaranteed to never need
                 // to resolve any symbols from the scope, we can skip restoring the scope
                 // register here.
@@ -4685,7 +4715,7 @@ bool BytecodeGenerator::emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, La
     while (numberOfScopesToCheckForFinally--) {
         ControlFlowScope* scope = &m_controlFlowScopeStack[scopeIndex--];
         if (scope->isFinallyScope()) {
-            FinallyContext* finallyContext = &scope->finallyContext;
+            FinallyContext* finallyContext = scope->finallyContext;
             if (!innermostFinallyContext)
                 innermostFinallyContext = finallyContext;
             outermostFinallyContext = finallyContext;
@@ -4699,7 +4729,7 @@ bool BytecodeGenerator::emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, La
     int lexicalScopeIndex = labelScopeDepthToLexicalScopeIndex(targetLabelScopeDepth);
     outermostFinallyContext->registerJump(jumpID, lexicalScopeIndex, jumpTarget);
 
-    emitSetCompletionType(jumpID);
+    emitLoad(innermostFinallyContext->completionTypeRegister(), jumpID);
     emitJump(*innermostFinallyContext->finallyLabel());
     return true; // We'll be jumping to a finally block.
 }
@@ -4715,7 +4745,7 @@ bool BytecodeGenerator::emitReturnViaFinallyIfNeeded(RegisterID* returnRegister)
         size_t scopeIndex = --numberOfScopesToCheckForFinally;
         ControlFlowScope* scope = &m_controlFlowScopeStack[scopeIndex];
         if (scope->isFinallyScope()) {
-            FinallyContext* finallyContext = &scope->finallyContext;
+            FinallyContext* finallyContext = scope->finallyContext;
             if (!innermostFinallyContext)
                 innermostFinallyContext = finallyContext;
             finallyContext->setHandlesReturns();
@@ -4724,76 +4754,95 @@ bool BytecodeGenerator::emitReturnViaFinallyIfNeeded(RegisterID* returnRegister)
     if (!innermostFinallyContext)
         return false; // No finallys to thread through.
 
-    emitSetCompletionType(CompletionType::Return);
-    emitSetCompletionValue(returnRegister);
+    emitLoad(innermostFinallyContext->completionTypeRegister(), CompletionType::Return);
+    move(innermostFinallyContext->completionValueRegister(), returnRegister);
     emitJump(*innermostFinallyContext->finallyLabel());
     return true; // We'll be jumping to a finally block.
 }
 
-void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, RegisterID* completionTypeRegister, Label& normalCompletionLabel)
+void BytecodeGenerator::emitFinallyCompletion(FinallyContext& context, Label& normalCompletionLabel)
 {
     if (context.numberOfBreaksOrContinues() || context.handlesReturns()) {
-        emitJumpIf<OpStricteq>(completionTypeRegister, CompletionType::Normal, normalCompletionLabel);
+        emitJumpIf<OpStricteq>(context.completionTypeRegister(), CompletionType::Normal, normalCompletionLabel);
 
         FinallyContext* outerContext = context.outerContext();
 
         size_t numberOfJumps = context.numberOfJumps();
         ASSERT(outerContext || numberOfJumps == context.numberOfBreaksOrContinues());
 
+        // Handle Break or Continue completions that jumps into this FinallyContext.
         for (size_t i = 0; i < numberOfJumps; i++) {
             Ref<Label> nextLabel = newLabel();
             auto& jump = context.jumps(i);
-            emitJumpIf<OpNstricteq>(completionTypeRegister, jump.jumpID, nextLabel.get());
+            emitJumpIf<OpNstricteq>(context.completionTypeRegister(), jump.jumpID, nextLabel.get());
 
+            // After a Break or Continue, we resume execution and may eventually complete with
+            // Normal completion (unless abruptly completed again). So, pre-emptively set the
+            // completion type to Normal. We can also set the completion value to undefined,
+            // but it will never be used for normal completion anyway. So, we'll skip setting it.
             restoreScopeRegister(jump.targetLexicalScopeIndex);
-            emitSetCompletionType(CompletionType::Normal);
+            emitLoad(context.completionTypeRegister(), CompletionType::Normal);
             emitJump(jump.targetLabel.get());
 
             emitLabel(nextLabel.get());
         }
 
+        // Handle completions that take us out of this FinallyContext.
         if (outerContext) {
-            // We are not the outermost finally.
+            if (context.handlesReturns()) {
+                Ref<Label> isNotReturnLabel = newLabel();
+                emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Return, isNotReturnLabel.get());
+
+                // For Return completion, we need to pass the completion type and value to
+                // the outer finally so that it can return when it's done (unless interrupted
+                // by another abrupt completion).
+                move(outerContext->completionTypeRegister(), context.completionTypeRegister());
+                move(outerContext->completionValueRegister(), context.completionValueRegister());
+                emitJump(*outerContext->finallyLabel());
+
+                emitLabel(isNotReturnLabel.get());
+            }
+
             bool hasBreaksOrContinuesNotCoveredByJumps = context.numberOfBreaksOrContinues() > numberOfJumps;
-            if (hasBreaksOrContinuesNotCoveredByJumps || context.handlesReturns())
-                emitJumpIf<OpNstricteq>(completionTypeRegister, CompletionType::Throw, *outerContext->finallyLabel());
+            if (hasBreaksOrContinuesNotCoveredByJumps) {
+                Ref<Label> isThrowOrNormalLabel = newLabel();
+                emitJumpIf<OpBeloweq>(context.completionTypeRegister(), CompletionType::Throw, isThrowOrNormalLabel.get());
+                static_assert(CompletionType::Throw < CompletionType::Return && CompletionType::Throw < CompletionType::Return, "jumpIDs are above CompletionType::Return");
+
+                // Not Throw means we have a Break or Continue that should be handled by the outer context.
+                // These are for Break or Continue completions that have not reached their jump targets
+                // yet. The outer context needs to run its finally, and resume the jump outwards (unless
+                // interrupted by another abrupt completion). So, we need to pass the completion type to
+                // the outer finally. Again, we can skip the completion value because it's not used for
+                // Break nor Continue.
+                move(outerContext->completionTypeRegister(), context.completionTypeRegister());
+                emitJump(*outerContext->finallyLabel());
+
+                emitLabel(isThrowOrNormalLabel.get());
+            }
 
         } else {
             // We are the outermost finally.
             if (context.handlesReturns()) {
                 Ref<Label> notReturnLabel = newLabel();
-                emitJumpIf<OpNstricteq>(completionTypeRegister, CompletionType::Return, notReturnLabel.get());
+                emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Return, notReturnLabel.get());
 
                 emitWillLeaveCallFrameDebugHook();
-                emitReturn(completionValueRegister(), ReturnFrom::Finally);
-                
+                emitReturn(context.completionValueRegister(), ReturnFrom::Finally);
+
                 emitLabel(notReturnLabel.get());
             }
         }
     }
-    emitJumpIf<OpNstricteq>(completionTypeRegister, CompletionType::Throw, normalCompletionLabel);
-    emitThrow(completionValueRegister());
-}
 
-bool BytecodeGenerator::allocateCompletionRecordRegisters()
-{
-    if (m_completionTypeRegister)
-        return false;
+    // Handle Throw or Normal completions.
+    emitJumpIf<OpNstricteq>(context.completionTypeRegister(), CompletionType::Throw, normalCompletionLabel);
 
-    ASSERT(!m_completionValueRegister);
-    m_completionTypeRegister = newTemporary();
-    m_completionValueRegister = newTemporary();
-
-    emitSetCompletionType(CompletionType::Normal);
-    moveEmptyValue(m_completionValueRegister.get());
-    return true;
-}
-
-void BytecodeGenerator::releaseCompletionRecordRegisters()
-{
-    ASSERT(m_completionTypeRegister && m_completionValueRegister);
-    m_completionTypeRegister = nullptr;
-    m_completionValueRegister = nullptr;
+    // For Throw, we just re-throw the previously caught exception captured in the completion value.
+    // The exception handler will set the completion type to Throw, and re-capture the completion
+    // value if needed (i.e. if the exception handler is for a finally). Hence, no need to set the
+    // completion type and value here.
+    emitThrow(context.completionValueRegister());
 }
 
 template<typename CompareOp>
@@ -4803,7 +4852,7 @@ void BytecodeGenerator::emitJumpIf(RegisterID* completionTypeRegister, Completio
     RegisterID* valueConstant = addConstantValue(jsNumber(static_cast<int>(type)));
     OperandTypes operandTypes = OperandTypes(ResultType::numberTypeIsInt32(), ResultType::unknownType());
 
-    auto equivalenceResult = emitBinaryOp<CompareOp>(tempRegister.get(), valueConstant, completionTypeRegister, operandTypes);
+    auto equivalenceResult = emitBinaryOp<CompareOp>(tempRegister.get(), completionTypeRegister, valueConstant, operandTypes);
     emitJumpIfTrue(equivalenceResult, jumpTarget);
 }
 

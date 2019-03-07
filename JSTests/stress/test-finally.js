@@ -725,6 +725,660 @@ test(() => {
 
 }, "a,b,c,y,d,z,f", NothingReturned, 600);
 
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        try {
+            append("d");
+        } finally {
+            append("e");
+        }
+        append("f");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,d,e,f", NothingReturned, 100);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        try {
+            append("d");
+        } finally {
+            append("e");
+        }
+        append("f");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,d,e,f", 100, NothingThrown);
+
+test(() => {
+    append("a");
+    label: try {
+        append("b");
+        for (var j = 0; j < 1; j++) {
+            append("x");
+            break label;
+        }
+    } finally {
+        append("c");
+        try {
+            append("d");
+        } finally {
+            append("e");
+        }
+        append("f");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,x,c,d,e,f,g", 700, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", NothingReturned, 100);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", 100, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", NothingReturned, 100);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                throw 42;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", 100, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", NothingReturned, 100);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                return 42;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", 100, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        throw 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", NothingReturned, 100);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                throw 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", NothingReturned, 200);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                return 200;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e", 200, NothingThrown);
+
+test(() => {
+    append("a");
+    try {
+        append("b");
+        return 100;
+    } finally {
+        append("c");
+        for (var j = 0; j < 1; j++) {
+            append("y");
+            try {
+                append("d");
+                continue;
+            } finally {
+                append("e");
+                continue;
+            }
+            append("f");
+        }
+        append("z");
+    }
+    append("g");
+    return 700;
+
+}, "a,b,c,y,d,e,z", 100, NothingThrown);
+
 // No throw or return in for-of loop.
 test(() => {
     class TestIterator {

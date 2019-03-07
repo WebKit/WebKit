@@ -1,3 +1,110 @@
+2019-03-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix incorrect handling of try-finally completion values.
+        https://bugs.webkit.org/show_bug.cgi?id=195131
+        <rdar://problem/46222079>
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        Consider the following:
+
+            function foo() {                        // line 1
+                try {
+                    return 42;                      // line 3
+                } finally {
+                    for (var j = 0; j < 1; j++) {   // line 5
+                        try {
+                            throw '';               // line 7
+                        } finally {
+                            continue;               // line 9
+                        }
+                    }
+                }                                   // line 11
+            }
+            var result = foo();
+
+        With the current (before fix) code base, result will be the exception object thrown
+        at line 7.  The expected result should be 42, returned at line 3.
+
+        The bug is that we were previously only using one set of completion type and
+        value registers for the entire function.  This is inadequate because the outer
+        try-finally needs to preserve its own completion type and value ({ Return, 42 }
+        in this case) in order to be able to complete correctly.
+
+        One might be deceived into thinking that the above example should complete with
+        the exception thrown at line 7.  However, according to Section 13.15.8 of the
+        ECMAScript spec, the 'continue' in the finally at line 9 counts as an abrupt
+        completion.  As a result, it overrides the throw from line 7.  After the continue,
+        execution resumes at the top of the loop at line 5, followed by a normal completion
+        at line 11.
+
+        Also according to Section 13.15.8, given that the completion type of the outer
+        finally is normal, the resultant completion of the outer try-finally should be
+        the completion of the outer try block i.e. { Return, 42 }.
+
+        This patch makes the following changes:
+        
+        1. Fix handling of finally completion to use a unique set of completion
+           type and value registers for each FinallyContext.
+
+        2. Move the setting of Throw completion type to the out of line exception handler.
+           This makes the mainline code slightly less branchy.
+
+        3. Introduce emitOutOfLineCatchHandler(), emitOutOfLineFinallyHandler(), and
+           emitOutOfLineExceptionHandler() to make it clearer that these are not emitting
+           bytecode inline.  Also, these make it clearer when we're emitting a handler
+           for a catch vs a finally.
+
+        4. Allocate the FinallyContext on the stack instead of as a member of the
+           heap allocated ControlFlowScope.  This simplifies its life-cycle management
+           and reduces the amount of needed copying.
+
+        5. Update emitFinallyCompletion() to propagate the completion type and value to
+           the outer FinallyContext when needed.
+
+        6. Fix emitJumpIf() to use the right order of operands.  Previously, we were
+           only using it to do op_stricteq and op_nstricteq comparisons.  So, the order
+           wasn't important.  We now use it to also do op_beloweq comparisons.  Hence,
+           the order needs to be corrected.
+
+        7. Remove the unused CompletionType::Break and Continue.  These are encoded with
+           the jumpIDs of the jump targets instead.
+
+        Relevant specifications:
+        Section 13.15.8: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-try-statement-runtime-semantics-evaluation
+        Section 6.3.2.4: https://www.ecma-international.org/ecma-262/9.0/index.html#sec-updateempty
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::FinallyContext::FinallyContext):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::popFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::emitOutOfLineCatchHandler):
+        (JSC::BytecodeGenerator::emitOutOfLineFinallyHandler):
+        (JSC::BytecodeGenerator::emitOutOfLineExceptionHandler):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitJumpViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitReturnViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::emitJumpIf):
+        (JSC::BytecodeGenerator::emitCatch): Deleted.
+        (JSC::BytecodeGenerator::allocateCompletionRecordRegisters): Deleted.
+        (JSC::BytecodeGenerator::releaseCompletionRecordRegisters): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::FinallyContext::completionTypeRegister const):
+        (JSC::FinallyContext::completionValueRegister const):
+        (JSC::ControlFlowScope::ControlFlowScope):
+        (JSC::BytecodeGenerator::emitLoad):
+        (JSC::BytecodeGenerator::CompletionRecordScope::CompletionRecordScope): Deleted.
+        (JSC::BytecodeGenerator::CompletionRecordScope::~CompletionRecordScope): Deleted.
+        (JSC::BytecodeGenerator::completionTypeRegister const): Deleted.
+        (JSC::BytecodeGenerator::completionValueRegister const): Deleted.
+        (JSC::BytecodeGenerator::emitSetCompletionType): Deleted.
+        (JSC::BytecodeGenerator::emitSetCompletionValue): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+
 2019-03-06  Saam Barati  <sbarati@apple.com>
 
         JSScript should keep the cache file locked for the duration of its existence and should truncate the cache when it is out of date
