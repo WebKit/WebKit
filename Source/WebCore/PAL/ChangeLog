@@ -1,3 +1,17 @@
+2019-03-07  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Untangle PKPaymentAuthorizationViewController from WebPaymentCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=195349
+        <rdar://problem/48625510>
+
+        Reviewed by Alex Christensen.
+
+        Moved soft-linking of PKPaymentErrorDomain from WebPaymentCoordinatorProxy to here and used
+        a more descriptive platform macro.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/cocoa/PassKitSoftLink.mm:
+
 2019-03-01  Conrad Shultz  <conrad_shultz@apple.com>
 
         Improper use of PLATFORM(TVOS) in PAL

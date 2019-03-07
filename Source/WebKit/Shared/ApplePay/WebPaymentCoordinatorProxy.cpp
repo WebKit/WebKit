@@ -230,7 +230,7 @@ void WebPaymentCoordinatorProxy::didCancelPaymentSession()
     didReachFinalState();
 }
 
-void WebPaymentCoordinatorProxy::validateMerchant(const URL& url)
+void WebPaymentCoordinatorProxy::presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL& url)
 {
     ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
 
@@ -238,13 +238,20 @@ void WebPaymentCoordinatorProxy::validateMerchant(const URL& url)
     send(Messages::WebPaymentCoordinator::ValidateMerchant(url.string()));
 }
 
-void WebPaymentCoordinatorProxy::didAuthorizePayment(const WebCore::Payment& payment)
+void WebPaymentCoordinatorProxy::presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment& payment)
 {
     m_state = State::Authorized;
     send(Messages::WebPaymentCoordinator::DidAuthorizePayment(payment));
 }
 
-void WebPaymentCoordinatorProxy::didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+void WebPaymentCoordinatorProxy::presenterDidFinish(PaymentAuthorizationPresenter&, bool didReachFinalState)
+{
+    if (!didReachFinalState)
+        didCancelPaymentSession();
+    hidePaymentUI();
+}
+
+void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
     ASSERT(m_state == State::Active);
 
@@ -252,7 +259,7 @@ void WebPaymentCoordinatorProxy::didSelectShippingMethod(const WebCore::ApplePay
     send(Messages::WebPaymentCoordinator::DidSelectShippingMethod(shippingMethod));
 }
 
-void WebPaymentCoordinatorProxy::didSelectShippingContact(const WebCore::PaymentContact& shippingContact)
+void WebPaymentCoordinatorProxy::presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact& shippingContact)
 {
     ASSERT(m_state == State::Active);
 
@@ -260,7 +267,7 @@ void WebPaymentCoordinatorProxy::didSelectShippingContact(const WebCore::Payment
     send(Messages::WebPaymentCoordinator::DidSelectShippingContact(shippingContact));
 }
 
-void WebPaymentCoordinatorProxy::didSelectPaymentMethod(const WebCore::PaymentMethod& paymentMethod)
+void WebPaymentCoordinatorProxy::presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod& paymentMethod)
 {
     ASSERT(m_state == State::Active);
 

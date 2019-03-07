@@ -38,6 +38,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
 #import "PageClient.h"
+#import "PaymentAuthorizationViewController.h"
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
@@ -1178,6 +1179,11 @@ void WebPageProxy::didRequestPasswordForQuickLookDocumentInMainFrameShared(Ref<W
 #endif
 
 #if ENABLE(APPLE_PAY)
+
+std::unique_ptr<PaymentAuthorizationPresenter> WebPageProxy::paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy& paymentCoordinatorProxy, PKPaymentRequest *paymentRequest)
+{
+    return std::make_unique<PaymentAuthorizationViewController>(paymentCoordinatorProxy, paymentRequest);
+}
 
 UIViewController *WebPageProxy::paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&)
 {

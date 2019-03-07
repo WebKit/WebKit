@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,36 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if USE(PASSKIT)
 
-#import <pal/spi/cocoa/PassKitSPI.h>
+#include "PaymentAuthorizationPresenter.h"
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS PKPaymentAuthorizationViewController;
+OBJC_CLASS PKPaymentRequest;
+OBJC_CLASS WKPaymentAuthorizationDelegate;
+OBJC_CLASS WKPaymentAuthorizationViewControllerDelegate;
 
 namespace WebKit {
 
-// FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
-// how to convert themselves to and from their platform representations.
-NSArray *toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems&);
-NSDecimalNumber *toDecimalNumber(const String& amount);
-PKPaymentSummaryItem *toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem&);
-PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type);
-PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
+class WebPaymentCoordinatorProxy;
+
+class PaymentAuthorizationViewController final : public PaymentAuthorizationPresenter {
+public:
+    PaymentAuthorizationViewController(PaymentAuthorizationPresenter::Client&, PKPaymentRequest *, PKPaymentAuthorizationViewController * = nil);
+
+private:
+    // PaymentAuthorizationPresenter
+    WKPaymentAuthorizationDelegate *platformDelegate() final;
+    void dismiss() final;
+#if PLATFORM(IOS_FAMILY)
+    void present(UIViewController *, CompletionHandler<void(bool)>&&) final;
+#endif
+
+    RetainPtr<PKPaymentAuthorizationViewController> m_viewController;
+    RetainPtr<WKPaymentAuthorizationViewControllerDelegate> m_delegate;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(APPLE_PAY)
+#endif // USE(PASSKIT)

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -65,8 +65,11 @@ Platform/cg/CGUtilities.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
+Platform/cocoa/PaymentAuthorizationPresenter.mm
+Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/SharedMemoryCocoa.cpp
 Platform/cocoa/WKCrashReporter.mm
+Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
 
 Platform/foundation/LoggingFoundation.mm

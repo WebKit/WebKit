@@ -1,3 +1,153 @@
+2019-03-07  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Untangle PKPaymentAuthorizationViewController from WebPaymentCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=195349
+        <rdar://problem/48625510>
+
+        Reviewed by Alex Christensen.
+
+        Introduced PaymentAuthorizationPresenter and WKPaymentAuthorizationDelegate to encapsulate
+        PKPaymentAuthorizationViewController and its delegate. Taught WebPaymentCoordinatorProxy to
+        interact with PaymentAuthorizationPresenter rather than PKPAVC directly.
+
+        These changes will allow us to swap out PKPaymentAuthorizationViewController with PKPaymentAuthorizationController in a follow-on patch.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.h: Added. Defined the abstract interface for
+        payment authorization presenters that use PKPA(V)C.
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm: Added.
+        (WebKit::toPKPaymentAuthorizationStatus): Moved from WebPaymentCoordinatorProxyCocoa.mm.
+        (WebKit::toPKPaymentErrorCode): Ditto.
+        (WebKit::toNSError): Ditto.
+        (WebKit::toNSErrors): Ditto.
+        (WebKit::toPKShippingMethods): Ditto.
+        (WebKit::PaymentAuthorizationPresenter::completeMerchantValidation): Added. Implements the
+        logic previously in WebPaymentCoordinatorProxy::platformCompleteMerchantValidation.
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection): Ditto for
+        WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection.
+        (WebKit::PaymentAuthorizationPresenter::completePaymentSession): Ditto for 
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection): Ditto for
+        WebPaymentCoordinatorProxy::platformCompletePaymentSession.
+        (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection): Ditto for
+        WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection.
+        * Platform/cocoa/PaymentAuthorizationViewController.h: Added. Defined a subclass of PaymentAuthorizationPresenter for PKPaymentAuthorizationViewController.
+        * Platform/cocoa/PaymentAuthorizationViewController.mm: Added.
+        (-[WKPaymentAuthorizationViewControllerDelegate initWithPresenter:]): Added a PKPAVC
+        delegate that's a subclass of WKPaymentAuthorizationDelegate.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish:]):
+        Called -[WKPaymentAuthorizationDelegate _didFinish].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:handler:]): Called
+        -[WKPaymentAuthorizationDelegate _didAuthorizePayment:completion:].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]): Called
+        -[WKPaymentAuthorizationDelegate _didSelectShippingMethod:completion:].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]): Called
+        -[WKPaymentAuthorizationDelegate _didSelectShippingContact:completion:].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]): Called
+        -[WKPaymentAuthorizationDelegate _didSelectPaymentMethod:completion:].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:willFinishWithError:]):
+        Called -[WKPaymentAuthorizationDelegate _willFinishWithError:].
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didRequestMerchantSession:]): Called
+        -[WKPaymentAuthorizationDelegate _didRequestMerchantSession:].
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h: Added.
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm: Added.
+        (-[WKPaymentAuthorizationDelegate summaryItems]): Added a summaryItems getter.
+        (-[WKPaymentAuthorizationDelegate shippingMethods]): Ditto for shippingMethods.
+        (-[WKPaymentAuthorizationDelegate completeMerchantValidation:error:]): Called
+        _didRequestMerchantSessionCompletion then set it to nil.
+        (-[WKPaymentAuthorizationDelegate completePaymentMethodSelection:]): Ditto for
+        _didSelectPaymentMethodCompletion.
+        (-[WKPaymentAuthorizationDelegate completePaymentSession:errors:didReachFinalState:]): Ditto
+        for _didAuthorizePaymentCompletion.
+        (-[WKPaymentAuthorizationDelegate completeShippingContactSelection:summaryItems:shippingMethods:errors:]):
+        Ditto for _didSelectShippingContactCompletion.
+        (-[WKPaymentAuthorizationDelegate completeShippingMethodSelection:]): Ditto for
+        _didSelectShippingMethodCompletion.
+        (-[WKPaymentAuthorizationDelegate invalidate]): If there's an outstanding authorization
+        callback, called -completePaymentSession:errors:didReachFinalState: with a state of
+        PKPaymentAuthorizationStatusFailure.
+        (-[WKPaymentAuthorizationDelegate _initWithPresenter:]):
+        (-[WKPaymentAuthorizationDelegate _didAuthorizePayment:completion:]): Added. Implements the
+        logic previously in WKPaymentAuthorizationViewControllerDelegate.
+        (-[WKPaymentAuthorizationDelegate _didFinish]): Ditto.
+        (-[WKPaymentAuthorizationDelegate _didRequestMerchantSession:]): Ditto.
+        (-[WKPaymentAuthorizationDelegate _didSelectPaymentMethod:completion:]): Ditto.
+        (-[WKPaymentAuthorizationDelegate _didSelectShippingContact:completion:]): Ditto.
+        (toShippingMethod): Moved from WebPaymentCoordinatorProxyCocoa.mm.
+        (-[WKPaymentAuthorizationDelegate _didSelectShippingMethod:completion:]): Added. Implements
+        the logic previously in WKPaymentAuthorizationViewControllerDelegate.
+        (-[WKPaymentAuthorizationDelegate _willFinishWithError:]): Ditto.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::presenterWillValidateMerchant): To conform to
+        PaymentAuthorizationPresenter::Client, renamed from validateMerchant.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidAuthorizePayment): Renamed from
+        didAuthorizePayment.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidFinish): Moved logic here that previously
+        existed in WKPaymentAuthorizationViewControllerDelegate.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod): Renamed from
+        didSelectShippingMethod.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidSelectShippingContact): Renamed from
+        didSelectShippingContact.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidSelectPaymentMethod): Renamed from
+        didSelectPaymentMethod.
+        (WebKit::WebPaymentCoordinatorProxy::validateMerchant): Renamed to
+        presenterWillValidateMerchant.
+        (WebKit::WebPaymentCoordinatorProxy::didAuthorizePayment): Renamed to
+        presenterDidAuthorizePayment.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectShippingMethod): Renamed to
+        presenterDidSelectShippingMethod.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectShippingContact): Renamed to
+        presenterDidSelectShippingContact.
+        (WebKit::WebPaymentCoordinatorProxy::didSelectPaymentMethod): Renamed to
+        didSelectPaymentMethod.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h: Changed WebPaymentCoordinatorProxy to
+        subclass PaymentAuthorizationPresenter::Client.
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h: Removed WKPaymentAuthorizationViewControllerDelegate interface and declared some helper functions
+        needed by PaymentAuthorizationPresenter.
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentSummaryItemType): Removed static keyword.
+        (WebKit::toDecimalNumber): Ditto.
+        (WebKit::toPKPaymentSummaryItem): Ditto.
+        (WebKit::toPKPaymentSummaryItems): Ditto.
+        (WebKit::toPKShippingMethod): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Changed to call
+        m_authorizationPresenter.
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentSession): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteMerchantValidation): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection): Ditto.
+        (-[WKPaymentAuthorizationViewControllerDelegate initWithPaymentCoordinatorProxy:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate invalidate]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:willFinishWithError:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didRequestMerchantSession:]): Deleted.
+        (toShippingMethod): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:handler:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:handler:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:handler:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:handler:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didAuthorizePayment:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingMethod:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectPaymentMethod:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didSelectShippingContact:completion:]): Deleted.
+        (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewControllerDidFinish:]): Deleted.
+        (WebKit::toPKPaymentAuthorizationStatus): Moved to PaymentAuthorizationPresenter.mm.
+        (WebKit::toPKPaymentErrorCode): Ditto.
+        (WebKit::toNSError): Ditto.
+        (WebKit::toNSErrors): Ditto.
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Changed to present a
+        PaymentAuthorizationPresenter rather than a PKPAVC.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Changed to dismiss a
+        PaymentAuthorizationPresenter rather than a PKPAVC.
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Ditto.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Ditto.
+        * SourcesCocoa.txt:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorAuthorizationPresenter): Added. Returns a new
+        PaymentAuthorizationViewController.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-07  Chris Dumez  <cdumez@apple.com>
 
         Regression(r242580) WebKit.NetworkProcessCrashWithPendingConnection API is crashing on iOS debug

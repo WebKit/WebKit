@@ -29,8 +29,8 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY)
 
 #import "APIUIClient.h"
+#import "PaymentAuthorizationPresenter.h"
 #import "WebPageProxy.h"
-#import "WebPaymentCoordinatorProxyCocoa.h"
 #import <PassKit/PassKit.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
@@ -40,47 +40,20 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    UIViewController *presentingViewController = m_client.paymentCoordinatorPresentingViewController(*this);
-
-    if (!presentingViewController) {
-        completionHandler(false);
-        return;
-    }
-
-    ASSERT(!m_paymentAuthorizationViewController);
-
     auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
-    m_paymentAuthorizationViewController = adoptNS([PAL::allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:paymentRequest.get()]);
-    if (!m_paymentAuthorizationViewController) {
-        completionHandler(false);
-        return;
-    }
+    ASSERT(!m_authorizationPresenter);
+    m_authorizationPresenter = m_client.paymentCoordinatorAuthorizationPresenter(*this, paymentRequest.get());
+    if (!m_authorizationPresenter)
+        return completionHandler(false);
 
-    m_paymentAuthorizationViewControllerDelegate = adoptNS([[WKPaymentAuthorizationViewControllerDelegate alloc] initWithPaymentCoordinatorProxy:*this]);
-    m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = [paymentRequest paymentSummaryItems];
-    m_paymentAuthorizationViewControllerDelegate->_shippingMethods = [paymentRequest shippingMethods];
-
-    [m_paymentAuthorizationViewController setDelegate:m_paymentAuthorizationViewControllerDelegate.get()];
-    [m_paymentAuthorizationViewController setPrivateDelegate:m_paymentAuthorizationViewControllerDelegate.get()];
-
-    [presentingViewController presentViewController:m_paymentAuthorizationViewController.get() animated:YES completion:nullptr];
-
-    completionHandler(true);
+    m_authorizationPresenter->present(m_client.paymentCoordinatorPresentingViewController(*this), WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::hidePaymentUI()
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    [[m_paymentAuthorizationViewController presentingViewController] dismissViewControllerAnimated:YES completion:nullptr];
-    [m_paymentAuthorizationViewController setDelegate:nil];
-    [m_paymentAuthorizationViewController setPrivateDelegate:nil];
-    m_paymentAuthorizationViewController = nullptr;
-
-    [m_paymentAuthorizationViewControllerDelegate invalidate];
-    m_paymentAuthorizationViewControllerDelegate = nullptr;
+    m_authorizationPresenter->dismiss();
+    m_authorizationPresenter = nullptr;
 }
 
 }

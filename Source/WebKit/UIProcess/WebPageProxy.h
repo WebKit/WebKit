@@ -1986,6 +1986,7 @@ private:
 #if ENABLE(APPLE_PAY) && PLATFORM(IOS_FAMILY)
     UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
     const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) final;
+    std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
 #endif
 #if ENABLE(APPLE_PAY) && PLATFORM(MAC)
     NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;

@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "PaymentAuthorizationPresenter.h"
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -56,13 +57,16 @@ OBJC_CLASS NSWindow;
 OBJC_CLASS PKPaymentAuthorizationViewController;
 OBJC_CLASS PKPaymentRequest;
 OBJC_CLASS UIViewController;
-OBJC_CLASS WKPaymentAuthorizationViewControllerDelegate;
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class WebPaymentCoordinatorProxy : private IPC::MessageReceiver, private IPC::MessageSender, public CanMakeWeakPtr<WebPaymentCoordinatorProxy> {
+class WebPaymentCoordinatorProxy
+    : private IPC::MessageReceiver
+    , private IPC::MessageSender
+    , public CanMakeWeakPtr<WebPaymentCoordinatorProxy>
+    , public PaymentAuthorizationPresenter::Client {
 public:
     struct Client {
         virtual ~Client() = default;
@@ -75,6 +79,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
         virtual UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) = 0;
         virtual const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&) = 0;
+        virtual std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) = 0;
 #endif
 #if PLATFORM(MAC)
         virtual NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) = 0;
@@ -85,12 +90,6 @@ public:
     ~WebPaymentCoordinatorProxy();
 
     void didCancelPaymentSession();
-    void validateMerchant(const URL&);
-    void didAuthorizePayment(const WebCore::Payment&);
-    void didSelectShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&);
-    void didSelectShippingContact(const WebCore::PaymentContact&);
-    void didSelectPaymentMethod(const WebCore::PaymentMethod&);
-
     void hidePaymentUI();
 
 private:
@@ -101,6 +100,14 @@ private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
+    
+    // PaymentAuthorizationPresenter::Client
+    void presenterDidAuthorizePayment(PaymentAuthorizationPresenter&, const WebCore::Payment&) final;
+    void presenterDidFinish(PaymentAuthorizationPresenter&, bool didReachFinalState) final;
+    void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) final;
+    void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) final;
+    void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePaySessionPaymentRequest::ShippingMethod&) final;
+    void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
 
     // Message handlers
     void availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&&);
@@ -173,8 +180,7 @@ private:
         ValidationComplete
     } m_merchantValidationState { MerchantValidationState::Idle };
 
-    RetainPtr<PKPaymentAuthorizationViewController> m_paymentAuthorizationViewController;
-    RetainPtr<WKPaymentAuthorizationViewControllerDelegate> m_paymentAuthorizationViewControllerDelegate;
+    std::unique_ptr<PaymentAuthorizationPresenter> m_authorizationPresenter;
 
 #if PLATFORM(MAC)
     uint64_t m_showPaymentUIRequestSeed { 0 };

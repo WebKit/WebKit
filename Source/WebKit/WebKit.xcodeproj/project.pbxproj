@@ -293,7 +293,6 @@
 		1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */; };
 		1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */; };
 		1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */; };
-		1AB1F77E1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */; };
 		1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */; };
 		1AB1F7961D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F7921D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp */; };
 		1AB1F7971D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB1F7931D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h */; };
@@ -1284,6 +1283,10 @@
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
 		A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */ = {isa = PBXBuildFile; fileRef = A15EEDE41E301CEE000069B0 /* WKPasswordView.h */; };
 		A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */; };
+		A1798B3E222D97A2000764BD /* PaymentAuthorizationPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */; };
+		A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */; };
+		A1798B49222E531D000764BD /* WKPaymentAuthorizationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B47222E530A000764BD /* WKPaymentAuthorizationDelegate.h */; };
+		A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */; };
 		A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A181A79721ACAC610059A316 /* WebKitAdditions.mm */; };
 		A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */; };
 		A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */; };
@@ -2228,7 +2231,6 @@
 		1AB1F7711D1B2F7E007C9BD1 /* WebPaymentCoordinator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPaymentCoordinator.cpp; sourceTree = "<group>"; };
 		1AB1F7721D1B2F7E007C9BD1 /* WebPaymentCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinator.h; sourceTree = "<group>"; };
 		1AB1F7731D1B2F7E007C9BD1 /* WebPaymentCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPaymentCoordinator.messages.in; sourceTree = "<group>"; };
-		1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinatorProxyCocoa.h; sourceTree = "<group>"; };
 		1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyCocoa.mm; sourceTree = "<group>"; };
 		1AB1F77B1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyIOS.mm; sourceTree = "<group>"; };
 		1AB1F77D1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorProxyMac.mm; sourceTree = "<group>"; };
@@ -3853,6 +3855,13 @@
 		A15EEDE41E301CEE000069B0 /* WKPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPasswordView.h; path = ios/WKPasswordView.h; sourceTree = "<group>"; };
 		A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersCocoa.h; sourceTree = "<group>"; };
 		A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersCocoa.mm; sourceTree = "<group>"; };
+		A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentAuthorizationPresenter.h; sourceTree = "<group>"; };
+		A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentAuthorizationViewController.h; sourceTree = "<group>"; };
+		A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAuthorizationViewController.mm; sourceTree = "<group>"; };
+		A1798B47222E530A000764BD /* WKPaymentAuthorizationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPaymentAuthorizationDelegate.h; sourceTree = "<group>"; };
+		A1798B48222E530A000764BD /* WKPaymentAuthorizationDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPaymentAuthorizationDelegate.mm; sourceTree = "<group>"; };
+		A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAuthorizationPresenter.mm; sourceTree = "<group>"; };
+		A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinatorProxyCocoa.h; sourceTree = "<group>"; };
 		A181A79721ACAC610059A316 /* WebKitAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAdditions.mm; sourceTree = "<group>"; };
 		A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityIOS.mm; sourceTree = "<group>"; };
 		A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityIOS.h; sourceTree = "<group>"; };
@@ -5272,7 +5281,7 @@
 		1AB1F7771D1B30A9007C9BD1 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				1AB1F7781D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h */,
+				A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */,
 				1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */,
 			);
 			path = cocoa;
@@ -6389,10 +6398,16 @@
 		4450AEBE1DC3FAAC009943F2 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */,
+				A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */,
+				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,
+				A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */,
 				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
 				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				A1FB68221F6E518200C43F9F /* WKCrashReporter.h */,
 				A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */,
+				A1798B47222E530A000764BD /* WKPaymentAuthorizationDelegate.h */,
+				A1798B48222E530A000764BD /* WKPaymentAuthorizationDelegate.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -9256,6 +9271,8 @@
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
+				A1798B3E222D97A2000764BD /* PaymentAuthorizationPresenter.h in Headers */,
+				A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */,
 				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
 				E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */,
 				2D6BF12421AF56E1001E79C9 /* PencilKitSoftLink.h in Headers */,
@@ -9560,7 +9577,7 @@
 				7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */,
 				1AB1F7971D1B3613007C9BD1 /* WebPaymentCoordinatorMessages.h in Headers */,
 				1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */,
-				1AB1F77E1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
+				A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
 				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
 				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
@@ -9874,6 +9891,7 @@
 				1AB8A1F218400B6200E9AE69 /* WKPageUIClient.h in Headers */,
 				A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */,
 				A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */,
+				A1798B49222E531D000764BD /* WKPaymentAuthorizationDelegate.h in Headers */,
 				2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */,
 				A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
@@ -10868,6 +10886,7 @@
 				1BBBE4A019B66C53006B7D81 /* RemoteWebInspectorUIMessageReceiver.cpp in Sources */,
 				E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */,
 				617A52D81F43A9DA00DCDC0A /* ServiceWorkerClientFetchMessageReceiver.cpp in Sources */,
+				41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */,
 				2D92A787212B6AB100F493FD /* ShareableBitmap.cpp in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
@@ -11052,7 +11071,6 @@
 				2D8508C6212E33ED000EF46C /* UnifiedSource97.cpp in Sources */,
 				2D8508D8212E33ED000EF46C /* UnifiedSource98.cpp in Sources */,
 				2D8508C5212E33ED000EF46C /* UnifiedSource99.cpp in Sources */,
-				41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */,
 				2D8508D2212E33ED000EF46C /* UnifiedSource100.cpp in Sources */,
 				CD491B0D1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp in Sources */,
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,

@@ -28,210 +28,14 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "WKPaymentAuthorizationDelegate.h"
 #import "WebPaymentCoordinatorProxy.h"
-#import "WebProcessPool.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/URL.h>
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-SOFT_LINK_FRAMEWORK(Contacts)
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCityKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubAdministrativeAreaKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
-SOFT_LINK_CONSTANT(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
-SOFT_LINK_CONSTANT(PAL::PassKit, PKPaymentErrorDomain, NSString *);
-#endif
-
-@implementation WKPaymentAuthorizationViewControllerDelegate
-
-- (instancetype)initWithPaymentCoordinatorProxy:(WebKit::WebPaymentCoordinatorProxy&)webPaymentCoordinatorProxy
-{
-    if (!(self = [super init]))
-        return nullptr;
-
-    _webPaymentCoordinatorProxy = &webPaymentCoordinatorProxy;
-
-    return self;
-}
-
-- (void)invalidate
-{
-    _webPaymentCoordinatorProxy = nullptr;
-    if (_paymentAuthorizedCompletion) {
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-        _paymentAuthorizedCompletion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
-#else
-        _paymentAuthorizedCompletion(PKPaymentAuthorizationStatusFailure);
-#endif
-        _paymentAuthorizedCompletion = nullptr;
-    }
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller willFinishWithError:(NSError *)error
-{
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock
-{
-    ASSERT(!_sessionBlock);
-    _sessionBlock = sessionBlock;
-
-    [PAL::getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
-        if (error)
-            LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            ASSERT(_sessionBlock);
-
-            if (!_webPaymentCoordinatorProxy) {
-                _sessionBlock(nullptr, nullptr);
-                return;
-            }
-
-            _webPaymentCoordinatorProxy->validateMerchant(merchantURL);
-        });
-    }];
-}
-
-static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
-{
-    ASSERT(shippingMethod);
-
-    WebCore::ApplePaySessionPaymentRequest::ShippingMethod result;
-    result.label = shippingMethod.label;
-    result.detail = shippingMethod.detail;
-    result.amount = shippingMethod.amount.stringValue;
-    result.identifier = shippingMethod.identifier;
-
-    return result;
-}
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
-        return;
-    }
-
-    ASSERT(!_paymentAuthorizedCompletion);
-    _paymentAuthorizedCompletion = completion;
-
-    _webPaymentCoordinatorProxy->didAuthorizePayment(WebCore::Payment(payment));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod handler:(void (^)(PKPaymentRequestPaymentMethodUpdate *update))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
-        return;
-    }
-
-    ASSERT(!_didSelectPaymentMethodCompletion);
-    _didSelectPaymentMethodCompletion = completion;
-    _webPaymentCoordinatorProxy->didSelectPaymentMethod(WebCore::PaymentMethod(paymentMethod));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
-    if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
-        return;
-    }
-
-    ASSERT(!_didSelectShippingMethodCompletion);
-    _didSelectShippingMethodCompletion = completion;
-    _webPaymentCoordinatorProxy->didSelectShippingMethod(toShippingMethod(shippingMethod));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact handler:(void (^)(PKPaymentRequestShippingContactUpdate *update))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
-        return;
-    }
-
-    ASSERT(!_didSelectShippingContactCompletion);
-    _didSelectShippingContactCompletion = completion;
-    _webPaymentCoordinatorProxy->didSelectShippingContact(WebCore::PaymentContact(contact));
-}
-
-#endif
-
-#if !HAVE(PASSKIT_GRANULAR_ERRORS)
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(PKPaymentAuthorizationStatusFailure);
-        return;
-    }
-
-    ASSERT(!_paymentAuthorizedCompletion);
-    _paymentAuthorizedCompletion = completion;
-
-    _webPaymentCoordinatorProxy->didAuthorizePayment(WebCore::Payment(payment));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(void (^)(PKPaymentAuthorizationStatus status, NSArray<PKPaymentSummaryItem *> *summaryItems))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(PKPaymentAuthorizationStatusFailure, @[ ]);
-        return;
-    }
-
-    ASSERT(!_didSelectShippingMethodCompletion);
-    _didSelectShippingMethodCompletion = completion;
-    _webPaymentCoordinatorProxy->didSelectShippingMethod(toShippingMethod(shippingMethod));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(void (^)(NSArray<PKPaymentSummaryItem *> *summaryItems))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(@[ ]);
-        return;
-    }
-
-    ASSERT(!_didSelectPaymentMethodCompletion);
-    _didSelectPaymentMethodCompletion = completion;
-
-    _webPaymentCoordinatorProxy->didSelectPaymentMethod(WebCore::PaymentMethod(paymentMethod));
-}
-
-- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingContact:(PKContact *)contact completion:(void (^)(PKPaymentAuthorizationStatus status, NSArray<PKShippingMethod *> *shippingMethods, NSArray<PKPaymentSummaryItem *> *summaryItems))completion
-{
-    if (!_webPaymentCoordinatorProxy) {
-        completion(PKPaymentAuthorizationStatusFailure, @[ ], @[ ]);
-        return;
-    }
-
-    ASSERT(!_didSelectShippingContactCompletion);
-    _didSelectShippingContactCompletion = completion;
-    _webPaymentCoordinatorProxy->didSelectShippingContact(WebCore::PaymentContact(contact));
-}
-
-#endif
-
-- (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller
-{
-    if (!_webPaymentCoordinatorProxy)
-        return;
-
-    if (!_didReachFinalState)
-        _webPaymentCoordinatorProxy->didCancelPaymentSession();
-
-    _webPaymentCoordinatorProxy->hidePaymentUI();
-}
-
-@end
 
 // FIXME: Once rdar://problem/24420024 has been fixed, import PKPaymentRequest_Private.h instead.
 @interface PKPaymentRequest ()
@@ -322,7 +126,7 @@ static PKAddressField toPKAddressField(const WebCore::ApplePaySessionPaymentRequ
 }
 #endif
 
-static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type type)
+PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySessionPaymentRequest::LineItem::Type type)
 {
     switch (type) {
     case WebCore::ApplePaySessionPaymentRequest::LineItem::Type::Final:
@@ -333,28 +137,28 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(WebCore::ApplePaySess
     }
 }
 
-static NSDecimalNumber *toDecimalNumber(const String& amount)
+NSDecimalNumber *toDecimalNumber(const String& amount)
 {
     if (!amount)
         return [NSDecimalNumber zero];
     return [NSDecimalNumber decimalNumberWithString:amount locale:@{ NSLocaleDecimalSeparator : @"." }];
 }
 
-static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
+PKPaymentSummaryItem *toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
     return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
-static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
+NSArray *toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
 {
-    auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
+    NSMutableArray *paymentSummaryItems = [NSMutableArray arrayWithCapacity:totalAndLineItems.lineItems.size() + 1];
     for (auto& lineItem : totalAndLineItems.lineItems) {
-        if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem.get()];
+        if (PKPaymentSummaryItem *summaryItem = toPKPaymentSummaryItem(lineItem))
+            [paymentSummaryItems addObject:summaryItem];
     }
 
-    if (auto totalItem = toPKPaymentSummaryItem(totalAndLineItems.total))
-        [paymentSummaryItems addObject:totalItem.get()];
+    if (PKPaymentSummaryItem *totalItem = toPKPaymentSummaryItem(totalAndLineItems.total))
+        [paymentSummaryItems addObject:totalItem];
 
     return paymentSummaryItems;
 }
@@ -399,9 +203,9 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
     }
 }
 
-static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+PKShippingMethod *toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
-    RetainPtr<PKShippingMethod> result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
+    PKShippingMethod *result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
 
@@ -470,17 +274,17 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     auto shippingMethods = adoptNS([[NSMutableArray alloc] init]);
     for (auto& shippingMethod : paymentRequest.shippingMethods())
-        [shippingMethods addObject:toPKShippingMethod(shippingMethod).get()];
+        [shippingMethods addObject:toPKShippingMethod(shippingMethod)];
     [result setShippingMethods:shippingMethods.get()];
 
     auto paymentSummaryItems = adoptNS([[NSMutableArray alloc] init]);
     for (auto& lineItem : paymentRequest.lineItems()) {
-        if (auto summaryItem = toPKPaymentSummaryItem(lineItem))
-            [paymentSummaryItems addObject:summaryItem.get()];
+        if (PKPaymentSummaryItem *summaryItem = toPKPaymentSummaryItem(lineItem))
+            [paymentSummaryItems addObject:summaryItem];
     }
 
-    if (auto totalItem = toPKPaymentSummaryItem(paymentRequest.total()))
-        [paymentSummaryItems addObject:totalItem.get()];
+    if (PKPaymentSummaryItem *totalItem = toPKPaymentSummaryItem(paymentRequest.total()))
+        [paymentSummaryItems addObject:totalItem];
 
     [result setPaymentSummaryItems:paymentSummaryItems.get()];
 
@@ -513,278 +317,29 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     return result;
 }
 
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::PaymentAuthorizationStatus status)
-{
-    switch (status) {
-    case WebCore::PaymentAuthorizationStatus::Success:
-        return PKPaymentAuthorizationStatusSuccess;
-    case WebCore::PaymentAuthorizationStatus::Failure:
-        return PKPaymentAuthorizationStatusFailure;
-    case WebCore::PaymentAuthorizationStatus::PINRequired:
-        return PKPaymentAuthorizationStatusPINRequired;
-    case WebCore::PaymentAuthorizationStatus::PINIncorrect:
-        return PKPaymentAuthorizationStatusPINIncorrect;
-    case WebCore::PaymentAuthorizationStatus::PINLockout:
-        return PKPaymentAuthorizationStatusPINLockout;
-    }
-}
-
-static PKPaymentErrorCode toPKPaymentErrorCode(WebCore::PaymentError::Code code)
-{
-    switch (code) {
-    case WebCore::PaymentError::Code::Unknown:
-        return PKPaymentUnknownError;
-    case WebCore::PaymentError::Code::ShippingContactInvalid:
-        return PKPaymentShippingContactInvalidError;
-    case WebCore::PaymentError::Code::BillingContactInvalid:
-        return PKPaymentBillingContactInvalidError;
-    case WebCore::PaymentError::Code::AddressUnserviceable:
-        return PKPaymentShippingAddressUnserviceableError;
-    }
-}
-
-static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
-{
-    auto userInfo = adoptNS([[NSMutableDictionary alloc] init]);
-    [userInfo setObject:error.message forKey:NSLocalizedDescriptionKey];
-
-    if (error.contactField) {
-        NSString *pkContactField = nil;
-        NSString *postalAddressKey = nil;
-
-        switch (*error.contactField) {
-        case WebCore::PaymentError::ContactField::PhoneNumber:
-            pkContactField = PAL::get_PassKit_PKContactFieldPhoneNumber();
-            break;
-
-        case WebCore::PaymentError::ContactField::EmailAddress:
-            pkContactField = PAL::get_PassKit_PKContactFieldEmailAddress();
-            break;
-
-        case WebCore::PaymentError::ContactField::Name:
-            pkContactField = PAL::get_PassKit_PKContactFieldName();
-            break;
-
-        case WebCore::PaymentError::ContactField::PhoneticName:
-            pkContactField = PAL::get_PassKit_PKContactFieldPhoneticName();
-            break;
-
-        case WebCore::PaymentError::ContactField::PostalAddress:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            break;
-
-        case WebCore::PaymentError::ContactField::AddressLines:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressStreetKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::SubLocality:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressSubLocalityKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::Locality:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressCityKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::PostalCode:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressPostalCodeKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::SubAdministrativeArea:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::AdministrativeArea:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressStateKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::Country:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressCountryKey();
-            break;
-
-        case WebCore::PaymentError::ContactField::CountryCode:
-            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
-            postalAddressKey = getCNPostalAddressISOCountryCodeKey();
-            break;
-        }
-
-        [userInfo setObject:pkContactField forKey:PAL::get_PassKit_PKPaymentErrorContactFieldUserInfoKey()];
-        if (postalAddressKey)
-            [userInfo setObject:postalAddressKey forKey:PAL::get_PassKit_PKPaymentErrorPostalAddressUserInfoKey()];
-    }
-
-    return adoptNS([[NSError alloc] initWithDomain:getPKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code) userInfo:userInfo.get()]);
-}
-
-static RetainPtr<NSArray> toNSErrors(const Vector<WebCore::PaymentError>& errors)
-{
-    auto result = adoptNS([[NSMutableArray alloc] init]);
-
-    for (const auto& error : errors) {
-        if (auto nsError = toNSError(error))
-            [result addObject:nsError.get()];
-    }
-
-    return result;
-}
-#else
-static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const Optional<WebCore::PaymentAuthorizationResult>& result)
-{
-    if (!result)
-        return PKPaymentAuthorizationStatusSuccess;
-
-    if (result->errors.size() == 1) {
-        auto& error = result->errors[0];
-        switch (error.code) {
-        case WebCore::PaymentError::Code::Unknown:
-        case WebCore::PaymentError::Code::AddressUnserviceable:
-            return PKPaymentAuthorizationStatusFailure;
-
-        case WebCore::PaymentError::Code::BillingContactInvalid:
-            return PKPaymentAuthorizationStatusInvalidBillingPostalAddress;
-
-        case WebCore::PaymentError::Code::ShippingContactInvalid:
-            if (error.contactField && error.contactField == WebCore::PaymentError::ContactField::PostalAddress)
-                return PKPaymentAuthorizationStatusInvalidShippingPostalAddress;
-
-            return PKPaymentAuthorizationStatusInvalidShippingContact;
-        }
-    }
-
-    switch (result->status) {
-    case WebCore::PaymentAuthorizationStatus::Success:
-        return PKPaymentAuthorizationStatusSuccess;
-    case WebCore::PaymentAuthorizationStatus::Failure:
-        return PKPaymentAuthorizationStatusFailure;
-    case WebCore::PaymentAuthorizationStatus::PINRequired:
-        return PKPaymentAuthorizationStatusPINRequired;
-    case WebCore::PaymentAuthorizationStatus::PINIncorrect:
-        return PKPaymentAuthorizationStatusPINIncorrect;
-    case WebCore::PaymentAuthorizationStatus::PINLockout:
-        return PKPaymentAuthorizationStatusPINLockout;
-    }
-
-    return PKPaymentAuthorizationStatusFailure;
-}
-#endif
-
 void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    m_paymentAuthorizationViewControllerDelegate->_didReachFinalState = WebCore::isFinalStateResult(result);
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto status = result ? result->status : WebCore::PaymentAuthorizationStatus::Success;
-    auto pkPaymentAuthorizationResult = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:result ? toNSErrors(result->errors).get() : @[ ]]);
-    m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(pkPaymentAuthorizationResult.get());
-#else
-    m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(toPKPaymentAuthorizationStatus(result));
-#endif
-    m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion = nullptr;
+    m_authorizationPresenter->completePaymentSession(result);
 }
 
 void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    m_paymentAuthorizationViewControllerDelegate->_sessionBlock(paymentMerchantSession.pkPaymentMerchantSession(), nullptr);
-    m_paymentAuthorizationViewControllerDelegate->_sessionBlock = nullptr;
+    m_authorizationPresenter->completeMerchantValidation(paymentMerchantSession);
 }
 
 void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>& update)
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    if (update)
-        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto pkShippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(pkShippingMethodUpdate.get());
-#else
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(PKPaymentAuthorizationStatusSuccess, m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
-#endif
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion = nullptr;
+    m_authorizationPresenter->completeShippingMethodSelection(update);
 }
-
-#if !HAVE(PASSKIT_GRANULAR_ERRORS)
-static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(const Optional<WebCore::ShippingContactUpdate>& update)
-{
-    if (!update || update->errors.isEmpty())
-        return PKPaymentAuthorizationStatusSuccess;
-
-    if (update->errors.size() == 1) {
-        auto& error = update->errors[0];
-        switch (error.code) {
-        case WebCore::PaymentError::Code::Unknown:
-        case WebCore::PaymentError::Code::AddressUnserviceable:
-            return PKPaymentAuthorizationStatusFailure;
-
-        case WebCore::PaymentError::Code::BillingContactInvalid:
-            return PKPaymentAuthorizationStatusInvalidBillingPostalAddress;
-
-        case WebCore::PaymentError::Code::ShippingContactInvalid:
-            if (error.contactField && error.contactField == WebCore::PaymentError::ContactField::PostalAddress)
-                return PKPaymentAuthorizationStatusInvalidShippingPostalAddress;
-
-            return PKPaymentAuthorizationStatusInvalidShippingContact;
-        }
-    }
-
-    return PKPaymentAuthorizationStatusFailure;
-}
-#endif
 
 void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const Optional<WebCore::ShippingContactUpdate>& update)
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    if (update) {
-        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
-
-        auto shippingMethods = adoptNS([[NSMutableArray alloc] init]);
-        for (auto& shippingMethod : update->newShippingMethods)
-            [shippingMethods addObject:toPKShippingMethod(shippingMethod).get()];
-
-        m_paymentAuthorizationViewControllerDelegate->_shippingMethods = WTFMove(shippingMethods);
-    }
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto pkShippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(pkShippingContactUpdate.get());
-#else
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(toPKPaymentAuthorizationStatus(update), m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get(), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
-#endif
-    m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion = nullptr;
+    m_authorizationPresenter->completeShippingContactSelection(update);
 }
 
 void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Optional<WebCore::PaymentMethodUpdate>& update)
 {
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
-
-    if (update)
-        m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
-
-#if HAVE(PASSKIT_GRANULAR_ERRORS)
-    auto pkPaymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
-    m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(pkPaymentMethodUpdate.get());
-#else
-    m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
-#endif
-    m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion = nullptr;
+    m_authorizationPresenter->completePaymentMethodSelection(update);
 }
 
 Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()

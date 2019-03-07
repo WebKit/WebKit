@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC) && ENABLE(APPLE_PAY)
 
+#import "PaymentAuthorizationViewController.h"
 #import "WebPageProxy.h"
-#import "WebPaymentCoordinatorProxyCocoa.h"
 #import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
 
@@ -64,12 +64,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
 
         ASSERT(viewController);
 
-        paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate = adoptNS([[WKPaymentAuthorizationViewControllerDelegate alloc] initWithPaymentCoordinatorProxy:*paymentCoordinatorProxy]);
-        paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = [paymentRequest paymentSummaryItems];
-        paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate->_shippingMethods = [paymentRequest shippingMethods];
-        paymentCoordinatorProxy->m_paymentAuthorizationViewController = viewController;
-        [paymentCoordinatorProxy->m_paymentAuthorizationViewController setDelegate:paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate.get()];
-        [paymentCoordinatorProxy->m_paymentAuthorizationViewController setPrivateDelegate:paymentCoordinatorProxy->m_paymentAuthorizationViewControllerDelegate.get()];
+        paymentCoordinatorProxy->m_authorizationPresenter = std::make_unique<PaymentAuthorizationViewController>(*paymentCoordinatorProxy, paymentRequest.get(), viewController);
 
         ASSERT(!paymentCoordinatorProxy->m_sheetWindow);
         paymentCoordinatorProxy->m_sheetWindow = [NSWindow windowWithContentViewController:viewController];
@@ -90,26 +85,20 @@ void WebPaymentCoordinatorProxy::hidePaymentUI()
     if (m_state == State::Activating) {
         ++m_showPaymentUIRequestSeed;
 
-        ASSERT(!m_paymentAuthorizationViewController);
-        ASSERT(!m_paymentAuthorizationViewControllerDelegate);
+        ASSERT(!m_authorizationPresenter);
         ASSERT(!m_sheetWindow);
         return;
     }
 
-    ASSERT(m_paymentAuthorizationViewController);
-    ASSERT(m_paymentAuthorizationViewControllerDelegate);
+    ASSERT(m_authorizationPresenter);
     ASSERT(m_sheetWindow);
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_sheetWindowWillCloseObserver.get()];
     m_sheetWindowWillCloseObserver = nullptr;
 
     [[m_sheetWindow sheetParent] endSheet:m_sheetWindow.get()];
-    [m_paymentAuthorizationViewController setDelegate:nil];
-    [m_paymentAuthorizationViewController setPrivateDelegate:nil];
-    m_paymentAuthorizationViewController = nullptr;
-
-    [m_paymentAuthorizationViewControllerDelegate invalidate];
-    m_paymentAuthorizationViewControllerDelegate = nullptr;
+    m_authorizationPresenter->dismiss();
+    m_authorizationPresenter = nullptr;
 
     m_sheetWindow = nullptr;
 }
