@@ -1,3 +1,18 @@
+2019-03-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM Debugger: event breakpoints still fire when breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=195377
+        <rdar://problem/48651645>
+
+        Reviewed by Joseph Pecoraro and Matt Baker.
+
+        Test: inspector/dom-debugger/event-listener-breakpoints.html
+
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::willFireTimer):
+        (WebCore::InspectorDOMDebuggerAgent::willFireAnimationFrame):
+
 2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Crash when attempting to change input type while dismissing datalist suggestions

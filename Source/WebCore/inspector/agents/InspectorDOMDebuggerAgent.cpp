@@ -367,6 +367,9 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
 
 void InspectorDOMDebuggerAgent::willHandleEvent(const Event& event, const RegisteredEventListener& registeredEventListener)
 {
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventBreakpoints.contains(std::make_pair(Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener, event.type()));
 
     if (!shouldPause && m_domAgent)
@@ -388,6 +391,9 @@ void InspectorDOMDebuggerAgent::willHandleEvent(const Event& event, const Regist
 
 void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
 {
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     String eventName = oneShot ? "setTimeout"_s : "setInterval"_s;
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventBreakpoints.contains(std::make_pair(Inspector::Protocol::DOMDebugger::EventBreakpointType::Timer, eventName));
     if (!shouldPause)
@@ -400,6 +406,9 @@ void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
 
 void InspectorDOMDebuggerAgent::willFireAnimationFrame()
 {
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     String eventName = "requestAnimationFrame"_s;
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventBreakpoints.contains(std::make_pair(Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame, eventName));
     if (!shouldPause)

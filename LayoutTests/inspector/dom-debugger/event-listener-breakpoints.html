@@ -126,12 +126,53 @@ function test() {
 
                 WI.debuggerManager.resume()
                 .catch(reject);
+            });
 
-                if (pauseCount >= 2) {
-                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            InspectorTest.singleFireEventListener(`TestPage-click`, (event) => {
+                InspectorTest.expectEqual(pauseCount, 2, "Should have paused twice.");
+                InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
 
-                    resolve();
-                }
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                resolve();
+            });
+
+            InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Listener, "click")
+            .then(() => {
+                InspectorTest.log("Firing \"click\" on div#x...");
+                return InspectorTest.evaluateInPage(`clickX()`);
+            })
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMDebugger.Event.Listener.DisableBetweenDispatches`,
+        description: "Check that event listener breakpoints only pause when breakpoints are enabled.",
+        test(resolve, reject) {
+            let pauseCount = 0;
+
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+
+                InspectorTest.pass("Should pause before event handler is run.");
+                logActiveStackTrace();
+
+                InspectorTest.log("Disabling breakpoints...");
+                DebuggerAgent.setBreakpointsActive(false)
+                .then(() => WI.debuggerManager.resume())
+                .catch(reject);
+            });
+
+            InspectorTest.singleFireEventListener(`TestPage-click`, (event) => {
+                InspectorTest.expectEqual(pauseCount, 1, "Should have paused once.");
+                InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                DebuggerAgent.setBreakpointsActive(true)
+                .then(resolve, reject);
             });
 
             InspectorTest.EventBreakpoint.addBreakpoint(WI.EventBreakpoint.Type.Listener, "click")
