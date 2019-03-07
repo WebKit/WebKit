@@ -1,3 +1,16 @@
+2019-03-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove an unneeded assert that was added with r242113
+        https://bugs.webkit.org/show_bug.cgi?id=195391
+
+        Reviewed by Simon Fraser.
+
+        Many layout tests are failing ASSERT(m_mediaBufferingIsSuspended). Since m_mediaBufferingIsSuspended is
+        protected by an 'if' statement directly afterwards, the assertion should be safe to remove.
+
+        * page/Page.cpp:
+        (WebCore::Page::resumeAllMediaBuffering):
+
 2019-03-06  Justin Fan  <justin_fan@apple.com>
 
         Unreviewed build fix. Replace a forward declaration with an include.

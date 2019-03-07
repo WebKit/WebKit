@@ -1781,7 +1781,6 @@ void Page::suspendAllMediaBuffering()
 void Page::resumeAllMediaBuffering()
 {
 #if ENABLE(VIDEO)
-    ASSERT(m_mediaBufferingIsSuspended);
     if (!m_mediaBufferingIsSuspended)
         return;
     m_mediaBufferingIsSuspended = false;
