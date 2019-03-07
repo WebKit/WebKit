@@ -1,3 +1,32 @@
+2019-03-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: CSS: there should be a way to inline-replace a variable with it's value
+        https://bugs.webkit.org/show_bug.cgi?id=195335
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.didDismissPopover):
+        (WI.InlineSwatch.prototype._swatchElementClicked):
+        (WI.InlineSwatch.prototype._swatchElementClicked.optionsForType): Added.
+        Shift-clicking a variable swatch replaces the text with the variable's value.
+        Drive-by: try to create a readonly swatch for the variable's value (e.g. a color indicator).
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        If the value of a variable swatch changes, re-render the value.
+
+        * UserInterface/Views/CodeMirrorTextMarkers.js:
+        (createCodeMirrorTextMarkers):
+        (createCodeMirrorColorTextMarkers):
+        (createCodeMirrorGradientTextMarkers):
+        (createCodeMirrorBezierTextMarkers):
+        (createCodeMirrorSpringTextMarkers):
+        Refactor function parameters for more flexibility.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-03-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: highlight the node when hovering event listeners sorted by node

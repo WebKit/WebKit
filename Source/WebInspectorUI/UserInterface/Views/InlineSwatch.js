@@ -41,14 +41,12 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         this._swatchElement.classList.add("inline-swatch", this._type.split("-").lastValue);
 
-        this._boundSwatchElementClicked = null;
-
         if (readOnly)
             this._swatchElement.classList.add("read-only");
         else {
             switch (this._type) {
             case WI.InlineSwatch.Type.Color:
-                this._swatchElement.title = WI.UIString("Click to select a color. Shift-click to switch color formats.");
+                this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
                 break;
             case WI.InlineSwatch.Type.Gradient:
                 this._swatchElement.title = WI.UIString("Edit custom gradient");
@@ -60,7 +58,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 this._swatchElement.title = WI.UIString("Edit \u201Cspring\u201D function");
                 break;
             case WI.InlineSwatch.Type.Variable:
-                this._swatchElement.title = WI.UIString("View variable value");
+                this._swatchElement.title = WI.UIString("Click to view variable value\nShift-click to replace variable with value");
                 break;
             case WI.InlineSwatch.Type.Image:
                 this._swatchElement.title = WI.UIString("View Image");
@@ -70,8 +68,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 break;
             }
 
-            this._boundSwatchElementClicked = this._swatchElementClicked.bind(this);
-            this._swatchElement.addEventListener("click", this._boundSwatchElementClicked);
+            this._swatchElement.addEventListener("click", this._swatchElementClicked.bind(this));
             if (this._type === WI.InlineSwatch.Type.Color)
                 this._swatchElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
         }
@@ -109,11 +106,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         if (!this._valueEditor)
             return;
 
-        if (typeof this._valueEditor.removeListeners === "function")
+        if (this._valueEditor.removeListeners)
             this._valueEditor.removeListeners();
 
-        if (this._boundSwatchElementClicked)
-            this._swatchElement.addEventListener("click", this._boundSwatchElementClicked);
+        if (this._valueEditor instanceof WI.Object)
+            this._valueEditor.removeEventListener(null, null, this);
+
+        this._valueEditor = null;
 
         this.dispatchEventToListeners(WI.InlineSwatch.Event.Deactivated);
     }
@@ -149,18 +148,29 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
     _swatchElementClicked(event)
     {
-        this.dispatchEventToListeners(WI.InlineSwatch.Event.BeforeClicked);
+        event.stop();
 
-        if (this._type === WI.InlineSwatch.Type.Color && event.shiftKey && this._value) {
-            let nextFormat = this._value.nextFormat();
-            console.assert(nextFormat);
-            if (!nextFormat)
+        if (event.shiftKey && this._value) {
+            if (this._type === WI.InlineSwatch.Type.Color) {
+                let nextFormat = this._value.nextFormat();
+                console.assert(nextFormat);
+                if (nextFormat) {
+                    this._value.format = nextFormat;
+                    this._updateSwatch();
+                }
                 return;
+            }
 
-            this._value.format = nextFormat;
-            this._updateSwatch();
-            return;
+            if (this._type === WI.InlineSwatch.Type.Variable) {
+                // Force the swatch to replace the displayed text with the variable's value.
+                this._swatchElement.remove();
+                this._updateSwatch();
+                return;
+            }
         }
+
+        if (this._valueEditor)
+            return;
 
         let bounds = WI.Rect.rectFromClientRect(this._swatchElement.getBoundingClientRect());
         let popover = new WI.Popover(this);
@@ -225,9 +235,6 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         popover.content = this._valueEditor.element;
         popover.present(bounds.pad(2), [WI.RectEdge.MIN_X]);
 
-        if (this._boundSwatchElementClicked)
-            this._swatchElement.removeEventListener("click", this._boundSwatchElementClicked);
-
         this.dispatchEventToListeners(WI.InlineSwatch.Event.Activated);
 
         let value = this._value || this._fallbackValue();
@@ -248,9 +255,26 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._valueEditor.spring = value;
             break;
 
-        case WI.InlineSwatch.Type.Variable:
-            this._valueEditor.codeMirror.setValue(value);
+        case WI.InlineSwatch.Type.Variable: {
+            let codeMirror = this._valueEditor.codeMirror;
+            codeMirror.setValue(value);
+
+            const range = null;
+            function optionsForType(type) {
+                return {
+                    allowedTokens: /\btag\b/,
+                    callback(marker, valueObject, valueString) {
+                        let swatch = new WI.InlineSwatch(type, valueObject, true);
+                        codeMirror.setUniqueBookmark({line: 0, ch: 0}, swatch.element);
+                    }
+                };
+            }
+            createCodeMirrorColorTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Color));
+            createCodeMirrorGradientTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Gradient));
+            createCodeMirrorCubicBezierTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Bezier));
+            createCodeMirrorSpringTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Spring));
             break;
+        }
         }
     }
 
@@ -378,7 +402,6 @@ WI.InlineSwatch.Type = {
 };
 
 WI.InlineSwatch.Event = {
-    BeforeClicked: "inline-swatch-before-clicked",
     ValueChanged: "inline-swatch-value-changed",
     Activated: "inline-swatch-activated",
     Deactivated: "inline-swatch-deactivated",

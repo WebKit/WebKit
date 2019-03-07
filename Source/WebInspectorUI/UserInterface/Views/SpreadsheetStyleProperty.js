@@ -500,29 +500,24 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
             innerElement.textContent = value;
             this._handleValueChange();
+
+            if (type === WI.InlineSwatch.Type.Variable)
+                this._renderValue(this._property.rawValue);
         }, this);
 
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
-                this._swatchActive = true;
                 this._delegate.stylePropertyInlineSwatchActivated();
             });
         }
 
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, () => {
-                this._swatchActive = false;
                 this._delegate.stylePropertyInlineSwatchDeactivated();
             });
         }
 
         tokenElement.append(swatch.element, innerElement);
-
-        // Prevent the value from editing when clicking on the swatch.
-        swatch.element.addEventListener("click", (event) => {
-            if (this._swatchActive || event.shiftKey)
-                event.stop();
-        });
 
         return tokenElement;
     }
