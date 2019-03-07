@@ -195,6 +195,7 @@
     "web-platform-tests/html/rendering": "skip", 
     "web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives": "skip", 
     "web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh": "import", 
+    "web-platform-tests/html/semantics/embedded-content": "import", 
     "web-platform-tests/html/semantics/embedded-content-0": "skip", 
     "web-platform-tests/html/semantics/embedded-content/image-maps/image-map-processing-model": "skip", 
     "web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html": "skip", 

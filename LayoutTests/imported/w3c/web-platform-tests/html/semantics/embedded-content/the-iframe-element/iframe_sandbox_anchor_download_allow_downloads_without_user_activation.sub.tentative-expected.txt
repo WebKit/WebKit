@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1489: Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+
+
+PASS <a download> triggered download in sandbox is allowed by allow-downloads-without-user-activation. 
+

@@ -1,13 +1,9 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
-CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
 spec reference
 
   
 
-Harness Error (FAIL), message = The operation was aborted.
-
 PASS audio events - pause 
-PASS calling play() then pause() on non-autoplay audio should trigger pause event 
 PASS video events - pause 
+PASS calling play() then pause() on non-autoplay audio should trigger pause event 
 PASS calling play() then pause() on non-autoplay video should trigger pause event 
 

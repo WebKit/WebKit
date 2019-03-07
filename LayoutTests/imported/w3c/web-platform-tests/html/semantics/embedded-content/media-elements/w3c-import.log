@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -14,7 +14,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_volume_check.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-supported-by-feature-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/contains.json
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html
@@ -43,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_volumechange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause.html
@@ -55,5 +66,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_initial.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_reflects_attribute_not_source_elements.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_008.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/video_volume_check.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/volume_nonfinite.html

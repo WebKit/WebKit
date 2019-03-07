@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1489: Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+CONSOLE MESSAGE: Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
+
+
+FAIL <a download> triggered download in sandbox is allowed by allow-downloads-without-user-activation. undefined is not an object (evaluating 'anchor.href = "support/download_stash.py?token=" + token')
+

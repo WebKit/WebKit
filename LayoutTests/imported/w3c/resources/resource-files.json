@@ -1012,6 +1012,7 @@
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_child.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/same_origin_grandchild.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm",
+        "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-checks-contentDocument.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-opens-modals.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-on-popup.html",
         "web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-without-user-gesture-failed.html",

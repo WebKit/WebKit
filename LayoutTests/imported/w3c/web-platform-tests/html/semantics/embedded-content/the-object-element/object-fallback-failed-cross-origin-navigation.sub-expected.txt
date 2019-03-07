@@ -1,0 +1,5 @@
+Blocked access to external URL http://nonexistent.not-web-platform.test:8800/foo.html
+n
+
+PASS Verify fallback content for failed cross-origin navigations is shown correctly. 
+

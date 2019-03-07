@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: line 7: Unsafe JavaScript attempt to initiate navigation for frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/load-into-the-iframe.html' from frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/support/iframe-that-performs-top-navigation-on-popup.html'. The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.
 
 
-PASS Frames with `allow-top-navigation` should be able to navigate the top frame even when `allow-top-navigation-by-user-activation` is set. 
+
+FAIL Frames with `allow-top-navigation` should be able to navigate the top frame even when `allow-top-navigation-by-user-activation` is set. assert_equals: expected "can navigate" but got "cannot navigate"
 

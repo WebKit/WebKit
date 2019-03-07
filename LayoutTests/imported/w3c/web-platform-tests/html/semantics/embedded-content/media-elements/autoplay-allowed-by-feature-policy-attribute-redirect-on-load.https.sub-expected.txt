@@ -1,0 +1,4 @@
+
+FAIL Feature-Policy allow="autoplay" allows same-origin navigation in an iframe. Can't find variable: simulateGesture
+FAIL Feature-Policy allow="autoplay" disallows cross-origin navigation in an iframe. Can't find variable: simulateGesture
+

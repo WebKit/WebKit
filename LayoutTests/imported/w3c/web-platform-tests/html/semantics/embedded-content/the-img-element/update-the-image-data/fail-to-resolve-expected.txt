@@ -1,0 +1,6 @@
+
+PASS <img src="//["> 
+PASS <img srcset="//["> 
+PASS <img srcset="//[" src="/images/red.png"> 
+PASS <img srcset="//[, /images/red.png"> 
+   

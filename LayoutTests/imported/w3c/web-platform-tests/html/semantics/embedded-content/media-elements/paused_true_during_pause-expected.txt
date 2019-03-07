@@ -1,10 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
-CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
 spec reference
 
   
-
-Harness Error (FAIL), message = The operation was aborted.
 
 PASS audio events - paused property 
 PASS audio.paused should be true during pause event 

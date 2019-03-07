@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1489: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
+
+CONSOLE MESSAGE: line 15: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
+
+
+
+PASS HTMLIFrameElement.contentDocument for cross-origin document 
+PASS HTMLIFrameElement.getSVGDocument() for cross-origin document 
+

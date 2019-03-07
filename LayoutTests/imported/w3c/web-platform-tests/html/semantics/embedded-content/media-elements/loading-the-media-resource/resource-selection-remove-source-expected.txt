@@ -1,0 +1,3 @@
+
+FAIL Changes to networkState when inserting and removing a <source> assert_equals: networkState after letting the sync section of resource selection run expected 0 but got 3
+

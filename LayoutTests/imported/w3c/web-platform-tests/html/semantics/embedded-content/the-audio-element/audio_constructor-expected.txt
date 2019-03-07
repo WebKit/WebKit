@@ -6,6 +6,7 @@ PASS Non-empty string argument
 PASS Null argument 
 PASS Undefined argument 
 PASS Extra argument 
+PASS Prototype of object created with named constructor 
 PASS Calling Audio should throw 
 PASS Calling HTMLAudioElement should throw 
 PASS Constructing HTMLAudioElement should throw 

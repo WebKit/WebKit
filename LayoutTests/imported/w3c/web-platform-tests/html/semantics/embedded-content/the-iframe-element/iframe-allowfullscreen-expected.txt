@@ -1,5 +1,6 @@
 
-FAIL iframe-allowfullscreen assert_true: Top level document has fullscreen enabled flag set expected true got undefined
-FAIL iframe-noload-noallowfullscreen assert_false: Fullscreen should not be enabled without allowfullscreen attribute expected false got undefined
+FAIL iframe-same-origin-allowfullscreen assert_true: Top level document has fullscreen enabled flag set expected true got undefined
+FAIL iframe-cross-origin-allowfullscreen assert_false: Document inside cross-origin iframe without allowfullscreen attribute should not have fullscreen enabled flag set expected false got undefined
+FAIL iframe-noload-noallowfullscreen assert_true: Fullscreen should still be enabled in same-origin document without allowfullscreen attribute expected true got undefined
 FAIL iframe-noload-allowfullscreen assert_true: Fullscreen should be enabled with allowfullscreen attribute expected true got undefined
 

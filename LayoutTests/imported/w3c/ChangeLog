@@ -1,3 +1,338 @@
+2019-03-07  Frederic Wang  <fwang@igalia.com>
+
+        Update WPT tests for embedded content
+        https://bugs.webkit.org/show_bug.cgi?id=194770
+
+        Reviewed by Rob Buis.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/html/semantics/embedded-content/META.yml: Added.
+        * web-platform-tests/html/semantics/embedded-content/image-maps/image-map-processing-model/hash-name-reference-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/image-maps/image-map-processing-model/hash-name-reference.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/image-maps/image-map-processing-model/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_base.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy.https.sub.html.headers: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-default-feature-policy.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html.headers: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-supported-by-feature-policy-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-supported-by-feature-policy.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-with-broken-track.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_loadstart_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadedmetadata_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadstart_progress.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_playing_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/crossOrigin-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/activeCues.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/addCue.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/removeCue.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/constructor-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/constructor.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCueList/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TrackEvent/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/autoplay-overrides-preload.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-removes-queued-error-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-removes-queued-error-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-insert-before-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-insert-before.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-moved-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-moved.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-addEventListener.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-no-listener-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-no-listener.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-candidate-remove-onerror.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-no-src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor-no-src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-audio-constructor.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-in-sync-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-in-sync-event.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-fragment-into-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-fragment-into-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-iframe-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-into-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-parent-into-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-parent-into-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-div-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-div.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-namespace-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-in-namespace.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-networkState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-not-in-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source-not-in-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-insert-source.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-load-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-load.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-networkState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-pause.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-play-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-play.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-networkState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-from-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-remove-src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-in-namespace-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-in-namespace.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-networkState-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-not-in-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src-not-in-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-set-src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-source-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-source.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-remove-src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resources/delayed-broken-video.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/currentSrc.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/location-of-the-media-resource/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/currentTime.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/paused_true_during_pause.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-networkState.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/play-in-detached-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-hidden.optional.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadedmetadata.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-max-value.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-negative-time-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-negative-time.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/seeking/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/user-interface/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/video_loop_base.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/svg/intrinsicsize/intrinsicsize-svg-image.tentative-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/svg/intrinsicsize/intrinsicsize-svg-image.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/svg/intrinsicsize/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/support/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor.html:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/document-getters-return-null-for-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/document-getters-return-null-for-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-04.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-frame-element/document-getters-return-null-for-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-frame-element/document-getters-return-null-for-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-frame-element/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/content_document_changes_only_after_load_matures.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/document-getters-return-null-for-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/document-getters-return-null-for-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allow-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allow.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-allowfullscreen.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-nosrc-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-nosrc.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01.htm:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_remove_src-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_remove_src.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-1-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-1.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-2-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-2.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-3-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-3.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads_without_user_activation.sub.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads_without_user_activation.sub.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads_without_user_activation.sub.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads_without_user_activation.sub.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/src-repeated-in-ancestor.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/download_stash.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe-that-checks-contentDocument.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/iframe_sandbox_download_helper.js: Added.
+        (StreamDownloadFinishDelay):
+        (DownloadVerifyDelay):
+        (VerifyDownload):
+        (AssertDownloadSuccess):
+        (AssertDownloadFailure):
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/load-into-the-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/404-response-with-actual-image-data-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/404-response-with-actual-image-data.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/404-response-with-actual-image-data.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/Image-constructor.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/available-images-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/available-images-onload-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/available-images-onload.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/available-images.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-iframe.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes-svg.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes-svg.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-picture-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-picture.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-svg.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-svg.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-with-quick-attach-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-with-quick-attach-svg.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-with-quick-attach-svg.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-with-quick-attach.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/decode/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-with-responsive-images.tentative-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-with-responsive-images.tentative.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/intrinsicsize/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCueList/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/ismap/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/null-image-source-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/null-image-source.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/relevant-mutations.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-display-none.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-001-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-001.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002-expected.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-dynamic-002.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/support/parse-a-sizes-attribute.js: Added.
+        (check):
+        (onload):
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/support/sizes-iframed.sub.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-iframed.sub.html.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/srcset-media-dynamic-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/srcset-media-dynamic.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-image-data/fail-to-resolve-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-image-data/fail-to-resolve.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-image-data/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/document-getters-return-null-for-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/document-getters-return-null-for-cross-origin.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback-failed-cross-origin-navigation.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-setcustomvalidity-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-setcustomvalidity.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html.headers: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/resources/w3c-import.log.
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+
 2019-03-06  Javier Fernandez  <jfernandez@igalia.com>
 
         Import new tests from the CSS Text 3 WPT test suite

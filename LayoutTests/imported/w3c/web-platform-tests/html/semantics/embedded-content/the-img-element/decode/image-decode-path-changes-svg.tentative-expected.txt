@@ -1,0 +1,8 @@
+
+FAIL SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+FAIL SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+FAIL SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode; following good decode succeeds. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+FAIL SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode; following good decode succeeds. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+FAIL SVGImageElement.prototype.decode(), href mutation tests. xlink:href changes fail decode; following bad decode fails. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+FAIL SVGImageElement.prototype.decode(), href mutation tests. href changes fail decode; following bad decode fails. img.decode is not a function. (In 'img.decode()', 'img.decode' is undefined)
+
