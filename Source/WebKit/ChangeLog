@@ -1,5 +1,21 @@
 2019-03-07  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r242580) WebKit.NetworkProcessCrashWithPendingConnection API is crashing on iOS debug
+        https://bugs.webkit.org/show_bug.cgi?id=195416
+
+        Reviewed by Antti Koivisto.
+
+        Drop ASSERT_NOT_REACHED() in WebPage::didCompletePageTransition() when the tree is still frozen due to
+        LayerTreeFreezeReason::ProcessSuspended. As demonstrated by this API test, nothing prevents a load from
+        completing and WebPage::didCompletePageTransition() to get called *after* WebProcess::prepareToSuspend()
+        has been called. From the logging during the test, I can tell that WebProcess::processDidResume() gets
+        called later on and the LayerTreeFreezeReason::ProcessSuspended freezing reason gets dropped, as expected.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+
+2019-03-07  Chris Dumez  <cdumez@apple.com>
+
         Clean up / simplify ProcessAssertion code
         https://bugs.webkit.org/show_bug.cgi?id=195394
 

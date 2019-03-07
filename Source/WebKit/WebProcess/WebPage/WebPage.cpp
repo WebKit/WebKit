@@ -3144,12 +3144,6 @@ void WebPage::didCompletePageTransition()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
-    if (m_LayerTreeFreezeReasons.contains(LayerTreeFreezeReason::ProcessSuspended)) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebPage (PageID=%" PRIu64 ") - LayerTreeFreezeReason::ProcessSuspended was set when removing LayerTreeFreezeReason::PageTransition; current reasons are %d",
-            this, m_pageID, m_LayerTreeFreezeReasons.toRaw());
-        ASSERT_NOT_REACHED();
-    }
-
     RELEASE_LOG_IF_ALLOWED("%p - WebPage - Did complete page transition", this);
 
     bool isInitialEmptyDocument = !m_mainFrame;
