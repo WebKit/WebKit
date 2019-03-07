@@ -44,8 +44,8 @@ RemoteInspectorSocketClient::RemoteInspectorSocketClient(RemoteInspectorConnecti
 
 Optional<ClientID> RemoteInspectorSocketClient::connectInet(const char* serverAddress, uint16_t serverPort)
 {
-    struct sockaddr_in address;
-    memset(&address, 0, sizeof(address));
+    struct sockaddr_in address = { };
+
     address.sin_family = AF_INET;
     inet_aton(serverAddress, &address.sin_addr);
     address.sin_port = htons(serverPort);

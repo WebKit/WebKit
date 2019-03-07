@@ -1,3 +1,24 @@
+2019-03-06  Christopher Reid  <chris.reid@sony.com>
+
+        Followups to (r242306): Use LockHolder instead of std::lock_guard on Remote Inspector Locks
+        https://bugs.webkit.org/show_bug.cgi?id=195381
+
+        Reviewed by Mark Lam.
+
+        Replacing std::lock_guard uses in Remote Inspector with WTF::LockHolder.
+        Also using `= { }` for struct initialization instead of memeset.
+
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        * inspector/remote/RemoteInspector.cpp:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        * inspector/remote/playstation/RemoteInspectorPlayStation.cpp:
+        * inspector/remote/playstation/RemoteInspectorSocketClientPlayStation.cpp:
+        * inspector/remote/playstation/RemoteInspectorSocketPlayStation.cpp:
+        * inspector/remote/playstation/RemoteInspectorSocketServerPlayStation.cpp:
+
 2019-03-06  Saam Barati  <sbarati@apple.com>
 
         Air::reportUsedRegisters must padInterference

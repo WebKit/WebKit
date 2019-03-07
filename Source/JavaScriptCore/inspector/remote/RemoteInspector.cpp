@@ -57,7 +57,7 @@ void RemoteInspector::registerTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     unsigned targetIdentifier = nextAvailableTargetIdentifier();
     target->setTargetIdentifier(targetIdentifier);
@@ -80,7 +80,7 @@ void RemoteInspector::unregisterTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     unsigned targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
@@ -102,7 +102,7 @@ void RemoteInspector::updateTarget(RemoteControllableTarget* target)
 {
     ASSERT_ARG(target, target);
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     unsigned targetIdentifier = target->targetIdentifier();
     if (!targetIdentifier)
@@ -127,7 +127,7 @@ void RemoteInspector::updateClientCapabilities()
 {
     ASSERT(isMainThread());
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     if (!m_client)
         m_clientCapabilities = WTF::nullopt;
@@ -147,7 +147,7 @@ void RemoteInspector::setClient(RemoteInspector::Client* client)
     ASSERT((m_client && !client) || (!m_client && client));
 
     {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         m_client = client;
     }
 
@@ -158,7 +158,7 @@ void RemoteInspector::setClient(RemoteInspector::Client* client)
 
 void RemoteInspector::setupFailed(unsigned targetIdentifier)
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     m_targetConnectionMap.remove(targetIdentifier);
 
@@ -172,7 +172,7 @@ void RemoteInspector::setupFailed(unsigned targetIdentifier)
 
 void RemoteInspector::setupCompleted(unsigned targetIdentifier)
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     if (targetIdentifier == m_automaticInspectionCandidateTargetIdentifier)
         m_automaticInspectionPaused = false;
@@ -192,7 +192,7 @@ void RemoteInspector::clientCapabilitiesDidChange()
 
 void RemoteInspector::stop()
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     stopInternal(StopSource::API);
 }

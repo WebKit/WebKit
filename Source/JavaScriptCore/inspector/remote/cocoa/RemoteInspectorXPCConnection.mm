@@ -74,7 +74,7 @@ RemoteInspectorXPCConnection::~RemoteInspectorXPCConnection()
 
 void RemoteInspectorXPCConnection::close()
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
     closeFromMessage();
 }
 
@@ -84,7 +84,7 @@ void RemoteInspectorXPCConnection::closeFromMessage()
     m_client = nullptr;
 
     dispatch_async(m_queue, ^{
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         // This will trigger one last XPC_ERROR_CONNECTION_INVALID event on the queue and deref us.
         closeOnQueue();
     });
@@ -111,7 +111,7 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
 
     xpc_object_t xpcDictionary = xpc_dictionary_get_value(object, RemoteInspectorXPCConnectionSerializedMessageKey);
     if (!xpcDictionary || xpc_get_type(xpcDictionary) != XPC_TYPE_DICTIONARY) {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         if (m_client)
             m_client->xpcConnectionUnhandledMessage(this, object);
         return nil;
@@ -127,7 +127,7 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
 {
     if (xpc_get_type(object) == XPC_TYPE_ERROR) {
         {
-            std::lock_guard<Lock> lock(m_mutex);
+            LockHolder lock(m_mutex);
             if (m_client)
                 m_client->xpcConnectionFailed(this);
 
@@ -149,7 +149,7 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
         audit_token_t token;
         xpc_connection_get_audit_token(m_connection, &token);
         if (!WTF::hasEntitlement(token, "com.apple.private.webinspector.webinspectord")) {
-            std::lock_guard<Lock> lock(m_mutex);
+            LockHolder lock(m_mutex);
             // This will trigger one last XPC_ERROR_CONNECTION_INVALID event on the queue and deref us.
             closeOnQueue();
             return;
@@ -170,7 +170,7 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
     if (userInfo && ![userInfo isKindOfClass:[NSDictionary class]])
         return;
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
     if (m_client)
         m_client->xpcConnectionReceivedMessage(this, message, userInfo);
 }

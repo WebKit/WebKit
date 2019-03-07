@@ -257,8 +257,8 @@ void RemoteInspectorSocket::acceptInetSocketIfEnabled(ClientID id)
 
     LockHolder lock(m_connectionsLock);
     if (const auto& connection = m_connections.get(id)) {
-        struct sockaddr_in address;
-        memset(&address, 0, sizeof(address));
+        struct sockaddr_in address = { };
+
         socklen_t len = sizeof(struct sockaddr_in);
         int fd = accept(connection->socket, (struct sockaddr*)&address, &len);
         if (fd < 0) {

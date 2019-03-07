@@ -57,7 +57,7 @@ void RemoteInspector::didClose(ClientID clientID)
         return;
 
     RunLoop::current().dispatch([=] {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         stopInternal(StopSource::API);
     });
 }
@@ -85,7 +85,7 @@ void RemoteInspector::sendWebInspectorEvent(const String& event)
 
 void RemoteInspector::start()
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
 
     if (m_enabled || s_connectionIdentifier == INVALID_SOCKET_VALUE)
         return;
@@ -178,7 +178,7 @@ void RemoteInspector::pushListingsSoon()
     m_pushScheduled = true;
 
     RunLoop::current().dispatch([=] {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         if (m_pushScheduled)
             pushListingsNow();
     });
@@ -194,7 +194,7 @@ void RemoteInspector::sendAutomaticInspectionCandidateMessage()
 
 void RemoteInspector::sendMessageToRemote(unsigned targetIdentifier, const String& message)
 {
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
     if (!m_socketConnection)
         return;
 
@@ -209,7 +209,7 @@ void RemoteInspector::receivedGetTargetListMessage(const Event&)
 {
     ASSERT(isMainThread());
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
     pushListingsNow();
 }
 
@@ -230,7 +230,7 @@ void RemoteInspector::receivedDataMessage(const Event& event)
 
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         connectionToTarget = m_targetConnectionMap.get(event.targetID.value());
         if (!connectionToTarget)
             return;
@@ -248,7 +248,7 @@ void RemoteInspector::receivedCloseMessage(const Event& event)
 
     RefPtr<RemoteConnectionToTarget> connectionToTarget;
     {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         RemoteControllableTarget* target = m_targetMap.get(event.targetID.value());
         if (!target)
             return;
@@ -265,7 +265,7 @@ void RemoteInspector::setup(unsigned targetIdentifier)
 {
     RemoteControllableTarget* target;
     {
-        std::lock_guard<Lock> lock(m_mutex);
+        LockHolder lock(m_mutex);
         target = m_targetMap.get(targetIdentifier);
         if (!target)
             return;
@@ -278,7 +278,7 @@ void RemoteInspector::setup(unsigned targetIdentifier)
         return;
     }
 
-    std::lock_guard<Lock> lock(m_mutex);
+    LockHolder lock(m_mutex);
     m_targetConnectionMap.set(targetIdentifier, WTFMove(connectionToTarget));
 
     updateHasActiveDebugSession();

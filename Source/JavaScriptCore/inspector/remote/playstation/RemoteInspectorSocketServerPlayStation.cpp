@@ -44,8 +44,7 @@ RemoteInspectorSocketServer::RemoteInspectorSocketServer(RemoteInspectorConnecti
 
 bool RemoteInspectorSocketServer::listenInet(uint16_t port)
 {
-    struct sockaddr_in address;
-    memset(&address, 0, sizeof(address));
+    struct sockaddr_in address = { };
 
     int fdListen = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (fdListen < 0) {

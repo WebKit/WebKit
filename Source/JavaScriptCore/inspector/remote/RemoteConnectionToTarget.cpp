@@ -45,7 +45,7 @@ RemoteConnectionToTarget::~RemoteConnectionToTarget()
 
 bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automaticallyPause)
 {
-    std::lock_guard<Lock> lock(m_targetMutex);
+    LockHolder lock(m_targetMutex);
     if (!m_target)
         return false;
 
@@ -75,7 +75,7 @@ void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
 {
     RemoteControllableTarget* target = nullptr;
     {
-        std::lock_guard<Lock> lock(m_targetMutex);
+        LockHolder lock(m_targetMutex);
         if (!m_target)
             return;
         target = m_target;
@@ -86,7 +86,7 @@ void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
 
 void RemoteConnectionToTarget::close()
 {
-    std::lock_guard<Lock> lock(m_targetMutex);
+    LockHolder lock(m_targetMutex);
     if (!m_target)
         return;
 
@@ -102,7 +102,7 @@ void RemoteConnectionToTarget::close()
 
 void RemoteConnectionToTarget::targetClosed()
 {
-    std::lock_guard<Lock> lock(m_targetMutex);
+    LockHolder lock(m_targetMutex);
     m_target = nullptr;
 }
 
