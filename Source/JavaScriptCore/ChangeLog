@@ -1,3 +1,44 @@
+2019-03-07  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Lazily decode cached bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=194810
+
+        Reviewed by Saam Barati.
+
+        Like lazy parsing, we should pause at code block boundaries. Instead
+        of always eagerly decoding UnlinkedFunctionExecutable's UnlinkedCodeBlocks,
+        we store their offsets in the executable and lazily decode them on the next
+        call to `unlinkedCodeBlockFor`.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::UnlinkedFunctionExecutable::decodeCachedCodeBlocks):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * runtime/CachedTypes.cpp:
+        (JSC::Decoder::Decoder):
+        (JSC::Decoder::~Decoder):
+        (JSC::Decoder::create):
+        (JSC::Decoder::offsetOf):
+        (JSC::Decoder::cacheOffset):
+        (JSC::Decoder::ptrForOffsetFromBase):
+        (JSC::Decoder::handleForEnvironment const):
+        (JSC::Decoder::setHandleForEnvironment):
+        (JSC::Decoder::addFinalizer):
+        (JSC::VariableLengthObject::isEmpty const):
+        (JSC::CachedWriteBarrier::isEmpty const):
+        (JSC::CachedFunctionExecutable::unlinkedCodeBlockForCall const):
+        (JSC::CachedFunctionExecutable::unlinkedCodeBlockForConstruct const):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::decodeCodeBlockImpl):
+        (JSC::isCachedBytecodeStillValid):
+        (JSC::decodeFunctionCodeBlock):
+        * runtime/CachedTypes.h:
+        (JSC::Decoder::vm):
+
 2019-03-06  Mark Lam  <mark.lam@apple.com>
 
         Exception is a JSCell, not a JSObject.

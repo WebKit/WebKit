@@ -28,6 +28,7 @@
 
 #include "BuiltinExecutables.h"
 #include "BytecodeGenerator.h"
+#include "CachedTypes.h"
 #include "ClassInfo.h"
 #include "CodeCache.h"
 #include "Debugger.h"
@@ -103,6 +104,9 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_scriptMode(static_cast<unsigned>(scriptMode))
     , m_superBinding(static_cast<unsigned>(node->superBinding()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
+    , m_isCached(false)
+    , m_unlinkedCodeBlockForCall()
+    , m_unlinkedCodeBlockForConstruct()
     , m_name(node->ident())
     , m_ecmaName(node->ecmaName())
     , m_inferredName(node->inferredName())
@@ -120,6 +124,12 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
         setClassSource(node->classSource());
 }
 
+UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable()
+{
+    if (m_isCached)
+        m_decoder.~RefPtr();
+}
+
 void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 {
     static_cast<UnlinkedFunctionExecutable*>(cell)->~UnlinkedFunctionExecutable();
@@ -130,8 +140,10 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_unlinkedCodeBlockForCall);
-    visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
+    if (!thisObject->m_isCached) {
+        visitor.append(thisObject->m_unlinkedCodeBlockForCall);
+        visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
+    }
 }
 
 SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passedParentSource) const
@@ -213,6 +225,8 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     VM& vm, const SourceCode& source, CodeSpecializationKind specializationKind, 
     DebuggerMode debuggerMode, ParserError& error, SourceParseMode parseMode)
 {
+    if (m_isCached)
+        decodeCachedCodeBlocks();
     switch (specializationKind) {
     case CodeForCall:
         if (UnlinkedFunctionCodeBlock* codeBlock = m_unlinkedCodeBlockForCall.get())
@@ -242,6 +256,31 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     }
     vm.unlinkedFunctionExecutableSpace.set.add(this);
     return result;
+}
+
+void UnlinkedFunctionExecutable::decodeCachedCodeBlocks()
+{
+    ASSERT(m_isCached);
+    ASSERT(m_decoder);
+    ASSERT(m_cachedCodeBlockForCallOffset || m_cachedCodeBlockForConstructOffset);
+
+    RefPtr<Decoder> decoder = WTFMove(m_decoder);
+    int32_t cachedCodeBlockForCallOffset = m_cachedCodeBlockForCallOffset;
+    int32_t cachedCodeBlockForConstructOffset = m_cachedCodeBlockForConstructOffset;
+
+    DeferGC deferGC(decoder->vm().heap);
+
+    // No need to clear m_unlinkedCodeBlockForCall here, since we moved the decoder out of the same slot
+    if (cachedCodeBlockForCallOffset)
+        decodeFunctionCodeBlock(*decoder, cachedCodeBlockForCallOffset, m_unlinkedCodeBlockForCall, this);
+    if (cachedCodeBlockForConstructOffset)
+        decodeFunctionCodeBlock(*decoder, cachedCodeBlockForConstructOffset, m_unlinkedCodeBlockForConstruct, this);
+    else
+        m_unlinkedCodeBlockForConstruct.clear();
+
+    WTF::storeStoreFence();
+    m_isCached = false;
+    decoder->vm().heap.writeBarrier(this);
 }
 
 UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareDataSlow()
