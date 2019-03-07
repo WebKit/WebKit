@@ -1,3 +1,16 @@
+2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Crash when attempting to change input type while dismissing datalist suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=195384
+        <rdar://problem/48563718>
+
+        Reviewed by Brent Fulgham.
+
+        Add a new layout test to exercise this scenario.
+
+        * fast/forms/datalist/change-input-type-after-closing-datalist-suggestions-expected.txt: Added.
+        * fast/forms/datalist/change-input-type-after-closing-datalist-suggestions.html: Added.
+
 2019-03-06  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUTexture and GPUTextureView updates, and related GPUBindGroup updates

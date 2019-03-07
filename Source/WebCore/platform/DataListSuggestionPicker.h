@@ -27,14 +27,13 @@
 
 #if ENABLE(DATALIST_ELEMENT)
 
-#import "DataListSuggestionInformation.h"
-#import "IntRect.h"
-
-#import <wtf/text/WTFString.h>
+#include "DataListSuggestionInformation.h"
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DataListSuggestionPicker {
+class DataListSuggestionPicker : public CanMakeWeakPtr<DataListSuggestionPicker> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DataListSuggestionPicker() = default;

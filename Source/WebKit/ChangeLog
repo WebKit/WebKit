@@ -1,3 +1,21 @@
+2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Crash when attempting to change input type while dismissing datalist suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=195384
+        <rdar://problem/48563718>
+
+        Reviewed by Brent Fulgham.
+
+        See WebCore ChangeLog for more details.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActiveDataListSuggestionPicker):
+        (WebKit::WebPage::didSelectDataListOption):
+        (WebKit::WebPage::didCloseSuggestions):
+        * WebProcess/WebPage/WebPage.h:
+
+        Turn m_activeDataListSuggestionPicker from a raw pointer into a WeakPtr.
+
 2019-03-06  Chris Dumez  <cdumez@apple.com>
 
         [iOS] ProcessDidResume() IPC should be sent upon resuming when ProcessWillSuspendImminently() IPC was sent

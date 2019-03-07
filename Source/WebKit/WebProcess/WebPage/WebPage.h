@@ -1657,7 +1657,7 @@ private:
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
-    WebDataListSuggestionPicker* m_activeDataListSuggestionPicker { nullptr };
+    WeakPtr<WebDataListSuggestionPicker> m_activeDataListSuggestionPicker;
 #endif
 
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;

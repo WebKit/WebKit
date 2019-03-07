@@ -3899,19 +3899,19 @@ void WebPage::didChooseColor(const WebCore::Color& color)
 
 void WebPage::setActiveDataListSuggestionPicker(WebDataListSuggestionPicker* dataListSuggestionPicker)
 {
-    m_activeDataListSuggestionPicker = dataListSuggestionPicker;
+    m_activeDataListSuggestionPicker = makeWeakPtr(dataListSuggestionPicker);
 }
 
 void WebPage::didSelectDataListOption(const String& selectedOption)
 {
-    m_activeDataListSuggestionPicker->didSelectOption(selectedOption);
+    if (m_activeDataListSuggestionPicker)
+        m_activeDataListSuggestionPicker->didSelectOption(selectedOption);
 }
 
 void WebPage::didCloseSuggestions()
 {
-    if (m_activeDataListSuggestionPicker)
-        m_activeDataListSuggestionPicker->didCloseSuggestions();
-    m_activeDataListSuggestionPicker = nullptr;
+    if (auto picker = std::exchange(m_activeDataListSuggestionPicker, nullptr))
+        picker->didCloseSuggestions();
 }
 
 #endif
