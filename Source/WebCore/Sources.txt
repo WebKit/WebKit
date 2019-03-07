@@ -363,6 +363,7 @@ Modules/webgpu/WebGPURenderingContext.cpp
 Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
+Modules/webgpu/WebGPUSampler.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
 Modules/webgpu/WebGPUSwapChain.cpp
 Modules/webgpu/WebGPUTexture.cpp
@@ -2782,6 +2783,7 @@ JSGPUExtent3D.cpp
 JSGPULoadOp.cpp
 JSGPUOrigin3D.cpp
 JSGPURequestAdapterOptions.cpp
+JSGPUSamplerDescriptor.cpp
 JSGPUShaderStageBit.cpp
 JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
@@ -3340,6 +3342,7 @@ JSWebGPURenderPassDescriptor.cpp
 JSWebGPURenderPassEncoder.cpp
 JSWebGPURenderPipeline.cpp
 JSWebGPURenderPipelineDescriptor.cpp
+JSWebGPUSampler.cpp
 JSWebGPUShaderModule.cpp
 JSWebGPUShaderModuleDescriptor.cpp
 JSWebGPUSwapChain.cpp

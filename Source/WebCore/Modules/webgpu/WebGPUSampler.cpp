@@ -23,17 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUSampler.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCompareFunction.h"
-#include "GPUTextureFormat.h"
-
 namespace WebCore {
 
-PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat);
-PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction);
+Ref<WebGPUSampler> WebGPUSampler::create(RefPtr<GPUSampler>&& sampler)
+{
+    return adoptRef(*new WebGPUSampler(WTFMove(sampler)));
+}
+
+WebGPUSampler::WebGPUSampler(RefPtr<GPUSampler>&& sampler)
+    : m_sampler(WTFMove(sampler))
+{
+}
 
 } // namespace WebCore
 

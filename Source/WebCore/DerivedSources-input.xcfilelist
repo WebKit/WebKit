@@ -332,6 +332,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUExtent3D.idl
 $(PROJECT_DIR)/Modules/webgpu/GPULoadOp.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUOrigin3D.idl
 $(PROJECT_DIR)/Modules/webgpu/GPURequestAdapterOptions.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUSamplerDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUShaderStageBit.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUStoreOp.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUTextureDescriptor.idl
@@ -369,6 +370,7 @@ $(PROJECT_DIR)/Modules/webgpu/WebGPURenderPassEncoder.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPURenderPipeline.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPURenderPipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPURenderingContext.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUSampler.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUShaderModule.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUShaderStageBit.idl

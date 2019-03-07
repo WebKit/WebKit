@@ -44,11 +44,13 @@ class WebGPUBuffer;
 class WebGPUCommandBuffer;
 class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
+class WebGPUSampler;
 class WebGPUShaderModule;
 class WebGPUTexture;
 
 struct GPUBindGroupLayoutDescriptor;
 struct GPUBufferDescriptor;
+struct GPUSamplerDescriptor;
 struct GPUTextureDescriptor;
 struct WebGPUBindGroupDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
@@ -64,6 +66,7 @@ public:
 
     Ref<WebGPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
     Ref<WebGPUTexture> createTexture(GPUTextureDescriptor&&) const;
+    Ref<WebGPUSampler> createSampler(const GPUSamplerDescriptor&) const;
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&) const;
     Ref<WebGPUPipelineLayout> createPipelineLayout(WebGPUPipelineLayoutDescriptor&&) const;

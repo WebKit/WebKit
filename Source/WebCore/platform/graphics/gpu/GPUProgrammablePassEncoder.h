@@ -61,8 +61,9 @@ protected:
 
 private:
 #if USE(METAL)
-    void setResourceAsBufferOnEncoder(MTLArgumentEncoder *, const GPUBindingResource&, unsigned, const char* const);
-    void setResourceAsTextureOnEncoder(MTLArgumentEncoder *, const GPUBindingResource&, unsigned, const char* const);
+    void setResourceAsBufferOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
+    void setResourceAsSamplerOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
+    void setResourceAsTextureOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
     virtual void useResource(MTLResource *, unsigned) = 0;
 
     // Render command encoder methods.

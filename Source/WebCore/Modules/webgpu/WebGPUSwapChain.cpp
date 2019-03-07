@@ -28,8 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormat.h"
-
 namespace WebCore {
 
 WebGPUSwapChain::~WebGPUSwapChain() = default;

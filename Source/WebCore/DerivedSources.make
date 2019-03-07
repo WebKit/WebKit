@@ -383,6 +383,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
     $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
+    $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
@@ -413,6 +414,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPURenderPipeline.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPipelineDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderingContext.idl \
+    $(WebCore)/Modules/webgpu/WebGPUSampler.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModule.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \

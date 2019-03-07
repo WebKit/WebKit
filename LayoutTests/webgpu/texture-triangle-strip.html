@@ -10,6 +10,14 @@
 if (window.testRunner)
     testRunner.waitUntilDone();
 
+const positionBufferIndex = 0;
+const texCoordsBufferIndex = 1;
+const positionAttributeNum = 0;
+const texCoordsAttributeNum = 1;
+const bindGroupIndex = 0;
+const textureBindingNum = 0;
+const samplerBindingNum = 1;
+
 const shaderCode = `
 #include <metal_stdlib>
     
@@ -17,8 +25,8 @@ using namespace metal;
 
 struct VertexIn
 {
-    float4 position [[attribute(0)]];
-    float2 texCoords [[attribute(1)]];
+    float4 position [[attribute(${positionAttributeNum})]];
+    float2 texCoords [[attribute(${texCoordsAttributeNum})]];
 };
 
 struct VertexOut
@@ -35,15 +43,15 @@ vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
     return vOut;
 }
 
-struct Texture
+struct TextureSampler
 {
-    texture2d<float> image [[id(0)]];
+    texture2d<float> t [[id(${textureBindingNum})]];
+    sampler s [[id(${samplerBindingNum})]];
 };
 
-fragment float4 fragment_main(VertexOut v [[stage_in]], const device Texture& t [[buffer(0)]])
+fragment float4 fragment_main(VertexOut v [[stage_in]], const device TextureSampler& args [[buffer(${bindGroupIndex})]])
 {
-    constexpr sampler s(coord::normalized, address::clamp_to_zero, filter::nearest);
-    return t.image.sample(s, v.texCoords);
+    return args.t.sample(args.s, v.texCoords);
 }
 `
 
@@ -51,22 +59,22 @@ function createInputStateDescriptor() {
     return {
         indexFormat: WebGPUIndexFormat.UINT32,
         attributes: [{
-            shaderLocation: 0,
-            inputSlot: 0,
+            shaderLocation: positionAttributeNum,
+            inputSlot: positionBufferIndex,
             offset: 0,
             format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
         }, {
-            shaderLocation: 1,
-            inputSlot: 1,
+            shaderLocation: texCoordsAttributeNum,
+            inputSlot: texCoordsBufferIndex,
             offset: 0,
             format: WebGPUVertexFormat.FLOAT_R32_G32
         }],
         inputs: [{
-            inputSlot: 0,
+            inputSlot: positionBufferIndex,
             stride: 4 * 4,
             stepMode: WebGPUInputStepMode.VERTEX
         }, {
-            inputSlot: 1,
+            inputSlot: texCoordsBufferIndex,
             stride: 4 * 2,
             stepMode: WebGPUInputStepMode.VERTEX
         }]
@@ -80,25 +88,25 @@ async function test() {
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
-    const vertexArray = new Float32Array([
+    const positionArray = new Float32Array([
         // float4 xyzw
         -1, 1, 0, 1,
         -1, -1, 0, 1,
         1, 1, 0, 1, 
         1, -1, 0, 1
     ]);
-    const vertexBuffer = device.createBuffer({ size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    vertexBuffer.setSubData(0, vertexArray.buffer);
+    const positionBuffer = device.createBuffer({ size: positionArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    positionBuffer.setSubData(0, positionArray.buffer);
 
-    const textureCoordArray = new Float32Array([
+    const texCoordsArray = new Float32Array([
         // float2 texCoords
         0, 0,
         0, 1,
         1, 0,
         1, 1
     ]);
-    const textureCoordBuffer = device.createBuffer({ size: textureCoordArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
-    textureCoordBuffer.setSubData(0, textureCoordArray.buffer);
+    const textureCoordBuffer = device.createBuffer({ size: texCoordsArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    textureCoordBuffer.setSubData(0, texCoordsArray.buffer);
 
     const inputStateDescriptor = createInputStateDescriptor();
 
@@ -143,17 +151,36 @@ async function test() {
     };
     const texture = device.createTexture(textureDescriptor);
 
-    // Bind texture to pipeline
-    const textureBindingNum = 0;
+    // Bind texture and a sampler to pipeline
+    const textureLayoutBinding = { 
+        binding: textureBindingNum, 
+        visibility: GPUShaderStageBit.FRAGMENT, 
+        type: "sampled-texture" 
+    };
+    const samplerLayoutBinding = {
+        binding: samplerBindingNum,
+        visibility: GPUShaderStageBit.FRAGMENT,
+        type: "sampler"
+    };
+
     const bindGroupLayoutDescriptor = {
-        bindings: [{ binding: textureBindingNum, visibility: GPUShaderStageBit.FRAGMENT, type: "sampled-texture" }]
+        bindings: [textureLayoutBinding, samplerLayoutBinding]
     };
     bindGroupLayout = device.createBindGroupLayout(bindGroupLayoutDescriptor);
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
+    const textureBinding = { 
+        binding: textureBindingNum, 
+        resource: texture.createDefaultTextureView() 
+    };
+    const samplerBinding = {
+        binding: samplerBindingNum,
+        resource: device.createSampler({ minFilter: "nearest", magFilter: "nearest" })
+    };
+
     const bindGroupDescriptor = {
         layout: bindGroupLayout,
-        bindings: [{ binding: textureBindingNum, resource: texture.createDefaultTextureView() }]
+        bindings: [textureBinding, samplerBinding]
     };
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
@@ -176,14 +203,14 @@ async function test() {
     commandBuffer.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
     const passEncoder = beginBasicRenderPass(context, commandBuffer);
     passEncoder.setPipeline(pipeline);
-    passEncoder.setBindGroup(0, bindGroup);
-    passEncoder.setVertexBuffers(0, [vertexBuffer, textureCoordBuffer], [0, 0]);
+    passEncoder.setBindGroup(bindGroupIndex, bindGroup);
+    passEncoder.setVertexBuffers(positionBufferIndex, [positionBuffer, textureCoordBuffer], [0, 0]);
     passEncoder.draw(4, 1, 0, 0);
     passEncoder.endPass();
 
     const queue = device.getQueue();
     queue.submit([commandBuffer]);
-    vertexBuffer.destroy();
+    positionBuffer.destroy();
     textureCoordBuffer.destroy();
     texture.destroy();
     context.present();

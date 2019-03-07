@@ -44,6 +44,32 @@ PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat 
     case GPUTextureFormat::D32FloatS8Uint:
         return MTLPixelFormatDepth32Float_Stencil8;
     }
+
+    ASSERT_NOT_REACHED();
+}
+
+PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction func)
+{
+    switch (func) {
+    case GPUCompareFunction::Never:
+        return MTLCompareFunctionNever;
+    case GPUCompareFunction::Less:
+        return MTLCompareFunctionLess;
+    case GPUCompareFunction::Equal:
+        return MTLCompareFunctionEqual;
+    case GPUCompareFunction::LessEqual:
+        return MTLCompareFunctionLessEqual;
+    case GPUCompareFunction::Greater:
+        return MTLCompareFunctionGreater;
+    case GPUCompareFunction::NotEqual:
+        return MTLCompareFunctionNotEqual;
+    case GPUCompareFunction::GreaterEqual:
+        return MTLCompareFunctionGreaterEqual;
+    case GPUCompareFunction::Always:
+        return MTLCompareFunctionAlways;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

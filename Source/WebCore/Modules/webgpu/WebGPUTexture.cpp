@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUTextureView.h"
+#include "Logging.h"
 
 namespace WebCore {
 

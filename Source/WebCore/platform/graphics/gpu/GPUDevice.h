@@ -45,6 +45,7 @@ class GPUBuffer;
 class GPUCommandBuffer;
 class GPUPipelineLayout;
 class GPURenderPipeline;
+class GPUSampler;
 class GPUShaderModule;
 class GPUTexture;
 
@@ -53,6 +54,7 @@ struct GPUBufferDescriptor;
 struct GPUPipelineLayoutDescriptor;
 struct GPURenderPipelineDescriptor;
 struct GPURequestAdapterOptions;
+struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
 struct GPUTextureDescriptor;
 
@@ -62,6 +64,7 @@ public:
 
     RefPtr<GPUBuffer> tryCreateBuffer(GPUBufferDescriptor&&);
     RefPtr<GPUTexture> tryCreateTexture(GPUTextureDescriptor&&) const;
+    RefPtr<GPUSampler> tryCreateSampler(const GPUSamplerDescriptor&) const;
 
     RefPtr<GPUBindGroupLayout> tryCreateBindGroupLayout(const GPUBindGroupLayoutDescriptor&) const;
     Ref<GPUPipelineLayout> createPipelineLayout(GPUPipelineLayoutDescriptor&&) const;

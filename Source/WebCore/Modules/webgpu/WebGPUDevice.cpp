@@ -37,6 +37,8 @@
 #include "GPUCommandBuffer.h"
 #include "GPUPipelineStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
+#include "GPUSampler.h"
+#include "GPUSamplerDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTextureDescriptor.h"
 #include "Logging.h"
@@ -52,6 +54,7 @@
 #include "WebGPUQueue.h"
 #include "WebGPURenderPipeline.h"
 #include "WebGPURenderPipelineDescriptor.h"
+#include "WebGPUSampler.h"
 #include "WebGPUShaderModule.h"
 #include "WebGPUShaderModuleDescriptor.h"
 #include "WebGPUTexture.h"
@@ -82,6 +85,12 @@ Ref<WebGPUTexture> WebGPUDevice::createTexture(GPUTextureDescriptor&& descriptor
 {
     auto texture = m_device->tryCreateTexture(WTFMove(descriptor));
     return WebGPUTexture::create(WTFMove(texture));
+}
+
+Ref<WebGPUSampler> WebGPUDevice::createSampler(const GPUSamplerDescriptor& descriptor) const
+{
+    auto sampler = m_device->tryCreateSampler(descriptor);
+    return WebGPUSampler::create(WTFMove(sampler));
 }
 
 Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& descriptor) const

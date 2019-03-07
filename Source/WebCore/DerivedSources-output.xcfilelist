@@ -599,6 +599,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPURequestAdapterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUSamplerDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUShaderStageBit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUStoreOp.cpp
@@ -1933,6 +1935,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPURenderPipelineDescriptor.cp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPURenderPipelineDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPURenderingContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPURenderingContext.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUSampler.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUSampler.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUShaderModule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUShaderModule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUShaderModuleDescriptor.cpp

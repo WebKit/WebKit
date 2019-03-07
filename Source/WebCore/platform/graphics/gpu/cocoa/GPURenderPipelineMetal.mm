@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPULimits.h"
+#import "GPUUtils.h"
 #import "Logging.h"
 #import "WHLSLVertexBufferIndexCalculator.h"
 #import <Metal/Metal.h>
@@ -36,30 +37,6 @@
 #import <wtf/Optional.h>
 
 namespace WebCore {
-
-static Optional<MTLCompareFunction> validateAndConvertDepthCompareFunctionToMtl(GPUCompareFunction func)
-{
-    switch (func) {
-    case GPUCompareFunction::Never:
-        return MTLCompareFunctionNever;
-    case GPUCompareFunction::Less:
-        return MTLCompareFunctionLess;
-    case GPUCompareFunction::Equal:
-        return MTLCompareFunctionEqual;
-    case GPUCompareFunction::LessEqual:
-        return MTLCompareFunctionLessEqual;
-    case GPUCompareFunction::Greater:
-        return MTLCompareFunctionGreater;
-    case GPUCompareFunction::NotEqual:
-        return MTLCompareFunctionNotEqual;
-    case GPUCompareFunction::GreaterEqual:
-        return MTLCompareFunctionGreaterEqual;
-    case GPUCompareFunction::Always:
-        return MTLCompareFunctionAlways;
-    default:
-        return WTF::nullopt;
-    }
-}
 
 static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const char* const functionName, const GPUDepthStencilStateDescriptor& descriptor, const GPUDevice& device)
 {
@@ -79,13 +56,8 @@ static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const char*
         return nullptr;
     }
 
-    auto mtlDepthCompare = validateAndConvertDepthCompareFunctionToMtl(descriptor.depthCompare);
-    if (!mtlDepthCompare) {
-        LOG(WebGPU, "%s: Invalid GPUCompareFunction in GPUDepthStencilStateDescriptor!", functionName);
-        return nullptr;
-    }
-
-    [mtlDescriptor setDepthCompareFunction:*mtlDepthCompare];
+    auto mtlDepthCompare = static_cast<MTLCompareFunction>(platformCompareFunctionForGPUCompareFunction(descriptor.depthCompare));
+    [mtlDescriptor setDepthCompareFunction:mtlDepthCompare];
     [mtlDescriptor setDepthWriteEnabled:descriptor.depthWriteEnabled];
 
     // FIXME: Implement back/frontFaceStencil.

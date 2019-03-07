@@ -325,6 +325,7 @@ platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm
 platform/graphics/gpu/cocoa/GPUQueueMetal.mm
 platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm
 platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm
+platform/graphics/gpu/cocoa/GPUSamplerMetal.mm
 platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm
 platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm
 platform/graphics/gpu/cocoa/GPUTextureMetal.mm

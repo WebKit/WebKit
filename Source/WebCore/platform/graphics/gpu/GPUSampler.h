@@ -27,13 +27,32 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCompareFunction.h"
-#include "GPUTextureFormat.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_PROTOCOL(MTLSamplerState);
 
 namespace WebCore {
 
-PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat);
-PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction);
+class GPUDevice;
+
+struct GPUSamplerDescriptor;
+
+using PlatformSampler = MTLSamplerState;
+using PlatformSamplerSmartPtr = RetainPtr<MTLSamplerState>;
+
+class GPUSampler : public RefCounted<GPUSampler> {
+public:
+    static RefPtr<GPUSampler> tryCreate(const GPUDevice&, const GPUSamplerDescriptor&);
+
+    PlatformSampler* platformSampler() const { return m_platformSampler.get(); }
+
+private:
+    GPUSampler(PlatformSamplerSmartPtr&&);
+
+    PlatformSamplerSmartPtr m_platformSampler;
+};
 
 } // namespace WebCore
 

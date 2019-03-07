@@ -133,7 +133,7 @@ private:
 
     unsigned long m_byteLength;
     OptionSet<GPUBufferUsage::Flags> m_usage;
-    unsigned m_numScheduledCommandBuffers = 0;
+    unsigned m_numScheduledCommandBuffers { 0 };
 };
 
 } // namespace WebCore

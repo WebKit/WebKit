@@ -88,7 +88,15 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::asGPUBindGroupDescri
 
         const auto layoutBinding = iterator->value;
 
-        auto bindingResourceVisitor = WTF::makeVisitor([](const RefPtr<WebGPUTextureView>& view) -> Optional<GPUBindingResource> {
+        auto bindingResourceVisitor = WTF::makeVisitor([](const RefPtr<WebGPUSampler>& sampler) -> Optional<GPUBindingResource> {
+            if (!sampler)
+                return WTF::nullopt;
+            auto gpuSampler = sampler->sampler();
+            if (!gpuSampler)
+                return WTF::nullopt;
+
+            return static_cast<GPUBindingResource>(makeRef(*gpuSampler));
+        }, [](const RefPtr<WebGPUTextureView>& view) -> Optional<GPUBindingResource> {
             if (!view)
                 return WTF::nullopt;
             auto texture = view->texture();

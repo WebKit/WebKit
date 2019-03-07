@@ -28,12 +28,40 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCompareFunction.h"
-#include "GPUTextureFormat.h"
 
 namespace WebCore {
 
-PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat);
-PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction);
+struct GPUSamplerDescriptor {
+    enum class AddressMode {
+        ClampToEdge,
+        Repeat,
+        MirrorRepeat,
+        ClampToBorderColor,
+    };
+
+    enum class FilterMode {
+        Nearest,
+        Linear,
+    };
+
+    enum class BorderColor {
+        TransparentBlack,
+        OpaqueBlack,
+        OpaqueWhite,
+    };
+
+    AddressMode addressModeU { AddressMode::ClampToEdge };
+    AddressMode addressModeV { AddressMode::ClampToEdge };
+    AddressMode addressModeW { AddressMode::ClampToEdge };
+    FilterMode magFilter { FilterMode::Nearest };
+    FilterMode minFilter { FilterMode::Nearest };
+    FilterMode mipmapFilter { FilterMode::Nearest };
+    float lodMinClamp { 0 };
+    float lodMaxClamp { 0xffffffff };
+    unsigned maxAnisotropy { 1 };
+    GPUCompareFunction compareFunction { GPUCompareFunction::Never };
+    BorderColor borderColor { BorderColor::TransparentBlack };
+};
 
 } // namespace WebCore
 

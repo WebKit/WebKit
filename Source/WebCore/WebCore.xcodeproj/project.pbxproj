@@ -14105,6 +14105,13 @@
 		D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureASTC.h; sourceTree = "<group>"; };
 		D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureASTC.cpp; sourceTree = "<group>"; };
 		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
+		D0ADB26222309D7600A22935 /* GPUSamplerDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUSamplerDescriptor.h; sourceTree = "<group>"; };
+		D0ADB26322309D7600A22935 /* GPUSamplerDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUSamplerDescriptor.idl; sourceTree = "<group>"; };
+		D0ADB2682230AACB00A22935 /* GPUSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUSampler.h; sourceTree = "<group>"; };
+		D0ADB26B2230ACC000A22935 /* GPUSamplerMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUSamplerMetal.mm; sourceTree = "<group>"; };
+		D0ADB26C2230BB8E00A22935 /* WebGPUSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSampler.h; sourceTree = "<group>"; };
+		D0ADB26D2230BB8E00A22935 /* WebGPUSampler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSampler.cpp; sourceTree = "<group>"; };
+		D0ADB26F2230C1F100A22935 /* WebGPUSampler.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSampler.idl; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
 		D0B8BB0121C46E78000C7681 /* GPUBindGroupLayoutBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayoutBinding.h; sourceTree = "<group>"; };
@@ -18503,6 +18510,8 @@
 				312FF8B921A4C2EF00EB199D /* GPURenderPipeline.h */,
 				312FF8BC21A4C2F000EB199D /* GPURenderPipelineDescriptor.h */,
 				D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */,
+				D0ADB2682230AACB00A22935 /* GPUSampler.h */,
+				D0ADB26222309D7600A22935 /* GPUSamplerDescriptor.h */,
 				312FF8BB21A4C2F000EB199D /* GPUShaderModule.h */,
 				312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */,
 				D08AA032220D0D0B0058C502 /* GPUStoreOp.h */,
@@ -26098,6 +26107,7 @@
 				D0CCA94922299F97006979B6 /* GPUOrigin3D.h */,
 				D0CCA94A22299F97006979B6 /* GPUOrigin3D.idl */,
 				D02C26922181416D00D818E4 /* GPURequestAdapterOptions.idl */,
+				D0ADB26322309D7600A22935 /* GPUSamplerDescriptor.idl */,
 				D0DE8FB8222E09E200882550 /* GPUShaderStageBit.h */,
 				D0DE8FB9222E09E200882550 /* GPUShaderStageBit.idl */,
 				D08AA031220D0CE60058C502 /* GPUStoreOp.idl */,
@@ -26168,6 +26178,9 @@
 				D0C419F9218404DA009EC1DE /* WebGPURenderPipeline.idl */,
 				D0C419F22183EFEC009EC1DE /* WebGPURenderPipelineDescriptor.h */,
 				D0C419F32183EFEC009EC1DE /* WebGPURenderPipelineDescriptor.idl */,
+				D0ADB26D2230BB8E00A22935 /* WebGPUSampler.cpp */,
+				D0ADB26C2230BB8E00A22935 /* WebGPUSampler.h */,
+				D0ADB26F2230C1F100A22935 /* WebGPUSampler.idl */,
 				D0615FCD217FE5C6008A48A8 /* WebGPUShaderModule.cpp */,
 				D0615FCC217FE5C6008A48A8 /* WebGPUShaderModule.h */,
 				D0615FCE217FE5C6008A48A8 /* WebGPUShaderModule.idl */,
@@ -26203,6 +26216,7 @@
 				D087CE3921ACA94200BDE174 /* GPUQueueMetal.mm */,
 				D087CE3A21ACA94200BDE174 /* GPURenderPassEncoderMetal.mm */,
 				D087CE3D21ACA94200BDE174 /* GPURenderPipelineMetal.mm */,
+				D0ADB26B2230ACC000A22935 /* GPUSamplerMetal.mm */,
 				D087CE4021ACA94200BDE174 /* GPUShaderModuleMetal.mm */,
 				D087CE3E21ACA94200BDE174 /* GPUSwapChainMetal.mm */,
 				D087CE3F21ACA94200BDE174 /* GPUTextureMetal.mm */,

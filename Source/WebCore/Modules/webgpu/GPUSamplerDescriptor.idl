@@ -22,19 +22,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
+typedef unsigned long u32;
 
-#if ENABLE(WEBGPU)
+enum GPUAddressMode {
+    "clamp-to-edge",
+    "repeat",
+    "mirror-repeat",
+    "clamp-to-border-color"
+};
 
-#include "GPUCompareFunction.h"
-#include "GPUTextureFormat.h"
+enum GPUFilterMode {
+    "nearest",
+    "linear"
+};
 
-namespace WebCore {
+enum GPUBorderColor {
+    "transparent-black",
+    "opaque-black",
+    "opaque-white"
+};
 
-PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat);
-PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction);
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary GPUSamplerDescriptor {
+    GPUAddressMode addressModeU = "clampToEdge";
+    GPUAddressMode addressModeV = "clampToEdge";
+    GPUAddressMode addressModeW = "clampToEdge";
+    GPUFilterMode magFilter = "nearest";
+    GPUFilterMode minFilter = "nearest";
+    GPUFilterMode mipmapFilter = "nearest";
+    float lodMinClamp = 0;
+    float lodMaxClamp = 0xffffffff; // TODO: What should this be? Was Number.MAX_VALUE.
+    u32 maxAnisotropy = 1;
+    GPUCompareFunction compareFunction = "never";
+    GPUBorderColor borderColor = "transparentBlack";
+};

@@ -473,6 +473,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPULoadOp.idl
     Modules/webgpu/GPUOrigin3D.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
+    Modules/webgpu/GPUSamplerDescriptor.idl
     Modules/webgpu/GPUShaderStageBit.idl
     Modules/webgpu/GPUStoreOp.idl
     Modules/webgpu/GPUTextureDescriptor.idl
@@ -503,6 +504,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPURenderPipeline.idl
     Modules/webgpu/WebGPURenderPipelineDescriptor.idl
     Modules/webgpu/WebGPURenderingContext.idl
+    Modules/webgpu/WebGPUSampler.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl
     Modules/webgpu/WebGPUSwapChain.idl

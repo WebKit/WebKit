@@ -22,19 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "GPUCompareFunction.h"
-#include "GPUTextureFormat.h"
-
-namespace WebCore {
-
-PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat);
-PlatformCompareFunction platformCompareFunctionForGPUCompareFunction(GPUCompareFunction);
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUSampler {
+};

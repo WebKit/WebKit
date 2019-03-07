@@ -37,6 +37,8 @@
 #include "GPUPipelineLayoutDescriptor.h"
 #include "GPURenderPipeline.h"
 #include "GPURenderPipelineDescriptor.h"
+#include "GPUSampler.h"
+#include "GPUSamplerDescriptor.h"
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUTexture.h"
@@ -52,6 +54,11 @@ RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(GPUBufferDescriptor&& descriptor)
 RefPtr<GPUTexture> GPUDevice::tryCreateTexture(GPUTextureDescriptor&& descriptor) const
 {
     return GPUTexture::tryCreate(*this, WTFMove(descriptor));
+}
+
+RefPtr<GPUSampler> GPUDevice::tryCreateSampler(const GPUSamplerDescriptor& descriptor) const
+{
+    return GPUSampler::tryCreate(*this, descriptor);
 }
 
 RefPtr<GPUBindGroupLayout> GPUDevice::tryCreateBindGroupLayout(const GPUBindGroupLayoutDescriptor& descriptor) const

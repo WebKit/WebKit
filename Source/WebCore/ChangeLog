@@ -1,3 +1,80 @@
+2019-03-07  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUSampler implementation
+        https://bugs.webkit.org/show_bug.cgi?id=195427
+        <rdar://problem/48686011>
+
+        Reviewed by Dean Jackson.
+
+        Implement ability to create GPUSamplers and use them as pipeline resource bindings.
+
+        Test: texture-triangle-strip.html updated.
+
+        Add symbols to project:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        GPUSampler creation:
+        * Modules/webgpu/GPUSamplerDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createSampler const): Added.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUSampler.cpp: Added.
+        (WebCore::WebGPUSampler::create):
+        (WebCore::WebGPUSampler::WebGPUSampler):
+        * Modules/webgpu/WebGPUSampler.h: Added.
+        (WebCore::WebGPUSampler::sampler const):
+        * Modules/webgpu/WebGPUSampler.idl: Added.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateSampler const): Added.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUSampler.h: Added.
+        (WebCore::GPUSampler::platformSampler const):
+        * platform/graphics/gpu/GPUSamplerDescriptor.h: Added.
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm: Added.
+        (WebCore::mtlAddressModeForAddressMode):
+        (WebCore::mtlBorderColorForBorderColor):
+        (WebCore::mtlMinMagFilterForFilterMode):
+        (WebCore::mtlMipFilterForFilterMode):
+        (WebCore::tryCreateMtlSamplerState):
+        (WebCore::GPUSampler::tryCreate):
+        (WebCore::GPUSampler::GPUSampler):
+
+        Move GPUCompareFunction to Utils for shared use.
+        * platform/graphics/gpu/GPUCompareFunction.h:
+        * platform/graphics/gpu/GPUUtils.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::tryCreateMtlDepthStencilState):
+        (WebCore::validateAndConvertDepthCompareFunctionToMtl): Deleted.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm:
+        (WebCore::platformTextureFormatForGPUTextureFormat):
+        (WebCore::platformCompareFunctionForGPUCompareFunction):
+
+        Expand bind groups to accept GPUSamplers:
+        * Modules/webgpu/WebGPUBindGroupBinding.h:
+        * Modules/webgpu/WebGPUBindGroupBinding.idl:
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::WebGPUBindGroupDescriptor::asGPUBindGroupDescriptor const):
+        * platform/graphics/gpu/GPUBindGroupBinding.h:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup):
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder):
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsSamplerOnEncoder): Added.
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsTextureOnEncoder):
+
+        Misc:
+        * Modules/webgpu/WebGPUTexture.cpp: Missing includes.
+        * Modules/webgpu/WebGPUTexture.h:
+        * Modules/webgpu/WebGPUSwapChain.cpp: Removed extra include.
+
 2019-03-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r242297.

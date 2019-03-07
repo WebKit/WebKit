@@ -33,6 +33,7 @@
 
     WebGPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     WebGPUTexture createTexture(GPUTextureDescriptor descriptor);
+    WebGPUSampler createSampler(GPUSamplerDescriptor descriptor);
 
     WebGPUBindGroupLayout createBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
     WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
@@ -49,8 +50,6 @@
     // FIXME: Unimplemented.
     // readonly attribute WebGPUExtensions extensions;
     // readonly attribute WebGPULimits limits;
-
-    // WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
 
     // WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
     // WebGPUFence createFence(WebGPUFenceDescriptor descriptor);

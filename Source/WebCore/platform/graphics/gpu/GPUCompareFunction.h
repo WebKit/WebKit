@@ -40,6 +40,8 @@ enum class GPUCompareFunction {
     Always
 };
 
+using PlatformCompareFunction = unsigned;
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
