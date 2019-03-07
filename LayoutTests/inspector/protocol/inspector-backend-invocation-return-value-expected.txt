@@ -2,43 +2,104 @@ Testing the inspector backend's return values when invoking a protocol command i
 
 
 == Running test suite: Protocol.BackendInvocationReturnValues
--- Running test case: ResolveCommandPromiseOnSuccess
+-- Running test case: ResolveCommandPromiseOnSuccess.call
 PASS: A backend command should return a Promise when invoked without a callback.
 PASS: A successful command invocation's promise should be resolved.
 
--- Running test case: RejectCommandPromiseWithInvalidArguments
+-- Running test case: ResolveCommandPromiseOnSuccess.invoke
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: A successful command invocation's promise should be resolved.
+
+-- Running test case: RejectCommandPromiseWithInvalidArguments.call
 ERROR: Protocol Error: Invalid type of argument 'expression' for command 'Runtime.evaluate' call. It must be 'string' but it is 'number'.
 PASS: A backend command should return a Promise when invoked without a callback.
 PASS: An invalid command invocation's promise should be rejected.
 
--- Running test case: RejectCommandPromiseWithMissingArguments
+-- Running test case: RejectCommandPromiseWithInvalidArguments.invoke
+ERROR: Protocol Error: Invalid type of argument 'expression' for command 'Runtime.evaluate' call. It must be 'string' but it is 'number'.
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: An invalid command invocation's promise should be rejected.
+
+-- Running test case: RejectCommandPromiseWithMissingArguments.call
 ERROR: Protocol Error: Invalid number of arguments for command 'Runtime.evaluate'.
 PASS: A backend command should return a Promise when invoked without a callback.
 PASS: An invalid command invocation's promise should be rejected.
 
--- Running test case: RejectCommandPromiseWithExtraArgumentThatIsNotCallback
+-- Running test case: RejectCommandPromiseWithMissingArguments.invoke.MissingObject
+ERROR: Protocol Error: invoke expects an object for command arguments but its type is 'undefined'.
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: An invalid command invocation's promise should be rejected.
+
+-- Running test case: RejectCommandPromiseWithMissingArguments.invoke.NonObject
+ERROR: Protocol Error: invoke expects an object for command arguments but its type is 'string'.
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: An invalid command invocation's promise should be rejected.
+
+-- Running test case: RejectCommandPromiseWithMissingArguments.invoke.EmptyObject
+ERROR: Protocol Error: Missing argument 'expression' for command 'Runtime.evaluate'.
+PASS: A backend command should return a Promise when invoked without a callback.
+PASS: An invalid command invocation's promise should be rejected.
+
+-- Running test case: RejectCommandPromiseWithExtraArgumentThatIsNotCallback.call
 ERROR: Protocol Error: Protocol Error: Optional callback argument for command 'Runtime.enable' call must be a function but its type is 'number'.
 PASS: A backend command should return a Promise when invoked without a callback.
 PASS: An invalid command invocation's promise should be rejected.
 
--- Running test case: ReturnNothingIfCallback
+-- Running test case: ReturnNothingIfCallback.call
 PASS: A backend command should not have a return value when invoked with a callback.
 
--- Running test case: InvokeCallbackWithResultOnSuccess
+-- Running test case: ReturnNothingIfCallback.invoke
+PASS: A backend command should not have a return value when invoked with a callback.
+
+-- Running test case: InvokeCallbackWithResultOnSuccess.call
 PASS: A backend command should not return anything when invoked with a callback.
 PASS: A backend command should always invoke its callback asynchronously.
 PASS: A successful command should invoke the callback with a 'null' first parameter.
 PASS: A successful command should invoke the callback with one or more result parameters.
 
--- Running test case: InvokeCallbackWithErrorForInvalidArguments
+-- Running test case: InvokeCallbackWithResultOnSuccess.invoke
+PASS: A backend command should not return anything when invoked with a callback.
+PASS: A backend command should always invoke its callback asynchronously.
+PASS: A successful command should invoke the callback with a 'null' first parameter.
+PASS: A successful command should invoke the callback with one or more result parameters.
+
+-- Running test case: InvokeCallbackWithErrorForInvalidArguments.call
 ERROR: Protocol Error: Invalid type of argument 'expression' for command 'Runtime.evaluate' call. It must be 'string' but it is 'number'.
 PASS: A backend command should not return anything when invoked with a callback.
 PASS: A backend command should always invoke its callback asynchronously.
 PASS: A failed command should invoke the callback with a string error message as its first parameter.
 PASS: A failed command should invoke the callback with only an error parameter.
 
--- Running test case: InvokeCallbackWithErrorForMissingArguments
+-- Running test case: InvokeCallbackWithErrorForInvalidArguments.invoke
+ERROR: Protocol Error: Invalid type of argument 'expression' for command 'Runtime.evaluate' call. It must be 'string' but it is 'number'.
+PASS: A backend command should not return anything when invoked with a callback.
+PASS: A backend command should always invoke its callback asynchronously.
+PASS: A failed command should invoke the callback with a string error message as its first parameter.
+PASS: A failed command should invoke the callback with only an error parameter.
+
+-- Running test case: InvokeCallbackWithErrorForMissingArguments.call
 ERROR: Protocol Error: Invalid number of arguments for command 'Runtime.evaluate'.
+PASS: A backend command should not return anything when invoked with a callback.
+PASS: A backend command should always invoke its callback asynchronously.
+PASS: A failed command should invoke the callback with a string error message as its first parameter.
+PASS: A failed command should invoke the callback with only an error parameter.
+
+-- Running test case: InvokeCallbackWithErrorForMissingArguments.invoke.MissingObject
+ERROR: Protocol Error: invoke expects an object for command arguments but its type is 'undefined'.
+PASS: A backend command should not return anything when invoked with a callback.
+PASS: A backend command should always invoke its callback asynchronously.
+PASS: A failed command should invoke the callback with a string error message as its first parameter.
+PASS: A failed command should invoke the callback with only an error parameter.
+
+-- Running test case: InvokeCallbackWithErrorForMissingArguments.invoke.NonObject
+ERROR: Protocol Error: invoke expects an object for command arguments but its type is 'string'.
+PASS: A backend command should not return anything when invoked with a callback.
+PASS: A backend command should always invoke its callback asynchronously.
+PASS: A failed command should invoke the callback with a string error message as its first parameter.
+PASS: A failed command should invoke the callback with only an error parameter.
+
+-- Running test case: InvokeCallbackWithErrorForMissingArguments.invoke.EmptyObject
+ERROR: Protocol Error: Missing argument 'expression' for command 'Runtime.evaluate'.
 PASS: A backend command should not return anything when invoked with a callback.
 PASS: A backend command should always invoke its callback asynchronously.
 PASS: A failed command should invoke the callback with a string error message as its first parameter.

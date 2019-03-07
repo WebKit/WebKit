@@ -1,5 +1,18 @@
 2019-03-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Protocol: add type checking when commands are called via invoke
+        https://bugs.webkit.org/show_bug.cgi?id=195310
+        <rdar://problem/48588679>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackend.Command.prototype.invoke.deliverFailure): Added.
+        (InspectorBackend.Command.prototype.invoke):
+        (InspectorBackend.Command.prototype._invokeWithArguments):
+
+2019-03-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION(r242118): WI.ScopeBar missing background
         https://bugs.webkit.org/show_bug.cgi?id=195299
 

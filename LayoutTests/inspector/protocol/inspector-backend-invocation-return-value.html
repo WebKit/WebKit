@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
@@ -11,7 +11,7 @@ function test()
     // Test behavior for promise-based callbacks.
 
     suite.addTestCase({
-        name: "ResolveCommandPromiseOnSuccess",
+        name: "ResolveCommandPromiseOnSuccess.call",
         description: "Backend command's returned promise should be resolved if the command is successful.",
         test(resolve, reject) {
             let returnValue = RuntimeAgent.evaluate("42");
@@ -32,7 +32,28 @@ function test()
     });
 
     suite.addTestCase({
-        name: "RejectCommandPromiseWithInvalidArguments",
+        name: "ResolveCommandPromiseOnSuccess.invoke",
+        description: "Backend command's returned promise should be resolved if the command is successful.",
+        test(resolve, reject) {
+            let returnValue = RuntimeAgent.evaluate.invoke({expression: "42"});
+
+            InspectorTest.expectThat(returnValue instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(returnValue instanceof Promise))
+                reject();
+
+            returnValue.then(function resolved(result) {
+                InspectorTest.log("PASS: A successful command invocation's promise should be resolved.");
+                resolve();
+            }, function rejected(result) {
+                InspectorTest.log("FAIL: A successful command invocation's promise should be resolved.");
+                reject();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithInvalidArguments.call",
         description: "Backend command's returned promise should be rejected if the command has invalid arguments.",
         test(resolve, reject) {
             let result = RuntimeAgent.evaluate(42);
@@ -53,7 +74,28 @@ function test()
     });
 
     suite.addTestCase({
-        name: "RejectCommandPromiseWithMissingArguments",
+        name: "RejectCommandPromiseWithInvalidArguments.invoke",
+        description: "Backend command's returned promise should be rejected if the command has invalid arguments.",
+        test(resolve, reject) {
+            let result = RuntimeAgent.evaluate.invoke({expression: 42});
+
+            InspectorTest.expectThat(result instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(result instanceof Promise))
+                reject();
+
+            result.then(function resolved(result) {
+                InspectorTest.log("FAIL: An invalid command invocation's promise should be rejected.");
+                reject();
+            }, function rejected(result) {
+                InspectorTest.log("PASS: An invalid command invocation's promise should be rejected.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithMissingArguments.call",
         description: "Backend command's returned promise should be rejected if the command lacks required arguments.",
         test(resolve, reject) {
             let result = RuntimeAgent.evaluate();
@@ -74,7 +116,70 @@ function test()
     });
 
     suite.addTestCase({
-        name: "RejectCommandPromiseWithExtraArgumentThatIsNotCallback",
+        name: "RejectCommandPromiseWithMissingArguments.invoke.MissingObject",
+        description: "Backend command's returned promise should be rejected if the command lacks required arguments.",
+        test(resolve, reject) {
+            let result = RuntimeAgent.evaluate.invoke();
+
+            InspectorTest.expectThat(result instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(result instanceof Promise))
+                reject();
+
+            result.then(function resolved(result) {
+                InspectorTest.log("FAIL: An invalid command invocation's promise should be rejected.");
+                reject();
+            }, function rejected(result) {
+                InspectorTest.log("PASS: An invalid command invocation's promise should be rejected.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithMissingArguments.invoke.NonObject",
+        description: "Backend command's returned promise should be rejected if the command lacks required arguments.",
+        test(resolve, reject) {
+            let result = RuntimeAgent.evaluate.invoke("test");
+
+            InspectorTest.expectThat(result instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(result instanceof Promise))
+                reject();
+
+            result.then(function resolved(result) {
+                InspectorTest.log("FAIL: An invalid command invocation's promise should be rejected.");
+                reject();
+            }, function rejected(result) {
+                InspectorTest.log("PASS: An invalid command invocation's promise should be rejected.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithMissingArguments.invoke.EmptyObject",
+        description: "Backend command's returned promise should be rejected if the command lacks required arguments.",
+        test(resolve, reject) {
+            let result = RuntimeAgent.evaluate.invoke({});
+
+            InspectorTest.expectThat(result instanceof Promise, "A backend command should return a Promise when invoked without a callback.");
+            // If a promise wasn't returned, we can't test the rest so just die.
+            if (!(result instanceof Promise))
+                reject();
+
+            result.then(function resolved(result) {
+                InspectorTest.log("FAIL: An invalid command invocation's promise should be rejected.");
+                reject();
+            }, function rejected(result) {
+                InspectorTest.log("PASS: An invalid command invocation's promise should be rejected.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "RejectCommandPromiseWithExtraArgumentThatIsNotCallback.call",
         description: "Backend command's returned promise should be rejected if the command has an extra argument that is not a callback.",
         test(resolve, reject) {
             let result = RuntimeAgent.enable(1);
@@ -97,7 +202,7 @@ function test()
     // Test behavior for function-based callbacks.
 
     suite.addTestCase({
-        name: "ReturnNothingIfCallback",
+        name: "ReturnNothingIfCallback.call",
         description: "Backend commands should not return anything if a callback is supplied.",
         test(resolve, reject) {
             let returnValue = RuntimeAgent.evaluate("41", dummyCallback);
@@ -107,7 +212,17 @@ function test()
     });
 
     suite.addTestCase({
-        name: "InvokeCallbackWithResultOnSuccess",
+        name: "ReturnNothingIfCallback.invoke",
+        description: "Backend commands should not return anything if a callback is supplied.",
+        test(resolve, reject) {
+            let returnValue = RuntimeAgent.evaluate.invoke({expression: "41"}, dummyCallback);
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not have a return value when invoked with a callback.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithResultOnSuccess.call",
         description: "Backend command callback should be invoked with a result if the command is successful.",
         test(resolve, reject) {
             let initialState = 1;
@@ -124,7 +239,24 @@ function test()
     });
 
     suite.addTestCase({
-        name: "InvokeCallbackWithErrorForInvalidArguments",
+        name: "InvokeCallbackWithResultOnSuccess.invoke",
+        description: "Backend command callback should be invoked with a result if the command is successful.",
+        test(resolve, reject) {
+            let initialState = 1;
+            let returnValue = RuntimeAgent.evaluate.invoke({expression: "42"}, function(error, result) {
+                InspectorTest.expectThat(error === null, "A successful command should invoke the callback with a 'null' first parameter.");
+                InspectorTest.expectThat(arguments.length > 1, "A successful command should invoke the callback with one or more result parameters.");
+                initialState++;
+                resolve();
+            });
+
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not return anything when invoked with a callback.");
+            InspectorTest.expectThat(initialState === 1, "A backend command should always invoke its callback asynchronously.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithErrorForInvalidArguments.call",
         description: "Backend command callback should be invoked with an error if the command has invalid arguments.",
         test(resolve, reject) {
             let initialState = 1;
@@ -141,11 +273,82 @@ function test()
     });
 
     suite.addTestCase({
-        name: "InvokeCallbackWithErrorForMissingArguments",
+        name: "InvokeCallbackWithErrorForInvalidArguments.invoke",
+        description: "Backend command callback should be invoked with an error if the command has invalid arguments.",
+        test(resolve, reject) {
+            let initialState = 1;
+            let returnValue = RuntimeAgent.evaluate.invoke({expression: 42}, function callback(error) {
+                InspectorTest.expectThat(typeof error === "string", "A failed command should invoke the callback with a string error message as its first parameter.");
+                InspectorTest.expectThat(arguments.length === 1, "A failed command should invoke the callback with only an error parameter.");
+                initialState++;
+                resolve();
+            });
+
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not return anything when invoked with a callback.");
+            InspectorTest.expectThat(initialState === 1, "A backend command should always invoke its callback asynchronously.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithErrorForMissingArguments.call",
         description: "Backend command callback should be invoked with an error if the command lacks required arguments.",
         test(resolve, reject) {
             let initialState = 1;
             let returnValue = RuntimeAgent.evaluate(function callback(error) {
+                InspectorTest.expectThat(typeof error === "string", "A failed command should invoke the callback with a string error message as its first parameter.");
+                InspectorTest.expectThat(arguments.length === 1, "A failed command should invoke the callback with only an error parameter.");
+
+                initialState++;
+                resolve();
+            });
+
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not return anything when invoked with a callback.");
+            InspectorTest.expectThat(initialState === 1, "A backend command should always invoke its callback asynchronously.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithErrorForMissingArguments.invoke.MissingObject",
+        description: "Backend command callback should be invoked with an error if the command lacks required arguments.",
+        test(resolve, reject) {
+            let initialState = 1;
+            let returnValue = RuntimeAgent.evaluate.invoke(undefined, function callback(error) {
+                InspectorTest.expectThat(typeof error === "string", "A failed command should invoke the callback with a string error message as its first parameter.");
+                InspectorTest.expectThat(arguments.length === 1, "A failed command should invoke the callback with only an error parameter.");
+
+                initialState++;
+                resolve();
+            });
+
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not return anything when invoked with a callback.");
+            InspectorTest.expectThat(initialState === 1, "A backend command should always invoke its callback asynchronously.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithErrorForMissingArguments.invoke.NonObject",
+        description: "Backend command callback should be invoked with an error if the command lacks required arguments.",
+        test(resolve, reject) {
+            let initialState = 1;
+            let returnValue = RuntimeAgent.evaluate.invoke("test", function callback(error) {
+                InspectorTest.expectThat(typeof error === "string", "A failed command should invoke the callback with a string error message as its first parameter.");
+                InspectorTest.expectThat(arguments.length === 1, "A failed command should invoke the callback with only an error parameter.");
+
+                initialState++;
+                resolve();
+            });
+
+            InspectorTest.expectThat(returnValue === undefined, "A backend command should not return anything when invoked with a callback.");
+            InspectorTest.expectThat(initialState === 1, "A backend command should always invoke its callback asynchronously.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvokeCallbackWithErrorForMissingArguments.invoke.EmptyObject",
+        description: "Backend command callback should be invoked with an error if the command lacks required arguments.",
+        test(resolve, reject) {
+            let initialState = 1;
+            let returnValue = RuntimeAgent.evaluate.invoke({}, function callback(error) {
                 InspectorTest.expectThat(typeof error === "string", "A failed command should invoke the callback with a string error message as its first parameter.");
                 InspectorTest.expectThat(arguments.length === 1, "A failed command should invoke the callback with only an error parameter.");
 
