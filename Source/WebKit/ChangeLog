@@ -1,3 +1,42 @@
+2019-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / simplify ProcessAssertion code
+        https://bugs.webkit.org/show_bug.cgi?id=195394
+
+        Reviewed by Geoffrey Garen.
+
+        Clean up / simplify ProcessAssertion code to facilitate its maintenance and make it
+        less error-prone.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::ConnectionTerminationWatchdog):
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::setState):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::Client::~Client):
+        (WebKit::ProcessAssertion::setClient):
+        (WebKit::ProcessAssertion::client):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager dealloc]):
+        (-[WKProcessAssertionBackgroundTaskManager addAssertionNeedingBackgroundTask:]):
+        (-[WKProcessAssertionBackgroundTaskManager removeAssertionNeedingBackgroundTask:]):
+        (-[WKProcessAssertionBackgroundTaskManager _notifyAssertionsOfImminentSuspension]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+        (WebKit::ProcessAssertion::setState):
+        (WebKit::ProcessAndUIAssertion::updateRunInBackgroundCount):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::~ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::processAssertionWasInvalidated):
+        (WebKit::ProcessAndUIAssertion::setState):
+        (WebKit::ProcessAndUIAssertion::uiAssertionWillExpireImminently):
+
 2019-03-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r242297.

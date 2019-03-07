@@ -43,7 +43,7 @@ typedef ProcessSuppressionDisabledCounter::Token ProcessSuppressionDisabledToken
 
 class ProcessThrottlerClient;
 
-class ProcessThrottler : private ProcessAssertionClient {
+class ProcessThrottler : private ProcessAssertion::Client {
 public:
     enum ForegroundActivityCounterType { };
     typedef RefCounter<ForegroundActivityCounterType> ForegroundActivityCounter;

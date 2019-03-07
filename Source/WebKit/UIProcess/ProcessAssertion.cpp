@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,51 +26,22 @@
 #include "config.h"
 #include "ProcessAssertion.h"
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID, AssertionState assertionState, Function<void()>&&)
+ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState)
     : m_assertionState(assertionState)
 {
 }
 
-ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState, Function<void()>&&)
-    : m_assertionState(assertionState)
-{
-}
-
-ProcessAssertion::~ProcessAssertion()
-{
-}
+ProcessAssertion::~ProcessAssertion() = default;
 
 void ProcessAssertion::setState(AssertionState assertionState)
 {
-    if (m_assertionState == assertionState)
-        return;
-
     m_assertionState = assertionState;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, AssertionState assertionState)
-    : ProcessAssertion(pid, assertionState)
-{
-}
+} // namespace WebKit
 
-ProcessAndUIAssertion::~ProcessAndUIAssertion()
-{
-}
-
-void ProcessAndUIAssertion::setState(AssertionState assertionState)
-{
-    ProcessAssertion::setState(assertionState);
-}
-
-void ProcessAndUIAssertion::setClient(ProcessAssertionClient& client)
-{
-    ProcessAssertion::setClient(client);
-}
-
-}
-
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // !PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)

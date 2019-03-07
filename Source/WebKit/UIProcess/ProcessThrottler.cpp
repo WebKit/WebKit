@@ -103,9 +103,9 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
 
     m_suspendTimer.stop();
     if (m_shouldTakeUIBackgroundAssertion)
-        m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());
+        m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, "Web content visibility"_s, assertionState());
     else
-        m_assertion = std::make_unique<ProcessAssertion>(pid, assertionState());
+        m_assertion = std::make_unique<ProcessAssertion>(pid, "Web content visibility"_s, assertionState());
     m_process.didSetAssertionState(assertionState());
     m_assertion->setClient(*this);
 }
