@@ -1,3 +1,22 @@
+2019-03-07  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: ( r231040 ) Layout Test http/tests/security/xss-DENIED-xsl-external-entity.xml is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189724
+        <rdar://problem/48422520>
+
+        Reviewed by Geoffrey Garen.
+
+        Copy the flaky test into a new test for which we use DumpJSConsoleLogInStdErr.
+        This should make the new test no longer flaky in WK1.
+        Run this new test for WK1 only and run the original test for WK2 only.
+
+        * TestExpectations:
+        * http/tests/security/xss-DENIED-xsl-external-entity-no-logging-expected.txt: Added.
+        * http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml: Added.
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2019-03-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Protocol: add type checking when commands are called via invoke

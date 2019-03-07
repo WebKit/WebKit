@@ -28,6 +28,8 @@ fast/shadow-dom/dragging-element-with-shadow-tree.html [ Pass ]
 fast/shadow-dom/dragging-element-inside-shadow-tree.html [ Pass ]
 http/tests/security/clipboard/drag-drop-html-cross-origin-iframe-in-same-origin.html [ Pass ]
 
+http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +94,7 @@ webkit.org/b/178272 [ Sierra ] http/tests/media/video-play-progress.html [ Pass 
 webkit.org/b/178272 [ Sierra ] http/tests/security/canvas-remote-read-remote-video-localhost.html [ Pass Timeout ]
 webkit.org/b/178272 [ Sierra ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Pass Timeout ]
 webkit.org/b/178272 [ Sierra ] http/tests/security/video-cross-origin-caching.html [ Pass Timeout ]
+http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
 # rdar://problem/20001985
 [ Sierra ] http/tests/xmlhttprequest/range-test.html [ Failure ]

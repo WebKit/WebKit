@@ -3,6 +3,7 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 editing/input/focus-change-with-marked-text.html [ Pass ]
+http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 
 # No service worker implementation for WK1
 imported/w3c/web-platform-tests/service-workers [ Skip ]
@@ -1773,7 +1774,7 @@ fetch/fetch-error-messages.html [ Crash Pass ]
 http/tests/navigation/metaredirect-subframeload.html [ Crash Pass ]
 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Pass Failure ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Pass Failure ]
-http/tests/security/xss-DENIED-xsl-external-entity.xml [ Pass Failure ]
+http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 imported/blink/compositing/ancestor-painted-layer-should-appear.html [ Pass ImageOnlyFailure ]
 imported/blink/compositing/invisible-subtree-compositing-and-preserves-3d.html [ Pass ImageOnlyFailure ]
 imported/blink/compositing/will-change/stacking-context-creation.html [ Pass ImageOnlyFailure ]
