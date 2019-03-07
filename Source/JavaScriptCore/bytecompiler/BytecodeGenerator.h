@@ -1278,7 +1278,12 @@ namespace JSC {
 
         CompactVariableMap::Handle m_cachedVariablesUnderTDZ;
 
-        using CatchEntry = std::tuple<TryData*, VirtualRegister, VirtualRegister, VirtualRegister>;
+        struct CatchEntry {
+            TryData* tryData;
+            VirtualRegister exceptionRegister;
+            VirtualRegister thrownValueRegister;
+            VirtualRegister completionTypeRegister;
+        };
         Vector<CatchEntry> m_exceptionHandlersToEmit;
     };
 
