@@ -91,16 +91,16 @@ public:
         // Due to race conditions between the server sending an "operation complete" message and the client
         // forcefully aborting an operation, it's unavoidable that this method might be called twice.
         // It's okay to handle that gracefully with an early return.
-        if (!m_completeFunction)
+        if (m_didComplete)
             return;
+        m_didComplete = true;
 
-        m_completeFunction(data);
+        if (m_completeFunction) {
+            m_completeFunction(data);
+            // m_completeFunction should not hold ref to this TransactionOperation after its execution.
+            m_completeFunction = { };
+        }
         m_transaction->operationCompletedOnClient(*this);
-
-        // m_completeFunction might be holding the last ref to this TransactionOperation,
-        // so we need to do this trick to null it out without first destroying it.
-        Function<void(const IDBResultData&)> oldCompleteFunction;
-        std::swap(m_completeFunction, oldCompleteFunction);
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
@@ -141,6 +141,7 @@ private:
     Ref<Thread> m_originThread { Thread::current() };
     RefPtr<IDBRequest> m_idbRequest;
     bool m_nextRequestCanGoToServer { true };
+    bool m_didComplete { false };
 };
 
 class TransactionOperationImpl final : public TransactionOperation {

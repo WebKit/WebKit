@@ -1,3 +1,30 @@
+2019-03-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash in com.apple.WebCore: WebCore::IDBTransaction::pendingOperationTimerFired + 72
+        https://bugs.webkit.org/show_bug.cgi?id=195214
+        <rdar://problem/48461116>
+
+        Reviewed by Geoffrey Garen.
+
+        When IDBTransaction is ready to commit, a commit operation would be schedule to 
+        m_pendingTransactionOperationQueue. If connection to IDBServer is lost, pending operations are moved to 
+        m_transactionOperationsInProgressQueue and will be completed with TransactionOperation::doComplete. doComplete 
+        executes complete function of the operation, clears the complete function, and then removes the operation from 
+        m_transactionOperationsInProgressQueue. In doComplete, we do early return when complete function is null, 
+        since the doComplete could be invoked twice due to the race conditions between receiving "operation complete" 
+        message from server and client-side abort.
+
+        However, commit operation does not have a complete function because it should be the last operation of 
+        transaction and it gets removed from queue in its perform function. A commit operation would not be removed from 
+        m_transactionOperationsInProgressQueue because of the early return. It would be removed from 
+        m_transactionOperationMap, which may hold the last ref to the commit operation, in 
+        IDBTransaction::connectionClosedFromServer. In this case, when pendingOperationTimerFired is called later, the 
+        commit operation left in m_transactionOperationsInProgressQueue would be used and found to be freed. We should
+        not use null check of complete function to decide whether an operation is completed.
+
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::TransactionOperation::doComplete):
+
 2019-03-07  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Log first-party navigations with link decoration
