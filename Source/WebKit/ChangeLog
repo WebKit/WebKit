@@ -1,3 +1,28 @@
+2019-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r242364): [WPE] Do not stop the compositing run loop update timer on suspend
+        https://bugs.webkit.org/show_bug.cgi?id=195410
+
+        Reviewed by Žan Doberšek.
+
+        Calling CompositingRunLoop::stopUpdates() on suspend is leaving the threaded compositor in an inconsistent
+        state, failing to resume and stopping the updates forever. This is causing timeouts in WPE layout tests. Instead
+        of calling stopUpdates(), a new suspend() is called, that stops the update timer, without changing the current
+        updae tha compositing state. A new method resume() is also added to schedule an update if needed.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::suspend): Set state as suspended and stop the update timer.
+        (WebKit::CompositingRunLoop::resume): Set state as not suspended and start the update timer if it was scheduled
+        while suspended.
+        (WebKit::CompositingRunLoop::scheduleUpdate): Do not start the update timer when suspended.
+        (WebKit::CompositingRunLoop::compositionCompleted): Ditto.
+        (WebKit::CompositingRunLoop::updateCompleted): Ditto.
+        (WebKit::CompositingRunLoop::updateTimerFired): Add an assert to ensure the update timer is not fired while suspended.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::suspend): Call CompositingRunLoop::suspend() instead of stopUpdates().
+        (WebKit::ThreadedCompositor::resume): Call CompositingRunLoop::resume().
+
 2019-03-06  Mark Lam  <mark.lam@apple.com>
 
         Exception is a JSCell, not a JSObject.

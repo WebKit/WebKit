@@ -121,7 +121,7 @@ void ThreadedCompositor::suspend()
     if (++m_suspendedCount > 1)
         return;
 
-    m_compositingRunLoop->stopUpdates();
+    m_compositingRunLoop->suspend();
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene->setActive(false);
     });
@@ -136,6 +136,7 @@ void ThreadedCompositor::resume()
     m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this)] {
         m_scene->setActive(true);
     });
+    m_compositingRunLoop->resume();
 }
 
 void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
