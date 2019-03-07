@@ -1,3 +1,41 @@
+2019-03-06  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] ProcessDidResume() IPC should be sent upon resuming when ProcessWillSuspendImminently() IPC was sent
+        https://bugs.webkit.org/show_bug.cgi?id=195382
+        <rdar://problem/48642739>
+
+        Reviewed by Geoffrey Garen.
+
+        ProcessDidResume() IPC should be sent upon resuming when ProcessWillSuspendImminently() IPC was sent. Previously,
+        we only send ProcessDidResume() to the WebProcess if PrepareToSuspend() was sent, not when the more urgent
+        ProcessWillSuspendImminently() IPC was sent.
+
+        This mismatch has lead to bugs because the WebProcess does not know it got resumed and failed to unfreeze the
+        layers it froze upon suspension.
+
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertionClient::~ProcessAssertionClient):
+
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertion):
+        (WebKit::ProcessThrottler::uiAssertionWillExpireImminently):
+        (WebKit::ProcessThrottler::assertionWillExpireImminently): Deleted.
+
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager _notifyClientsOfImminentSuspension]):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::~ProcessAndUIAssertion):
+        (WebKit::ProcessAndUIAssertion::setClient):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCompletePageTransition):
+        Revert change that was landed in r242098 to work around this ProcessThrottler bug.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillEnterForeground):
+        Revert change that was landed in r242554 to work around this ProcessThrottler bug.
+
 2019-03-06  Alex Christensen  <achristensen@webkit.org>
 
         Add gettid to allowed syscalls on Mac

@@ -68,10 +68,12 @@ void ProcessThrottler::updateAssertionNow()
     
 void ProcessThrottler::updateAssertion()
 {
+    bool shouldBeRunnable = m_foregroundCounter.value() || m_backgroundCounter.value();
+
     // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
     // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
     // in the background for too long.
-    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !m_foregroundCounter.value() && !m_backgroundCounter.value()) {
+    if (m_assertion && m_assertion->state() != AssertionState::Suspended && !shouldBeRunnable) {
         ++m_suspendMessageCount;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::updateAssertion() sending PrepareToSuspend IPC", this);
         m_process.sendPrepareToSuspend();
@@ -81,14 +83,16 @@ void ProcessThrottler::updateAssertion()
         return;
     }
 
-    bool shouldBeRunnable = m_foregroundCounter.value() || m_backgroundCounter.value();
+    if (shouldBeRunnable) {
+        // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
+        if (m_suspendTimer.isActive())
+            m_process.sendCancelPrepareToSuspend();
 
-    // If we're currently waiting for the Web process to do suspension cleanup, but no longer need to be suspended, tell the Web process to cancel the cleanup.
-    if (m_suspendTimer.isActive() && shouldBeRunnable)
-        m_process.sendCancelPrepareToSuspend();
-    
-    if (m_assertion && m_assertion->state() == AssertionState::Suspended && shouldBeRunnable)
-        m_process.sendProcessDidResume();
+        if ((m_assertion && m_assertion->state() == AssertionState::Suspended) || m_uiAssertionExpired) {
+            m_process.sendProcessDidResume();
+            m_uiAssertionExpired = false;
+        }
+    }
 
     updateAssertionNow();
 }
@@ -125,9 +129,10 @@ void ProcessThrottler::didCancelProcessSuspension()
     ASSERT(m_suspendMessageCount >= 0);
 }
 
-void ProcessThrottler::assertionWillExpireImminently()
+void ProcessThrottler::uiAssertionWillExpireImminently()
 {
     m_process.sendProcessWillSuspendImminently();
+    m_uiAssertionExpired = true;
 }
 
 }

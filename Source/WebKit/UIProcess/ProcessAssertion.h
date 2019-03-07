@@ -51,8 +51,8 @@ enum class AssertionState {
 
 class ProcessAssertionClient {
 public:
-    virtual ~ProcessAssertionClient() { };
-    virtual void assertionWillExpireImminently() = 0;
+    virtual ~ProcessAssertionClient() { }
+    virtual void uiAssertionWillExpireImminently() = 0;
 };
 
 class ProcessAssertion

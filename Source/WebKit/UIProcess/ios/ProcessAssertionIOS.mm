@@ -98,7 +98,7 @@ using WebKit::ProcessAssertionClient;
     ASSERT(RunLoop::isMain());
 
     for (auto* client : copyToVector(_clients))
-        client->assertionWillExpireImminently();
+        client->uiAssertionWillExpireImminently();
 }
 
 - (void)_updateBackgroundTask
@@ -208,9 +208,6 @@ ProcessAssertion::~ProcessAssertion()
 {
     m_assertion.get().invalidationHandler = nil;
 
-    if (ProcessAssertionClient* client = this->client())
-        [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
-
     RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion", this);
     [m_assertion invalidate];
 }
@@ -259,6 +256,9 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 {
     if (m_isHoldingBackgroundAssertion)
         [[WKProcessAssertionBackgroundTaskManager shared] decrementNeedsToRunInBackgroundCount];
+
+    if (auto* client = this->client())
+        [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
 }
 
 void ProcessAndUIAssertion::setState(AssertionState assertionState)
@@ -270,7 +270,7 @@ void ProcessAndUIAssertion::setState(AssertionState assertionState)
 void ProcessAndUIAssertion::setClient(ProcessAssertionClient& newClient)
 {
     [[WKProcessAssertionBackgroundTaskManager shared] addClient:newClient];
-    if (ProcessAssertionClient* oldClient = this->client())
+    if (auto* oldClient = this->client())
         [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*oldClient];
     ProcessAssertion::setClient(newClient);
 }
