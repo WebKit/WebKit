@@ -37,7 +37,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -158,7 +157,7 @@ Vector<String> DragData::asFilenames() const
         for (unsigned i = 0; i < numFiles; i++) {
             if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
                 continue;
-            result.append(nullTerminatedWCharToString(filename));
+            result.append(filename);
         }
 
         // Free up memory from drag

@@ -1228,7 +1228,7 @@ HRESULT DOMHTMLInputElement::setValueForUser(_In_ BSTR value)
 {
     ASSERT(is<HTMLInputElement>(m_element));
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
-    inputElement.setValueForUser(String(static_cast<UChar*>(value), SysStringLen(value)));
+    inputElement.setValueForUser(String(value, SysStringLen(value)));
     return S_OK;
 }
 
@@ -1326,7 +1326,7 @@ HRESULT DOMHTMLInputElement::replaceCharactersInRange(int startTarget, int endTa
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
 
     String newValue = inputElement.value();
-    String webCoreReplacementString(static_cast<UChar*>(replacementString), SysStringLen(replacementString));
+    String webCoreReplacementString(replacementString, SysStringLen(replacementString));
     newValue.replace(startTarget, endTarget - startTarget, webCoreReplacementString);
     inputElement.setValue(newValue);
     inputElement.setSelectionRange(index, newValue.length());

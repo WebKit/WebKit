@@ -1,3 +1,51 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * COMPropertyBag.h:
+        (HashType>::GetPropertyInfo):
+        (HashType>::LoadObject):
+        * DOMCoreClasses.cpp:
+        (DOMNode::addEventListener):
+        (DOMNode::removeEventListener):
+        (DOMWindow::addEventListener):
+        (DOMWindow::removeEventListener):
+        (DOMElement::font):
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::setValueForUser):
+        (DOMHTMLInputElement::replaceCharactersInRange):
+        * Plugins/PluginDatabaseWin.cpp:
+        (WebCore::addPluginPathsFromRegistry):
+        (WebCore::PluginDatabase::getPluginPathsInDirectories const):
+        (WebCore::addMozillaPluginDirectories):
+        (WebCore::addWindowsMediaPlayerPluginDirectory):
+        (WebCore::addAdobeAcrobatPluginDirectory):
+        (WebCore::addJavaPluginDirectory):
+        (WebCore::safariPluginsDirectory):
+        (WebCore::addMacromediaPluginDirectories):
+        * Plugins/PluginPackageWin.cpp:
+        (WebCore::getVersionInfo):
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::load):
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::handlePostReadFile):
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::runOpenPanel):
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::checkSpellingOfString):
+        (WebEditorClient::checkGrammarOfString):
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::updateWindowTitle):
+        * WebLocalizableStrings.cpp:
+        (LocalizedString::operator LPCTSTR const):
+        * WebView.cpp:
+        (createContextMenuFromItems):
+        (WebView::setToolTip):
+        Use wchar helpers as needed.
+
 2019-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Programmatic paste access should be granted when copying and pasting within the same origin

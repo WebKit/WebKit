@@ -30,7 +30,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/WindowsExtras.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -41,10 +40,10 @@ static String mimeTypeForExtension(const String& extension)
     DWORD contentTypeStrLen = sizeof(contentTypeStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, stringToNullTerminatedWChar(ext).data(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, ext.wideCharacters().data(), L"Content Type", &keyType, contentTypeStr, &contentTypeStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
-        return wcharToString(contentTypeStr, contentTypeStrLen / sizeof(contentTypeStr[0]) - 1);
+        return String(contentTypeStr, contentTypeStrLen / sizeof(contentTypeStr[0]) - 1);
 
     return String();
 }
@@ -56,10 +55,10 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     DWORD extStrLen = sizeof(extStr);
     DWORD keyType;
 
-    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, stringToNullTerminatedWChar(path).data(), L"Extension", &keyType, extStr, &extStrLen);
+    HRESULT result = getRegistryValue(HKEY_CLASSES_ROOT, path.wideCharacters().data(), L"Extension", &keyType, extStr, &extStrLen);
 
     if (result == ERROR_SUCCESS && keyType == REG_SZ)
-        return wcharToString(extStr + 1, extStrLen / sizeof(extStr[0]) - 2);
+        return String(extStr + 1, extStrLen / sizeof(extStr[0]) - 2);
 
     return String();
 }

@@ -28,13 +28,12 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebKit {
 
 bool InjectedBundle::initialize(const WebProcessCreationParameters&, API::Object* initializationUserData)
 {
-    HMODULE lib = ::LoadLibrary(stringToNullTerminatedWChar(m_path).data());
+    HMODULE lib = ::LoadLibrary(m_path.wideCharacters().data());
     if (!lib)
         return false;
 

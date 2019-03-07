@@ -26,6 +26,10 @@
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/WTFString.h>
 
+#if OS(WINDOWS)
+#include <wtf/text/win/WCharStringExtras.h>
+#endif
+
 // Define 'NO_IMPLICIT_ATOMICSTRING' before including this header,
 // to disallow (expensive) implicit String-->AtomicString conversions.
 #ifdef NO_IMPLICIT_ATOMICSTRING
@@ -151,6 +155,14 @@ public:
 #ifdef __OBJC__
     AtomicString(NSString*);
     operator NSString*() const { return m_string; }
+#endif
+
+#if OS(WINDOWS) && U_ICU_VERSION_MAJOR_NUM >= 59
+    AtomicString(const wchar_t* characters, unsigned length)
+        : AtomicString(ucharFrom(characters), length) { }
+
+    AtomicString(const wchar_t* characters)
+        : AtomicString(ucharFrom(characters)) { }
 #endif
 
     // AtomicString::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.

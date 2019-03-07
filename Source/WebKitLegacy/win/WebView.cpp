@@ -1598,13 +1598,13 @@ static HMENU createContextMenuFromItems(const Vector<ContextMenuItem>& items)
         switch (item.type()) {
         case ActionType:
         case CheckableActionType:
-            ::AppendMenu(menu, flags | MF_STRING, item.action(), item.title().charactersWithNullTermination().data());
+            ::AppendMenu(menu, flags | MF_STRING, item.action(), item.title().wideCharacters().data());
             break;
         case SeparatorType:
             ::AppendMenu(menu, flags | MF_SEPARATOR, item.action(), nullptr);
             break;
         case SubmenuType:
-            ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)createContextMenuFromItems(item.subMenuItems()), item.title().charactersWithNullTermination().data());
+            ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)createContextMenuFromItems(item.subMenuItems()), item.title().wideCharacters().data());
             break;
         }
     }
@@ -3234,8 +3234,8 @@ void WebView::setToolTip(const String& toolTip)
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(m_viewWindow);
-        Vector<UChar> toolTipCharacters = m_toolTip.charactersWithNullTermination(); // Retain buffer long enough to make the SendMessage call
-        info.lpszText = const_cast<UChar*>(toolTipCharacters.data());
+        Vector<wchar_t> toolTipCharacters = m_toolTip.wideCharacters(); // Retain buffer long enough to make the SendMessage call
+        info.lpszText = const_cast<wchar_t*>(toolTipCharacters.data());
         ::SendMessage(m_toolTipHwnd, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 

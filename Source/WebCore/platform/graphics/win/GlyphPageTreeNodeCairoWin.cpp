@@ -31,6 +31,7 @@
 
 #include "Font.h"
 #include "HWndDC.h"
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     SelectObject(dc, font.platformData().hfont());
 
     WORD localGlyphBuffer[GlyphPage::size * 2];
-    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+    DWORD result = GetGlyphIndices(dc, wcharFrom(buffer), bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
     bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
     if (success) {
         for (unsigned i = 0; i < GlyphPage::size; i++) {

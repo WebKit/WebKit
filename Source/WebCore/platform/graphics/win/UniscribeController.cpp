@@ -31,7 +31,7 @@
 #include "HWndDC.h"
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
-
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 using namespace WTF::Unicode;
@@ -196,7 +196,7 @@ void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned stringO
     m_items.resize(6);
     int numItems = 0;
     HRESULT rc = S_OK;
-    while (rc = ::ScriptItemize(cp, length, m_items.size() - 1, &m_control, &m_state, m_items.data(), &numItems) == E_OUTOFMEMORY) {
+    while (rc = ::ScriptItemize(wcharFrom(cp), length, m_items.size() - 1, &m_control, &m_state, m_items.data(), &numItems) == E_OUTOFMEMORY) {
         m_items.resize(m_items.size() * 2);
         resetControlAndState();
     }
@@ -428,7 +428,7 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
         return false;
 
     do {
-        shapeResult = ScriptShape(hdc, fontData->scriptCache(), str, len, glyphs.size(), &item.a,
+        shapeResult = ScriptShape(hdc, fontData->scriptCache(), wcharFrom(str), len, glyphs.size(), &item.a,
                                   glyphs.data(), clusters.data(), visualAttributes.data(), &glyphCount);
         if (shapeResult == E_PENDING) {
             // The script cache isn't primed with enough info yet.  We need to select our HFONT into

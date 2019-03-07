@@ -1,3 +1,24 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        (TestWebKitAPI::TEST):
+        Delete wchar tests -- these are MSVC-only and we won't be using String::operator+ going forward anyway.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (findFontFallback):
+        (addFontFallbackIfPresent):
+        (removeFontFallbackIfPresent):
+        (main):
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::moduleDirectory):
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        Use wchar helpers as needed.
+
 2019-03-06  Rob Buis  <rbuis@igalia.com>
 
         Consider supporting the `referrerpolicy` attribute.

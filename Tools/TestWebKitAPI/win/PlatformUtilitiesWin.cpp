@@ -29,7 +29,6 @@
 #include <Shlwapi.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -40,12 +39,12 @@ static String moduleDirectory()
     wchar_t filename[bufferLength];
     auto len = GetModuleFileName(nullptr, filename, bufferLength);
     ASSERT(len > 0);
-    return FileSystem::directoryName(wcharToString(filename, len));
+    return FileSystem::directoryName(String(filename, len));
 }
 
 WKStringRef createInjectedBundlePath()
 {
-    auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), String(L"TestWebKitAPIInjectedBundle.dll"));
+    auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), "TestWebKitAPIInjectedBundle.dll");
     return WKStringCreateWithUTF8CString(path.utf8().data());
 }
 

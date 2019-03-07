@@ -25,11 +25,9 @@
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
-
 #include <cairo-win32.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/Base64.h>
-#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
@@ -47,7 +45,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     LOGFONT logFont;
     memset(&logFont, 0, sizeof(LOGFONT));
-    wcsncpy(logFont.lfFaceName, stringToNullTerminatedWChar(m_name).data(), LF_FACESIZE - 1);
+    wcsncpy(logFont.lfFaceName, m_name.wideCharacters().data(), LF_FACESIZE - 1);
 
     logFont.lfHeight = -size;
     if (renderingMode == FontRenderingMode::Normal)

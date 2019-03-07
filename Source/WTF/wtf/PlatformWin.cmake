@@ -8,6 +8,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 )
 
 list(APPEND WTF_SOURCES
+    text/win/StringWin.cpp
     text/win/TextBreakIteratorInternalICUWin.cpp
 
     win/CPUTimeWin.cpp

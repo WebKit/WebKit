@@ -44,7 +44,6 @@
 
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 SOFT_LINK_LIBRARY(Mf);
 SOFT_LINK_OPTIONAL(Mf, MFCreateSourceResolver, HRESULT, STDAPICALLTYPE, (IMFSourceResolver**));
@@ -142,7 +141,7 @@ static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
     if (SUCCEEDED(hr)) {
         CALPWSTR mimeTypeArray = propVarMimeTypeArray.calpwstr;
         for (unsigned i = 0; i < mimeTypeArray.cElems; i++)
-            cachedTypes.get().add(nullTerminatedWCharToString(mimeTypeArray.pElems[i]));
+            cachedTypes.get().add(mimeTypeArray.pElems[i]);
     }
 
     PropVariantClear(&propVarMimeTypeArray);
@@ -470,7 +469,7 @@ bool MediaPlayerPrivateMediaFoundation::startCreateMediaSource(const String& url
         return false;
 
     COMPtr<IUnknown> cancelCookie;
-    Vector<wchar_t> urlSource = stringToNullTerminatedWChar(url);
+    Vector<wchar_t> urlSource = url.wideCharacters();
 
     AsyncCallback* callback = new AsyncCallback(this, false);
 

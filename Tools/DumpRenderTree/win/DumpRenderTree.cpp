@@ -1038,7 +1038,7 @@ static String findFontFallback(const char* pathOrUrl)
     String pathToFontFallback = FileSystem::directoryName(pathOrUrl);
 
     wchar_t fullPath[_MAX_PATH];
-    if (!_wfullpath(fullPath, pathToFontFallback.charactersWithNullTermination().data(), _MAX_PATH))
+    if (!_wfullpath(fullPath, pathToFontFallback.wideCharacters().data(), _MAX_PATH))
         return emptyString();
 
     if (!::PathIsDirectoryW(fullPath))
@@ -1069,7 +1069,7 @@ static String findFontFallback(const char* pathOrUrl)
     for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
         pathToFontFallback = FileSystem::pathByAppendingComponent(*pos, "resources\\");
 
-        if (::PathIsDirectoryW(pathToFontFallback.charactersWithNullTermination().data()))
+        if (::PathIsDirectoryW(pathToFontFallback.wideCharacters().data()))
             return pathToFontFallback;
     }
 
@@ -1083,7 +1083,7 @@ static void addFontFallbackIfPresent(const String& fontFallbackPath)
 
     String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
-    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination().data()))
+    if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;
 
     ::setPersistentUserStyleSheetLocation(fontFallback.createCFString().get());
@@ -1096,7 +1096,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
 
     String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
-    if (!::PathFileExistsW(fontFallback.charactersWithNullTermination().data()))
+    if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;
 
     ::setPersistentUserStyleSheetLocation(nullptr);
@@ -1541,12 +1541,12 @@ int main(int argc, const char* argv[])
     String desktopName = makeString("desktop", processId);
     HDESK desktop = nullptr;
 
-    auto windowsStation = ::CreateWindowStation(windowStationName.charactersWithNullTermination().data(), CWF_CREATE_ONLY, WINSTA_ALL_ACCESS, nullptr);
+    auto windowsStation = ::CreateWindowStation(windowStationName.wideCharacters().data(), CWF_CREATE_ONLY, WINSTA_ALL_ACCESS, nullptr);
     if (windowsStation) {
         if (!::SetProcessWindowStation(windowsStation))
             fprintf(stderr, "SetProcessWindowStation failed with error %lu\n", ::GetLastError());
 
-        desktop = ::CreateDesktop(desktopName.charactersWithNullTermination().data(), nullptr, nullptr, 0, GENERIC_ALL, nullptr);
+        desktop = ::CreateDesktop(desktopName.wideCharacters().data(), nullptr, nullptr, 0, GENERIC_ALL, nullptr);
         if (!desktop)
             fprintf(stderr, "Failed to create desktop with error %lu\n", ::GetLastError());
     } else {

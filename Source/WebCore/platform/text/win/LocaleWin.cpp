@@ -59,7 +59,7 @@ static LCID LCIDFromLocaleInternal(LCID userDefaultLCID, const String& userDefau
 {
     if (equalIgnoringASCIICase(extractLanguageCode(locale), userDefaultLanguageCode))
         return userDefaultLCID;
-    return LocaleNameToLCID(stringToNullTerminatedWChar(locale).data(), 0);
+    return LocaleNameToLCID(locale.wideCharacters().data(), 0);
 }
 
 static LCID LCIDFromLocale(const AtomicString& locale)
@@ -68,7 +68,7 @@ static LCID LCIDFromLocale(const AtomicString& locale)
     const size_t languageCodeBufferSize = 9;
     WCHAR lowercaseLanguageCode[languageCodeBufferSize];
     ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lowercaseLanguageCode, languageCodeBufferSize);
-    String userDefaultLanguageCode = nullTerminatedWCharToString(lowercaseLanguageCode);
+    String userDefaultLanguageCode(lowercaseLanguageCode);
 
     LCID lcid = LCIDFromLocaleInternal(LOCALE_USER_DEFAULT, userDefaultLanguageCode, String(locale));
     if (!lcid)
@@ -95,7 +95,7 @@ String LocaleWin::getLocaleInfoString(LCTYPE type)
     if (bufferSizeWithNUL <= 0)
         return String();
     Vector<UChar> buffer(bufferSizeWithNUL);
-    ::GetLocaleInfo(m_lcid, type, buffer.data(), bufferSizeWithNUL);
+    ::GetLocaleInfo(m_lcid, type, wcharFrom(buffer.data()), bufferSizeWithNUL);
     buffer.shrink(bufferSizeWithNUL - 1);
     return String::adopt(WTFMove(buffer));
 }

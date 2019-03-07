@@ -1,3 +1,67 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::appendLinkedFonts):
+        (WebCore::getLinkedFonts):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::fontFromDescriptionAndLogFont):
+        (WebCore::createGDIFont):
+        (WebCore::FontCache::getFontSelectionCapabilitiesInFamily):
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::createIconForFiles):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::itemizeShapeAndPlace):
+        (WebCore::UniscribeController::shape):
+        * platform/network/win/DownloadBundleWin.cpp:
+        (WebCore::DownloadBundle::appendResumeData):
+        (WebCore::DownloadBundle::extractResumeData):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LCIDFromLocaleInternal):
+        (WebCore::LCIDFromLocale):
+        (WebCore::LocaleWin::getLocaleInfoString):
+        * platform/win/BString.cpp:
+        (WebCore::BString::BString):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getWebLocData):
+        (WebCore::createGlobalData):
+        (WebCore::getFileDescriptorData):
+        (WebCore::getURL):
+        (WebCore::getCFData):
+        (WebCore::setCFData):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::asFilenames const):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageIconForCachedImageFilename):
+        (WebCore::dragLabelFont):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::mimeTypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+        (WebCore::filesystemPathFromUrlOrTitle):
+        (WebCore::Pasteboard::writeURLToDataObject):
+        (WebCore::createGlobalImageFileDescriptor):
+        (WebCore::createGlobalHDropContent):
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/win/SharedBufferWin.cpp:
+        (WebCore::SharedBuffer::createFromReadingFile):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::fillFontDescription):
+        Use wchar helpers as needed.
+
 2019-03-06  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM Debugger: event breakpoints still fire when breakpoints are disabled

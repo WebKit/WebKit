@@ -1,3 +1,17 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * jsc.cpp:
+        (currentWorkingDirectory):
+        (fetchModuleFromLocalFileSystem):
+        * runtime/DateConversion.cpp:
+        (JSC::formatDateTime):
+        Use wchar helpers as needed.
+
 2019-03-06  Mark Lam  <mark.lam@apple.com>
 
         Fix incorrect handling of try-finally completion values.

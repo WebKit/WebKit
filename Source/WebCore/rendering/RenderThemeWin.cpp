@@ -40,7 +40,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 #if ENABLE(VIDEO)
@@ -318,7 +317,7 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
 static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT& logFont, float fontSize)
 {    
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(nullTerminatedWCharToString(logFont.lfFaceName));
+    fontDescription.setOneFamily(logFont.lfFaceName);
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
     fontDescription.setIsItalic(logFont.lfItalic);

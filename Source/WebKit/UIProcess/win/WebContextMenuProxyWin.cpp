@@ -71,7 +71,7 @@ static void createMenuItem(const ContextMenuContextData &context, HMENU menu, co
     switch (data.type()) {
     case ActionType:
     case CheckableActionType:
-        ::AppendMenu(menu, flags | MF_STRING, data.action(), data.title().charactersWithNullTermination().data());
+        ::AppendMenu(menu, flags | MF_STRING, data.action(), data.title().wideCharacters().data());
         break;
     case SeparatorType:
         ::AppendMenu(menu, flags | MF_SEPARATOR, data.action(), nullptr);
@@ -79,7 +79,7 @@ static void createMenuItem(const ContextMenuContextData &context, HMENU menu, co
     case SubmenuType:
         HMENU submenu = createMenu(context);
         populate(context, submenu, data.submenu());
-        ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)submenu, data.title().charactersWithNullTermination().data());
+        ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)submenu, data.title().wideCharacters().data());
         break;
     }
 }

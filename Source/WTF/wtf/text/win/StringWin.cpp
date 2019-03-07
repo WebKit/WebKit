@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +24,30 @@
  */
 
 #include "config.h"
-#include "Module.h"
+#include <wtf/text/WTFString.h>
 
-#include <shlwapi.h>
-#include <wtf/text/CString.h>
+namespace WTF {
 
-namespace WebKit {
-
-bool Module::load()
+Vector<wchar_t> String::wideCharacters() const
 {
-    ASSERT(!::PathIsRelativeW(m_path.wideCharacters().data()));
-    m_module = ::LoadLibraryExW(m_path.wideCharacters().data(), 0, LOAD_WITH_ALTERED_SEARCH_PATH);
-    return m_module;
-}
+    Vector<wchar_t> result;
 
-void Module::unload()
-{
-    if (!m_module)
-        return;
-    ::FreeLibrary(m_module);
-    m_module = 0;
-}
+    if (m_impl) {
+        result.reserveInitialCapacity(length() + 1);
 
-void* Module::platformFunctionPointer(const char* functionName) const
-{
-    if (!m_module)
-        return 0;
-    auto proc = ::GetProcAddress(m_module, functionName);
-    return reinterpret_cast<void*>(proc);
+        if (is8Bit()) {
+            const LChar* characters8 = m_impl->characters8();
+            for (size_t i = 0; i < length(); ++i)
+                result.uncheckedAppend(characters8[i]);
+        } else {
+            const UChar* characters16 = m_impl->characters16();
+            result.append(characters16, m_impl->length());
+        }
+
+        result.append(0);
+    }
+
+    return result;
 }
 
 }

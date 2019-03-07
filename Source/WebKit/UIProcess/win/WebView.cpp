@@ -874,8 +874,8 @@ void WebView::setToolTip(const String& toolTip)
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(nativeWindow());
-        Vector<UChar> toolTipCharacters = toolTip.charactersWithNullTermination(); // Retain buffer long enough to make the SendMessage call
-        info.lpszText = const_cast<UChar*>(toolTipCharacters.data());
+        Vector<wchar_t> toolTipCharacters = toolTip.wideCharacters(); // Retain buffer long enough to make the SendMessage call
+        info.lpszText = const_cast<wchar_t*>(toolTipCharacters.data());
         ::SendMessage(m_toolTipWindow, TTM_UPDATETIPTEXT, 0, reinterpret_cast<LPARAM>(&info));
     }
 

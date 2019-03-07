@@ -27,14 +27,13 @@
 #include <wtf/win/PathWalker.h>
 
 #include <wtf/text/WTFString.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WTF {
 
 PathWalker::PathWalker(const String& directory, const String& pattern)
 {
     String path = directory + "\\" + pattern;
-    m_handle = ::FindFirstFileW(stringToNullTerminatedWChar(path).data(), &m_data);
+    m_handle = ::FindFirstFileW(path.wideCharacters().data(), &m_data);
 }
 
 PathWalker::~PathWalker()

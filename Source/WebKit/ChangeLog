@@ -1,3 +1,24 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::createServerAndClientIdentifiers):
+        * Platform/win/ModuleWin.cpp:
+        (WebKit::Module::load):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        (WebKit::createMenuItem):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setToolTip):
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::initialize):
+        Use wchar helpers as needed.
+
 2019-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Crash when attempting to change input type while dismissing datalist suggestions

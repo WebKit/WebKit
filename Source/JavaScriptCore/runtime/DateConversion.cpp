@@ -32,7 +32,6 @@
 
 #if OS(WINDOWS)
 #include <windows.h>
-#include <wtf/text/win/WCharStringExtras.h>
 #endif
 
 namespace JSC {
@@ -109,7 +108,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
             TIME_ZONE_INFORMATION timeZoneInformation;
             GetTimeZoneInformation(&timeZoneInformation);
             const WCHAR* winTimeZoneName = t.isDST() ? timeZoneInformation.DaylightName : timeZoneInformation.StandardName;
-            String timeZoneName = nullTerminatedWCharToString(winTimeZoneName);
+            String timeZoneName(winTimeZoneName);
 #else
             struct tm gtm = t;
             char timeZoneName[70];

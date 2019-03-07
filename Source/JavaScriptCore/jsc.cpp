@@ -98,7 +98,6 @@
 #include <direct.h>
 #include <fcntl.h>
 #include <io.h>
-#include <wtf/text/win/WCharStringExtras.h>
 #else
 #include <unistd.h>
 #endif
@@ -748,7 +747,7 @@ static Optional<DirectoryName> currentWorkingDirectory()
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
     Vector<wchar_t> buffer(bufferLength);
     DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.data());
-    String directoryString = wcharToString(buffer.data(), lengthNotIncludingNull);
+    String directoryString(buffer.data(), lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
         return WTF::nullopt;
@@ -1062,8 +1061,7 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector& buffe
 #if OS(WINDOWS)
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa365247.aspx#maxpath
     // Use long UNC to pass the long path name to the Windows APIs.
-    String longUNCPathName = WTF::makeString("\\\\?\\", fileName);
-    auto pathName = stringToNullTerminatedWChar(longUNCPathName);
+    auto pathName = makeString("\\\\?\\", fileName).wideCharacters();
     struct _stat status { };
     if (_wstat(pathName.data(), &status))
         return false;

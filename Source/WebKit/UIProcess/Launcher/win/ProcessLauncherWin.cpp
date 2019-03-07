@@ -31,7 +31,6 @@
 #include <WTF/RunLoop.h>
 #include <shlwapi.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebKit {
 
@@ -85,7 +84,7 @@ void ProcessLauncher::launchProcess()
     commandLineBuilder.append(String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
     commandLineBuilder.append('\0');
 
-    auto commandLine = stringToNullTerminatedWChar(commandLineBuilder.toString());
+    auto commandLine = commandLineBuilder.toString().wideCharacters();
 
     STARTUPINFO startupInfo { };
     startupInfo.cb = sizeof(startupInfo);

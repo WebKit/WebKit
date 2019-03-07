@@ -1,3 +1,14 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        Stop compiling with -DUCHAR_TYPE=wchar_t.
+
 2019-03-06  Don Olmstead  <don.olmstead@sony.com>
 
         [WinCairo] Enable additional experimental features

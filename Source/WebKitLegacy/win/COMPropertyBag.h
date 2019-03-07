@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef COMPropertyBag_h
-#define COMPropertyBag_h
-
-#include <ocidl.h>
-#include <unknwn.h>
-
-#include <wtf/Noncopyable.h>
-#include <wtf/HashMap.h>
+#pragma once
 
 #include "COMVariantSetter.h"
+#include <ocidl.h>
+#include <unknwn.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/HashMap.h>
 
 template<typename ValueType, typename KeyType = typename WTF::String, typename HashType = typename WTF::StringHash>
 class COMPropertyBag final : public IPropertyBag, public IPropertyBag2 {
@@ -220,7 +217,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
         pPropBag[j].pstrName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t)*(current->key.length()+1));
         if (!pPropBag[j].pstrName)
             return E_OUTOFMEMORY;
-        wcscpy_s(pPropBag[j].pstrName, current->key.length()+1, static_cast<String>(current->key).charactersWithNullTermination().data());
+        wcscpy_s(pPropBag[j].pstrName, current->key.length()+1, current->key.wideCharacters().data());
         ++*pcProperties;
     }
     return S_OK;
@@ -231,5 +228,3 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::LoadObje
 {
     return E_NOTIMPL;
 }
-
-#endif // COMPropertyBag_h

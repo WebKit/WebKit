@@ -450,7 +450,7 @@ void WebInspectorFrontendClient::destroyInspectorView()
 void WebInspectorFrontendClient::updateWindowTitle()
 {
     String title = makeString("Web Inspector ", static_cast<UChar>(0x2014), ' ', m_inspectedURL);
-    ::SetWindowText(m_frontendHwnd, title.charactersWithNullTermination().data());
+    ::SetWindowText(m_frontendHwnd, title.wideCharacters().data());
 }
 
 LRESULT WebInspectorFrontendClient::onGetMinMaxInfo(WPARAM, LPARAM lParam)

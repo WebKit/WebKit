@@ -1,3 +1,49 @@
+2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+
+        Reviewed by Fujii Hironori.
+
+        * wtf/PlatformWin.cmake:
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        * wtf/text/win/StringWin.cpp: Added.
+        (WTF::String::wideCharacters const): Renamed from WTF::stringToNullTerminatedWChar.
+        * wtf/text/win/WCharStringExtras.h:
+        (WTF::ucharFrom):
+        (WTF::wcharFrom):
+        (WTF::stringToNullTerminatedWChar): Deleted.
+        (WTF::wcharToString): Deleted.
+        (WTF::nullTerminatedWCharToString): Deleted.
+        Add static_assert-guarded reinterpret_cast wrappers for going between UChar* and wchar_t*.
+        Move existing to/from-String helpers into the String (and AtomicString) class(es).
+
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::getFindData):
+        (WTF::FileSystemImpl::getFinalPathName):
+        (WTF::FileSystemImpl::createSymbolicLink):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        (WTF::FileSystemImpl::moveFile):
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        (WTF::FileSystemImpl::fileSystemRepresentation):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::pathGetFileName):
+        (WTF::FileSystemImpl::storageDirectory):
+        (WTF::FileSystemImpl::generateTemporaryPath):
+        (WTF::FileSystemImpl::openTemporaryFile):
+        (WTF::FileSystemImpl::openFile):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::localeInfo):
+        * wtf/win/PathWalker.cpp:
+        (WTF::PathWalker::PathWalker):
+        Use wchar helpers as needed.
+
 2019-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add WeakHashSet

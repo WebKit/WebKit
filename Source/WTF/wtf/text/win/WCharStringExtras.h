@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Konstantin Tokarev <annulen@yandex.ru>
+ * Copyright (C) 2019 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,46 +26,33 @@
 
 #pragma once
 
-#include <wchar.h>
-#include <wtf/text/WTFString.h>
-
 namespace WTF {
 
-inline Vector<wchar_t> stringToNullTerminatedWChar(const String& string)
-{
-    Vector<wchar_t> result;
-
-    if (!string.isNull()) {
-        result.reserveInitialCapacity(string.impl()->length() + 1);
-
-        if (string.is8Bit()) {
-            const LChar* characters8 = string.impl()->characters8();
-            for (size_t i = 0; i < string.impl()->length(); ++i)
-                result.uncheckedAppend(characters8[i]);
-        } else {
-            const UChar* characters16 = string.impl()->characters16();
-            result.append(characters16, string.impl()->length());
-        }
-
-        result.append(0);
-    }
-
-    return result;
-}
-
-inline String wcharToString(const wchar_t* characters, unsigned length)
+inline const UChar* ucharFrom(const wchar_t* characters)
 {
     static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
-    return String(reinterpret_cast<const UChar*>(characters), length);
+    return reinterpret_cast<const UChar*>(characters);
 }
 
-inline String nullTerminatedWCharToString(const wchar_t* characters)
+inline UChar* ucharFrom(wchar_t* characters)
 {
-    return wcharToString(characters, wcslen(characters));
+    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
+    return reinterpret_cast<UChar*>(characters);
+}
+
+inline const wchar_t* wcharFrom(const UChar* characters)
+{
+    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
+    return reinterpret_cast<const wchar_t*>(characters);
+}
+
+inline wchar_t* wcharFrom(UChar* characters)
+{
+    static_assert(sizeof(wchar_t) == sizeof(UChar), "We assume wchar_t and UChar have the same size");
+    return reinterpret_cast<wchar_t*>(characters);
 }
 
 } // namespace WTF
 
-using WTF::stringToNullTerminatedWChar;
-using WTF::wcharToString;
-using WTF::nullTerminatedWCharToString;
+using WTF::ucharFrom;
+using WTF::wcharFrom;

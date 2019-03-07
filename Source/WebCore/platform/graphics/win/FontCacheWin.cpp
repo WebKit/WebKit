@@ -112,7 +112,7 @@ WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vecto
         unsigned j = i;
         while (j < length && linkedFonts[j])
             j++;
-        result->append(wcharToString(linkedFonts + i, j - i));
+        result->append(String(linkedFonts + i, j - i));
         i = j + 1;
     }
 }
@@ -131,14 +131,14 @@ static const Vector<String>* getLinkedFonts(String& family)
         return result;
 
     DWORD linkedFontsBufferSize = 0;
-    if (::RegQueryValueEx(fontLinkKey, stringToNullTerminatedWChar(family).data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
+    if (::RegQueryValueEx(fontLinkKey, family.wideCharacters().data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
         WTFLogAlways("The font link key %s does not exist in the registry.", family.utf8().data());
         return result;
     }
 
     static const constexpr unsigned InitialBufferSize { 256 / sizeof(WCHAR) };
     Vector<WCHAR, InitialBufferSize> linkedFonts(roundUpToMultipleOf<sizeof(WCHAR)>(linkedFontsBufferSize) / sizeof(WCHAR));
-    if (::RegQueryValueEx(fontLinkKey, stringToNullTerminatedWChar(family).data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
+    if (::RegQueryValueEx(fontLinkKey, family.wideCharacters().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
         unsigned length = linkedFontsBufferSize / sizeof(WCHAR);
         appendLinkedFonts(linkedFonts.data(), length, result);
     }
@@ -285,7 +285,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         SelectObject(hdc, hfont);
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
-        familyName = nullTerminatedWCharToString(name);
+        familyName = String(name);
 
         if (containsCharacter || currentFontContainsCharacter(hdc, character))
             break;
@@ -301,7 +301,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
         LOGFONT logFont;
         logFont.lfCharSet = DEFAULT_CHARSET;
-        StringView(linkedFonts->at(linkedFontIndex)).getCharactersWithUpconvert(logFont.lfFaceName);
+        StringView(linkedFonts->at(linkedFontIndex)).getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
         logFont.lfFaceName[linkedFonts->at(linkedFontIndex).length()] = 0;
         EnumFontFamiliesEx(hdc, &logFont, linkedFontEnumProc, reinterpret_cast<LPARAM>(&hfont), 0);
         linkedFontIndex++;
@@ -330,7 +330,7 @@ Vector<String> FontCache::systemFontFamilies()
 
 RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
-    AtomicString familyName = wcharToString(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    AtomicString familyName(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
     RefPtr<Font> fontData = fontForFamily(fontDescription, familyName);
     if (fontData)
         outFontFamilyName = familyName;
@@ -484,7 +484,7 @@ static GDIObject<HFONT> createGDIFont(const AtomicString& family, LONG desiredWe
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(family).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharactersWithUpconvert(logFont.lfFaceName);
+    truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 
@@ -598,7 +598,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
     StringView truncatedFamily = StringView(familyName).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
-    truncatedFamily.getCharactersWithUpconvert(logFont.lfFaceName);
+    truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
 

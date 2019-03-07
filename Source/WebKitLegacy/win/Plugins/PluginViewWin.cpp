@@ -71,7 +71,6 @@
 #include <WebCore/runtime_root.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 #if USE(CAIRO)
@@ -755,13 +754,13 @@ NPError PluginView::handlePostReadFile(Vector<char>& buffer, uint32_t len, const
 
     // Get file info
     WIN32_FILE_ATTRIBUTE_DATA attrs;
-    if (!GetFileAttributesExW(stringToNullTerminatedWChar(filename).data(), GetFileExInfoStandard, &attrs))
+    if (!GetFileAttributesExW(filename.wideCharacters().data(), GetFileExInfoStandard, &attrs))
         return NPERR_FILE_NOT_FOUND;
 
     if (attrs.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         return NPERR_FILE_NOT_FOUND;
 
-    HANDLE fileHandle = CreateFileW(stringToNullTerminatedWChar(filename).data(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
+    HANDLE fileHandle = CreateFileW(filename.wideCharacters().data(), FILE_READ_DATA, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
     
     if (fileHandle == INVALID_HANDLE_VALUE)
         return NPERR_FILE_NOT_FOUND;
