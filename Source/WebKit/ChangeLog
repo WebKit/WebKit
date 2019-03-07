@@ -1,3 +1,15 @@
+2019-03-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Disable permissive call logging in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=195288
+        <rdar://problem/47683804>
+
+        Reviewed by Brent Fulgham.
+
+        As on macOS, we should enable strict call filtering in sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-03-07  Youenn Fablet  <youenn@apple.com>
 
         Introduce a quota manager for Cache API/Service Worker/IDB storage

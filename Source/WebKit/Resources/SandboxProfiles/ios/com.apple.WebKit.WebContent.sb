@@ -542,7 +542,7 @@
 )
 
 (when (defined? 'syscall-unix)
-    (allow syscall-unix (with report))
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
         (syscall-number SYS_exit)
         (syscall-number SYS_read)
@@ -685,5 +685,11 @@
         (syscall-number SYS_sem_close)
         (syscall-number SYS_fsetattrlist)
         (syscall-number SYS_guarded_open_dprotected_np) ; <rdar://problem/48166729>
+        (syscall-number SYS_mremap_encrypted)
+        (syscall-number SYS_dup2)
+        (syscall-number SYS_fileport_makefd)
+        (syscall-number SYS_os_fault_with_payload)
+        (syscall-number SYS_persona)
+        (syscall-number SYS_work_interval_ctl)
     )
 )
