@@ -1,3 +1,13 @@
+2019-03-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add gettid to allowed syscalls on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=195386
+        <rdar://problem/48651255>
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-03-06  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Sandbox call violation causes WebContent process to crash
