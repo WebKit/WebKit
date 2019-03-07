@@ -171,10 +171,20 @@ WI.MultipleScopeBarItem = class MultipleScopeBarItem extends WI.Object
         if (event.button !== 0)
             return;
 
-        // Only support click to select when the item is not selected yet.
-        // Clicking when selected will cause the menu it appear instead.
-        if (this._element.classList.contains("selected"))
+        if (event.__original)
             return;
+
+        // Only support click to select when the item is not selected yet.
+        // Clicking when selected will cause the menu to appear instead.
+        if (this._element.classList.contains("selected")) {
+            let newEvent = new event.constructor(event.type, event);
+            newEvent.__original = event;
+
+            event.stop();
+
+            this._selectElement.dispatchEvent(newEvent);
+            return;
+        }
 
         this.selected = true;
     }

@@ -515,7 +515,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             scopeBarItems.unshift(this._placeholderScopeBarItem);
         }
 
-        this._scopeBar = new WI.ScopeBar("canvas-recordinga-scope-bar", scopeBarItems, selectedScopeBarItem, true);
+        this._scopeBar = new WI.ScopeBar("canvas-recording-scope-bar", scopeBarItems, selectedScopeBarItem, true);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionChanged, this);
         this._recordingNavigationBar.insertNavigationItem(this._scopeBar, 0);
     }

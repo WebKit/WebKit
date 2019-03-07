@@ -91,6 +91,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Debugs, WI.UIString("Debugs"), {className: "debugs", hidden: true}),
         ];
 
+        for (let scopeBarItem of scopeBarItems) {
+            let indicatorElement = scopeBarItem.element.insertBefore(document.createElement("div"), scopeBarItem.element.firstChild);
+            indicatorElement.className = "indicator";
+        }
+
         this._scopeBar = new WI.ScopeBar("log-scope-bar", scopeBarItems, scopeBarItems[0]);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 

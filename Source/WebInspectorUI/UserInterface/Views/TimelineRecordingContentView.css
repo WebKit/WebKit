@@ -53,13 +53,10 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple {
-    background-color: transparent;
-    color: var(--text-color);
-}
-
-.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows {
-    color: var(--text-color);
+.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
 }
 
 .content-view.timeline-recording > .content-browser .recording-progress {

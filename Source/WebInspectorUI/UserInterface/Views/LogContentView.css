@@ -23,46 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.log-scope-bar > li.unread::before {
-    content: '';
-    display: inline-block;
-    vertical-align: baseline;
+.log-scope-bar > li:not(.unread) > .indicator {
+    display: none;
+}
 
-    margin-left: -10px;
-    margin-right: 2px;
+.log-scope-bar > li.unread > .indicator {
+    display: inline-block;
     width: 8px;
     height: 8px;
-
-    -webkit-clip-path: circle(50% at 50% 50%);
     animation: unread-background-pulse 1.5s ease-in-out infinite alternate-reverse;
+    -webkit-clip-path: circle(50% at 50% 50%);
 
-    --unread-indicator-margin-start: -10px;
-    --unread-indicator-margin-end: 2px;
+    -webkit-margin-start: -10px;
+    -webkit-margin-end: 2px;
 }
 
-body[dir=ltr] .log-scope-bar > li.unread::before {
-    margin-left: var(--unread-indicator-margin-start);
-    margin-right: var(--unread-indicator-margin-end);
-}
-
-body[dir=rtl] .log-scope-bar > li.unread::before {
-    margin-left: var(--unread-indicator-margin-end);
-    margin-right: var(--unread-indicator-margin-start);
-}
-
-.log-scope-bar > li.unread:hover::before {
+.log-scope-bar > li.unread:hover > .indicator {
     visibility: hidden;
 }
 
-.log-scope-bar > li.unread.errors::before {
+.log-scope-bar > li.unread.errors > .indicator {
     background-color: hsl(0, 95%, 72%);
 }
 
-.log-scope-bar > li.unread.warnings::before {
+.log-scope-bar > li.unread.warnings > .indicator {
     background-color: hsl(48, 98%, 51%);
 }
 
-.log-scope-bar > li.unread.logs::before {
+.log-scope-bar > li.unread.logs > .indicator {
     background-color: hsl(213, 92%, 77%);
 }
 

@@ -79,43 +79,42 @@
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li {
-    display: inline-flex;
-    align-items: center;
     margin: 0 3px;
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li:not(:hover, .selected) {
-    border: 1px solid var(--selected-background-color-unfocused);
+    --scope-bar-border-color-override: var(--selected-background-color-unfocused);
 }
 
 .content-view.audit-test-group > header > nav > .scope-bar > li:last-child {
     -webkit-margin-end: 0;
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li > img {
     width: 16px;
     height: 16px;
-    margin-top: 1px;
+    margin-top: 2px;
     -webkit-margin-end: 4px;
+    vertical-align: -4px;
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li.pass::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li.pass > img {
     content: url(../Images/AuditTestPass.svg);
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li.warn::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li.warn > img {
     content: url(../Images/AuditTestWarn.svg);
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li.fail::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li.fail > img {
     content: url(../Images/AuditTestFail.svg);
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li.error::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li.error > img {
     content: url(../Images/AuditTestError.svg);
 }
 
-.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported::before {
+.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported > img {
     content: url(../Images/AuditTestUnsupported.svg);
 }
 
@@ -136,9 +135,14 @@
 }
 
 .content-view.audit-test-group > section > .audit-test-case:first-child,
+.content-view.audit-test-group > section > .audit-test-case.filtered ~ .audit-test-case:not(.filtered),
 .content-view.audit-test-group > section > .audit-test-group + .audit-test-case,
 .content-view.audit-test-group > section > .audit-test-case + .audit-test-group {
     margin-top: var(--audit-test-vertical-space);
+}
+
+.content-view.audit-test-group > section > .audit-test-case:not(.filtered) ~ .audit-test-case:not(.filtered) {
+    margin-top: unset;
 }
 
 .content-view.audit-test-group > section > .audit-test-case:last-child {

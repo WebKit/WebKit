@@ -1,5 +1,99 @@
 2019-03-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r242118): WI.ScopeBar missing background
+        https://bugs.webkit.org/show_bug.cgi?id=195299
+
+        Reviewed by Joseph Pecoraro.
+
+        Rework the way `color`, `background-color`, and `border-color` are set for `WI.ScopeBar` to
+        use CSS variables instead. Divides the variables into three categories:
+         - default: these are the values that the `WI.ScopeBar` would use normally
+         - override: these are values that take precidence over the default (e.g. set by other elements)
+            - falls back to default when no value is set
+         - actual: this is the resulting value that will be used when displaying
+            - this way, other elements can "mirror" the styling of the `WI.ScopeBar`
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar):
+        (.scope-bar > li):
+        (.scope-bar > li::before):
+        (.scope-bar > li:matches(.selected, :hover)):
+        (.scope-bar > li:not(.selected):hover::after):
+        (.scope-bar > li.selected:active::after):
+        (.scope-bar > li.multiple > select):
+        (body[dir=ltr] .scope-bar > li.multiple > select):
+        (body[dir=rtl] .scope-bar > li.multiple > select):
+        (.scope-bar > li.multiple:not(.selected) > select): Added.
+        (.scope-bar > li.multiple > .arrows):
+        (.scope-bar > li::before): Deleted.
+        (.scope-bar.default-item-selected > li.multiple.selected::before): Deleted.
+        (.scope-bar > li:matches(.selected, :hover)::before): Deleted.
+        (.scope-bar > li.selected:active::before): Deleted.
+        (.scope-bar > li.multiple.selected > select): Deleted.
+        (body[dir=ltr] .scope-bar > li.multiple > .arrows): Deleted.
+        (body[dir=rtl] .scope-bar > li.multiple > .arrows): Deleted.
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows): Deleted.
+        (.scope-bar > li:matches(.selected, :active)): Deleted.
+        (@media (prefers-color-scheme: dark)): Deleted.
+        Switch to using `::after` since `::before` is more commonly used.
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype._handleMouseDown):
+        Drive-by: fix the <select> alignment by re-firing the "mousedown" event on it.
+
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.layout):
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > header > nav > .scope-bar > li):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li:not(:hover, .selected)):
+        (.content-view.audit-test-group > header > nav > .scope-bar > li > img): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.pass > img): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.warn > img): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.fail > img): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.error > img): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported > img): Added.
+        (.content-view.audit-test-group > section > .audit-test-case:first-child, .content-view.audit-test-group > section > .audit-test-case.filtered ~ .audit-test-case:not(.filtered), .content-view.audit-test-group > section > .audit-test-group + .audit-test-case, .content-view.audit-test-group > section > .audit-test-case + .audit-test-group): Added.
+        (.content-view.audit-test-group > section > .audit-test-case:not(.filtered) ~ .audit-test-case:not(.filtered)): Added.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li::before): Deleted.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.pass::before): Deleted.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.warn::before): Deleted.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.fail::before): Deleted.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.error::before): Deleted.
+        (.content-view.audit-test-group > header > nav > .scope-bar > li.unsupported::before): Deleted.
+        (.content-view.audit-test-group > section > .audit-test-case:first-child, .content-view.audit-test-group > section > .audit-test-group + .audit-test-case, .content-view.audit-test-group > section > .audit-test-case + .audit-test-group): Deleted.
+        Replace the `::before` image with an actual `<img>` now that the `WI.ScopeBar` itself uses
+        a pseudo-element for the background styling.
+
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView):
+        * UserInterface/Views/LogContentView.css:
+        (.log-scope-bar > li:not(.unread) > .indicator): Added.
+        (.log-scope-bar > li.unread > .indicator): Added.
+        (.log-scope-bar > li.unread:hover > .indicator): Added.
+        (.log-scope-bar > li.unread.errors > .indicator): Added.
+        (.log-scope-bar > li.unread.warnings > .indicator): Added.
+        (.log-scope-bar > li.unread.logs > .indicator): Added.
+        (.log-scope-bar > li.unread::before): Deleted.
+        (body[dir=ltr] .log-scope-bar > li.unread::before): Deleted.
+        (body[dir=rtl] .log-scope-bar > li.unread::before): Deleted.
+        (.log-scope-bar > li.unread:hover::before): Deleted.
+        (.log-scope-bar > li.unread.errors::before): Deleted.
+        (.log-scope-bar > li.unread.warnings::before): Deleted.
+        (.log-scope-bar > li.unread.logs::before): Deleted.
+        Replace the `::before` unread indicator with an actual `<div>` now that the `WI.ScopeBar`
+        itself uses a pseudo-element for the background styling.
+
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected):
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple): Deleted.
+        (.content-view.timeline-recording > .content-browser > .navigation-bar > .item.scope-bar.default-item-selected > .multiple .arrows): Deleted.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        Drive-by: fix typo.
+
+2019-03-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: CSS: there should be a way to inline-replace a variable with it's value
         https://bugs.webkit.org/show_bug.cgi?id=195335
 

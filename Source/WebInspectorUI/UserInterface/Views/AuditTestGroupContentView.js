@@ -119,6 +119,9 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
                     independent: true,
                 });
                 scopeBarItem.selected = true;
+
+                scopeBarItem.element.insertBefore(document.createElement("img"), scopeBarItem.element.firstChild);
+
                 scopeBarItems.push(scopeBarItem);
             };
 
