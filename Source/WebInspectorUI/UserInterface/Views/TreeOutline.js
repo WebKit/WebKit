@@ -817,7 +817,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             treeElement = treeElement.children.lastValue;
 
         let item = this.objectForSelection(treeElement);
-        if (treeElement.selectable)
+        if (this.canSelectTreeElement(treeElement))
             return item;
         return this.selectionControllerPreviousSelectableItem(controller, item);
     }
@@ -834,7 +834,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         const dontPopulate = true;
 
         while (treeElement = treeElement.traversePreviousTreeElement(skipUnrevealed, stayWithin, dontPopulate)) {
-            if (treeElement.selectable)
+            if (this.canSelectTreeElement(treeElement))
                 return this.objectForSelection(treeElement);
         }
 
@@ -853,7 +853,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         const dontPopulate = true;
 
         while (treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate)) {
-            if (treeElement.selectable)
+            if (this.canSelectTreeElement(treeElement))
                 return this.objectForSelection(treeElement);
         }
 
@@ -861,6 +861,13 @@ WI.TreeOutline = class TreeOutline extends WI.Object
     }
 
     // Protected
+
+    canSelectTreeElement(treeElement)
+    {
+        // Can be overridden by subclasses.
+
+        return treeElement.selectable;
+    }
 
     objectForSelection(treeElement)
     {
