@@ -69,7 +69,7 @@
 }
 
 .scope-bar > li.selected:active::before {
-    filter: brightness(0.6);
+    filter: brightness(0.8);
 }
 
 .scope-bar > li.multiple {

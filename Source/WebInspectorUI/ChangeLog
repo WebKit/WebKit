@@ -1,5 +1,28 @@
 2019-03-06  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: system accent color follow-ups
+        https://bugs.webkit.org/show_bug.cgi?id=195190
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button:not(.disabled):matches(:focus, .activate.activated)):
+        (@media (prefers-color-scheme: dark)):
+        (.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated)): Deleted.
+        Drop pressed toolbar button style. It's extremely subtle and not worth the hassle.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-messages:focus .console-item.selected::after):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.selected:active::before):
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.selected > .segment):
+
+2019-03-06  Matt Baker  <mattbaker@apple.com>
+
         REGRESSION: Elements tab: Uncaught Exception: No node with given id found
         https://bugs.webkit.org/show_bug.cgi?id=194299
         <rdar://problem/47828647>

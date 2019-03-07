@@ -42,8 +42,8 @@
 }
 
 .timeline-record-bar.selected > .segment {
-    background-color: var(--selected-background-color) !important;
-    border-color: var(--selected-background-color-active) !important;
+    background-color: var(--selected-text-background-color) !important;
+    border-color: var(--glyph-color-active) !important;
 }
 
 .timeline-record-bar:not(.has-inactive-segment) > .segment {

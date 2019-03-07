@@ -38,11 +38,7 @@
 }
 
 .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) {
-    color: var(--selected-background-color);
-}
-
-.toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) {
-    color: var(--selected-background-color-active);
+    color: var(--glyph-color-active);
 }
 
 .toolbar .item.button > .glyph {
@@ -73,11 +69,7 @@ body.window-inactive .toolbar .item.button.disabled {
         background: var(--button-background-color-pressed);
     }
 
-    .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) {
-        color: var(--glyph-color-active);
-    }
-
-    .toolbar .item.button:not(.disabled):active:matches(:focus, .activate.activated) {
-        color: var(--glyph-color-active-pressed);
+    body:not(.window-inactive) .toolbar .item.button:not(.disabled):matches(:focus, .activate.activated) > .glyph {
+        filter: brightness(1.35);
     }
 }

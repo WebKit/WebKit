@@ -148,7 +148,7 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
 }
 
 .console-messages:focus .console-item.selected::after {
-    background: hsl(210, 100%, 49%);
+    background-color: var(--glyph-color-active);
 }
 
 .console-messages:focus .console-item.selected .go-to-link {
@@ -307,10 +307,6 @@ body[dir=rtl] .console-group-title::before {
 
     .console-messages a:hover {
         color: var(--selected-secondary-text-color-active);
-    }
-
-    .console-messages:focus .console-item.selected::after {
-        background: hsl(210, 100%, 75%);
     }
 
     .console-error-level {
