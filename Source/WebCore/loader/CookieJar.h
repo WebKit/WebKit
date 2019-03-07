@@ -35,6 +35,7 @@ class SessionID;
 namespace WebCore {
 
 enum class IncludeSecureCookies : bool { No, Yes };
+enum class IncludeHttpOnlyCookies : bool { No, Yes };
 enum class SecureCookiesAccessed : bool { No, Yes };
 
 class Document;

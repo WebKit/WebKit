@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Check that only HttpOnly cookies remain if all script-accessible cookies are deleted.");
+    jsTestIsAsync = true;
+
+    const httpOnlyCookieName = "http-only-cookie";
+    const serverSideCookieName = "server-side-cookie";
+    const clientSideCookieName = "client-side-cookie";
+
+    function sortStringArray(a, b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+
+        return a > b ? 1 : b > a ? -1 : 0;
+    }
+
+    function checkCookies(isAfterScriptAccessibleDeletion) {
+        let unsortedTestPassedMessages = [];
+        let cookies = internals.getCookies();
+        if (!cookies.length)
+            testFailed((isAfterScriptAccessibleDeletion ? "After" : "Before") + " script-accessible deletion: No cookies found.");
+        for (let cookie of cookies) {
+            switch (cookie.name) {
+                case httpOnlyCookieName:
+                    unsortedTestPassedMessages.push((isAfterScriptAccessibleDeletion ? "After" : "Before") + " script-accessible deletion: " + (isAfterScriptAccessibleDeletion ? " " : "") + "HttpOnly cookie exists.");
+                    break;
+                case serverSideCookieName:
+                    if (isAfterScriptAccessibleDeletion)
+                        testFailed("After script-accessible deletion:  Regular server-side cookie exists.");
+                    else
+                        unsortedTestPassedMessages.push("Before script-accessible deletion: Regular server-side cookie exists.");
+                    break;
+                case clientSideCookieName:
+                    if (isAfterScriptAccessibleDeletion)
+                        testFailed("After script-accessible deletion:  Client-side cookie exists.");
+                    else
+                        unsortedTestPassedMessages.push("Before script-accessible deletion: Client-side cookie exists.");
+                    break;
+            }
+        }
+        let sortedTestPassedMessages = unsortedTestPassedMessages.sort(sortStringArray);
+        for (let testPassedMessage of sortedTestPassedMessages)
+            testPassed(testPassedMessage);
+    }
+
+    async function runTest() {
+        if (!testRunner || !internals) {
+            testFailed("No testRunner or no internals.");
+            return;
+        }
+
+        await fetch("/cookies/resources/set-http-only-cookie.php?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
+        await fetch("/cookies/resources/setCookies.cgi", { headers: { "Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
+        document.cookie = clientSideCookieName + "=1";
+        checkCookies(false);
+        testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", false);
+        checkCookies(true);
+        testRunner.statisticsDeleteCookiesForHost("http://127.0.0.1", true);
+        let cookiesLeft = internals.getCookies().length;
+        if (cookiesLeft === 0)
+            testPassed("After full deletion:               All cookies are gone.");
+        else
+            testFailed("After full deletion:              " + cookiesLeft + " cookie(s) left.");
+        finishJSTest();
+    }
+</script>
+</body>
+</html>

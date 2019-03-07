@@ -1,3 +1,15 @@
+2019-03-07  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make it possible to purge only script-accessible cookies
+        https://bugs.webkit.org/show_bug.cgi?id=195383
+        <rdar://problem/48570136>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/cookies/resources/set-http-only-cookie.php: Added.
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies.html: Added.
+
 2019-03-07  Frederic Wang  <fwang@igalia.com>
 
         Update WPT tests for embedded content

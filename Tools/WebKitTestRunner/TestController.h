@@ -235,6 +235,7 @@ public:
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     void statisticsClearThroughWebsiteDataRemoval();
+    void statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState();
 

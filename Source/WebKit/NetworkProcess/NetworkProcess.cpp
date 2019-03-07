@@ -63,6 +63,7 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include "WebsiteDataType.h"
+#include <WebCore/CookieJar.h>
 #include <WebCore/DNS.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -1466,7 +1467,7 @@ static Vector<WebsiteData::Entry> filterForRegistrableDomains(const Vector<Regis
     return result;
 }
 
-void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
+void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
 
@@ -1513,7 +1514,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
         if (auto* networkStorageSession = storageSession(sessionID)) {
             networkStorageSession->getHostnamesWithCookies(websiteDataStore.hostNamesWithCookies);
             hostnamesWithCookiesToDelete = filterForRegistrableDomains(domains, websiteDataStore.hostNamesWithCookies);
-            networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete);
+            networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete, includeHttpOnlyCookies);
         }
     }
 
@@ -1596,6 +1597,16 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataSt
             clearDiskCacheEntries(cache(), entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
         });
     }
+}
+
+void NetworkProcess::deleteCookiesForTesting(PAL::SessionID sessionID, RegistrableDomain domain, bool includeHttpOnlyCookies, CompletionHandler<void()>&& completionHandler)
+{
+    OptionSet<WebsiteDataType> cookieType = WebsiteDataType::Cookies;
+
+    deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(sessionID, cookieType, { domain }, true, includeHttpOnlyCookies ? IncludeHttpOnlyCookies::Yes : IncludeHttpOnlyCookies::No, [completionHandler = WTFMove(completionHandler)] (const HashSet<RegistrableDomain>& domainsDeletedFor) mutable {
+        UNUSED_PARAM(domainsDeletedFor);
+        completionHandler();
+    });
 }
 
 void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)

@@ -387,6 +387,13 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime timestamp)
         g_warning("Deleting cookies modified since a given time span is not supported yet");
 }
 
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+{
+    // FIXME: Not yet implemented.
+    UNUSED_PARAM(includeHttpOnlyCookies);
+    deleteCookiesForHostnames(hostnames);
+}
+
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames)
 {
     SoupCookieJar* cookieJar = cookieStorage();

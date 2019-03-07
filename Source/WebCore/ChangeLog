@@ -1,3 +1,29 @@
+2019-03-07  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make it possible to purge only script-accessible cookies
+        https://bugs.webkit.org/show_bug.cgi?id=195383
+        <rdar://problem/48570136>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/resourceLoadStatistics/delete-script-accessible-cookies.html
+
+        This patch provides the ability to purge all script-accessible cookies while leaving
+        HttpOnly cookies in place.
+
+        * loader/CookieJar.h:
+            Added boolean enum IncludeHttpOnlyCookies for use as function parameter.
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+            Support for the new IncludeHttpOnlyCookies flag.
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+            Stubbed out the new function and added a FIXME comment.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::deleteCookiesForHostnames):
+            Stubbed out the new function and added a FIXME comment.
+
 2019-03-06  Mark Lam  <mark.lam@apple.com>
 
         Exception is a JSCell, not a JSObject.

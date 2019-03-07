@@ -500,6 +500,11 @@ void NetworkStorageSession::deleteAllCookies()
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames)
 {
+    deleteCookiesForHostnames(hostnames, IncludeHttpOnlyCookies::Yes);
+}
+
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+{
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -511,7 +516,7 @@ void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& host
 
     HashMap<String, Vector<RetainPtr<NSHTTPCookie>>> cookiesByDomain;
     for (NSHTTPCookie *cookie in cookies) {
-        if (!cookie.domain)
+        if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
             continue;
         cookiesByDomain.ensure(cookie.domain, [] {
             return Vector<RetainPtr<NSHTTPCookie>>();

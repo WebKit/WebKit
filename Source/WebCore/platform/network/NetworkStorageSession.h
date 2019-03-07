@@ -71,6 +71,7 @@ struct CookieRequestHeaderFieldProxy;
 struct SameSiteInfo;
 
 enum class IncludeSecureCookies : bool;
+enum class IncludeHttpOnlyCookies : bool;
 
 class NetworkStorageSession {
     WTF_MAKE_NONCOPYABLE(NetworkStorageSession); WTF_MAKE_FAST_ALLOCATED;
@@ -130,6 +131,7 @@ public:
     WEBCORE_EXPORT void deleteAllCookies();
     WEBCORE_EXPORT void deleteAllCookiesModifiedSince(WallTime);
     WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames);
+    WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
     WEBCORE_EXPORT Vector<Cookie> getCookies(const URL&);
     WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, Optional<uint64_t> frameID, Optional<uint64_t> pageID, Vector<Cookie>&) const;

@@ -3332,6 +3332,14 @@ void TestController::statisticsClearThroughWebsiteDataRemoval()
     m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
 }
 
+void TestController::statisticsDeleteCookiesForHost(WKStringRef host, bool includeHttpOnlyCookies)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(dataStore, host, includeHttpOnlyCookies, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
 void TestController::setStatisticsCacheMaxAgeCap(double seconds)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

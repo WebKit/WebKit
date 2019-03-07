@@ -125,6 +125,13 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime since)
     cookieStorage().deleteAllCookiesModifiedSince(*this, since);
 }
 
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
+{
+    // FIXME: Not yet implemented.
+    UNUSED_PARAM(includeHttpOnlyCookies);
+    deleteCookiesForHostnames(hostnames);
+}
+
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames)
 {
     cookieStorage().deleteCookiesForHostnames(*this, cookieHostNames);

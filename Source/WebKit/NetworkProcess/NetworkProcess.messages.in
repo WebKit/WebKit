@@ -134,6 +134,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID) -> () Async
     CommittedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, uint64_t pageID)
     ResetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID) -> () Async
+    DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> () Async
 #endif
 
     SetSessionIsControlledByAutomation(PAL::SessionID sessionID, bool controlled);
