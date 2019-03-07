@@ -34,14 +34,42 @@
 #include "Image.h"
 #include "ImageBitmap.h"
 #include "OffscreenCanvas.h"
-#include <wtf/URL.h>
 #include "SecurityOrigin.h"
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
+
+HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances(const LockHolder&)
+{
+    static NeverDestroyed<HashSet<CanvasRenderingContext*>> instances;
+    return instances;
+}
+
+Lock& CanvasRenderingContext::instancesMutex()
+{
+    static LazyNeverDestroyed<Lock> mutex;
+    static std::once_flag initializeMutex;
+    std::call_once(initializeMutex, [] {
+        mutex.construct();
+    });
+    return mutex.get();
+}
 
 CanvasRenderingContext::CanvasRenderingContext(CanvasBase& canvas)
     : m_canvas(canvas)
 {
+    LockHolder lock(instancesMutex());
+    instances(lock).add(this);
+}
+
+CanvasRenderingContext::~CanvasRenderingContext()
+{
+    LockHolder lock(instancesMutex());
+    ASSERT(instances(lock).contains(this));
+    instances(lock).remove(this);
 }
 
 void CanvasRenderingContext::ref()

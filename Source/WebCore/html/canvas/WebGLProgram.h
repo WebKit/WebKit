@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGLSharedObject.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -35,6 +36,9 @@ class WebGLProgram final : public WebGLSharedObject {
 public:
     static Ref<WebGLProgram> create(WebGLRenderingContextBase&);
     virtual ~WebGLProgram();
+
+    static HashMap<WebGLProgram*, WebGLRenderingContextBase*>& instances(const LockHolder&);
+    static Lock& instancesMutex();
 
     unsigned numActiveAttribLocations();
     GC3Dint getActiveAttribLocation(GC3Duint index);

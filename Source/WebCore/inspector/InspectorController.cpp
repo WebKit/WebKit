@@ -146,10 +146,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     m_agents.append(std::make_unique<InspectorTimelineAgent>(pageContext, scriptProfilerAgent, heapAgent, pageAgent));
 
-    auto canvasAgentPtr = std::make_unique<InspectorCanvasAgent>(pageContext);
-    m_instrumentingAgents->setInspectorCanvasAgent(canvasAgentPtr.get());
-    m_agents.append(WTFMove(canvasAgentPtr));
-
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
         commandLineAPIHost->init(m_inspectorAgent, consoleAgent, m_domAgent, domStorageAgent, databaseAgent);
@@ -210,6 +206,7 @@ void InspectorController::createLazyAgents()
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
 #endif
     m_agents.append(std::make_unique<PageAuditAgent>(pageContext));
+    m_agents.append(std::make_unique<InspectorCanvasAgent>(pageContext));
 }
 
 void InspectorController::inspectedPageDestroyed()

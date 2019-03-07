@@ -1272,6 +1272,7 @@ inline void InspectorInstrumentation::didChangeCSSCanvasClientNodes(CanvasBase& 
 
 inline void InspectorInstrumentation::didCreateCanvasRenderingContext(CanvasRenderingContext& context)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context.canvasBase().scriptExecutionContext()))
         didCreateCanvasRenderingContextImpl(*instrumentingAgents, context);
 }
@@ -1307,12 +1308,14 @@ inline void InspectorInstrumentation::didEnableExtension(WebGLRenderingContextBa
 
 inline void InspectorInstrumentation::didCreateProgram(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
         didCreateProgramImpl(*instrumentingAgents, contextWebGLBase, program);
 }
 
 inline void InspectorInstrumentation::willDeleteProgram(WebGLRenderingContextBase& contextWebGLBase, WebGLProgram& program)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(contextWebGLBase.canvasBase().scriptExecutionContext()))
         willDeleteProgramImpl(*instrumentingAgents, program);
 }

@@ -28,6 +28,7 @@
 #include "CanvasBase.h"
 #include "GraphicsLayer.h"
 #include "ScriptWrappable.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
 
@@ -44,7 +45,10 @@ class WebGLObject;
 class CanvasRenderingContext : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~CanvasRenderingContext() = default;
+    virtual ~CanvasRenderingContext();
+
+    static HashSet<CanvasRenderingContext*>& instances(const LockHolder&);
+    static Lock& instancesMutex();
 
     void ref();
     WEBCORE_EXPORT void deref();

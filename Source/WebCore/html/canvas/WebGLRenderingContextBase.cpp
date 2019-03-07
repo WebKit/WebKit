@@ -98,7 +98,9 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint32Array.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
+#include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
@@ -890,6 +892,17 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
         detachAndRemoveAllObjects();
         destroyGraphicsContext3D();
         m_contextGroup->removeContext(*this);
+    }
+
+    {
+        LockHolder lock(WebGLProgram::instancesMutex());
+        for (auto& entry : WebGLProgram::instances(lock)) {
+            if (entry.value == this) {
+                // Don't remove any WebGLProgram from the instances list, as they may still exist.
+                // Only remove the association with a WebGL context.
+                entry.value = nullptr;
+            }
+        }
     }
 }
 

@@ -114,6 +114,7 @@ private:
     void canvasDestroyedTimerFired();
     void canvasRecordingTimerFired();
     void clearCanvasData();
+    InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
     String unbindCanvas(InspectorCanvas&);
     InspectorCanvas* assertInspectorCanvas(ErrorString&, const String& identifier);
     InspectorCanvas* findInspectorCanvas(CanvasRenderingContext&);
@@ -133,8 +134,6 @@ private:
     Timer m_canvasDestroyedTimer;
     Timer m_canvasRecordingTimer;
     Optional<size_t> m_recordingAutoCaptureFrameCount;
-
-    bool m_enabled { false };
 };
 
 } // namespace WebCore
