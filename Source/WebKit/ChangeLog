@@ -1,3 +1,45 @@
+2019-03-07  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Log first-party navigations with link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=195301
+        <rdar://problem/48569971>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds a call to the network process' resource load statistics to
+        log cross-site navigations with link decoration. The logging checks if the
+        source of the navigation is a prevalent resource and if so, sets the
+        appropriate flag for the destination.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logSubresourceRedirect):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::logCrossSiteLoadWithLinkDecoration):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::committedCrossSiteLoadWithLinkDecoration):
+            This now receives a completion handler. This is in preparation for
+            test cases where we need to log such an event and wait for it to
+            finish before continuing.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::committedCrossSiteLoadWithLinkDecoration):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::committedCrossSiteLoadWithLinkDecoration):
+        * UIProcess/WebProcessPool.h:
+
 2019-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Disable permissive call logging in sandbox

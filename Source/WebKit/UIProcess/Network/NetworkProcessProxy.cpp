@@ -932,6 +932,16 @@ void NetworkProcessProxy::notifyResourceLoadStatisticsTelemetryFinished(unsigned
     WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Dictionary::create(messageBody).ptr());
 }
 
+void NetworkProcessProxy::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::CommittedCrossSiteLoadWithLinkDecoration(sessionID, fromDomain, toDomain, pageID), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

@@ -103,6 +103,7 @@ public:
     void logWebSocketLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen, CompletionHandler<void()>&&);
     void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen, CompletionHandler<void()>&&);
     void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
+    void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<RegistrableDomain>&&, bool shouldNotifyPage, WebCore::IncludeHttpOnlyCookies, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);

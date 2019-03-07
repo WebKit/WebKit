@@ -256,7 +256,7 @@ public:
     void setTopFrameUniqueRedirectTo(PAL::SessionID, const TopFrameDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
     void setTopFrameUniqueRedirectFrom(PAL::SessionID, const TopFrameDomain&, const RedirectedFromDomain&, CompletionHandler<void()>&&);
     void registrableDomainsWithWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
-    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID);
+    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 

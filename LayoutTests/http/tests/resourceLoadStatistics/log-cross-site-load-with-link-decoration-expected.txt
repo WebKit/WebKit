@@ -1,0 +1,22 @@
+Test logging of link decorated cross-site navigations from a prevalent resource.
+
+Resource load statistics:
+
+Registrable domain: localhost
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    topFrameLinkDecorationsFrom:
+        127.0.0.1
+    gotLinkDecorationFromPrevalentResource: Yes    isPrevalentResource: No
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0
+Registrable domain: 127.0.0.1
+    lastSeen: 0
+    hadUserInteraction: No
+    mostRecentUserInteraction: -1
+    grandfathered: No
+    gotLinkDecorationFromPrevalentResource: No    isPrevalentResource: Yes
+    isVeryPrevalentResource: No
+    dataRecordsRemoved: 0

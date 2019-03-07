@@ -98,6 +98,7 @@ public:
     void logUserInteraction(const TopFrameDomain&) override;
     void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen) override;
     void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&) override;
+    void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
     void clearUserInteraction(const RegistrableDomain&) override;
     bool hasHadUserInteraction(const RegistrableDomain&) override;
@@ -174,6 +175,8 @@ private:
     mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsToExists;
     WebCore::SQLiteStatement m_topFrameUniqueRedirectsFrom;
     mutable WebCore::SQLiteStatement m_topFrameUniqueRedirectsFromExists;
+    WebCore::SQLiteStatement m_topFrameLinkDecorationsFrom;
+    mutable WebCore::SQLiteStatement m_topFrameLinkDecorationsFromExists;
     WebCore::SQLiteStatement m_subframeUnderTopFrameDomains;
     mutable WebCore::SQLiteStatement m_subframeUnderTopFrameDomainExists;
     WebCore::SQLiteStatement m_subresourceUnderTopFrameDomains;

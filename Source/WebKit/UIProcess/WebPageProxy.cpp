@@ -4083,7 +4083,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
             RegistrableDomain currentDomain { currentURL };
             URL requesterURL { URL(), requesterOrigin.toString() };
             if (!currentDomain.matches(requesterURL))
-                m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::CommittedCrossSiteLoadWithLinkDecoration(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, m_pageID));
+                m_process->processPool().committedCrossSiteLoadWithLinkDecoration(m_websiteDataStore->sessionID(), RegistrableDomain { requesterURL }, currentDomain, m_pageID);
         }
 #endif
     }

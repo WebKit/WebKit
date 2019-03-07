@@ -75,6 +75,10 @@ constexpr auto topFrameUniqueRedirectsFromQuery = "INSERT INTO TopFrameUniqueRed
     "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto topFrameUniqueRedirectsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameUniqueRedirectsFrom WHERE targetDomainID = ? "
     "AND fromDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
+constexpr auto topFrameLinkDecorationsFromQuery = "INSERT INTO TopFrameLinkDecorationsFrom (fromDomainID, toDomainID) "
+    "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
+constexpr auto topFrameLinkDecorationsFromExistsQuery = "SELECT EXISTS (SELECT 1 FROM TopFrameLinkDecorationsFrom WHERE fromDomainID = ? "
+    "AND toDomainID = (SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?))"_s;
 constexpr auto subframeUnderTopFrameDomainsQuery = "INSERT INTO SubframeUnderTopFrameDomains (subFrameDomainID, topFrameDomainID) "
     "SELECT ?, domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto subframeUnderTopFrameDomainExistsQuery = "SELECT EXISTS (SELECT 1 FROM SubframeUnderTopFrameDomains WHERE subFrameDomainID = ? "
@@ -128,7 +132,12 @@ constexpr auto createTopFrameUniqueRedirectsFrom = "CREATE TABLE TopFrameUniqueR
     "targetDomainID INTEGER NOT NULL, fromDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(targetDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
     "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
-    
+
+constexpr auto createTopFrameLinkDecorationsFrom = "CREATE TABLE TopFrameLinkDecorationsFrom ("
+    "fromDomainID INTEGER NOT NULL, toDomainID INTEGER NOT NULL, "
+    "FOREIGN KEY(fromDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE, "
+    "FOREIGN KEY(toDomainID) REFERENCES TopLevelDomains(topLevelDomainID) ON DELETE CASCADE);"_s;
+
 constexpr auto createSubframeUnderTopFrameDomains = "CREATE TABLE SubframeUnderTopFrameDomains ("
     "subFrameDomainID INTEGER NOT NULL, topFrameDomainID INTEGER NOT NULL, "
     "FOREIGN KEY(subFrameDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
@@ -161,6 +170,8 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
     , m_topFrameUniqueRedirectsToExists(m_database, topFrameUniqueRedirectsToExistsQuery)
     , m_topFrameUniqueRedirectsFrom(m_database, topFrameUniqueRedirectsFromQuery)
     , m_topFrameUniqueRedirectsFromExists(m_database, topFrameUniqueRedirectsFromExistsQuery)
+    , m_topFrameLinkDecorationsFrom(m_database, topFrameLinkDecorationsFromQuery)
+    , m_topFrameLinkDecorationsFromExists(m_database, topFrameLinkDecorationsFromExistsQuery)
     , m_subframeUnderTopFrameDomains(m_database, subframeUnderTopFrameDomainsQuery)
     , m_subframeUnderTopFrameDomainExists(m_database, subframeUnderTopFrameDomainExistsQuery)
     , m_subresourceUnderTopFrameDomains(m_database, subresourceUnderTopFrameDomainsQuery)
@@ -259,6 +270,11 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
         return false;
     }
 
+    if (!m_database.executeCommand(createTopFrameLinkDecorationsFrom)) {
+        LOG_ERROR("Could not create TopFrameLinkDecorationsFrom table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
+        return false;
+    }
+    
     if (!m_database.executeCommand(createSubframeUnderTopFrameDomains)) {
         LOG_ERROR("Could not create SubframeUnderTopFrameDomains table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
@@ -964,6 +980,19 @@ void ResourceLoadStatisticsDatabaseStore::logSubresourceRedirect(const Redirecte
 
     if (isNewRedirectToEntry || isNewRedirectFromEntry)
         scheduleStatisticsProcessingRequestIfNecessary();
+}
+
+void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(fromDomain != toDomain);
+
+    auto fromDomainResult = ensureResourceStatisticsForRegistrableDomain(fromDomain);
+
+    if (!relationshipExists(m_topFrameLinkDecorationsFromExists, fromDomainResult.second, toDomain)) {
+        insertDomainRelationship(m_topFrameLinkDecorationsFrom, fromDomainResult.second, toDomain);
+        scheduleStatisticsProcessingRequestIfNecessary();
+    }
 }
 
 void ResourceLoadStatisticsDatabaseStore::setUserInteraction(const RegistrableDomain& domain, bool hadUserInteraction, WallTime mostRecentInteraction)

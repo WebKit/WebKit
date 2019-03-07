@@ -1,5 +1,16 @@
 2019-03-07  John Wilander  <wilander@apple.com>
 
+        Resource Load Statistics: Log first-party navigations with link decoration
+        https://bugs.webkit.org/show_bug.cgi?id=195301
+        <rdar://problem/48569971>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html: Added.
+
+2019-03-07  John Wilander  <wilander@apple.com>
+
         Resource Load Statistics: Make it possible to purge only script-accessible cookies
         https://bugs.webkit.org/show_bug.cgi?id=195383
         <rdar://problem/48570136>

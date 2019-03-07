@@ -543,6 +543,18 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const RegistrableDomain&
     });
 }
 
+void WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration(const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(fromDomain != toDomain);
+    
+    postTask([this, fromDomain = fromDomain.isolatedCopy(), toDomain = toDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (m_statisticsStore)
+            m_statisticsStore->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain);
+        postTaskReply(WTFMove(completionHandler));
+    });
+}
+
 void WebResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

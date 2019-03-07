@@ -132,7 +132,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetTopFrameUniqueRedirectTo(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedToDomain) -> () Async
     SetTopFrameUniqueRedirectFrom(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain redirectedFromDomain) -> () Async
     ResetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID) -> () Async
-    CommittedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, uint64_t pageID)
+    CommittedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, uint64_t pageID) -> () Async
     ResetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID) -> () Async
     DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> () Async
 #endif

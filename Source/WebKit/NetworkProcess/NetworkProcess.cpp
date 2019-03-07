@@ -1187,12 +1187,22 @@ void NetworkProcess::resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID ses
     completionHandler();
 }
 
-void NetworkProcess::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID)
+void NetworkProcess::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->committedCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, pageID);
     else
         ASSERT_NOT_REACHED();
+    
+    if (auto* networkSession = this->networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->logCrossSiteLoadWithLinkDecoration(fromDomain, toDomain, WTFMove(completionHandler));
+        else
+            completionHandler();
+    } else {
+        ASSERT_NOT_REACHED();
+        completionHandler();
+    }
 }
 
 void NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)

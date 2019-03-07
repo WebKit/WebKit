@@ -48,7 +48,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-constexpr unsigned statisticsModelVersion { 15 };
+constexpr unsigned statisticsModelVersion { 16 };
 
 struct StatisticsLastSeen {
     RegistrableDomain domain;
@@ -422,6 +422,19 @@ void ResourceLoadStatisticsMemoryStore::logUserInteraction(const TopFrameDomain&
     auto& statistics = ensureResourceStatisticsForRegistrableDomain(domain);
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteractionTime = WallTime::now();
+}
+
+void ResourceLoadStatisticsMemoryStore::logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain& fromDomain, const NavigatedToDomain& toDomain)
+{
+    ASSERT(!RunLoop::isMain());
+    ASSERT(fromDomain != toDomain);
+
+    auto& toStatistics = ensureResourceStatisticsForRegistrableDomain(toDomain);
+    toStatistics.topFrameLinkDecorationsFrom.add(fromDomain);
+    
+    auto& fromStatistics = ensureResourceStatisticsForRegistrableDomain(fromDomain);
+    if (fromStatistics.isPrevalentResource)
+        toStatistics.gotLinkDecorationFromPrevalentResource = true;
 }
 
 void ResourceLoadStatisticsMemoryStore::clearUserInteraction(const RegistrableDomain& domain)

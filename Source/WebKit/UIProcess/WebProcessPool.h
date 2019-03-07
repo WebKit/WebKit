@@ -44,6 +44,7 @@
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
 #include "WebProcessProxy.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SharedStringHash.h>
 #include <pal/SessionID.h>
@@ -486,6 +487,7 @@ public:
 
     void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(const String&)>&&);
     void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
+    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const WebCore::RegistrableDomain& fromDomain, const WebCore::RegistrableDomain& toDomain, uint64_t pageID);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };

@@ -163,6 +163,7 @@ public:
     virtual void logUserInteraction(const TopFrameDomain&) = 0;
     virtual void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen) = 0;
     virtual void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&) = 0;
+    virtual void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) = 0;
 
     virtual void clearUserInteraction(const RegistrableDomain&) = 0;
     virtual bool hasHadUserInteraction(const RegistrableDomain&) = 0;

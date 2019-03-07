@@ -2472,5 +2472,20 @@ void WebProcessPool::clearAdClickAttribution(PAL::SessionID sessionID, Completio
     
     m_networkProcess->clearAdClickAttribution(sessionID, WTFMove(completionHandler));
 }
+    
+void WebProcessPool::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, uint64_t pageID)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    if (!m_networkProcess)
+        return;
+
+    m_networkProcess->committedCrossSiteLoadWithLinkDecoration(sessionID, fromDomain, toDomain, pageID, [] { });
+#else
+    UNUSED_PARAM(sessionID);
+    UNUSED_PARAM(fromDomain);
+    UNUSED_PARAM(toDomain);
+    UNUSED_PARAM(pageID);
+#endif
+}
 
 } // namespace WebKit

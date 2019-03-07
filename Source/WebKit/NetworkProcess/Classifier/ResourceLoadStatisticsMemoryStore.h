@@ -103,6 +103,7 @@ public:
     void logUserInteraction(const TopFrameDomain&) override;
     void logSubresourceLoading(const SubResourceDomain&, const TopFrameDomain&, WallTime lastSeen) override;
     void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&) override;
+    void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
     void clearUserInteraction(const RegistrableDomain&) override;
     bool hasHadUserInteraction(const RegistrableDomain&) override;
