@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -260,32 +260,32 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
     return error;
 }
 
-JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, ThrowScope& scope, const char* constructorName)
+Exception* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState* exec, ThrowScope& scope, const char* constructorName)
 {
     return throwTypeError(exec, scope, makeString("calling ", constructorName, " constructor without new is invalid"));
 }
 
-JSObject* throwTypeError(ExecState* exec, ThrowScope& scope)
+Exception* throwTypeError(ExecState* exec, ThrowScope& scope)
 {
     return throwException(exec, scope, createTypeError(exec));
 }
 
-JSObject* throwTypeError(ExecState* exec, ThrowScope& scope, ASCIILiteral errorMessage)
+Exception* throwTypeError(ExecState* exec, ThrowScope& scope, ASCIILiteral errorMessage)
 {
     return throwTypeError(exec, scope, String(errorMessage));
 }
 
-JSObject* throwTypeError(ExecState* exec, ThrowScope& scope, const String& message)
+Exception* throwTypeError(ExecState* exec, ThrowScope& scope, const String& message)
 {
     return throwException(exec, scope, createTypeError(exec, message));
 }
 
-JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope)
+Exception* throwSyntaxError(ExecState* exec, ThrowScope& scope)
 {
     return throwException(exec, scope, createSyntaxError(exec, "Syntax error"_s));
 }
 
-JSObject* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& message)
+Exception* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& message)
 {
     return throwException(exec, scope, createSyntaxError(exec, message));
 }

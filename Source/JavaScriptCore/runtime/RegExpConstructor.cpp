@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007-2008, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -210,8 +210,10 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
         return nullptr;
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
-    if (!regExp->isValid())
-        return throwException(exec, scope, regExp->errorToThrow(exec));
+    if (UNLIKELY(!regExp->isValid())) {
+        throwException(exec, scope, regExp->errorToThrow(exec));
+        return nullptr;
+    }
 
     Structure* structure = getRegExpStructure(exec, globalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -250,8 +252,10 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
                 return nullptr;
             regExp = RegExp::create(vm, regExp->pattern(), flags);
 
-            if (!regExp->isValid())
-                return throwException(exec, scope, regExp->errorToThrow(exec));
+            if (UNLIKELY(!regExp->isValid())) {
+                throwException(exec, scope, regExp->errorToThrow(exec));
+                return nullptr;
+            }
         }
 
         return RegExpObject::create(vm, structure, regExp);

@@ -1034,7 +1034,7 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
 }
 
 template <typename ExecutableType>
-JSObject* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+Exception* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
         if (std::is_same<ExecutableType, EvalExecutable>::value)

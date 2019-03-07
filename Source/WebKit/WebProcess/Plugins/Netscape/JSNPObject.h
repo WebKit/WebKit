@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,7 +104,7 @@ private:
 
     static JSC::EncodedJSValue propertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
     static JSC::EncodedJSValue methodGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-    static JSC::JSObject* throwInvalidAccessError(JSC::ExecState*, JSC::ThrowScope&);
+    static JSC::Exception* throwInvalidAccessError(JSC::ExecState*, JSC::ThrowScope&);
 
     NPRuntimeObjectMap* m_objectMap;
     NPObject* m_npObject;

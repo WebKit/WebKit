@@ -946,9 +946,9 @@ private:
     bool isSafeToRecurseSoftCLoop() const;
 #endif // ENABLE(C_LOOP)
 
-    JS_EXPORT_PRIVATE void throwException(ExecState*, Exception*);
-    JS_EXPORT_PRIVATE JSValue throwException(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE JSObject* throwException(ExecState*, JSObject*);
+    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, Exception*);
+    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSValue);
+    JS_EXPORT_PRIVATE Exception* throwException(ExecState*, JSObject*);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     void verifyExceptionCheckNeedIsSatisfied(unsigned depth, ExceptionEventLocation&);

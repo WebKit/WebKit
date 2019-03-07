@@ -778,8 +778,10 @@ JSObject* objectConstructorSeal(ExecState* exec, JSObject* object)
 
     bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    if (UNLIKELY(!success))
-        return throwTypeError(exec, scope, "Unable to prevent extension in Object.seal"_s);
+    if (UNLIKELY(!success)) {
+        throwTypeError(exec, scope, "Unable to prevent extension in Object.seal"_s);
+        return nullptr;
+    }
 
     return object;
 }
@@ -809,8 +811,10 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
 
     bool success = setIntegrityLevel<IntegrityLevel::Frozen>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    if (!success)
-        return throwTypeError(exec, scope, "Unable to prevent extension in Object.freeze"_s);
+    if (UNLIKELY(!success)) {
+        throwTypeError(exec, scope, "Unable to prevent extension in Object.freeze"_s);
+        return nullptr;
+    }
     return object;
 }
 

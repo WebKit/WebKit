@@ -1,3 +1,17 @@
+2019-03-06  Mark Lam  <mark.lam@apple.com>
+
+        Exception is a JSCell, not a JSObject.
+        https://bugs.webkit.org/show_bug.cgi?id=195392
+
+        Reviewed by Saam Barati.
+
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::throwError):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::throwInvalidAccessError):
+        * bridge/runtime_object.h:
+
 2019-03-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: lazily create the agent

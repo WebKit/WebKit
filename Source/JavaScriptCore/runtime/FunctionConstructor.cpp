@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -69,8 +69,10 @@ JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!globalObject->evalEnabled())
-        return throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+    if (UNLIKELY(!globalObject->evalEnabled())) {
+        throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        return nullptr;
+    }
     RELEASE_AND_RETURN(scope, constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceOrigin, sourceURL, position, -1, functionConstructionMode, newTarget));
 }
 
@@ -145,9 +147,10 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     SourceCode source = makeSource(program, sourceOrigin, URL({ }, sourceURL), position);
     JSObject* exception = nullptr;
     FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber, functionConstructorParametersEndPosition);
-    if (!function) {
+    if (UNLIKELY(!function)) {
         ASSERT(exception);
-        return throwException(exec, scope, exception);
+        throwException(exec, scope, exception);
+        return nullptr;
     }
 
     Structure* structure = nullptr;

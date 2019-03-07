@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Andy VanWagoner (andy@vanwagoner.family)
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -200,8 +201,10 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
 
     // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
-    if (!m_initializedPluralRules)
-        return throwTypeError(&exec, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
+    if (UNLIKELY(!m_initializedPluralRules)) {
+        throwTypeError(&exec, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s);
+        return nullptr;
+    }
 
     JSObject* options = constructEmptyObject(&exec);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(&exec, m_locale));
@@ -217,8 +220,10 @@ JSObject* IntlPluralRules::resolvedOptions(ExecState& exec)
 #if HAVE(ICU_PLURALRULES_KEYWORDS)
     JSGlobalObject* globalObject = exec.jsCallee()->globalObject(vm);
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
-    if (!categories)
-        return throwOutOfMemoryError(&exec, scope);
+    if (UNLIKELY(!categories)) {
+        throwOutOfMemoryError(&exec, scope);
+        return nullptr;
+    }
 
     UErrorCode status = U_ZERO_ERROR;
     auto keywords = std::unique_ptr<UEnumeration, UEnumerationDeleter>(uplrules_getKeywords(m_pluralRules.get(), &status));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ErrorInstance.h"
+#include "Exception.h"
 #include "JSObject.h"
 #include "ThrowScope.h"
 
@@ -55,9 +56,9 @@ JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);
 JSString* errorDescriptionForValue(ExecState*, JSValue);
 
-JS_EXPORT_PRIVATE JSObject* throwOutOfMemoryError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE JSObject* throwStackOverflowError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE JSObject* throwTerminatedExecutionException(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwStackOverflowError(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwTerminatedExecutionException(ExecState*, ThrowScope&);
 
 
 class TerminatedExecutionError final : public JSNonFinalObject {

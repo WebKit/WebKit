@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,7 +121,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         for (auto& entry : lexicalDeclarations) {
             // The ES6 spec says that RestrictedGlobalProperty can't be shadowed.
             GlobalPropertyLookUpStatus status = hasRestrictedGlobalProperty(exec, globalObject, entry.key.get());
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
             switch (status) {
             case GlobalPropertyLookUpStatus::NonConfigurable:
                 return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
@@ -138,7 +138,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
             }
 
             bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
             if (hasProperty) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {
                     // We only allow "const" duplicate declarations under this setting.
@@ -155,7 +155,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         if (!globalLexicalEnvironment->isEmpty()) {
             for (auto& entry : variableDeclarations) {
                 bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
-                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+                RETURN_IF_EXCEPTION(throwScope, nullptr);
                 if (hasProperty)
                     return createSyntaxError(exec, makeString("Can't create duplicate variable: '", String(entry.key.get()), "'"));
             }

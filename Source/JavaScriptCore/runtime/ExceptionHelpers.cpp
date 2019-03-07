@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -324,19 +324,19 @@ JSObject* createTDZError(ExecState* exec)
     return createReferenceError(exec, "Cannot access uninitialized variable.");
 }
 
-JSObject* throwOutOfMemoryError(ExecState* exec, ThrowScope& scope)
+Exception* throwOutOfMemoryError(ExecState* exec, ThrowScope& scope)
 {
     return throwException(exec, scope, createOutOfMemoryError(exec));
 }
 
-JSObject* throwStackOverflowError(ExecState* exec, ThrowScope& scope)
+Exception* throwStackOverflowError(ExecState* exec, ThrowScope& scope)
 {
     VM& vm = exec->vm();
     ErrorHandlingScope errorScope(vm);
     return throwException(exec, scope, createStackOverflowError(exec));
 }
 
-JSObject* throwTerminatedExecutionException(ExecState* exec, ThrowScope& scope)
+Exception* throwTerminatedExecutionException(ExecState* exec, ThrowScope& scope)
 {
     VM& vm = exec->vm();
     ErrorHandlingScope errorScope(vm);

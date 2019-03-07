@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,10 @@ JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& a
 
     ConstructData constructData;
     ConstructType constructType = getConstructData(vm, constructorObject, constructData);
-    if (constructType == ConstructType::None)
-        return throwTypeError(exec, scope, errorMessage);
+    if (UNLIKELY(constructType == ConstructType::None)) {
+        throwTypeError(exec, scope, errorMessage);
+        return nullptr;
+    }
 
     RELEASE_AND_RETURN(scope, construct(exec, constructorObject, constructType, constructData, args, constructorObject));
 }

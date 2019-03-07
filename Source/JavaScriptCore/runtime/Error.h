@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 
 #include "ErrorInstance.h"
 #include "ErrorType.h"
+#include "Exception.h"
 #include "InternalFunction.h"
 #include "JSObject.h"
 #include "ThrowScope.h"
@@ -76,13 +77,13 @@ JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&)
 // Methods to throw Errors.
 
 // Convenience wrappers, create an throw an exception with a default message.
-JS_EXPORT_PRIVATE JSObject* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState*, ThrowScope&, const char* constructorName);
-JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&, ASCIILiteral errorMessage);
-JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&, const String& errorMessage);
-JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, ThrowScope&);
-JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*, ThrowScope&, const String& errorMessage);
-inline JSObject* throwRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return throwException(state, scope, createRangeError(state, errorMessage)); }
+JS_EXPORT_PRIVATE Exception* throwConstructorCannotBeCalledAsFunctionTypeError(ExecState*, ThrowScope&, const char* constructorName);
+JS_EXPORT_PRIVATE Exception* throwTypeError(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwTypeError(ExecState*, ThrowScope&, ASCIILiteral errorMessage);
+JS_EXPORT_PRIVATE Exception* throwTypeError(ExecState*, ThrowScope&, const String& errorMessage);
+JS_EXPORT_PRIVATE Exception* throwSyntaxError(ExecState*, ThrowScope&);
+JS_EXPORT_PRIVATE Exception* throwSyntaxError(ExecState*, ThrowScope&, const String& errorMessage);
+inline Exception* throwRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return throwException(state, scope, createRangeError(state, errorMessage)); }
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeGetterTypeError(ExecState*, ThrowScope&, const ClassInfo*, PropertyName);
 
 // Convenience wrappers, wrap result as an EncodedJSValue.

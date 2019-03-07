@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo Exception::s_info = { "Exception", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Exception) };
+const ClassInfo Exception::s_info = { "Exception", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Exception) };
 
 Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
@@ -48,7 +48,7 @@ void Exception::destroy(JSCell* cell)
 
 Structure* Exception::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
 }
 
 void Exception::visitChildren(JSCell* cell, SlotVisitor& visitor)

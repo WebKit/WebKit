@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,8 +128,10 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
         if (lengthOpt)
             length = lengthOpt.value();
         else {
-            if ((buffer->byteLength() - offset) % ViewClass::elementSize)
-                return throwRangeError(exec, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"_s);
+            if (UNLIKELY((buffer->byteLength() - offset) % ViewClass::elementSize)) {
+                throwRangeError(exec, scope, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"_s);
+                return nullptr;
+            }
             length = (buffer->byteLength() - offset) / ViewClass::elementSize;
         }
 
@@ -137,8 +139,10 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
     }
     ASSERT(!offset && !lengthOpt);
     
-    if (ViewClass::TypedArrayStorageType == TypeDataView)
-        return throwTypeError(exec, scope, "Expected ArrayBuffer for the first argument."_s);
+    if (UNLIKELY(ViewClass::TypedArrayStorageType == TypeDataView)) {
+        throwTypeError(exec, scope, "Expected ArrayBuffer for the first argument."_s);
+        return nullptr;
+    }
     
     // For everything but DataView, we allow construction with any of:
     // - Another array. This creates a copy of the of that array.

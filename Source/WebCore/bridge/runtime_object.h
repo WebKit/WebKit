@@ -59,7 +59,7 @@ public:
 
     Instance* getInternalInstance() const { return m_instance.get(); }
 
-    static JSObject* throwInvalidAccessError(ExecState*, ThrowScope&);
+    static Exception* throwInvalidAccessError(ExecState*, ThrowScope&);
 
     DECLARE_INFO;
 

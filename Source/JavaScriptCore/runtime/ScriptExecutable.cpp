@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -252,7 +252,7 @@ bool ScriptExecutable::hasClearableCode(VM& vm) const
 }
 
 CodeBlock* ScriptExecutable::newCodeBlockFor(
-    CodeSpecializationKind kind, JSFunction* function, JSScope* scope, JSObject*& exception)
+    CodeSpecializationKind kind, JSFunction* function, JSScope* scope, Exception*& exception)
 {
     VM* vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(*vm);
@@ -402,18 +402,18 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 #endif
 }
 
-JSObject* ScriptExecutable::prepareForExecutionImpl(
+Exception* ScriptExecutable::prepareForExecutionImpl(
     VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     DeferGCForAWhile deferGC(vm.heap);
 
-    if (vm.getAndClearFailNextNewCodeBlock()) {
+    if (UNLIKELY(vm.getAndClearFailNextNewCodeBlock())) {
         auto& state = *scope->globalObject(vm)->globalExec();
         return throwException(&state, throwScope, createError(&state, "Forced Failure"_s));
     }
 
-    JSObject* exception = nullptr;
+    Exception* exception = nullptr;
     CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope, exception);
     resultCodeBlock = codeBlock;
     EXCEPTION_ASSERT(!!throwScope.exception() == !codeBlock);
