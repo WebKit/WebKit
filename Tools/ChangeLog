@@ -1,3 +1,17 @@
+2019-03-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r242354.
+        https://bugs.webkit.org/show_bug.cgi?id=195402
+
+        breaks layout tests in all configurations (Requested by
+        zdobersek on #webkit).
+
+        Reverted changeset:
+
+        "[WPE] Enable web process sandbox"
+        https://bugs.webkit.org/show_bug.cgi?id=195169
+        https://trac.webkit.org/changeset/242354
+
 2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.

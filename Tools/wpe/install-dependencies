@@ -58,7 +58,6 @@ function installDependenciesWithApt {
         automake \
         autopoint \
         autotools-dev \
-        bubblewrap \
         cmake \
         g++ \
         gawk \
@@ -78,7 +77,6 @@ function installDependenciesWithApt {
         libjpeg-dev \
         libfile-copy-recursive-perl \
         $(aptIfElse libpng-dev libpng12-dev) \
-        libseccomp-dev \
         libsqlite3-dev \
         libtasn1-6-dev \
         libtool \
@@ -150,7 +148,6 @@ function installDependenciesWithPacman {
         alsa-lib \
         autoconf \
         automake \
-        bubblewrap \
         cmake \
         file \
         findutils \
@@ -171,7 +168,6 @@ function installDependenciesWithPacman {
         libevent \
         libjpeg-turbo \
         libpng \
-        libseccomp \
         libtasn1 \
         libtool \
         libwebp \
@@ -251,7 +247,6 @@ function installDependenciesWithDnf {
         autoconf \
         automake \
         alsa-lib-devel \
-        bubblewrap \
         cmake \
         gcc-c++ \
         gnutls-devel \
@@ -266,7 +261,6 @@ function installDependenciesWithDnf {
         libicu-devel \
         libjpeg-turbo-devel \
         libpng-devel \
-        libseccomp-devel \
         libtasn1-devel \
         libtool \
         libwebp-devel \

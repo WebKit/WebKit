@@ -668,13 +668,11 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 {
     ASSERT(launcher);
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
     // It is impossible to know what access arbitrary plugins need and since it is for legacy
     // reasons lets just leave it unsandboxed.
     if (launchOptions.processType == ProcessLauncher::ProcessType::Plugin64
         || launchOptions.processType == ProcessLauncher::ProcessType::Plugin32)
         return adoptGRef(g_subprocess_launcher_spawnv(launcher, argv, error));
-#endif
 
     // For now we are just considering the network process trusted as it
     // requires a lot of access but doesn't execute arbitrary code like

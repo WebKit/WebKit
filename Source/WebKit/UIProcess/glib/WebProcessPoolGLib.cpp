@@ -73,10 +73,6 @@ static bool memoryPressureMonitorDisabled()
 
 void WebProcessPool::platformInitialize()
 {
-#if PLATFORM(WPE)
-    m_sandboxEnabled = true;
-#endif
-
 #if PLATFORM(GTK)
     m_alwaysUsesComplexTextCodePath = true;
 #endif
