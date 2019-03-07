@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SecurityOriginData.h"
+#include <wtf/HashTraits.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

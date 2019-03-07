@@ -69,16 +69,13 @@ public:
     void retrieveRecords(const URL&, WebCore::DOMCacheEngine::RecordsCallback&&);
     WebCore::DOMCacheEngine::CacheInfo info() const { return { m_identifier, m_name }; }
 
-    enum class CanRequestMoreSpace { No, Yes };
-    void put(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&, CanRequestMoreSpace = CanRequestMoreSpace::Yes);
+    void put(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
     Vector<NetworkCache::Key> keys() const;
 
     void dispose();
     void clearMemoryRepresentation();
-
-    void retryPuttingPendingRecords();
 
     static Optional<WebCore::DOMCacheEngine::Record> decode(const NetworkCache::Storage::Record&);
     static NetworkCache::Storage::Record encode(const RecordInformation&, const WebCore::DOMCacheEngine::Record&);
@@ -123,12 +120,6 @@ private:
     HashMap<String, Vector<RecordInformation>> m_records;
     uint64_t m_nextRecordIdentifier { 0 };
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingOpeningCallbacks;
-
-    struct PendingPutRequest {
-        Vector<WebCore::DOMCacheEngine::Record> records;
-        WebCore::DOMCacheEngine::RecordIdentifiersCallback callback;
-    };
-    Vector<PendingPutRequest> m_pendingPutRequests;
 };
 
 } // namespace CacheStorage

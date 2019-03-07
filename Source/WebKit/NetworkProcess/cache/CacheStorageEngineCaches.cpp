@@ -30,6 +30,7 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheIOChannel.h"
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/StorageQuotaManager.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
@@ -50,9 +51,21 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
+Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, StorageQuotaManager& quotaManager)
+    : m_engine(&engine)
+    , m_origin(WTFMove(origin))
+    , m_rootPath(WTFMove(rootPath))
+    , m_quotaManager(makeWeakPtr(quotaManager))
+{
+    quotaManager.addUser(*this);
+}
+
 Caches::~Caches()
 {
     ASSERT(m_pendingWritingCachesToDiskCallbacks.isEmpty());
+
+    if (m_quotaManager)
+        m_quotaManager->removeUser(*this);
 }
 
 void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(Optional<WebCore::ClientOrigin>&&)>&& completionHandler)
@@ -76,14 +89,6 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
             completionHandler(readOrigin(data));
         });
     });
-}
-
-Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, uint64_t quota)
-    : m_engine(&engine)
-    , m_origin(WTFMove(origin))
-    , m_rootPath(WTFMove(rootPath))
-    , m_quota(quota)
-{
 }
 
 void Caches::storeOrigin(CompletionCallback&& completionHandler)
@@ -488,35 +493,20 @@ void Caches::readRecordsList(Cache& cache, NetworkCache::Storage::TraverseHandle
 
 void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    ASSERT(!m_isRequestingSpace);
-
-    ASSERT(m_quota < m_size + spaceRequired);
-
-    if (!m_engine) {
+    if (!m_quotaManager) {
         callback(Error::QuotaExceeded);
         return;
     }
 
-    m_isRequestingSpace = true;
-    m_engine->requestSpace(m_origin, m_quota, m_size, spaceRequired, [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (Optional<uint64_t> newQuota) {
-        m_isRequestingSpace = false;
-        if (!newQuota) {
+    m_quotaManager->requestSpace(spaceRequired, [callback = WTFMove(callback)](auto decision) {
+        switch (decision) {
+        case StorageQuotaManager::Decision::Deny:
             callback(Error::QuotaExceeded);
-            notifyCachesOfRequestSpaceEnd();
             return;
-        }
-        m_quota = *newQuota;
-        callback({ });
-        notifyCachesOfRequestSpaceEnd();
+        case StorageQuotaManager::Decision::Grant:
+            callback({ });
+        };
     });
-}
-
-void Caches::notifyCachesOfRequestSpaceEnd()
-{
-    for (auto& cache : m_caches)
-        cache.retryPuttingPendingRecords();
-    for (auto& cache : m_removedCaches)
-        cache.retryPuttingPendingRecords();
 }
 
 void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInformation, Record&& record, uint64_t previousRecordSize, CompletionCallback&& callback)
@@ -526,8 +516,6 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
     ASSERT(m_size >= previousRecordSize);
     m_size += recordInformation.size;
     m_size -= previousRecordSize;
-
-    ASSERT(m_size <= m_quota);
 
     if (!shouldPersist()) {
         m_volatileStorage.set(recordInformation.key, WTFMove(record));

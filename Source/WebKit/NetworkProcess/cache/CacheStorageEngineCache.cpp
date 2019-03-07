@@ -400,14 +400,9 @@ void Cache::storeRecords(Vector<Record>&& records, RecordIdentifiersCallback&& c
     }
 }
 
-void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback, CanRequestMoreSpace canRequestMoreSpace)
+void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
     ASSERT(m_state == State::Open);
-
-    if (m_caches.isRequestingSpace()) {
-        m_pendingPutRequests.append({ WTFMove(records), WTFMove(callback) });
-        return;
-    }
 
     WebCore::CacheQueryOptions options;
     uint64_t spaceRequired = 0;
@@ -423,16 +418,6 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback, 
             spaceRequired -= sameURLRecords->at(position).size;
     }
 
-    if (m_caches.hasEnoughSpace(spaceRequired)) {
-        storeRecords(WTFMove(records), WTFMove(callback));
-        return;
-    }
-
-    if (canRequestMoreSpace == CanRequestMoreSpace::No) {
-        callback(makeUnexpected(DOMCacheEngine::Error::QuotaExceeded));
-        return;
-    }
-
     m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](Optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
@@ -443,16 +428,8 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback, 
             callback(makeUnexpected(DOMCacheEngine::Error::Internal));
             return;
         }
-
-        cache->put(WTFMove(records), WTFMove(callback), CanRequestMoreSpace::No);
+        cache->storeRecords(WTFMove(records), WTFMove(callback));
     });
-}
-
-void Cache::retryPuttingPendingRecords()
-{
-    auto pendingPutRequests = WTFMove(m_pendingPutRequests);
-    for (auto& request : pendingPutRequests)
-        put(WTFMove(request.records), WTFMove(request.callback));
 }
 
 void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)

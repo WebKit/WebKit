@@ -1,3 +1,37 @@
+2019-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a quota manager for Cache API/Service Worker/IDB storage
+        https://bugs.webkit.org/show_bug.cgi?id=195283
+
+        Reviewed by Chris Dumez.
+
+        Introduce a generic quota manager and quota users to be used in Network Process.
+        Quota manager/users are scoped by client origin.
+        Quota manager is used to check for quota by an entity wanting to execute a storage task of a given taskSize.
+        Quota manager will check the current space used by all its quota users.
+        If the size + taskSize is above quota, it will call a function to try extend the quota.
+        In the meantime, the task (and all tasks that may be added) are queued.
+
+        Once the new quota is received, the quota manager will either allow or disallow the first task in the queue.
+        The quota manager will try to execute as many tasks as possible with the provided quota.
+        If some tasks are remaining and quota limit is hit, the quota manager will compute the space needed for all remaining requests
+        and do another quota extension request.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ClientOrigin.h:
+        * storage/StorageQuotaManager.cpp: Added.
+        (WebCore::StorageQuotaManager::~StorageQuotaManager):
+        (WebCore::StorageQuotaManager::spaceUsage const):
+        (WebCore::StorageQuotaManager::requestSpace):
+        (WebCore::StorageQuotaManager::askForMoreSpace):
+        (WebCore::StorageQuotaManager::processPendingRequests):
+        * storage/StorageQuotaManager.h: Added.
+        (WebCore::StorageQuotaManager::StorageQuotaManager):
+        (WebCore::StorageQuotaManager::addUser):
+        (WebCore::StorageQuotaManager::removeUser):
+        * storage/StorageQuotaUser.h: Added.
+
 2019-03-07  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make it possible to purge only script-accessible cookies

@@ -1168,6 +1168,8 @@
 		41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D41F3D0F6600D15E47 /* CacheStorageProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D129DB1F3D143800D15E47 /* FetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F54F831C50C4F600338488 /* FetchHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41D28D0D2139E05800F4206F /* LibWebRTCStatsCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41D28D0B2139E01D00F4206F /* LibWebRTCStatsCollector.cpp */; };
+		41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		41DE7C7D222DA14800532B65 /* StorageQuotaUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41DEFCB61E56C1BD000D9E5F /* JSDOMMapLike.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */; };
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
@@ -7511,6 +7513,9 @@
 		41D28D0B2139E01D00F4206F /* LibWebRTCStatsCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCStatsCollector.cpp; path = libwebrtc/LibWebRTCStatsCollector.cpp; sourceTree = "<group>"; };
 		41D28D0C2139E01E00F4206F /* LibWebRTCStatsCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCStatsCollector.h; path = libwebrtc/LibWebRTCStatsCollector.h; sourceTree = "<group>"; };
 		41D51BB21E4E2E8100131A5B /* LibWebRTCAudioFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCAudioFormat.h; path = libwebrtc/LibWebRTCAudioFormat.h; sourceTree = "<group>"; };
+		41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageQuotaUser.h; sourceTree = "<group>"; };
+		41DE7C7A222DA13D00532B65 /* StorageQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageQuotaManager.cpp; sourceTree = "<group>"; };
+		41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageQuotaManager.h; sourceTree = "<group>"; };
 		41DEFCB21E56C1B9000D9E5F /* JSDOMBindingInternals.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSDOMBindingInternals.js; sourceTree = "<group>"; };
 		41DEFCB31E56C1B9000D9E5F /* JSDOMMapLike.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMapLike.cpp; sourceTree = "<group>"; };
 		41DEFCB41E56C1B9000D9E5F /* JSDOMMapLike.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMapLike.h; sourceTree = "<group>"; };
@@ -16862,6 +16867,9 @@
 				C50D0E810FF4272900AC2644 /* StorageNamespace.h */,
 				1A3763691A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp */,
 				1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */,
+				41DE7C7A222DA13D00532B65 /* StorageQuotaManager.cpp */,
+				41DE7C7B222DA13E00532B65 /* StorageQuotaManager.h */,
+				41DE7C78222DA13C00532B65 /* StorageQuotaUser.h */,
 				5166D3CC1E8ED41100AD62E3 /* StorageType.h */,
 			);
 			indentWidth = 4;
@@ -31689,6 +31697,8 @@
 				51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */,
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				1A37636C1A2E68BB009A7EE2 /* StorageNamespaceProvider.h in Headers */,
+				41DE7C7C222DA14300532B65 /* StorageQuotaManager.h in Headers */,
+				41DE7C7D222DA14800532B65 /* StorageQuotaUser.h in Headers */,
 				5C9EF2F321F06190003BDC56 /* StorageSessionProvider.h in Headers */,
 				5166D3CD1E8ED48F00AD62E3 /* StorageType.h in Headers */,
 				4682D2001F79783000C863DB /* StoredCredentialsPolicy.h in Headers */,

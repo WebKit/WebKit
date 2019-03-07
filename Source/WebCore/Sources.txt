@@ -2231,6 +2231,7 @@ rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 
 replay/UserInputBridge.cpp
 
+storage/StorageQuotaManager.cpp
 storage/Storage.cpp
 storage/StorageEvent.cpp
 storage/StorageEventDispatcher.cpp

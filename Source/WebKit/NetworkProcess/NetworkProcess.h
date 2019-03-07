@@ -33,6 +33,7 @@
 #include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
 #include <WebCore/AdClickAttribution.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/IDBKeyData.h>
@@ -69,6 +70,7 @@ namespace WebCore {
 class CertificateInfo;
 class CurlProxySettings;
 class DownloadID;
+class StorageQuotaManager;
 class NetworkStorageSession;
 class ResourceError;
 class SWServer;
@@ -258,8 +260,8 @@ public:
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
-    using CacheStorageParametersCallback = CompletionHandler<void(const String&, uint64_t quota)>;
-    void cacheStorageParameters(PAL::SessionID, CacheStorageParametersCallback&&);
+    using CacheStorageRootPathCallback = CompletionHandler<void(String&&)>;
+    void cacheStorageRootPath(PAL::SessionID, CacheStorageRootPathCallback&&);
 
     void preconnectTo(const URL&, WebCore::StoredCredentialsPolicy);
 
@@ -322,6 +324,8 @@ public:
     void storeAdClickAttribution(PAL::SessionID, WebCore::AdClickAttribution&&);
     void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(String)>&&);
     void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
+
+    WebCore::StorageQuotaManager& storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -467,7 +471,8 @@ private:
     NetworkProcessSupplementMap m_supplements;
 
     HashSet<PAL::SessionID> m_sessionsControlledByAutomation;
-    HashMap<PAL::SessionID, Vector<CacheStorageParametersCallback>> m_cacheStorageParametersCallbacks;
+    HashMap<PAL::SessionID, Vector<CacheStorageRootPathCallback>> m_cacheStorageParametersCallbacks;
+
     HashMap<PAL::SessionID, Ref<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     mutable std::unique_ptr<WebCore::NetworkStorageSession> m_defaultNetworkStorageSession;
@@ -516,6 +521,12 @@ private:
 #if PLATFORM(COCOA)
     NetworkHTTPSUpgradeChecker m_networkHTTPSUpgradeChecker;
 #endif
+
+    struct StorageQuotaManagers {
+        uint64_t defaultQuota { 0 };
+        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> managersPerOrigin;
+    };
+    HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
 };
 
 } // namespace WebKit

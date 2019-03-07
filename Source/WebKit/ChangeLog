@@ -1,3 +1,39 @@
+2019-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a quota manager for Cache API/Service Worker/IDB storage
+        https://bugs.webkit.org/show_bug.cgi?id=195283
+
+        Reviewed by Chris Dumez.
+
+        Remove quota handling from Cache API storage and use StorageQuotaManager/StorageQuotaUser.
+        CacheStorage::Caches becomes a quota user and has a StorageQuotaManager to check for space for any cache API write task.
+        NetworkProcess is responsible to manage the quota managers.
+        Quota managers will go through network process to ask UIProcess for quota extension.
+
+        Remove pending callback handling from CacheStorage since they are queued in QuotaManager now.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::~NetworkProcess):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::cacheStorageRootPath):
+        (WebKit::NetworkProcess::setCacheStorageParameters):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+        (WebKit::CacheStorage::Engine::Engine):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::put):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::~Caches):
+        (WebKit::CacheStorage::Caches::requestSpace):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+
 2019-03-07  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make it possible to purge only script-accessible cookies
