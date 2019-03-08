@@ -278,50 +278,45 @@ void ContentChangeObserver::adjustObservedState(Event event)
     }
 }
 
-static Visibility elementImplicitVisibility(const Element& element)
+static bool isConsideredHidden(const Element& element)
 {
-    auto* renderer = element.renderer();
-    if (!renderer)
-        return Visibility::Visible;
+    if (!element.renderStyle())
+        return true;
 
-    auto& style = renderer->style();
+    auto& style = *element.renderStyle();
+    if (style.display() == DisplayType::None)
+        return true;
+
+    if (style.visibility() == Visibility::Hidden)
+        return true;
 
     auto width = style.width();
     auto height = style.height();
-    if ((width.isFixed() && width.value() <= 0) || (height.isFixed() && height.value() <= 0))
-        return Visibility::Hidden;
+    if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
+        return true;
 
     auto top = style.top();
     auto left = style.left();
+    // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
     if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
-        return Visibility::Hidden;
+        return true;
 
     if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
-        return Visibility::Hidden;
-    return Visibility::Visible;
+        return true;
+
+    // FIXME: Check for other cases like zero height with overflow hidden.
+    auto maxHeight = style.maxHeight();
+    if (maxHeight.isFixed() && !maxHeight.value())
+        return true;
+
+    return false;
 }
 
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
     : m_contentChangeObserver(document.contentChangeObserver())
     , m_element(element)
-    , m_needsObserving(m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState())
 {
-    if (m_needsObserving) {
-        m_previousDisplay = element.renderStyle() ? element.renderStyle()->display() : DisplayType::None;
-        m_previousVisibility = element.renderStyle() ? element.renderStyle()->visibility() : Visibility::Hidden;
-        m_previousImplicitVisibility = elementImplicitVisibility(element);
-    }
-}
-
-ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
-{
-    if (!m_needsObserving)
-        return;
-
-    auto* style = m_element.renderStyle();
     auto qualifiesForVisibilityCheck = [&] {
-        if (!style)
-            return false;
         if (m_element.isInUserAgentShadowTree())
             return false;
         if (!const_cast<Element&>(m_element).willRespondToMouseClickEvents())
@@ -329,13 +324,17 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
         return true;
     };
 
-    if (!qualifiesForVisibilityCheck())
+    auto needsObserving = m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState() && qualifiesForVisibilityCheck();
+    if (needsObserving)
+        m_wasHidden = isConsideredHidden(m_element);
+}
+
+ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
+{
+    if (!m_wasHidden || isConsideredHidden(m_element))
         return;
 
-    if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None)
-        || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
-        || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
-        m_contentChangeObserver.contentVisibilityDidChange();
+    m_contentChangeObserver.contentVisibilityDidChange();
 }
 
 #if ENABLE(TOUCH_EVENTS)

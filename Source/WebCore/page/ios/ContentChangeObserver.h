@@ -60,10 +60,7 @@ public:
     private:
         ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
-        bool m_needsObserving { false };
-        DisplayType m_previousDisplay;
-        Visibility m_previousVisibility;
-        Visibility m_previousImplicitVisibility;
+        bool m_wasHidden { false };
     };
 
     class TouchEventScope {

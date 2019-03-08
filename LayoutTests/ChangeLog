@@ -1,5 +1,16 @@
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Check if max-height change triggers visible content change.
+        https://bugs.webkit.org/show_bug.cgi?id=195417
+        <rdar://problem/48680631>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/visibility-change-is-max-height-change-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/visibility-change-is-max-height-change.html: Added.
+
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Click event fires immediately on hover menu at Ebbets.com
         https://bugs.webkit.org/show_bug.cgi?id=195397
 
