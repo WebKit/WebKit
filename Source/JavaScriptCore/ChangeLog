@@ -1,5 +1,44 @@
 2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Remove merging must handle values into proven types in CFA
+        https://bugs.webkit.org/show_bug.cgi?id=195444
+
+        Reviewed by Saam Barati.
+
+        Previously, we are merging must handle values as a proven constant in CFA. This is OK as long as this proven AbstractValue is blurred by merging the other legit AbstractValues
+        from the successors. But let's consider the following code, this is actually generated DFG graph from the attached test in r242626.
+
+            Block #2 (loop header) succ #3, #4
+            ...
+            1: ForceOSRExit
+            ...
+            2: JSConstant(0)
+            3: SetLocal(@2, loc6)
+            ...
+            4: Branch(#3, #4)
+
+            Block #3 (This is OSR entry target) pred #2, #3, must handle value for loc6 => JSConstant(Int32, 31)
+            ...
+            5: GetLocal(loc6)
+            6: StringFromCharCode(@5)
+            ...
+
+        Block #3 is OSR entry target. So we have must handle value for loc6 and it is Int32 constant 31. Then we merge this constant as a proven value in #3's loc6 AbstractValue.
+        If the value from #2 blurs the value, it is OK. However, #2 has ForceOSRExit. So must handle value suddenly becomes the only source of loc6 in #3. Then we use this constant
+        as a proven value. But this is not expected behavior since must handle value is just a snapshot of the locals when we kick off the concurrent compilation. In the above example,
+        we assume that loop index is an constant 31, but it is wrong, and OSR entry fails. Because there is no strong assumption that the must handle value is the proven type or value,
+        we should not merge it in CFA.
+
+        Since (1) this is just an optimization, (2) type information is already propagated in prediction injection phase, and (3) the must handle value does not show the performance
+        progression in r211461 and we no longer see type misprediction in marsaglia-osr-entry.js, this patch simply removes must handle value type widening in CFA.
+
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::CFAPhase::injectOSR): Deleted.
+
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] StringFromCharCode fast path should accept 0xff in DFG and FTL
         https://bugs.webkit.org/show_bug.cgi?id=195429
 

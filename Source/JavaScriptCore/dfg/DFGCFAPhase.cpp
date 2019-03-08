@@ -76,63 +76,12 @@ public:
         
         m_state.initialize();
         
-        if (m_graph.m_form != SSA) {
-            if (m_verbose)
-                dataLog("   Widening state at OSR entry block.\n");
-            
-            // Widen the abstract values at the block that serves as the must-handle OSR entry.
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                
-                if (!block->isOSRTarget)
-                    continue;
-                if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
-                    continue;
-                
-                // We record that the block needs some OSR stuff, but we don't do that yet. We want to
-                // handle OSR entry data at the right time in order to get the best compile times. If we
-                // simply injected OSR data right now, then we'd potentially cause a loop body to be
-                // interpreted with just the constants we feed it, which is more expensive than if we
-                // interpreted it with non-constant values. If we always injected this data after the
-                // main pass of CFA ran, then we would potentially spend a bunch of time rerunning CFA
-                // after convergence. So, we try very hard to inject OSR data for a block when we first
-                // naturally come to see it - see the m_blocksWithOSR check in performBlockCFA(). This
-                // way, we:
-                //
-                // - Reduce the likelihood of interpreting the block with constants, since we will inject
-                //   the OSR entry constants on top of whatever abstract values we got for that block on
-                //   the first pass. The mix of those two things is likely to not be constant.
-                //
-                // - Reduce the total number of CFA reexecutions since we inject the OSR data as part of
-                //   the normal flow of CFA instead of having to do a second fixpoint. We may still have
-                //   to do a second fixpoint if we don't even reach the OSR entry block during the main
-                //   run of CFA, but in that case at least we're not being redundant.
-                m_blocksWithOSR.add(block);
-            }
-        }
-
         do {
             m_changed = false;
             performForwardCFA();
         } while (m_changed);
         
         if (m_graph.m_form != SSA) {
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                
-                if (m_blocksWithOSR.remove(block))
-                    m_changed |= injectOSR(block);
-            }
-            
-            while (m_changed) {
-                m_changed = false;
-                performForwardCFA();
-            }
-        
             // Make sure we record the intersection of all proofs that we ever allowed the
             // compiler to rely upon.
             for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -157,45 +106,6 @@ public:
     }
     
 private:
-    bool injectOSR(BasicBlock* block)
-    {
-        if (m_verbose)
-            dataLog("   Found must-handle block: ", *block, "\n");
-        
-        bool changed = false;
-        const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
-        for (size_t i = mustHandleValues.size(); i--;) {
-            int operand = mustHandleValues.operandForIndex(i);
-            Optional<JSValue> value = mustHandleValues[i];
-            if (!value) {
-                if (m_verbose)
-                    dataLog("   Not live in bytecode: ", VirtualRegister(operand), "\n");
-                continue;
-            }
-            Node* node = block->variablesAtHead.operand(operand);
-            if (!node) {
-                if (m_verbose)
-                    dataLog("   Not live: ", VirtualRegister(operand), "\n");
-                continue;
-            }
-            
-            if (m_verbose)
-                dataLog("   Widening ", VirtualRegister(operand), " with ", value.value(), "\n");
-            
-            AbstractValue& target = block->valuesAtHead.operand(operand);
-            changed |= target.mergeOSREntryValue(m_graph, value.value());
-            target.fixTypeForRepresentation(
-                m_graph, resultFor(node->variableAccessData()->flushFormat()), node);
-        }
-        
-        if (changed || !block->cfaHasVisited) {
-            block->cfaShouldRevisit = true;
-            return true;
-        }
-        
-        return false;
-    }
-    
     void performBlockCFA(BasicBlock* block)
     {
         if (!block)
@@ -204,9 +114,6 @@ private:
             return;
         if (m_verbose)
             dataLog("   Block ", *block, ":\n");
-        
-        if (m_blocksWithOSR.remove(block))
-            injectOSR(block);
         
         m_state.beginBasicBlock(block);
         if (m_verbose) {
@@ -263,7 +170,6 @@ private:
 private:
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
-    BlockSet m_blocksWithOSR;
     
     bool m_verbose;
     
