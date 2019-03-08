@@ -1827,12 +1827,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return nil;
 }
 
-- (void)_accessibilityActivate
+- (BOOL)_accessibilityActivate
 {
     if (![self _prepareAccessibilityCall])
-        return;
+        return NO;
 
-    m_object->press();
+    return m_object->press();
 }
 
 - (id)attachmentView

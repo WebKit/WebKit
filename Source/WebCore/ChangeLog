@@ -1,3 +1,16 @@
+2019-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: AOM accessibleclick does not work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195423
+        <rdar://problem/48682110>
+
+        Reviewed by Joanmarie Diggs.
+
+        Return this value of this method so it can be surfaced to a higher level.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityActivate]):
+
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_error.html is a flaky crash
