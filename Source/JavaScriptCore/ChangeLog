@@ -1,5 +1,46 @@
 2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Make more fields lazy in JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=195449
+
+        Reviewed by Mark Lam.
+
+        This patch makes more fields lazy-allocated in JSGlobalObject to save memory.
+
+        1. Some minor structures like moduleRecordStructure.
+        2. Some functions like parseInt / parseFloat. While they are eagerly created in JIT mode anyway to materialize NumberConstructor, we can lazily allocate them in non JIT mode.
+        3. ArrayBuffer constructor. While it is eagerly allocated in WebCore, we can make lazily allocated in JSC.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/JSArrayBufferPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::parseIntFunction const):
+        (JSC::JSGlobalObject::parseFloatFunction const):
+        (JSC::JSGlobalObject::evalFunction const):
+        (JSC::JSGlobalObject::strictEvalActivationStructure const):
+        (JSC::JSGlobalObject::moduleRecordStructure const):
+        (JSC::JSGlobalObject::moduleNamespaceObjectStructure const):
+        (JSC::JSGlobalObject::proxyObjectStructure const):
+        (JSC::JSGlobalObject::callableProxyObjectStructure const):
+        (JSC::JSGlobalObject::proxyRevokeStructure const):
+        (JSC::JSGlobalObject::arrayBufferConstructor const):
+        (JSC::JSGlobalObject::arrayBufferPrototype const):
+        (JSC::JSGlobalObject::arrayBufferStructure const):
+        * runtime/ProxyObject.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StrictEvalActivation.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::buffer):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::webAssemblyModuleCustomSections):
+
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove merging must handle values into proven types in CFA
         https://bugs.webkit.org/show_bug.cgi?id=195444
 

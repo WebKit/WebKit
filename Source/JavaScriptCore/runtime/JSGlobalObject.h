@@ -142,7 +142,7 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
     FOR_EACH_SIMPLE_BUILTIN_TYPE_WITH_CONSTRUCTOR(macro) \
     macro(JSInternalPromise, internalPromise, internalPromise, JSInternalPromise, InternalPromise, object) \
 
-#define FOR_EACH_LAZY_BUILTIN_TYPE(macro) \
+#define FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(macro) \
     macro(Boolean, boolean, booleanObject, BooleanObject, Boolean, object) \
     macro(Date, date, date, DateInstance, Date, object) \
     macro(Error, error, error, ErrorInstance, Error, object) \
@@ -150,6 +150,10 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
     macro(Symbol, symbol, symbolObject, SymbolObject, Symbol, object) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
+
+#define FOR_EACH_LAZY_BUILTIN_TYPE(macro) \
+    FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(macro) \
+    macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer, object) \
 
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro) \
@@ -172,7 +176,7 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 class IteratorPrototype;
 FOR_EACH_SIMPLE_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 FOR_BIG_INT_BUILTIN_TYPE_WITH_CONSTRUCTOR(DECLARE_SIMPLE_BUILTIN_TYPE)
-FOR_EACH_LAZY_BUILTIN_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
+FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(DECLARE_SIMPLE_BUILTIN_TYPE)
 FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 
@@ -260,7 +264,6 @@ public:
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
 
-    WriteBarrier<ErrorConstructor> m_errorConstructor;
     LazyClassStructure m_evalErrorStructure;
     LazyClassStructure m_rangeErrorStructure;
     LazyClassStructure m_referenceErrorStructure;
@@ -283,15 +286,15 @@ public:
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
 
-    WriteBarrier<JSFunction> m_parseIntFunction;
-    WriteBarrier<JSFunction> m_parseFloatFunction;
+    LazyProperty<JSGlobalObject, JSFunction> m_parseIntFunction;
+    LazyProperty<JSGlobalObject, JSFunction> m_parseFloatFunction;
 
-    WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
     WriteBarrier<JSFunction> m_applyFunction;
     WriteBarrier<JSFunction> m_throwTypeErrorFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
+    LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_initializePromiseFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
@@ -320,7 +323,7 @@ public:
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
-    WriteBarrier<Structure> m_strictEvalActivationStructure;
+    LazyProperty<JSGlobalObject, Structure> m_strictEvalActivationStructure;
     WriteBarrier<Structure> m_lexicalEnvironmentStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleEnvironmentStructure;
     WriteBarrier<Structure> m_directArgumentsStructure;
@@ -373,13 +376,11 @@ public:
     WriteBarrier<Structure> m_iteratorResultObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayWithGroupsStructure;
-    WriteBarrier<Structure> m_moduleRecordStructure;
-    WriteBarrier<Structure> m_moduleNamespaceObjectStructure;
-    WriteBarrier<Structure> m_proxyObjectStructure;
-    WriteBarrier<Structure> m_callableProxyObjectStructure;
-    WriteBarrier<Structure> m_proxyRevokeStructure;
-    WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
-    WriteBarrier<Structure> m_arrayBufferStructure;
+    LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
+    LazyProperty<JSGlobalObject, Structure> m_moduleNamespaceObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_callableProxyObjectStructure;
+    LazyProperty<JSGlobalObject, Structure> m_proxyRevokeStructure;
 #if ENABLE(SHARED_ARRAY_BUFFER)
     WriteBarrier<JSArrayBufferPrototype> m_sharedArrayBufferPrototype;
     WriteBarrier<Structure> m_sharedArrayBufferStructure;
@@ -593,10 +594,10 @@ public:
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
     NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }
 
-    JSFunction* parseIntFunction() const { return m_parseIntFunction.get(); }
-    JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(); }
+    JSFunction* parseIntFunction() const { return m_parseIntFunction.get(this); }
+    JSFunction* parseFloatFunction() const { return m_parseFloatFunction.get(this); }
 
-    JSFunction* evalFunction() const { return m_evalFunction.get(); }
+    JSFunction* evalFunction() const { return m_evalFunction.get(this); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
     JSFunction* applyFunction() const { return m_applyFunction.get(); }
     JSFunction* throwTypeErrorFunction() const { return m_throwTypeErrorFunction.get(); }
@@ -645,7 +646,7 @@ public:
 
     Structure* debuggerScopeStructure() const { return m_debuggerScopeStructure.get(this); }
     Structure* withScopeStructure() const { return m_withScopeStructure.get(this); }
-    Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
+    Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(this); }
     Structure* activationStructure() const { return m_lexicalEnvironmentStructure.get(); }
     Structure* moduleEnvironmentStructure() const { return m_moduleEnvironmentStructure.get(this); }
     Structure* directArgumentsStructure() const { return m_directArgumentsStructure.get(); }
@@ -751,11 +752,11 @@ public:
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithGroupsStructure() const { return m_regExpMatchesArrayWithGroupsStructure.get(); }
-    Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(); }
-    Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(); }
-    Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(); }
-    Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(); }
-    Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(); }
+    Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
+    Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(this); }
+    Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(this); }
+    Structure* callableProxyObjectStructure() const { return m_callableProxyObjectStructure.get(this); }
+    Structure* proxyRevokeStructure() const { return m_proxyRevokeStructure.get(this); }
     Structure* restParameterStructure() const { return arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous); }
     Structure* originalRestParameterStructure() const { return originalArrayStructureForIndexingType(ArrayWithContiguous); }
 #if ENABLE(WEBASSEMBLY)
@@ -800,17 +801,19 @@ public:
     void setName(const String&);
     const String& name() const { return m_name; }
 
-    JSArrayBufferPrototype* arrayBufferPrototype(ArrayBufferSharingMode sharingMode) const
+    JSObject* arrayBufferConstructor() const { return m_arrayBufferStructure.constructor(this); }
+
+    JSObject* arrayBufferPrototype(ArrayBufferSharingMode sharingMode) const
     {
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
-            return m_arrayBufferPrototype.get();
+            return m_arrayBufferStructure.prototype(this);
 #if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
             return m_sharedArrayBufferPrototype.get();
 #else
         default:
-            return m_arrayBufferPrototype.get();
+            return m_arrayBufferStructure.prototype(this);
 #endif
         }
     }
@@ -818,13 +821,13 @@ public:
     {
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
-            return m_arrayBufferStructure.get();
+            return m_arrayBufferStructure.get(this);
 #if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
             return m_sharedArrayBufferStructure.get();
 #else
         default:
-            return m_arrayBufferStructure.get();
+            return m_arrayBufferStructure.get(this);
 #endif
         }
         RELEASE_ASSERT_NOT_REACHED();

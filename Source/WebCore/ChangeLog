@@ -1,3 +1,15 @@
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make more fields lazy in JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=195449
+
+        Reviewed by Mark Lam.
+
+        Use arrayBufferConstructor() since getDirect does not work with lazy property.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver][REGRESSION] Check if visibility change happens while dispatching mouseMoved

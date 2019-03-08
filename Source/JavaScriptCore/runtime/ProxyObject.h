@@ -39,7 +39,8 @@ public:
     static ProxyObject* create(ExecState* exec, JSGlobalObject* globalObject, JSValue target, JSValue handler)
     {
         VM& vm = exec->vm();
-        ProxyObject* proxy = new (NotNull, allocateCell<ProxyObject>(vm.heap)) ProxyObject(vm, ProxyObject::structureForTarget(globalObject, target));
+        Structure* structure = ProxyObject::structureForTarget(globalObject, target);
+        ProxyObject* proxy = new (NotNull, allocateCell<ProxyObject>(vm.heap)) ProxyObject(vm, structure);
         proxy->finishCreation(vm, exec, target, handler);
         return proxy;
     }
