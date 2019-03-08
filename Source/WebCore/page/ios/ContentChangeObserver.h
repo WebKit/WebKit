@@ -58,9 +58,13 @@ public:
         ~StyleChangeScope();
 
     private:
+        bool isConsideredHidden() const;
+        bool isConsideredClickable() const;
+
         ContentChangeObserver& m_contentChangeObserver;
         const Element& m_element;
         bool m_wasHidden { false };
+        bool m_hadRenderer { false };
     };
 
     class TouchEventScope {

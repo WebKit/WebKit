@@ -1,5 +1,30 @@
 2019-03-08  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Expand "isConsideredClickable" to descendants
+        https://bugs.webkit.org/show_bug.cgi?id=195478
+        <rdar://problem/48724935>
+
+        Reviewed by Simon Fraser.
+
+        In StyleChangeScope we try to figure out whether newly visible content should stick (menu panes etc) by checking if it is clickable.
+        This works fine as long as all the visible elements are gaining new renderers through this style update processs.
+        However when an element becomes visible by a change other than display: (not)none, it's not sufficient to just check the element itself,
+        since it might not respond to click at all, while its descendants do.
+        A concrete example is a max-height value change on usps.com, where the max-height is on a container (menu pane).
+        This container itself is not clickable while most of its children are (menu items).    
+
+        Test: fast/events/touch/ios/content-observation/clickable-content-is-inside-a-container.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::StyleChangeScope::StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredHidden const):
+        (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredClickable const):
+        (WebCore::isConsideredHidden): Deleted.
+        * page/ios/ContentChangeObserver.h:
+
+2019-03-08  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Cleanup adjustObservedState
         https://bugs.webkit.org/show_bug.cgi?id=195470
         <rdar://problem/48717823>

@@ -1,3 +1,14 @@
+2019-03-08  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Expand "isConsideredClickable" to descendants
+        https://bugs.webkit.org/show_bug.cgi?id=195478
+        <rdar://problem/48724935>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/clickable-content-is-inside-a-container-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/clickable-content-is-inside-a-container.html: Added.
+
 2019-03-08  Truitt Savell  <tsavell@apple.com>
 
         (r242595) Layout Tests in imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/* are failing

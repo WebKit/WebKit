@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "RenderDescendantIterator.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -295,12 +296,31 @@ void ContentChangeObserver::adjustObservedState(Event event)
     }
 }
 
-static bool isConsideredHidden(const Element& element)
+ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
+    : m_contentChangeObserver(document.contentChangeObserver())
+    , m_element(element)
+    , m_hadRenderer(element.renderer())
 {
-    if (!element.renderStyle())
+    if (m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState())
+        m_wasHidden = isConsideredHidden();
+}
+
+ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
+{
+    auto changedFromHiddenToVisible = [&] {
+        return m_wasHidden && !isConsideredHidden();
+    };
+    
+    if (changedFromHiddenToVisible() && isConsideredClickable())
+        m_contentChangeObserver.contentVisibilityDidChange();
+}
+
+bool ContentChangeObserver::StyleChangeScope::isConsideredHidden() const
+{
+    if (!m_element.renderStyle())
         return true;
 
-    auto& style = *element.renderStyle();
+    auto& style = *m_element.renderStyle();
     if (style.display() == DisplayType::None)
         return true;
 
@@ -329,29 +349,21 @@ static bool isConsideredHidden(const Element& element)
     return false;
 }
 
-ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
-    : m_contentChangeObserver(document.contentChangeObserver())
-    , m_element(element)
+bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
 {
-    auto qualifiesForVisibilityCheck = [&] {
-        if (m_element.isInUserAgentShadowTree())
-            return false;
-        if (!const_cast<Element&>(m_element).willRespondToMouseClickEvents())
-            return false;
+    if (m_element.isInUserAgentShadowTree())
+        return false;
+    if (!m_hadRenderer)
+        return const_cast<Element&>(m_element).willRespondToMouseClickEvents();
+    ASSERT(m_element.renderer());
+    if (const_cast<Element&>(m_element).willRespondToMouseClickEvents())
         return true;
-    };
-
-    auto needsObserving = m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState() && qualifiesForVisibilityCheck();
-    if (needsObserving)
-        m_wasHidden = isConsideredHidden(m_element);
-}
-
-ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
-{
-    if (!m_wasHidden || isConsideredHidden(m_element))
-        return;
-
-    m_contentChangeObserver.contentVisibilityDidChange();
+    // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
+    for (auto& descendant : descendantsOfType<RenderElement>(*m_element.renderer())) {
+        if (descendant.element()->willRespondToMouseClickEvents())
+            return true;
+    }
+    return false;
 }
 
 #if ENABLE(TOUCH_EVENTS)
