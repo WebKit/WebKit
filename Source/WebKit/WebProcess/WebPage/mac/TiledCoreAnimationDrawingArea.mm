@@ -59,6 +59,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/MainThread.h>
+#import <wtf/SystemTracing.h>
 
 #if ENABLE(ASYNC_SCROLLING)
 #import <WebCore/AsyncScrollingCoordinator.h>
@@ -459,12 +460,13 @@ void TiledCoreAnimationDrawingArea::flushLayers()
     if (layerTreeStateIsFrozen())
         return;
 
+    TraceScope traceScope(RenderingUpdateStart, RenderingUpdateEnd);
+
     @autoreleasepool {
         scaleViewToFitDocumentIfNeeded();
 
-        m_webPage.layoutIfNeeded();
+        m_webPage.renderingUpdate();
         m_webPage.flushPendingEditorStateUpdate();
-        m_webPage.willDisplayPage();
 
         updateIntrinsicContentSizeIfNeeded();
 

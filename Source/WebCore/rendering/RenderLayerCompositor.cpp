@@ -431,7 +431,7 @@ void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer* layer)
 void RenderLayerCompositor::scheduleLayerFlushNow()
 {
     m_hasPendingLayerFlush = false;
-    page().chrome().client().scheduleCompositingLayerFlush();
+    page().renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)

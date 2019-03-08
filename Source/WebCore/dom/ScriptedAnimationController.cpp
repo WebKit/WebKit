@@ -30,7 +30,6 @@
 #include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -189,7 +188,7 @@ void ScriptedAnimationController::cancelCallback(CallbackId id)
     }
 }
 
-void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
+void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
 {
     if (!m_callbacks.size() || m_suspendCount || !requestAnimationFrameEnabled())
         return;
@@ -197,8 +196,8 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
     TraceScope tracingScope(RAFCallbackStart, RAFCallbackEnd);
 
     // We round this to the nearest microsecond so that we can return a time that matches what is returned by document.timeline.currentTime.
-    double highResNowMs = std::round(1000 * timestamp);
-    double legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime().secondsSinceEpoch().seconds());
+    DOMHighResTimeStamp highResNowMs = std::round(1000 * timestamp);
+    DOMHighResTimeStamp legacyHighResNowMs = 1000 * (timestamp + m_document->loader()->timing().referenceWallTime().secondsSinceEpoch().seconds());
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.
@@ -210,24 +209,21 @@ void ScriptedAnimationController::serviceScriptedAnimations(double timestamp)
     Ref<Document> protectedDocument(*m_document);
 
     for (auto& callback : callbacks) {
-        if (!callback->m_firedOrCancelled) {
-            callback->m_firedOrCancelled = true;
-            InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
-            if (callback->m_useLegacyTimeBase)
-                callback->handleEvent(legacyHighResNowMs);
-            else
-                callback->handleEvent(highResNowMs);
-            InspectorInstrumentation::didFireAnimationFrame(cookie);
-        }
+        if (callback->m_firedOrCancelled)
+            continue;
+        callback->m_firedOrCancelled = true;
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(protectedDocument, callback->m_id);
+        if (callback->m_useLegacyTimeBase)
+            callback->handleEvent(legacyHighResNowMs);
+        else
+            callback->handleEvent(highResNowMs);
+        InspectorInstrumentation::didFireAnimationFrame(cookie);
     }
 
     // Remove any callbacks we fired from the list of pending callbacks.
-    for (size_t i = 0; i < m_callbacks.size();) {
-        if (m_callbacks[i]->m_firedOrCancelled)
-            m_callbacks.remove(i);
-        else
-            ++i;
-    }
+    m_callbacks.removeAllMatching([](auto& callback) {
+        return callback->m_firedOrCancelled;
+    });
 
     if (m_callbacks.size())
         scheduleAnimation();
@@ -262,8 +258,10 @@ void ScriptedAnimationController::scheduleAnimation()
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (!m_isUsingTimer && !isThrottled()) {
-        if (m_document->animationScheduler().scheduleScriptedAnimationResolution())
+        if (auto* page = this->page()) {
+            page->renderingUpdateScheduler().scheduleRenderingUpdate();
             return;
+        }
 
         m_isUsingTimer = true;
     }
@@ -292,15 +290,7 @@ void ScriptedAnimationController::scheduleAnimation()
 void ScriptedAnimationController::animationTimerFired()
 {
     m_lastAnimationFrameTimestamp = m_document->domWindow()->nowTimestamp();
-    serviceScriptedAnimations(m_lastAnimationFrameTimestamp);
+    serviceRequestAnimationFrameCallbacks(m_lastAnimationFrameTimestamp);
 }
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-void ScriptedAnimationController::documentAnimationSchedulerDidFire()
-{
-    // We obtain the time from the animation scheduler so that we use the same timestamp as the DocumentTimeline.
-    serviceScriptedAnimations(m_document->animationScheduler().lastTimestamp().seconds());
-}
-#endif
 
 }

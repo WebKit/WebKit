@@ -1,3 +1,15 @@
+2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (-[WebView _viewWillDrawInternal]):
+        Call Page::renderingUpdate() which implements  "Update the rendering"
+        step of the HTML Event Loop specification.
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add a setting to be able to turn content change observation on/off

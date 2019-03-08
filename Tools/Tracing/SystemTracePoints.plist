@@ -218,6 +218,38 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Schedule rendering update</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5028</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Trigger rendering update</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5029</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Rendering update</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>5030</string>
+                 <key>CodeEnd</key>
+                 <string>5031</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Paint WebHTMLView</string>
                  <key>Type</key>
                  <string>Interval</string>

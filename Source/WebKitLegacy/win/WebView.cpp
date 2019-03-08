@@ -1173,9 +1173,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 
     if (m_backingStoreBitmap && (m_backingStoreDirtyRegion || backingStoreCompletelyDirty)) {
         // Do a layout first so that everything we render to the backing store is always current.
-        if (Frame* coreFrame = core(m_mainFrame))
-            if (FrameView* view = coreFrame->view())
-                view->updateLayoutAndStyleIfNeededRecursive();
+        m_page->renderingUpdate();
 
         Vector<IntRect> paintRects;
         if (!backingStoreCompletelyDirty && m_backingStoreDirtyRegion) {
@@ -7159,8 +7157,10 @@ void WebView::setRootChildLayer(GraphicsLayer* layer)
 void WebView::flushPendingGraphicsLayerChangesSoon()
 {
 #if USE(CA)
-    if (!m_layerTreeHost)
+    if (!m_layerTreeHost) {
+        m_page->renderingUpdate();
         return;
+    }
     m_layerTreeHost->flushPendingGraphicsLayerChangesSoon();
 #elif USE(TEXTURE_MAPPER_GL)
     if (!m_acceleratedCompositingContext)
@@ -7388,7 +7388,7 @@ void WebView::flushPendingGraphicsLayerChanges()
     if (!isAcceleratedCompositing())
         return;
 
-    view->updateLayoutAndStyleIfNeededRecursive();
+    m_page->renderingUpdate();
 
     // Updating layout might have taken us out of compositing mode.
     if (m_backingLayer)

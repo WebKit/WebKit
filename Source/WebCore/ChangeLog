@@ -1,3 +1,124 @@
+2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        This change fixes two issues with animation timing:
+
+        1. Calling the requestAnimationFrame callbacks would have happened when
+           the DisplayLink fires. This may have happened even if the frame is
+           missed and no display is committed.
+
+        2. Style changes and layout triggered by script could trigger painting
+           at more than 60fps. CoreAnimation commits could happen at more than
+           60fps, although WindowServer will throttle those, and only some will
+           be shown on the screen.
+
+        This change introduces a new paint scheduling model where painting is
+        driven by a "RenderingUpdateScheduler", which only triggers paints once
+        per 16.7ms frame.
+
+        Code that previously scheduled a compositing layer flush now schedules a
+        "RenderingUpdate", and that update is driven by a DisplayRefreshMonitor
+        callback. When the render happens, we service requestAnimationFrame callbacks,
+        Web Animations and intersection observations per the "Update the rendering"
+        step of the HTML Event Loop specification
+        <https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering>.
+
+        In the future, more rendering steps will be added to this code.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        Fix layout tests by adding null check.
+
+        * animation/DocumentAnimationScheduler.cpp: Removed.
+        * animation/DocumentAnimationScheduler.h: Removed.
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::DocumentTimeline):
+        (WebCore::DocumentTimeline::updateThrottlingState):
+        (WebCore::DocumentTimeline::resumeAnimations):
+        (WebCore::DocumentTimeline::liveCurrentTime const):
+        (WebCore::DocumentTimeline::currentTime):
+        (WebCore::DocumentTimeline::animationTimingDidChange):
+        (WebCore::DocumentTimeline::scheduleAnimationResolution):
+        (WebCore::DocumentTimeline::unscheduleAnimationResolution):
+        (WebCore::DocumentTimeline::updateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::internalUpdateAnimationsAndSendEvents):
+        (WebCore::DocumentTimeline::scheduleNextTick):
+        (WebCore::DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement):
+        Simplify this function by handling the case of no-animations separately.
+
+        (WebCore::DocumentTimeline::resolveAnimationsForElement):
+        Simplify the loop and delete hasPendingAcceleratedAnimations because it
+        is initialized to true and is not changed inside the loop.
+
+        (WebCore::DocumentTimeline::scheduleAnimationResolutionIfNeeded): Deleted.
+        (WebCore::DocumentTimeline::animationResolutionTimerFired): Deleted.
+        * animation/DocumentTimeline.h:
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        There is no need to force update in resolveStyle(). notifyFlushRequired()
+        will be called eventually which will scheduleRenderingUpdate().
+
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::updateAnimationsAndSendEvents):
+        (WebCore::Document::serviceRequestAnimationFrameCallbacks):
+        (WebCore::Document::windowScreenDidChange):
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::scheduleForcedIntersectionObservationUpdate): Deleted.
+        (WebCore::Document::animationScheduler): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::numberOfIntersectionObservers const):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceRequestAnimationFrameCallbacks):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        (WebCore::ScriptedAnimationController::animationTimerFired):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations): Deleted.
+        (WebCore::ScriptedAnimationController::documentAnimationSchedulerDidFire): Deleted.
+        * dom/ScriptedAnimationController.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportContentsChanged):
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::observe):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::layoutIfNeeded):
+        (WebCore::Page::renderingUpdate):
+        (WebCore::Page::renderingUpdateScheduler):
+        (WebCore::Page::willDisplayPage): Deleted.
+        (WebCore::Page::addDocumentNeedingIntersectionObservationUpdate): Deleted.
+        (WebCore::Page::updateIntersectionObservations): Deleted.
+        (WebCore::Page::scheduleForcedIntersectionObservationUpdate): Deleted.
+        * page/Page.h:
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::didChangeViewExposedRect):
+        (WebCore::PageOverlayController::notifyFlushRequired):
+        * page/ResourceUsageData.h:
+        Include header files that become missing because of adding 
+        RenderingUpdateScheduler.cpp.
+
+        * page/RenderingUpdateScheduler.cpp: Added.
+        (WebCore::RenderingUpdateScheduler::RenderingUpdateScheduler):
+        (WebCore::RenderingUpdateScheduler::scheduleRenderingUpdate):
+        (WebCore::RenderingUpdateScheduler::startTimer):
+        (WebCore::RenderingUpdateScheduler::clearTimer):
+        (WebCore::RenderingUpdateScheduler::windowScreenDidChange):
+        (WebCore::RenderingUpdateScheduler::createDisplayRefreshMonitor const):
+        (WebCore::RenderingUpdateScheduler::displayRefreshFired):
+        * page/RenderingUpdateScheduler.h: Added.
+        (WebCore::RenderingUpdateScheduler::create):
+        * page/ios/ContentChangeObserver.h:
+        Include header files that become missing because of adding 
+        RenderingUpdateScheduler.cpp.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::Highlight::notifyFlushRequired):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlushNow):
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add a setting to be able to turn content change observation on/off

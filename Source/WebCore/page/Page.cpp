@@ -250,9 +250,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_storageNamespaceProvider(*WTFMove(pageConfiguration.storageNamespaceProvider))
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
-#if ENABLE(INTERSECTION_OBSERVER)
-    , m_intersectionObservationUpdateTimer(*this, &Page::updateIntersectionObservations)
-#endif
     , m_sessionID(PAL::SessionID::defaultSessionID())
 #if ENABLE(VIDEO)
     , m_playbackControlsManagerUpdateTimer(*this, &Page::playbackControlsManagerUpdateTimerFired)
@@ -1111,13 +1108,6 @@ void Page::didFinishLoad()
         m_performanceMonitor->didFinishLoad();
 }
 
-void Page::willDisplayPage()
-{
-#if ENABLE(INTERSECTION_OBSERVER)
-    updateIntersectionObservations();
-#endif
-}
-
 bool Page::isOnlyNonUtilityPage() const
 {
     return !isUtilityPage() && nonUtilityPageCount == 1;
@@ -1259,31 +1249,43 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
     m_activityStateChangeObservers.remove(&observer);
 }
 
-#if ENABLE(INTERSECTION_OBSERVER)
-void Page::addDocumentNeedingIntersectionObservationUpdate(Document& document)
+void Page::layoutIfNeeded()
 {
-    if (m_documentsNeedingIntersectionObservationUpdate.find(&document) == notFound)
-        m_documentsNeedingIntersectionObservationUpdate.append(makeWeakPtr(document));
+    if (FrameView* view = m_mainFrame->view())
+        view->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void Page::updateIntersectionObservations()
+void Page::renderingUpdate()
 {
-    m_intersectionObservationUpdateTimer.stop();
-    for (const auto& document : m_documentsNeedingIntersectionObservationUpdate) {
-        if (document)
-            document->updateIntersectionObservations();
-    }
-    m_documentsNeedingIntersectionObservationUpdate.clear();
-}
-
-void Page::scheduleForcedIntersectionObservationUpdate(Document& document)
-{
-    addDocumentNeedingIntersectionObservationUpdate(document);
-    if (m_intersectionObservationUpdateTimer.isActive())
+    // This function is not reentrant, e.g. a rAF callback may force repaint.
+    if (m_inRenderingUpdate) {
+        layoutIfNeeded();
         return;
-    m_intersectionObservationUpdateTimer.startOneShot(0_s);
-}
+    }
+
+    SetForScope<bool> change(m_inRenderingUpdate, true);
+
+    Vector<RefPtr<Document>> documents;
+
+    // The requestAnimationFrame callbacks may change the frame hierarchy of the page
+    forEachDocument([&documents] (Document& document) {
+        documents.append(&document);
+    });
+
+    for (auto& document : documents) {
+        DOMHighResTimeStamp timestamp = document->domWindow()->nowTimestamp();
+        document->updateAnimationsAndSendEvents(timestamp);
+        document->serviceRequestAnimationFrameCallbacks(timestamp);
+    }
+
+    layoutIfNeeded();
+
+    for (auto& document : documents) {
+#if ENABLE(INTERSECTION_OBSERVER)
+        document->updateIntersectionObservations();
 #endif
+    }
+}
 
 void Page::suspendScriptedAnimations()
 {
@@ -2821,6 +2823,13 @@ void Page::didChangeMainDocument()
 #if ENABLE(WEB_RTC)
     m_rtcController.reset(m_shouldEnableICECandidateFilteringByDefault);
 #endif
+}
+
+RenderingUpdateScheduler& Page::renderingUpdateScheduler()
+{
+    if (!m_renderingUpdateScheduler)
+        m_renderingUpdateScheduler = RenderingUpdateScheduler::create(*this);
+    return *m_renderingUpdateScheduler;
 }
 
 void Page::forEachDocument(const Function<void(Document&)>& functor)

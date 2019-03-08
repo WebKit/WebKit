@@ -1,3 +1,17 @@
+2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::updateBackingStore):
+        (WebView::flushPendingGraphicsLayerChangesSoon):
+        (WebView::flushPendingGraphicsLayerChanges):
+        Call Page::renderingUpdate() which implements  "Update the rendering"
+        step of the HTML Event Loop specification.
+
 2019-03-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.

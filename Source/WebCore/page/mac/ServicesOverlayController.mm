@@ -121,7 +121,7 @@ void ServicesOverlayController::Highlight::notifyFlushRequired(const GraphicsLay
     if (!m_controller)
         return;
 
-    m_controller->page().chrome().client().scheduleCompositingLayerFlush();
+    m_controller->page().renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void ServicesOverlayController::Highlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect&, GraphicsLayerPaintBehavior)

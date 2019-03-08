@@ -1,3 +1,23 @@
+2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        There is a slight difference between the actual DRT and the expected DRT
+        due to animation timing change. But these two tests are not animating
+        correctly if they are opened in Safari with web animation turned on. 
+
+        * animations/animation-multiple-callbacks-timestamp.html:
+        Fix variable names used by an error message.
+        * animations/no-style-recalc-during-accelerated-animation-expected.txt:
+        * animations/no-style-recalc-during-accelerated-animation.html:
+        One extra styleReclc was incurred due to the document styleRecalcTimer.
+        I think this timer is not needed anymore. I will look at removing it in
+        a separate patch.
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add a setting to be able to turn content change observation on/off

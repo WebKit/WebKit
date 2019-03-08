@@ -27,12 +27,16 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include "Document.h"
+#include "RenderStyleConstants.h"
 #include "WKContentObservation.h"
+#include <wtf/HashSet.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
 class DOMTimer;
-class Document;
+class Element;
 
 class ContentChangeObserver {
 public:

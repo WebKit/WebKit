@@ -1,3 +1,14 @@
+2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        Add trace points for the page RenderingUpdate.
+
+        * Tracing/SystemTracePoints.plist:
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add a setting to be able to turn content change observation on/off

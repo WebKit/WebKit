@@ -381,10 +381,9 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
 
         m_webPage.setDeviceScaleFactor(deviceScaleFactor);
         m_webPage.setSize(size);
-        m_webPage.layoutIfNeeded();
+        m_webPage.renderingUpdate();
         m_webPage.flushPendingEditorStateUpdate();
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
-        m_webPage.willDisplayPage();
 
         if (m_layerTreeHost)
             m_layerTreeHost->sizeDidChange(m_webPage.size());
@@ -703,7 +702,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     ASSERT(!m_layerTreeHost);
     ASSERT(!m_webPage.size().isEmpty());
 
-    m_webPage.layoutIfNeeded();
+    m_webPage.renderingUpdate();
     m_webPage.flushPendingEditorStateUpdate();
 
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is
@@ -711,7 +710,6 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     if (m_layerTreeHost)
         return;
 
-    m_webPage.willDisplayPage();
     updateInfo.viewSize = m_webPage.size();
     updateInfo.deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
 

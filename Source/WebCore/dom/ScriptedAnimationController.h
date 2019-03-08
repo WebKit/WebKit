@@ -52,7 +52,7 @@ public:
 
     CallbackId registerCallback(Ref<RequestAnimationFrameCallback>&&);
     void cancelCallback(CallbackId);
-    void serviceScriptedAnimations(double timestamp);
+    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
 
     void suspend();
     void resume();
@@ -68,10 +68,6 @@ public:
 
     WEBCORE_EXPORT bool isThrottled() const;
     WEBCORE_EXPORT Seconds interval() const;
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    void documentAnimationSchedulerDidFire();
-#endif
 
 private:
     ScriptedAnimationController(Document&);

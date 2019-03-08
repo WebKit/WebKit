@@ -539,8 +539,14 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
 {
     NSAccessibilityHandleFocusChanged();
     // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
-    if (UNLIKELY(axShouldRepostNotificationsForTests))
-        [rootWebArea()->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];
+    if (UNLIKELY(!axShouldRepostNotificationsForTests))
+        return;
+
+    auto* rootWebArea = this->rootWebArea();
+    if (!rootWebArea)
+        return;
+
+    [rootWebArea->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node*)
