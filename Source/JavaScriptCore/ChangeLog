@@ -1,5 +1,14 @@
 2019-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, follow-up after r242568
+
+        Robin pointed that calculation of `numberOfChildren` and `nonEmptyIndex` is unnecessary.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+2019-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] We should have more WithoutTransition functions which are usable for JSGlobalObject initialization
         https://bugs.webkit.org/show_bug.cgi?id=195447
 
