@@ -62,15 +62,15 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension", jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions", jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 
-    JSC_NATIVE_GETTER("caller", jsJavaScriptCallFrameAttributeCaller, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("sourceID", jsJavaScriptCallFrameAttributeSourceID, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("line", jsJavaScriptCallFrameAttributeLine, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("column", jsJavaScriptCallFrameAttributeColumn, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("functionName", jsJavaScriptCallFrameAttributeFunctionName, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("thisObject", jsJavaScriptCallFrameAttributeThisObject, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("type", jsJavaScriptCallFrameAttributeType, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER("isTailDeleted", jsJavaScriptCallFrameIsTailDeleted, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("caller", jsJavaScriptCallFrameAttributeCaller, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("sourceID", jsJavaScriptCallFrameAttributeSourceID, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("line", jsJavaScriptCallFrameAttributeLine, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("column", jsJavaScriptCallFrameAttributeColumn, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("functionName", jsJavaScriptCallFrameAttributeFunctionName, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("thisObject", jsJavaScriptCallFrameAttributeThisObject, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("type", jsJavaScriptCallFrameAttributeType, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("isTailDeleted", jsJavaScriptCallFrameIsTailDeleted, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
 EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension(ExecState* exec)

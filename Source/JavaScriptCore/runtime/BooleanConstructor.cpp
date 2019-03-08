@@ -57,7 +57,7 @@ BooleanConstructor::BooleanConstructor(VM& vm, Structure* structure)
 
 void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototype)
 {
-    Base::finishCreation(vm, booleanPrototype->classInfo(vm)->className);
+    Base::finishCreation(vm, vm.propertyNames->Boolean.string(), NameVisibility::Visible, NameAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }

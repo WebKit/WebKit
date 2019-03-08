@@ -35,8 +35,9 @@ public:
 
     static NullGetterFunction* create(VM& vm, Structure* structure)
     {
+        // Since NullGetterFunction is per JSGlobalObject, we use put-without-transition in InternalFunction::finishCreation.
         NullGetterFunction* function = new (NotNull, allocateCell< NullGetterFunction>(vm.heap))  NullGetterFunction(vm, structure);
-        function->finishCreation(vm, String());
+        function->finishCreation(vm, String(), NameVisibility::Visible, NameAdditionMode::WithStructureTransition);
         return function;
     }
 
