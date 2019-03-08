@@ -145,6 +145,8 @@ void RemoteScrollingTree::currentSnapPointIndicesDidChange(ScrollingNodeID nodeI
 void RemoteScrollingTree::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+    if (!rootNode())
+        return;
     static_cast<ScrollingTreeFrameScrollingNodeRemoteMac&>(*rootNode()).handleMouseEvent(event);
 #else
     UNUSED_PARAM(event);

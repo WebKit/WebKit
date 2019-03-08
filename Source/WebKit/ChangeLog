@@ -1,3 +1,17 @@
+2019-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS UI-side compositing] Mouse handling can trigger a crash before we have a scrolling tree root
+        https://bugs.webkit.org/show_bug.cgi?id=195467
+
+        Reviewed by Antti Koivisto.
+        
+        When launching MiniBrowser with UI-side compositing enabled in a state where the window
+        appears under the mouse, we can hit RemoteScrollingTree::handleMouseEvent() for a mouseEnter
+        event before we have a scrolling tree root node, so add a null check.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::handleMouseEvent):
+
 2019-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r242624): [GTK] New rAF code path assumes AC mode
