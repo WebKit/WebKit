@@ -918,15 +918,19 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                     if (effectiveProperty.ownerStyle === property.ownerStyle) {
                         if (effectiveProperty.important && !property.important) {
                             property.overridden = true;
+                            property.overridingProperty = effectiveProperty;
                             continue;
                         }
                     } else if (effectiveProperty.important || !property.important || effectiveProperty.ownerStyle.node !== property.ownerStyle.node) {
                         property.overridden = true;
+                        property.overridingProperty = effectiveProperty;
                         continue;
                     }
 
-                    if (!property.anonymous)
+                    if (!property.anonymous) {
                         effectiveProperty.overridden = true;
+                        effectiveProperty.overridingProperty = property;
+                    }
                 }
 
                 property.overridden = false;

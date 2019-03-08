@@ -229,6 +229,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         }
     }
 
+    spreadsheetCSSStyleDeclarationEditorSelectProperty(property)
+    {
+        if (this._delegate && this._delegate.spreadsheetCSSStyleDeclarationSectionSelectProperty)
+            this._delegate.spreadsheetCSSStyleDeclarationSectionSelectProperty(property);
+    }
+
     applyFilter(filterText)
     {
         this._filterText = filterText;

@@ -157,6 +157,11 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
     // SpreadsheetCSSStyleDeclarationSection delegate
 
+    spreadsheetCSSStyleDeclarationSectionSelectProperty(property)
+    {
+        this.scrollToSectionAndHighlightProperty(property);
+    }
+
     spreadsheetCSSStyleDeclarationSectionStartEditingAdjacentRule(currentSection, delta)
     {
         console.assert(delta !== 0);

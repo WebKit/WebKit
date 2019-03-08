@@ -1,3 +1,40 @@
+2019-03-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: overridden CSS property should have go-to button to jump to effective property
+        https://bugs.webkit.org/show_bug.cgi?id=185930
+        <rdar://problem/40506252>
+
+        Reviewed by Matt Baker.
+
+        Introduce a new experimental jump to effective property button. The button is a small arrow button
+        next to an overridden CSS property. Clicking the button scrolls to the effective CSS property and
+        selects it.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty):
+        (WI.CSSProperty.prototype.update):
+        (WI.CSSProperty.prototype.get overridingProperty):
+        (WI.CSSProperty.prototype.set overridingProperty):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._markOverriddenProperties):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property.overridden .select-effective-property):
+        (.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property,):
+        (.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,):
+        (@media (prefers-color-scheme: dark)):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertySelectByProperty):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetCSSStyleDeclarationEditorSelectProperty):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.spreadsheetCSSStyleDeclarationSectionSelectProperty):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+
 2019-03-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Protocol: add type checking when commands are called via invoke

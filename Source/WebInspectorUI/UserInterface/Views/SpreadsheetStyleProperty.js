@@ -39,6 +39,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._contentElement = null;
         this._nameElement = null;
         this._valueElement = null;
+        this._jumpToEffectivePropertyButton = null;
 
         this._nameTextField = null;
         this._valueTextField = null;
@@ -261,6 +262,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let elementTitle = "";
 
         if (this._property.overridden) {
+            if (!this._jumpToEffectivePropertyButton && this._delegate && this._delegate.spreadsheetStylePropertySelectByProperty) {
+                console.assert(this._property.overridingProperty, `Overridden property is missing overridingProperty: ${this._property.formattedText}`);
+                if (this._property.overridingProperty) {
+                    this._jumpToEffectivePropertyButton = WI.createGoToArrowButton();
+                    this._jumpToEffectivePropertyButton.classList.add("select-effective-property");
+                    this._jumpToEffectivePropertyButton.dataset.value = this._property.overridingProperty.rawValue;
+                    this._element.append(this._jumpToEffectivePropertyButton);
+
+                    this._jumpToEffectivePropertyButton.addEventListener("click", (event) => {
+                        console.assert(this._property.overridingProperty);
+                        event.stop();
+                        this._delegate.spreadsheetStylePropertySelectByProperty(this._property.overridingProperty);
+                    });
+                }
+            }
+
             classNames.push("overridden");
             if (duplicatePropertyExistsBelow(this._property)) {
                 classNames.push("has-warning");

@@ -166,6 +166,29 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     color: var(--syntax-highlight-string-color);
 }
 
+.spreadsheet-style-declaration-editor .property.overridden .select-effective-property {
+    display: none;
+    height: 10px;
+    line-height: 10px;
+    vertical-align: middle;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+}
+
+.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property,
+.spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property {
+    display: inline-block;
+}
+
+.spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,
+.spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property::after {
+    content: attr(data-value);
+    display: inline-block;
+    position: relative;
+    left: 16px;
+    white-space: nowrap;
+}
+
 .meta-key-pressed .spreadsheet-css-declaration:not(.locked) :matches(.name, .value):not(.editing):hover {
     color: var(--syntax-highlight-link-color) !important;
     text-decoration: underline !important;
@@ -195,5 +218,11 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
 
     .spreadsheet-style-declaration-editor .property.modified:not(.selected) {
         background-color: hsl(106, 13%, 25%);
+    }
+
+    .spreadsheet-style-declaration-editor .property.overridden:hover .select-effective-property::after,
+    .spreadsheet-style-declaration-editor .property.overridden:focus-within .select-effective-property::after {
+        /* .select-effective-property has inverted colors. Invert the pseudo-element again to restore the original text color. */
+        filter: invert();
     }
 }

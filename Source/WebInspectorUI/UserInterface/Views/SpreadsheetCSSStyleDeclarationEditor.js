@@ -455,6 +455,12 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.selectProperties(index, index);
     }
 
+    spreadsheetStylePropertySelectByProperty(property)
+    {
+        if (this._delegate && this._delegate.spreadsheetCSSStyleDeclarationEditorSelectProperty)
+            this._delegate.spreadsheetCSSStyleDeclarationEditorSelectProperty(property);
+    }
+
     spreadsheetStylePropertyAddBlankPropertySoon(propertyView, {index})
     {
         if (isNaN(index))
