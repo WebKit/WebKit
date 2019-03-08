@@ -44,7 +44,7 @@ namespace WebKit {
 enum class AssertionState {
     Suspended,
     Background,
-    Download,
+    UnboundedNetworking,
     Foreground
 };
 

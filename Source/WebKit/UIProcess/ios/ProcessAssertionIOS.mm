@@ -139,7 +139,7 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
     case AssertionState::Suspended:
         return suspendedTabFlags;
     case AssertionState::Background:
-    case AssertionState::Download:
+    case AssertionState::UnboundedNetworking:
         return backgroundTabFlags;
     case AssertionState::Foreground:
         return foregroundTabFlags;
@@ -149,7 +149,7 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
 static BKSProcessAssertionReason reasonForState(AssertionState assertionState)
 {
     switch (assertionState) {
-    case AssertionState::Download:
+    case AssertionState::UnboundedNetworking:
         return BKSProcessAssertionReasonFinishTaskUnbounded;
     case AssertionState::Suspended:
     case AssertionState::Background:

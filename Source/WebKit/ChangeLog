@@ -1,3 +1,25 @@
+2019-03-08  Brady Eidson  <beidson@apple.com>
+
+        Rename AssertionState::Download.
+        https://bugs.webkit.org/show_bug.cgi?id=195465
+
+        Reviewed by Andy Estes.
+
+        It's (currently) about uploads and downloads.
+        Let's call it "UnboundedNetworking"
+
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::add):
+
+        * UIProcess/ProcessAssertion.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::flagsForState):
+        (WebKit::reasonForState):
+
 2019-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         [macOS UI-side compositing] Mouse handling can trigger a crash before we have a scrolling tree root

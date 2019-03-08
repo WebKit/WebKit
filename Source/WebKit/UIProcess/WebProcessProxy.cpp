@@ -1172,7 +1172,7 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
             page->processWillBecomeForeground();
         break;
     
-    case AssertionState::Download:
+    case AssertionState::UnboundedNetworking:
         ASSERT_NOT_REACHED();
     }
 
