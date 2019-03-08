@@ -1,3 +1,13 @@
+2019-03-08  Robin Morisset  <rmorisset@apple.com>
+
+        PutByIdVariant can be shrunk by 8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=195482
+
+        Reviewed by Mark Lam.
+
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::PutByIdVariant):
+
 2019-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, follow-up after r242568

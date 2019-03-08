@@ -44,8 +44,8 @@ public:
     
     PutByIdVariant()
         : m_kind(NotSet)
-        , m_newStructure(nullptr)
         , m_offset(invalidOffset)
+        , m_newStructure(nullptr)
     {
     }
     
@@ -141,10 +141,10 @@ private:
     bool attemptToMergeTransitionWithReplace(const PutByIdVariant& replace);
     
     Kind m_kind;
+    PropertyOffset m_offset;
     StructureSet m_oldStructure;
     Structure* m_newStructure { nullptr };
     ObjectPropertyConditionSet m_conditionSet;
-    PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
 };
 
