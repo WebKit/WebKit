@@ -98,8 +98,8 @@ TEST(WebKit2, InputMethodFilterSimple)
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=67"), events[1]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=74 text='t'"), events[2]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=74"), events[3]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=6b text='k'"), events[4]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6b"), events[5]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=6B text='k'"), events[4]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6B"), events[5]);
 }
 
 TEST(WebKit2, InputMethodFilterUnicodeSequence)
@@ -126,8 +126,8 @@ TEST(WebKit2, InputMethodFilterUnicodeSequence)
 
     const Vector<String>& events = inputMethodFilter.events();
     ASSERT_EQ(21, events.size());
-    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=ffe3"), events[0]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=ffe1"), events[1]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=FFE3"), events[0]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=press keycode=FFE1"), events[1]);
     ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=55"), events[2]);
     ASSERT_EQ(String("setPreedit text='u' cursorOffset=1"), events[3]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=55"), events[4]);
@@ -143,10 +143,10 @@ TEST(WebKit2, InputMethodFilterUnicodeSequence)
     ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=34"), events[14]);
     ASSERT_EQ(String("setPreedit text='u00F4' cursorOffset=5"), events[15]);
     ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=34"), events[16]);
-    ASSERT_EQ(String("confirmComposition 'ô'"), events[17]);
+    ASSERT_EQ(String::fromUTF8("confirmComposition 'ô'"), events[17]);
     ASSERT_EQ(String("setPreedit text='' cursorOffset=0"), events[18]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffe1"), events[19]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffe3"), events[20]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=FFE1"), events[19]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=FFE3"), events[20]);
 }
 
 TEST(WebKit2, InputMethodFilterComposeKey)
@@ -159,9 +159,9 @@ TEST(WebKit2, InputMethodFilterComposeKey)
 
     const Vector<String>& events = inputMethodFilter.events();
     ASSERT_EQ(3, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=6f"), events[0]);
-    ASSERT_EQ(String("confirmComposition 'ó'"), events[1]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6f"), events[2]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=6F"), events[0]);
+    ASSERT_EQ(String::fromUTF8("confirmComposition 'ó'"), events[1]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=6F"), events[2]);
 }
 
 typedef void (*GetPreeditStringCallback) (GtkIMContext*, gchar**, PangoAttrList**, int*);
@@ -189,12 +189,12 @@ TEST(WebKit2, InputMethodFilterContextEventsWithoutKeyEvents)
 
     const Vector<String>& events = inputMethodFilter.events();
     ASSERT_EQ(6, events.size());
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=ffffff (faked)"), events[0]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=FFFFFF (faked)"), events[0]);
     ASSERT_EQ(String("setPreedit text='preedit of doom, bringer of cheese' cursorOffset=3"), events[1]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[2]);
-    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=ffffff (faked)"), events[3]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=FFFFFF (faked)"), events[2]);
+    ASSERT_EQ(String("sendKeyEventWithCompositionResults type=press keycode=FFFFFF (faked)"), events[3]);
     ASSERT_EQ(String("confirmComposition 'commit text'"), events[4]);
-    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=ffffff (faked)"), events[5]);
+    ASSERT_EQ(String("sendSimpleKeyEvent type=release keycode=FFFFFF (faked)"), events[5]);
 }
 
 static bool gSawContextReset = false;

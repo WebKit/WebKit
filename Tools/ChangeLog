@@ -1,3 +1,17 @@
+2019-03-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Several InputMethodFilter tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=195408
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit/gtk/InputMethodFilter.cpp:
+        Regressed in r241751.
+        Hexadecimal values of keycodes are expressed now in upper letters.
+        Composited characters should be cast to UTF8 strings.
+
+        (TestWebKitAPI::TEST):
+
 2019-03-07  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Make Tools/gtkdoc python3 compatible
