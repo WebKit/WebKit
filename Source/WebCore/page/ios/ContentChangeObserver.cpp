@@ -183,18 +183,21 @@ void ContentChangeObserver::touchEventDidFinish()
 
 void ContentChangeObserver::mouseMovedDidStart()
 {
-#if !ASSERT_DISABLED
-    m_mouseMovedIsBeingDispatched = true;
-#endif
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    LOG(ContentObservation, "mouseMovedDidStart: mouseMoved started.");
+    m_mouseMovedEventIsBeingDispatched = true;
     adjustObservedState(Event::StartedMouseMovedEventDispatching);
 }
 
 void ContentChangeObserver::mouseMovedDidFinish()
 {
+    if (!m_mouseMovedEventIsBeingDispatched)
+        return;
+    ASSERT(m_document.settings().contentChangeObserverEnabled());
+    LOG(ContentObservation, "mouseMovedDidFinish: mouseMoved finished.");
     adjustObservedState(Event::EndedMouseMovedEventDispatching);
-#if !ASSERT_DISABLED
-    m_mouseMovedIsBeingDispatched = false;
-#endif
+    m_mouseMovedEventIsBeingDispatched = false;
 }
 
 WKContentChange ContentChangeObserver::observedContentChange() const
@@ -219,7 +222,7 @@ bool ContentChangeObserver::hasDeterminateState() const
 #if !ASSERT_DISABLED
 bool ContentChangeObserver::isNotifyContentChangeAllowed() const
 {
-    return m_document.settings().contentChangeObserverEnabled() && !m_mouseMovedIsBeingDispatched;
+    return m_document.settings().contentChangeObserverEnabled() && !m_mouseMovedEventIsBeingDispatched;
 }
 #endif
 

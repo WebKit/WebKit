@@ -1,5 +1,24 @@
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver][REGRESSION] Check if visibility change happens while dispatching mouseMoved
+        https://bugs.webkit.org/show_bug.cgi?id=195421
+        <rdar://problem/48682004>
+
+        Reviewed by Simon Fraser.
+
+        Visibility change might be triggered synchronously while dispatching mouseMoved event.
+
+        Test: fast/events/touch/ios/content-observation/visibility-change-happens-while-in-mousemoved.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::mouseMovedDidStart):
+        (WebCore::ContentChangeObserver::mouseMovedDidFinish):
+        (WebCore::ContentChangeObserver::isNotifyContentChangeAllowed const):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Check if max-height change triggers visible content change.
         https://bugs.webkit.org/show_bug.cgi?id=195417
         <rdar://problem/48680631>

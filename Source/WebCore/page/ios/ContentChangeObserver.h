@@ -119,7 +119,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_touchEventIsBeingDispatched || m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
+    bool isObservingContentChanges() const { return m_mouseMovedEventIsBeingDispatched || m_touchEventIsBeingDispatched || m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
 
     void cancelPendingActivities();
 
@@ -162,9 +162,7 @@ private:
     bool m_isObservingDOMTimerScheduling { false };
     bool m_domTimerIsBeingExecuted { false };
     bool m_isMouseMovedPrecededByTouch { false };
-#if !ASSERT_DISABLED
-    bool m_mouseMovedIsBeingDispatched { false };
-#endif
+    bool m_mouseMovedEventIsBeingDispatched { false };
 };
 
 inline void ContentChangeObserver::setHasNoChangeState()
