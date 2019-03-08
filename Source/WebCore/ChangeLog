@@ -1,3 +1,10 @@
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix failing EWS build for ios-sim
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::touchEventDidStart):
+
 2019-03-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MSE] Adopt new AVSampleBufferDisplayLayer SPI

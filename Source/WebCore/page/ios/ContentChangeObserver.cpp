@@ -164,6 +164,8 @@ void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
     LOG(ContentObservation, "touchEventDidStart: touch start event started.");
     m_touchEventIsBeingDispatched = true;
     adjustObservedState(Event::StartedTouchStartEventDispatching);
+#else
+    UNUSED_PARAM(eventType);
 #endif
 }
 
