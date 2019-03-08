@@ -1,5 +1,17 @@
 2019-03-07  Justin Fan  <justin_fan@apple.com>
 
+        Unreviewed build fixes since MTLClampToBorderColor is only supported on macOS.
+
+        * Modules/webgpu/GPUSamplerDescriptor.idl:
+        * platform/graphics/gpu/GPUSamplerDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Forgot include.
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm:
+        (WebCore::mtlAddressModeForAddressMode):
+        (WebCore::tryCreateMtlSamplerState):
+        (WebCore::mtlBorderColorForBorderColor): Deleted.
+
+2019-03-07  Justin Fan  <justin_fan@apple.com>
+
         [Web GPU] GPUSampler implementation
         https://bugs.webkit.org/show_bug.cgi?id=195427
         <rdar://problem/48686011>

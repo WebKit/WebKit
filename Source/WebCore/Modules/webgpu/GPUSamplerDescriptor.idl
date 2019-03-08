@@ -29,19 +29,12 @@ typedef unsigned long u32;
 enum GPUAddressMode {
     "clamp-to-edge",
     "repeat",
-    "mirror-repeat",
-    "clamp-to-border-color"
+    "mirror-repeat"
 };
 
 enum GPUFilterMode {
     "nearest",
     "linear"
-};
-
-enum GPUBorderColor {
-    "transparent-black",
-    "opaque-black",
-    "opaque-white"
 };
 
 [
@@ -58,5 +51,4 @@ enum GPUBorderColor {
     float lodMaxClamp = 0xffffffff; // TODO: What should this be? Was Number.MAX_VALUE.
     u32 maxAnisotropy = 1;
     GPUCompareFunction compareFunction = "never";
-    GPUBorderColor borderColor = "transparentBlack";
 };

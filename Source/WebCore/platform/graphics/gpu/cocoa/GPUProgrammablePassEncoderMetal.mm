@@ -30,6 +30,7 @@
 
 #import "GPUBindGroup.h"
 #import "GPUBindGroupLayoutBinding.h"
+#import "GPUCommandBuffer.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>

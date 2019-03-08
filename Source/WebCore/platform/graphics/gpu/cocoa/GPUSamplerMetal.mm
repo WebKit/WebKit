@@ -46,22 +46,6 @@ static MTLSamplerAddressMode mtlAddressModeForAddressMode(GPUSamplerDescriptor::
         return MTLSamplerAddressModeRepeat;
     case GPUSamplerDescriptor::AddressMode::MirrorRepeat:
         return MTLSamplerAddressModeMirrorRepeat;
-    case GPUSamplerDescriptor::AddressMode::ClampToBorderColor:
-        return MTLSamplerAddressModeClampToBorderColor;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-static MTLSamplerBorderColor mtlBorderColorForBorderColor(GPUSamplerDescriptor::BorderColor color)
-{
-    switch (color) {
-    case GPUSamplerDescriptor::BorderColor::TransparentBlack:
-        return MTLSamplerBorderColorTransparentBlack;
-    case GPUSamplerDescriptor::BorderColor::OpaqueBlack:
-        return MTLSamplerBorderColorOpaqueBlack;
-    case GPUSamplerDescriptor::BorderColor::OpaqueWhite:
-        return MTLSamplerBorderColorOpaqueWhite;
     }
 
     ASSERT_NOT_REACHED();
@@ -115,7 +99,6 @@ static RetainPtr<MTLSamplerState> tryCreateMtlSamplerState(const GPUDevice& devi
     [mtlDescriptor setRAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeU)];
     [mtlDescriptor setSAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeV)];
     [mtlDescriptor setTAddressMode:mtlAddressModeForAddressMode(descriptor.addressModeW)];
-    [mtlDescriptor setBorderColor:mtlBorderColorForBorderColor(descriptor.borderColor)];
     [mtlDescriptor setMinFilter:mtlMinMagFilterForFilterMode(descriptor.minFilter)];
     [mtlDescriptor setMagFilter:mtlMinMagFilterForFilterMode(descriptor.magFilter)];
     [mtlDescriptor setMipFilter:mtlMipFilterForFilterMode(descriptor.mipmapFilter)];

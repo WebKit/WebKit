@@ -36,18 +36,11 @@ struct GPUSamplerDescriptor {
         ClampToEdge,
         Repeat,
         MirrorRepeat,
-        ClampToBorderColor,
     };
 
     enum class FilterMode {
         Nearest,
         Linear,
-    };
-
-    enum class BorderColor {
-        TransparentBlack,
-        OpaqueBlack,
-        OpaqueWhite,
     };
 
     AddressMode addressModeU { AddressMode::ClampToEdge };
@@ -60,7 +53,6 @@ struct GPUSamplerDescriptor {
     float lodMaxClamp { 0xffffffff };
     unsigned maxAnisotropy { 1 };
     GPUCompareFunction compareFunction { GPUCompareFunction::Never };
-    BorderColor borderColor { BorderColor::TransparentBlack };
 };
 
 } // namespace WebCore
