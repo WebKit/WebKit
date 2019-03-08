@@ -39,7 +39,24 @@ namespace WebCore {
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
+    , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
 {
+}
+
+void ContentChangeObserver::startContentObservationForDuration(Seconds duration)
+{
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    ASSERT(!hasVisibleChangeState());
+    LOG_WITH_STREAM(ContentObservation, stream << "startContentObservationForDuration: start observing the content for " << duration.milliseconds() << "ms");
+    adjustObservedState(Event::StartedFixedObservationTimeWindow);
+    m_contentObservationTimer.startOneShot(duration);
+}
+
+void ContentChangeObserver::completeDurationBasedContentObservation()
+{
+    LOG_WITH_STREAM(ContentObservation, stream << "completeDurationBasedContentObservation: complete duration based content observing ");
+    adjustObservedState(Event::EndedFixedObservationTimeWindow);
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
@@ -113,26 +130,22 @@ void ContentChangeObserver::styleRecalcDidFinish()
     adjustObservedState(Event::StyleRecalcFinished);
 }
 
-void ContentChangeObserver::clearTimersAndReportContentChange()
+void ContentChangeObserver::cancelPendingActivities()
 {
-    if (!hasObservedDOMTimer())
-        return;
-    LOG_WITH_STREAM(ContentObservation, stream << "clearTimersAndReportContentChange: remove registered timers and report content change." << observedContentChange());
-
     clearObservedDOMTimers();
-    ASSERT(m_document.page());
-    ASSERT(m_document.frame());
-    m_document.page()->chrome().client().observedContentChange(*m_document.frame());
+    m_contentObservationTimer.stop();
 }
 
 void ContentChangeObserver::didSuspendActiveDOMObjects()
 {
-    clearTimersAndReportContentChange();
+    LOG(ContentObservation, "didSuspendActiveDOMObjects");
+    cancelPendingActivities();
 }
 
 void ContentChangeObserver::willDetachPage()
 {
-    clearTimersAndReportContentChange();
+    LOG(ContentObservation, "willDetachPage");
+    cancelPendingActivities();
 }
 
 void ContentChangeObserver::contentVisibilityDidChange()
@@ -205,6 +218,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setHasNoChangeState();
         break;
     case Event::InstalledDOMTimer:
+    case Event::StartedFixedObservationTimeWindow:
         // Expecting a timer fire. Promote to an indeterminate state.
         ASSERT(!hasVisibleChangeState());
         setHasIndeterminateState();
@@ -212,6 +226,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
     case Event::RemovedDOMTimer:
     case Event::StyleRecalcFinished:
     case Event::EndedDOMTimerExecution:
+    case Event::EndedFixedObservationTimeWindow:
         // Demote to "no change" when there's no pending activity anymore.
         if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
             setHasNoChangeState();

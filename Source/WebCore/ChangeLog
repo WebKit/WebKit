@@ -1,3 +1,41 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Introduce fixed duration content observation
+        https://bugs.webkit.org/show_bug.cgi?id=195295
+        <rdar://problem/48579913>
+
+        Reviewed by Simon Fraser.
+
+        Some pages have a runloop-like scheduling setup where the content triggering change happens at a nested timer firing.
+        This patch helps finding cases like that using a 32ms long fixed window. Currently nested timers get dropped on the floor and
+        we stop observing for content changes before they even get fired.
+
+        Test: fast/events/touch/ios/content-observation/visibility-change-happens-on-timer-hops.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::ContentChangeObserver):
+        (WebCore::ContentChangeObserver::startContentObservationForDuration):
+        (WebCore::ContentChangeObserver::completeDurationBasedContentObservation):
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::didRemoveDOMTimer):
+        (WebCore::ContentChangeObserver::domTimerExecuteDidStart):
+        (WebCore::ContentChangeObserver::domTimerExecuteDidFinish):
+        (WebCore::ContentChangeObserver::styleRecalcDidStart):
+        (WebCore::ContentChangeObserver::styleRecalcDidFinish):
+        (WebCore::ContentChangeObserver::cancelPendingActivities):
+        (WebCore::ContentChangeObserver::didSuspendActiveDOMObjects):
+        (WebCore::ContentChangeObserver::willDetachPage):
+        (WebCore::ContentChangeObserver::contentVisibilityDidChange):
+        (WebCore::ContentChangeObserver::setShouldObserveNextStyleRecalc):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::StyleChangeScope::StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::clearTimersAndReportContentChange): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::clearObservedDOMTimers):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+        (WebCore::ContentChangeObserver::hasPendingActivity const):
+
 2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

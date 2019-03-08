@@ -559,32 +559,29 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         mainframe.document()->updateStyleIfNeeded();
     }
 
-    m_pendingSyntheticClickNode = nullptr;
-    m_pendingSyntheticClickLocation = FloatPoint();
-    m_pendingSyntheticClickModifiers = { };
-
     if (m_isClosed)
         return;
 
-    switch (respondingDocument.contentChangeObserver().observedContentChange()) {
-    case WKContentVisibilityChange:
+    auto& contentChangeObserver = respondingDocument.contentChangeObserver();
+    auto observedContentChange = contentChangeObserver.observedContentChange();
+    if (observedContentChange == WKContentVisibilityChange) {
         // The move event caused new contents to appear. Don't send the click event.
         LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
         return;
-    case WKContentIndeterminateChange: {
-        // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
-        ASSERT(respondingDocument.settings().contentChangeObserverEnabled());
-        m_pendingSyntheticClickNode = &nodeRespondingToClick;
-        m_pendingSyntheticClickLocation = location;
-        m_pendingSyntheticClickModifiers = modifiers;
-        LOG(ContentObservation, "handleSyntheticClick: Observed some change, but can't decide it yet -> wait.");
-        return;
-    } case WKContentNoChange:
-        LOG(ContentObservation, "handleSyntheticClick: No change was observed -> click.");
+    }
+    const Seconds observationDuration = 32_ms;
+    contentChangeObserver.startContentObservationForDuration(observationDuration);
+    if (contentChangeObserver.observedContentChange() == WKContentNoChange) {
+        ASSERT(!respondingDocument.settings().contentChangeObserverEnabled());
         completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
         return;
     }
-    ASSERT_NOT_REACHED();
+
+    LOG(ContentObservation, "handleSyntheticClick: Can't decide it yet -> wait.");
+    // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
+    m_pendingSyntheticClickNode = &nodeRespondingToClick;
+    m_pendingSyntheticClickLocation = location;
+    m_pendingSyntheticClickModifiers = modifiers;
 }
 
 void WebPage::completePendingSyntheticClickForContentChangeObserver()

@@ -29,6 +29,7 @@
 
 #include "Document.h"
 #include "RenderStyleConstants.h"
+#include "Timer.h"
 #include "WKContentObservation.h"
 #include <wtf/HashSet.h>
 #include <wtf/Seconds.h>
@@ -42,11 +43,11 @@ class ContentChangeObserver {
 public:
     ContentChangeObserver(Document&);
 
+    WEBCORE_EXPORT void startContentObservationForDuration(Seconds duration);
     WEBCORE_EXPORT WKContentChange observedContentChange() const;
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
-    void contentVisibilityDidChange();
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
@@ -93,12 +94,15 @@ private:
     void mouseMovedDidStart();
     void mouseMovedDidFinish();
 
+    void contentVisibilityDidChange();
+
     void setShouldObserveDOMTimerScheduling(bool observe) { m_isObservingDOMTimerScheduling = observe; }
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
     void registerDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
     void unregisterDOMTimer(const DOMTimer& timer) { m_DOMTimerList.remove(&timer); }
+    void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
     bool containsObservedDOMTimer(const DOMTimer& timer) const { return m_DOMTimerList.contains(&timer); }
 
     void styleRecalcDidStart();
@@ -106,10 +110,9 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted; }
+    bool isObservingContentChanges() const { return m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
 
-    void clearObservedDOMTimers() { m_DOMTimerList.clear(); }
-    void clearTimersAndReportContentChange();
+    void cancelPendingActivities();
 
     void setHasIndeterminateState();
     void setHasVisibleChangeState();
@@ -119,10 +122,12 @@ private:
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasDeterminateState() const;
 
-    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc(); }
+    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || m_contentObservationTimer.isActive(); }
 #if !ASSERT_DISABLED
     bool isNotifyContentChangeAllowed() const;
 #endif
+
+    void completeDurationBasedContentObservation();
 
     enum class Event {
         StartedMouseMovedEventDispatching,
@@ -130,11 +135,14 @@ private:
         RemovedDOMTimer,
         EndedDOMTimerExecution,
         StyleRecalcFinished,
-        ContentVisibilityChanged
+        ContentVisibilityChanged,
+        StartedFixedObservationTimeWindow,
+        EndedFixedObservationTimeWindow
     };
     void adjustObservedState(Event);
 
     Document& m_document;
+    Timer m_contentObservationTimer;
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_isObservingStyleRecalc { false };
     bool m_styleRecalcIsBeingExecuted { false };
