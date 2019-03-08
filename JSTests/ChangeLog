@@ -1,3 +1,14 @@
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] StringFromCharCode fast path should accept 0xff in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=195429
+
+        Reviewed by Saam Barati.
+
+        * stress/must-handled-values-should-not-be-used-as-proven-constants-in-cfa.js: Added.
+        (foo):
+        * stress/string-from-char-code-255.js: Added.
+
 2019-03-06  Mark Lam  <mark.lam@apple.com>
 
         Fix incorrect handling of try-finally completion values.

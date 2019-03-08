@@ -1,3 +1,20 @@
+2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] StringFromCharCode fast path should accept 0xff in DFG and FTL
+        https://bugs.webkit.org/show_bug.cgi?id=195429
+
+        Reviewed by Saam Barati.
+
+        We can create single characters without allocation up to 0xff character code. But currently, DFGSpeculativeJIT and FTLLowerDFGToB3 go to the slow path
+        for 0xff case. On the other hand, DFG DoesGC phase says GC won't happen if the child is int32 constant and it is <= 0xff. So, if you have `String.fromCharCode(0xff)`,
+        this breaks the assumption in DFG DoesGC. The correct fix is changing the check in DFGSpeculativeJIT and FTLLowerDFGToB3 from AboveOrEqual to Above.
+        Note that ThunkGenerators's StringFromCharCode thunk was correct.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringFromCharCode):
+
 2019-03-07  Mark Lam  <mark.lam@apple.com>
 
         Follow up refactoring in try-finally code after r242591.
