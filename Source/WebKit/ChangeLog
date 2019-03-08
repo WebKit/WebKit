@@ -1,3 +1,40 @@
+2019-03-08  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r242629. rdar://problem/48716549
+
+    Crash under RemoteLayerTreePropertyApplier::applyProperties
+    https://bugs.webkit.org/show_bug.cgi?id=195448
+    <rdar://problem/48588226>
+    
+    Reviewed by Simon Fraser.
+    
+    * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+    (WebKit::RemoteLayerTreeHost::updateLayerTree):
+    Under some currently-unknown circumstances, the UI process is receiving
+    commits referring to layers that it does not know about.
+    One understood case of this was fixed in r241899, but there seem to be
+    cases remaining that are not understood.
+    Also, add a release log so that we can identify any downstream effects.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242629 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-07  Tim Horton  <timothy_horton@apple.com>
+
+            Crash under RemoteLayerTreePropertyApplier::applyProperties
+            https://bugs.webkit.org/show_bug.cgi?id=195448
+            <rdar://problem/48588226>
+
+            Reviewed by Simon Fraser.
+
+            * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+            (WebKit::RemoteLayerTreeHost::updateLayerTree):
+            Under some currently-unknown circumstances, the UI process is receiving
+            commits referring to layers that it does not know about.
+            One understood case of this was fixed in r241899, but there seem to be
+            cases remaining that are not understood.
+            Also, add a release log so that we can identify any downstream effects.
+
 2019-03-06  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r242554. rdar://problem/48538837
