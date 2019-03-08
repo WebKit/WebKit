@@ -186,6 +186,7 @@ void WebProcessCache::setApplicationIsActive(bool isActive)
 
 void WebProcessCache::evictProcess(WebProcessProxy& process)
 {
+    RELEASE_ASSERT(!process.registrableDomain().isEmpty());
     auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());
     ASSERT(it != m_processesPerRegistrableDomain.end());
     ASSERT(&it->value->process() == &process);

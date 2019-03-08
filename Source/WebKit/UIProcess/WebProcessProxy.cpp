@@ -1427,6 +1427,8 @@ void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector
 
 void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 {
+    RELEASE_ASSERT(!isInProcessCache());
+
     // This process has been used for several registrable domains already.
     if (m_registrableDomain && m_registrableDomain->isNull())
         return;
