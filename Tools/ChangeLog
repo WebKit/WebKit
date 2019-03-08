@@ -1,3 +1,29 @@
+2019-03-08  Saam barati  <sbarati@apple.com>
+
+        Add a compare-results script to compare benchmark results
+        https://bugs.webkit.org/show_bug.cgi?id=195486
+        <rdar://problem/48723397>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a script to compare benchmark results using Welch's two-tailed t test.
+        Initially, this patch only reasons about PLT5/JetStream2/Speedometer2. It will be easy
+        to extend it to learn about our other benchmarks.
+
+        * Scripts/compare-results: Added.
+        (readJSONFile):
+        (detectJetStream2):
+        (JetStream2Results):
+        (detectSpeedometer2):
+        (Speedometer2Results):
+        (detectPLT5):
+        (PLT5Results):
+        (detectBenchmark):
+        (biggerIsBetter):
+        (ttest):
+        (getOptions):
+        (main):
+
 2019-03-08  Stephanie Lewis  <slewis@apple.com>
 
         Ensure old tab state is cleared between iterations of run-benchmark
