@@ -37,6 +37,7 @@ namespace WebKit {
 
 class DownloadProxy;
 class NetworkProcessProxy;
+class ProcessAssertion;
 class WebProcessPool;
 
 class DownloadProxyMap {
@@ -57,6 +58,9 @@ public:
 private:
     NetworkProcessProxy* m_process;
     HashMap<DownloadID, RefPtr<DownloadProxy>> m_downloads;
+
+    bool m_shouldTakeAssertion { false };
+    std::unique_ptr<ProcessAssertion> m_downloadAssertion;
 };
 
 } // namespace WebKit
