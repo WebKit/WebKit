@@ -1,3 +1,21 @@
+2019-03-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MSE] Adopt new AVSampleBufferDisplayLayer SPI
+        https://bugs.webkit.org/show_bug.cgi?id=195445
+        <rdar://problem/48480516>
+
+        Reviewed by Jer Noble.
+
+        No new tests, no functional change.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC): Only register for 
+        kCMSampleBufferConsumerNotification_BufferConsumed notiication when
+        -[AVSampleBufferDisplayLayer prerollDecodeWithCompletionHandler:] isn't available.
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC): Ditto, for unregistering.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Use 
+        -[AVSampleBufferDisplayLayer prerollDecodeWithCompletionHandler:] when possible.
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Click event fires immediately on hover menu at Ebbets.com

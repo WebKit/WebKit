@@ -89,6 +89,10 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
 
+@interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerQueueManagementPrivate)
+- (void)prerollDecodeWithCompletionHandler:(void (^)(BOOL success))block;
+@end
+
 #pragma mark -
 #pragma mark AVStreamSession
 
@@ -494,8 +498,10 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
 #endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
+    
+    if (![getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
+        CMNotificationCenterAddListener(CMNotificationCenterGetDefaultLocalCenter(), reinterpret_cast<void*>(m_mapID), bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr, 0);
+    
     m_delegate.get().abortSemaphore = Box<Semaphore>::create(0);
 
     sourceBufferMap().add(m_mapID, makeWeakPtr(*this));
@@ -510,7 +516,8 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
     destroyParser();
     destroyRenderers();
 
-    CMNotificationCenterRemoveListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
+    if (![getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)])
+        CMNotificationCenterRemoveListener(CMNotificationCenterGetDefaultLocalCenter(), this, bufferWasConsumedCallback, kCMSampleBufferConsumerNotification_BufferConsumed, nullptr);
 
     if (m_hasSessionSemaphore)
         m_hasSessionSemaphore->signal();
@@ -1144,14 +1151,31 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         if (m_mediaSource && !m_mediaSource->player()->hasAvailableVideoFrame() && !sample->isNonDisplaying()) {
             DEBUG_LOG(LOGIDENTIFIER, "adding buffer attachment");
 
-            CMSampleBufferRef rawSampleCopy;
-            CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
-            auto sampleCopy = adoptCF(rawSampleCopy);
-            CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
-            [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
+            bool havePrerollDecodeWithCompletionHandler = [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(prerollDecodeWithCompletionHandler:)];
+
+            if (!havePrerollDecodeWithCompletionHandler) {
+                CMSampleBufferRef rawSampleCopy;
+                CMSampleBufferCreateCopy(kCFAllocatorDefault, platformSample.sample.cmSampleBuffer, &rawSampleCopy);
+                auto sampleCopy = adoptCF(rawSampleCopy);
+                CMSetAttachment(sampleCopy.get(), kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed, (__bridge CFDictionaryRef)@{ (__bridge NSString *)kCMSampleBufferAttachmentKey_PostNotificationWhenConsumed : @(YES) }, kCMAttachmentMode_ShouldNotPropagate);
+                [m_displayLayer enqueueSampleBuffer:sampleCopy.get()];
 #if PLATFORM(IOS_FAMILY)
-            m_mediaSource->player()->setHasAvailableVideoFrame(true);
+                m_mediaSource->player()->setHasAvailableVideoFrame(true);
 #endif
+            } else {
+                [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
+                [m_displayLayer prerollDecodeWithCompletionHandler:[weakThis = createWeakPtr()] (BOOL success) mutable {
+                    if (!success || !weakThis)
+                        return;
+
+                    callOnMainThread([weakThis = WTFMove(weakThis)] () mutable {
+                        if (!weakThis)
+                            return;
+
+                        weakThis->bufferWasConsumed();
+                    });
+                }];
+            }
         } else
             [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
 
