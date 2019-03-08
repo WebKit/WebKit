@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "Document.h"
+#include "PlatformEvent.h"
 #include "RenderStyleConstants.h"
 #include "Timer.h"
 #include "WKContentObservation.h"
@@ -65,6 +66,14 @@ public:
         Visibility m_previousImplicitVisibility;
     };
 
+    class TouchEventScope {
+    public:
+        WEBCORE_EXPORT TouchEventScope(Document&, PlatformEvent::Type);
+        WEBCORE_EXPORT ~TouchEventScope();
+    private:
+        ContentChangeObserver& m_contentChangeObserver;
+    };
+
     class MouseMovedScope {
     public:
         WEBCORE_EXPORT MouseMovedScope(Document&);
@@ -91,6 +100,9 @@ public:
     };
 
 private:
+    void touchEventDidStart(PlatformEvent::Type);
+    void touchEventDidFinish();
+
     void mouseMovedDidStart();
     void mouseMovedDidFinish();
 
@@ -110,7 +122,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
+    bool isObservingContentChanges() const { return m_touchEventIsBeingDispatched || m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
 
     void cancelPendingActivities();
 
@@ -130,7 +142,10 @@ private:
     void completeDurationBasedContentObservation();
 
     enum class Event {
+        StartedTouchStartEventDispatching,
+        EndedTouchStartEventDispatching,
         StartedMouseMovedEventDispatching,
+        EndedMouseMovedEventDispatching,
         InstalledDOMTimer,
         RemovedDOMTimer,
         EndedDOMTimerExecution,
@@ -144,10 +159,12 @@ private:
     Document& m_document;
     Timer m_contentObservationTimer;
     HashSet<const DOMTimer*> m_DOMTimerList;
+    bool m_touchEventIsBeingDispatched { false };
     bool m_isObservingStyleRecalc { false };
     bool m_styleRecalcIsBeingExecuted { false };
     bool m_isObservingDOMTimerScheduling { false };
     bool m_domTimerIsBeingExecuted { false };
+    bool m_isMouseMovedPrecededByTouch { false };
 #if !ASSERT_DISABLED
     bool m_mouseMovedIsBeingDispatched { false };
 #endif

@@ -154,20 +154,42 @@ void ContentChangeObserver::contentVisibilityDidChange()
     adjustObservedState(Event::ContentVisibilityChanged);
 }
 
+void ContentChangeObserver::touchEventDidStart(PlatformEvent::Type eventType)
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    if (eventType != PlatformEvent::Type::TouchStart)
+        return;
+    LOG(ContentObservation, "touchEventDidStart: touch start event started.");
+    m_touchEventIsBeingDispatched = true;
+    adjustObservedState(Event::StartedTouchStartEventDispatching);
+#endif
+}
+
+void ContentChangeObserver::touchEventDidFinish()
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (!m_touchEventIsBeingDispatched)
+        return;
+    ASSERT(m_document.settings().contentChangeObserverEnabled());
+    LOG(ContentObservation, "touchEventDidFinish: touch start event finished.");
+    m_touchEventIsBeingDispatched = false;
+    adjustObservedState(Event::EndedTouchStartEventDispatching);
+#endif
+}
+
 void ContentChangeObserver::mouseMovedDidStart()
 {
 #if !ASSERT_DISABLED
     m_mouseMovedIsBeingDispatched = true;
 #endif
-    ASSERT(!m_document.hasPendingStyleRecalc());
-    clearObservedDOMTimers();
-    setShouldObserveDOMTimerScheduling(true);
     adjustObservedState(Event::StartedMouseMovedEventDispatching);
 }
 
 void ContentChangeObserver::mouseMovedDidFinish()
 {
-    setShouldObserveDOMTimerScheduling(false);
+    adjustObservedState(Event::EndedMouseMovedEventDispatching);
 #if !ASSERT_DISABLED
     m_mouseMovedIsBeingDispatched = false;
 #endif
@@ -214,8 +236,24 @@ void ContentChangeObserver::adjustObservedState(Event event)
     };
 
     switch (event) {
-    case Event::StartedMouseMovedEventDispatching:
+    case Event::StartedTouchStartEventDispatching:
         setHasNoChangeState();
+        clearObservedDOMTimers();
+        m_isMouseMovedPrecededByTouch = true;
+        setShouldObserveDOMTimerScheduling(true);
+        break;
+    case Event::StartedMouseMovedEventDispatching:
+        ASSERT(!m_document.hasPendingStyleRecalc());
+        if (!m_isMouseMovedPrecededByTouch) {
+            setHasNoChangeState();
+            clearObservedDOMTimers();
+        }
+        setShouldObserveDOMTimerScheduling(true);
+        m_isMouseMovedPrecededByTouch = false;
+        break;
+    case Event::EndedTouchStartEventDispatching:
+    case Event::EndedMouseMovedEventDispatching:
+        setShouldObserveDOMTimerScheduling(false);
         break;
     case Event::InstalledDOMTimer:
     case Event::StartedFixedObservationTimeWindow:
@@ -297,6 +335,19 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))
         m_contentChangeObserver.contentVisibilityDidChange();
 }
+
+#if ENABLE(TOUCH_EVENTS)
+ContentChangeObserver::TouchEventScope::TouchEventScope(Document& document, PlatformEvent::Type eventType)
+    : m_contentChangeObserver(document.contentChangeObserver())
+{
+    m_contentChangeObserver.touchEventDidStart(eventType);
+}
+
+ContentChangeObserver::TouchEventScope::~TouchEventScope()
+{
+    m_contentChangeObserver.touchEventDidFinish();
+}
+#endif
 
 ContentChangeObserver::MouseMovedScope::MouseMovedScope(Document& document)
     : m_contentChangeObserver(document.contentChangeObserver())

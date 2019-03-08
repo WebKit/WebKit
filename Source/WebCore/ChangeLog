@@ -1,5 +1,27 @@
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Click event fires immediately on hover menu at Ebbets.com
+        https://bugs.webkit.org/show_bug.cgi?id=195397
+
+        Reviewed by Simon Fraser.
+
+        This patch introduces TouchEventScope to track changes triggered by touch start.
+
+        Test: fast/events/touch/ios/content-observation/visibility-change-on-touch-start-simple.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::touchEventDidStart):
+        (WebCore::ContentChangeObserver::touchEventDidFinish):
+        (WebCore::ContentChangeObserver::mouseMovedDidStart):
+        (WebCore::ContentChangeObserver::mouseMovedDidFinish):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::TouchEventScope::TouchEventScope):
+        (WebCore::ContentChangeObserver::TouchEventScope::~TouchEventScope):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Introduce fixed duration content observation
         https://bugs.webkit.org/show_bug.cgi?id=195295
         <rdar://problem/48579913>

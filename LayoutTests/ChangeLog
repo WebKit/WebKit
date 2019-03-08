@@ -1,5 +1,15 @@
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Click event fires immediately on hover menu at Ebbets.com
+        https://bugs.webkit.org/show_bug.cgi?id=195397
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/visibility-change-on-touch-start-simple-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/visibility-change-on-touch-start-simple.html: Added.
+
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Introduce fixed duration content observation
         https://bugs.webkit.org/show_bug.cgi?id=195295
         <rdar://problem/48579913>
