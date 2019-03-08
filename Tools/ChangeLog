@@ -1,3 +1,14 @@
+2019-03-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.
+        https://bugs.webkit.org/show_bug.cgi?id=195346
+        <rdar://problem/48667048>
+
+        Unreviewed build fix for clang-cl.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (setApplicationId): Replaced calling String::charactersWithNullTermination with String::wideCharacters to get wchar_t.
+
 2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

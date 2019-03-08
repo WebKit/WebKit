@@ -914,7 +914,7 @@ static void setApplicationId()
     if (SUCCEEDED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, (void**)&preferences))) {
         COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, preferences);
         ASSERT(prefsPrivate4);
-        _bstr_t fileName = applicationId().charactersWithNullTermination().data();
+        _bstr_t fileName = applicationId().wideCharacters().data();
         prefsPrivate4->setApplicationId(fileName);
     }
 }
