@@ -1,3 +1,19 @@
+2019-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        Crash under RemoteLayerTreePropertyApplier::applyProperties
+        https://bugs.webkit.org/show_bug.cgi?id=195448
+        <rdar://problem/48588226>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        Under some currently-unknown circumstances, the UI process is receiving
+        commits referring to layers that it does not know about.
+        One understood case of this was fixed in r241899, but there seem to be
+        cases remaining that are not understood.
+        Also, add a release log so that we can identify any downstream effects.
+
 2019-03-07  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Introduce fixed duration content observation

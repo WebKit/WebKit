@@ -102,6 +102,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         auto* node = nodeForID(layerID);
         ASSERT(node);
 
+        if (!node) {
+            // We have evidence that this can still happen, but don't know how (see r241899 for one already-fixed cause).
+            RELEASE_LOG_IF_ALLOWED("%p RemoteLayerTreeHost::updateLayerTree - failed to find layer with ID %llu", this, layerID);
+            continue;
+        }
+
         if (properties.changedProperties.contains(RemoteLayerTreeTransaction::ClonedContentsChanged) && properties.clonedLayerID)
             clonesToUpdate.append({ layerID, properties.clonedLayerID });
 
