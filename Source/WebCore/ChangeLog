@@ -1,3 +1,21 @@
+2019-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        GLContextEGL: desired EGL config should search for 8-bit components by default
+        https://bugs.webkit.org/show_bug.cgi?id=195413
+
+        Reviewed by Carlos Garcia Campos.
+
+        The EGL config search in GLContextEGL should by default look for
+        RGBA8888 configurations while allowing RGB565 as an alternative.
+        This prevents from accidentally landing on an RGBA1010102
+        configuration that is available with some graphics stacks, and which is
+        not expected in e.g. window snapshotting that's done for layout test
+        output comparison.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::getEGLConfig): EGL config search should by
+        default request 8-bit color channels.
+
 2019-03-08  Miguel Gomez  <magomez@igalia.com>
 
         Use a thread safe refcounter for FilterOperation.
