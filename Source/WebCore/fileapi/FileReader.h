@@ -102,6 +102,7 @@ private:
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<FileError> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
+    RefPtr<PendingActivity<FileReader>> m_loadingActivity;
 };
 
 } // namespace WebCore

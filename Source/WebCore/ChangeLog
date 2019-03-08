@@ -1,3 +1,32 @@
+2019-03-08  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/FileAPI/reading-data-section/filereader_error.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=195441
+        <rdar://problem/43437394>
+
+        Reviewed by Alexey Proskuryakov.
+
+        FileReader is an ActiveDOMObject, which means that FileReader::stop() gets called when
+        its script execution context is about to get destroyed. FileReader::stop() sets m_state
+        to DONE. FileReader::abort() would schedule an asynchronous task and then ASSERT that
+        m_state is not DONE, which would hit if FileReader::stop() had been called in between
+        the task being scheduled and its execution. To address the issue, have the task abort
+        early if isContextStopped() returns true.
+
+        Also replace calls to setPendingActivity() / unsetPendingActivity() with a
+        PendingActivity data member as mismatched call to those can lead to leaks.
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::canSuspendForDocumentSuspension const):
+        No reason not to suspend if there is no pending read.
+
+        (WebCore::FileReader::stop):
+        (WebCore::FileReader::readInternal):
+        (WebCore::FileReader::abort):
+        (WebCore::FileReader::didFinishLoading):
+        (WebCore::FileReader::didFail):
+        * fileapi/FileReader.h:
+
 2019-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         GLContextEGL: desired EGL config should search for 8-bit components by default
