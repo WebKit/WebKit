@@ -94,6 +94,7 @@ void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
 
     m_domTimerIsBeingExecuted = true;
+    adjustObservedState(Event::StartedDOMTimerExecution);
 }
 
 void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
@@ -110,24 +111,24 @@ void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
 
 void ContentChangeObserver::styleRecalcDidStart()
 {
-    if (!isObservingStyleRecalc())
+    if (!isWaitingForStyleRecalc())
         return;
     if (hasVisibleChangeState())
         return;
     LOG(ContentObservation, "startObservingStyleRecalc: start observing style recalc.");
 
     m_styleRecalcIsBeingExecuted = true;
+    adjustObservedState(Event::StartedStyleRecalc);
 }
 
 void ContentChangeObserver::styleRecalcDidFinish()
 {
-    if (!isObservingStyleRecalc())
+    if (!isWaitingForStyleRecalc())
         return;
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
 
     m_styleRecalcIsBeingExecuted = false;
-    setShouldObserveNextStyleRecalc(false);
-    adjustObservedState(Event::StyleRecalcFinished);
+    adjustObservedState(Event::EndedStyleRecalc);
 }
 
 void ContentChangeObserver::cancelPendingActivities()
@@ -209,7 +210,7 @@ void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
 {
     if (shouldObserve)
         LOG(ContentObservation, "Wait until next style recalc fires.");
-    m_isObservingStyleRecalc = shouldObserve;
+    m_isWaitingForStyleRecalc = shouldObserve;
 }
 
 bool ContentChangeObserver::hasDeterminateState() const
@@ -256,6 +257,10 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setShouldObserveDOMTimerScheduling(true);
         m_isMouseMovedPrecededByTouch = false;
         break;
+    case Event::StartedDOMTimerExecution:
+    case Event::StartedStyleRecalc:
+        ASSERT(observedContentChange() == WKContentIndeterminateChange);
+        break;
     case Event::EndedTouchStartEventDispatching:
     case Event::EndedMouseMovedEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
@@ -266,8 +271,10 @@ void ContentChangeObserver::adjustObservedState(Event event)
         ASSERT(!hasVisibleChangeState());
         setHasIndeterminateState();
         break;
+    case Event::EndedStyleRecalc:
+        setShouldObserveNextStyleRecalc(false);
+        FALLTHROUGH;
     case Event::RemovedDOMTimer:
-    case Event::StyleRecalcFinished:
     case Event::EndedDOMTimerExecution:
     case Event::EndedFixedObservationTimeWindow:
         // Demote to "no change" when there's no pending activity anymore.

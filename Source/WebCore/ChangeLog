@@ -1,3 +1,23 @@
+2019-03-08  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add StartedDOMTimerExecution and StartedStyleRecalc
+        https://bugs.webkit.org/show_bug.cgi?id=195463
+        <rdar://problem/48714762>
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for introducing m_isObservingContentChanges flag to track observing state across events (touchStart -> mouseMoved).
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::domTimerExecuteDidStart):
+        (WebCore::ContentChangeObserver::styleRecalcDidStart):
+        (WebCore::ContentChangeObserver::styleRecalcDidFinish):
+        (WebCore::ContentChangeObserver::setShouldObserveNextStyleRecalc):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservingPendingStyleRecalc const):
+        (WebCore::ContentChangeObserver::isObservingStyleRecalc const): Deleted.
+
 2019-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: AOM accessibleclick does not work on iOS

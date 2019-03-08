@@ -117,7 +117,7 @@ private:
     void styleRecalcDidStart();
     void styleRecalcDidFinish();
     void setShouldObserveNextStyleRecalc(bool);
-    bool isObservingStyleRecalc() const { return m_isObservingStyleRecalc; }
+    bool isWaitingForStyleRecalc() const { return m_isWaitingForStyleRecalc; }
 
     bool isObservingContentChanges() const { return m_mouseMovedEventIsBeingDispatched || m_touchEventIsBeingDispatched || m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
 
@@ -145,11 +145,13 @@ private:
         EndedMouseMovedEventDispatching,
         InstalledDOMTimer,
         RemovedDOMTimer,
+        StartedDOMTimerExecution,
         EndedDOMTimerExecution,
-        StyleRecalcFinished,
-        ContentVisibilityChanged,
+        StartedStyleRecalc,
+        EndedStyleRecalc,
         StartedFixedObservationTimeWindow,
-        EndedFixedObservationTimeWindow
+        EndedFixedObservationTimeWindow,
+        ContentVisibilityChanged
     };
     void adjustObservedState(Event);
 
@@ -157,7 +159,7 @@ private:
     Timer m_contentObservationTimer;
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_touchEventIsBeingDispatched { false };
-    bool m_isObservingStyleRecalc { false };
+    bool m_isWaitingForStyleRecalc { false };
     bool m_styleRecalcIsBeingExecuted { false };
     bool m_isObservingDOMTimerScheduling { false };
     bool m_domTimerIsBeingExecuted { false };
