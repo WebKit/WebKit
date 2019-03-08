@@ -13,6 +13,7 @@ class OSXChromeDriver(OSXBrowserDriver):
     process_name = 'Google Chrome'
     browser_name = 'chrome'
     app_name = 'Google Chrome.app'
+    bundle_id = 'com.google.Chrome'
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         # FIXME: handle self._browser_path.
@@ -37,6 +38,7 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
     process_name = 'Google Chrome Canary'
     browser_name = 'chrome-canary'
     app_name = 'Google Chrome Canary.app'
+    bundle_id = 'com.google.Chrome.canary'
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         # FIXME: handle self._browser_path.

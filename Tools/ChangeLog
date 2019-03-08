@@ -1,3 +1,31 @@
+2019-03-08  Stephanie Lewis  <slewis@apple.com>
+
+        Ensure old tab state is cleared between iterations of run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=195393
+        <rdar://problem/46885583>
+
+        Reviewed by Dewei Zhu.
+
+        a) ensure the default to restore state is not set
+        b) terminate Safari correctly
+        c) Set the system default to ignore Persistent State in Safari
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver): fix terminate processes to call terminate before killing.
+        (OSXBrowserDriver.prepare_env): 
+        (OSXBrowserDriver.restore_env):
+        (OSXBrowserDriver.close_browsers):
+        (OSXBrowserDriver._terminate_processes):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py: add bundle id
+        (OSXChromeDriver):
+        (OSXChromeCanaryDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py: ditto
+        (OSXFirefoxDriver):
+        (OSXFirefoxNightlyDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py: add preferences to not restore state, bundle id
+        (OSXSafariDriver):
+        (OSXSafariDriver.prepare_env):
+
 2019-03-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Several InputMethodFilter tests are failing

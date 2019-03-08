@@ -13,6 +13,7 @@ class OSXFirefoxDriver(OSXBrowserDriver):
     process_name = 'firefox'
     browser_name = 'firefox'
     app_name = 'Firefox.app'
+    bundle_id = 'org.mozilla.firefox'
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         # FIXME: handle self._browser_path.
@@ -38,6 +39,8 @@ class OSXFirefoxNightlyDriver(OSXBrowserDriver):
     process_name = 'firefox'
     browser_name = 'firefox-nightly'
     app_name = 'FirefoxNightly.app'
+    bundle_id = 'org.mozilla.firefox'
+
 
     def launch_url(self, url, options, browser_build_path, browser_path):
         # FIXME: handle self._browser_path.
