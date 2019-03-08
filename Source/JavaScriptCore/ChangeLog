@@ -1,3 +1,17 @@
+2019-03-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        op_check_tdz does not def its argument
+        https://bugs.webkit.org/show_bug.cgi?id=192880
+        <rdar://problem/46221598>
+
+        Reviewed by Saam Barati.
+
+        This prevented the for-in loop optimization in the bytecode generator, since
+        the analysis sees a redefinition of the loop variable.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeDefsForBytecodeOffset):
+
 2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make more fields lazy in JSGlobalObject

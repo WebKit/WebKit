@@ -1,3 +1,14 @@
+2019-03-08  Tadeu Zagallo  <tzagallo@apple.com>
+
+        op_check_tdz does not def its argument
+        https://bugs.webkit.org/show_bug.cgi?id=192880
+        <rdar://problem/46221598>
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/let-for-in.js: Added.
+        (foo):
+
 2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] StringFromCharCode fast path should accept 0xff in DFG and FTL

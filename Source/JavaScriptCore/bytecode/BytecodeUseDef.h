@@ -295,6 +295,7 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     case op_end:
     case op_throw:
     case op_throw_static_error:
+    case op_check_tdz:
     case op_debug:
     case op_ret:
     case op_jmp:
@@ -448,7 +449,6 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, const Ins
     DEFS(OpMov, dst)
     DEFS(OpNewObject, dst)
     DEFS(OpToThis, srcDst)
-    DEFS(OpCheckTdz, targetVirtualRegister)
     DEFS(OpGetScope, dst)
     DEFS(OpCreateDirectArguments, dst)
     DEFS(OpCreateScopedArguments, dst)
