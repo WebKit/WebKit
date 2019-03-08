@@ -59,6 +59,8 @@ public:
     bool matches(const URL& url) const
     {
         auto host = url.host();
+        if (host.isEmpty() && m_registrableDomain == "nullOrigin"_s)
+            return true;
         if (!host.endsWith(m_registrableDomain))
             return false;
         if (host.length() == m_registrableDomain.length())

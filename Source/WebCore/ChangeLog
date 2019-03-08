@@ -1,3 +1,23 @@
+2019-03-07  John Wilander  <wilander@apple.com>
+
+        Make sure an empty host matches the internal representation "nullOrigin" in WebCore::RegistrableDomain::matches()
+        https://bugs.webkit.org/show_bug.cgi?id=195435
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. Tests are currently failing and will pass again with
+        this patch.
+
+        WebCore::RegistrableDomain::matches() is a quick way to compare a
+        RegistrableDomain with a URL. Since RegistrableDomain represents the
+        empty host as "nullOrigin," a URL with an empty host needs to match
+        that representation in WebCore::RegistrableDomain::matches().
+        Failure to do so caused debug assertions in fast/ layout tests after
+        https://trac.webkit.org/changeset/242603/webkit.
+
+        * platform/RegistrableDomain.h:
+        (WebCore::RegistrableDomain::matches const):
+
 2019-03-07  Justin Fan  <justin_fan@apple.com>
 
         Unreviewed build fixes since MTLClampToBorderColor is only supported on macOS.
