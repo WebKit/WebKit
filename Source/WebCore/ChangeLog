@@ -1,3 +1,14 @@
+2019-03-08  Miguel Gomez  <magomez@igalia.com>
+
+        Use a thread safe refcounter for FilterOperation.
+        https://bugs.webkit.org/show_bug.cgi?id=194149
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use a thread safe refcounter for FilterOperation.
+
+        * platform/graphics/filters/FilterOperation.h:
+
 2019-03-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make more fields lazy in JSGlobalObject
