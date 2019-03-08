@@ -303,6 +303,8 @@ void DrawingAreaCoordinatedGraphics::scheduleCompositingLayerFlush()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->scheduleLayerFlush();
+    else
+        setNeedsDisplay();
 }
 
 void DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers()
