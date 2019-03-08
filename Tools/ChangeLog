@@ -1,3 +1,23 @@
+2019-03-07  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Make Tools/gtkdoc python3 compatible
+        https://bugs.webkit.org/show_bug.cgi?id=195359
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtkdoc/generate-gtkdoc:
+        ConfigParser was reworked in Python 3.2 so we have adapt the code to
+        work with Python 2 and 3.
+        (get_gtkdoc_module_paths):
+        The iteritems() was removed in Python 3, so let's use items() that's
+        available in Python 2 and 3.
+        (get_generator_for_config):
+        * gtkdoc/gtkdoc.py:
+        (GTKDoc._run_command):
+        The sys.stdout.write() is expecting str in Python 3 and not bytes
+        (that are coming from stdout.encode()). Use sys.stdout.buffer.write()
+        for passing the bytes there.
+
 2019-03-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove -DUCHAR_TYPE=wchar_t stopgap and learn to live with char16_t.

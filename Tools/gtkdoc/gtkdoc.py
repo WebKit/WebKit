@@ -199,12 +199,18 @@ class GTKDoc(object):
         if print_output:
             if stdout:
                 try:
-                    sys.stdout.write(stdout.encode("utf-8"))
+                    if sys.version_info.major == 2:
+                        sys.stdout.write(stdout.encode("utf-8"))
+                    else:
+                        sys.stdout.buffer.write(stdout.encode("utf-8"))
                 except UnicodeDecodeError:
                     sys.stdout.write(stdout)
             if stderr:
                 try:
-                    sys.stderr.write(stderr.encode("utf-8"))
+                    if sys.version_info.major == 2:
+                        sys.stderr.write(stderr.encode("utf-8"))
+                    else:
+                        sys.stderr.buffer.write(stderr.encode("utf-8"))
                 except UnicodeDecodeError:
                     sys.stderr.write(stderr)
 
