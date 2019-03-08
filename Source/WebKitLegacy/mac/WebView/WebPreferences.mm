@@ -582,6 +582,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitPlugInSnapshottingEnabledPreferenceKey,
 
 #if PLATFORM(IOS_FAMILY)
+        [NSNumber numberWithBool:YES],  WebKitContentChangeObserverEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitTelephoneParsingEnabledPreferenceKey,
         [NSNumber numberWithInt:-1],      WebKitLayoutIntervalPreferenceKey,
         [NSNumber numberWithFloat:-1.0f], WebKitMaxParseDurationPreferenceKey,
@@ -1596,6 +1597,16 @@ public:
 - (BOOL)_telephoneNumberParsingEnabled
 {
     return [self _boolValueForKey:WebKitTelephoneParsingEnabledPreferenceKey];
+}
+
+- (BOOL)contentChangeObserverEnabled
+{
+    return [self _boolValueForKey:WebKitContentChangeObserverEnabledPreferenceKey];
+}
+
+- (void)setContentChangeObserverEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitContentChangeObserverEnabledPreferenceKey];
 }
 #endif
 

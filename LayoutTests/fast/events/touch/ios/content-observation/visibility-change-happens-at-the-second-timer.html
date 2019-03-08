@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>This tests the case when the second timer triggers visible content change</title>
-<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../../resources/basic-gestures.js"></script>
 <style>
 #tapthis {
     width: 400px;
@@ -20,6 +20,8 @@
 async function test() {
     if (!window.testRunner || !testRunner.runUIScript)
         return;
+	if (window.internals)
+		internals.settings.setContentChangeObserverEnabled(true);
 
     testRunner.waitUntilDone();
     testRunner.dumpAsText();

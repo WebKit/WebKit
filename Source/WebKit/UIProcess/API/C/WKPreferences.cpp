@@ -1350,6 +1350,16 @@ bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef prefer
     return toImpl(preferencesRef)->simpleLineLayoutDebugBordersEnabled();
 }
 
+void WKPreferencesSetContentChangeObserverEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setContentChangeObserverEnabled(flag);
+}
+
+bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->contentChangeObserverEnabled();
+}
+
 void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool)
 {
     // FIXME: Remove Safari call to this.

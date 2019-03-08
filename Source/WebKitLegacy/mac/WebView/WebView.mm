@@ -3012,6 +3012,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLayoutInterval(Seconds::fromMilliseconds([preferences _layoutInterval]));
     settings.setMaxParseDuration([preferences _maxParseDuration]);
     settings.setAlwaysUseAcceleratedOverflowScroll([preferences _alwaysUseAcceleratedOverflowScroll]);
+    settings.setContentChangeObserverEnabled([preferences contentChangeObserverEnabled]);
     DeprecatedGlobalSettings::setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
     DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
     DeprecatedGlobalSettings::setNetworkInterfaceName([preferences networkInterfaceName]);

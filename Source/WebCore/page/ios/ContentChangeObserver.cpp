@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -43,6 +44,8 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
 {
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
     if (m_document.activeDOMObjectsAreSuspended())
         return;
     if (timeout > 250_ms || !singleShot)
@@ -175,6 +178,13 @@ bool ContentChangeObserver::hasDeterminateState() const
         return true;
     return observedContentChange() == WKContentNoChange && !hasPendingActivity();
 }
+
+#if !ASSERT_DISABLED
+bool ContentChangeObserver::isNotifyContentChangeAllowed() const
+{
+    return m_document.settings().contentChangeObserverEnabled() && !m_mouseMovedIsBeingDispatched;
+}
+#endif
 
 void ContentChangeObserver::adjustObservedState(Event event)
 {

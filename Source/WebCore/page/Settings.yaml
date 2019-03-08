@@ -446,6 +446,9 @@ simpleLineLayoutDebugBordersEnabled:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames
 
+contentChangeObserverEnabled:
+  initial: defaultContentChangeObserverEnabled()
+
 subpixelCSSOMElementMetricsEnabled:
   initial: false
 

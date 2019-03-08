@@ -107,6 +107,15 @@ bool SettingsBase::defaultDownloadableBinaryFontsEnabled()
 #endif
 }
 
+bool SettingsBase::defaultContentChangeObserverEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return true;
+#else
+    return false;
+#endif
+}
+
 #if !PLATFORM(COCOA)
 const String& SettingsBase::defaultMediaContentTypesRequiringHardwareSupport()
 {

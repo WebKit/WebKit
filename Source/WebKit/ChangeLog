@@ -1,3 +1,23 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add a setting to be able to turn content change observation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=195353
+        <rdar://problem/48626394>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetContentChangeObserverEnabled):
+        (WKPreferencesGetContentChangeObserverEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _contentChangeObserverEnabled]):
+        (-[WKPreferences _setContentChangeObserverEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2019-03-07  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Untangle PKPaymentAuthorizationViewController from WebPaymentCoordinatorProxy

@@ -354,6 +354,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 - (void)setMediaPlaybackAllowsAirPlay:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsAirPlay;
+
+- (BOOL)contentChangeObserverEnabled;
+- (void)setContentChangeObserverEnabled:(BOOL)enabled;
 #endif
 
 - (void)_setTextAutosizingEnabled:(BOOL)enabled;

@@ -1,3 +1,22 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add a setting to be able to turn content change observation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=195353
+        <rdar://problem/48626394>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/click-instead-of-hover-simple-expected.txt: Renamed from LayoutTests/fast/events/touch/ios/click-instead-of-hover-simple-expected.txt.
+        * fast/events/touch/ios/content-observation/click-instead-of-hover-simple.html: Renamed from LayoutTests/fast/events/touch/ios/click-instead-of-hover-simple.html.
+        * fast/events/touch/ios/content-observation/hover-when-style-change-is-async-expected.txt: Renamed from LayoutTests/fast/events/touch/ios/hover-when-style-change-is-async-expected.txt.
+        * fast/events/touch/ios/content-observation/hover-when-style-change-is-async.html: Renamed from LayoutTests/fast/events/touch/ios/hover-when-style-change-is-async.html.
+        * fast/events/touch/ios/content-observation/stuck-with-hover-state-expected.txt: Renamed from LayoutTests/fast/events/touch/ios/stuck-with-hover-state-expected.txt.
+        * fast/events/touch/ios/content-observation/stuck-with-hover-state.html: Renamed from LayoutTests/fast/events/touch/ios/stuck-with-hover-state.html.
+        * fast/events/touch/ios/content-observation/style-recalc-schedule-and-force-relalc-expected.txt: Renamed from LayoutTests/fast/events/touch/ios/style-recalc-schedule-and-force-relalc-expected.txt.
+        * fast/events/touch/ios/content-observation/style-recalc-schedule-and-force-relalc.html: Renamed from LayoutTests/fast/events/touch/ios/style-recalc-schedule-and-force-relalc.html.
+        * fast/events/touch/ios/content-observation/visibility-change-happens-at-the-second-timer-expected.txt: Renamed from LayoutTests/fast/events/touch/ios/visibility-change-happens-at-the-second-timer-expected.txt.
+        * fast/events/touch/ios/content-observation/visibility-change-happens-at-the-second-timer.html: Renamed from LayoutTests/fast/events/touch/ios/visibility-change-happens-at-the-second-timer.html.
+
 2019-03-07  Ross Kirsling  <ross.kirsling@sony.com>
 
         [WinCairo] Unreviewed test gardening.

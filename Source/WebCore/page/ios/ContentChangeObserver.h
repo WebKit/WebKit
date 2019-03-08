@@ -117,7 +117,7 @@ private:
 
     bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc(); }
 #if !ASSERT_DISABLED
-    bool isNotifyContentChangeAllowed() const { return !m_mouseMovedIsBeingDispatched; }
+    bool isNotifyContentChangeAllowed() const;
 #endif
 
     enum class Event {

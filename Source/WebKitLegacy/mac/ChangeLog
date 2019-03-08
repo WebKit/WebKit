@@ -1,3 +1,20 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add a setting to be able to turn content change observation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=195353
+        <rdar://problem/48626394>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences contentChangeObserverEnabled]):
+        (-[WebPreferences setContentChangeObserverEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2019-03-06  Sam Weinig  <sam@webkit.org>
 
         WebKitLegacy does not need to generate an export file for i386 anymore

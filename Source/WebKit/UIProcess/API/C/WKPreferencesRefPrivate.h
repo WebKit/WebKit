@@ -334,6 +334,9 @@ WK_EXPORT bool WKPreferencesGetSimpleLineLayoutEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetSimpleLineLayoutDebugBordersEnabled(WKPreferencesRef);
 
+WK_EXPORT void WKPreferencesSetContentChangeObserverEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetContentChangeObserverEnabled(WKPreferencesRef);
+
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef);

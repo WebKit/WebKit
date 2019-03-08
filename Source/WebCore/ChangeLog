@@ -1,3 +1,28 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add a setting to be able to turn content change observation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=195353
+        <rdar://problem/48626394>
+
+        Reviewed by Simon Fraser.
+
+        Move content observation tests to a dedicated directory.
+
+        Tests: fast/events/touch/ios/content-observation/click-instead-of-hover-simple.html
+               fast/events/touch/ios/content-observation/hover-when-style-change-is-async.html
+               fast/events/touch/ios/content-observation/stuck-with-hover-state.html
+               fast/events/touch/ios/content-observation/style-recalc-schedule-and-force-relalc.html
+               fast/events/touch/ios/content-observation/visibility-change-happens-at-the-second-timer.html
+
+        * page/Settings.yaml:
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::isNotifyContentChangeAllowed const):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isNotifyContentChangeAllowed const): Deleted.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::resetToConsistentState):
+
 2019-03-07  John Wilander  <wilander@apple.com>
 
         Make sure an empty host matches the internal representation "nullOrigin" in WebCore::RegistrableDomain::matches()

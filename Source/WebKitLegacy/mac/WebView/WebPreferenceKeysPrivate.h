@@ -111,6 +111,7 @@
 #define WebKitSubpixelAntialiasedLayerTextEnabledPreferenceKey @"WebKitSubpixelAntialiasedLayerTextEnabled"
 #define WebKitSimpleLineLayoutEnabledPreferenceKey @"WebKitSimpleLineLayoutEnabled"
 #define WebKitSimpleLineLayoutDebugBordersEnabledPreferenceKey @"WebKitSimpleLineLayoutDebugBordersEnabled"
+#define WebKitContentChangeObserverEnabledPreferenceKey @"WebKitContentChangeObserverEnabled"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"
 #define WebKitWebAudioEnabledPreferenceKey @"WebKitWebAudioEnabled"
 #define WebKitWebGLEnabledPreferenceKey @"WebKitWebGLEnabled"

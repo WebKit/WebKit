@@ -484,6 +484,11 @@ SimpleLineLayoutEnabled:
   type: bool
   defaultValue: true
 
+ContentChangeObserverEnabled:
+  type: bool
+  defaultValue: true
+  condition: PLATFORM(IOS_FAMILY)
+
 SubpixelCSSOMElementMetricsEnabled:
   type: bool
   defaultValue: false

@@ -1,3 +1,14 @@
+2019-03-07  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add a setting to be able to turn content change observation on/off
+        https://bugs.webkit.org/show_bug.cgi?id=195353
+        <rdar://problem/48626394>
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+
 2019-03-07  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Make it possible to purge only script-accessible cookies

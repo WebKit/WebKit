@@ -573,6 +573,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     case WKContentIndeterminateChange: {
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
+        ASSERT(respondingDocument.settings().contentChangeObserverEnabled());
         m_pendingSyntheticClickNode = &nodeRespondingToClick;
         m_pendingSyntheticClickLocation = location;
         m_pendingSyntheticClickModifiers = modifiers;

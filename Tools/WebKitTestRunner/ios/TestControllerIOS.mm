@@ -128,6 +128,7 @@ void TestController::platformResetPreferencesToConsistentValues()
 {
     WKPreferencesRef preferences = platformPreferences();
     WKPreferencesSetTextAutosizingEnabled(preferences, false);
+    WKPreferencesSetContentChangeObserverEnabled(preferences, false);
 }
 
 void TestController::platformResetStateToConsistentValues(const TestOptions& options)

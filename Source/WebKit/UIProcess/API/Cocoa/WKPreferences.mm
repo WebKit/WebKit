@@ -335,6 +335,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setSimpleLineLayoutDebugBordersEnabled(simpleLineLayoutDebugBordersEnabled);
 }
 
+- (BOOL)_contentChangeObserverEnabled
+{
+    return _preferences->contentChangeObserverEnabled();
+}
+
+- (void)_setContentChangeObserverEnabled:(BOOL)contentChangeObserverEnabled
+{
+    _preferences->setContentChangeObserverEnabled(contentChangeObserverEnabled);
+}
+
 - (BOOL)_acceleratedDrawingEnabled
 {
     return _preferences->acceleratedDrawingEnabled();
