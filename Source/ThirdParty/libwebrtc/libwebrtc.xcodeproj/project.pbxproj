@@ -1743,9 +1743,7 @@
 		5C11A0031E457400004F0987 /* fine_audio_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C119FF81E457400004F0987 /* fine_audio_buffer.cc */; };
 		5C11A0041E457400004F0987 /* fine_audio_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C119FF91E457400004F0987 /* fine_audio_buffer.h */; };
 		5C11A0051E457400004F0987 /* mock_audio_device_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C119FFA1E457400004F0987 /* mock_audio_device_buffer.h */; };
-		5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C11A0071E457448004F0987 /* audio_device_mac.cc */; };
 		5C11A00C1E457448004F0987 /* audio_device_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C11A0081E457448004F0987 /* audio_device_mac.h */; };
-		5C11A00D1E457448004F0987 /* audio_mixer_manager_mac.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C11A0091E457448004F0987 /* audio_mixer_manager_mac.cc */; };
 		5C11A00E1E457448004F0987 /* audio_mixer_manager_mac.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C11A00A1E457448004F0987 /* audio_mixer_manager_mac.h */; };
 		5C11A01D1E457578004F0987 /* audio_device_dummy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C11A0171E457578004F0987 /* audio_device_dummy.cc */; };
 		5C11A01E1E457578004F0987 /* audio_device_dummy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C11A0181E457578004F0987 /* audio_device_dummy.h */; };
@@ -3358,7 +3356,6 @@
 		5CFD537C1E4BA4F500482908 /* audio_device_ios.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53751E4BA4F500482908 /* audio_device_ios.h */; };
 		5CFD53801E4BA4F500482908 /* audio_session_observer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD53791E4BA4F500482908 /* audio_session_observer.h */; };
 		5CFD53811E4BA4F500482908 /* voice_processing_audio_unit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CFD537A1E4BA4F500482908 /* voice_processing_audio_unit.h */; };
-		5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD537B1E4BA4F500482908 /* voice_processing_audio_unit.mm */; };
 		5CFD538D1E4BD3A300482908 /* compare_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53851E4BD3A300482908 /* compare_neon.cc */; };
 		5CFD538E1E4BD3A300482908 /* compare_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53861E4BD3A300482908 /* compare_neon64.cc */; };
 		5CFD538F1E4BD3A300482908 /* rotate_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD53871E4BD3A300482908 /* rotate_neon.cc */; };
@@ -16318,7 +16315,6 @@
 				5C119FFB1E457400004F0987 /* audio_device_buffer.cc in Sources */,
 				5C11A01D1E457578004F0987 /* audio_device_dummy.cc in Sources */,
 				5C119FFE1E457400004F0987 /* audio_device_generic.cc in Sources */,
-				5C11A00B1E457448004F0987 /* audio_device_mac.cc in Sources */,
 				4145E4DF1EF8CD3900FCF6E6 /* audio_encoder.cc in Sources */,
 				5CDD8CA71E43C6F700621E92 /* audio_encoder_cng.cc in Sources */,
 				5CDD8FF31E43CDF400621E92 /* audio_encoder_copy_red.cc in Sources */,
@@ -16346,7 +16342,6 @@
 				4102F6A421273262006AE8D7 /* audio_level.cc in Sources */,
 				5CDD8A8F1E43C00F00621E92 /* audio_loop.cc in Sources */,
 				5CD284951E6A5F410094FDC8 /* audio_mixer_impl.cc in Sources */,
-				5C11A00D1E457448004F0987 /* audio_mixer_manager_mac.cc in Sources */,
 				5CDD8A011E43BFB300621E92 /* audio_multi_vector.cc in Sources */,
 				419C830D1FE20F3C0040C30F /* audio_network_adaptor_config.cc in Sources */,
 				5CDD8F791E43CBE000621E92 /* audio_network_adaptor_impl.cc in Sources */,
@@ -17289,7 +17284,6 @@
 				413A23121FE18E0700373E99 /* virtualsocketserver.cc in Sources */,
 				5CDD87401E43BABE00621E92 /* voice_activity_detector.cc in Sources */,
 				5CDD84C71E43AF1300621E92 /* voice_detection_impl.cc in Sources */,
-				5CFD53821E4BA4F500482908 /* voice_processing_audio_unit.mm in Sources */,
 				419241F521275C3200634FCF /* vp8_encoder_simulcast_proxy.cc in Sources */,
 				5CDD83851E439A3500621E92 /* vp8_header_parser.cc in Sources */,
 				5CDD8C141E43C3B400621E92 /* vp9_noop.cc in Sources */,

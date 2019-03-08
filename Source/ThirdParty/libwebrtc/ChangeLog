@@ -1,3 +1,14 @@
+2019-03-07  Youenn Fablet  <youenn@apple.com>
+
+        Skip compilation of unused audio device files for Mac and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195412
+
+        Reviewed by Eric Carlson.
+
+        Stop compiling audio_device_mac.cc, audio_mixer_manager_mac.cc and voice_processing_audio_unit.mm
+        as unused in WebKit.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2019-02-23  Keith Miller  <keith_miller@apple.com>
 
         Add new mac target numbers
