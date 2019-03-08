@@ -4277,3 +4277,10 @@ storage/indexeddb/result-request-cycle.html [ Skip ]
 storage/indexeddb/value-cursor-cycle.html [ Skip ]
 
 webkit.org/b/194711 fast/replaced/encrypted-pdf-as-object-and-embed.html [ Failure ]
+
+webkit.org/b/195461 http/tests/referrer-policy-iframe/no-referrer/cross-origin-http-http.html [ Failure ]
+webkit.org/b/195461 http/tests/referrer-policy-iframe/no-referrer/same-origin.html [ Failure ]
+webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/cross-origin-http-http.html [ Failure ]
+webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/cross-origin-http.https.html [ Failure ]
+webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/same-origin.html [ Failure ]
+webkit.org/b/195461 http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http.https.html [ Failure ]
