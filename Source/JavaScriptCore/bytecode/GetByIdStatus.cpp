@@ -142,11 +142,11 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker
 
 #if ENABLE(JIT)
 GetByIdStatus::GetByIdStatus(const ModuleNamespaceAccessCase& accessCase)
-    : m_state(ModuleNamespace)
-    , m_wasSeenInJIT(true)
-    , m_moduleNamespaceObject(accessCase.moduleNamespaceObject())
+    : m_moduleNamespaceObject(accessCase.moduleNamespaceObject())
     , m_moduleEnvironment(accessCase.moduleEnvironment())
     , m_scopeOffset(accessCase.scopeOffset())
+    , m_state(ModuleNamespace)
+    , m_wasSeenInJIT(true)
 {
 }
 
