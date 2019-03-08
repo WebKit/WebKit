@@ -40,21 +40,21 @@ typedef intptr_t GlobalVariableID;
 class TypeLocation {
 public:
     TypeLocation()
-        : m_lastSeenType(TypeNothing)
-        , m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
-        , m_instructionTypeSet(TypeSet::create())
+        : m_instructionTypeSet(TypeSet::create())
         , m_globalTypeSet(nullptr)
+        , m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
+        , m_lastSeenType(TypeNothing)
     {
     }
 
     GlobalVariableID m_globalVariableID;
-    RuntimeType m_lastSeenType;
+    RefPtr<TypeSet> m_instructionTypeSet;
+    RefPtr<TypeSet> m_globalTypeSet;
     intptr_t m_sourceID;
     unsigned m_divotStart;
     unsigned m_divotEnd;
     unsigned m_divotForFunctionOffsetIfReturnStatement;
-    RefPtr<TypeSet> m_instructionTypeSet;
-    RefPtr<TypeSet> m_globalTypeSet;
+    RuntimeType m_lastSeenType;
 };
 
 } // namespace JSC
