@@ -1,3 +1,17 @@
+2019-03-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WebKit] Nothing is drawn after Web process crashed
+        https://bugs.webkit.org/show_bug.cgi?id=195399
+
+        Reviewed by Alex Christensen.
+
+        PageClientImpl::viewSize returned 0x0 size after Web process
+        crashed. Restored the original implementation using GetClientRect
+        (Bug 52175).
+
+        * UIProcess/win/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewSize):
+
 2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

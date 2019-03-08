@@ -67,9 +67,10 @@ WebCore::FloatPoint PageClientImpl::viewScrollPosition()
 
 WebCore::IntSize PageClientImpl::viewSize()
 {
-    if (m_view.drawingArea())
-        return m_view.drawingArea()->size();
-    return IntSize();
+    RECT clientRect;
+    GetClientRect(m_view.window(), &clientRect);
+
+    return IntRect(clientRect).size();
 }
 
 bool PageClientImpl::isViewWindowActive()
