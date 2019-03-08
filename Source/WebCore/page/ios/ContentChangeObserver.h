@@ -119,7 +119,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isWaitingForStyleRecalc() const { return m_isWaitingForStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_mouseMovedEventIsBeingDispatched || m_touchEventIsBeingDispatched || m_domTimerIsBeingExecuted || m_styleRecalcIsBeingExecuted || m_contentObservationTimer.isActive(); }
+    bool isObservingContentChanges() const { return m_mouseMovedEventIsBeingDispatched || m_touchEventIsBeingDispatched || m_observedDomTimerIsBeingExecuted || m_isInObservedStyleRecalc || m_contentObservationTimer.isActive(); }
 
     void cancelPendingActivities();
 
@@ -131,7 +131,8 @@ private:
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasDeterminateState() const;
 
-    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || m_contentObservationTimer.isActive(); }
+    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || isObservationTimeWindowActive(); }
+    bool isObservationTimeWindowActive() const { return m_contentObservationTimer.isActive(); }
 #if !ASSERT_DISABLED
     bool isNotifyContentChangeAllowed() const;
 #endif
@@ -160,9 +161,9 @@ private:
     HashSet<const DOMTimer*> m_DOMTimerList;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
-    bool m_styleRecalcIsBeingExecuted { false };
+    bool m_isInObservedStyleRecalc { false };
     bool m_isObservingDOMTimerScheduling { false };
-    bool m_domTimerIsBeingExecuted { false };
+    bool m_observedDomTimerIsBeingExecuted { false };
     bool m_isMouseMovedPrecededByTouch { false };
     bool m_mouseMovedEventIsBeingDispatched { false };
 };

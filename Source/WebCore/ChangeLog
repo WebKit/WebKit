@@ -1,5 +1,27 @@
 2019-03-08  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Cleanup adjustObservedState
+        https://bugs.webkit.org/show_bug.cgi?id=195470
+        <rdar://problem/48717823>
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for introducing an observation window from touchStart -> mouseMoved.
+        1. Cancel pending activities (future timers, pending stylesheet recalcs) when visible content change is detected.
+        2. The fixed time window takes care of notifying the client -timers, style recalcs during the window should not signal themselves.  
+        3. Reset m_isObservingPendingStyleRecalc at StartedStyleRecalc instead of EndedStyleRecalc. 
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::domTimerExecuteDidFinish):
+        (WebCore::ContentChangeObserver::styleRecalcDidStart):
+        (WebCore::ContentChangeObserver::styleRecalcDidFinish):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::hasPendingActivity const):
+        (WebCore::ContentChangeObserver::isObservationTimeWindowActive const):
+
+2019-03-08  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Add StartedDOMTimerExecution and StartedStyleRecalc
         https://bugs.webkit.org/show_bug.cgi?id=195463
         <rdar://problem/48714762>

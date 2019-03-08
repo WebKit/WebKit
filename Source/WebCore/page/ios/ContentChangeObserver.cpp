@@ -93,19 +93,18 @@ void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "startObservingDOMTimerExecute: start observing (" << &timer << ") timer callback.");
 
-    m_domTimerIsBeingExecuted = true;
+    m_observedDomTimerIsBeingExecuted = true;
     adjustObservedState(Event::StartedDOMTimerExecution);
 }
 
 void ContentChangeObserver::domTimerExecuteDidFinish(const DOMTimer& timer)
 {
-    if (!containsObservedDOMTimer(timer))
+    if (!m_observedDomTimerIsBeingExecuted)
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "stopObservingDOMTimerExecute: stop observing (" << &timer << ") timer callback.");
 
-    m_domTimerIsBeingExecuted = false;
+    m_observedDomTimerIsBeingExecuted = false;
     unregisterDOMTimer(timer);
-    setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
     adjustObservedState(Event::EndedDOMTimerExecution);
 }
 
@@ -113,21 +112,19 @@ void ContentChangeObserver::styleRecalcDidStart()
 {
     if (!isWaitingForStyleRecalc())
         return;
-    if (hasVisibleChangeState())
-        return;
     LOG(ContentObservation, "startObservingStyleRecalc: start observing style recalc.");
 
-    m_styleRecalcIsBeingExecuted = true;
+    m_isInObservedStyleRecalc = true;
     adjustObservedState(Event::StartedStyleRecalc);
 }
 
 void ContentChangeObserver::styleRecalcDidFinish()
 {
-    if (!isWaitingForStyleRecalc())
+    if (!m_isInObservedStyleRecalc)
         return;
     LOG(ContentObservation, "stopObservingStyleRecalc: stop observing style recalc");
 
-    m_styleRecalcIsBeingExecuted = false;
+    m_isInObservedStyleRecalc = false;
     adjustObservedState(Event::EndedStyleRecalc);
 }
 
@@ -229,7 +226,11 @@ bool ContentChangeObserver::isNotifyContentChangeAllowed() const
 
 void ContentChangeObserver::adjustObservedState(Event event)
 {
-    auto notifyContentChangeIfNeeded = [&] {
+    auto adjustStateAndNotifyContentChangeIfNeeded = [&] {
+        // Demote to "no change" when there's no pending activity anymore.
+        if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
+            setHasNoChangeState();
+
         if (!hasDeterminateState()) {
             LOG(ContentObservation, "notifyContentChangeIfNeeded: not in a determined state yet.");
             return;
@@ -248,6 +249,9 @@ void ContentChangeObserver::adjustObservedState(Event event)
         m_isMouseMovedPrecededByTouch = true;
         setShouldObserveDOMTimerScheduling(true);
         break;
+    case Event::EndedTouchStartEventDispatching:
+        setShouldObserveDOMTimerScheduling(false);
+        break;
     case Event::StartedMouseMovedEventDispatching:
         ASSERT(!m_document.hasPendingStyleRecalc());
         if (!m_isMouseMovedPrecededByTouch) {
@@ -257,33 +261,36 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setShouldObserveDOMTimerScheduling(true);
         m_isMouseMovedPrecededByTouch = false;
         break;
-    case Event::StartedDOMTimerExecution:
-    case Event::StartedStyleRecalc:
-        ASSERT(observedContentChange() == WKContentIndeterminateChange);
-        break;
-    case Event::EndedTouchStartEventDispatching:
     case Event::EndedMouseMovedEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
         break;
+    case Event::StartedStyleRecalc:
+        setShouldObserveNextStyleRecalc(false);
+        FALLTHROUGH;
+    case Event::StartedDOMTimerExecution:
+        ASSERT(isObservationTimeWindowActive() || observedContentChange() == WKContentIndeterminateChange);
+        break;
     case Event::InstalledDOMTimer:
     case Event::StartedFixedObservationTimeWindow:
-        // Expecting a timer fire. Promote to an indeterminate state.
         ASSERT(!hasVisibleChangeState());
         setHasIndeterminateState();
         break;
-    case Event::EndedStyleRecalc:
-        setShouldObserveNextStyleRecalc(false);
-        FALLTHROUGH;
-    case Event::RemovedDOMTimer:
     case Event::EndedDOMTimerExecution:
+        setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
+        FALLTHROUGH;
+    case Event::EndedStyleRecalc:
+    case Event::RemovedDOMTimer:
+        if (!isObservationTimeWindowActive())
+            adjustStateAndNotifyContentChangeIfNeeded();
+        break;
     case Event::EndedFixedObservationTimeWindow:
-        // Demote to "no change" when there's no pending activity anymore.
-        if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
-            setHasNoChangeState();
-        notifyContentChangeIfNeeded();
+        adjustStateAndNotifyContentChangeIfNeeded();
         break;
     case Event::ContentVisibilityChanged:
         setHasVisibleChangeState();
+        // Remove pending activities. We don't need to observe them anymore.
+        setShouldObserveNextStyleRecalc(false);
+        clearObservedDOMTimers();
         break;
     }
 }
