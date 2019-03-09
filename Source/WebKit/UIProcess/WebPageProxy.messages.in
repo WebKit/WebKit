@@ -533,6 +533,10 @@ messages -> WebPageProxy {
     StopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Delayed
 
+#if ENABLE(DEVICE_ORIENTATION)
+    RequestDeviceOrientationAndMotionAccess(struct WebCore::SecurityOriginData origin, uint64_t callbackID);
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)

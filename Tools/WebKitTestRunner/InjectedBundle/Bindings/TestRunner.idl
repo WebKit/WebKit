@@ -104,6 +104,9 @@ interface TestRunner {
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();
 
+    // Device Orientation Motion.
+    void setShouldAllowDeviceOrientationAndMotionAccess(boolean value);
+
     // Special DOM variables.
     attribute boolean globalFlag;
 

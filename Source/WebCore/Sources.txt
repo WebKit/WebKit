@@ -820,9 +820,11 @@ dom/DecodedDataDocumentParser.cpp
 dom/DeviceMotionController.cpp
 dom/DeviceMotionData.cpp
 dom/DeviceMotionEvent.cpp
+dom/DeviceOrientationAndMotionAccessController.cpp
 dom/DeviceOrientationController.cpp
 dom/DeviceOrientationData.cpp
 dom/DeviceOrientationEvent.cpp
+dom/DeviceOrientationOrMotionEvent.cpp
 dom/Document.cpp
 dom/DocumentEventQueue.cpp
 dom/DocumentFragment.cpp
@@ -2723,6 +2725,8 @@ JSDeprecatedCSSOMValue.cpp
 JSDeprecatedCSSOMValueList.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
+JSDeviceOrientationOrMotionPermissionState.cpp
+JSDeviceOrientationOrMotionEvent.cpp
 JSDocument.cpp
 JSDocumentAndElementEventHandlers.cpp
 JSDocumentFragment.cpp

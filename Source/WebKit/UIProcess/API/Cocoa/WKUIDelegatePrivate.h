@@ -171,6 +171,15 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didChangeSafeAreaShouldAffectObscuredInsets:(BOOL)safeAreaShouldAffectObscuredInsets WK_API_AVAILABLE(ios(11.0));
 - (void)_webView:(WKWebView *)webView didPresentFocusedElementViewController:(UIViewController *)controller WK_API_AVAILABLE(ios(12.0));
 - (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller WK_API_AVAILABLE(ios(12.0));
+
+/*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
+ @param securityOrigin The security origin which requested access to the device's orientation and motion.
+ @param decisionHandler The decision handler to call once the app has made its decision. Pass YES to allow the origin access, NO otherwise.
+
+ If you do not implement this method, access to the device's orientation and motion will be granted.
+ */
+- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #else // TARGET_OS_IPHONE
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_cancelImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));

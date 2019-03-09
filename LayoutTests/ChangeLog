@@ -1,3 +1,33 @@
+2019-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Add support for Device Orientation / Motion permission API
+        https://bugs.webkit.org/show_bug.cgi?id=195329
+        <rdar://problem/47645367>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * TestExpectations:
+        * fast/device-orientation/device-motion-request-permission-denied-expected.txt: Added.
+        * fast/device-orientation/device-motion-request-permission-denied.html: Added.
+        * fast/device-orientation/device-motion-request-permission-granted-expected.txt: Added.
+        * fast/device-orientation/device-motion-request-permission-granted.html: Added.
+        * fast/device-orientation/device-motion-request-permission-user-gesture-expected.txt: Added.
+        * fast/device-orientation/device-motion-request-permission-user-gesture.html: Added.
+        * fast/device-orientation/device-orientation-request-permission-denied-expected.txt: Added.
+        * fast/device-orientation/device-orientation-request-permission-denied.html: Added.
+        * fast/device-orientation/device-orientation-request-permission-granted-expected.txt: Added.
+        * fast/device-orientation/device-orientation-request-permission-granted.html: Added.
+        * fast/device-orientation/device-orientation-request-permission-user-gesture-expected.txt: Added.
+        * fast/device-orientation/device-orientation-request-permission-user-gesture.html: Added.
+        * http/tests/events/device-orientation-motion-non-secure-context.html:
+        * http/tests/events/device-orientation-motion-secure-context-expected.txt:
+        * http/tests/events/device-orientation-motion-secure-context.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/http/tests/events/device-orientation-motion-non-secure-context-expected.txt:
+        * platform/ios/http/tests/events/device-orientation-motion-secure-context-expected.txt:
+
 2019-03-08  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Expand "isConsideredClickable" to descendants

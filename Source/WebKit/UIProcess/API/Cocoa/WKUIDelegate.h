@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKNavigationAction;
 @class WKOpenPanelParameters;
 @class WKPreviewElementInfo;
+@class WKSecurityOrigin;
 @class WKWebView;
 @class WKWebViewConfiguration;
 @class WKWindowFeatures;

@@ -27,7 +27,7 @@ function runDeviceMotionTest()
     debug("* Registering device motion listener");
     addEventListener("devicemotion", function() { });
     internals.postTask(() => {
-        shouldBeEqualToString("lastConsoleMessage", "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure.");
+        shouldBeEqualToString("lastConsoleMessage", "Blocked attempt to add a device motion or orientation event listener, reason: Browsing context is not secure.");
         finishJSTest();
     });
 }
@@ -44,7 +44,7 @@ function runDeviceOrientationTest()
     debug("* Registering device orientation listener");
     addEventListener("deviceorientation", function() { });
     internals.postTask(() => {
-        shouldBeEqualToString("lastConsoleMessage", "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure.");
+        shouldBeEqualToString("lastConsoleMessage", "Blocked attempt to add a device motion or orientation event listener, reason: Browsing context is not secure.");
         runDeviceMotionTest();
     });
 }

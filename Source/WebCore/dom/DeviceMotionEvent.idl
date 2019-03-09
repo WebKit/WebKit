@@ -57,3 +57,5 @@
     double? beta;
     double? gamma;
 };
+
+DeviceMotionEvent implements DeviceOrientationOrMotionEvent;

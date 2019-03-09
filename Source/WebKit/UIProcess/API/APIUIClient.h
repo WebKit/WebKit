@@ -173,6 +173,10 @@ public:
     virtual void didLosePointerLock(WebKit::WebPageProxy*) { }
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+    virtual void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, SecurityOrigin&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
+#endif
+
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, Object*) { }
 
     virtual void didResignInputElementStrongPasswordAppearance(WebKit::WebPageProxy&, Object*) { }

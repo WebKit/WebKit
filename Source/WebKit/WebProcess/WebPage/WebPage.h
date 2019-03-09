@@ -1110,6 +1110,10 @@ public:
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, CompletionHandler<void(bool)>&& callback);
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+    void shouldAllowDeviceOrientationAndMotionAccess(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&);
+#endif
+
     void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback);
     void didCompleteShareSheet(bool wasCompleted, ShareSheetCallbackID contextId);
     
@@ -1204,6 +1208,10 @@ private:
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
     void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+    void didReceiveDeviceOrientationAndMotionAccessDecision(uint64_t callbackID, bool granted);
 #endif
 
 #if !PLATFORM(COCOA) && !PLATFORM(WPE)
@@ -1835,6 +1843,10 @@ private:
 
     HashMap<uint64_t, WTF::Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
     HashMap<ShareSheetCallbackID, WTF::Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
+
+#if ENABLE(DEVICE_ORIENTATION)
+    HashMap<uint64_t, WTF::CompletionHandler<void(bool granted)>> m_deviceOrientationAndMotionPermissionCallbackMap;
+#endif
 
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;

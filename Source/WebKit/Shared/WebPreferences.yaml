@@ -12,6 +12,15 @@ DeviceOrientationEventEnabled:
   condition: ENABLE(DEVICE_ORIENTATION)
   webcoreName: deviceOrientationEventEnabled
 
+DeviceOrientationPermissionAPIEnabled:
+  type: bool
+  defaultValue: defaultDeviceOrientationPermissionAPIEnabled()
+  condition: ENABLE(DEVICE_ORIENTATION)
+  webcoreName: deviceOrientationPermissionAPIEnabled
+  humanReadableName: "Permission API for device orientation / motion access."
+  humanReadableDescription: "DeviceOrientationEvent.requestPermission() / DeviceMotionEvent.requestPermission()"
+  category: experimental
+
 JavaScriptEnabled:
   type: bool
   defaultValue: true

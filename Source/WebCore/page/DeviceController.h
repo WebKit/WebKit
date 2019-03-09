@@ -46,6 +46,7 @@ public:
     void addDeviceEventListener(DOMWindow&);
     void removeDeviceEventListener(DOMWindow&);
     void removeAllDeviceEventListeners(DOMWindow&);
+    bool hasDeviceEventListener(DOMWindow&) const;
 
     void dispatchDeviceEvent(Event&);
     bool isActive() { return !m_listeners.isEmpty(); }

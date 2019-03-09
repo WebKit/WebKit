@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 14: NotAllowedError: Calling requestPermission() requires a user gesture
+Tests that DeviceOrientationEvent.requestPermission() requires a user gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.name is "NotAllowedError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

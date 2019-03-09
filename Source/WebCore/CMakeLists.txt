@@ -671,6 +671,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DataTransferItemList.idl
     dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
+    dom/DeviceOrientationOrMotionEvent.idl
+    dom/DeviceOrientationOrMotionPermissionState.idl
     dom/Document.idl
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl

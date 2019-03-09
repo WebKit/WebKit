@@ -150,6 +150,9 @@ public:
     unsigned userMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
     void resetUserMediaPermissionRequestCountForOrigin(WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
 
+    // Device Orientation / Motion.
+    bool handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef);
+
     // Content Extensions.
     void configureContentExtensionForTest(const TestInvocation&);
     void resetContentExtensions();
@@ -199,6 +202,7 @@ public:
     void setIgnoresViewportScaleLimits(bool);
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
+    void setShouldAllowDeviceOrientationAndMotionAccess(bool value) { m_shouldAllowDeviceOrientationAndMotionAccess = value; }
 
     void setStatisticsDebugMode(bool value);
     void setStatisticsPrevalentResourceForDebugMode(WKStringRef hostName);
@@ -509,6 +513,7 @@ private:
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };
     bool m_shouldDownloadUndisplayableMIMETypes { false };
+    bool m_shouldAllowDeviceOrientationAndMotionAccess { false };
 
     bool m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges { false };
     bool m_handlesAuthenticationChallenges { false };

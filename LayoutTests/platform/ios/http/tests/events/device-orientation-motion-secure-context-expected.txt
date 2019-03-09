@@ -1,11 +1,16 @@
+Received device orientation & motion access request for security origin "http://127.0.0.1:8000".
 Tests that trying to set an event listener for deviceorientation and deviceorientation does not log an error in secure contexts.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+* Requesting device orientation access...
+PASS result is "granted"
 * Registering device orientation listener
 PASS lastConsoleMessage is null
 
+* Requesting device motion access...
+PASS result is "granted"
 * Registering device motion listener
 PASS lastConsoleMessage is null
 PASS successfullyParsed is true

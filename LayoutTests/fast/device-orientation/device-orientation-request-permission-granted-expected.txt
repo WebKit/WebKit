@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 12: No device motion or orientation events will be fired until permission has been requested and granted.
+Received device orientation & motion access request for security origin "".
+Basic testing for DeviceOrientationEvent.requestPermission().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "granted"
+PASS result is "granted"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

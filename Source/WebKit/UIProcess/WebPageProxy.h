@@ -1401,6 +1401,10 @@ public:
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, uint64_t frameID, CompletionHandler<void(bool)>&&);
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
+    void requestDeviceOrientationAndMotionAccess(WebCore::SecurityOriginData&&, uint64_t callbackID);
+#endif
+
     static WebPageProxy* nonEphemeralWebPageProxy();
 
 #if ENABLE(ATTACHMENT_ELEMENT)

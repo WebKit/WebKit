@@ -82,6 +82,11 @@ class VisualViewport;
 class WebKitNamespace;
 class WebKitPoint;
 
+#if ENABLE(DEVICE_ORIENTATION)
+class DeviceMotionController;
+class DeviceOrientationController;
+#endif
+
 struct ImageBitmapOptions;
 struct WindowFeatures;
 
@@ -309,6 +314,19 @@ public:
     void incrementScrollEventListenersCount();
     void decrementScrollEventListenersCount();
     unsigned scrollEventListenerCount() const { return m_scrollEventListenerCount; }
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+    void startListeningForDeviceOrientationIfNecessary();
+    void stopListeningForDeviceOrientationIfNecessary();
+    void startListeningForDeviceMotionIfNecessary();
+    void stopListeningForDeviceMotionIfNecessary();
+
+    bool isAllowedToUseDeviceMotionOrientation(String& message) const;
+    bool isAllowedToAddDeviceMotionOrientationListener(String& message) const;
+
+    DeviceOrientationController* deviceOrientationController() const;
+    DeviceMotionController* deviceMotionController() const;
 #endif
 
     void resetAllGeolocationPermission();

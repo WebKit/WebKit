@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 12: No device motion or orientation events will be fired until permission has been requested and granted.
+Received device orientation & motion access request for security origin "".
+CONSOLE MESSAGE: line 19: No device motion or orientation events will be fired because permission to use the API was denied.
+Basic testing for DeviceMotionEvent.requestPermission().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "denied"
+PASS result is "denied"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

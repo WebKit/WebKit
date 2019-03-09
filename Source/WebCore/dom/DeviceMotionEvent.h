@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "DeviceOrientationOrMotionEvent.h"
 #include "Event.h"
 
 namespace WebCore {
 
 class DeviceMotionData;
 
-class DeviceMotionEvent final : public Event {
+class DeviceMotionEvent final : public Event, public DeviceOrientationOrMotionEvent {
 public:
     virtual ~DeviceMotionEvent();
 

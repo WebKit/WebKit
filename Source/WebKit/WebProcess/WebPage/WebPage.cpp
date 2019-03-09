@@ -6339,6 +6339,30 @@ void WebPage::requestStorageAccess(String&& subFrameHost, String&& topFrameHost,
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(sessionID(), RegistrableDomain::uncheckedCreateFromHost(subFrameHost), RegistrableDomain::uncheckedCreateFromHost(topFrameHost), frameID, m_pageID, promptEnabled), WTFMove(completionHandler));
 }
 #endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+static uint64_t nextDeviceOrientationAndMotionPermissionCallbackID()
+{
+    static uint64_t nextCallbackID = 0;
+    return ++nextCallbackID;
+}
+
+void WebPage::shouldAllowDeviceOrientationAndMotionAccess(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& callback)
+{
+    auto callbackID = nextDeviceOrientationAndMotionPermissionCallbackID();
+    ASSERT(!m_deviceOrientationAndMotionPermissionCallbackMap.contains(callbackID));
+    m_deviceOrientationAndMotionPermissionCallbackMap.add(callbackID, WTFMove(callback));
+
+    send(Messages::WebPageProxy::RequestDeviceOrientationAndMotionAccess(origin.data(), callbackID));
+}
+
+void WebPage::didReceiveDeviceOrientationAndMotionAccessDecision(uint64_t callbackID, bool granted)
+{
+    auto callback = m_deviceOrientationAndMotionPermissionCallbackMap.take(callbackID);
+    ASSERT(callback);
+    callback(granted);
+}
+#endif
     
 static ShareSheetCallbackID nextShareSheetCallbackID()
 {

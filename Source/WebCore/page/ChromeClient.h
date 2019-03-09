@@ -482,6 +482,10 @@ public:
     virtual void hasStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
     virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
 
+#if ENABLE(DEVICE_ORIENTATION)
+    virtual void shouldAllowDeviceOrientationAndMotionAccess(const SecurityOrigin&, WTF::CompletionHandler<void(bool)>&& callback) { callback(true); }
+#endif
+
     virtual void didInsertMenuElement(HTMLMenuElement&) { }
     virtual void didRemoveMenuElement(HTMLMenuElement&) { }
     virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }

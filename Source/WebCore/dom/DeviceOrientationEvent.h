@@ -25,13 +25,14 @@
 
 #pragma once
 
+#include "DeviceOrientationOrMotionEvent.h"
 #include "Event.h"
 
 namespace WebCore {
 
 class DeviceOrientationData;
 
-class DeviceOrientationEvent final : public Event {
+class DeviceOrientationEvent final : public Event, public DeviceOrientationOrMotionEvent {
 public:
     static Ref<DeviceOrientationEvent> create(const AtomicString& eventType, DeviceOrientationData* orientation)
     {

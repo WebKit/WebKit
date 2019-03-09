@@ -6,6 +6,11 @@
 description("Tests that trying to set an event listener for deviceorientation and deviceorientation does not log an error in secure contexts.");
 jsTestIsAsync = true;
 
+if (window.testRunner) {
+    if (testRunner.setShouldAllowDeviceOrientationAndMotionAccess)
+        testRunner.setShouldAllowDeviceOrientationAndMotionAccess(true);
+}
+
 // localhost is secure by default.
 
 let lastConsoleMessage = null;
@@ -15,19 +20,27 @@ internals.setConsoleMessageListener((message) => {
 
 function runDeviceMotionTest()
 {
+    debug("");
     if (!window.DeviceMotionEvent) {
         console.log("Device Motion API is not supported");
         finishJSTest();
         return;
     }
 
-    lastConsoleMessage = null;
-    debug("");
-    debug("* Registering device motion listener");
-    addEventListener("devicemotion", function() { });
-    internals.postTask(() => {
-        shouldBeNull("lastConsoleMessage");
-        finishJSTest();
+    debug("* Requesting device motion access...");
+    internals.withUserGesture(() => {
+        DeviceMotionEvent.requestPermission().then((_result) => {
+            result = _result;
+            shouldBeEqualToString("result", "granted");
+
+            lastConsoleMessage = null;
+            debug("* Registering device motion listener");
+            addEventListener("devicemotion", function() { });
+            internals.postTask(() => {
+                shouldBeNull("lastConsoleMessage");
+                finishJSTest();
+            });
+        });
     });
 }
 
@@ -39,12 +52,20 @@ function runDeviceOrientationTest()
         return;
     }
 
-    lastConsoleMessage = null;
-    debug("* Registering device orientation listener");
-    addEventListener("deviceorientation", function() { });
-    internals.postTask(() => {
-        shouldBeNull("lastConsoleMessage");
-        runDeviceMotionTest();
+    debug("* Requesting device orientation access...");
+    internals.withUserGesture(() => {
+        DeviceOrientationEvent.requestPermission().then((_result) => {
+            result = _result;
+            shouldBeEqualToString("result", "granted");
+
+            lastConsoleMessage = null;
+            debug("* Registering device orientation listener");
+            addEventListener("deviceorientation", function() { });
+            internals.postTask(() => {
+                shouldBeNull("lastConsoleMessage");
+                runDeviceMotionTest();
+            });
+        });
     });
 }
 

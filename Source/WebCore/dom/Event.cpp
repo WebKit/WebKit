@@ -28,6 +28,7 @@
 #include "EventNames.h"
 #include "EventPath.h"
 #include "EventTarget.h"
+#include "InspectorInstrumentation.h"
 #include "Performance.h"
 #include "UserGestureIndicator.h"
 #include "WorkerGlobalScope.h"

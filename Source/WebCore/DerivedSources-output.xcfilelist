@@ -459,6 +459,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceMotionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceMotionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeviceOrientationOrMotionPermissionState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocumentAndElementEventHandlers.cpp

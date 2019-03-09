@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Microtasks.h"
 
+#include "WorkerGlobalScope.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>

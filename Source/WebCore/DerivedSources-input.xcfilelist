@@ -564,6 +564,8 @@ $(PROJECT_DIR)/dom/DataTransferItem.idl
 $(PROJECT_DIR)/dom/DataTransferItemList.idl
 $(PROJECT_DIR)/dom/DeviceMotionEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationEvent.idl
+$(PROJECT_DIR)/dom/DeviceOrientationOrMotionEvent.idl
+$(PROJECT_DIR)/dom/DeviceOrientationOrMotionPermissionState.idl
 $(PROJECT_DIR)/dom/Document.idl
 $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl

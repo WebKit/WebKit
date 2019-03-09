@@ -244,6 +244,7 @@
 
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionEvent.h"
+#include "DeviceOrientationAndMotionAccessController.h"
 #include "DeviceOrientationEvent.h"
 #endif
 
@@ -8610,6 +8611,20 @@ void Document::frameWasDisconnectedFromOwner()
 
     detachFromFrame();
 }
+
+#if ENABLE(DEVICE_ORIENTATION)
+
+DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotionAccessController()
+{
+    if (&topDocument() != this)
+        return topDocument().deviceOrientationAndMotionAccessController();
+
+    if (!m_deviceOrientationAndMotionAccessController)
+        m_deviceOrientationAndMotionAccessController = std::make_unique<DeviceOrientationAndMotionAccessController>(*this);
+    return *m_deviceOrientationAndMotionAccessController;
+}
+
+#endif
 
 #if ENABLE(CSS_PAINTING_API)
 Worklet& Document::ensurePaintWorklet()

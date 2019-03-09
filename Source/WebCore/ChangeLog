@@ -1,3 +1,75 @@
+2019-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Add support for Device Orientation / Motion permission API
+        https://bugs.webkit.org/show_bug.cgi?id=195329
+        <rdar://problem/47645367>
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for Device Orientation / Motion permission API:
+        - https://github.com/w3c/deviceorientation/issues/57
+
+        Pages can add event listeners for 'deviceorientation' / 'devicemotion' events but
+        such events will not be fired until the page's JavaScript calls
+        DeviceOrientationEvent.requestPermission() / DeviceMotionEvent.requestPermission()
+        and the user grants the request.
+
+        The feature is currently behind an experimental feature flag, off by default.
+
+        Tests: fast/device-orientation/device-motion-request-permission-denied.html
+               fast/device-orientation/device-motion-request-permission-granted.html
+               fast/device-orientation/device-motion-request-permission-user-gesture.html
+               fast/device-orientation/device-orientation-request-permission-denied.html
+               fast/device-orientation/device-orientation-request-permission-granted.html
+               fast/device-orientation/device-orientation-request-permission-user-gesture.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceMotionEvent.h:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationAndMotionAccessController.cpp: Added.
+        (WebCore::DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController):
+        (WebCore::DeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        (WebCore::DeviceOrientationAndMotionAccessController::setAccessState):
+        * dom/DeviceOrientationAndMotionAccessController.h: Added.
+        (WebCore::DeviceOrientationAndMotionAccessController::accessState const):
+        * dom/DeviceOrientationEvent.h:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/DeviceOrientationOrMotionEvent.cpp: Added.
+        (WebCore::DeviceOrientationOrMotionEvent::requestPermission):
+        * dom/DeviceOrientationOrMotionEvent.h: Added.
+        * dom/DeviceOrientationOrMotionEvent.idl: Added.
+        * dom/DeviceOrientationOrMotionPermissionState.h: Added.
+        * dom/DeviceOrientationOrMotionPermissionState.idl: Added.
+        * dom/Document.cpp:
+        (WebCore::Document::deviceOrientationAndMotionAccessController):
+        * dom/Document.h:
+        * dom/Event.cpp:
+        * dom/MessagePort.cpp:
+        * dom/Microtasks.cpp:
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::deviceOrientationController const):
+        (WebCore::DOMWindow::deviceMotionController const):
+        (WebCore::DOMWindow::isAllowedToUseDeviceMotionOrientation const):
+        (WebCore::DOMWindow::isAllowedToAddDeviceMotionOrientationListener const):
+        (WebCore::DOMWindow::startListeningForDeviceOrientationIfNecessary):
+        (WebCore::DOMWindow::stopListeningForDeviceOrientationIfNecessary):
+        (WebCore::DOMWindow::startListeningForDeviceMotionIfNecessary):
+        (WebCore::DOMWindow::stopListeningForDeviceMotionIfNecessary):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.h:
+        * page/DeviceController.cpp:
+        (WebCore::DeviceController::hasDeviceEventListener const):
+        * page/DeviceController.h:
+        * page/Settings.yaml:
+
 2019-03-08  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Expand "isConsideredClickable" to descendants

@@ -69,6 +69,11 @@ void DeviceController::removeAllDeviceEventListeners(DOMWindow& window)
         m_client.stopUpdating();
 }
 
+bool DeviceController::hasDeviceEventListener(DOMWindow& window) const
+{
+    return m_listeners.contains(&window);
+}
+
 void DeviceController::dispatchDeviceEvent(Event& event)
 {
     for (auto& listener : copyToVector(m_listeners.values())) {

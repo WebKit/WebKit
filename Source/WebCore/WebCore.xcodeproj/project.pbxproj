@@ -1254,6 +1254,8 @@
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 460BB6141D0A1BEC00221812 /* Base64Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
+		460E3075222F4EFD009A0606 /* DeviceOrientationOrMotionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 461DA52A222F486F00D05A87 /* DeviceOrientationOrMotionEvent.h */; };
+		460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */; };
 		46218ACB1F72D64E00574FBE /* DOMHighResTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463521AD2081092A00C28922 /* WindowProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 463521AA2081090B00C28922 /* WindowProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
@@ -1271,6 +1273,7 @@
 		46B95198207D634700A7D2DD /* GlobalFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95191207D632D00A7D2DD /* GlobalFrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B95199207D634D00A7D2DD /* RemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B9518E207D632A00A7D2DD /* RemoteDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46B9519A207D635400A7D2DD /* RemoteFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95192207D632E00A7D2DD /* RemoteFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		46B95BF52231CFD60053A504 /* DeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B95BF42231CFB80053A504 /* DeviceOrientationAndMotionAccessController.h */; };
 		46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C376612085176D00C73829 /* JSRemoteDOMWindow.h */; };
 		46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C696C91E7205E400597937 /* CPUMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7725,6 +7728,8 @@
 		460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowProperties.cpp; sourceTree = "<group>"; };
 		460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowProperties.h; sourceTree = "<group>"; };
 		460D19441FCE21DD00C3DB85 /* JSServiceWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
+		461DA52A222F486F00D05A87 /* DeviceOrientationOrMotionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationOrMotionEvent.h; sourceTree = "<group>"; };
+		461DA52C222F486F00D05A87 /* DeviceOrientationOrMotionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientationOrMotionEvent.cpp; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
 		463521AA2081090B00C28922 /* WindowProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowProxy.h; sourceTree = "<group>"; };
 		463521AC2081090E00C28922 /* WindowProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowProxy.cpp; sourceTree = "<group>"; };
@@ -7732,6 +7737,9 @@
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		4642404520EAF0ED00B29FD2 /* DatabaseManagerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DatabaseManagerCocoa.mm; sourceTree = "<group>"; };
 		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecksCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecksCocoa.mm; sourceTree = "<group>"; };
+		465EDD9D222F4EC300B46E16 /* DeviceOrientationOrMotionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionEvent.idl; sourceTree = "<group>"; };
+		465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationOrMotionPermissionState.h; sourceTree = "<group>"; };
+		465EDDA0222F4EC400B46E16 /* DeviceOrientationOrMotionPermissionState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeviceOrientationOrMotionPermissionState.idl; sourceTree = "<group>"; };
 		466DC6AB1EDE021D00746224 /* JSDOMRectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMRectList.cpp; sourceTree = "<group>"; };
 		466ED8D21EDE0135005E43F6 /* JSDOMRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRectList.h; sourceTree = "<group>"; };
 		4671E0631D67A57B00C6B497 /* CanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPath.cpp; sourceTree = "<group>"; };
@@ -7754,6 +7762,8 @@
 		46B95192207D632E00A7D2DD /* RemoteFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteFrame.h; sourceTree = "<group>"; };
 		46B95193207D632F00A7D2DD /* AbstractDOMWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDOMWindow.cpp; sourceTree = "<group>"; };
 		46B95194207D633000A7D2DD /* AbstractFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractFrame.cpp; sourceTree = "<group>"; };
+		46B95BF22231CFB80053A504 /* DeviceOrientationAndMotionAccessController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceOrientationAndMotionAccessController.cpp; sourceTree = "<group>"; };
+		46B95BF42231CFB80053A504 /* DeviceOrientationAndMotionAccessController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationAndMotionAccessController.h; sourceTree = "<group>"; };
 		46BCBBBE2085005B00710638 /* JSRemoteDOMWindowCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindowCustom.cpp; sourceTree = "<group>"; };
 		46BCBBC02085007F00710638 /* JSRemoteDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRemoteDOMWindowBase.h; sourceTree = "<group>"; };
 		46BCBBC12085008000710638 /* JSRemoteDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRemoteDOMWindowBase.cpp; sourceTree = "<group>"; };
@@ -27498,6 +27508,8 @@
 				31FB1A54120A5D0600DC02A0 /* DeviceMotionEvent.cpp */,
 				31FB1A55120A5D0600DC02A0 /* DeviceMotionEvent.h */,
 				31FB1A56120A5D0600DC02A0 /* DeviceMotionEvent.idl */,
+				46B95BF22231CFB80053A504 /* DeviceOrientationAndMotionAccessController.cpp */,
+				46B95BF42231CFB80053A504 /* DeviceOrientationAndMotionAccessController.h */,
 				59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */,
 				59A8F1D311A69508001AC34A /* DeviceOrientationController.cpp */,
 				59A8F1D511A69513001AC34A /* DeviceOrientationController.h */,
@@ -27506,6 +27518,11 @@
 				59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */,
 				59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */,
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
+				461DA52C222F486F00D05A87 /* DeviceOrientationOrMotionEvent.cpp */,
+				461DA52A222F486F00D05A87 /* DeviceOrientationOrMotionEvent.h */,
+				465EDD9D222F4EC300B46E16 /* DeviceOrientationOrMotionEvent.idl */,
+				465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */,
+				465EDDA0222F4EC400B46E16 /* DeviceOrientationOrMotionPermissionState.idl */,
 				A8185F3409765765005826D9 /* Document.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
 				6548E24809E1E04D00AF8020 /* Document.idl */,
@@ -29030,12 +29047,15 @@
 				31FB1A59120A5D0600DC02A0 /* DeviceMotionController.h in Headers */,
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
 				31FB1A5D120A5D0600DC02A0 /* DeviceMotionEvent.h in Headers */,
+				46B95BF52231CFD60053A504 /* DeviceOrientationAndMotionAccessController.h in Headers */,
 				59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */,
 				3140379D124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h in Headers */,
 				59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */,
 				59A8F1D611A69513001AC34A /* DeviceOrientationController.h in Headers */,
 				590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */,
 				59A85EA4119D68EC00DEF1EF /* DeviceOrientationEvent.h in Headers */,
+				460E3075222F4EFD009A0606 /* DeviceOrientationOrMotionEvent.h in Headers */,
+				460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */,
 				572B401F21757A64000AD43E /* DeviceRequestConverter.h in Headers */,
 				572B403A21772581000AD43E /* DeviceResponseConverter.h in Headers */,
 				267725FD1A5B3AD9003C24DD /* DFA.h in Headers */,

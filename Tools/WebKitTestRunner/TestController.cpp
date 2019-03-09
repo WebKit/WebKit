@@ -262,6 +262,11 @@ static void requestPointerLock(WKPageRef page, const void*)
     WKPageDidAllowPointerLock(page);
 }
 
+static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, const void*)
+{
+    return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin);
+}
+
 WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
@@ -570,8 +575,8 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
     resetPreferencesToConsistentValues(options);
 
     platformCreateWebView(configuration.get(), options);
-    WKPageUIClientV8 pageUIClient = {
-        { 8, m_mainWebView.get() },
+    WKPageUIClientV13 pageUIClient = {
+        { 13, m_mainWebView.get() },
         0, // createNewPage_deprecatedForUseWithV0
         0, // showPage
         0, // close
@@ -637,7 +642,13 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // runBeforeUnloadConfirmPanel
         0, // fullscreenMayReturnToInline
         requestPointerLock,
-        0,
+        0, // didLosePointerLock
+        0, // handleAutoplayEvent
+        0, // hasVideoInPictureInPictureDidChange
+        0, // didExceedBackgroundResourceLimitWhileInForeground
+        0, // didResignInputElementStrongPasswordAppearance
+        0, // requestStorageAccessConfirm
+        shouldAllowDeviceOrientationAndMotionAccess
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 
@@ -942,6 +953,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     resetContentExtensions();
 
     m_shouldDownloadUndisplayableMIMETypes = false;
+
+    m_shouldAllowDeviceOrientationAndMotionAccess = false;
 
     m_workQueueManager.clearWorkQueue();
 
@@ -2546,6 +2559,12 @@ void TestController::handleCheckOfUserMediaPermissionForOrigin(WKFrameRef frame,
     WKRetainPtr<WKStringRef> saltString = adoptWK(WKStringCreateWithUTF8CString(salt.utf8().data()));
 
     WKUserMediaPermissionCheckSetUserMediaAccessInfo(checkRequest, saltString.get(), settingsForOrigin(originHash).persistentPermission());
+}
+
+bool TestController::handleDeviceOrientationAndMotionAccessRequest(WKSecurityOriginRef origin)
+{
+    m_currentInvocation->outputText(makeString("Received device orientation & motion access request for security origin \"", originUserVisibleName(origin), "\".\n"));
+    return m_shouldAllowDeviceOrientationAndMotionAccess;
 }
 
 void TestController::handleUserMediaPermissionRequest(WKFrameRef frame, WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin, WKUserMediaPermissionRequestRef request)

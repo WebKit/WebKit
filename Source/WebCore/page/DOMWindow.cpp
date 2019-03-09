@@ -49,6 +49,7 @@
 #include "DeviceMotionController.h"
 #include "DeviceMotionData.h"
 #include "DeviceMotionEvent.h"
+#include "DeviceOrientationAndMotionAccessController.h"
 #include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -1826,50 +1827,134 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
     else if (eventNames().isGamepadEventType(eventType))
         incrementGamepadEventListenerCount();
 #endif
-
 #if ENABLE(DEVICE_ORIENTATION)
-    if (frame() && frame()->settings().deviceOrientationEventEnabled() && document() && document()->loader() && document()->loader()->deviceOrientationEventEnabled()) {
-#if PLATFORM(IOS_FAMILY)
-        if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent)) {
-            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-                if (eventType == eventNames().deviceorientationEvent)
-                    document()->deviceOrientationController().addDeviceEventListener(*this);
-                else
-                    document()->deviceMotionController().addDeviceEventListener(*this);
-            } else if (document()) {
-                if (isSecureContext())
-                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener from child frame that wasn't the same security origin as the main page."_s);
-                else
-                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
-            }
-        }
-#else
-        if (eventType == eventNames().devicemotionEvent) {
-            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-                if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-                    controller->addDeviceEventListener(*this);
-            } else
-                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion listener from child frame that wasn't the same security origin as the main page."_s);
-        } else if (eventType == eventNames().deviceorientationEvent) {
-            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-                if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-                    controller->addDeviceEventListener(*this);
-            } else {
-                if (isSecureContext())
-                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device orientation listener from child frame that wasn't the same security origin as the main page."_s);
-                else
-                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
-            }
-        }
-#endif // PLATFORM(IOS_FAMILY)
-    } else if (eventType == eventNames().devicemotionEvent)
-        failedToRegisterDeviceMotionEventListener();
-#endif // ENABLE(DEVICE_ORIENTATION)
+    else if (eventType == eventNames().deviceorientationEvent)
+        startListeningForDeviceOrientationIfNecessary();
+    else if (eventType == eventNames().devicemotionEvent)
+        startListeningForDeviceMotionIfNecessary();
+#endif
 
     return true;
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
+
+DeviceOrientationController* DOMWindow::deviceOrientationController() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return document() ? &document()->deviceOrientationController() : nullptr;
+#else
+    return DeviceOrientationController::from(page());
+#endif
+}
+
+DeviceMotionController* DOMWindow::deviceMotionController() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return document() ? &document()->deviceMotionController() : nullptr;
+#else
+    return DeviceMotionController::from(page());
+#endif
+}
+
+bool DOMWindow::isAllowedToUseDeviceMotionOrientation(String& message) const
+{
+    if (!frame() || !frame()->settings().deviceOrientationEventEnabled() || !document() || !document()->loader() || !document()->loader()->deviceOrientationEventEnabled()) {
+        message = "API is disabled"_s;
+        return false;
+    }
+
+    if (!isSecureContext()) {
+        message = "Browsing context is not secure"_s;
+        return false;
+    }
+
+    if (!isSameSecurityOriginAsMainFrame()) {
+        message = "Source frame did not have the same security origin as the main page"_s;
+        return false;
+    }
+    return true;
+}
+
+bool DOMWindow::isAllowedToAddDeviceMotionOrientationListener(String& message) const
+{
+    String innerMessage;
+    if (!isAllowedToUseDeviceMotionOrientation(innerMessage)) {
+        message = makeString("Blocked attempt to add a device motion or orientation event listener, reason: ", innerMessage, ".");
+        return false;
+    }
+
+    if (frame()->settings().deviceOrientationPermissionAPIEnabled()) {
+        auto accessState = document()->deviceOrientationAndMotionAccessController().accessState();
+        if (accessState && !*accessState) {
+            message = "No device motion or orientation events will be fired because permission to use the API was denied."_s;
+            return false;
+        }
+        if (!accessState) {
+            message = "No device motion or orientation events will be fired until permission has been requested and granted."_s;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void DOMWindow::startListeningForDeviceOrientationIfNecessary()
+{
+    if (!hasEventListeners(eventNames().deviceorientationEvent))
+        return;
+
+    auto* deviceController = deviceOrientationController();
+    if (!deviceController || deviceController->hasDeviceEventListener(*this))
+        return;
+
+    String errorMessage;
+    if (!isAllowedToAddDeviceMotionOrientationListener(errorMessage)) {
+        if (auto* document = this->document())
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, errorMessage);
+        return;
+    }
+
+    deviceController->addDeviceEventListener(*this);
+}
+
+void DOMWindow::stopListeningForDeviceOrientationIfNecessary()
+{
+    if (hasEventListeners(eventNames().deviceorientationEvent))
+        return;
+
+    if (auto* deviceController = deviceOrientationController())
+        deviceController->removeDeviceEventListener(*this);
+}
+
+void DOMWindow::startListeningForDeviceMotionIfNecessary()
+{
+    if (!hasEventListeners(eventNames().devicemotionEvent))
+        return;
+
+    auto* deviceController = deviceMotionController();
+    if (!deviceController || deviceController->hasDeviceEventListener(*this))
+        return;
+
+    String errorMessage;
+    if (!isAllowedToAddDeviceMotionOrientationListener(errorMessage)) {
+        failedToRegisterDeviceMotionEventListener();
+        if (auto* document = this->document())
+            document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, errorMessage);
+        return;
+    }
+
+    deviceController->addDeviceEventListener(*this);
+}
+
+void DOMWindow::stopListeningForDeviceMotionIfNecessary()
+{
+    if (hasEventListeners(eventNames().devicemotionEvent))
+        return;
+
+    if (auto* deviceController = deviceMotionController())
+        deviceController->removeDeviceEventListener(*this);
+}
 
 void DOMWindow::failedToRegisterDeviceMotionEventListener()
 {
@@ -1941,22 +2026,6 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         removeUnloadEventListener(this);
     else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
         removeBeforeUnloadEventListener(this);
-#if ENABLE(DEVICE_ORIENTATION)
-#if PLATFORM(IOS_FAMILY)
-    else if (eventType == eventNames().devicemotionEvent && document())
-        document()->deviceMotionController().removeDeviceEventListener(*this);
-    else if (eventType == eventNames().deviceorientationEvent && document())
-        document()->deviceOrientationController().removeDeviceEventListener(*this);
-#else
-    else if (eventType == eventNames().devicemotionEvent) {
-        if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-            controller->removeDeviceEventListener(*this);
-    } else if (eventType == eventNames().deviceorientationEvent) {
-        if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-            controller->removeDeviceEventListener(*this);
-    }
-#endif // PLATFORM(IOS_FAMILY)
-#endif // ENABLE(DEVICE_ORIENTATION)
 #if PLATFORM(IOS_FAMILY)
     else if (eventType == eventNames().scrollEvent)
         decrementScrollEventListenersCount();
@@ -1976,6 +2045,12 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 #if ENABLE(GAMEPAD)
     else if (eventNames().isGamepadEventType(eventType))
         decrementGamepadEventListenerCount();
+#endif
+#if ENABLE(DEVICE_ORIENTATION)
+    else if (eventType == eventNames().deviceorientationEvent)
+        stopListeningForDeviceOrientationIfNecessary();
+    else if (eventType == eventNames().devicemotionEvent)
+        stopListeningForDeviceMotionIfNecessary();
 #endif
 
     return true;
@@ -2059,18 +2134,9 @@ void DOMWindow::removeAllEventListeners()
     EventTarget::removeAllEventListeners();
 
 #if ENABLE(DEVICE_ORIENTATION)
-#if PLATFORM(IOS_FAMILY)
-    if (Document* document = this->document()) {
-        document->deviceMotionController().removeAllDeviceEventListeners(*this);
-        document->deviceOrientationController().removeAllDeviceEventListeners(*this);
-    }
-#else
-    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-        controller->removeAllDeviceEventListeners(*this);
-    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-        controller->removeAllDeviceEventListeners(*this);
-#endif // PLATFORM(IOS_FAMILY)
-#endif // ENABLE(DEVICE_ORIENTATION)
+        stopListeningForDeviceOrientationIfNecessary();
+        stopListeningForDeviceMotionIfNecessary();
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     if (m_scrollEventListenerCount) {

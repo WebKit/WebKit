@@ -767,6 +767,11 @@ deviceOrientationEventEnabled:
   initial: true
   conditional: DEVICE_ORIENTATION
 
+deviceOrientationPermissionAPIEnabled:
+  type: bool
+  initial: false
+  conditional: DEVICE_ORIENTATION
+
 shouldEnableTextAutosizingBoost:
   type: bool
   initial: false

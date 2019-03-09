@@ -224,11 +224,14 @@ class Touch;
 class TouchList;
 #endif
 
+#if ENABLE(DEVICE_ORIENTATION)
 #if PLATFORM(IOS_FAMILY)
 class DeviceMotionClient;
 class DeviceMotionController;
 class DeviceOrientationClient;
 class DeviceOrientationController;
+#endif
+class DeviceOrientationAndMotionAccessController;
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1216,11 +1219,15 @@ public:
 #include <WebKitAdditions/DocumentIOS.h>
 #endif
 
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+#if ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY)
     DeviceMotionController& deviceMotionController() const;
     DeviceOrientationController& deviceOrientationController() const;
     WEBCORE_EXPORT void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 #endif
+
+    DeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController();
+#endif // ENABLE(DEVICE_ORIENTATION)
 
     const DocumentTiming& timing() const { return m_documentTiming; }
 
@@ -1869,11 +1876,14 @@ private:
     void setHasFrameSpecificStorageAccess(bool);
 #endif
 
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
+#if ENABLE(DEVICE_ORIENTATION)
+#if PLATFORM(IOS_FAMILY)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
     std::unique_ptr<DeviceMotionController> m_deviceMotionController;
     std::unique_ptr<DeviceOrientationClient> m_deviceOrientationClient;
     std::unique_ptr<DeviceOrientationController> m_deviceOrientationController;
+#endif
+    std::unique_ptr<DeviceOrientationAndMotionAccessController> m_deviceOrientationAndMotionAccessController;
 #endif
 
     GenericTaskQueue<Timer> m_logMessageTaskQueue;

@@ -35,6 +35,7 @@
 #include "MessageWithMessagePorts.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 

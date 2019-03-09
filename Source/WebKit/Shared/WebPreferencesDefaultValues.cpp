@@ -44,6 +44,15 @@ bool defaultPassiveTouchListenersAsDefaultOnDocument()
 #endif
 }
 
+bool defaultDeviceOrientationPermissionAPIEnabled()
+{
+#if PLATFORM(IOS) && ENABLE(DEVICE_ORIENTATION)
+    return linkedOnOrAfter(WebKit::SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI);
+#else
+    return false;
+#endif
+}
+
 bool defaultCustomPasteboardDataEnabled()
 {
 #if PLATFORM(IOSMAC)

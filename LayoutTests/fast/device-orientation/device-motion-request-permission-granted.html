@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Basic testing for DeviceMotionEvent.requestPermission().");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setShouldAllowDeviceOrientationAndMotionAccess(true);
+
+addEventListener("devicemotion", () => {});
+
+internals.withUserGesture(() => {
+    DeviceMotionEvent.requestPermission().then((_result) => {
+        result = _result;
+        shouldBeEqualToString("result", "granted");
+
+        addEventListener("devicemotion", () => {});
+
+        internals.withUserGesture(() => {
+            DeviceMotionEvent.requestPermission().then((_result) => {
+                result = _result;
+                shouldBeEqualToString("result", "granted");
+                finishJSTest();
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>
