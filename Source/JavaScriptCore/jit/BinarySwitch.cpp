@@ -40,11 +40,11 @@ static const bool verbose = false;
 static unsigned globalCounter; // We use a different seed every time we are invoked.
 
 BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type)
-    : m_value(value)
+    : m_type(type)
+    , m_value(value)
     , m_weakRandom(globalCounter++)
     , m_index(0)
     , m_caseIndex(UINT_MAX)
-    , m_type(type)
 {
     if (cases.isEmpty())
         return;

@@ -78,6 +78,7 @@ public:
 private:
     void build(unsigned start, bool hardStart, unsigned end);
     
+    Type m_type;
     GPRReg m_value;
     
     struct Case {
@@ -134,8 +135,6 @@ private:
     Vector<MacroAssembler::Jump> m_jumpStack;
     
     MacroAssembler::JumpList m_fallThrough;
-    
-    Type m_type;
 };
 
 } // namespace JSC
