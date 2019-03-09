@@ -69,8 +69,6 @@ public:
     virtual void invalidate() { }
     WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
 
-    void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
-
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
@@ -88,9 +86,6 @@ public:
 
     virtual void reportSynchronousScrollingReasonsChanged(MonotonicTime, SynchronousScrollingReasons) { }
     virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
-
-    FloatPoint mainFrameScrollPosition();
-    WEBCORE_EXPORT virtual FloatRect mainFrameLayoutViewport();
 
 #if PLATFORM(IOS_FAMILY)
     virtual void scrollingTreeNodeWillStartPanGesture() { }
@@ -114,13 +109,11 @@ public:
     WEBCORE_EXPORT virtual void currentSnapPointIndicesDidChange(ScrollingNodeID, unsigned horizontal, unsigned vertical) = 0;
 #endif
 
+    void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
+
     // Can be called from any thread. Will update what edges allow rubber-banding.
     WEBCORE_EXPORT void setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
 
-    bool rubberBandsAtLeft();
-    bool rubberBandsAtRight();
-    bool rubberBandsAtTop();
-    bool rubberBandsAtBottom();
     bool isHandlingProgrammaticScroll();
     
     void setScrollPinningBehavior(ScrollPinningBehavior);
@@ -137,7 +130,7 @@ public:
     void setLatchedNode(ScrollingNodeID);
     void clearLatchedNode();
 
-    bool hasLatchedNode() const { return m_latchedNodeID; }
+    bool hasLatchedNode() const { return m_treeState.latchedNodeID; }
     void setOrClearLatchedNode(const PlatformWheelEvent&, ScrollingNodeID);
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
@@ -168,26 +161,33 @@ private:
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, ScrollingTreeNode*>;
     ScrollingTreeNodeMap m_nodeMap;
 
-    Lock m_mutex;
-    EventTrackingRegions m_eventTrackingRegions;
-    FloatPoint m_mainFrameScrollPosition;
+    struct TreeState {
+        ScrollingNodeID latchedNodeID { 0 };
+        EventTrackingRegions eventTrackingRegions;
+        FloatPoint mainFrameScrollPosition;
+        bool mainFrameIsRubberBanding { false };
+        bool mainFrameIsScrollSnapping { false };
+    };
+    
+    Lock m_treeStateMutex;
+    TreeState m_treeState;
+
+    struct SwipeState {
+        ScrollPinningBehavior scrollPinningBehavior { DoNotPin };
+        bool rubberBandsAtLeft { true };
+        bool rubberBandsAtRight { true };
+        bool rubberBandsAtTop { true };
+        bool rubberBandsAtBottom { true };
+        bool mainFramePinnedToTheLeft { true };
+        bool mainFramePinnedToTheRight { true };
+        bool mainFramePinnedToTheTop { true };
+        bool mainFramePinnedToTheBottom { true };
+    };
 
     Lock m_swipeStateMutex;
-    ScrollPinningBehavior m_scrollPinningBehavior { DoNotPin };
-    ScrollingNodeID m_latchedNodeID { 0 };
+    SwipeState m_swipeState;
 
     unsigned m_fixedOrStickyNodeCount { 0 };
-
-    bool m_rubberBandsAtLeft { true };
-    bool m_rubberBandsAtRight { true };
-    bool m_rubberBandsAtTop { true };
-    bool m_rubberBandsAtBottom { true };
-    bool m_mainFramePinnedToTheLeft { true };
-    bool m_mainFramePinnedToTheRight { true };
-    bool m_mainFramePinnedToTheTop { true };
-    bool m_mainFramePinnedToTheBottom { true };
-    bool m_mainFrameIsRubberBanding { false };
-    bool m_mainFrameIsScrollSnapping { false };
     bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_isHandlingProgrammaticScroll { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };

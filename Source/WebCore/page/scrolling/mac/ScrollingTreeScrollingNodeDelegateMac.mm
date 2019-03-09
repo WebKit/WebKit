@@ -178,6 +178,7 @@ IntSize ScrollingTreeScrollingNodeDelegateMac::stretchAmount()
     else if (scrollPosition.x() > maximumScrollPosition().x())
         stretch.setWidth(scrollPosition.x() - maximumScrollPosition().x());
 
+    // FIXME: calling this function should not have these side-effects.
     if (scrollingNode().isRootNode()) {
         if (stretch.isZero())
             scrollingTree().setMainFrameIsRubberBanding(false);

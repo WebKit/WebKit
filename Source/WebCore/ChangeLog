@@ -1,5 +1,57 @@
 2019-03-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Make it clearer which data is protected by the two locks in ScrollingTree
+        https://bugs.webkit.org/show_bug.cgi?id=195501
+
+        Reviewed by Tim Horton.
+
+        Gather ScrollingTree member variables into two structs, and name the struct
+        members and the locks to make it clear which data is protected by each lock.
+        
+        We only need to protect data read by multiple threads; these are the scrolling
+        thread, the event handling thread (which runs ThreadedScrollingTree::tryToHandleWheelEvent()),
+        and the main thread, which pokes various bits of pin/rubber-banding state.
+        Ideally the main thread would always push data to the scrolling thread via a commit,
+        but that's not what happens now.
+
+        Suspiciously, ScrollingTree::shouldHandleWheelEventSynchronously() uses the root node,
+        so should probably hold a lock shared with the scrolling thread (webkit.org/b/195502).
+        
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::shouldHandleWheelEventSynchronously):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::setAsyncFrameOrOverflowScrollingEnabled):
+        (WebCore::ScrollingTree::setMainFrameScrollPosition):
+        (WebCore::ScrollingTree::eventTrackingTypeForPoint):
+        (WebCore::ScrollingTree::isRubberBandInProgress):
+        (WebCore::ScrollingTree::setMainFrameIsRubberBanding):
+        (WebCore::ScrollingTree::isScrollSnapInProgress):
+        (WebCore::ScrollingTree::setMainFrameIsScrollSnapping):
+        (WebCore::ScrollingTree::setMainFramePinState):
+        (WebCore::ScrollingTree::setCanRubberBandState):
+        (WebCore::ScrollingTree::setScrollPinningBehavior):
+        (WebCore::ScrollingTree::scrollPinningBehavior):
+        (WebCore::ScrollingTree::willWheelEventStartSwipeGesture):
+        (WebCore::ScrollingTree::latchedNode):
+        (WebCore::ScrollingTree::setLatchedNode):
+        (WebCore::ScrollingTree::clearLatchedNode):
+        (WebCore::ScrollingTree::scrollingTreeAsText):
+        (WebCore::ScrollingTree::touchActionDataAtPoint const):
+        (WebCore::ScrollingTree::mainFrameScrollPosition): Deleted.
+        (WebCore::ScrollingTree::mainFrameLayoutViewport): Deleted.
+        (WebCore::ScrollingTree::rubberBandsAtLeft): Deleted.
+        (WebCore::ScrollingTree::rubberBandsAtRight): Deleted.
+        (WebCore::ScrollingTree::rubberBandsAtBottom): Deleted.
+        (WebCore::ScrollingTree::rubberBandsAtTop): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::hasLatchedNode const):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stretchAmount):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::isZero const):
+
+2019-03-08  Simon Fraser  <simon.fraser@apple.com>
+
         Share some code that sets CALayer positions
         https://bugs.webkit.org/show_bug.cgi?id=195485
 
