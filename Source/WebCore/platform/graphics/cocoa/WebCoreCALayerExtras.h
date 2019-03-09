@@ -28,6 +28,7 @@
 @interface CALayer (WebCoreCALayerExtras)
 
 - (void)web_disableAllActions;
+- (void)_web_setLayerTopLeftPosition:(CGPoint)position;
 + (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID;
 
 @end

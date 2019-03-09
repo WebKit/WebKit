@@ -33,7 +33,7 @@
 #import "ScrollingTree.h"
 #import "ScrollingTreeFrameScrollingNode.h"
 #import "ScrollingTreeOverflowScrollingNode.h"
-#import <QuartzCore/CALayer.h>
+#import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -65,16 +65,8 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
         m_constraints = stickyStateNode.viewportConstraints();
 }
 
-namespace ScrollingTreeStickyNodeInternal {
-static inline CGPoint operator*(CGPoint& a, const CGSize& b)
-{
-    return CGPointMake(a.x * b.width, a.y * b.height);
-}
-}
-
 void ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
-    using namespace ScrollingTreeStickyNodeInternal;
     FloatRect constrainingRect;
 
     auto* enclosingScrollingNode = enclosingScrollingNodeIncludingSelf();
@@ -87,12 +79,8 @@ void ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange(const Scrolling
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: new viewport " << layoutViewport << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout());
 
-    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect);
-
-    CGRect layerBounds = [m_layer bounds];
-    CGPoint anchorPoint = [m_layer anchorPoint];
-    CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-    [m_layer setPosition:newPosition];
+    FloatPoint layerPosition = m_constraints.layerPositionForConstrainingRect(constrainingRect) - m_constraints.alignmentOffset();
+    [m_layer _web_setLayerTopLeftPosition:layerPosition];
 
     cumulativeDelta += layerPosition - m_constraints.layerPositionAtLastLayout();
 }

@@ -31,7 +31,7 @@
 #import "Logging.h"
 #import "ScrollingStateFixedNode.h"
 #import "ScrollingTree.h"
-#import <QuartzCore/CALayer.h>
+#import "WebCoreCALayerExtras.h"
 #import <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -63,35 +63,15 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
         m_constraints = fixedStateNode.viewportConstraints();
 }
 
-namespace ScrollingTreeFixedNodeInternal {
-static inline CGPoint operator*(CGPoint& a, const CGSize& b)
-{
-    return CGPointMake(a.x * b.width, a.y * b.height);
-}
-}
-
 void ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
-    using namespace ScrollingTreeFixedNodeInternal;
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(layoutViewport);
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " relatedNodeScrollPositionDidChange: new viewport " << layoutViewport << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from top " << (layoutViewport.y() - layerPosition.y()));
 
     layerPosition -= cumulativeDelta;
 
-    CGRect layerBounds = [m_layer bounds];
-    CGPoint anchorPoint = [m_layer anchorPoint];
-    CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-
-    if (isnan(newPosition.x) || isnan(newPosition.y)) {
-        WTFLogAlways("Attempt to call [CALayer setPosition] with NaN: newPosition=(%f, %f) layerPosition=(%f, %f) alignmentOffset=(%f, %f)",
-            newPosition.x, newPosition.y, layerPosition.x(), layerPosition.y(),
-            m_constraints.alignmentOffset().width(), m_constraints.alignmentOffset().height());
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    [m_layer setPosition:newPosition];
+    [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
     cumulativeDelta += layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 

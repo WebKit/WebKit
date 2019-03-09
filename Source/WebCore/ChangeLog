@@ -1,3 +1,23 @@
+2019-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Share some code that sets CALayer positions
+        https://bugs.webkit.org/show_bug.cgi?id=195485
+
+        Reviewed by Zalan Bujtas.
+
+        Share some code between ScrollingTreeStickyNode and ScrollingTreeFixedNode that sets the position
+        of a CALayer given the top-left location.
+
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange):
+        (WebCore::ScrollingTreeFixedNodeInternal::operator*): Deleted.
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange):
+        (WebCore::ScrollingTreeStickyNodeInternal::operator*): Deleted.
+        * platform/graphics/cocoa/WebCoreCALayerExtras.h:
+        * platform/graphics/cocoa/WebCoreCALayerExtras.mm:
+        (-[CALayer _web_setLayerTopLeftPosition:]):
+
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
         Add support for Device Orientation / Motion permission API
