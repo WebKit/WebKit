@@ -1,5 +1,20 @@
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
+        Enable ProcessAssertions on iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=195479
+
+        Reviewed by Alexey Proskuryakov.
+
+        Enable ProcessAssertions on iOS Simulator. We have some layout tests timing out in the
+        iOS Simulator due to the WebContent process suspending. Turning on ProcessAssertions in
+        the iOS Simulator seems to make those tests pass.
+
+        * UIProcess/ProcessAssertion.cpp:
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+
+2019-03-08  Chris Dumez  <cdumez@apple.com>
+
         Add support for Device Orientation / Motion permission API
         https://bugs.webkit.org/show_bug.cgi?id=195329
         <rdar://problem/47645367>

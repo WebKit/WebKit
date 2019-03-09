@@ -34,7 +34,7 @@
 #include <unistd.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS BKSProcessAssertion;
 #endif
@@ -66,7 +66,7 @@ public:
     AssertionState state() const { return m_assertionState; }
     virtual void setState(AssertionState);
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(IOS_FAMILY)
 protected:
     enum class Validity { No, Yes, Unset };
     Validity validity() const { return m_validity; }
@@ -75,7 +75,7 @@ protected:
 #endif
 
 private:
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<BKSProcessAssertion> m_assertion;
     Validity m_validity { Validity::Unset };
 #endif
@@ -83,7 +83,7 @@ private:
     Client* m_client { nullptr };
 };
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(IOS_FAMILY)
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
@@ -104,6 +104,6 @@ private:
 
 using ProcessAndUIAssertion = ProcessAssertion;
 
-#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // PLATFORM(IOS_FAMILY)
     
 } // namespace WebKit

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ProcessAssertion.h"
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(IOS_FAMILY)
 
 #import "AssertionServicesSPI.h"
 #import "Logging.h"
@@ -256,4 +256,4 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // PLATFORM(IOS_FAMILY)

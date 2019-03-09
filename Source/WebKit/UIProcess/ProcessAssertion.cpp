@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProcessAssertion.h"
 
-#if !PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
+#if !PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -44,4 +44,4 @@ void ProcessAssertion::setState(AssertionState assertionState)
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // !PLATFORM(IOS_FAMILY)
