@@ -1,3 +1,12 @@
+2019-03-09  Robin Morisset  <rmorisset@apple.com>
+
+        AsyncStackTrace can be shrunk by 8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=195491
+
+        Reviewed by Mark Lam.
+
+        * inspector/AsyncStackTrace.h:
+
 2019-03-08  Mark Lam  <mark.lam@apple.com>
 
         Stack overflow crash in JSC::JSObject::hasInstance.

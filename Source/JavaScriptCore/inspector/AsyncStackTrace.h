@@ -35,7 +35,7 @@ class ScriptCallStack;
 
 class JS_EXPORT_PRIVATE AsyncStackTrace : public RefCounted<AsyncStackTrace> {
 public:
-    enum class State {
+    enum class State : uint8_t {
         Pending,
         Active,
         Dispatched,
