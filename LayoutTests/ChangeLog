@@ -1,3 +1,12 @@
+2019-03-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ iOS Simulator ] REGRESSION (r237087) Layout Test fast/viewport/ios/*-width-viewport-after-changing-view-scale.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=195341
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
         Add support for Device Orientation / Motion permission API
