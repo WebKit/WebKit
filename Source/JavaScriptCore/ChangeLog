@@ -1,5 +1,14 @@
 2019-03-08  Robin Morisset  <rmorisset@apple.com>
 
+        IntegerCheckCombiningPhase::Range can be shrunk by 8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=195487
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+
+2019-03-08  Robin Morisset  <rmorisset@apple.com>
+
         TypeLocation can be shrunk by 8 bytes
         https://bugs.webkit.org/show_bug.cgi?id=195483
 

@@ -145,8 +145,8 @@ public:
         }
         
         int32_t m_minBound { 0 };
-        CodeOrigin m_minOrigin;
         int32_t m_maxBound { 0 };
+        CodeOrigin m_minOrigin;
         CodeOrigin m_maxOrigin;
         unsigned m_count { 0 }; // If this is zero then the bounds won't necessarily make sense.
         bool m_hoisted { false };
