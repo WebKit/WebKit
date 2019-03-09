@@ -1,3 +1,13 @@
+2019-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Stack overflow crash in JSC::JSObject::hasInstance.
+        https://bugs.webkit.org/show_bug.cgi?id=195458
+        <rdar://problem/48710195>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/stack-overflow-in-custom-hasInstance.js: Added.
+
 2019-03-08  Tadeu Zagallo  <tzagallo@apple.com>
 
         op_check_tdz does not def its argument

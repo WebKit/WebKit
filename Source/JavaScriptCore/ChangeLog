@@ -1,3 +1,14 @@
+2019-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Stack overflow crash in JSC::JSObject::hasInstance.
+        https://bugs.webkit.org/show_bug.cgi?id=195458
+        <rdar://problem/48710195>
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasInstance):
+
 2019-03-08  Robin Morisset  <rmorisset@apple.com>
 
         IntegerCheckCombiningPhase::Range can be shrunk by 8 bytes

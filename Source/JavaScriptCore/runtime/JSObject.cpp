@@ -46,6 +46,7 @@
 #include "ProxyObject.h"
 #include "SlotVisitorInlines.h"
 #include "TypeError.h"
+#include "VMInlines.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 
@@ -2245,8 +2246,13 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceVa
         RETURN_IF_EXCEPTION(scope, false);
         RELEASE_AND_RETURN(scope, defaultHasInstance(exec, value, prototype));
     }
-    if (info.implementsHasInstance())
+    if (info.implementsHasInstance()) {
+        if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
+            throwStackOverflowError(exec, scope);
+            return false;
+        }
         RELEASE_AND_RETURN(scope, methodTable(vm)->customHasInstance(this, exec, value));
+    }
 
     throwException(exec, scope, createInvalidInstanceofParameterErrorNotFunction(exec, this));
     return false;
