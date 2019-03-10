@@ -1,3 +1,17 @@
+2019-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r242551): Sporadic hangs when tapping to change selection on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195475
+        <rdar://problem/48721153>
+
+        Reviewed by Chris Dumez.
+
+        Add a new layout test that taps to change selection 20 times in a contenteditable area and additionally
+        disables IPC timeout, to ensure that any IPC deadlocks will result in the test failing due to timing out.
+
+        * editing/selection/ios/change-selection-by-tapping-expected.txt: Added.
+        * editing/selection/ios/change-selection-by-tapping.html: Added.
+
 2019-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Click event fires immediately on hover menu at seriouseats.com

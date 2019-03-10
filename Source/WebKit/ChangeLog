@@ -1,3 +1,59 @@
+2019-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r242551): Sporadic hangs when tapping to change selection on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195475
+        <rdar://problem/48721153>
+
+        Reviewed by Chris Dumez.
+
+        r242551 refactored synchronous autocorrection context requests to send an async IPC message and then use
+        waitForAndDispatchImmediately, instead of calling sendSync. However, this exposes a couple of existing issues in
+        the implementation of waitForAndDispatchImmediately that causes sporadic IPC deadlocks when changing selection.
+
+        First, passing in InterruptWaitingIfSyncMessageArrives when synchronously waiting for an IPC message currently
+        does not fulfill its intended behavior of interrupting waiting when a sync message arrives. This is because sync
+        IPC messages, by default, may be dispatched while the receiver is waiting for a sync reply. This means that the
+        logic in Connection::SyncMessageState::processIncomingMessage to dispatch an incoming sync message on the main
+        thread will attempt to handle the incoming message by enqueueing it on the main thread, and then waking up the
+        client runloop (i.e. signaling m_waitForSyncReplySemaphore). This works in the case of sendSync since the sync
+        reply semaphore is used to block the main thread, but in the case of waitForAndDispatchImmediately, a different
+        m_waitForMessageCondition is used instead, so SyncMessageState::processIncomingMessage will only enqueue the
+        incoming sync message on the main thread, and not actually invoke it.
+
+        To fix this first issue, observe that there is pre-existing logic to enqueue the incoming message and signal
+        m_waitForMessageCondition in Connection::processIncomingMessage. This codepath is currently not taken because we
+        end up bailing early in the call to SyncMessageState::processIncomingMessage. Instead, we can move this early
+        return further down in the function, such that if there is an incoming sync message and we're waiting with the
+        InterruptWaitingIfSyncMessageArrives option, we will correctly enqueue the incoming message, wake the runloop,
+        and proceed to handle the incoming message.
+
+        The second issue is more subtle; consider the scenario in which we send a sync message A from the web process to
+        the UI process, and simultaneously, in the UI process, we schedule some work to be done on the main thread.
+        Let's additionally suppose that this scheduled work will send an IPC message B to the web process and
+        synchronously wait for a reply (in the case of this particular bug, this is the sync autocorrection context
+        request). What happens upon receiving sync message A is that the IPC thread in the UI process will schedule A on
+        the main thread; however, before the scheduled response to A is invoked, we will first invoke previously
+        scheduled work that attempts to block synchronously until a message B is received. In summary:
+
+        1. (Web process)    sends sync IPC message A to UI process.
+        2. (UI process)     schedules some main runloop task that will block synchronously on IPC message B.
+        3. (UI process)     receives sync IPC message A and schedules A on the main runloop.
+        4. (UI process)     carry out the task scheduled in (2) and block on B.
+
+        ...and then, the UI process and web process are now deadlocked because the UI process is waiting for B to
+        arrive, but the web process can't send B because it's waiting for a reply for IPC message A! To fix this second
+        deadlock, we first make an important observation: when using sendSync, we don't run into this problem because
+        immediately before sending sync IPC, we will attempt to handle any incoming sync IPC messages that have been
+        queued up. However, when calling waitForAndDispatchImmediately, we don't have this extra step, so a deadlock may
+        occur in the manner described above. To fix this, we make waitForAndDispatchImmediately behave more like
+        sendSync, by handling all incoming sync messages prior to blocking on an IPC response.
+
+        Test: editing/selection/ios/change-selection-by-tapping.html
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::processIncomingMessage):
+
 2019-03-09  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] CanMakePaymentsWithActiveCard and OpenPaymentSetup should be async messages

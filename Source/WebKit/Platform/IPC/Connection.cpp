@@ -514,6 +514,9 @@ std::unique_ptr<Decoder> Connection::waitForMessage(StringReference messageRecei
 
     // Now wait for it to be set.
     while (true) {
+        // Handle any messages that are blocked on a response from us.
+        SyncMessageState::singleton().dispatchMessages(nullptr);
+
         std::unique_lock<Lock> lock(m_waitForMessageMutex);
 
         if (m_waitingForMessage->decoder) {
@@ -722,13 +725,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
         m_incomingSyncMessageCallbacks.clear();
     }
 
-    // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
-    // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
-    // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
-    if (SyncMessageState::singleton().processIncomingMessage(*this, message))
-        return;
-
-    // Check if we're waiting for this message.
+    // Check if we're waiting for this message, or if we need to interrupt waiting due to an incoming sync message.
     {
         std::lock_guard<Lock> lock(m_waitForMessageMutex);
 
@@ -743,9 +740,17 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
             if (m_waitingForMessage->waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives) && message->isSyncMessage()) {
                 m_waitingForMessage->messageWaitingInterrupted = true;
                 m_waitForMessageCondition.notifyOne();
+                enqueueIncomingMessage(WTFMove(message));
+                return;
             }
         }
     }
+
+    // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
+    // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
+    // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
+    if (SyncMessageState::singleton().processIncomingMessage(*this, message))
+        return;
 
     enqueueIncomingMessage(WTFMove(message));
 }

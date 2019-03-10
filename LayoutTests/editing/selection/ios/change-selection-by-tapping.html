@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ignoreSynchronousMessagingTimeouts=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#editor {
+    width: 300px;
+    height: 320px;
+    font-size: 18px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+function tapAndWaitForSelectionChange(x, y) {
+    return new Promise(resolve => {
+        const editor = document.getElementById("editor");
+        let doneCount = 0;
+        const checkDone = () => {
+            if (++doneCount != 2)
+                return;
+
+            document.removeEventListener("selectionchange", checkDone);
+            resolve();
+        }
+        document.addEventListener("selectionchange", checkDone);
+        UIHelper.activateAt(x, y).then(checkDone);
+    });
+}
+
+addEventListener("load", async () => {
+    description("Verifies that rapidly tapping to change selection doesn't hang due to IPC deadlock. To verify manually, focus the editable text and tap repeatedly in different parts of the editable area to change selection; check that this does not result in sporadic 1-second IPC hangs.");
+
+    await UIHelper.activateElementAndWaitForInputSession(document.getElementById("editor"));
+    for (let i = 0; i < 5; ++i) {
+        for (const [x, y] of [[40, 40], [220, 40], [40, 240], [220, 240]])
+            await tapAndWaitForSelectionChange(x, y);
+    }
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<p contenteditable id="editor">Here's to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can't do is ignore them.  Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</p>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>
