@@ -1,5 +1,17 @@
 2019-03-09  Simon Fraser  <simon.fraser@apple.com>
 
+        [ios-simulator WK2] LayoutTest scrollingcoordinator/ios/non-stable-viewport-scroll.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=168924
+
+        Unreviewed test gardening.
+        
+        Let's try a new expectation for this test (it's non-flakey for me for 100 iterations).
+
+        * platform/ios-wk2/TestExpectations:
+        * scrollingcoordinator/ios/non-stable-viewport-scroll-expected.txt:
+
+2019-03-09  Simon Fraser  <simon.fraser@apple.com>
+
         Add a test for scrolling tree adjustment of fixed layers (r242601)
         https://bugs.webkit.org/show_bug.cgi?id=195521
 
