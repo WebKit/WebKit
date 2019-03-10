@@ -1,5 +1,28 @@
 2019-03-09  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] CanMakePaymentsWithActiveCard and OpenPaymentSetup should be async messages
+        https://bugs.webkit.org/show_bug.cgi?id=195526
+        <rdar://problem/48745636>
+
+        Reviewed by Chris Dumez.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinator::openPaymentSetup):
+        (WebKit::generateCanMakePaymentsWithActiveCardReplyID): Deleted.
+        (WebKit::generateOpenPaymentSetupReplyID): Deleted.
+        (WebKit::WebPaymentCoordinator::canMakePaymentsWithActiveCardReply): Deleted.
+        (WebKit::WebPaymentCoordinator::openPaymentSetupReply): Deleted.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+
+2019-03-09  Andy Estes  <aestes@apple.com>
+
         [iOS] Remove unneeded entitlements and sandbox allowances from the Networking service
         https://bugs.webkit.org/show_bug.cgi?id=195527
 

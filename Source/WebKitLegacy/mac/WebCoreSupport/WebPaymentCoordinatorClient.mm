@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
 #import <wtf/URL.h>
 
@@ -48,16 +49,16 @@ bool WebPaymentCoordinatorClient::canMakePayments()
     return false;
 }
 
-void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void (bool)>&& completionHandler)
+void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler = WTFMove(completionHandler)] {
+    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(false);
     });
 }
 
-void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, WTF::Function<void (bool)>&& completionHandler)
+void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler = WTFMove(completionHandler)] {
+    callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(false);
     });
 }

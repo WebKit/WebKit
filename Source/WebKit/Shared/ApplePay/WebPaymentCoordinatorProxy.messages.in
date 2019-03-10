@@ -28,8 +28,8 @@ messages -> WebPaymentCoordinatorProxy {
 
     AvailablePaymentNetworks() -> (Vector<String> availablePaymentNetworks) Delayed
     CanMakePayments() -> (bool result) Delayed
-    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, uint64_t requestID)
-    OpenPaymentSetup(String merchantIdentifier, String domainName, uint64_t requestID)
+    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments) Async
+    OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result) Async
 
     ShowPaymentUI(String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Delayed
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)

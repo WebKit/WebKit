@@ -66,8 +66,8 @@ public:
 private:
     Optional<String> validatedPaymentNetwork(const String&) final;
     bool canMakePayments() final;
-    void canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void(bool)>&&);
-    void openPaymentSetup(const String&, const String&, WTF::Function<void(bool)>&&);
+    void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&);
+    void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&);
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
     void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&) final;

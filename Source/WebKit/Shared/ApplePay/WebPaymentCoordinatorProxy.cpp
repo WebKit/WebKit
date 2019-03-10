@@ -78,20 +78,14 @@ void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&&
     reply(platformCanMakePayments());
 }
 
-void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID)
+void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, [weakThis = makeWeakPtr(*this), requestID](bool canMakePayments) {
-        if (auto paymentCoordinatorProxy = weakThis.get())
-            paymentCoordinatorProxy->send(Messages::WebPaymentCoordinator::CanMakePaymentsWithActiveCardReply(requestID, canMakePayments));
-    });
+    platformCanMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID)
+void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    platformOpenPaymentSetup(merchantIdentifier, domainName, [weakThis = makeWeakPtr(*this), requestID](bool result) {
-        if (auto paymentCoordinatorProxy = weakThis.get())
-            paymentCoordinatorProxy->send(Messages::WebPaymentCoordinator::OpenPaymentSetupReply(requestID, result));
-    });
+    platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
 void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)

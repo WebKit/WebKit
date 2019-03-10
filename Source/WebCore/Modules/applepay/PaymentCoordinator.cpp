@@ -31,6 +31,7 @@
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

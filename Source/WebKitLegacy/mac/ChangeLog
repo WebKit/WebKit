@@ -1,3 +1,16 @@
+2019-03-09  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] CanMakePaymentsWithActiveCard and OpenPaymentSetup should be async messages
+        https://bugs.webkit.org/show_bug.cgi?id=195526
+        <rdar://problem/48745636>
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPaymentCoordinatorClient.h:
+        * WebCoreSupport/WebPaymentCoordinatorClient.mm:
+        (WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard):
+        (WebPaymentCoordinatorClient::openPaymentSetup):
+
 2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

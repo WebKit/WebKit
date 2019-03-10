@@ -112,8 +112,8 @@ private:
     // Message handlers
     void availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&&);
     void canMakePayments(CompletionHandler<void(bool)>&&);
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
+    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
+    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
     void showPaymentUI(const String& originatingURLString, const Vector<String>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completeShippingMethodSelection(const Optional<WebCore::ShippingMethodUpdate>&);

@@ -86,34 +86,14 @@ bool WebPaymentCoordinator::canMakePayments()
     return canMakePayments;
 }
 
-static uint64_t generateCanMakePaymentsWithActiveCardReplyID()
+void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    static uint64_t canMakePaymentsWithActiveCardReplyID;
-
-    return ++canMakePaymentsWithActiveCardReplyID;
+    m_webPage.sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::CanMakePaymentsWithActiveCard(merchantIdentifier, domainName), WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
+void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto replyID = generateCanMakePaymentsWithActiveCardReplyID();
-
-    m_pendingCanMakePaymentsWithActiveCardCallbacks.add(replyID, WTFMove(completionHandler));
-    m_webPage.send(Messages::WebPaymentCoordinatorProxy::CanMakePaymentsWithActiveCard(merchantIdentifier, domainName, replyID));
-}
-
-static uint64_t generateOpenPaymentSetupReplyID()
-{
-    static uint64_t openPaymentSetupReplyID;
-
-    return ++openPaymentSetupReplyID;
-}
-
-void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
-{
-    auto replyID = generateOpenPaymentSetupReplyID();
-
-    m_pendingOpenPaymentSetupCallbacks.add(replyID, WTFMove(completionHandler));
-    m_webPage.send(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName, replyID));
+    m_webPage.sendWithAsyncReply(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName), WTFMove(completionHandler));
 }
 
 bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
@@ -197,18 +177,6 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
 void WebPaymentCoordinator::didCancelPaymentSession()
 {
     paymentCoordinator().didCancelPaymentSession();
-}
-
-void WebPaymentCoordinator::canMakePaymentsWithActiveCardReply(uint64_t requestID, bool canMakePayments)
-{
-    auto callback = m_pendingCanMakePaymentsWithActiveCardCallbacks.take(requestID);
-    callback(canMakePayments);
-}
-
-void WebPaymentCoordinator::openPaymentSetupReply(uint64_t requestID, bool result)
-{
-    auto callback = m_pendingOpenPaymentSetupCallbacks.take(requestID);
-    callback(result);
 }
 
 WebCore::PaymentCoordinator& WebPaymentCoordinator::paymentCoordinator()
