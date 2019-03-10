@@ -100,6 +100,9 @@ public:
     // Should be called whenever the root layer for the given frame view changes.
     virtual void frameViewRootLayerDidChange(FrameView&);
 
+    // Traverses the scrolling tree, setting layer positions to represent the current scrolled state.
+    virtual void applyScrollingTreeLayerPositions() { }
+
 #if PLATFORM(COCOA)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
     void handleWheelEventPhase(PlatformWheelEventPhase);

@@ -97,6 +97,8 @@ private:
 
     WEBCORE_EXPORT bool requestScrollPositionUpdate(FrameView&, const IntPoint&) override;
 
+    WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
+
     WEBCORE_EXPORT ScrollingNodeID createNode(ScrollingNodeType, ScrollingNodeID newNodeID) override;
     WEBCORE_EXPORT ScrollingNodeID insertNode(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex) override;
     WEBCORE_EXPORT void unparentNode(ScrollingNodeID) override;

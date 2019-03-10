@@ -228,6 +228,11 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView& frameView
     return true;
 }
 
+void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()
+{
+    m_scrollingTree->applyLayerPositions();
+}
+
 void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, const Optional<FloatPoint>& layoutViewportOrigin, bool programmaticScroll, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
     ScheduledScrollUpdate scrollUpdate(nodeID, scrollPosition, layoutViewportOrigin, programmaticScroll, scrollingLayerPositionAction);

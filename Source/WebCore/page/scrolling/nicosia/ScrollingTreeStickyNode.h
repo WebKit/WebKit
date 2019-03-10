@@ -42,7 +42,8 @@ private:
     ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+    void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+
 };
 
 } // namespace WebCore

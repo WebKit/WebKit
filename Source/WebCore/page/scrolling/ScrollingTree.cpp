@@ -106,6 +106,7 @@ ScrollingEventResult ScrollingTree::handleWheelEvent(const PlatformWheelEvent& w
             return downcast<ScrollingTreeScrollingNode>(*node).handleWheelEvent(wheelEvent);
     }
 
+    LockHolder locker(m_treeMutex);
     if (m_rootNode) {
         auto& frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*m_rootNode);
 
@@ -140,6 +141,8 @@ void ScrollingTree::mainFrameViewportChangedViaDelegatedScrolling(const FloatPoi
 
 void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
+    LockHolder locker(m_treeMutex);
+
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
     
     LOG(Scrolling, "\nScrollingTree %p commitTreeState", this);
@@ -243,6 +246,32 @@ void ScrollingTree::updateTreeFromStateNode(const ScrollingStateNode* stateNode,
     }
 
     node->commitStateAfterChildren(*stateNode);
+}
+
+// Called from the main thread.
+void ScrollingTree::applyLayerPositions()
+{
+    LockHolder locker(m_treeMutex);
+
+    if (!m_rootNode)
+        return;
+
+    applyLayerPositionsRecursive(*m_rootNode, { }, { });
+}
+
+void ScrollingTree::applyLayerPositionsRecursive(ScrollingTreeNode& currNode, FloatRect layoutViewport, FloatSize cumulativeDelta)
+{
+    if (is<ScrollingTreeFrameScrollingNode>(currNode)) {
+        layoutViewport = downcast<ScrollingTreeFrameScrollingNode>(currNode).layoutViewport();
+        cumulativeDelta = { };
+    }
+
+    currNode.applyLayerPositions(layoutViewport, cumulativeDelta);
+
+    if (auto children = currNode.children()) {
+        for (auto& child : *children)
+            applyLayerPositionsRecursive(*child, layoutViewport, cumulativeDelta);
+    }
 }
 
 ScrollingTreeNode* ScrollingTree::nodeForID(ScrollingNodeID nodeID) const

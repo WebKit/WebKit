@@ -77,8 +77,9 @@ bool ScrollingTreeNode::isRootNode() const
     return m_scrollingTree.rootNode() == this;
 }
 
-void ScrollingTreeNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect&, FloatSize&)
+void ScrollingTreeNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
+    applyLayerPositions(layoutViewport, cumulativeDelta);
 }
 
 void ScrollingTreeNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const

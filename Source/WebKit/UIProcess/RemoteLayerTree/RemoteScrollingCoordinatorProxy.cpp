@@ -184,6 +184,11 @@ void RemoteScrollingCoordinatorProxy::viewportChangedViaDelegatedScrolling(const
     m_scrollingTree->mainFrameViewportChangedViaDelegatedScrolling(scrollPosition, layoutViewport, scale);
 }
 
+void RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositions()
+{
+    m_scrollingTree->applyLayerPositions();
+}
+
 void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID nodeID, unsigned horizontal, unsigned vertical)
 {
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical));

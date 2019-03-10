@@ -85,6 +85,8 @@ protected:
 
     WEBCORE_EXPORT virtual void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta);
 
+    virtual void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) = 0;
+
     WEBCORE_EXPORT virtual void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
     std::unique_ptr<Vector<RefPtr<ScrollingTreeNode>>> m_children;

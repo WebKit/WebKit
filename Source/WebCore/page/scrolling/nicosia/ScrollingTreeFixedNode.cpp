@@ -54,7 +54,7 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
 {
 }
 
-void ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect&, FloatSize&)
+void ScrollingTreeFixedNode::applyLayerPositions(const FloatRect&, FloatSize&)
 {
 }
 

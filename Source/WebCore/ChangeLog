@@ -1,3 +1,56 @@
+2019-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollingTree should have the final say on where layers go
+        https://bugs.webkit.org/show_bug.cgi?id=195507
+
+        Reviewed by Antti Koivisto.
+
+        Main thread layer flushing can race with scrolling tree layer changes on macOS, causing
+        flashing as layers jump around sometimes. We go to some lengths to avoid this by trying
+        not to touch properties on layers that are being interacted with (scrollableArea->setIsUserScroll in
+        updateScrollPositionAfterAsyncScroll()), but that's fragile.
+
+        This patch adds ScrollingTree::applyScrollingTreeLayerPositions(), which enters
+        ScrollingTree::applyLayerPositions() on the main thread/UI process. This traverses
+        the tree allowing each node to run their layer positioning logic.
+
+        For macOS WK2, this is called from TiledCoreAnimationDrawingArea::flushLayers() after flushCompositingStateIncludingSubframes().
+        For macOS WK2 with UI-side compositing, RemoteLayerTreeDrawingAreaProxy::commitLayerTree()
+        calls m_webPageProxy.scrollingCoordinatorProxy()->applyScrollingTreeLayerPositions().
+        iOS WK2 is unchanged, using viewportChangedViaDelegatedScrolling() which does the same thing, allowing
+        for the dynamic viewport changes that happen when zooming on iOS.
+
+        Testing this requires infrastructure that we don't have yet.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::applyScrollingTreeLayerPositions):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::applyScrollingTreeLayerPositions):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::applyLayerPositions):
+        (WebCore::ScrollingTree::applyLayerPositionsRecursive):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ScrollingTreeFrameHostingNode.cpp:
+        (WebCore::ScrollingTreeFrameHostingNode::applyLayerPositions):
+        * page/scrolling/ScrollingTreeFrameHostingNode.h:
+        * page/scrolling/ScrollingTreeNode.h:
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::applyLayerPositions):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.h:
+        * page/scrolling/cocoa/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange):
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.h:
+        * page/scrolling/cocoa/ScrollingTreeStickyNode.mm:
+        (WebCore::ScrollingTreeStickyNode::applyLayerPositions):
+        (WebCore::ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h:
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::applyLayerPositions):
+
 2019-03-09  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] CanMakePaymentsWithActiveCard and OpenPaymentSetup should be async messages

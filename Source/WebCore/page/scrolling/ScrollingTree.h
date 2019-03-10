@@ -68,6 +68,8 @@ public:
 
     virtual void invalidate() { }
     WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
+    
+    WEBCORE_EXPORT void applyLayerPositions();
 
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
 
@@ -154,7 +156,11 @@ private:
 
     ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
+    void applyLayerPositionsRecursive(ScrollingTreeNode&, FloatRect layoutViewport, FloatSize cumulativeDelta);
+
     void notifyRelatedNodesRecursive(ScrollingTreeScrollingNode& changedNode, ScrollingTreeNode& currNode, const FloatRect& layoutViewport, FloatSize cumulativeDelta);
+
+    Lock m_treeMutex; // Protects the scrolling tree.
 
     RefPtr<ScrollingTreeNode> m_rootNode;
 

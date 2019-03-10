@@ -496,8 +496,10 @@ void TiledCoreAnimationDrawingArea::flushLayers()
         bool didFlushAllFrames = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 
 #if ENABLE(ASYNC_SCROLLING)
-        if (ScrollingCoordinator* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator())
+        if (auto* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator()) {
             scrollingCoordinator->commitTreeStateIfNeeded();
+            scrollingCoordinator->applyScrollingTreeLayerPositions();
+        }
 #endif
 
         // If we have an active transient zoom, we want the zoom to win over any changes

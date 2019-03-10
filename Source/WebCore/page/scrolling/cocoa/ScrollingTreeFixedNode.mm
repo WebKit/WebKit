@@ -63,7 +63,7 @@ void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode&
         m_constraints = fixedStateNode.viewportConstraints();
 }
 
-void ScrollingTreeFixedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+void ScrollingTreeFixedNode::applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(layoutViewport);
 

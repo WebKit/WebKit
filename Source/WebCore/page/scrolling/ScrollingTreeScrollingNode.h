@@ -98,6 +98,8 @@ protected:
     WEBCORE_EXPORT virtual void repositionScrollingLayers() { }
     WEBCORE_EXPORT virtual void repositionRelatedLayers() { }
 
+    void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }

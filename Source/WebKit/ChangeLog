@@ -1,3 +1,18 @@
+2019-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollingTree should have the final say on where layers go
+        https://bugs.webkit.org/show_bug.cgi?id=195507
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositions):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2019-03-09  Darin Adler  <darin@apple.com>
 
         [Cocoa] Code signing fails because services are copied into XPCServices after the framework is signed

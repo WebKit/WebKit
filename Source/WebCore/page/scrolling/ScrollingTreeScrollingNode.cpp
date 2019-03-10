@@ -179,6 +179,12 @@ bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const Floa
     return position == m_currentScrollPosition;
 }
 
+void ScrollingTreeScrollingNode::applyLayerPositions(const FloatRect&, FloatSize&)
+{
+    repositionScrollingLayers();
+    repositionRelatedLayers();
+}
+
 void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport)
 {
     // Even if position and overrideLayoutViewport haven't changed for this node, other nodes may have received new constraint data

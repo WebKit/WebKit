@@ -65,7 +65,7 @@ void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode
         m_constraints = stickyStateNode.viewportConstraints();
 }
 
-void ScrollingTreeStickyNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode&, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
+void ScrollingTreeStickyNode::applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
     FloatRect constrainingRect;
 
