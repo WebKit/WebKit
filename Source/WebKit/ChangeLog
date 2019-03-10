@@ -1,3 +1,13 @@
+2019-03-09  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Code signing fails because services are copied into XPCServices after the framework is signed
+        https://bugs.webkit.org/show_bug.cgi?id=195523
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Make symbolic links while building the WebKit
+        framework instead of copying in the services after the framework is built.
+
 2019-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r242551): Sporadic hangs when tapping to change selection on iOS
