@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>This tests the case when the absolute positioned, non-fixed width content is offscreen.</title>
+<script src="../../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#becomesVisible {
+	position: absolute;
+	left: -999px;
+	top: 50px;
+    width: 10%;
+    height: 10%;
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+    if (window.internals)
+        internals.settings.setContentChangeObserverEnabled(true);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if 'clicked' text is not shown below.</div>
+<div id=becomesVisible></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mousemove", function( event ) {
+    setTimeout(function() {
+        becomesVisible.style.left = "0px";
+        document.body.offsetHeight;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 300);
+}, false);
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

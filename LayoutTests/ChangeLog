@@ -1,5 +1,16 @@
 2019-03-09  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Click event fires immediately on hover menu at seriouseats.com
+        https://bugs.webkit.org/show_bug.cgi?id=195520
+        <rdar://problem/48740098>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/move-content-from-offscreen-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/move-content-from-offscreen.html: Added.
+
+2019-03-09  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Start observing for content change between touchEnd and mouseMoved start
         https://bugs.webkit.org/show_bug.cgi?id=195510
         <rdar://problem/48735695>

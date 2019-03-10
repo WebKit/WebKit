@@ -66,7 +66,7 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
         return;
     if (m_document.activeDOMObjectsAreSuspended())
         return;
-    if (timeout > 250_ms || !singleShot)
+    if (timeout > 300_ms || !singleShot)
         return;
     if (!isObservingDOMTimerScheduling())
         return;
@@ -317,7 +317,7 @@ ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
     auto changedFromHiddenToVisible = [&] {
         return m_wasHidden && !isConsideredHidden();
     };
-    
+
     if (changedFromHiddenToVisible() && isConsideredClickable())
         m_contentChangeObserver.contentVisibilityDidChange();
 }
@@ -334,18 +334,21 @@ bool ContentChangeObserver::StyleChangeScope::isConsideredHidden() const
     if (style.visibility() == Visibility::Hidden)
         return true;
 
-    auto width = style.width();
-    auto height = style.height();
+    auto width = style.logicalWidth();
+    auto height = style.logicalHeight();
     if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
         return true;
 
-    auto top = style.top();
-    auto left = style.left();
+    auto top = style.logicalTop();
+    auto left = style.logicalLeft();
     // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
     if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
         return true;
-
     if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
+        return true;
+
+    // It's a common technique used to position content offscreen.
+    if (style.hasOutOfFlowPosition() && left.isFixed() && left.value() <= -999)
         return true;
 
     // FIXME: Check for other cases like zero height with overflow hidden.

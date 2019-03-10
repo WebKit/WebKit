@@ -1,3 +1,21 @@
+2019-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Click event fires immediately on hover menu at seriouseats.com
+        https://bugs.webkit.org/show_bug.cgi?id=195520
+        <rdar://problem/48740098>
+
+        Reviewed by Simon Fraser.
+
+        Unfortunately seriouseats has a 300ms hover intent delay to deal with accidental menupane pop-ups. This page also hides this
+        non-fixed width menupane using absolute positioning and negative left.  
+
+        Test: fast/events/touch/ios/content-observation/move-content-from-offscreen.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didInstallDOMTimer):
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope):
+        (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredHidden const): Content auhtors tend to use x - 1 values (where x = 10^y)
+
 2019-03-09  Chris Dumez  <cdumez@apple.com>
 
         Add assertions to help debug crash under DOMWindowExtension::suspendForPageCache()
