@@ -90,10 +90,7 @@
 ;; Various services required by system frameworks
 (allow mach-lookup
     (global-name "com.apple.lsd.mapdb")
-    (global-name "com.apple.analyticsd")
-    (global-name "com.apple.WirelessCoexManager")
-    (global-name "com.apple.wifi.manager")
-    (global-name "com.apple.identityservicesd.embedded.auth"))
+    (global-name "com.apple.analyticsd"))
 
 ;; For reporting progress for active downloads <rdar://problem/44405661>
 (allow mach-lookup

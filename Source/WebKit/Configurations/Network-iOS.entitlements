@@ -4,13 +4,7 @@
 <dict>
 	<key>com.apple.private.accounts.bundleidspoofing</key>
 	<true/>
-	<key>com.apple.private.ids.link-preferences</key>
-	<true/>
-	<key>com.apple.private.ids.messaging</key>
-	<true/>
 	<key>com.apple.private.network.socket-delegate</key>
-	<true/>
-	<key>com.apple.wifi.manager-access</key>
 	<true/>
 	<key>seatbelt-profiles</key>
 	<array>

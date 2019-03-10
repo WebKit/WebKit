@@ -1,3 +1,13 @@
+2019-03-09  Andy Estes  <aestes@apple.com>
+
+        [iOS] Remove unneeded entitlements and sandbox allowances from the Networking service
+        https://bugs.webkit.org/show_bug.cgi?id=195527
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/Network-iOS.entitlements:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2019-03-09  Chris Dumez  <cdumez@apple.com>
 
         Use modern async IPC with reply for device orientation permission
