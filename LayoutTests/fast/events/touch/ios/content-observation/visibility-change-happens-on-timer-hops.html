@@ -50,8 +50,7 @@ tapthis.addEventListener("mouseover", function( event ) {
         setTimeout(function() {
             becomesVisible.style.visibility = "visible";
             document.body.offsetHeight;
-            if (window.testRunner)
-                setTimeout(testRunner.notifyDone(), 0);
+            setTimeout("testRunner.notifyDone()", 0);
         }, 10);
     }, 0);
 }, false);

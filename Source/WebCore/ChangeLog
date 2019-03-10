@@ -1,3 +1,23 @@
+2019-03-10  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Fix failing test cases
+        https://bugs.webkit.org/show_bug.cgi?id=195524
+        <rdar://problem/48745101>
+
+        Reviewed by Simon Fraser.
+
+        1. Do not start DOM timer install observation when we already detected change at touchstart.
+        2. hasPendingActivity() should only care about ContentChangeObserver flags.
+        3. Do not try to notify the client when we are in the mouseMoved dispatch call (currently it could happen
+        when a timer gets intalled and removed right away).
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::isNotifyContentChangeAllowed const): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::hasPendingActivity const):
+        (WebCore::ContentChangeObserver::isObservationTimeWindowActive const):
+
 2019-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         ScrollingTree should have the final say on where layers go

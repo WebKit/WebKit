@@ -225,13 +225,6 @@ bool ContentChangeObserver::hasDeterminateState() const
     return observedContentChange() == WKContentNoChange && !hasPendingActivity();
 }
 
-#if !ASSERT_DISABLED
-bool ContentChangeObserver::isNotifyContentChangeAllowed() const
-{
-    return m_document.settings().contentChangeObserverEnabled() && !m_mouseMovedEventIsBeingDispatched;
-}
-#endif
-
 void ContentChangeObserver::adjustObservedState(Event event)
 {
     auto adjustStateAndNotifyContentChangeIfNeeded = [&] {
@@ -239,12 +232,16 @@ void ContentChangeObserver::adjustObservedState(Event event)
         if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
             setHasNoChangeState();
 
-        if (!hasDeterminateState()) {
-            LOG(ContentObservation, "notifyContentChangeIfNeeded: not in a determined state yet.");
+        // Do not notify the client unless we couldn't make the decision synchronously.
+        if (m_mouseMovedEventIsBeingDispatched) {
+            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: in mouseMoved call. No need to notify the client.");
             return;
         }
-        LOG_WITH_STREAM(ContentObservation, stream << "notifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
-        ASSERT(isNotifyContentChangeAllowed());
+        if (!hasDeterminateState()) {
+            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: not in a determined state yet.");
+            return;
+        }
+        LOG_WITH_STREAM(ContentObservation, stream << "adjustStateAndNotifyContentChangeIfNeeded: sending observedContentChange ->" << observedContentChange());
         ASSERT(m_document.page());
         ASSERT(m_document.frame());
         m_document.page()->chrome().client().observedContentChange(*m_document.frame());
@@ -265,9 +262,10 @@ void ContentChangeObserver::adjustObservedState(Event event)
         if (!isBetweenTouchEndAndMouseMoved()) {
             setHasNoChangeState();
             clearObservedDOMTimers();
-        }
+            setShouldObserveDOMTimerScheduling(true);
+        } else
+            setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
         setIsBetweenTouchEndAndMouseMoved(false);
-        setShouldObserveDOMTimerScheduling(true);
         break;
     case Event::EndedMouseMovedEventDispatching:
         setShouldObserveDOMTimerScheduling(false);

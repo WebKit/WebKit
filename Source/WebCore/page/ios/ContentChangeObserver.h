@@ -139,11 +139,8 @@ private:
     void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
     bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }
 
-    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || isObservationTimeWindowActive(); }
+    bool hasPendingActivity() const { return hasObservedDOMTimer() || m_isWaitingForStyleRecalc || isObservationTimeWindowActive(); }
     bool isObservationTimeWindowActive() const { return m_contentObservationTimer.isActive(); }
-#if !ASSERT_DISABLED
-    bool isNotifyContentChangeAllowed() const;
-#endif
 
     void completeDurationBasedContentObservation();
 
