@@ -1,3 +1,16 @@
+2019-03-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark two tests as failing after r242624
+        https://bugs.webkit.org/show_bug.cgi?id=195531
+
+        Unreviewed test gardening.
+
+        These tests are failing:
+        accessibility/mac/selection-notification-focus-change.html [ Failure ]
+        compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
+
+        * platform/mac-wk2/TestExpectations:
+
 2019-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS Simulator] LayoutTest/scrollingcoordinator/ios/nested-fixed-layer-positions.html is flaky fail
