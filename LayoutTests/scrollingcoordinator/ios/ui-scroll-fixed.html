@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            height: 2000px;
+            margin: 0;
+        }
+
+        #fixed {
+            position: fixed;
+            top: 200px;
+            left: 20px;
+            height: 100px;
+            width: calc(100% - 40px);
+            background-color: blue;
+        }
+        
+        #container {
+            position: absolute;
+            z-index: 0;
+            top: 50px;
+            left: 0;
+            height: 400px;
+            width: 100%;
+            border: 2px solid black;
+            box-sizing: border-box;
+            overflow: hidden; /* Forces compositing on this layer */
+        }
+        
+        #container.changed {
+            top: 100px;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            await UIHelper.delayFor(0);
+            await UIHelper.immediateUnstableScrollTo(0, 50);
+            await UIHelper.delayFor((120)); // Wait for scrollbars to disappear.
+            document.getElementById('container').classList.add('changed');
+            testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="fixed"></div>
+    </div>
+</body>
+</html>

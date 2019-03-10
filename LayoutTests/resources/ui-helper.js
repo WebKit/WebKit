@@ -197,6 +197,38 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async delayFor(ms)
+    {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    static async immediateScrollTo(x, y)
+    {
+        if (!this.isWebKit2()) {
+            window.scrollTo(x, y);
+            return Promise.resolve();
+        }
+
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.immediateScrollToOffset(${x}, ${y});`, resolve);
+        });
+    }
+
+    static async immediateUnstableScrollTo(x, y)
+    {
+        if (!this.isWebKit2()) {
+            window.scrollTo(x, y);
+            return Promise.resolve();
+        }
+
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.stableStateOverride = false;
+                uiController.immediateScrollToOffset(${x}, ${y});`, resolve);
+        });
+    }
+
     static ensureVisibleContentRectUpdate()
     {
         if (!this.isWebKit2())

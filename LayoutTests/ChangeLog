@@ -1,3 +1,24 @@
+2019-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a test for scrolling tree adjustment of fixed layers (r242601)
+        https://bugs.webkit.org/show_bug.cgi?id=195521
+
+        Reviewed by Sam Weinig.
+        
+        This test sets the "unstable" scrolling state (as if the user is actively scrolling) and scrolls,
+        then changes style to trigger a scrolling tree commit with a changed offset for a fixed layer.
+        The test shows the wrong fixed layer position before r242601.
+
+        Helpers are added to UIHelper to do the scroll, and to wrap setTimeout in an async function.
+        Sadly we have to wait about 120ms for the scrollbars to fade out.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.async.delayFor):
+        (window.UIHelper.async.immediateScrollTo):
+        (window.UIHelper.async.immediateUnstableScrollTo):
+        * scrollingcoordinator/ios/ui-scroll-fixed-expected.html: Added.
+        * scrollingcoordinator/ios/ui-scroll-fixed.html: Added.
+
 2019-03-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r242551): Sporadic hangs when tapping to change selection on iOS
