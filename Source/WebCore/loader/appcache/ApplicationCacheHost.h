@@ -34,6 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -146,7 +147,7 @@ private:
     ApplicationCache* mainResourceApplicationCache() const { return m_mainResourceApplicationCache.get(); }
     bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
 
-    DOMApplicationCache* m_domApplicationCache { nullptr };
+    WeakPtr<DOMApplicationCache> m_domApplicationCache;
     DocumentLoader& m_documentLoader;
 
     bool m_defersEvents { true }; // Events are deferred until after document onload.

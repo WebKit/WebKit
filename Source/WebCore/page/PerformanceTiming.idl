@@ -29,7 +29,9 @@
  */
 
 // See: https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html
-interface PerformanceTiming {
+[
+    ImplementationLacksVTable,
+] interface PerformanceTiming {
     readonly attribute unsigned long long navigationStart;
     readonly attribute unsigned long long unloadEventStart;
     readonly attribute unsigned long long unloadEventEnd;

@@ -1,3 +1,94 @@
+2019-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Simplify DOMWindowProperty code / handling
+        https://bugs.webkit.org/show_bug.cgi?id=195495
+
+        Reviewed by Ryosuke Niwa.
+
+        DOMWindowProperty code was unnecessarily complex because DOMWindowExtension inherited
+        from it and DOMWindowExtension needs a lot of information about the global object's
+        lifetime to communicate to the injected bbundle client. This subclassing is also
+        very confusing because a DOMWindowExtension is not a *property* on the Window object.
+
+        This patch updates DOMWindowExtension to stop subclassing DOMWindowProperty and
+        moves all the complexity from DOMWindowProperty to DOMWindowExtension.
+        DOMWindowProperty is now a very simple base class which merely has a WeakPtr to
+        the window and getters for the window and the frame.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::DOMWindowIndexedDatabase):
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        * Modules/indexeddb/DOMWindowIndexedDatabase.h:
+        There is no reason for DOMWindowIndexedDatabase to move its IDBFactory to a
+        separate data member which in PageCache. Script do not run while in PageCache.
+        Also, frames are nulled out while in the PageCache so the indexedDB() getter
+        would return null anyway while in PageCache.
+
+        * css/StyleMedia.idl:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::setDOMApplicationCache):
+        Store a WeakPtr to the DOMApplicationCache for safety.
+
+        (WebCore::ApplicationCacheHost::dispatchDOMEvent):
+        Do not fire events on the DOMApplicationCache if it is frameless to maintain
+        previous behavior. Previously, the DOMApplicationCache would have been nulled
+        out when detached from its frame so we would not have fired events.
+
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+        Remove some unnecessary complexity. The ApplicationCacheHost is owned by the
+        DocumentLoader, which changes on navigation. There is therefore no reason to
+        null out the DOMApplicationCache on the ApplicationCacheHost when its gets
+        detached from its frame or enters PageCache.
+
+        * page/BarProp.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDestroyCachedFrame):
+        (WebCore::DOMWindow::willDestroyDocumentInFrame):
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::registerExtension):
+        (WebCore::DOMWindow::unregisterExtension):
+
+        (WebCore::DOMWindow::resetDOMWindowProperties): Removed.
+        Stop clearing some of the DOMWindow's properties when the document gets destroyed or when
+        the Window for the initial empty document gets reused on navigation. I think we used to
+        need this because DOMWindowProperty used to hold pointers to their frame. However, this
+        is no longer the case nowadays as DOMWindowProperty objects get their frame from their
+        Window.
+
+        (WebCore::DOMWindow::resetUnlessSuspendedForDocumentSuspension):
+        (WebCore::DOMWindow::suspendForPageCache):
+        (WebCore::DOMWindow::resumeFromPageCache):
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::DOMWindowExtension):
+        (WebCore::DOMWindowExtension::~DOMWindowExtension):
+        (WebCore::DOMWindowExtension::frame const):
+        (WebCore::DOMWindowExtension::suspendForPageCache):
+        (WebCore::DOMWindowExtension::resumeFromPageCache):
+        (WebCore::DOMWindowExtension::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowExtension::willDestroyGlobalObjectInFrame):
+        (WebCore::DOMWindowExtension::willDetachGlobalObjectFromFrame):
+        * page/DOMWindowExtension.h:
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::DOMWindowProperty):
+        * page/DOMWindowProperty.h:
+        (WebCore::DOMWindowProperty::window const):
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::plugins):
+        (WebCore::Navigator::mimeTypes):
+        * page/PerformanceNavigation.idl:
+        * page/PerformanceTiming.idl:
+        * page/Screen.idl:
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::scriptExecutionContext const):
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPluginArray.idl:
+
 2019-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Start observing for content change between touchEnd and mouseMoved start

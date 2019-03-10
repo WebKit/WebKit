@@ -45,19 +45,11 @@ public:
 
     WEBCORE_EXPORT static IDBFactory* indexedDB(DOMWindow&);
 
-    void suspendForPageCache() override;
-    void resumeFromPageCache() override;
-    void willDestroyGlobalObjectInCachedFrame() override;
-    void willDestroyGlobalObjectInFrame() override;
-    void willDetachGlobalObjectFromFrame() override;
-
 private:
     IDBFactory* indexedDB();
     static const char* supplementName();
 
-    DOMWindow* m_window;
     RefPtr<IDBFactory> m_idbFactory;
-    RefPtr<IDBFactory> m_suspendedIDBFactory;
 };
 
 } // namespace WebCore

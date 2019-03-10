@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class DOMWindow;
@@ -32,21 +34,15 @@ class Frame;
 
 class DOMWindowProperty {
 public:
-    explicit DOMWindowProperty(DOMWindow*);
-
-    virtual void suspendForPageCache();
-    virtual void resumeFromPageCache();
-    virtual void willDestroyGlobalObjectInCachedFrame();
-    virtual void willDestroyGlobalObjectInFrame();
-    virtual void willDetachGlobalObjectFromFrame();
-
-    WEBCORE_EXPORT Frame* frame() const;
-    DOMWindow* window() const { return m_window; }
+    Frame* frame() const;
+    DOMWindow* window() const { return m_window.get(); }
 
 protected:
-    virtual ~DOMWindowProperty();
+    explicit DOMWindowProperty(DOMWindow*);
+    ~DOMWindowProperty() = default;
 
-    DOMWindow* m_window;
+private:
+    WeakPtr<DOMWindow> m_window;
 };
 
 } // namespace WebCore

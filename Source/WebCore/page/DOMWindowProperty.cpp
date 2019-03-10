@@ -28,64 +28,12 @@
 #include "DOMWindowProperty.h"
 
 #include "DOMWindow.h"
-#include "Document.h"
 #include "Frame.h"
 
 namespace WebCore {
 
 DOMWindowProperty::DOMWindowProperty(DOMWindow* window)
-    : m_window(window)
-{
-    if (m_window)
-        m_window->registerProperty(*this);
-}
-
-DOMWindowProperty::~DOMWindowProperty()
-{
-    if (m_window)
-        m_window->unregisterProperty(*this);
-
-    m_window = nullptr;
-}
-
-void DOMWindowProperty::suspendForPageCache()
-{
-    ASSERT(m_window);
-}
-
-void DOMWindowProperty::resumeFromPageCache()
-{
-    // If this property is being reconnected to its Frame to enter the PageCache, it must have
-    // been disconnected from its Frame in the first place and it should still have an associated DOMWindow.
-    ASSERT(frame());
-    ASSERT(frame()->document()->domWindow() == m_window);
-}
-
-void DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()
-{
-    // If the property has been disconnected from its Frame for the page cache, then it must have originally had a Frame
-    // and therefore should still have an associated DOMWindow.
-    ASSERT(m_window);
-
-    // DOMWindowProperty lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with if that DOMWindow is going away.
-    if (m_window)
-        m_window->unregisterProperty(*this);
-    m_window = nullptr;
-}
-
-void DOMWindowProperty::willDestroyGlobalObjectInFrame()
-{
-    ASSERT(m_window);
-
-    // DOMWindowProperty lifetime isn't tied directly to the DOMWindow itself so it is important that it unregister
-    // itself from any DOMWindow it is associated with if that DOMWindow is going away.
-    if (m_window)
-        m_window->unregisterProperty(*this);
-    m_window = nullptr;
-}
-
-void DOMWindowProperty::willDetachGlobalObjectFromFrame()
+    : m_window(makeWeakPtr(window))
 {
 }
 

@@ -50,9 +50,10 @@ EventTargetInterface VisualViewport::eventTargetInterface() const
 
 ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
 {
-    if (!m_window)
+    auto window = this->window();
+    if (!window)
         return nullptr;
-    return static_cast<ContextDestructionObserver*>(m_window)->scriptExecutionContext();
+    return static_cast<ContextDestructionObserver*>(window)->scriptExecutionContext();
 }
 
 bool VisualViewport::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)

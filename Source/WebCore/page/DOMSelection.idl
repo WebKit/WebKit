@@ -30,6 +30,7 @@
 // https://www.w3.org/TR/selection-api/#idl-def-Selection
 [
     GenerateIsReachable=ImplFrame,
+    ImplementationLacksVTable,
     InterfaceName=Selection,
 ] interface DOMSelection {
     readonly attribute Node? anchorNode;

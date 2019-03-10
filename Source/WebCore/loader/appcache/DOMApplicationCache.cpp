@@ -41,27 +41,6 @@ DOMApplicationCache::DOMApplicationCache(DOMWindow& window)
         host->setDOMApplicationCache(this);
 }
 
-void DOMApplicationCache::suspendForPageCache()
-{
-    if (auto* host = applicationCacheHost())
-        host->setDOMApplicationCache(nullptr);
-    DOMWindowProperty::suspendForPageCache();
-}
-
-void DOMApplicationCache::resumeFromPageCache()
-{
-    DOMWindowProperty::resumeFromPageCache();
-    if (auto* host = applicationCacheHost())
-        host->setDOMApplicationCache(this);
-}
-
-void DOMApplicationCache::willDestroyGlobalObjectInFrame()
-{
-    if (auto* host = applicationCacheHost())
-        host->setDOMApplicationCache(nullptr);
-    DOMWindowProperty::willDestroyGlobalObjectInFrame();
-}
-
 ApplicationCacheHost* DOMApplicationCache::applicationCacheHost() const
 {
     auto* frame = this->frame();

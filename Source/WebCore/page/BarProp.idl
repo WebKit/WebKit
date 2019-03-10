@@ -28,6 +28,7 @@
 
 [
     GenerateIsReachable=ImplFrame,
+    ImplementationLacksVTable,
 ] interface BarProp {
     readonly attribute boolean visible;
 };

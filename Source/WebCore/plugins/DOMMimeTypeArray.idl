@@ -21,6 +21,7 @@
 [
     GenerateIsReachable=ImplFrame,
     LegacyUnenumerableNamedProperties,
+    ImplementationLacksVTable,
     InterfaceName=MimeTypeArray,
 ] interface DOMMimeTypeArray {
     readonly attribute unsigned long length;

@@ -45,7 +45,6 @@
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
 #include "DOMURL.h"
-#include "DOMWindowExtension.h"
 #include "DeviceMotionController.h"
 #include "DeviceMotionData.h"
 #include "DeviceMotionEvent.h"
@@ -451,21 +450,21 @@ void DOMWindow::frameDestroyed()
 
 void DOMWindow::willDestroyCachedFrame()
 {
-    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInCachedFrame.
-    for (auto* property : copyToVector(m_properties)) {
-        if (m_properties.contains(property))
-            property->willDestroyGlobalObjectInCachedFrame();
+    for (auto* observer : copyToVector(m_observers)) {
+        if (m_observers.contains(observer))
+            observer->willDestroyGlobalObjectInCachedFrame();
     }
 }
 
 void DOMWindow::willDestroyDocumentInFrame()
 {
-    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the DOMWindow as a result of the call to willDestroyGlobalObjectInFrame.
-    for (auto* property : copyToVector(m_properties)) {
-        if (m_properties.contains(property))
-            property->willDestroyGlobalObjectInFrame();
+    for (auto* observer : copyToVector(m_observers)) {
+        if (m_observers.contains(observer))
+            observer->willDestroyGlobalObjectInFrame();
     }
 }
 
@@ -474,11 +473,11 @@ void DOMWindow::willDetachDocumentFromFrame()
     if (!frame())
         return;
 
-    // It is necessary to copy m_properties to a separate vector because the DOMWindowProperties may
+    // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
-    for (auto& property : copyToVector(m_properties)) {
-        if (m_properties.contains(property))
-            property->willDetachGlobalObjectFromFrame();
+    for (auto& observer : copyToVector(m_observers)) {
+        if (m_observers.contains(observer))
+            observer->willDetachGlobalObjectFromFrame();
     }
 
     if (m_performance)
@@ -503,14 +502,14 @@ void DOMWindow::decrementGamepadEventListenerCount()
 
 #endif
 
-void DOMWindow::registerProperty(DOMWindowProperty& property)
+void DOMWindow::registerObserver(Observer& observer)
 {
-    m_properties.add(&property);
+    m_observers.add(&observer);
 }
 
-void DOMWindow::unregisterProperty(DOMWindowProperty& property)
+void DOMWindow::unregisterObserver(Observer& observer)
 {
-    m_properties.remove(&property);
+    m_observers.remove(&observer);
 }
 
 void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
@@ -518,14 +517,13 @@ void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
     if (m_suspendedForDocumentSuspension)
         return;
     willDestroyDocumentInFrame();
-    resetDOMWindowProperties();
 }
 
 void DOMWindow::suspendForPageCache()
 {
-    for (auto* property : copyToVector(m_properties)) {
-        if (m_properties.contains(property))
-            property->suspendForPageCache();
+    for (auto* observer : copyToVector(m_observers)) {
+        if (m_observers.contains(observer))
+            observer->suspendForPageCache();
     }
 
     m_suspendedForDocumentSuspension = true;
@@ -533,36 +531,12 @@ void DOMWindow::suspendForPageCache()
 
 void DOMWindow::resumeFromPageCache()
 {
-    for (auto* property : copyToVector(m_properties)) {
-        if (m_properties.contains(property))
-            property->resumeFromPageCache();
+    for (auto* observer : copyToVector(m_observers)) {
+        if (m_observers.contains(observer))
+            observer->resumeFromPageCache();
     }
 
     m_suspendedForDocumentSuspension = false;
-}
-
-void DOMWindow::resetDOMWindowProperties()
-{
-    m_properties.clear();
-
-    m_applicationCache = nullptr;
-    m_crypto = nullptr;
-    m_history = nullptr;
-    m_localStorage = nullptr;
-    m_location = nullptr;
-    m_locationbar = nullptr;
-    m_media = nullptr;
-    m_menubar = nullptr;
-    m_navigator = nullptr;
-    m_personalbar = nullptr;
-    m_screen = nullptr;
-    m_scrollbars = nullptr;
-    m_selection = nullptr;
-    m_sessionStorage = nullptr;
-    m_statusbar = nullptr;
-    m_toolbar = nullptr;
-    m_performance = nullptr;
-    m_visualViewport = nullptr;
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const

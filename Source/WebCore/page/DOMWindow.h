@@ -113,8 +113,19 @@ public:
     // the network load. See also SecurityContext::isSecureTransitionTo.
     void didSecureTransitionTo(Document&);
 
-    void registerProperty(DOMWindowProperty&);
-    void unregisterProperty(DOMWindowProperty&);
+    class Observer {
+    public:
+        virtual ~Observer() { }
+
+        virtual void suspendForPageCache() { }
+        virtual void resumeFromPageCache() { }
+        virtual void willDestroyGlobalObjectInCachedFrame() { }
+        virtual void willDestroyGlobalObjectInFrame() { }
+        virtual void willDetachGlobalObjectFromFrame() { }
+    };
+
+    void registerObserver(Observer&);
+    void unregisterObserver(Observer&);
 
     void resetUnlessSuspendedForDocumentSuspension();
     void suspendForPageCache();
@@ -369,8 +380,6 @@ private:
     static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, const WTF::Function<void(DOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
-    void resetDOMWindowProperties();
-
 #if ENABLE(DEVICE_ORIENTATION)
     void failedToRegisterDeviceMotionEventListener();
 #endif
@@ -386,7 +395,7 @@ private:
     bool m_suspendedForDocumentSuspension { false };
     Optional<bool> m_canShowModalDialogOverride;
 
-    HashSet<DOMWindowProperty*> m_properties;
+    HashSet<Observer*> m_observers;
 
     mutable RefPtr<Crypto> m_crypto;
     mutable RefPtr<History> m_history;

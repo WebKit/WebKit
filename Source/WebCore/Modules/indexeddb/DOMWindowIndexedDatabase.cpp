@@ -38,7 +38,6 @@ namespace WebCore {
 
 DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(DOMWindow* window)
     : DOMWindowProperty(window)
-    , m_window(window)
 {
 }
 
@@ -60,36 +59,6 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
     return supplement;
 }
 
-void DOMWindowIndexedDatabase::suspendForPageCache()
-{
-    m_suspendedIDBFactory = WTFMove(m_idbFactory);
-    DOMWindowProperty::suspendForPageCache();
-}
-
-void DOMWindowIndexedDatabase::resumeFromPageCache()
-{
-    DOMWindowProperty::resumeFromPageCache();
-    m_idbFactory = WTFMove(m_suspendedIDBFactory);
-}
-
-void DOMWindowIndexedDatabase::willDestroyGlobalObjectInCachedFrame()
-{
-    m_suspendedIDBFactory = nullptr;
-    DOMWindowProperty::willDestroyGlobalObjectInCachedFrame();
-}
-
-void DOMWindowIndexedDatabase::willDestroyGlobalObjectInFrame()
-{
-    m_idbFactory = nullptr;
-    DOMWindowProperty::willDestroyGlobalObjectInFrame();
-}
-
-void DOMWindowIndexedDatabase::willDetachGlobalObjectFromFrame()
-{
-    m_idbFactory = nullptr;
-    DOMWindowProperty::willDetachGlobalObjectFromFrame();
-}
-
 IDBFactory* DOMWindowIndexedDatabase::indexedDB(DOMWindow& window)
 {
     return from(&window)->indexedDB();
@@ -97,15 +66,19 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB(DOMWindow& window)
 
 IDBFactory* DOMWindowIndexedDatabase::indexedDB()
 {
-    Document* document = m_window->document();
+    auto* window = this->window();
+    if (!window)
+        return nullptr;
+
+    auto* document = window->document();
     if (!document)
         return nullptr;
 
-    Page* page = document->page();
+    auto* page = document->page();
     if (!page)
         return nullptr;
 
-    if (!m_window->isCurrentlyDisplayedInFrame())
+    if (!window->isCurrentlyDisplayedInFrame())
         return nullptr;
 
     if (!m_idbFactory) {

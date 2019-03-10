@@ -19,7 +19,7 @@
 #include "config.h"
 #include "DOMObjectCache.h"
 
-#include <WebCore/DOMWindowProperty.h>
+#include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserver.h>
@@ -113,27 +113,31 @@ public:
     }
 
 private:
-    class DOMWindowObserver final: public WebCore::DOMWindowProperty {
+    class DOMWindowObserver final : public WebCore::DOMWindow::Observer {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         DOMWindowObserver(WebCore::DOMWindow& window, DOMObjectCacheFrameObserver& frameObserver)
-            : DOMWindowProperty(&window)
+            : m_window(makeWeakPtr(window))
             , m_frameObserver(frameObserver)
         {
+            window.registerObserver(*this);
         }
 
-        virtual ~DOMWindowObserver()
+        ~DOMWindowObserver()
         {
+            if (m_window)
+                m_window->unregisterObserver(*this);
         }
+
+        WebCore::DOMWindow* window() const { return m_window.get(); }
 
     private:
         void willDetachGlobalObjectFromFrame() override
         {
-            // Clear the DOMWindowProperty first, and then notify the Frame observer.
-            DOMWindowProperty::willDetachGlobalObjectFromFrame();
             m_frameObserver.willDetachGlobalObjectFromFrame();
         }
 
+        WeakPtr<WebCore::DOMWindow> m_window;
         DOMObjectCacheFrameObserver& m_frameObserver;
     };
 

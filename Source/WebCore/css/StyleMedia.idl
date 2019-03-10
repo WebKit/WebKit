@@ -27,6 +27,7 @@
 [
     NoInterfaceObject,
     GenerateIsReachable=ImplFrame,
+    ImplementationLacksVTable,
 ] interface StyleMedia {
     readonly attribute DOMString type;
 

@@ -296,7 +296,7 @@ bool ApplicationCacheHost::canCacheInPageCache()
 void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplicationCache)
 {
     ASSERT(!m_domApplicationCache || !domApplicationCache);
-    m_domApplicationCache = domApplicationCache;
+    m_domApplicationCache = makeWeakPtr(domApplicationCache);
 }
 
 void ApplicationCacheHost::notifyDOMApplicationCache(const AtomicString& eventType, int total, int done)
@@ -379,8 +379,9 @@ static Ref<Event> createApplicationCacheEvent(const AtomicString& eventType, int
 
 void ApplicationCacheHost::dispatchDOMEvent(const AtomicString& eventType, int total, int done)
 {
-    if (!m_domApplicationCache)
+    if (!m_domApplicationCache || !m_domApplicationCache->frame())
         return;
+
     m_domApplicationCache->dispatchEvent(createApplicationCacheEvent(eventType, total, done));
 }
 
