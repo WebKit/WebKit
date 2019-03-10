@@ -1402,7 +1402,7 @@ public:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void requestDeviceOrientationAndMotionAccess(WebCore::SecurityOriginData&&, uint64_t callbackID);
+    void requestDeviceOrientationAndMotionAccess(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
 #endif
 
     static WebPageProxy* nonEphemeralWebPageProxy();

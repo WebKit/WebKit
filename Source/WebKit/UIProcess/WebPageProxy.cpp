@@ -7175,14 +7175,10 @@ void WebPageProxy::clearUserMediaState()
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebPageProxy::requestDeviceOrientationAndMotionAccess(WebCore::SecurityOriginData&& originData, uint64_t callbackID)
+void WebPageProxy::requestDeviceOrientationAndMotionAccess(WebCore::SecurityOriginData&& originData, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto origin = API::SecurityOrigin::create(originData.securityOrigin());
-    m_uiClient->shouldAllowDeviceOrientationAndMotionAccess(*this, origin.get(), [this, weakThis = makeWeakPtr(*this), callbackID](bool granted) {
-        if (!weakThis || !isValid())
-            return;
-        m_process->send(Messages::WebPage::DidReceiveDeviceOrientationAndMotionAccessDecision(callbackID, granted), m_pageID);
-    });
+    m_uiClient->shouldAllowDeviceOrientationAndMotionAccess(*this, origin.get(), WTFMove(completionHandler));
 }
 #endif
 

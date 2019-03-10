@@ -534,7 +534,7 @@ messages -> WebPageProxy {
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Delayed
 
 #if ENABLE(DEVICE_ORIENTATION)
-    RequestDeviceOrientationAndMotionAccess(struct WebCore::SecurityOriginData origin, uint64_t callbackID);
+    RequestDeviceOrientationAndMotionAccess(struct WebCore::SecurityOriginData origin) -> (bool granted) Async
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

@@ -1,3 +1,21 @@
+2019-03-09  Chris Dumez  <cdumez@apple.com>
+
+        Use modern async IPC with reply for device orientation permission
+        https://bugs.webkit.org/show_bug.cgi?id=195529
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestDeviceOrientationAndMotionAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::shouldAllowDeviceOrientationAndMotionAccess):
+        (WebKit::nextDeviceOrientationAndMotionPermissionCallbackID): Deleted.
+        (WebKit::WebPage::didReceiveDeviceOrientationAndMotionAccessDecision): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-03-09  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Start observing for content change between touchEnd and mouseMoved start

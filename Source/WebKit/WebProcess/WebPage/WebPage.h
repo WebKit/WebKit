@@ -1210,10 +1210,6 @@ private:
     void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
 #endif
 
-#if ENABLE(DEVICE_ORIENTATION)
-    void didReceiveDeviceOrientationAndMotionAccessDecision(uint64_t callbackID, bool granted);
-#endif
-
 #if !PLATFORM(COCOA) && !PLATFORM(WPE)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
 #endif
@@ -1843,10 +1839,6 @@ private:
 
     HashMap<uint64_t, WTF::Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
     HashMap<ShareSheetCallbackID, WTF::Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
-
-#if ENABLE(DEVICE_ORIENTATION)
-    HashMap<uint64_t, WTF::CompletionHandler<void(bool granted)>> m_deviceOrientationAndMotionPermissionCallbackMap;
-#endif
 
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
