@@ -1160,8 +1160,6 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 # Skipped because there is no key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
 
-webkit.org/b/171628 scrollingcoordinator/ios/nested-fixed-layer-positions.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html [ Failure ]
 
 webkit.org/b/169558 fast/history/ios/history-scroll-restoration.html [ Pass Failure ]

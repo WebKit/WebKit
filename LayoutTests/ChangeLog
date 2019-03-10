@@ -1,5 +1,16 @@
 2019-03-09  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS Simulator] LayoutTest/scrollingcoordinator/ios/nested-fixed-layer-positions.html is flaky fail
+        https://bugs.webkit.org/show_bug.cgi?id=171628
+
+        Unreviewed test gardening.
+        
+        I can't reproduce flakiness for this test. Let's see if it's fixed.
+
+        * platform/ios-wk2/TestExpectations:
+
+2019-03-09  Simon Fraser  <simon.fraser@apple.com>
+
         [ios-simulator WK2] LayoutTest scrollingcoordinator/ios/non-stable-viewport-scroll.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=168924
 
