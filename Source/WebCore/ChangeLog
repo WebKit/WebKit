@@ -1,3 +1,23 @@
+2019-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Start observing for content change between touchEnd and mouseMoved start
+        https://bugs.webkit.org/show_bug.cgi?id=195510
+        <rdar://problem/48735695>
+
+        Reviewed by Simon Fraser.
+
+        This patch covers the observation of async changes triggered by touchStart/touchEnd (animations, timers, style recalcs).
+
+        Test: fast/events/touch/ios/content-observation/visibility-change-after-touch-end.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didCancelTouchEvent):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::setIsInBetweenTouchEndAndMouseMoved):
+        (WebCore::ContentChangeObserver::isInBetweenTouchEndAndMouseMoved const):
+        (WebCore::ContentChangeObserver::isObservingContentChanges const):
+
 2019-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         Make it clearer which data is protected by the two locks in ScrollingTree

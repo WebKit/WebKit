@@ -88,6 +88,13 @@ void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
     adjustObservedState(Event::RemovedDOMTimer);
 }
 
+void ContentChangeObserver::willNotProceedWithClick()
+{
+    LOG(ContentObservation, "willNotProceedWithClick: click will not happen.");
+    setIsBetweenTouchEndAndMouseMoved(false);
+    // FIXME: Add support for preventDefault() and long press.
+}
+
 void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)
 {
     if (!containsObservedDOMTimer(timer))
@@ -247,20 +254,20 @@ void ContentChangeObserver::adjustObservedState(Event event)
     case Event::StartedTouchStartEventDispatching:
         setHasNoChangeState();
         clearObservedDOMTimers();
-        m_isMouseMovedPrecededByTouch = true;
         setShouldObserveDOMTimerScheduling(true);
         break;
     case Event::EndedTouchStartEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
+        setIsBetweenTouchEndAndMouseMoved(true);
         break;
     case Event::StartedMouseMovedEventDispatching:
         ASSERT(!m_document.hasPendingStyleRecalc());
-        if (!m_isMouseMovedPrecededByTouch) {
+        if (!isBetweenTouchEndAndMouseMoved()) {
             setHasNoChangeState();
             clearObservedDOMTimers();
         }
+        setIsBetweenTouchEndAndMouseMoved(false);
         setShouldObserveDOMTimerScheduling(true);
-        m_isMouseMovedPrecededByTouch = false;
         break;
     case Event::EndedMouseMovedEventDispatching:
         setShouldObserveDOMTimerScheduling(false);

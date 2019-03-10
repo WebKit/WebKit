@@ -865,7 +865,8 @@ void WebPage::cancelPotentialTap()
 void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
 {
     if (m_potentialTapNode) {
-        Frame* potentialTapFrame = m_potentialTapNode->document().frame();
+        m_potentialTapNode->document().contentChangeObserver().willNotProceedWithClick();
+        auto* potentialTapFrame = m_potentialTapNode->document().frame();
         if (potentialTapFrame && !potentialTapFrame->tree().isDescendantOf(frame.coreFrame()))
             return;
     }

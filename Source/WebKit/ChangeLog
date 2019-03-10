@@ -1,3 +1,14 @@
+2019-03-09  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Start observing for content change between touchEnd and mouseMoved start
+        https://bugs.webkit.org/show_bug.cgi?id=195510
+        <rdar://problem/48735695>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::cancelPotentialTapInFrame):
+
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
         Enable ProcessAssertions on iOS Simulator

@@ -49,6 +49,7 @@ public:
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
+    WEBCORE_EXPORT void willNotProceedWithClick();
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
@@ -123,7 +124,7 @@ private:
     void setShouldObserveNextStyleRecalc(bool);
     bool isWaitingForStyleRecalc() const { return m_isWaitingForStyleRecalc; }
 
-    bool isObservingContentChanges() const { return m_mouseMovedEventIsBeingDispatched || m_touchEventIsBeingDispatched || m_observedDomTimerIsBeingExecuted || m_isInObservedStyleRecalc || m_contentObservationTimer.isActive(); }
+    bool isObservingContentChanges() const;
 
     void cancelPendingActivities();
 
@@ -134,6 +135,9 @@ private:
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
     bool hasObservedDOMTimer() const { return !m_DOMTimerList.isEmpty(); }
     bool hasDeterminateState() const;
+
+    void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
+    bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }
 
     bool hasPendingActivity() const { return hasObservedDOMTimer() || m_document.hasPendingStyleRecalc() || isObservationTimeWindowActive(); }
     bool isObservationTimeWindowActive() const { return m_contentObservationTimer.isActive(); }
@@ -168,8 +172,8 @@ private:
     bool m_isInObservedStyleRecalc { false };
     bool m_isObservingDOMTimerScheduling { false };
     bool m_observedDomTimerIsBeingExecuted { false };
-    bool m_isMouseMovedPrecededByTouch { false };
     bool m_mouseMovedEventIsBeingDispatched { false };
+    bool m_isBetweenTouchEndAndMouseMoved { false };
 };
 
 inline void ContentChangeObserver::setHasNoChangeState()
@@ -188,5 +192,15 @@ inline void ContentChangeObserver::setHasVisibleChangeState()
     WKSetObservedContentChange(WKContentVisibilityChange);
 }
 
+inline bool ContentChangeObserver::isObservingContentChanges() const
+{
+    return m_touchEventIsBeingDispatched
+        || m_isBetweenTouchEndAndMouseMoved
+        || m_mouseMovedEventIsBeingDispatched
+        || m_observedDomTimerIsBeingExecuted
+        || m_isInObservedStyleRecalc
+        || m_contentObservationTimer.isActive();
+    }
 }
+
 #endif
