@@ -393,6 +393,7 @@ private:
 
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
+    bool m_isSuspendingObservers { false };
     Optional<bool> m_canShowModalDialogOverride;
 
     HashSet<Observer*> m_observers;

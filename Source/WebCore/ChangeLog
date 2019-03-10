@@ -1,5 +1,20 @@
 2019-03-09  Chris Dumez  <cdumez@apple.com>
 
+        Add assertions to help debug crash under DOMWindowExtension::suspendForPageCache()
+        https://bugs.webkit.org/show_bug.cgi?id=195488
+
+        Reviewed by Ryosuke Niwa.
+
+        Try and figure out how the document can be detached from its frame while we're suspending
+        DOMWindowExtensions.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::willDetachDocumentFromFrame):
+        (WebCore::DOMWindow::suspendForPageCache):
+        * page/DOMWindow.h:
+
+2019-03-09  Chris Dumez  <cdumez@apple.com>
+
         Simplify DOMWindowProperty code / handling
         https://bugs.webkit.org/show_bug.cgi?id=195495
 

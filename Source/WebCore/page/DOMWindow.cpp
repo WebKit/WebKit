@@ -119,6 +119,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
@@ -473,6 +474,8 @@ void DOMWindow::willDetachDocumentFromFrame()
     if (!frame())
         return;
 
+    RELEASE_ASSERT(!m_isSuspendingObservers);
+
     // It is necessary to copy m_observers to a separate vector because the Observer may
     // unregister themselves from the DOMWindow as a result of the call to willDetachGlobalObjectFromFrame.
     for (auto& observer : copyToVector(m_observers)) {
@@ -521,10 +524,14 @@ void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
 
 void DOMWindow::suspendForPageCache()
 {
+    SetForScope<bool> isSuspendingObservers(m_isSuspendingObservers, true);
+    RELEASE_ASSERT(frame());
+
     for (auto* observer : copyToVector(m_observers)) {
         if (m_observers.contains(observer))
             observer->suspendForPageCache();
     }
+    RELEASE_ASSERT(frame());
 
     m_suspendedForDocumentSuspension = true;
 }
