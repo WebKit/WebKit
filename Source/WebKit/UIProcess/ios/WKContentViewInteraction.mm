@@ -4723,7 +4723,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _formAccessoryView.get();
 }
 
-static bool shouldZoomToRevealSelectionRect(WebKit::InputType type)
+static bool shouldDeferZoomingToSelectionWhenRevealingFocusedElement(WebKit::InputType type)
 {
     switch (type) {
     case WebKit::InputType::ContentEditable:
@@ -4748,7 +4748,7 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     if (elementInfo.elementRect.contains(elementInfo.lastInteractionLocation))
         elementInteractionRect = { elementInfo.lastInteractionLocation, { 1, 1 } };
 
-    if (!shouldZoomToRevealSelectionRect(elementInfo.elementType))
+    if (!shouldDeferZoomingToSelectionWhenRevealingFocusedElement(elementInfo.elementType))
         return elementInteractionRect;
 
     if (editorState.isMissingPostLayoutData) {
@@ -4840,7 +4840,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     else
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
 
-    BOOL shouldShowKeyboard = [&] {
+    BOOL shouldShowInputView = [&] {
         switch (startInputSessionPolicy) {
         case _WKFocusStartsInputSessionPolicyAuto:
             // The default behavior is to allow node assistance if the user is interacting.
@@ -4887,7 +4887,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
         [_drawingCoordinator installInkPickerForDrawing:information.embeddedViewID];
 #endif
 
-    if (!shouldShowKeyboard)
+    if (!shouldShowInputView)
         return;
 
     if (!isAssistableInputType(information.elementType))
@@ -4951,7 +4951,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     if (editableChanged)
         [_webView _scheduleVisibleContentRectUpdate];
     
-    if (!shouldZoomToRevealSelectionRect(_focusedElementInformation.elementType))
+    if (!shouldDeferZoomingToSelectionWhenRevealingFocusedElement(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 
     [self _ensureFormAccessoryView];
@@ -5106,7 +5106,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
     // FIXME: If the initial writing direction just changed, we should wait until we get the next post-layout editor state
     // before zooming to reveal the selection rect.
-    if (shouldZoomToRevealSelectionRect(_focusedElementInformation.elementType))
+    if (shouldDeferZoomingToSelectionWhenRevealingFocusedElement(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 }
 

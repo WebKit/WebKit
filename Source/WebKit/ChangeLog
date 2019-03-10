@@ -1,3 +1,26 @@
+2019-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix some misleading function and variable names in WKContentViewInteraction.mm
+        https://bugs.webkit.org/show_bug.cgi?id=195536
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldDeferZoomingToSelectionWhenRevealingFocusedElement):
+
+        Rename shouldZoomToRevealSelectionRect to shouldDeferZoomingToSelectionWhenRevealingFocusedElement; this
+        function is used to determine whether we should zoom to the selection rect when revealing the focused element,
+        and therefore affects whether we need to defer zooming until we get selection information.
+
+        (rectToRevealWhenZoomingToFocusedElement):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        Rename shouldShowKeyboard to shouldShowInputView; this boolean indicates whether we should show not only the
+        keyboard, but other UI for user input such as date and select pickers.
+
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]):
+        (shouldZoomToRevealSelectionRect): Deleted.
+
 2019-03-10  Simon Fraser  <simon.fraser@apple.com>
 
         ScrollingTree should have the final say on where layers go
