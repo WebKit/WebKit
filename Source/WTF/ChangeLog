@@ -1,3 +1,16 @@
+2019-03-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Crash under WebCore::IDBDatabase::connectionToServerLost
+        https://bugs.webkit.org/show_bug.cgi?id=195563
+        <rdar://problem/37193655>
+
+        CrossThreadTask should protect callee if it is ThreadSafeRefCounted.
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/CrossThreadTask.h:
+        (WTF::createCrossThreadTask):
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.
