@@ -1,3 +1,22 @@
+2019-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Dispatching reentrant "contextmenu" events may cause crashes
+        https://bugs.webkit.org/show_bug.cgi?id=195571
+        <rdar://problem/48086046>
+
+        Reviewed by Andy Estes.
+
+        Make ContextMenuController::handleContextMenuEvent robust against reentrancy by guarding it with a boolean flag.
+        As demonstrated in the test case, it is currently possible to force WebKit into a bad state by dispatching a
+        synthetic "contextmenu" event from within the scope of one of the "before(copy|cut|paste)" events triggered as
+        a result of handling a context menu event.
+
+        Test: fast/events/contextmenu-reentrancy-crash.html
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * page/ContextMenuController.h:
+
 2019-03-11  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Use PKPaymentAuthorizationController to present the Apple Pay UI remotely from the Networking service on iOS

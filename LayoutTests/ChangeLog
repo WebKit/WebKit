@@ -1,3 +1,16 @@
+2019-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Dispatching reentrant "contextmenu" events may cause crashes
+        https://bugs.webkit.org/show_bug.cgi?id=195571
+        <rdar://problem/48086046>
+
+        Reviewed by Andy Estes.
+
+        Add a test to verify that triggering reentrant "contextmenu" events from script does not cause a crash.
+
+        * fast/events/contextmenu-reentrancy-crash-expected.txt: Added.
+        * fast/events/contextmenu-reentrancy-crash.html: Added.
+
 2019-03-11  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: Layout Test media/media-fullscreen-return-to-inline.html is a flaky timeout
