@@ -123,6 +123,9 @@ public:
     bool hasCSSAnimation() const { return m_hasCSSAnimation; }
     void setHasCSSAnimation(bool value) { m_hasCSSAnimation = value; }
 
+    bool hasElementIdentifier() const { return m_hasElementIdentifier; }
+    void setHasElementIdentifier(bool value) { m_hasElementIdentifier = value; }
+
 #if ENABLE(INTERSECTION_OBSERVER)
     IntersectionObserverData* intersectionObserverData() { return m_intersectionObserverData.get(); }
     void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
@@ -180,6 +183,7 @@ private:
 #endif
     unsigned m_hasPendingResources : 1;
     unsigned m_hasCSSAnimation : 1;
+    unsigned m_hasElementIdentifier : 1;
     unsigned m_childrenAffectedByHover : 1;
     unsigned m_childrenAffectedByDrag : 1;
     // Bits for dynamic child matching.
@@ -228,6 +232,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
 #endif
     , m_hasPendingResources(false)
     , m_hasCSSAnimation(false)
+    , m_hasElementIdentifier(false)
     , m_childrenAffectedByHover(false)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)

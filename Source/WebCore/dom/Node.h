@@ -283,7 +283,7 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return false; }
 
-    bool isRootEditableElement() const;
+    WEBCORE_EXPORT bool isRootEditableElement() const;
     WEBCORE_EXPORT Element* rootEditableElement() const;
 
     // Called by the parser when this element's close tag is reached,

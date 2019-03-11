@@ -83,6 +83,7 @@
 #include "SharedBufferDataReference.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "TextInputContext.h"
 #include "UIMessagePortChannelProvider.h"
 #include "URLSchemeTaskParameters.h"
 #include "UndoOrRedo.h"
@@ -8815,6 +8816,26 @@ void WebPageProxy::webViewDidMoveToWindow()
             continue;
         observer.value->webViewDidMoveToWindow();
     }
+}
+
+void WebPageProxy::textInputContextsInRect(WebCore::FloatRect rect, CompletionHandler<void(const Vector<WebKit::TextInputContext>&)>&& completionHandler)
+{
+    if (!isValid()) {
+        completionHandler({ });
+        return;
+    }
+
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::TextInputContextsInRect(rect), WTFMove(completionHandler), m_pageID);
+}
+
+void WebPageProxy::focusTextInputContext(const TextInputContext& context, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!isValid()) {
+        completionHandler(false);
+        return;
+    }
+
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::FocusTextInputContext(context), WTFMove(completionHandler), m_pageID);
 }
 
 } // namespace WebKit

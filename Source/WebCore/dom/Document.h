@@ -34,6 +34,7 @@
 #include "DocumentEventQueue.h"
 #include "DocumentIdentifier.h"
 #include "DocumentTiming.h"
+#include "ElementIdentifier.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
@@ -387,6 +388,10 @@ public:
     using DocumentsMap = HashMap<DocumentIdentifier, Document*>;
     WEBCORE_EXPORT static DocumentsMap::ValuesIteratorRange allDocuments();
     WEBCORE_EXPORT static DocumentsMap& allDocumentsMap();
+
+    WEBCORE_EXPORT ElementIdentifier identifierForElement(Element&);
+    WEBCORE_EXPORT Element* searchForElementByIdentifier(const ElementIdentifier&);
+    void identifiedElementWasRemovedFromDocument(Element&);
 
     MediaQueryMatcher& mediaQueryMatcher();
 
@@ -2083,6 +2088,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
 #endif
+
+    HashMap<Element*, ElementIdentifier> m_identifiedElementsMap;
 };
 
 Element* eventTargetElementForDocument(Document*);

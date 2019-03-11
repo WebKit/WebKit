@@ -726,6 +726,9 @@
 		2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */; };
 		2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */; };
 		2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */; };
+		2DE9B1352231B5B2005287B7 /* TextInputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B1332231B5B2005287B7 /* TextInputContext.h */; };
+		2DE9B13A2231F61C005287B7 /* _WKTextInputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2DE9B13C2231F77C005287B7 /* _WKTextInputContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */; };
 		2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DEB1D2E2127473600933906 /* ArgumentCodersCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF0C4912B16334008E49E2 /* ArgumentCodersCF.cpp */; };
 		2DF6FE52212E110900469030 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
@@ -2785,6 +2788,11 @@
 		2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStoreCollection.mm; sourceTree = "<group>"; };
 		2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SmartMagnificationControllerMessageReceiver.cpp; path = DerivedSources/WebKit2/SmartMagnificationControllerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmartMagnificationControllerMessages.h; path = DerivedSources/WebKit2/SmartMagnificationControllerMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DE9B1332231B5B2005287B7 /* TextInputContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputContext.h; sourceTree = "<group>"; };
+		2DE9B1342231B5B2005287B7 /* TextInputContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextInputContext.cpp; sourceTree = "<group>"; };
+		2DE9B1372231F61C005287B7 /* _WKTextInputContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextInputContext.mm; sourceTree = "<group>"; };
+		2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContext.h; sourceTree = "<group>"; };
+		2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContextInternal.h; sourceTree = "<group>"; };
 		2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindOptions.h; sourceTree = "<group>"; };
 		2DF3962A21C8DC50008835E3 /* WKInkPickerView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInkPickerView.mm; path = ios/WKInkPickerView.mm; sourceTree = "<group>"; };
 		2DF3962B21C8DC50008835E3 /* WKInkPickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKInkPickerView.h; path = ios/WKInkPickerView.h; sourceTree = "<group>"; };
@@ -5104,6 +5112,8 @@
 				5272B2881406985D0096A5D0 /* StatisticsData.cpp */,
 				5272B2891406985D0096A5D0 /* StatisticsData.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
+				2DE9B1342231B5B2005287B7 /* TextInputContext.cpp */,
+				2DE9B1332231B5B2005287B7 /* TextInputContext.h */,
 				2FD43B921FA006A30083F51C /* TouchBarMenuData.cpp */,
 				2FD43B911FA006A10083F51C /* TouchBarMenuData.h */,
 				2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */,
@@ -6077,6 +6087,9 @@
 				1A002D3F196B329400B9AD44 /* _WKSessionState.h */,
 				1A002D3E196B329400B9AD44 /* _WKSessionState.mm */,
 				1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */,
+				2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */,
+				2DE9B1372231F61C005287B7 /* _WKTextInputContext.mm */,
+				2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */,
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
@@ -8934,6 +8947,8 @@
 				376311FE1A3FB600005A2E51 /* _WKSameDocumentNavigationTypeInternal.h in Headers */,
 				1A002D44196B338900B9AD44 /* _WKSessionState.h in Headers */,
 				1A002D43196B337000B9AD44 /* _WKSessionStateInternal.h in Headers */,
+				2DE9B13A2231F61C005287B7 /* _WKTextInputContext.h in Headers */,
+				2DE9B13C2231F77C005287B7 /* _WKTextInputContextInternal.h in Headers */,
 				2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */,
 				2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */,
 				99E7189C21F79D9E0055E975 /* _WKTouchEventGenerator.h in Headers */,
@@ -9401,6 +9416,7 @@
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
+				2DE9B1352231B5B2005287B7 /* TextInputContext.h in Headers */,
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,

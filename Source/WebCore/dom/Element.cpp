@@ -2049,6 +2049,11 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (frame && frame->page())
         frame->page()->removeLatchingStateForTarget(*this);
 #endif
+
+    if (hasRareData() && elementRareData()->hasElementIdentifier()) {
+        document().identifiedElementWasRemovedFromDocument(*this);
+        elementRareData()->setHasElementIdentifier(false);
+    }
 }
 
 ShadowRoot* Element::shadowRoot() const
@@ -4155,6 +4160,15 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations()
         }
     }
     return animations;
+}
+
+ElementIdentifier Element::createElementIdentifier()
+{
+    auto& rareData = ensureElementRareData();
+    ASSERT(!rareData.hasElementIdentifier());
+
+    rareData.setHasElementIdentifier(true);
+    return ElementIdentifier::generate();
 }
 
 #if ENABLE(CSS_TYPED_OM)

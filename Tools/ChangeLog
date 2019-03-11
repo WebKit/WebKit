@@ -1,3 +1,19 @@
+2019-03-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add SPI to retrieve the set of text inputs in a given rect, and later focus one
+        https://bugs.webkit.org/show_bug.cgi?id=195499
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm: Added.
+        (-[WKWebView synchronouslyRequestTextInputContextsInRect:]):
+        (-[WKWebView synchronouslyFocusTextInputContext:]):
+        (applyStyle):
+        (applyIframe):
+        (TEST):
+        Add some tests for this SPI.
+
 2019-03-10  Yusuke Suzuki <utatane.tea@gmail.com>
 
         [WTF] Align assumption in RunLoopWin to the other platform's RunLoop

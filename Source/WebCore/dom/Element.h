@@ -592,6 +592,8 @@ public:
     ExceptionOr<Ref<WebAnimation>> animate(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations();
 
+    ElementIdentifier createElementIdentifier();
+
 #if ENABLE(POINTER_EVENTS)
     OptionSet<TouchAction> computedTouchActions() const;
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)

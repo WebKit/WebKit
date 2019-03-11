@@ -111,6 +111,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class _WKRemoteObjectRegistry;
 @class _WKSafeBrowsingWarning;
 @class _WKSessionState;
+@class _WKTextInputContext;
 @class _WKThumbnailView;
 @class _WKWebsitePolicies;
 @class _WKWebViewPrintFormatter;
@@ -418,6 +419,10 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;
 - (void)_resumeAllMediaPlayback;
+
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_focusTextInputContext:(_WKTextInputContext *)textInputElement completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

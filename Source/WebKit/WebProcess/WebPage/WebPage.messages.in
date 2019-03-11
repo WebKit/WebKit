@@ -545,4 +545,7 @@ messages -> WebPage LegacyReceiver {
 
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
     SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
+
+    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebKit::TextInputContext> contexts) Async
+    FocusTextInputContext(struct WebKit::TextInputContext context) -> (bool success) Async
 }

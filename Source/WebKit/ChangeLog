@@ -1,5 +1,64 @@
 2019-03-10  Tim Horton  <timothy_horton@apple.com>
 
+        Add SPI to retrieve the set of text inputs in a given rect, and later focus one
+        https://bugs.webkit.org/show_bug.cgi?id=195499
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit/messages.py:
+        * Shared/TextInputContext.cpp: Added.
+        (IPC::ArgumentCoder<WebKit::TextInputContext>::encode):
+        (IPC::ArgumentCoder<WebKit::TextInputContext>::decode):
+        * Shared/TextInputContext.h: Added.
+        (WebKit::TextInputContext::operator== const):
+        Add TextInputContext, which represents a minimal set of information
+        about a text field.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        (-[WKWebView _focusTextInputContext:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add SPI that allows clients to asynchronously request text input
+        contexts for a given rect, and later focus a given context.
+
+        * UIProcess/API/Cocoa/_WKTextInputContext.h: Added.
+        * UIProcess/API/Cocoa/_WKTextInputContext.mm: Added.
+        (-[_WKTextInputContext _initWithTextInputContext:]):
+        (-[_WKTextInputContext boundingRect]):
+        (-[_WKTextInputContext _textInputContext]):
+        (-[_WKTextInputContext isEqual:]):
+        (-[_WKTextInputContext hash]):
+        (-[_WKTextInputContext copyWithZone:]):
+        * UIProcess/API/Cocoa/_WKTextInputContextInternal.h: Added.
+        Add an SPI object that exposes a read-only window on a TextInputContext to clients.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::textInputContextsInRect):
+        (WebKit::WebPageProxy::focusTextInputContext):
+        * UIProcess/WebPageProxy.h:
+        Plumbing from WKWebView<->WebPage.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::elementRectInWindowCoordinates):
+        (WebKit::isEditableTextInputElement):
+        (WebKit::WebPage::textInputContextsInRect):
+        Search the DOM for text input contexts: <input type='text'> (or other
+        form fields that fall back on text field behavior), <textarea>, and
+        contenteditable roots. Store the WebPage, Document, and Element identifiers
+        so that we can find the element again later.
+
+        (WebKit::WebPage::focusTextInputContext):
+        Find the element for a given (web page, document, element) triple and focus it,
+        if it's still available.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2019-03-10  Tim Horton  <timothy_horton@apple.com>
+
         iOS: Using ⌥ to scroll horizontally is no different than arrow key
         https://bugs.webkit.org/show_bug.cgi?id=195268
         <rdar://problem/48326682>

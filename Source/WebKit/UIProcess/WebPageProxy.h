@@ -275,6 +275,7 @@ struct InteractionInformationRequest;
 struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
+struct TextInputContext;
 struct WebPopupItem;
 struct URLSchemeTaskParameters;
 
@@ -605,6 +606,9 @@ public:
         
     void requestFontAttributesAtSelectionStart(Function<void(const WebCore::FontAttributes&, CallbackBase::Error)>&&);
     void fontAttributesCallback(const WebCore::FontAttributes&, CallbackID);
+
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<TextInputContext>&)>&&);
+    void focusTextInputContext(const TextInputContext&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }

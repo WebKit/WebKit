@@ -6468,6 +6468,94 @@ WebCore::IntRect WebPage::rectForElementAtInteractionLocation() const
 
 #endif // !PLATFORM(IOS_FAMILY)
 
+static IntRect elementRectInWindowCoordinates(const Element& element, const Frame& frame)
+{
+    auto* view = frame.view();
+    if (!view)
+        return { };
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return { };
+
+    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
+}
+
+static bool isEditableTextInputElement(Element& element)
+{
+    if (is<HTMLTextFormControlElement>(element)) {
+        if (!element.isTextField() && !is<HTMLTextAreaElement>(element))
+            return false;
+        return downcast<HTMLTextFormControlElement>(element).isInnerTextElementEditable();
+    }
+
+    return element.isRootEditableElement();
+}
+
+void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionHandler<void(const Vector<TextInputContext>&)>&& completionHandler)
+{
+    Vector<WebKit::TextInputContext> textInputContexts;
+
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        Document* document = frame->document();
+        if (!document)
+            continue;
+
+        Deque<Node*> nodesToSearch;
+        nodesToSearch.append(document);
+        while (!nodesToSearch.isEmpty()) {
+            auto node = nodesToSearch.takeFirst();
+
+            // It is possible to have nested text input contexts (e.g. <input type='text'> inside contenteditable) but
+            // in this case we just take the outermost context and skip the rest.
+            if (!is<Element>(*node) || !isEditableTextInputElement(downcast<Element>(*node))) {
+                for (auto* child = node->firstChild(); child; child = child->nextSibling())
+                    nodesToSearch.append(child);
+                continue;
+            }
+
+            auto& element = downcast<Element>(*node);
+
+            IntRect elementRect = elementRectInWindowCoordinates(element, *frame);
+            if (!searchRect.intersects(elementRect))
+                continue;
+
+            WebKit::TextInputContext context;
+            context.webPageIdentifier = m_pageID;
+            context.documentIdentifier = document->identifier();
+            context.elementIdentifier = document->identifierForElement(element);
+            context.boundingRect = elementRect;
+
+            textInputContexts.append(context);
+        }
+    }
+
+    completionHandler(textInputContexts);
+}
+
+void WebPage::focusTextInputContext(const TextInputContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler([&] {
+        if (textInputContext.webPageIdentifier != m_pageID)
+            return false;
+
+        auto* document = Document::allDocumentsMap().get(textInputContext.documentIdentifier);
+        if (!document)
+            return false;
+
+        if (document->page() != m_page.get())
+            return false;
+
+        auto* element = document->searchForElementByIdentifier(textInputContext.elementIdentifier);
+        if (!element)
+            return false;
+
+        element->focus();
+
+        return true;
+    }());
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

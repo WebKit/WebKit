@@ -251,6 +251,7 @@ struct InteractionInformationAtPosition;
 struct InteractionInformationRequest;
 struct LoadParameters;
 struct PrintInfo;
+struct TextInputContext;
 struct WebAutocorrectionContext;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
@@ -591,6 +592,9 @@ public:
     void disabledAdaptationsDidChange(const OptionSet<WebCore::DisabledAdaptations>&);
     void viewportPropertiesDidChange(const WebCore::ViewportArguments&);
     void executeEditCommandWithCallback(const String&, const String& argument, CallbackID);
+
+    void textInputContextsInRect(WebCore::FloatRect, CompletionHandler<void(const Vector<WebKit::TextInputContext>&)>&&);
+    void focusTextInputContext(const TextInputContext&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     WebCore::FloatSize screenSize() const;

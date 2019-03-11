@@ -1,3 +1,40 @@
+2019-03-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add SPI to retrieve the set of text inputs in a given rect, and later focus one
+        https://bugs.webkit.org/show_bug.cgi?id=195499
+
+        Reviewed by Darin Adler.
+
+        New API tests: WebKit.RequestTextInputContext and WebKit.FocusTextInputContext
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::identifierForElement):
+        (WebCore::Document::elementWithIdentifier):
+        (WebCore::Document::identifiedElementWasRemovedFromDocument):
+        * dom/Document.h:
+        Add a mechanism where Document will vend an ObjectIdentifier for a given
+        element, and can (if possible) retrieve that element later.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        If an Element has an identifier created for it, inform Document to remove
+        it from the identifier map when the element is detached.
+
+        (WebCore::Element::createElementIdentifier):
+        * dom/Element.h:
+        * dom/ElementIdentifier.h: Added.
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::hasElementIdentifier const):
+        (WebCore::ElementRareData::setHasElementIdentifier):
+        (WebCore::ElementRareData::ElementRareData):
+        Store a bit indicating if the Element has had a identifier created for it,
+        so that we can avoid a hash lookup on every Element removal.
+
+        * dom/Node.h:
+        * html/HTMLTextFormControlElement.h:
+
 2019-03-10  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Fix failing test cases

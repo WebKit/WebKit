@@ -49,6 +49,7 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "SafeBrowsingWarning.h"
+#import "TextInputContext.h"
 #import "UIDelegate.h"
 #import "UserMediaProcessManager.h"
 #import "VersionChecks.h"
@@ -96,6 +97,7 @@
 #import "_WKInspectorInternal.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
+#import "_WKTextInputContextInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/GraphicsContextCG.h>
@@ -4824,6 +4826,31 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
         Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
+}
+
+- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+{
+    _page->textInputContextsInRect(rect, [capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::TextInputContext>& contexts) {
+        RetainPtr<NSMutableArray> elements = adoptNS([[NSMutableArray alloc] initWithCapacity:contexts.size()]);
+
+        for (const auto& context : contexts)
+            [elements addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:context]).get()];
+
+        capturedCompletionHandler(elements.get());
+    });
+}
+
+- (void)_focusTextInputContext:(_WKTextInputContext *)textInputContext completionHandler:(void(^)(BOOL))completionHandler
+{
+    auto webContext = [textInputContext _textInputContext];
+    if (webContext.webPageIdentifier != _page->pageID())
+        [NSException raise:NSInvalidArgumentException format:@"The provided _WKTextInputContext was not created by this WKWebView."];
+
+    [self becomeFirstResponder];
+
+    _page->focusTextInputContext(webContext, [capturedCompletionHandler = makeBlockPtr(completionHandler)](bool success) {
+        capturedCompletionHandler(success);
+    });
 }
 
 #if PLATFORM(MAC)

@@ -8612,6 +8612,30 @@ void Document::frameWasDisconnectedFromOwner()
     detachFromFrame();
 }
 
+ElementIdentifier Document::identifierForElement(Element& element)
+{
+    ASSERT(&element.document() == this);
+    auto result = m_identifiedElementsMap.ensure(&element, [&] {
+        return element.createElementIdentifier();
+    });
+    return result.iterator->value;
+}
+
+Element* Document::searchForElementByIdentifier(const ElementIdentifier& identifier)
+{
+    for (auto it = m_identifiedElementsMap.begin(); it != m_identifiedElementsMap.end(); ++it) {
+        if (it->value == identifier)
+            return it->key;
+    }
+
+    return nullptr;
+}
+
+void Document::identifiedElementWasRemovedFromDocument(Element& element)
+{
+    m_identifiedElementsMap.remove(&element);
+}
+
 #if ENABLE(DEVICE_ORIENTATION)
 
 DeviceOrientationAndMotionAccessController& Document::deviceOrientationAndMotionAccessController()

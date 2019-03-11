@@ -98,6 +98,8 @@ public:
     WEBCORE_EXPORT void showPlaceholderIfNecessary();
 #endif
 
+    WEBCORE_EXPORT virtual bool isInnerTextElementEditable() const;
+
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document&, HTMLFormElement*);
     bool isPlaceholderEmpty() const;
@@ -107,7 +109,7 @@ protected:
 
     void disabledStateChanged() override;
     void readOnlyStateChanged() override;
-    virtual bool isInnerTextElementEditable() const;
+
     void updateInnerTextElementEditability();
 
     void cacheSelection(int start, int end, TextFieldSelectionDirection direction)

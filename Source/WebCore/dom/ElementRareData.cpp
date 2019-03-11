@@ -37,9 +37,9 @@ struct SameSizeAsElementRareData : NodeRareData {
     int tabIndex;
     unsigned short childIndex;
 #if ENABLE(FULLSCREEN_API)
-    unsigned bitfields : 11;
+    unsigned bitfields : 12;
 #else
-    unsigned bitfields : 10;
+    unsigned bitfields : 11;
 #endif
     LayoutSize sizeForResizing;
     IntPoint savedLayerScrollPosition;
