@@ -349,7 +349,8 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
     backingStoreCollection.willFlushLayers();
 
-    m_webPage.renderingUpdate();
+    m_webPage.layoutIfNeeded();
+    m_webPage.willDisplayPage();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
     if (m_scrolledViewExposedRect)

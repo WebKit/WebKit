@@ -77,11 +77,6 @@ enum TracePointCode {
     ComputeEventRegionsStart,
     ComputeEventRegionsEnd,
 
-    ScheduleRenderingUpdate,
-    TriggerRenderingUpdate,
-    RenderingUpdateStart,
-    RenderingUpdateEnd,
-
     WebKitRange = 10000,
     WebHTMLViewPaintStart,
     WebHTMLViewPaintEnd,

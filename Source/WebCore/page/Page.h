@@ -33,7 +33,6 @@
 #include "RTCController.h"
 #include "Region.h"
 #include "RegistrableDomain.h"
-#include "RenderingUpdateScheduler.h"
 #include "ScrollTypes.h"
 #include "Supplementable.h"
 #include "Timer.h"
@@ -263,8 +262,6 @@ public:
 
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
 
-    RenderingUpdateScheduler& renderingUpdateScheduler();
-
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
     void updateValidationBubbleStateIfNeeded();
 
@@ -336,6 +333,8 @@ public:
 
     void didStartProvisionalLoad();
     void didFinishLoad(); // Called when the load has been committed in the main frame.
+
+    WEBCORE_EXPORT void willDisplayPage();
 
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
@@ -464,8 +463,11 @@ public:
     WEBCORE_EXPORT void addActivityStateChangeObserver(ActivityStateChangeObserver&);
     WEBCORE_EXPORT void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
 
-    WEBCORE_EXPORT void layoutIfNeeded();
-    WEBCORE_EXPORT void renderingUpdate();
+#if ENABLE(INTERSECTION_OBSERVER)
+    void addDocumentNeedingIntersectionObservationUpdate(Document&);
+    void scheduleForcedIntersectionObservationUpdate(Document&);
+    void updateIntersectionObservations();
+#endif
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
@@ -860,8 +862,6 @@ private:
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
 
-    std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
-
     HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
@@ -901,6 +901,14 @@ private:
     RefPtr<WheelEventTestTrigger> m_testTrigger;
 
     HashSet<ActivityStateChangeObserver*> m_activityStateChangeObservers;
+
+#if ENABLE(INTERSECTION_OBSERVER)
+    Vector<WeakPtr<Document>> m_documentsNeedingIntersectionObservationUpdate;
+
+    // FIXME: Schedule intersection observation updates in a way that fits into the HTML
+    // EventLoop. See https://bugs.webkit.org/show_bug.cgi?id=160711.
+    Timer m_intersectionObservationUpdateTimer;
+#endif
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
@@ -962,7 +970,6 @@ private:
     bool m_shouldEnableICECandidateFilteringByDefault { true };
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaBufferingIsSuspended { false };
-    bool m_inRenderingUpdate { false };
 };
 
 inline PageGroup& Page::group()

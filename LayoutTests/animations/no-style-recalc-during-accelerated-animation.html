@@ -35,10 +35,10 @@
             box.addEventListener("animationiteration", () => result.innerText = "Got iteration event.\n");
             box.addEventListener("animationend", () => {
                 const numRecalcs = internals.styleRecalcCount();
-                if (numRecalcs > 3)
-                    result.innerText += "FAIL: saw " + numRecalcs + " style recalcs during the animation, should only see three."
+                if (numRecalcs > 2)
+                    result.innerText += "FAIL: saw " + numRecalcs + " style recalcs during the animation, should only see two."
                 else 
-                    result.innerText += "PASS: saw three or fewer style recalcs during the animation."
+                    result.innerText += "PASS: saw two or fewer style recalcs during the animation."
 
                 if (window.testRunner)
                     testRunner.notifyDone();

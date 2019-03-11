@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,50 +25,48 @@
 
 #pragma once
 
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+
 #include "DisplayRefreshMonitorClient.h"
+#include "PlatformScreen.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
 
-class Page;
-class Timer;
+class Document;
 
-class RenderingUpdateScheduler
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    : public DisplayRefreshMonitorClient
-#endif
-{
-    WTF_MAKE_FAST_ALLOCATED;
+class DocumentAnimationScheduler : public RefCounted<DocumentAnimationScheduler>
+    , public DisplayRefreshMonitorClient {
 public:
-    static std::unique_ptr<RenderingUpdateScheduler> create(Page& page)
-    {
-        return std::make_unique<RenderingUpdateScheduler>(page);
-    }
+    static Ref<DocumentAnimationScheduler> create(Document&, PlatformDisplayID);
+    ~DocumentAnimationScheduler();
 
-    RenderingUpdateScheduler(Page&);
-    void scheduleRenderingUpdate();
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    void detachFromDocument();
     void windowScreenDidChange(PlatformDisplayID);
-#endif
+
+    bool scheduleWebAnimationsResolution();
+    void unscheduleWebAnimationsResolution();
+    bool scheduleScriptedAnimationResolution();
+
+    Seconds lastTimestamp() { return m_lastTimestamp; }
+    bool isFiring() const { return m_isFiring; }
 
 private:
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const final;
-    void displayRefreshFired() final;
-#else
-    void displayRefreshFired();
-#endif
+    DocumentAnimationScheduler(Document&, PlatformDisplayID);
 
-    bool isScheduled() const;
-    void startTimer(Seconds);
-    void clearScheduled();
+    RefPtr<Document> m_document;
+    bool m_scheduledWebAnimationsResolution { false };
+    bool m_scheduledScriptedAnimationResolution { false };
+    bool m_isFiring { false };
+    Seconds m_lastTimestamp { 0_s };
 
-    Page& m_page;
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    bool m_scheduled { false };
-#endif
-    std::unique_ptr<Timer> m_refreshTimer;
+    void displayRefreshFired() override;
+    RefPtr<DisplayRefreshMonitor> createDisplayRefreshMonitor(PlatformDisplayID) const override;
 };
 
-}
+} // namespace WebCore
+
+#endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

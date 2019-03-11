@@ -57,6 +57,7 @@
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
+#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -1957,8 +1958,11 @@ void Document::resolveStyle(ResolveStyleType type)
             frameView.layoutContext().scheduleLayout();
 
         // Usually this is handled by post-layout.
-        if (!frameView.needsLayout())
+        if (!frameView.needsLayout()) {
             frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
+            if (m_needsForcedIntersectionObservationUpdate)
+                page()->scheduleForcedIntersectionObservationUpdate(*this);
+        }
 
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
@@ -2554,6 +2558,13 @@ void Document::prepareForDestruction()
         m_timeline->detachFromDocument();
         m_timeline = nullptr;
     }
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (m_animationScheduler) {
+        m_animationScheduler->detachFromDocument();
+        m_animationScheduler = nullptr;
+    }
+#endif
 
 #if ENABLE(CSS_PAINTING_API)
     for (auto& scope : m_paintWorkletGlobalScopes.values())
@@ -6251,20 +6262,13 @@ void Document::resumeScriptedAnimationControllerCallbacks()
         m_scriptedAnimationController->resume();
 }
 
-void Document::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
-{
-    if (m_timeline)
-        m_timeline->updateAnimationsAndSendEvents(timestamp);
-}
-
-void Document::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
-{
-    if (m_scriptedAnimationController)
-        m_scriptedAnimationController->serviceRequestAnimationFrameCallbacks(timestamp);
-}
-
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    if (m_animationScheduler)
+        m_animationScheduler->windowScreenDidChange(displayID);
+#endif
+
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().windowScreenDidChange(displayID);
@@ -7926,6 +7930,8 @@ void Document::updateIntersectionObservations()
     if (needsLayout || hasPendingStyleRecalc())
         return;
 
+    m_needsForcedIntersectionObservationUpdate = false;
+
     for (const auto& observer : m_intersectionObservers) {
         bool needNotify = false;
         DOMHighResTimeStamp timestamp;
@@ -8000,6 +8006,17 @@ void Document::updateIntersectionObservations()
 
     if (m_intersectionObserversWithPendingNotifications.size())
         m_intersectionObserversNotifyTimer.startOneShot(0_s);
+}
+
+void Document::scheduleForcedIntersectionObservationUpdate()
+{
+    ASSERT(!m_intersectionObservers.isEmpty());
+    if (m_needsForcedIntersectionObservationUpdate)
+        return;
+
+    m_needsForcedIntersectionObservationUpdate = true;
+    if (auto* page = this->page())
+        page->scheduleForcedIntersectionObservationUpdate(*this);
 }
 
 void Document::notifyIntersectionObserversTimerFired()
@@ -8434,6 +8451,16 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 {
     m_consoleMessageListener = listener;
 }
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+DocumentAnimationScheduler& Document::animationScheduler()
+{
+    if (!m_animationScheduler)
+        m_animationScheduler = DocumentAnimationScheduler::create(*this, page() ? page()->chrome().displayID() : 0);
+
+    return *m_animationScheduler;
+}
+#endif
 
 DocumentTimeline& Document::timeline()
 {

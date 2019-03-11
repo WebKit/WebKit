@@ -3039,8 +3039,6 @@ webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
 # This is fallout from turning Web Animations on.
 webkit.org/b/190032 animations/animation-playstate-paused-style-resolution.html [ Failure ]
-webkit.org/b/190032 animations/missing-values-first-keyframe.html [ Failure ]
-webkit.org/b/190032 animations/missing-values-last-keyframe.html [ Failure ]
 webkit.org/b/190032 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 webkit.org/b/190032 compositing/backing/transform-transition-from-outside-view.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure ]

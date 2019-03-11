@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "DocumentAnimationScheduler.h"
 #include "GraphicsLayer.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
@@ -60,7 +61,10 @@ Ref<DocumentTimeline> DocumentTimeline::create(Document& document, DocumentTimel
 
 DocumentTimeline::DocumentTimeline(Document& document, Seconds originTime)
     : AnimationTimeline()
-    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolution)
+#if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    , m_animationResolutionTimer(*this, &DocumentTimeline::animationResolutionTimerFired)
+#endif
+    , m_tickScheduleTimer(*this, &DocumentTimeline::scheduleAnimationResolutionIfNeeded)
     , m_document(&document)
     , m_originTime(originTime)
 {
@@ -190,7 +194,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
 void DocumentTimeline::updateThrottlingState()
 {
-    scheduleAnimationResolution();
+    scheduleAnimationResolutionIfNeeded();
 }
 
 Seconds DocumentTimeline::animationInterval() const
@@ -206,7 +210,7 @@ void DocumentTimeline::suspendAnimations()
         return;
 
     if (!m_cachedCurrentTime)
-        m_cachedCurrentTime = Seconds(liveCurrentTime());
+        m_cachedCurrentTime = liveCurrentTime();
 
     for (const auto& animation : m_animations)
         animation->setSuspended(true);
@@ -230,7 +234,7 @@ void DocumentTimeline::resumeAnimations()
     for (const auto& animation : m_animations)
         animation->setSuspended(false);
 
-    scheduleAnimationResolution();
+    scheduleAnimationResolutionIfNeeded();
 }
 
 bool DocumentTimeline::animationsAreSuspended()
@@ -248,9 +252,13 @@ unsigned DocumentTimeline::numberOfActiveAnimationsForTesting() const
     return count;
 }
 
-DOMHighResTimeStamp DocumentTimeline::liveCurrentTime() const
+Seconds DocumentTimeline::liveCurrentTime() const
 {
-    return m_document->domWindow()->nowTimestamp();
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    return m_document->animationScheduler().lastTimestamp();
+#else
+    return Seconds(m_document->domWindow()->nowTimestamp());
+#endif
 }
 
 Optional<Seconds> DocumentTimeline::currentTime()
@@ -266,15 +274,36 @@ Optional<Seconds> DocumentTimeline::currentTime()
         }
     }
 
-    if (!m_cachedCurrentTime)
-        cacheCurrentTime(liveCurrentTime());
-    
+    auto currentTime = liveCurrentTime();
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    // If we're in the middle of firing a frame, either due to a requestAnimationFrame callback
+    // or scheduling an animation update, we want to ensure we use the same time we're using as
+    // the timestamp for requestAnimationFrame() callbacks.
+    if (m_document->animationScheduler().isFiring())
+        cacheCurrentTime(currentTime);
+#endif
+
+    if (!m_cachedCurrentTime) {
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        // If we're not in the middle of firing a frame, let's make our best guess at what the currentTime should
+        // be since the last time a frame fired by increment of our update interval. This way code using something
+        // like setTimeout() or handling events will get a time that's only updating at around 60fps, or less if
+        // we're throttled.
+        auto lastAnimationSchedulerTimestamp = currentTime;
+        auto delta = Seconds(m_document->domWindow()->nowTimestamp()) - lastAnimationSchedulerTimestamp;
+        int frames = std::floor(delta.seconds() / animationInterval().seconds());
+        cacheCurrentTime(lastAnimationSchedulerTimestamp + Seconds(frames * animationInterval().seconds()));
+#else
+        cacheCurrentTime(currentTime);
+#endif
+    }
     return m_cachedCurrentTime.value() - m_originTime;
 }
 
-void DocumentTimeline::cacheCurrentTime(DOMHighResTimeStamp newCurrentTime)
+void DocumentTimeline::cacheCurrentTime(Seconds newCurrentTime)
 {
-    m_cachedCurrentTime = Seconds(newCurrentTime);
+    m_cachedCurrentTime = newCurrentTime;
     // We want to be sure to keep this time cached until we've both finished running JS and finished updating
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
@@ -297,10 +326,16 @@ void DocumentTimeline::maybeClearCachedCurrentTime()
         m_cachedCurrentTime = WTF::nullopt;
 }
 
+void DocumentTimeline::scheduleAnimationResolutionIfNeeded()
+{
+    if (!m_isUpdatingAnimations && !m_isSuspended && !m_animations.isEmpty())
+        scheduleAnimationResolution();
+}
+
 void DocumentTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     AnimationTimeline::animationTimingDidChange(animation);
-    scheduleAnimationResolution();
+    scheduleAnimationResolutionIfNeeded();
 }
 
 void DocumentTimeline::removeAnimation(WebAnimation& animation)
@@ -313,43 +348,43 @@ void DocumentTimeline::removeAnimation(WebAnimation& animation)
 
 void DocumentTimeline::scheduleAnimationResolution()
 {
-    if (m_isSuspended || m_animations.isEmpty() || m_animationResolutionScheduled)
-        return;
-
-    if (!m_document || !m_document->page())
-        return;
-    
-    m_document->page()->renderingUpdateScheduler().scheduleRenderingUpdate();
-    m_animationResolutionScheduled = true;
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_document->animationScheduler().scheduleWebAnimationsResolution();
+#else
+    // FIXME: We need to use the same logic as ScriptedAnimationController here,
+    // which will be addressed by the refactor tracked by webkit.org/b/179293.
+    m_animationResolutionTimer.startOneShot(animationInterval());
+#endif
 }
 
 void DocumentTimeline::unscheduleAnimationResolution()
 {
     m_tickScheduleTimer.stop();
-    m_animationResolutionScheduled = false;
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    m_document->animationScheduler().unscheduleWebAnimationsResolution();
+#else
+    // FIXME: We need to use the same logic as ScriptedAnimationController here,
+    // which will be addressed by the refactor tracked by webkit.org/b/179293.
+    m_animationResolutionTimer.stop();
+#endif
 }
 
-void DocumentTimeline::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+void DocumentTimeline::documentAnimationSchedulerDidFire()
+#else
+void DocumentTimeline::animationResolutionTimerFired()
+#endif
 {
-    // We need to freeze the current time even if no animation is running.
-    // document.timeline.currentTime may be called from a rAF callback and
-    // it has to match the rAF timestamp.
-    if (!m_isSuspended)
-        cacheCurrentTime(timestamp);
-
-    if (m_isSuspended || m_animations.isEmpty() || !m_animationResolutionScheduled)
-        return;
-
-    internalUpdateAnimationsAndSendEvents();
+    updateAnimationsAndSendEvents();
     applyPendingAcceleratedAnimations();
-
-    m_animationResolutionScheduled = false;
     scheduleNextTick();
 }
 
-void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
+void DocumentTimeline::updateAnimationsAndSendEvents()
 {
     m_numberOfAnimationTimelineInvalidationsForTesting++;
+
+    m_isUpdatingAnimations = true;
 
     // https://drafts.csswg.org/web-animations/#update-animations-and-send-events
 
@@ -413,6 +448,8 @@ void DocumentTimeline::internalUpdateAnimationsAndSendEvents()
     // removed from the list of completed transitions otherwise.
     for (auto& completedTransition : completedTransitions)
         transitionDidComplete(completedTransition);
+
+    m_isUpdatingAnimations = false;
 }
 
 void DocumentTimeline::transitionDidComplete(RefPtr<CSSTransition> transition)
@@ -436,7 +473,7 @@ void DocumentTimeline::scheduleNextTick()
 
     for (const auto& animation : m_animations) {
         if (!animation->isRunningAccelerated()) {
-            scheduleAnimationResolution();
+            scheduleAnimationResolutionIfNeeded();
             return;
         }
     }
@@ -446,7 +483,7 @@ void DocumentTimeline::scheduleNextTick()
     for (const auto& animation : m_animations) {
         auto animationTimeToNextRequiredTick = animation->timeToNextTick();
         if (animationTimeToNextRequiredTick < animationInterval()) {
-            scheduleAnimationResolution();
+            scheduleAnimationResolutionIfNeeded();
             return;
         }
         scheduleDelay = std::min(scheduleDelay, animationTimeToNextRequiredTick);
@@ -556,20 +593,18 @@ void DocumentTimeline::animationAcceleratedRunningStateDidChange(WebAnimation& a
 void DocumentTimeline::updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element& element)
 {
     auto animations = animationsForElement(element);
-
-    if (animations.isEmpty()) {
-        m_elementsWithRunningAcceleratedAnimations.remove(&element);
-        return;
-    }
-
+    bool runningAnimationsForElementAreAllAccelerated = !animations.isEmpty();
     for (const auto& animation : animations) {
         if (!animation->isRunningAccelerated()) {
-            m_elementsWithRunningAcceleratedAnimations.remove(&element);
-            return;
+            runningAnimationsForElementAreAllAccelerated = false;
+            break;
         }
     }
 
-    m_elementsWithRunningAcceleratedAnimations.add(&element);
+    if (runningAnimationsForElementAreAllAccelerated)
+        m_elementsWithRunningAcceleratedAnimations.add(&element);
+    else
+        m_elementsWithRunningAcceleratedAnimations.remove(&element);
 }
 
 void DocumentTimeline::applyPendingAcceleratedAnimations()
@@ -590,28 +625,30 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 
 bool DocumentTimeline::resolveAnimationsForElement(Element& element, RenderStyle& targetStyle)
 {
-    bool hasNonAcceleratedAnimationProperty = false;
-
+    bool hasNonAcceleratedAnimations = false;
+    bool hasPendingAcceleratedAnimations = true;
     for (const auto& animation : animationsForElement(element)) {
         animation->resolve(targetStyle);
-
-        if (hasNonAcceleratedAnimationProperty)
-            continue;
-
-        auto* effect = animation->effect();
-        if (!effect || !is<KeyframeEffect>(effect))
-            continue;
-
-        auto* keyframeEffect = downcast<KeyframeEffect>(effect);
-        for (auto cssPropertyId : keyframeEffect->animatedProperties()) {
-            if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
-                hasNonAcceleratedAnimationProperty = true;
-                break;
+        if (!hasNonAcceleratedAnimations) {
+            if (auto* effect = animation->effect()) {
+                if (is<KeyframeEffect>(effect)) {
+                    auto* keyframeEffect = downcast<KeyframeEffect>(effect);
+                    for (auto cssPropertyId : keyframeEffect->animatedProperties()) {
+                        if (!CSSPropertyAnimation::animationOfPropertyIsAccelerated(cssPropertyId)) {
+                            hasNonAcceleratedAnimations = true;
+                            continue;
+                        }
+                        if (!hasPendingAcceleratedAnimations)
+                            hasPendingAcceleratedAnimations = keyframeEffect->hasPendingAcceleratedAction();
+                    }
+                }
             }
         }
     }
 
-    return !hasNonAcceleratedAnimationProperty;
+    // If there are no non-accelerated animations and we've encountered at least one pending
+    // accelerated animation, we should recomposite this element's layer for animation purposes.
+    return !hasNonAcceleratedAnimations && hasPendingAcceleratedAnimations;
 }
 
 bool DocumentTimeline::runningAnimationsForElementAreAllAccelerated(Element& element) const

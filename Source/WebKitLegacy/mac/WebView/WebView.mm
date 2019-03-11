@@ -1620,8 +1620,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (void)_viewWillDrawInternal
 {
-    if (_private->page)
-        _private->page->renderingUpdate();
+    Frame* frame = [self _mainCoreFrame];
+    if (frame && frame->view())
+        frame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 + (NSArray *)_supportedMIMETypes

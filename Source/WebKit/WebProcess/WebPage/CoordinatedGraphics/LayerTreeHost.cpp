@@ -145,8 +145,8 @@ void LayerTreeHost::layerFlushTimerFired()
         return;
 
     m_coordinator.syncDisplayState();
-    m_webPage.renderingUpdate();
     m_webPage.flushPendingEditorStateUpdate();
+    m_webPage.willDisplayPage();
 
     if (!m_isValid || !m_coordinator.rootCompositingLayer())
         return;

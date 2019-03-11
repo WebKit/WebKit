@@ -71,8 +71,10 @@ public:
     void detachFromDocument();
 
     void enqueueAnimationPlaybackEvent(AnimationPlaybackEvent&);
-    
-    void updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp);
+
+#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    void documentAnimationSchedulerDidFire();
+#endif
 
     void updateThrottlingState();
     WEBCORE_EXPORT Seconds animationInterval() const;
@@ -86,18 +88,25 @@ public:
 private:
     DocumentTimeline(Document&, Seconds);
 
-    DOMHighResTimeStamp liveCurrentTime() const;
-    void cacheCurrentTime(DOMHighResTimeStamp);
-    void maybeClearCachedCurrentTime();
+    Seconds liveCurrentTime() const;
+    void cacheCurrentTime(Seconds);
+    void scheduleAnimationResolutionIfNeeded();
     void scheduleInvalidationTaskIfNeeded();
     void performInvalidationTask();
+    void animationScheduleTimerFired();
     void scheduleAnimationResolution();
     void unscheduleAnimationResolution();
-    void internalUpdateAnimationsAndSendEvents();
+    void updateAnimationsAndSendEvents();
     void performEventDispatchTask();
+    void maybeClearCachedCurrentTime();
     void updateListOfElementsWithRunningAcceleratedAnimationsForElement(Element&);
     void transitionDidComplete(RefPtr<CSSTransition>);
     void scheduleNextTick();
+
+#if !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    void animationResolutionTimerFired();
+    Timer m_animationResolutionTimer;
+#endif
 
     Timer m_tickScheduleTimer;
     GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
@@ -110,7 +119,7 @@ private:
     unsigned m_numberOfAnimationTimelineInvalidationsForTesting { 0 };
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };
-    bool m_animationResolutionScheduled { false };
+    bool m_isUpdatingAnimations { false };
 };
 
 } // namespace WebCore
