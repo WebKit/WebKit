@@ -1,3 +1,56 @@
+2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce # of structures in JSGlobalObject initialization
+        https://bugs.webkit.org/show_bug.cgi?id=195498
+
+        Reviewed by Darin Adler.
+
+        This patch reduces # of structure allocations in JSGlobalObject initialization. Now it becomes 141, it fits in one
+        MarkedBlock and this patch drops one MarkedBlock used for Structure previously.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation): ArrayIteratorPrototype, MapIteratorPrototype, and StringIteratorPrototype's
+        "next" properties are referenced by JSGlobalObject::init, and it causes reification of the lazy "next" property and structure
+        transition anyway. So we should put it eagerly "without-transition" configuration to avoid one structure transition.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation): @@unscopable object's structure should be dictionary because (1) it is used as a dictionary
+        in with-scope-resolution and (2) since with-scope-resolution is C++ runtime function anyway, non-dictionary structure does not add
+        any performance benefit. This change saves several structures that are not useful.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createStructure): Bake CloneArguments's structure with 'without-transition' manner.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Previously we are always call resetProtoype at the end of JSGlobalObject::init. But it is not necessary
+        since we do not change [[Prototype]] of JSGlobalObject. All we want is (1) fixupPrototypeChainWithObjectPrototype's operation and (2) setGlobalThis
+        operation. Since setGlobalThis part is done in JSGlobalObject::finishCreation, fixupPrototypeChainWithObjectPrototype is only the thing
+        we should do here.
+
+        (JSC::JSGlobalObject::fixupPrototypeChainWithObjectPrototype):
+        (JSC::JSGlobalObject::resetPrototype): If the [[Prototype]] is the same to the current [[Prototype]], we can skip the operation.
+
+        * runtime/JSGlobalObject.h:
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/NullGetterFunction.h:
+        * runtime/NullSetterFunction.h: Since structures of them are allocated per JSGlobalObject and they are per-JSGlobalObject,
+        we can use without-transition property addition.
+
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::setIteratorStructureSlow):
+        (JSC::VM::mapIteratorStructureSlow): These structures are only used in WebCore's main thread.
+        * runtime/VM.h:
+        (JSC::VM::setIteratorStructure):
+        (JSC::VM::mapIteratorStructure):
+
 2019-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] BuiltinExecutables should behave like a WeakSet instead of generic WeakHandleOwner for memory footprint

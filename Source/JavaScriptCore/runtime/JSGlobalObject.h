@@ -1035,6 +1035,7 @@ private:
     void initializeErrorConstructor(LazyClassStructure::Initializer&);
 
     JS_EXPORT_PRIVATE void init(VM&);
+    void fixupPrototypeChainWithObjectPrototype(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 

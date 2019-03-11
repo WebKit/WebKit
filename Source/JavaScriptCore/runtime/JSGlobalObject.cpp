@@ -1160,7 +1160,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         m_numberProtoToStringFunction.set(vm, this, jsCast<JSFunction*>(numberPrototype->getDirect(vm, vm.propertyNames->toString)));
     }
 
-    resetPrototype(vm, getPrototypeDirect(vm));
+    fixupPrototypeChainWithObjectPrototype(vm);
 }
 
 bool JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1585,16 +1585,21 @@ void JSGlobalObject::haveABadTime(VM& vm)
     }
 }
 
-// Set prototype, and also insert the object prototype at the end of the chain.
-void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
+void JSGlobalObject::fixupPrototypeChainWithObjectPrototype(VM& vm)
 {
-    setPrototypeDirect(vm, prototype);
-
     JSObject* oldLastInPrototypeChain = lastInPrototypeChain(vm, this);
     JSObject* objectPrototype = m_objectPrototype.get();
     if (oldLastInPrototypeChain != objectPrototype)
         oldLastInPrototypeChain->setPrototypeDirect(vm, objectPrototype);
+}
 
+// Set prototype, and also insert the object prototype at the end of the chain.
+void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
+{
+    if (getPrototypeDirect(vm) == prototype)
+        return;
+    setPrototypeDirect(vm, prototype);
+    fixupPrototypeChainWithObjectPrototype(vm);
     // Whenever we change the prototype of the global object, we need to create a new JSProxy with the correct prototype.
     setGlobalThis(vm, JSNonDestructibleProxy::create(vm, JSNonDestructibleProxy::createStructure(vm, this, prototype, PureForwardingProxyType), this));
 }

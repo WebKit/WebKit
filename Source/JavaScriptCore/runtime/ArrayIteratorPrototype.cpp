@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ArrayIteratorPrototype.h"
 
-#include "ArrayIteratorPrototype.lut.h"
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
@@ -37,19 +36,14 @@
 
 namespace JSC {
 
-const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, &arrayIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
+const ClassInfo ArrayIteratorPrototype::s_info = { "Array Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ArrayIteratorPrototype) };
 
-/* Source for ArrayIteratorPrototype.lut.h
-@begin arrayIteratorPrototypeTable
-  next      JSBuiltin  DontEnum|Function 0
-@end
-*/
-
-void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
+void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Array Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, arrayIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     didBecomePrototype();
 }
 

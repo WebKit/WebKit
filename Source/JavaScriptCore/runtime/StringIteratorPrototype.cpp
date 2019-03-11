@@ -32,23 +32,16 @@
 #include "JSStringIterator.h"
 #include "ObjectConstructor.h"
 
-#include "StringIteratorPrototype.lut.h"
-
 namespace JSC {
 
-const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_info, &stringIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(StringIteratorPrototype) };
+const ClassInfo StringIteratorPrototype::s_info = { "String Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringIteratorPrototype) };
 
-/* Source for StringIteratorPrototype.lut.h
-@begin stringIteratorPrototypeTable
-  next      JSBuiltin    DontEnum|Function 0
-@end
-*/
-
-void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
+void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "String Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, stringIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     didBecomePrototype();
 }
 

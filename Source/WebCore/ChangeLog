@@ -1,3 +1,13 @@
+2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce # of structures in JSGlobalObject initialization
+        https://bugs.webkit.org/show_bug.cgi?id=195498
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+
 2019-03-11  Brent Fulgham  <bfulgham@apple.com>
 
         Remove obsolete runtime flag for StorageAccess API Prompt

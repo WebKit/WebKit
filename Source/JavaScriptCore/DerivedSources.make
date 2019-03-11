@@ -135,7 +135,6 @@ JSCBuiltins.h: $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) 
 OBJECT_LUT_HEADERS = \
     AsyncFromSyncIteratorPrototype.lut.h \
     ArrayConstructor.lut.h \
-    ArrayIteratorPrototype.lut.h \
     AsyncGeneratorPrototype.lut.h \
     BigIntConstructor.lut.h \
     BigIntPrototype.lut.h \
@@ -169,7 +168,6 @@ OBJECT_LUT_HEADERS = \
     RegExpConstructor.lut.h \
     SetPrototype.lut.h \
     StringConstructor.lut.h \
-    StringIteratorPrototype.lut.h \
     StringPrototype.lut.h \
     SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \

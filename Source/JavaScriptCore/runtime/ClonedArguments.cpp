@@ -151,9 +151,12 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
 Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
 {
     Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ClonedArgumentsType, StructureFlags), info(), indexingType);
-    PropertyOffset offset;
-    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, static_cast<unsigned>(PropertyAttribute::DontEnum), offset);
-    ASSERT(offset == clonedArgumentsLengthPropertyOffset);
+    structure->addPropertyWithoutTransition(
+        vm, vm.propertyNames->length, static_cast<unsigned>(PropertyAttribute::DontEnum),
+        [&] (const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newLastOffset) {
+            RELEASE_ASSERT(offset == clonedArgumentsLengthPropertyOffset);
+            structure->setLastOffset(newLastOffset);
+        });
     return structure;
 }
 

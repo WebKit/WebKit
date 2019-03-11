@@ -400,8 +400,6 @@ VM::VM(VMType vmType, HeapType heapType)
     functionCodeBlockStructure.set(*this, FunctionCodeBlock::createStructure(*this, 0, jsNull()));
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, 0, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));
-    setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
-    mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
     bigIntStructure.set(*this, JSBigInt::createStructure(*this, 0, jsNull()));
     executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
@@ -1291,6 +1289,19 @@ DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW(moduleProgramExecutableSpace, destructi
 
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER_SLOW
 
+Structure* VM::setIteratorStructureSlow()
+{
+    ASSERT(!m_setIteratorStructure);
+    m_setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
+    return m_setIteratorStructure.get();
+}
+
+Structure* VM::mapIteratorStructureSlow()
+{
+    ASSERT(!m_mapIteratorStructure);
+    m_mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
+    return m_mapIteratorStructure.get();
+}
 
 JSCell* VM::sentinelSetBucketSlow()
 {

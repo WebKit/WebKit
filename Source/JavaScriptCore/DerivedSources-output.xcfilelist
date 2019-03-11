@@ -3,7 +3,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AirOpcode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AirOpcodeGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AirOpcodeUtils.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ArrayConstructor.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ArrayIteratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AsyncFromSyncIteratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/AsyncGeneratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/BigIntConstructor.lut.h
@@ -52,7 +51,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpJitTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SetPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringConstructor.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringIteratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolPrototype.lut.h

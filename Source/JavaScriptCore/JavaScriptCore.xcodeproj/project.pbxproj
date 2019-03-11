@@ -1286,7 +1286,6 @@
 		9959E9321BD18279001AA413 /* inline-and-minify-stylesheets-and-scripts.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		996231E918D1804200C03FDA /* InspectorBackendCommands.js in Headers */ = {isa = PBXBuildFile; fileRef = A53243961856A475002ED692 /* InspectorBackendCommands.js */; settings = {ATTRIBUTES = (Private, ); }; };
 		996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */; };
-		996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */; };
 		996B73191BDA068000331B84 /* BooleanPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */; };
 		996B731A1BDA08D100331B84 /* DateConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73081BD9FA2C00331B84 /* DateConstructor.lut.h */; };
 		996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */; };
@@ -1299,7 +1298,6 @@
 		996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */; };
 		996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */; };
 		996B73251BDA08EF00331B84 /* StringConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */; };
-		996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */; };
 		996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */; };
 		996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */; };
 		998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4030,11 +4028,9 @@
 		996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructor.lut.h; sourceTree = "<group>"; };
 		996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.lut.h; sourceTree = "<group>"; };
 		996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.lut.h; sourceTree = "<group>"; };
-		996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolConstructor.lut.h; sourceTree = "<group>"; };
 		996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.lut.h; sourceTree = "<group>"; };
 		996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.lut.h; sourceTree = "<group>"; };
-		996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteControllableTarget.cpp; sourceTree = "<group>"; };
 		998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteControllableTarget.h; sourceTree = "<group>"; };
 		99DA00991BD5992700F4575C /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
@@ -6364,7 +6360,6 @@
 				0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */,
 				0F6183351C45F3B60072450B /* AirOpcodeUtils.h */,
 				996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */,
-				996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */,
 				E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */,
 				8B3BF5E31E3D365A0076A87A /* AsyncGeneratorPrototype.lut.h */,
 				996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */,
@@ -6406,7 +6401,6 @@
 				A718F61A11754A21002465A7 /* RegExpJitTables.h */,
 				7035587F1C418458004BD7BF /* SetPrototype.lut.h */,
 				996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */,
-				996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */,
 				996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */,
 				996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */,
 				533B15DE1DC7F463004D500A /* WasmOps.h */,
@@ -8489,7 +8483,6 @@
 				996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */,
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				A7BDAEC917F4EA1400F6140C /* ArrayIteratorPrototype.h in Headers */,
-				996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
@@ -9702,7 +9695,6 @@
 				BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */,
 				996B73251BDA08EF00331B84 /* StringConstructor.lut.h in Headers */,
 				70EC0EC71AA0D7DA00B6AAFA /* StringIteratorPrototype.h in Headers */,
-				996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */,
 				BC18C4680E16F5CD00B34460 /* StringObject.h in Headers */,
 				BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */,
 				E325A36022211590007349A1 /* StringPrototypeInlines.h in Headers */,
