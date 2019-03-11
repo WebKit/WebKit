@@ -64,8 +64,8 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    enum class Style { Decimal, Percent, Currency };
-    enum class CurrencyDisplay { Code, Symbol, Name };
+    enum class Style : uint8_t { Decimal, Percent, Currency };
+    enum class CurrencyDisplay : uint8_t { Code, Symbol, Name };
 
     struct UNumberFormatDeleter {
         void operator()(UNumberFormat*) const;
@@ -76,16 +76,16 @@ private:
 
     String m_locale;
     String m_numberingSystem;
-    Style m_style { Style::Decimal };
     String m_currency;
-    CurrencyDisplay m_currencyDisplay;
+    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
+    WriteBarrier<JSBoundFunction> m_boundFormat;
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };
     unsigned m_minimumSignificantDigits { 0 };
     unsigned m_maximumSignificantDigits { 0 };
-    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
-    WriteBarrier<JSBoundFunction> m_boundFormat;
+    Style m_style { Style::Decimal };
+    CurrencyDisplay m_currencyDisplay;
     bool m_useGrouping { true };
     bool m_initializedNumberFormat { false };
 
