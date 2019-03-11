@@ -1,3 +1,14 @@
+2019-03-11  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unreviewed GTK test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=195551
+
+        Unreviewed test gardening.
+
+        Mark the text-transform-capitilize-026.html as flaky for all platforms.
+
+        * TestExpectations:
+
 2019-03-10  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Fix failing test cases
