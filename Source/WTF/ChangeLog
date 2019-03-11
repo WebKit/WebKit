@@ -1,3 +1,20 @@
+2019-03-11  Sam Weinig  <sam@webkit.org>
+
+        Add utility function to allow easy reverse range-based iteration of a container
+        https://bugs.webkit.org/show_bug.cgi?id=195542
+
+        Reviewed by Antti Koivisto.
+
+        Add functions to create an IteratorRange<T> that will iterate a container backwards. It
+        works with any container that is compatible with std::rbegin() and std::rend(). It is
+        expected to be used in conjunction with range-based for-loops like so:
+
+        for (auto& value : WTF::makeReversedRange(myContainer)) 
+            ...
+
+        * wtf/IteratorRange.h:
+        (WTF::makeReversedRange):
+
 2019-03-10  Yusuke Suzuki <utatane.tea@gmail.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTF] Align assumption in RunLoopWin to the other platform's RunLoop
