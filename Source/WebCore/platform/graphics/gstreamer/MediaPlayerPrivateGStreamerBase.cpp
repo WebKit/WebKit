@@ -269,9 +269,6 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
-#if USE(GSTREAMER_GL)
-    flushCurrentBuffer();
-#endif
 #if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 #endif
@@ -849,6 +846,7 @@ GstFlowReturn MediaPlayerPrivateGStreamerBase::newPrerollCallback(GstElement* si
 
 void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
 {
+    GST_DEBUG_OBJECT(pipeline(), "Flushing video sample");
     auto sampleLocker = holdLock(m_sampleMutex);
 
     if (m_sample) {
@@ -860,14 +858,12 @@ void MediaPlayerPrivateGStreamerBase::flushCurrentBuffer()
     }
 
     auto proxyOperation =
-        [shouldWait = m_isVideoDecoderVideo4Linux, pipeline = pipeline()](TextureMapperPlatformLayerProxy& proxy)
+        [](TextureMapperPlatformLayerProxy& proxy)
         {
-            GST_DEBUG_OBJECT(pipeline, "Flushing video sample %s", shouldWait ? "synchronously" : "");
-            if (!shouldWait)
-                proxy.lock().lock();
+            LockHolder locker(proxy.lock());
 
             if (proxy.isActive())
-                proxy.dropCurrentBufferWhilePreservingTexture(shouldWait);
+                proxy.dropCurrentBufferWhilePreservingTexture();
         };
 
 #if USE(NICOSIA)
@@ -1014,7 +1010,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createGLAppSink()
     g_signal_connect(appsink, "new-preroll", G_CALLBACK(newPrerollCallback), this);
 
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(appsink, "sink"));
-    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH), [] (GstPad*, GstPadProbeInfo* info,  gpointer userData) -> GstPadProbeReturn {
+    gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_FLUSH), [] (GstPad*, GstPadProbeInfo* info,  gpointer userData) -> GstPadProbeReturn {
         // In some platforms (e.g. OpenMAX on the Raspberry Pi) when a resolution change occurs the
         // pipeline has to be drained before a frame with the new resolution can be decoded.
         // In this context, it's important that we don't hold references to any previous frame

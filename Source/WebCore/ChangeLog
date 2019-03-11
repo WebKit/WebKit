@@ -1,3 +1,21 @@
+2019-03-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Manually rolling out r242701 and r242703 since the changes
+        are causing test timeouts and crashes on GTK and WPE.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::pushNextBuffer):
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+        (): Deleted.
+
 2019-03-11  Jer Noble  <jer.noble@apple.com>
 
         Use AVContentKeySession for "com.apple.fps.2_0" CDM version when AVStreamSession is absent

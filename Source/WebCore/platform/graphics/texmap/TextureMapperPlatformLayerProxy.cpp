@@ -36,7 +36,6 @@
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
-#include <wtf/Scope.h>
 
 static const Seconds releaseUnusedSecondsTolerance { 1_s };
 static const Seconds releaseUnusedBuffersTimerInterval = { 500_ms };
@@ -114,7 +113,6 @@ void TextureMapperPlatformLayerProxy::pushNextBuffer(std::unique_ptr<TextureMapp
 {
     ASSERT(m_lock.isHeld());
     m_pendingBuffer = WTFMove(newBuffer);
-    m_wasBufferDropped = false;
 
     if (m_compositor)
         m_compositor->onNewBufferAvailable();
@@ -189,10 +187,9 @@ void TextureMapperPlatformLayerProxy::swapBuffer()
         appendToUnusedBuffers(WTFMove(prevBuffer));
 }
 
-void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bool shouldWait)
+void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture()
 {
-    if (!shouldWait)
-        ASSERT(m_lock.isHeld());
+    ASSERT(m_lock.isHeld());
 
     if (m_pendingBuffer && m_pendingBuffer->hasManagedTexture()) {
         m_usedBuffers.append(WTFMove(m_pendingBuffer));
@@ -203,16 +200,8 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
         return;
 
     m_compositorThreadUpdateFunction =
-        [this, shouldWait] {
+        [this] {
             LockHolder locker(m_lock);
-
-            auto maybeNotifySynchronousOperation = WTF::makeScopeExit([this, shouldWait]() {
-                if (shouldWait) {
-                    LockHolder holder(m_wasBufferDroppedLock);
-                    m_wasBufferDropped = true;
-                    m_wasBufferDroppedCondition.notifyAll();
-                }
-            });
 
             if (!m_compositor || !m_targetLayer || !m_currentBuffer)
                 return;
@@ -225,19 +214,7 @@ void TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture(bo
             if (prevBuffer->hasManagedTexture())
                 appendToUnusedBuffers(WTFMove(prevBuffer));
         };
-
-    if (shouldWait) {
-        LockHolder holder(m_wasBufferDroppedLock);
-        m_wasBufferDropped = false;
-    }
-
     m_compositorThreadUpdateTimer->startOneShot(0_s);
-    if (shouldWait) {
-        LockHolder holder(m_wasBufferDroppedLock);
-        m_wasBufferDroppedCondition.wait(m_wasBufferDroppedLock, [this] {
-            return m_wasBufferDropped;
-        });
-    }
 }
 
 bool TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread(Function<void()>&& updateFunction)
