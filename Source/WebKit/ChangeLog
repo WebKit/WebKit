@@ -1,3 +1,31 @@
+2019-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Block access to backboardd service
+        https://bugs.webkit.org/show_bug.cgi?id=195484
+
+        Reviewed by Brent Fulgham.
+
+        This patch is addressing blocking the backboardd service "com.apple.backboard.hid.services". Getting the
+        backlight level in the WebContent process will initiate a connection with this service. To be able to
+        block the service, the backlight level is queried in the UI process and sent to the WebContent process
+        when the WebContent process is started, and when the backlight level is changed. On the WebContent side,
+        the method getting the backlight level is swizzled to return the value sent from the UI process.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::displayBrightness):
+        (WebKit::WebProcessPool::backlightLevelDidChangeCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::currentBacklightLevel):
+        (WebKit::WebProcess::backlightLevelDidChange):
+
 2019-03-11  Brent Fulgham  <bfulgham@apple.com>
 
         Remove obsolete runtime flag for StorageAccess API Prompt

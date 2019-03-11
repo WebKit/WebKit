@@ -134,6 +134,10 @@ messages -> WebProcess LegacyReceiver {
 #endif
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    BacklightLevelDidChange(float backlightLevel)
+#endif
+
     IsJITEnabled() -> (bool enabled) Async
 
 #if PLATFORM(COCOA)

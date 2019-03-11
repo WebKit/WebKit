@@ -75,6 +75,7 @@
 #import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
@@ -695,6 +696,28 @@ void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisp
 void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
 {
     DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+static float currentBacklightLevel()
+{
+    return WebProcess::singleton().backlightLevel();
+}
+
+void WebProcess::backlightLevelDidChange(float backlightLevel)
+{
+    m_backlightLevel = backlightLevel;
+
+    // Swizzle -[UIDevice _backlightLevel]
+    // FIXME: remove the swizzling and related code once <rdar://problem/47603552> is fixed.
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            Method methodToPatch = class_getInstanceMethod([UIDevice class], @selector(_backlightLevel));
+            method_setImplementation(methodToPatch, reinterpret_cast<IMP>(currentBacklightLevel));
+        });
 }
 #endif
 
