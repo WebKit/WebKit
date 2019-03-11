@@ -1,3 +1,14 @@
+2019-03-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r242622): Web Inspector: Fix asserts "Overridden property is missing overridingProperty"
+        https://bugs.webkit.org/show_bug.cgi?id=195515
+        <rdar://problem/48737315>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.updateStatus):
+
 2019-03-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: overridden CSS property should have go-to button to jump to effective property
