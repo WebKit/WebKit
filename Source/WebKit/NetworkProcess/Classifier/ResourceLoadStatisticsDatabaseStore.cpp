@@ -158,8 +158,8 @@ constexpr auto createSubresourceUniqueRedirectsFrom = "CREATE TABLE SubresourceU
     "FOREIGN KEY(subresourceDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE, "
     "FOREIGN KEY(fromDomainID) REFERENCES ObservedDomains(domainID) ON DELETE CASCADE);"_s;
     
-ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, const String& storageDirectoryPath)
-    : ResourceLoadStatisticsStore(store, workQueue)
+ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath)
+    : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
     , m_storageDirectoryPath(storageDirectoryPath + "/observations.db")
     , m_observedDomainCount(m_database, observedDomainCountQuery)
     , m_insertObservedDomainStatement(m_database, insertObservedDomainQuery)
@@ -689,6 +689,9 @@ void ResourceLoadStatisticsDatabaseStore::reclassifyResources()
     auto notVeryPrevalentResources = findNotVeryPrevalentResources();
 
     for (auto& resourceStatistic : notVeryPrevalentResources.values()) {
+        if (shouldSkip(resourceStatistic.registerableDomain))
+            continue;
+
         auto newPrevalence = classifier().calculateResourcePrevalence(resourceStatistic.subresourceUnderTopFrameDomainsCount, resourceStatistic.subresourceUniqueRedirectsToCount, resourceStatistic.subframeUnderTopFrameDomainsCount, resourceStatistic.topFrameUniqueRedirectsToCount, resourceStatistic.prevalence);
         if (newPrevalence != resourceStatistic.prevalence)
             setPrevalentResource(resourceStatistic.registerableDomain, newPrevalence);
@@ -1066,6 +1069,8 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
 void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const RegistrableDomain& domain, ResourceLoadPrevalence newPrevalence)
 {
     ASSERT(!RunLoop::isMain());
+    if (shouldSkip(domain))
+        return;
 
     if (m_updatePrevalentResourceStatement.bindInt(1, 1) != SQLITE_OK
         || m_updatePrevalentResourceStatement.bindText(2, domain.string()) != SQLITE_OK
@@ -1139,12 +1144,18 @@ bool ResourceLoadStatisticsDatabaseStore::isPrevalentResource(const RegistrableD
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return false;
+
     return predicateValueForDomain(m_isPrevalentResourceStatement, domain);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::isVeryPrevalentResource(const RegistrableDomain& domain) const
 {
     ASSERT(!RunLoop::isMain());
+
+    if (shouldSkip(domain))
+        return false;
 
     return predicateValueForDomain(m_isVeryPrevalentResourceStatement, domain);
 }
@@ -1584,6 +1595,9 @@ void ResourceLoadStatisticsDatabaseStore::setPrevalentResource(const Registrable
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return;
+
     ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(domain, ResourceLoadPrevalence::High);
 }
@@ -1592,6 +1606,9 @@ void ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource(const Registr
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return;
+    
     ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(domain, ResourceLoadPrevalence::VeryHigh);
 }

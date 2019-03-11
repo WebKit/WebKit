@@ -101,9 +101,10 @@ bool OperatingDate::operator<=(const OperatingDate& other) const
     return secondsSinceEpoch() <= other.secondsSinceEpoch();
 }
 
-ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue)
+ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
     : m_store(store)
     , m_workQueue(workQueue)
+    , m_shouldIncludeLocalhost(shouldIncludeLocalhost)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -129,6 +130,19 @@ void ResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool 
 {
     ASSERT(!RunLoop::isMain());
     m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned = value;
+}
+
+bool ResourceLoadStatisticsStore::shouldSkip(const RegistrableDomain& domain) const
+{
+    ASSERT(!RunLoop::isMain());
+    return !(parameters().isRunningTest)
+    && m_shouldIncludeLocalhost == ShouldIncludeLocalhost::No && domain.string() == "localhost";
+}
+
+void ResourceLoadStatisticsStore::setIsRunningTest(bool value)
+{
+    ASSERT(!RunLoop::isMain());
+    m_parameters.isRunningTest = value;
 }
 
 void ResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)

@@ -26,17 +26,19 @@
     var requestStorageAccessResolved;
 
     function makeRequestWithUserGesture() {
-        var promise = document.requestStorageAccess();
-        promise.then(
-            function () {
-                requestStorageAccessResolved = true;
-                continueAfterRequestWithUserGesture();
-            },
-            function () {
-                requestStorageAccessResolved = false;
-                continueAfterRequestWithUserGesture();
-            }
-        );
+        setEnableFeature(true, function() {
+            var promise = document.requestStorageAccess();
+            promise.then(
+                function () {
+                    requestStorageAccessResolved = true;
+                    continueAfterRequestWithUserGesture();
+                },
+                function () {
+                    requestStorageAccessResolved = false;
+                    continueAfterRequestWithUserGesture();
+                }
+            );
+        });
     }
 
     function continueAfterRequestWithUserGesture() {

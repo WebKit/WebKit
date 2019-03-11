@@ -3,6 +3,7 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that cross-origin iframe storage access is granted if the iframe is sandboxed, has the allow token, the iframe origin is a prevalent resource, the iframe origin has had recent user interaction, and the user opts in.");
         jsTestIsAsync = true;
@@ -17,7 +18,7 @@
                     testFailed(event.data);
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         function activateElement(elementId) {
@@ -30,12 +31,12 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
-                        finishJSTest();
+                        setEnableFeature(false, finishJSTest);
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
-                    finishJSTest();
+                    setEnableFeature(false, finishJSTest);
                 }
             );
         }
@@ -46,18 +47,20 @@
 
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
-            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
-                if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                    testFailed("Host did not get logged for user interaction.");
-                let iframeElement = document.createElement("iframe");
-                iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
-                iframeElement.onload = runTest;
-                iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
-                document.body.appendChild(iframeElement);
+        setEnableFeature(true, function() {
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                    testFailed("Host did not get set as prevalent resource.");
+                testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                        testFailed("Host did not get logged for user interaction.");
+                    let iframeElement = document.createElement("iframe");
+                    iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
+                    iframeElement.onload = runTest;
+                    iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                    iframeElement.src = "http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess,isNotSameOriginIframe";
+                    document.body.appendChild(iframeElement);
+                });
             });
         });
     </script>

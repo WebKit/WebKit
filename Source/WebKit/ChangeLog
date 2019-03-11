@@ -1,3 +1,91 @@
+2019-03-11  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make it possible exclude localhost from classification
+        https://bugs.webkit.org/show_bug.cgi?id=195474
+        <rdar://problem/47520577>
+
+        Reviewed by Brent Fulgham.
+
+        This patch allows for localhost to be excluded from classification and
+        treatment as a prevalent resource.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::reclassifyResources):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isPrevalentResource const):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isVeryPrevalentResource const):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setVeryPrevalentResource):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+        (WebKit::ResourceLoadStatisticsMemoryStore::classifyPrevalentResources):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsMemoryStore::setPrevalentResource):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsMemoryStore::isPrevalentResource const):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource const):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        (WebKit::ResourceLoadStatisticsMemoryStore::setVeryPrevalentResource):
+            Makes use of the new ResourceLoadStatisticsMemoryStore::shouldSkip().
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+            Now takes a ShouldIncludeLocalhost parameter.
+        (WebKit::ResourceLoadStatisticsStore::shouldSkip const):
+            Convenience function, currently supporting the localhost exclusion.
+        (WebKit::ResourceLoadStatisticsStore::setIsRunningTest):
+            Test infrastructure.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setIsRunningTest):
+            Test infrastructure.
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            Now takes a ShouldIncludeLocalhost parameter.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            Defines the new ShouldIncludeLocalhost boolean enum.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setIsRunningResourceLoadStatisticsTest):
+            Test infrastructure.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+            Forwards the localhost setting to the create function.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+            New parameter called shouldIncludeLocalhostInResourceLoadStatistics.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            Picks up the localhost setting from the parameters.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsIsRunningTest):
+            Test infrastructure.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setIsRunningResourceLoadStatisticsTest):
+            Test infrastructure.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+            Picks up the localhost setting from the WebsiteDataStore parameters.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+            Makes sure Safari does not exclude localhost.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setIsRunningResourceLoadStatisticsTest):
+            Test infrastructure.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r242698.

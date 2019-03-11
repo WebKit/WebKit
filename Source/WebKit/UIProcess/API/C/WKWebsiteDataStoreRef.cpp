@@ -336,6 +336,17 @@ void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(WKWebs
 #endif
 }
 
+void WKWebsiteDataStoreSetStatisticsIsRunningTest(WKWebsiteDataStoreRef dataStoreRef, bool value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setIsRunningResourceLoadStatisticsTest(value, [context, callback] {
+        callback(context);
+    });
+#else
+    callback(context);
+#endif
+}
+
 void WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(WKWebsiteDataStoreRef dataStoreRef, bool value)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

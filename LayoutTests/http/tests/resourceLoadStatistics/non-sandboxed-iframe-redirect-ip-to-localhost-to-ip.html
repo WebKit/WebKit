@@ -41,7 +41,6 @@
 
         if (testRunner) {
             setEnableFeature(true, function() {
-                testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
                 testRunner.installStatisticsDidScanDataRecordsCallback(checkStats);
             });
         }

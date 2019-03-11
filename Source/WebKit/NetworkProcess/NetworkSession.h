@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
@@ -91,6 +92,7 @@ protected:
     String m_resourceLoadStatisticsDirectory;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
+    ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };
 #endif
     UniqueRef<NetworkAdClickAttribution> m_adClickAttribution;
 };

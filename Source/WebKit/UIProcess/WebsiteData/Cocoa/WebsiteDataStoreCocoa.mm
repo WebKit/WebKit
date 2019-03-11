@@ -102,7 +102,8 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(httpsProxy),
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
-        false
+        false,
+        isSafari
     };
     finalizeApplicationIdentifiers();
 

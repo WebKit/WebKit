@@ -3288,6 +3288,14 @@ void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool val
     WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(dataStore, value);
 }
 
+void TestController::setStatisticsIsRunningTest(bool value)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetStatisticsIsRunningTest(dataStore, value, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
 void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

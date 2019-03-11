@@ -30,7 +30,6 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -99,8 +98,8 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     // FIXME(193728): Support ResourceLoadStatistics for ephemeral sessions, too.
     if (m_sessionID.isEphemeral())
         return;
-    
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory);
+
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
 }
 
 void NetworkSession::notifyResourceLoadStatisticsProcessed()

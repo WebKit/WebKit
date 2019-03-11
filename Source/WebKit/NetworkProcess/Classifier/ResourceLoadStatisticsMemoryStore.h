@@ -47,7 +47,7 @@ class ResourceLoadStatisticsPersistentStorage;
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsMemoryStore final : public ResourceLoadStatisticsStore {
 public:
-    ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&);
+    ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
 
     void setPersistentStorage(ResourceLoadStatisticsPersistentStorage&);
 

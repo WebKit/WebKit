@@ -309,6 +309,7 @@ interface TestRunner {
     void statisticsUpdateCookieBlocking(object completionHandler);
     void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
+    void setStatisticsIsRunningTest(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(boolean value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);

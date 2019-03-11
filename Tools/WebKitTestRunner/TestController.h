@@ -230,6 +230,7 @@ public:
     void statisticsUpdateCookieBlocking();
     void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);

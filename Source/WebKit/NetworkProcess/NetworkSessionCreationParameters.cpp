@@ -79,6 +79,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << resourceLoadStatisticsDirectory;
     encoder << resourceLoadStatisticsDirectoryExtensionHandle;
     encoder << enableResourceLoadStatistics;
+    encoder << shouldIncludeLocalhostInResourceLoadStatistics;
 }
 
 Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
@@ -172,6 +173,11 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!enableResourceLoadStatistics)
         return WTF::nullopt;
 
+    Optional<bool> shouldIncludeLocalhostInResourceLoadStatistics;
+    decoder >> shouldIncludeLocalhostInResourceLoadStatistics;
+    if (!shouldIncludeLocalhostInResourceLoadStatistics)
+        return WTF::nullopt;
+
     return {{
         sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -196,6 +202,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(*resourceLoadStatisticsDirectory)
         , WTFMove(*resourceLoadStatisticsDirectoryExtensionHandle)
         , WTFMove(*enableResourceLoadStatistics)
+        , WTFMove(*shouldIncludeLocalhostInResourceLoadStatistics)
     }};
 }
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 <script>
     description("Tests that blocking is not applied to top-level navigation redirects.");
     jsTestIsAsync = true;
@@ -11,17 +12,18 @@
 
     function doRedirect()
     {
-        testRunner.setStatisticsPrevalentResource("http://localhost", true, function() {
-            if (!testRunner.isStatisticsPrevalentResource("http://localhost")) {
-                testFailed("Host did not get set as prevalent resource.");
-                finishJSTest();
-            }
-            else
-                document.location.href = "http://localhost:8000/resourceLoadStatistics/resources/set-cookie-on-redirect.php?step=1";
+        setEnableFeature(true, function () {
+            testRunner.setStatisticsPrevalentResource("http://localhost", true, function () {
+                if (!testRunner.isStatisticsPrevalentResource("http://localhost")) {
+                    testFailed("Host did not get set as prevalent resource.");
+                    setEnableFeature(false, finishJSTest);
+                } else
+                    document.location.href = "http://localhost:8000/resourceLoadStatistics/resources/set-cookie-on-redirect.php?step=1";
+            });
         });
     }
 </script>
 </head>
-<body onload="doRedirect()">
+<body onload="setTimeout('doRedirect()', 0)">
 </body>
 </html>

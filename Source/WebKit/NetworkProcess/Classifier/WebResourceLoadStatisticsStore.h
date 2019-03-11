@@ -58,6 +58,7 @@ class ResourceLoadStatisticsPersistentStorage;
 class WebFrameProxy;
 class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
+enum class ShouldIncludeLocalhost : bool { No, Yes };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:
@@ -77,9 +78,9 @@ public:
     using PageID = uint64_t;
     using FrameID = uint64_t;
 
-    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory)
+    static Ref<WebResourceLoadStatisticsStore> create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost)
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory));
+        return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -128,6 +129,7 @@ public:
     void isGrandfathered(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void removePrevalentDomains(const Vector<RegistrableDomain>&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);
+    void setIsRunningTest(bool, CompletionHandler<void()>&&);
     void setSubframeUnderTopFrameDomain(const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void()>&&);
     void setSubresourceUnderTopFrameDomain(const SubResourceDomain&, const TopFrameDomain&, CompletionHandler<void()>&&);
     void setSubresourceUniqueRedirectTo(const SubResourceDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
@@ -171,7 +173,7 @@ public:
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;
 
 private:
-    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&);
+    explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);
 
     void postTask(WTF::Function<void()>&&);
     static void postTaskReply(WTF::Function<void()>&&);

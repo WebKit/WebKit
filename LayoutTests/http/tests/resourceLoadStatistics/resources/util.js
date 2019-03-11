@@ -4,9 +4,11 @@ function setEnableFeature(enable, completionHandler) {
     testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(enable);
     if (enable) {
         internals.setResourceLoadStatisticsEnabled(true);
+        testRunner.setStatisticsIsRunningTest(true);
         completionHandler();
     } else {
         testRunner.statisticsResetToConsistentState(function() {
+            testRunner.setStatisticsIsRunningTest(false);
             internals.setResourceLoadStatisticsEnabled(false);
             completionHandler();
         });

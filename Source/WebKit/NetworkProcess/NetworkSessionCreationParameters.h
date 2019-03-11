@@ -81,6 +81,7 @@ struct NetworkSessionCreationParameters {
     String resourceLoadStatisticsDirectory;
     SandboxExtension::Handle resourceLoadStatisticsDirectoryExtensionHandle;
     bool enableResourceLoadStatistics { false };
+    bool shouldIncludeLocalhostInResourceLoadStatistics { true };
 };
 
 } // namespace WebKit

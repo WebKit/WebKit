@@ -146,6 +146,8 @@ public:
     virtual void calculateAndSubmitTelemetry() const = 0;
 
     void setNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setIsRunningTest(bool);
+    bool shouldSkip(const RegistrableDomain&) const;
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setShouldSubmitTelemetry(bool);
     void setTimeToLiveUserInteraction(Seconds);
@@ -184,7 +186,7 @@ protected:
     static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates);
     static void debugLogDomainsInBatches(const char* action, const Vector<RegistrableDomain>& domains);
 
-    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&);
+    ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
 
     bool hasStatisticsExpired(const ResourceLoadStatistics&) const;
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime) const;
@@ -216,6 +218,7 @@ protected:
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool shouldSubmitTelemetry { true };
+        bool isRunningTest { false };
     };
     const Parameters& parameters() const { return m_parameters; }
     const Vector<OperatingDate>& operatingDates() const { return m_operatingDates; }
@@ -265,6 +268,7 @@ private:
     bool m_debugModeEnabled { false };
     bool m_storageAccessPromptsEnabled { false };
     bool m_dataRecordsBeingRemoved { false };
+    ShouldIncludeLocalhost m_shouldIncludeLocalhost { ShouldIncludeLocalhost::Yes };
 };
 
 } // namespace WebKit

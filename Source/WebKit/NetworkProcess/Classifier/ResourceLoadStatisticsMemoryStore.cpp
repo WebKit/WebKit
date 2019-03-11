@@ -67,8 +67,8 @@ static void pruneResources(HashMap<RegistrableDomain, ResourceLoadStatistics>& s
         statisticsMap.remove(statisticsToPrune[i].domain);
 }
 
-ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue)
-    : ResourceLoadStatisticsStore(store, workQueue)
+ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost)
+    : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -175,6 +175,8 @@ bool ResourceLoadStatisticsMemoryStore::isPrevalentDueToDebugMode(ResourceLoadSt
 void ResourceLoadStatisticsMemoryStore::classifyPrevalentResources()
 {
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
+        if (shouldSkip(resourceStatistic.registrableDomain))
+            continue;
         if (isPrevalentDueToDebugMode(resourceStatistic))
             setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
         else if (!resourceStatistic.isVeryPrevalentResource) {
@@ -458,6 +460,9 @@ void ResourceLoadStatisticsMemoryStore::setPrevalentResource(ResourceLoadStatist
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(resourceStatistic.registrableDomain))
+        return;
+
     resourceStatistic.isPrevalentResource = true;
     resourceStatistic.isVeryPrevalentResource = newPrevalence == ResourceLoadPrevalence::VeryHigh;
     HashSet<RegistrableDomain> domainsThatHaveRedirectedTo;
@@ -486,6 +491,9 @@ bool ResourceLoadStatisticsMemoryStore::isPrevalentResource(const RegistrableDom
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return false;
+
     auto mapEntry = m_resourceStatisticsMap.find(domain);
     return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource;
 }
@@ -494,6 +502,9 @@ bool ResourceLoadStatisticsMemoryStore::isVeryPrevalentResource(const Registrabl
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return false;
+    
     auto mapEntry = m_resourceStatisticsMap.find(domain);
     return mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource && mapEntry->value.isVeryPrevalentResource;
 }
@@ -850,6 +861,9 @@ void ResourceLoadStatisticsMemoryStore::setPrevalentResource(const RegistrableDo
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return;
+    
     auto& resourceStatistic = ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::High);
 }
@@ -858,6 +872,9 @@ void ResourceLoadStatisticsMemoryStore::setVeryPrevalentResource(const Registrab
 {
     ASSERT(!RunLoop::isMain());
 
+    if (shouldSkip(domain))
+        return;
+    
     auto& resourceStatistic = ensureResourceStatisticsForRegistrableDomain(domain);
     setPrevalentResource(resourceStatistic, ResourceLoadPrevalence::VeryHigh);
 }

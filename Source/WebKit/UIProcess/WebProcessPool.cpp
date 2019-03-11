@@ -574,12 +574,17 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectory, parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsDirectoryExtensionHandle);
 
     bool enableResourceLoadStatistics = false;
-    if (withWebsiteDataStore)
+    bool shouldIncludeLocalhost = true;
+    if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
-    else if (m_websiteDataStore)
+        shouldIncludeLocalhost = withWebsiteDataStore->parameters().networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+    } else if (m_websiteDataStore) {
         enableResourceLoadStatistics = m_websiteDataStore->resourceLoadStatisticsEnabled();
+        shouldIncludeLocalhost = m_websiteDataStore->websiteDataStore().parameters().networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+    }
 
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = enableResourceLoadStatistics;
+    parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;
 
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);

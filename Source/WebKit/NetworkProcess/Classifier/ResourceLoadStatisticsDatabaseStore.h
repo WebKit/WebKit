@@ -50,7 +50,7 @@ class ResourceLoadStatisticsMemoryStore;
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
 public:
-    ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, const String& storageDirectoryPath);
+    ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost, const String& storageDirectoryPath);
 
     void populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore&);
 

@@ -3,6 +3,7 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that same-origin iframe storage access is granted if the iframe is not sandboxed.");
         jsTestIsAsync = true;
@@ -17,7 +18,7 @@
                     testFailed(event.data.replace("FAIL ", ""));
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         function activateElement(elementId) {
@@ -30,18 +31,20 @@
                         eventSender.keyDown("escape");
                     else {
                         testFailed("No eventSender.");
-                        finishJSTest();
+                        setEnableFeature(false, finishJSTest);
                     }
                 },
                 function () {
                     testFailed("Promise rejected.");
-                    finishJSTest();
+                    setEnableFeature(false, finishJSTest);
                 }
             );
         }
 
         function runTest() {
-            activateElement("TheIframeThatRequestsStorageAccess");
+            setEnableFeature(true, function() {
+                activateElement("TheIframeThatRequestsStorageAccess");
+            });
         }
     </script>
 </head>

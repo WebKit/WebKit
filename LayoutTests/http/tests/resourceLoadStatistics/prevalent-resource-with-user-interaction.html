@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <title>Tests for Prevalent Resource With User Interaction</title>
     <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
 </head>
-<body>
+<body onload="setTimeout('setUpAndRun()', 0)">
 <script>
+    if (testRunner)
+        testRunner.waitUntilDone();
+
     const hostUnderTest = "127.0.0.1:8000";
     const statisticsUrl = "http://" + hostUnderTest + "/temp";
     const otherPrevalentUrl = "http://localhost:8000/temp";
@@ -37,8 +41,7 @@
                             testPassed("Cookie not deleted.");
                         else
                             testFailed("Cookie deleted or document.cookie contains other cookies: " + document.cookie);
-                        internals.setResourceLoadStatisticsEnabled(false);
-                        testRunner.statisticsResetToConsistentState(function() {
+                        setEnableFeature(false, function() {
                             testRunner.notifyDone();
                         });
                     });
@@ -50,11 +53,15 @@
         });
     }
 
-    if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
-        testRunner.waitUntilDone();
-        internals.setResourceLoadStatisticsEnabled(true);
-        testRunner.setStatisticsNotifyPagesWhenDataRecordsWereScanned(true);
-        runTestRunnerTest();
+    function setUpAndRun() {
+        if (document.location.host === hostUnderTest && window.testRunner && window.internals) {
+            setEnableFeature(true, function () {
+                runTestRunnerTest();
+            });
+        } else {
+            testFailed("Wrong host, no testRunner, or no internals.");
+            testRunner.notifyDone();
+        }
     }
 </script>
 </body>

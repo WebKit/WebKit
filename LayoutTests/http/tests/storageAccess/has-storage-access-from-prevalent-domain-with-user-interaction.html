@@ -3,6 +3,7 @@
 <head>
     <script src="/js-test-resources/js-test.js"></script>
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
     <script>
         description("Tests that a cross-origin iframe from a prevalent domain with user interaction does not have storage access.");
         jsTestIsAsync = true;
@@ -17,26 +18,31 @@
                     testFailed(event.data);
             } else
                 testFailed("Received a message from an unexpected origin: " + event.origin);
-            finishJSTest();
+            setEnableFeature(false, finishJSTest);
         }
 
         const hostUnderTest = "localhost:8000";
         const statisticsUrl = "http://" + hostUnderTest + "/temp";
-        testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
-            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
-                testFailed("Host did not get set as prevalent resource.");
-            testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
-                if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
-                    testFailed("Host did not get logged for user interaction.");
-                let iframeElement = document.createElement("iframe");
-                iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
-                iframeElement.id = "TheIframeThatRequestsStorageAccess";
-                iframeElement.src = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldNotGrantAccess";
-                document.body.appendChild(iframeElement);
+        function runTest() {
+            setEnableFeature(true, function() {
+                testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                        testFailed("Host did not get set as prevalent resource.");
+                    testRunner.setStatisticsHasHadUserInteraction(statisticsUrl, true, function() {
+                        if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                            testFailed("Host did not get logged for user interaction.");
+                        let iframeElement = document.createElement("iframe");
+                        iframeElement.setAttribute("sandbox", "allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals");
+                        iframeElement.id = "TheIframeThatRequestsStorageAccess";
+                        iframeElement.src = "http://localhost:8000/storageAccess/resources/has-storage-access-iframe.html#policyShouldNotGrantAccess";
+                        document.body.appendChild(iframeElement);
+                    });
+                });
+
             });
-        });
+        }
     </script>
 </head>
-<body>
+<body onload="runTest()">
 </body>
 </html>

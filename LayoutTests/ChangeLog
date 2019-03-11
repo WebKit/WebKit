@@ -1,3 +1,31 @@
+2019-03-11  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Make it possible exclude localhost from classification
+        https://bugs.webkit.org/show_bug.cgi?id=195474
+        <rdar://problem/47520577>
+
+        Reviewed by Brent Fulgham.
+
+        This patch makes sure that all test cases that need to, call the enableFeature()
+        function in http/tests/resourceLoadStatistics/resources/util.js.
+
+        The enableFeature() now calls the new function testRunner.setStatisticsIsRunningTest().
+
+        * http/tests/resourceLoadStatistics/do-not-block-top-level-navigation-redirect.html:
+        * http/tests/resourceLoadStatistics/non-sandboxed-iframe-redirect-ip-to-localhost-to-ip.html:
+        * http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.php:
+        * http/tests/resourceLoadStatistics/resources/util.js:
+        (setEnableFeature):
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-user-interaction.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html:
+        * http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe.html:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html:
+        * http/tests/storageAccess/request-storage-access-top-frame.html:
+
 2019-03-11  Javier Fernandez  <jfernandez@igalia.com>
 
         Unreviewed GTK test gardening

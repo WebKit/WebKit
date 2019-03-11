@@ -16,6 +16,7 @@ if ($_GET['step'] == 1) {
   } else {
     echo "FAILED: Cookie not set\n";
   }
-  echo "<script>if (window.testRunner && window.internals) testRunner.statisticsResetToConsistentState(function() { internals.setResourceLoadStatisticsEnabled(false); testRunner.notifyDone(); });</script>";
+  echo "<script src='util.js'></script>";
+  echo "<script>if (window.testRunner && window.internals) setEnableFeature(false, finishJSTest);</script>";
 }
 ?>
