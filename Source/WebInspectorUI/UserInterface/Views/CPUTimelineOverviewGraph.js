@@ -38,11 +38,8 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         this._cpuTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
 
         let size = new WI.Size(0, this.height);
-        if (WI.settings.experimentalEnableCPUUsageEnhancements.value) {
-            this._chart = new WI.StackedColumnChart(size);
-            this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
-        } else
-            this._chart = new WI.ColumnChart(size);
+        this._chart = new WI.StackedColumnChart(size);
+        this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
         this.addSubview(this._chart);
         this.element.appendChild(this._chart.element);
 
@@ -129,16 +126,13 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
 
         // Bars for each record.
         for (let record of visibleRecords) {
+            let additionalClass = record === this.selectedRecord ? "selected" : undefined;
             let w = intervalWidth;
+            let x = xScale(record.startTime - (CPUTimelineOverviewGraph.samplingRatePerSecond / 2));            
+            let h1 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage));
+            let h2 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage));
             let h3 = Math.max(minimumDisplayHeight, yScale(record.usage));
-            let x = xScale(record.startTime - (CPUTimelineOverviewGraph.samplingRatePerSecond / 2));
-            if (WI.settings.experimentalEnableCPUUsageEnhancements.value) {
-                let additionalClass = record === this.selectedRecord ? "selected" : undefined;
-                let h1 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage));
-                let h2 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage));
-                this._chart.addColumnSet(x, height, w, [h1, h2, h3], additionalClass);
-            } else
-                this._chart.addColumn(x, height - h3, w, h3);
+            this._chart.addColumnSet(x, height, w, [h1, h2, h3], additionalClass);
         }
     }
 

@@ -158,7 +158,6 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
-    experimentalEnableCPUUsageEnhancements: new WI.Setting("experimental-cpu-usage", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
     experimentalEnableNewTabBar: new WI.Setting("experimental-enable-new-tab-bar", false),
     experimentalEnableSourcesTab: new WI.Setting("experimental-enable-sources-tab", false),

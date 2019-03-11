@@ -107,6 +107,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             WI.TimelineRecord.Type.Script,
         ];
 
+        if (WI.CPUInstrument.supported())
+            defaultTypes.push(WI.TimelineRecord.Type.CPU);
+
         if (WI.FPSInstrument.supported())
             defaultTypes.push(WI.TimelineRecord.Type.RenderingFrame);
 

@@ -82,13 +82,3 @@ body[dir=rtl] .timeline-overview-graph.cpu > .stacked-column-chart {
     stroke: var(--selected-background-color-active) !important;
     stroke-opacity: 0.8;
 }
-
-/* LegacyCPUTimeline */
-.timeline-overview-graph.cpu > .column-chart > svg > rect {
-    stroke: var(--cpu-stroke-color);
-    fill: var(--cpu-main-thread-fill-color);
-}
-
-body[dir=rtl] .timeline-overview-graph.cpu > .column-chart {
-    transform: scaleX(-1);
-}

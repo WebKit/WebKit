@@ -132,10 +132,6 @@
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
 
-    /* LegacyCPUTimeline */
-    --cpu-fill-color: hsl(81, 80%, 50%);
-    --cpu-stroke-color: hsl(118, 33%, 42%);
-
     --cpu-other-thread-fill-color: hsl(81, 80%, 50%);
     --cpu-other-thread-stroke-color: hsl(81, 80%, 30%);
     --cpu-main-thread-fill-color: hsl(118, 43%, 55%);

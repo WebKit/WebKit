@@ -1,5 +1,35 @@
 2019-03-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Enable by default
+        https://bugs.webkit.org/show_bug.cgi?id=195471
+
+        Reviewed by Devin Rousso.
+
+        Remove experimental setting and include the CPU timeline in the
+        default set of timelines.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.defaultTimelineTypes):
+        * UserInterface/Main.html:
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.selected):
+        (.timeline-overview-graph.cpu > .column-chart > svg > rect): Deleted.
+        (body[dir=rtl] .timeline-overview-graph.cpu > .column-chart): Deleted.
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph):
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        * UserInterface/Views/LegacyCPUTimelineView.css: Removed.
+        * UserInterface/Views/LegacyCPUTimelineView.js: Removed.
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        * UserInterface/Views/Variables.css:
+        (:root):
+
+2019-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: CPU Usage Timeline - Better Thread chart layout values
         https://bugs.webkit.org/show_bug.cgi?id=195547
 
