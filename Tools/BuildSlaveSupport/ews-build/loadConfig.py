@@ -37,9 +37,14 @@ BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
 
 
-def loadBuilderConfig(c, use_localhost_worker=False, master_prefix_path='./'):
+def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     config = json.load(open(os.path.join(master_prefix_path, 'config.json')))
-    passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
+    use_localhost_worker = is_test_mode_enabled
+    if is_test_mode_enabled:
+        passwords = {}
+    else:
+        passwords = json.load(open(os.path.join(master_prefix_path, 'passwords.json')))
+
     checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
     checkValidSchedulers(config, config['schedulers'])
 

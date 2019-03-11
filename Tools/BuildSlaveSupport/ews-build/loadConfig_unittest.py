@@ -33,7 +33,7 @@ import loadConfig
 class ConfigDotJSONTest(unittest.TestCase):
     def test_configuration(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        loadConfig.loadBuilderConfig({}, master_prefix_path=cwd)
+        loadConfig.loadBuilderConfig({}, is_test_mode_enabled=True, master_prefix_path=cwd)
 
     def test_builder_keys(self):
         cwd = os.path.dirname(os.path.abspath(__file__))

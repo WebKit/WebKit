@@ -1,3 +1,16 @@
+2019-03-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] unit-tests fail when passwords.json is missing
+        https://bugs.webkit.org/show_bug.cgi?id=195557
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+        (loadBuilderConfig):
+        * BuildSlaveSupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.test_configuration):
+        * BuildSlaveSupport/ews-build/master.cfg:
+
 2019-03-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r242702.
