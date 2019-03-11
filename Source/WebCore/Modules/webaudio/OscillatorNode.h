@@ -101,4 +101,14 @@ private:
     static PeriodicWave* s_periodicWaveTriangle;
 };
 
+String convertEnumerationToString(OscillatorNode::Type); // In JSOscillatorNode.cpp
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct LogArgument<WebCore::OscillatorNode::Type> {
+    static String toString(WebCore::OscillatorNode::Type type) { return convertEnumerationToString(type); }
+};
+
+} // namespace WTF

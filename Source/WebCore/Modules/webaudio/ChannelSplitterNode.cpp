@@ -45,13 +45,13 @@ RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(AudioContext& context, f
 ChannelSplitterNode::ChannelSplitterNode(AudioContext& context, float sampleRate, unsigned numberOfOutputs)
     : AudioNode(context, sampleRate)
 {
+    setNodeType(NodeTypeChannelSplitter);
+
     addInput(std::make_unique<AudioNodeInput>(this));
 
     // Create a fixed number of outputs (able to handle the maximum number of channels fed to an input).
     for (unsigned i = 0; i < numberOfOutputs; ++i)
         addOutput(std::make_unique<AudioNodeOutput>(this, 1));
-    
-    setNodeType(NodeTypeChannelSplitter);
     
     initialize();
 }

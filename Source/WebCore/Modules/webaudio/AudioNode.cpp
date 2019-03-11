@@ -32,6 +32,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
+#include "Logging.h"
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
@@ -40,6 +41,56 @@
 #endif
 
 namespace WebCore {
+
+String convertEnumerationToString(AudioNode::NodeType enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("NodeTypeUnknown"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeDestination"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeOscillator"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeAudioBufferSource"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeMediaElementAudioSource"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeMediaStreamAudioDestination"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeMediaStreamAudioSource"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeJavaScript"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeBiquadFilter"),
+        MAKE_STATIC_STRING_IMPL("NodeTypePanner"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeConvolver"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeDelay"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeGain"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeChannelSplitter"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeChannelMerger"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeAnalyser"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeDynamicsCompressor"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeWaveShaper"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeBasicInspector"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeEnd"),
+    };
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeUnknown) == 0, "AudioNode::NodeTypeUnknown is not 0 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDestination) == 1, "AudioNode::NodeTypeDestination is not 1 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeOscillator) == 2, "AudioNode::NodeTypeOscillator is not 2 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeAudioBufferSource) == 3, "AudioNode::NodeTypeAudioBufferSource is not 3 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaElementAudioSource) == 4, "AudioNode::NodeTypeMediaElementAudioSource is not 4 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioDestination) == 5, "AudioNode::NodeTypeMediaStreamAudioDestination is not 5 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeMediaStreamAudioSource) == 6, "AudioNode::NodeTypeMediaStreamAudioSource is not 6 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeJavaScript) == 7, "AudioNode::NodeTypeJavaScript is not 7 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeBiquadFilter) == 8, "AudioNode::NodeTypeBiquadFilter is not 8 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypePanner) == 9, "AudioNode::NodeTypePanner is not 9 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeConvolver) == 10, "AudioNode::NodeTypeConvolver is not 10 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDelay) == 11, "AudioNode::NodeTypeDelay is not 11 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeGain) == 12, "AudioNode::NodeTypeGain is not 12 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelSplitter) == 13, "AudioNode::NodeTypeChannelSplitter is not 13 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeChannelMerger) == 14, "AudioNode::NodeTypeChannelMerger is not 14 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeAnalyser) == 15, "AudioNode::NodeTypeAnalyser is not 15 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeDynamicsCompressor) == 16, "AudioNode::NodeTypeDynamicsCompressor is not 16 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeWaveShaper) == 17, "AudioNode::NodeTypeWaveShaper is not 17 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeBasicInspector) == 18, "AudioNode::NodeTypeBasicInspector is not 18 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 19, "AudioNode::NodeTypeEnd is not 19 as expected");
+
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    
+    return values[static_cast<size_t>(enumerationValue)];
+}
 
 AudioNode::AudioNode(AudioContext& context, float sampleRate)
     : m_isInitialized(false)
@@ -52,10 +103,16 @@ AudioNode::AudioNode(AudioContext& context, float sampleRate)
     , m_connectionRefCount(0)
     , m_isMarkedForDeletion(false)
     , m_isDisabled(false)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(context.logger())
+    , m_logIdentifier(context.nextAudioNodeLogIdentifier())
+#endif
     , m_channelCount(2)
     , m_channelCountMode(Max)
     , m_channelInterpretation(AudioBus::Speakers)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
 #if DEBUG_AUDIONODE_REFERENCES
     if (!s_isNodeCountInitialized) {
         s_isNodeCountInitialized = true;
@@ -66,6 +123,8 @@ AudioNode::AudioNode(AudioContext& context, float sampleRate)
 
 AudioNode::~AudioNode()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     ASSERT(isMainThread());
 #if DEBUG_AUDIONODE_REFERENCES
     --s_nodeCount[nodeType()];
@@ -85,6 +144,9 @@ void AudioNode::uninitialize()
 
 void AudioNode::setNodeType(NodeType type)
 {
+    ASSERT(isMainThread());
+    ALWAYS_LOG(LOGIDENTIFIER, type);
+
     m_nodeType = type;
 
 #if DEBUG_AUDIONODE_REFERENCES
@@ -100,11 +162,15 @@ void AudioNode::lazyInitialize()
 
 void AudioNode::addInput(std::unique_ptr<AudioNodeInput> input)
 {
+    ASSERT(isMainThread());
+    DEBUG_LOG(LOGIDENTIFIER, input->node()->nodeType());
     m_inputs.append(WTFMove(input));
 }
 
 void AudioNode::addOutput(std::unique_ptr<AudioNodeOutput> output)
 {
+    ASSERT(isMainThread());
+    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
     m_outputs.append(WTFMove(output));
 }
 
@@ -124,9 +190,11 @@ AudioNodeOutput* AudioNode::output(unsigned i)
 
 ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
-    ASSERT(isMainThread()); 
+    ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
 
+    ALWAYS_LOG(LOGIDENTIFIER, destination.nodeType(), ", output = ", outputIndex, ", input = ", inputIndex);
+    
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError };
@@ -149,8 +217,11 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
 ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 {
-    ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
+
+    ASSERT(isMainThread());
+
+    DEBUG_LOG(LOGIDENTIFIER, param.name(), ", output = ", outputIndex);
 
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError };
@@ -174,6 +245,8 @@ ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
         return Exception { IndexSizeError };
 
     auto* output = this->output(outputIndex);
+    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+
     output->disconnectAll();
 
     return { };
@@ -189,6 +262,8 @@ ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
     ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
 
+    ALWAYS_LOG(LOGIDENTIFIER, channelCount);
+    
     if (!(channelCount > 0 && channelCount <= AudioContext::maxNumberOfChannels()))
         return Exception { InvalidStateError };
 
@@ -220,6 +295,8 @@ ExceptionOr<void> AudioNode::setChannelCountMode(const String& mode)
     ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
 
+    ALWAYS_LOG(LOGIDENTIFIER, mode);
+    
     ChannelCountMode oldMode = m_channelCountMode;
 
     if (mode == "max")
@@ -254,6 +331,8 @@ ExceptionOr<void> AudioNode::setChannelInterpretation(const String& interpretati
     ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
 
+    ALWAYS_LOG(LOGIDENTIFIER, interpretation);
+    
     if (interpretation == "speakers")
         m_channelInterpretation = AudioBus::Speakers;
     else if (interpretation == "discrete")
@@ -504,6 +583,13 @@ void AudioNode::printNodeCounts()
 }
 
 #endif // DEBUG_AUDIONODE_REFERENCES
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& AudioNode::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 } // namespace WebCore
 

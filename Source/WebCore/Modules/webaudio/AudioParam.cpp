@@ -33,12 +33,31 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "FloatConversion.h"
+#include "Logging.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 const double AudioParam::DefaultSmoothingConstant = 0.05;
 const double AudioParam::SnapThreshold = 0.001;
+
+AudioParam::AudioParam(AudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units)
+    : AudioSummingJunction(context)
+    , m_name(name)
+    , m_value(defaultValue)
+    , m_defaultValue(defaultValue)
+    , m_minValue(minValue)
+    , m_maxValue(maxValue)
+    , m_units(units)
+    , m_smoothedValue(defaultValue)
+    , m_smoothingConstant(DefaultSmoothingConstant)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(context.logger())
+    , m_logIdentifier(context.nextAudioParameterLogIdentifier())
+#endif
+{
+    ALWAYS_LOG(LOGIDENTIFIER, "name = ", m_name, ", value = ", m_value, ", default = ", m_defaultValue, ", min = ", m_minValue, ", max = ", m_maxValue, ", units = ", m_units);
+}
 
 float AudioParam::value()
 {
@@ -56,6 +75,8 @@ float AudioParam::value()
 
 void AudioParam::setValue(float value)
 {
+    DEBUG_LOG(LOGIDENTIFIER, value);
+
     // Check against JavaScript giving us bogus floating-point values.
     // Don't ASSERT, since this can happen if somebody writes bad JS.
     if (!std::isnan(value) && !std::isinf(value))
@@ -173,6 +194,8 @@ void AudioParam::connect(AudioNodeOutput* output)
     if (!m_outputs.add(output).isNewEntry)
         return;
 
+    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+
     output->addParam(this);
     changedOutputs();
 }
@@ -185,11 +208,21 @@ void AudioParam::disconnect(AudioNodeOutput* output)
     if (!output)
         return;
 
+    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+
     if (m_outputs.remove(output)) {
         changedOutputs();
         output->removeParam(this);
     }
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& AudioParam::logChannel() const
+{
+    return LogMedia;
+}
+#endif
+    
 
 } // namespace WebCore
 

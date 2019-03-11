@@ -28,6 +28,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include <wtf/Forward.h>
+#include <wtf/LoggerHelper.h>
 
 #define DEBUG_AUDIONODE_REFERENCES 0
 
@@ -44,7 +45,12 @@ class AudioParam;
 // An AudioDestinationNode has one input and no outputs and represents the final destination to the audio hardware.
 // Most processing nodes such as filters will have one input and one output, although multiple inputs and outputs are possible.
 
-class AudioNode : public EventTargetWithInlineData {
+class AudioNode
+    : public EventTargetWithInlineData
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
     WTF_MAKE_NONCOPYABLE(AudioNode);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -75,6 +81,7 @@ public:
         NodeTypeAnalyser,
         NodeTypeDynamicsCompressor,
         NodeTypeWaveShaper,
+        NodeTypeBasicInspector,
         NodeTypeEnd
     };
 
@@ -191,6 +198,13 @@ protected:
     // Force all inputs to take any channel interpretation changes into account.
     void updateChannelsForInputs();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "AudioNode"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 private:
     volatile bool m_isInitialized;
     NodeType m_nodeType;
@@ -217,10 +231,25 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
+#if !RELEASE_LOG_DISABLED
+    mutable Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
+
 protected:
     unsigned m_channelCount;
     ChannelCountMode m_channelCountMode;
     AudioBus::ChannelInterpretation m_channelInterpretation;
 };
 
+String convertEnumerationToString(AudioNode::NodeType);
+
 } // namespace WebCore
+
+namespace WTF {
+    
+template<> struct LogArgument<WebCore::AudioNode::NodeType> {
+    static String toString(WebCore::AudioNode::NodeType type) { return convertEnumerationToString(type); }
+};
+
+} // namespace WTF

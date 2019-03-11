@@ -79,6 +79,8 @@ ExceptionOr<void> OscillatorNode::setType(Type type)
 {
     PeriodicWave* periodicWave = nullptr;
 
+    ALWAYS_LOG(LOGIDENTIFIER, type);
+
     switch (type) {
     case Type::Sine:
         if (!s_periodicWaveSine)
@@ -297,8 +299,9 @@ void OscillatorNode::reset()
 
 void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "sample rate = ", periodicWave ? periodicWave->sampleRate() : 0, ", wave size = ", periodicWave ? periodicWave->periodicWaveSize() : 0, ", rate scale = ", periodicWave ? periodicWave->rateScale() : 0);
     ASSERT(isMainThread());
-
+    
     // This synchronizes with process().
     std::lock_guard<Lock> lock(m_processMutex);
     m_periodicWave = periodicWave;

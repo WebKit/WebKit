@@ -39,12 +39,12 @@ GainNode::GainNode(AudioContext& context, float sampleRate)
     , m_lastGain(1.0)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
 {
+    setNodeType(NodeTypeGain);
+
     m_gain = AudioParam::create(context, "gain", 1.0, 0.0, 1.0);
 
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, 1));
-
-    setNodeType(NodeTypeGain);
 
     initialize();
 }

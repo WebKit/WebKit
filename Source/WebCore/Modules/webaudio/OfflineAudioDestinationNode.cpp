@@ -74,6 +74,8 @@ void OfflineAudioDestinationNode::uninitialize()
 
 void OfflineAudioDestinationNode::startRendering()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     ASSERT(isMainThread());
     ASSERT(m_renderTarget.get());
     if (!m_renderTarget.get())

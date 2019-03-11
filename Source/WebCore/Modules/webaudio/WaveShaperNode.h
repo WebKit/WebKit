@@ -53,4 +53,14 @@ private:
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
 };
 
+String convertEnumerationToString(WebCore::WaveShaperNode::OverSampleType); // in JSWaveShaperNode.cpp
+
 } // namespace WebCore
+
+namespace WTF {
+    
+template<> struct LogArgument<WebCore::WaveShaperNode::OverSampleType> {
+    static String toString(WebCore::WaveShaperNode::OverSampleType type) { return convertEnumerationToString(type); }
+};
+    
+} // namespace WTF

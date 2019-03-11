@@ -47,6 +47,8 @@ namespace WebCore {
 ConvolverNode::ConvolverNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
+    setNodeType(NodeTypeConvolver);
+
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, 2));
 
@@ -54,8 +56,6 @@ ConvolverNode::ConvolverNode(AudioContext& context, float sampleRate)
     m_channelCount = 2;
     m_channelCountMode = ClampedMax;
     m_channelInterpretation = AudioBus::Speakers;
-
-    setNodeType(NodeTypeConvolver);
     
     initialize();
 }

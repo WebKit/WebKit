@@ -36,6 +36,7 @@ namespace WebCore {
 AudioBasicInspectorNode::AudioBasicInspectorNode(AudioContext& context, float sampleRate, unsigned outputChannelCount)
     : AudioNode(context, sampleRate)
 {
+    setNodeType(NodeTypeBasicInspector);
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, outputChannelCount));
 }

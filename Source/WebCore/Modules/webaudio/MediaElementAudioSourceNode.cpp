@@ -51,10 +51,10 @@ MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext& context, 
     , m_sourceNumberOfChannels(0)
     , m_sourceSampleRate(0)
 {
+    setNodeType(NodeTypeMediaElementAudioSource);
+
     // Default to stereo. This could change depending on what the media element .src is set to.
     addOutput(std::make_unique<AudioNodeOutput>(this, 2));
-
-    setNodeType(NodeTypeMediaElementAudioSource);
 
     initialize();
 }

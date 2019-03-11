@@ -43,9 +43,8 @@ AudioDestinationNode::AudioDestinationNode(AudioContext& context, float sampleRa
     , m_isEffectivelyPlayingAudio(false)
     , m_muted(false)
 {
-    addInput(std::make_unique<AudioNodeInput>(this));
-    
     setNodeType(NodeTypeDestination);
+    addInput(std::make_unique<AudioNodeInput>(this));
 }
 
 AudioDestinationNode::~AudioDestinationNode()

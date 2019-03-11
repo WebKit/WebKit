@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #include <JavaScriptCore/Float32Array.h>
 #include <atomic>
 #include <wtf/HashSet.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -76,7 +77,18 @@ class WaveShaperNode;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public MediaProducer, private PlatformMediaSessionClient, private VisibilityChangeClient {
+class AudioContext
+    : public ActiveDOMObject
+    , public ThreadSafeRefCounted<AudioContext>
+    , public EventTargetWithInlineData
+    , public MediaCanStartListener
+    , public MediaProducer
+    , private PlatformMediaSessionClient
+    , private VisibilityChangeClient
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static RefPtr<AudioContext> create(Document&);
@@ -263,6 +275,14 @@ public:
 
     void nodeWillBeginPlayback();
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+    const void* nextAudioNodeLogIdentifier() { return childLogIdentifier(++m_nextAudioNodeIdentifier); }
+    const void* nextAudioParameterLogIdentifier() { return childLogIdentifier(++m_nextAudioParameterIdentifier); }
+#endif
+
 protected:
     explicit AudioContext(Document&);
     AudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
@@ -335,6 +355,15 @@ private:
 
     void addReaction(State, DOMPromiseDeferred<void>&&);
     void updateAutomaticPullNodes();
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "AudioContext"; }
+
+    Ref<Logger> m_logger;
+    const void* m_logIdentifier;
+    uint64_t m_nextAudioNodeIdentifier { 0 };
+    uint64_t m_nextAudioParameterIdentifier { 0 };
+#endif
 
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_finishedNodes;

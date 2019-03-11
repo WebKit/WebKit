@@ -41,10 +41,10 @@ namespace WebCore {
 DynamicsCompressorNode::DynamicsCompressorNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
+    setNodeType(NodeTypeDynamicsCompressor);
+
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, defaultNumberOfOutputChannels));
-
-    setNodeType(NodeTypeDynamicsCompressor);
 
     m_threshold = AudioParam::create(context, "threshold", -24, -100, 0);
     m_knee = AudioParam::create(context, "knee", 30, 0, 40);
