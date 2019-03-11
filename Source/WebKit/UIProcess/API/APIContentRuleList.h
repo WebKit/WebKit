@@ -48,6 +48,8 @@ public:
     const WTF::String& name() const { return m_name; }
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
 
+    bool usesCopiedMemory() const;
+
 private:
     WTF::String m_name;
     Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;

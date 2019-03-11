@@ -31,6 +31,10 @@
 #include <system_error>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class SharedBuffer;
+}
+
 namespace WTF {
 class WorkQueue;
 }
@@ -71,6 +75,8 @@ public:
     void synchronousRemoveAllContentRuleLists();
     void invalidateContentRuleListVersion(const WTF::String& identifier);
     void getContentRuleListSource(const WTF::String& identifier, CompletionHandler<void(WTF::String)>);
+
+    static RefPtr<WebCore::SharedBuffer> readContentsOfFile(const WTF::String& path);
 
 private:
     WTF::String defaultStorePath(bool legacyFilename);
