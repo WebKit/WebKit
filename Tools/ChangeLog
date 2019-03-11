@@ -1,3 +1,35 @@
+2019-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Allow storage quota increase by default in WTR
+        https://bugs.webkit.org/show_bug.cgi?id=195541
+
+        Reviewed by Geoffrey Garen.
+
+        Allow storage quota increase by default in WTR.
+        Move from testRunner.allowStorageQuotaIncrease to testRunner.setAllowStorageQuotaIncrease.
+        Use this for tests that explicitly need cache increase.
+
+        Instead of increasing quota by 2, make sure the next request is
+        granted by adding all given parameters.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAllowStorageQuotaIncrease):
+        (WTR::TestRunner::allowCacheStorageQuotaIncrease): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setAllowStorageQuotaIncrease):
+        (WTR::TestController::allowCacheStorageQuotaIncrease): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        (WTR::TestController::setAllowStorageQuotaIncrease):
+        (WTR::TestController::allowCacheStorageQuotaIncrease): Deleted.
+        * WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.mm:
+        (-[TestWebsiteDataStoreDelegate requestStorageSpace:frameOrigin:quota:currentSize:spaceRequired:decisionHandler:]):
+
 2019-03-11  Xan Lopez  <xan@igalia.com>
 
         [CMake] Build 32bit binaries on Linux/64bit when the --32-bit is passed to build-jsc

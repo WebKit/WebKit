@@ -4,6 +4,9 @@
 var test_url = 'https://example.com/foo';
 var test_body = 'Hello world!';
 
+if (window.testRunner)
+    testRunner.setAllowStorageQuotaIncrease(false);
+
 function getResponseBodySizeWithPadding(response)
 {
     var cache;
@@ -128,7 +131,7 @@ promise_test((test) => {
 }, 'Hitting cache quota for non opaque responses');
 
 promise_test((test) => {
-    if (!window.internals)
+    if (!window.internals || !window.testRunner)
         return Promise.reject("Test requires internals");
 
     var cache;
@@ -152,7 +155,7 @@ promise_test((test) => {
             assert_equals(e.name, "QuotaExceededError");
         });
     }).then(() => {
-        testRunner.allowCacheStorageQuotaIncrease();
+        testRunner.setAllowStorageQuotaIncrease(true);
         return cache.put("1ko", response1ko.clone());
     }).then(() => {
         return cache.delete("1ko-padded-to-200ko");

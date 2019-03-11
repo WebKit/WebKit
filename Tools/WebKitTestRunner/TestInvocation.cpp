@@ -1463,8 +1463,10 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return result;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "AllowCacheStorageQuotaIncrease")) {
-        TestController::singleton().allowCacheStorageQuotaIncrease();
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAllowStorageQuotaIncrease")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        auto canIncrease = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody));
+        TestController::singleton().setAllowStorageQuotaIncrease(canIncrease);
         return nullptr;
     }
 

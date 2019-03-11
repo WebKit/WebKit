@@ -63,7 +63,7 @@ interface TestRunner {
     void clearDOMCache(DOMString origin);
     boolean hasDOMCache(DOMString origin);
     unsigned long domCacheSize(DOMString origin);
-    void allowCacheStorageQuotaIncrease();
+    void setAllowStorageQuotaIncrease(boolean value);
 
     // Special options.
     void keepWebHistory();

@@ -242,7 +242,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
             [platformView toggleContinuousSpellChecking:nil];
     }
 
-    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: false];
+    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: true];
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
@@ -369,9 +369,9 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
     return false;
 }
 
-void TestController::allowCacheStorageQuotaIncrease()
+void TestController::setAllowStorageQuotaIncrease(bool value)
 {
-    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: true];
+    [globalWebsiteDataStoreDelegateClient setAllowRaisingQuota: value];
 }
 
 bool TestController::canDoServerTrustEvaluationInNetworkProcess() const

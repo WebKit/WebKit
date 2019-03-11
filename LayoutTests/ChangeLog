@@ -1,3 +1,13 @@
+2019-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Allow storage quota increase by default in WTR
+        https://bugs.webkit.org/show_bug.cgi?id=195541
+
+        Reviewed by Geoffrey Garen.
+
+        * http/wpt/cache-storage/cache-quota.any.js:
+        (promise_test):
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.

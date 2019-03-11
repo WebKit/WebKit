@@ -3040,7 +3040,7 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
 }
 
 #if !PLATFORM(COCOA)
-void TestController::allowCacheStorageQuotaIncrease()
+void TestController::setAllowStorageQuotaIncrease(bool)
 {
     // FIXME: To implement.
 }
