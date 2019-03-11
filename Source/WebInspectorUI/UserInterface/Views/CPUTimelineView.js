@@ -460,6 +460,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let mainThreadMax = -Infinity;
         let webkitThreadMax = -Infinity;
         let unknownThreadMax = -Infinity;
+        let workerMax = -Infinity;
 
         let min = Infinity;
         let mainThreadMin = Infinity;
@@ -577,13 +578,22 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         webkitThreadAverage /= visibleRecords.length;
         unknownThreadAverage /= visibleRecords.length;
 
-        for (let [workerId, workerData] of workersDataMap)
+        for (let [workerId, workerData] of workersDataMap) {
             workerData.average = workerData.average / workerData.recordsCount;
+            if (workerData.max > workerMax)
+                workerMax = workerData.max;
+        }
 
         // If the graph end time is inside a gap, the last data point should
         // only be extended to the start of the discontinuity.
         if (discontinuities.length)
             visibleEndTime = discontinuities[0].startTime;
+
+        function bestThreadLayoutMax(value) {
+            if (value > 100)
+                return Math.ceil(value);            
+            return (Math.floor(value / 25) + 1) * 25;
+        }
 
         function removeGreaterThan(arr, max) {
             return arr.filter((x) => x <= max);
@@ -621,12 +631,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             }
         }
 
-        // Layout all graphs to the same time scale. The maximum value is
-        // the maximum total CPU usage across all threads.
-        let layoutMax = max;
-        this._layoutMax = max;
-
-        function layoutView(view, property, graphHeight, {dataPoints, min, max, average}) {
+        function layoutView(view, property, graphHeight, layoutMax, {dataPoints, min, max, average}) {
             if (min === Infinity)
                 min = 0;
             if (max === -Infinity)
@@ -685,12 +690,17 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             }
         }
 
-        layoutView(this._cpuUsageView, null, CPUTimelineView.cpuUsageViewHeight, {dataPoints, min, max, average});
+        // Layout the combined graph to the maximum total CPU usage.
+        // Layout all the thread graphs to the same time scale, the maximum across threads / thread groups.
+        this._layoutMax = max;
+        this._threadLayoutMax = bestThreadLayoutMax(Math.max(mainThreadMax, webkitThreadMax, unknownThreadMax, workerMax));
+
+        layoutView(this._cpuUsageView, null, CPUTimelineView.cpuUsageViewHeight, this._layoutMax, {dataPoints, min, max, average});
 
         if (this._threadsDetailsElement.open) {
-            layoutView(this._mainThreadUsageView, "mainThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: mainThreadMin, max: mainThreadMax, average: mainThreadAverage});
-            layoutView(this._webkitThreadUsageView, "webkitThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: webkitThreadMin, max: webkitThreadMax, average: webkitThreadAverage});
-            layoutView(this._unknownThreadUsageView, "unknownThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints, min: unknownThreadMin, max: unknownThreadMax, average: unknownThreadAverage});
+            layoutView(this._mainThreadUsageView, "mainThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, {dataPoints, min: mainThreadMin, max: mainThreadMax, average: mainThreadAverage});
+            layoutView(this._webkitThreadUsageView, "webkitThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, {dataPoints, min: webkitThreadMin, max: webkitThreadMax, average: webkitThreadAverage});
+            layoutView(this._unknownThreadUsageView, "unknownThreadUsage", CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, {dataPoints, min: unknownThreadMin, max: unknownThreadMax, average: unknownThreadAverage});
 
             this._removeWorkerThreadViews();
 
@@ -704,7 +714,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                 this._threadsDetailsElement.insertBefore(workerView.element, this._webkitThreadUsageView.element);
                 this._workerViews.push(workerView);
 
-                layoutView(workerView, "usage", CPUTimelineView.threadCPUUsageViewHeight, {dataPoints: workerData.dataPoints, min: workerData.min, max: workerData.max, average: workerData.average});
+                layoutView(workerView, "usage", CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, {dataPoints: workerData.dataPoints, min: workerData.min, max: workerData.max, average: workerData.average});
             }
         }
 
@@ -1703,9 +1713,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._overlayRecord = record;
         this._overlayTime = time;
 
-        let layoutMax = this._layoutMax;
         let secondsPerPixel = this._secondsPerPixelInLayout;
-        let graphMax = layoutMax * 1.05;
         let graphStartTime = this.startTime;
 
         this._overlayMarker.time = time + (secondsPerPixel / 2);
@@ -1718,9 +1726,11 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         let {mainThreadUsage, workerThreadUsage, webkitThreadUsage, unknownThreadUsage, workersData} = record;
 
-        function addOverlayPoint(view, graphHeight, value) {
+        function addOverlayPoint(view, graphHeight, layoutMax, value) {
             if (!value)
                 return;
+
+            let graphMax = layoutMax * 1.05;
 
             function yScale(value) {
                 return graphHeight - ((value / graphMax) * graphHeight);
@@ -1733,19 +1743,19 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         this._clearOverlayMarkers();
 
         this._cpuUsageView.updateLegend(record);
-        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, mainThreadUsage);
-        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, mainThreadUsage + workerThreadUsage);
-        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, mainThreadUsage + workerThreadUsage + webkitThreadUsage + unknownThreadUsage);
+        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, this._layoutMax, mainThreadUsage);
+        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, this._layoutMax, mainThreadUsage + workerThreadUsage);
+        addOverlayPoint(this._cpuUsageView, CPUTimelineView.cpuUsageViewHeight, this._layoutMax, mainThreadUsage + workerThreadUsage + webkitThreadUsage + unknownThreadUsage);
 
         if (this._threadsDetailsElement.open) {
             this._mainThreadUsageView.updateLegend(mainThreadUsage);
-            addOverlayPoint(this._mainThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, mainThreadUsage);
+            addOverlayPoint(this._mainThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, mainThreadUsage);
 
             this._webkitThreadUsageView.updateLegend(webkitThreadUsage);
-            addOverlayPoint(this._webkitThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, webkitThreadUsage);
+            addOverlayPoint(this._webkitThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, webkitThreadUsage);
 
             this._unknownThreadUsageView.updateLegend(unknownThreadUsage);
-            addOverlayPoint(this._unknownThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, unknownThreadUsage);
+            addOverlayPoint(this._unknownThreadUsageView, CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, unknownThreadUsage);
 
             for (let workerView of this._workerViews)
                 workerView.updateLegend(NaN);
@@ -1755,7 +1765,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
                     let workerView = this._workerViews.find((x) => x.__workerId === targetId);
                     if (workerView) {
                         workerView.updateLegend(usage);
-                        addOverlayPoint(workerView, CPUTimelineView.threadCPUUsageViewHeight, usage);
+                        addOverlayPoint(workerView, CPUTimelineView.threadCPUUsageViewHeight, this._threadLayoutMax, usage);
                     }
                 }
             }
