@@ -1,3 +1,35 @@
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
+        WebProcessCache should keep track of processes being added
+        https://bugs.webkit.org/show_bug.cgi?id=195538
+
+        Reviewed by Geoffrey Garen.
+
+        WebProcessCache should keep track of processes being added, while they are being
+        checked for responsiveness. This is useful so that:
+        - Requests to clear the cache also clear processes being added
+        - Requests to remove a given process from the cache (either because it crashed
+          or because it is being used for a history navigation) actually remove the
+          process if it is still being checked for responsiveness.
+        - The cached process eviction timer applies to such processes in case something
+          goes wrong with the code and the pending request does not get processed.
+
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::generateAddRequestIdentifier):
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::clear):
+        (WebKit::WebProcessCache::clearAllProcessesForSession):
+        (WebKit::WebProcessCache::removeProcess):
+        (WebKit::WebProcessCache::CachedProcess::evictionTimerFired):
+        (WebKit::WebProcessCache::evictProcess): Deleted.
+        * UIProcess/WebProcessCache.h:
+        (WebKit::WebProcessCache::size const):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
 2019-03-11  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: ( r240978-r240985 ) [ iOS Release ] Layout Test imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm is crashing

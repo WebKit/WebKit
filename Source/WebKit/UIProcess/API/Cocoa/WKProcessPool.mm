@@ -476,7 +476,12 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 
 - (size_t)_webProcessCountIgnoringPrewarmedAndCached
 {
-    return [self _webProcessCount] - ([self _hasPrewarmedWebProcess] ? 1 : 0) - _processPool->webProcessCache().size();
+    size_t count = 0;
+    for (auto& process : _processPool->processes()) {
+        if (!process->isInProcessCache() && !process->isPrewarmed())
+            ++count;
+    }
+    return count;
 }
 
 - (size_t)_webPageContentProcessCount

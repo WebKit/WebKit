@@ -2260,8 +2260,8 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 
             // Make sure we remove the process from the cache if it is in there since we're about to use it.
             if (process->isInProcessCache()) {
-                auto removedProcess = webProcessCache().takeProcess(process->registrableDomain(), process->websiteDataStore());
-                ASSERT_UNUSED(removedProcess, removedProcess.get() == process.get());
+                webProcessCache().removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
+                ASSERT(!process->isInProcessCache());
             }
 
             return completionHandler(process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s);
