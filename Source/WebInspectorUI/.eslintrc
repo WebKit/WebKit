@@ -76,6 +76,7 @@
         "InspectorTest": true,
         "LinkedList": true,
         "ListMultimap": true,
+        "Multimap": true,
         "ProtocolTest": true,
         "ProtocolTestHarness": true,
         "SyncTestSuite": true,
