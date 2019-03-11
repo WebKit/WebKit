@@ -59,9 +59,9 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    enum class Usage { Sort, Search };
-    enum class Sensitivity { Base, Accent, Case, Variant };
-    enum class CaseFirst { Upper, Lower, False };
+    enum class Usage : uint8_t { Sort, Search };
+    enum class Sensitivity : uint8_t { Base, Accent, Case, Variant };
+    enum class CaseFirst : uint8_t { Upper, Lower, False };
 
     struct UCollatorDeleter {
         void operator()(UCollator*) const;
@@ -72,13 +72,13 @@ private:
     static ASCIILiteral sensitivityString(Sensitivity);
     static ASCIILiteral caseFirstString(CaseFirst);
 
-    Usage m_usage;
     String m_locale;
     String m_collation;
-    Sensitivity m_sensitivity;
-    CaseFirst m_caseFirst;
     WriteBarrier<JSBoundFunction> m_boundCompare;
     std::unique_ptr<UCollator, UCollatorDeleter> m_collator;
+    Usage m_usage;
+    Sensitivity m_sensitivity;
+    CaseFirst m_caseFirst;
     bool m_numeric;
     bool m_ignorePunctuation;
     bool m_initializedCollator { false };
