@@ -64,15 +64,15 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
-    enum class Weekday { None, Narrow, Short, Long };
-    enum class Era { None, Narrow, Short, Long };
-    enum class Year { None, TwoDigit, Numeric };
-    enum class Month { None, TwoDigit, Numeric, Narrow, Short, Long };
-    enum class Day { None, TwoDigit, Numeric };
-    enum class Hour { None, TwoDigit, Numeric };
-    enum class Minute { None, TwoDigit, Numeric };
-    enum class Second { None, TwoDigit, Numeric };
-    enum class TimeZoneName { None, Short, Long };
+    enum class Weekday : uint8_t { None, Narrow, Short, Long };
+    enum class Era : uint8_t { None, Narrow, Short, Long };
+    enum class Year : uint8_t { None, TwoDigit, Numeric };
+    enum class Month : uint8_t { None, TwoDigit, Numeric, Narrow, Short, Long };
+    enum class Day : uint8_t { None, TwoDigit, Numeric };
+    enum class Hour : uint8_t { None, TwoDigit, Numeric };
+    enum class Minute : uint8_t { None, TwoDigit, Numeric };
+    enum class Second : uint8_t { None, TwoDigit, Numeric };
+    enum class TimeZoneName : uint8_t { None, Short, Long };
 
     struct UDateFormatDeleter {
         void operator()(UDateFormat*) const;
@@ -89,7 +89,6 @@ private:
     static ASCIILiteral secondString(Second);
     static ASCIILiteral timeZoneNameString(TimeZoneName);
 
-    bool m_initializedDateTimeFormat { false };
     WriteBarrier<JSBoundFunction> m_boundFormat;
     std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
 
@@ -107,6 +106,7 @@ private:
     Minute m_minute { Minute::None };
     Second m_second { Second::None };
     TimeZoneName m_timeZoneName { TimeZoneName::None };
+    bool m_initializedDateTimeFormat { false };
 
 #if JSC_ICU_HAS_UFIELDPOSITER
     struct UFieldPositionIteratorDeleter {
