@@ -1,5 +1,14 @@
 2019-03-11  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Use port 17000 for worker communication
+        https://bugs.webkit.org/show_bug.cgi?id=195558
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/master.cfg:
+
+2019-03-11  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] unit-tests fail when passwords.json is missing
         https://bugs.webkit.org/show_bug.cgi?id=195557
 
