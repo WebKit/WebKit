@@ -228,9 +228,10 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
 
 } // namespace WebKit
 
-static const float highlightDelay = 0.12;
-static const float tapAndHoldDelay  = 0.75;
-const CGFloat minimumTapHighlightRadius = 2.0;
+constexpr float highlightDelay = 0.12;
+constexpr float tapAndHoldDelay = 0.75;
+constexpr CGFloat minimumTapHighlightRadius = 2.0;
+constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKTextRange : UITextRange {
     CGRect _startRect;
@@ -645,7 +646,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 - (void)_createAndConfigureDoubleTapGestureRecognizer
 {
-    _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
+    _doubleTapGestureRecognizer = adoptNS([[WKSyntheticTapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
+    [_doubleTapGestureRecognizer setGestureFailedTarget:self action:@selector(_doubleTapDidFail:)];
     [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
     [_doubleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
@@ -694,9 +696,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     
 #endif
 
-    _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
+    _singleTapGestureRecognizer = adoptNS([[WKSyntheticTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapRecognized:)]);
     [_singleTapGestureRecognizer setDelegate:self];
-    [_singleTapGestureRecognizer setGestureRecognizedTarget:self action:@selector(_singleTapRecognized:)];
+    [_singleTapGestureRecognizer setGestureIdentifiedTarget:self action:@selector(_singleTapIdentified:)];
     [_singleTapGestureRecognizer setResetTarget:self action:@selector(_singleTapDidReset:)];
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
@@ -813,7 +815,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 #endif
 
     [_singleTapGestureRecognizer setDelegate:nil];
-    [_singleTapGestureRecognizer setGestureRecognizedTarget:nil action:nil];
+    [_singleTapGestureRecognizer setGestureIdentifiedTarget:nil action:nil];
     [_singleTapGestureRecognizer setResetTarget:nil action:nil];
     [self removeGestureRecognizer:_singleTapGestureRecognizer.get()];
 
@@ -1489,6 +1491,23 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         return;
 
     [self _setDoubleTapGesturesEnabled:NO];
+}
+
+- (void)_handleSmartMagnificationInformationForPotentialTap:(uint64_t)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale
+{
+    ASSERT(_page->preferences().fasterClicksEnabled());
+    if (!_potentialTapInProgress)
+        return;
+
+    auto targetScale = _smartMagnificationController->zoomFactorForTargetRect(renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
+
+    auto initialScale = [self _initialScaleFactor];
+    if (std::min(targetScale, initialScale) / std::max(targetScale, initialScale) > fasterTapSignificantZoomThreshold) {
+        RELEASE_LOG(ViewGestures, "Potential tap would not cause a significant zoom. Trigger click. (%p)", self);
+        [self _setDoubleTapGesturesEnabled:NO];
+        return;
+    }
+    RELEASE_LOG(ViewGestures, "Potential tap may cause significant zoom. Wait. (%p)", self);
 }
 
 - (void)_cancelLongPressGestureRecognizer
@@ -2176,13 +2195,17 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _potentialTapInProgress = NO;
 }
 
-- (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
+- (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     ASSERT(!_potentialTapInProgress);
     [self _resetIsDoubleTapPending];
 
-    _page->potentialTapAtPosition(gestureRecognizer.location, ++_latestTapID);
+    bool shouldRequestMagnificationInformation = _page->preferences().fasterClicksEnabled();
+    if (shouldRequestMagnificationInformation)
+        RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p)", self);
+
+    _page->potentialTapAtPosition(gestureRecognizer.location, shouldRequestMagnificationInformation, ++_latestTapID);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
@@ -2201,6 +2224,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     cancelPotentialTapIfNecessary(self);
+}
+
+- (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
+{
+    RELEASE_LOG(ViewGestures, "Double tap was not recognized. (%p)", self);
+    ASSERT(gestureRecognizer == _doubleTapGestureRecognizer);
 }
 
 - (void)_commitPotentialTapFailed
@@ -2232,10 +2261,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_didCompleteSyntheticClick
 {
+    RELEASE_LOG(ViewGestures, "Synthetic click completed. (%p)", self);
     [self _resetInputViewDeferral];
 }
 
-- (void)_singleTapCommited:(UITapGestureRecognizer *)gestureRecognizer
+- (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
 
@@ -2260,6 +2290,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 
     [_inputPeripheral endEditing];
+
+    RELEASE_LOG(ViewGestures, "Single tap recognized - commit potential tap (%p)", self);
+
     _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastTouchStart);
 
     if (!_isExpectingFastSingleTapCommit)
@@ -2268,6 +2301,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
+    RELEASE_LOG(ViewGestures, "Identified a double tap (%p)", self);
+
     [self _resetIsDoubleTapPending];
     _lastInteractionLocation = gestureRecognizer.location;
 

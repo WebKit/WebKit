@@ -1,0 +1,2 @@
+PASS: Click fired on element with handler.
+This document doesn't have fast clicks because it sets a viewport width. However, it doesn't have a large amount of zoom on double tap, so double tapping on the rectangle above should send a click event.

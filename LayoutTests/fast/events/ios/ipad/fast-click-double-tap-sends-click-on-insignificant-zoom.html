@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta name="viewport" content="width=500">
+<head>
+    <style>
+        body {
+            font-family: system-ui;
+            line-height: 1.4;
+            padding: 10px 10px;
+            width: 500px;
+            margin: 0;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        async function runTest()
+        {
+            document.getElementById("target").addEventListener("click", handleClick, false);
+
+            if (!window.testRunner)
+                return;
+            await UIHelper.humanSpeedDoubleTapAt(30, 30);
+        }
+
+        function handleClick(event)
+        {
+            document.getElementById("target").textContent = "PASS: Click fired on element with handler.";
+            testRunner.notifyDone();
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+<div id="target"></div>
+<div id="description">This document doesn't have fast clicks because
+    it sets a viewport width. However, it doesn't have a large amount of
+    zoom on double tap, so double tapping on the rectangle
+    above should send a click event.</div>
+</body>
+</html>

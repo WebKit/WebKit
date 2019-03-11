@@ -415,8 +415,8 @@
 		2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */; };
 		2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */; };
 		2684055318B86ED60022C38B /* ViewUpdateDispatcherMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */; };
-		26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */; };
-		26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */; };
+		26F10BE819187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F10BE619187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h */; };
+		26F10BE919187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 26F10BE719187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.m */; };
 		26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2749F6442146561B008380BF /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
 		2749F6452146561E008380BF /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
@@ -2445,8 +2445,8 @@
 		2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleContentRectUpdateInfo.cpp; sourceTree = "<group>"; };
 		2684055018B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewUpdateDispatcherMessageReceiver.cpp; path = DerivedSources/WebKit2/ViewUpdateDispatcherMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		2684055118B86ED60022C38B /* ViewUpdateDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewUpdateDispatcherMessages.h; path = DerivedSources/WebKit2/ViewUpdateDispatcherMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSyntheticClickTapGestureRecognizer.h; path = ios/WKSyntheticClickTapGestureRecognizer.h; sourceTree = "<group>"; };
-		26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKSyntheticClickTapGestureRecognizer.m; path = ios/WKSyntheticClickTapGestureRecognizer.m; sourceTree = "<group>"; };
+		26F10BE619187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSyntheticTapGestureRecognizer.h; path = ios/WKSyntheticTapGestureRecognizer.h; sourceTree = "<group>"; };
+		26F10BE719187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WKSyntheticTapGestureRecognizer.m; path = ios/WKSyntheticTapGestureRecognizer.m; sourceTree = "<group>"; };
 		26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewPrivate.h; sourceTree = "<group>"; };
 		290F4271172A0C7400939FF0 /* AuxiliaryProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuxiliaryProcessSupplement.h; sourceTree = "<group>"; };
 		29232DF118B29D1100D0596F /* WKAccessibilityWebPageObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAccessibilityWebPageObjectMac.mm; sourceTree = "<group>"; };
@@ -5904,10 +5904,10 @@
 				A1046EA02079263100F0C5D8 /* WKPDFView.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
-				26F10BE619187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h */,
-				26F10BE719187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m */,
 				CE5B4C8621B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h */,
 				CE5B4C8721B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.mm */,
+				26F10BE619187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h */,
+				26F10BE719187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.m */,
 				316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */,
 				316B8B612054B55800BD4A62 /* WKSystemPreviewView.mm */,
 				2D1E8221216FFF5000A15265 /* WKWebEvent.h */,
@@ -9964,8 +9964,8 @@
 				BC407606124FF0270068F20A /* WKString.h in Headers */,
 				BC40761A124FF0370068F20A /* WKStringCF.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
-				26F10BE819187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.h in Headers */,
 				CE5B4C8821B73D870022E64F /* WKSyntheticFlagsChangedWebEvent.h in Headers */,
+				26F10BE819187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.h in Headers */,
 				316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */,
 				51F886A61F2C228100C193EF /* WKTestingSupport.h in Headers */,
 				31D755C11D91B81500843BD1 /* WKTextChecker.h in Headers */,
@@ -11167,7 +11167,7 @@
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
-				26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */,
+				26F10BE919187E2E001D0E68 /* WKSyntheticTapGestureRecognizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

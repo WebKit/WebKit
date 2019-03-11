@@ -38,6 +38,7 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class FloatRect;
 struct Highlight;
 }
 
@@ -108,5 +109,8 @@ class WebProcessPool;
 - (BOOL)_zoomToRect:(CGRect)targetRect withOrigin:(CGPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(CGFloat)minimumScrollDistance;
 - (void)_zoomOutWithOrigin:(CGPoint)origin;
 - (void)_zoomToInitialScaleWithOrigin:(CGPoint)origin;
+- (double)_initialScaleFactor;
+- (double)_contentZoomScale;
+- (double)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale;
 
 @end

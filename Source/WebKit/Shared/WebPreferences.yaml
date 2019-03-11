@@ -1470,6 +1470,15 @@ SelectionAcrossShadowBoundariesEnabled:
   category: internal
   webcoreName: selectionAcrossShadowBoundariesEnabled
 
+FasterClicksEnabled:
+  type: bool
+  defaultValue: true
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "Faster clicks"
+  humanReadableDescription: "Support faster clicks on zoomable pages"
+  webcoreBinding: none
+  category: internal
+
 InputTypeColorEnabled:
   type: bool
   defaultValue: DEFAULT_INPUT_TYPE_COLOR_ENABLED

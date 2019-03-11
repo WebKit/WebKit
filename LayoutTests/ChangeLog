@@ -1,3 +1,27 @@
+2019-03-11  Dean Jackson  <dino@apple.com>
+
+        [iOS] Implement a faster click detection that intercepts double-tap-to-zoom if possible
+        https://bugs.webkit.org/show_bug.cgi?id=195473
+        <rdar://problem/48718396>
+
+        Reviewed by Wenson Hsieh (with some help from Dan Bates).
+
+        Implement a test (iPad only) that sets up a page with zoomable content
+        but not quite at a significant scale, meaning we should dispatch a click
+        event rather than Double Tap To Zoom.
+
+        In order to do this, a humanSpeedDoubleTapAt() method was added to
+        UIHelper that sleeps a bit between taps, otherwise the double tap
+        gesture is recognized before the Web Process has had a chance to
+        evaluate the potential click.
+
+        * fast/events/ios/ipad/fast-click-double-tap-sends-click-on-insignificant-zoom-expected.txt: Added.
+        * fast/events/ios/ipad/fast-click-double-tap-sends-click-on-insignificant-zoom.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/ipad/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.humanSpeedDoubleTapAt):
+
 2019-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Dispatching reentrant "contextmenu" events may cause crashes

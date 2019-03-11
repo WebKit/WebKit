@@ -43,6 +43,7 @@
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
+#import "ViewGestureGeometryCollector.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import "WebAutocorrectionContext.h"
@@ -808,9 +809,22 @@ void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint6
     frame.document()->setFocusedElement(image.get());
 }
 
-void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
+void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation)
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
+
+    if (shouldRequestMagnificationInformation && m_potentialTapNode && m_viewGestureGeometryCollector) {
+        // FIXME: Could this be combined into tap highlight?
+        FloatPoint origin = position;
+        FloatRect renderRect;
+        bool fitEntireRect;
+        double viewportMinimumScale;
+        double viewportMaximumScale;
+
+        m_viewGestureGeometryCollector->computeZoomInformationForNode(*m_potentialTapNode, origin, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
+        send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    }
+
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
 #if ENABLE(TOUCH_EVENTS)
     if (m_potentialTapNode && !m_potentialTapNode->allowsDoubleTapGesture())

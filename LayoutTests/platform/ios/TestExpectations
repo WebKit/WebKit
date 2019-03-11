@@ -23,6 +23,9 @@ http/tests/gzip-content-encoding [ Pass ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# iPad-specific tests skipped here and re-enabled in platform/ipad
+fast/events/ios/ipad [ Skip ]
+
 ###
 # Unsupported and disabled features
 ##

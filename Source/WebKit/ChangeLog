@@ -1,3 +1,100 @@
+2019-03-11  Dean Jackson  <dino@apple.com>
+
+        [iOS] Implement a faster click detection that intercepts double-tap-to-zoom if possible
+        https://bugs.webkit.org/show_bug.cgi?id=195473
+        <rdar://problem/48718396>
+
+        Reviewed by Wenson Hsieh (with some help from Dan Bates).
+
+        Adds a new algorithm, behind a flag FasterClicksEnabled, that can trigger a click
+        event without waiting to see if a double tap will occur. It does this by examining
+        the amount of zoom that would be triggered if it was a double tap, and if that value
+        doesn't exceed a set threshold, commits to the click event instead.
+
+        This is implemented by having the Web Process respond to the potential click with
+        some geometry information. If the UI Process receives the information before the
+        second tap in a double tap, it can decide to trigger a click.
+
+        * Shared/WebPreferences.yaml: New internal feature so this can be toggled in
+            a UI for testing.
+
+        * SourcesCocoa.txt: Renamed WKSyntheticTapGestureRecognizer.
+        * WebKit.xcodeproj/project.pbxproj: Ditto.
+
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.h:
+        * UIProcess/ios/WKSyntheticTapGestureRecognizer.m:
+        (-[WKSyntheticTapGestureRecognizer setGestureIdentifiedTarget:action:]):
+        (-[WKSyntheticTapGestureRecognizer setGestureFailedTarget:action:]):
+        (-[WKSyntheticTapGestureRecognizer setResetTarget:action:]):
+        (-[WKSyntheticTapGestureRecognizer setState:]):
+        (-[WKSyntheticTapGestureRecognizer reset]):  Renamed WKSyntheticClickTapGestureRecognizer to
+            WKSyntheticTapGestureRecognizer, changed the signature of the main function to be a bit
+            more clear about what it does, and added a gesture failed target.
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initialScaleFactor]):
+        (-[WKWebView _contentZoomScale]):
+        (-[WKWebView _targetContentZoomScaleForRect:currentScale:fitEntireRect:minimumScale:maximumScale:]):
+            Exposed the initial content scale, the current scale and added a declaration that
+            was missing from the .h.
+
+        * UIProcess/WebPageProxy.messages.in: Add a new message,
+            HandleSmartMagnificationInformationForPotentialTap, to
+            communicate the geometry of the clicked node to the UI Process.
+
+        * UIProcess/PageClient.h: Pure virtual function for the geometry message response.
+        * UIProcess/WebPageProxy.h: Ditto.
+
+        * UIProcess/ios/PageClientImplIOS.h: Calls into the WKContentView.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleSmartMagnificationInformationForPotentialTap):
+
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::calculatePotentialZoomParameters): A new method that
+            asks the WKContentView to work out what the zoom factor will be for a potential double
+            tap at a location.
+        (WebKit::SmartMagnificationController::smartMagnificationTargetRectAndZoomScales): New implementation
+            of this function to avoid multiple out-arguments.
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _initialScaleFactor]):
+        (-[WKContentView _contentZoomScale]):
+        (-[WKContentView _targetContentZoomScaleForRect:currentScale:fitEntireRect:minimumScale:maximumScale:]):
+            Exposed the initial content scale, the current scale and the target zoom scale. These
+            all just call into the WKWebView implementation.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureDoubleTapGestureRecognizer]): Use a WKSyntheticTapGestureRecognizer instead
+            of a generic one, so we can capture the failure.
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _handleSmartMagnificationInformationForPotentialTap:origin:renderRect:fitEntireRect:viewportMinimumScale:viewportMaximumScale:]):
+            New method that responds to the incoming Web Process message, and decides if any
+            potential zoom would be "significant".
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView _doubleTapDidFail:]):
+        (-[WKContentView _didCompleteSyntheticClick]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _doubleTapRecognized:]):
+            Add some release logging.
+        (-[WKContentView _singleTapCommited:]): Deleted.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::potentialTapAtPosition):
+        (WebKit::WebPageProxy::handleSmartMagnificationInformationForPotentialTap):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+            Removed an unused parameter from the existing message.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::potentialTapAtPosition): Calculates the geometry of the element
+        if requested, and sends it to the UIProcess.
+
 2019-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed build fix after r242745.

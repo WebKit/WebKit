@@ -411,8 +411,8 @@ UIProcess/ios/WKPasswordView.mm
 UIProcess/ios/WKPDFPageNumberIndicator.mm
 UIProcess/ios/WKPDFView.mm
 UIProcess/ios/WKScrollView.mm
-UIProcess/ios/WKSyntheticClickTapGestureRecognizer.m
 UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm
+UIProcess/ios/WKSyntheticTapGestureRecognizer.m
 UIProcess/ios/WKSystemPreviewView.mm
 UIProcess/ios/WKWebEvent.mm
 

@@ -641,6 +641,21 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     return [_webView _zoomToInitialScaleWithOrigin:origin animated:YES];
 }
 
+- (double)_initialScaleFactor
+{
+    return [_webView _initialScaleFactor];
+}
+
+- (double)_contentZoomScale
+{
+    return [_webView _contentZoomScale];
+}
+
+- (double)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale
+{
+    return [_webView _targetContentZoomScaleForRect:targetRect currentScale:currentScale fitEntireRect:fitEntireRect minimumScale:minimumScale maximumScale:maximumScale];
+}
+
 - (void)_applicationWillResignActive:(NSNotification*)notification
 {
     _page->applicationWillResignActive();

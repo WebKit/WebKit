@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 - 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,31 @@
  */
 
 #import "config.h"
-#import "WKSyntheticClickTapGestureRecognizer.h"
+#import "WKSyntheticTapGestureRecognizer.h"
 
 #if PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
-@implementation WKSyntheticClickTapGestureRecognizer {
-    id _gestureRecognizedTarget;
-    SEL _gestureRecognizedAction;
+@implementation WKSyntheticTapGestureRecognizer {
+    id _gestureIdentifiedTarget;
+    SEL _gestureIdentifiedAction;
+    id _gestureFailedTarget;
+    SEL _gestureFailedAction;
     id _resetTarget;
     SEL _resetAction;
 }
 
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action
+- (void)setGestureIdentifiedTarget:(id)target action:(SEL)action
 {
-    _gestureRecognizedTarget = target;
-    _gestureRecognizedAction = action;
+    _gestureIdentifiedTarget = target;
+    _gestureIdentifiedAction = action;
+}
+
+- (void)setGestureFailedTarget:(id)target action:(SEL)action
+{
+    _gestureFailedTarget = target;
+    _gestureFailedAction = action;
 }
 
 - (void)setResetTarget:(id)target action:(SEL)action
@@ -52,7 +60,9 @@
 - (void)setState:(UIGestureRecognizerState)state
 {
     if (state == UIGestureRecognizerStateEnded)
-        [_gestureRecognizedTarget performSelector:_gestureRecognizedAction withObject:self];
+        [_gestureIdentifiedTarget performSelector:_gestureIdentifiedAction withObject:self];
+    else if (state == UIGestureRecognizerStateFailed)
+        [_gestureFailedTarget performSelector:_gestureFailedAction withObject:self];
     [super setState:state];
 }
 

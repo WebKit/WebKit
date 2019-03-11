@@ -48,6 +48,8 @@ public:
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
     void handleResetMagnificationGesture(WebCore::FloatPoint origin);
 
+    double zoomFactorForTargetRect(WebCore::FloatRect targetRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale);
+
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -55,7 +57,7 @@ private:
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale);
     void magnify(WebCore::FloatPoint origin, WebCore::FloatRect targetRect, WebCore::FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale);
     void scrollToRect(WebCore::FloatPoint origin, WebCore::FloatRect targetRect);
-    void adjustSmartMagnificationTargetRectAndZoomScales(bool addMagnificationPadding, WebCore::FloatRect& targetRect, double& minimumScale, double& maximumScale);
+    std::tuple<WebCore::FloatRect, double, double> smartMagnificationTargetRectAndZoomScales(WebCore::FloatRect targetRect, double minimumScale, double maximumScale, bool addMagnificationPadding);
 
     WebPageProxy& m_webPageProxy;
     WKContentView *m_contentView;
