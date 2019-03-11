@@ -1,3 +1,14 @@
+2019-03-08  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add MotionMark-1.1 plan file for run-benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=195481
+
+        Rubber-stamped by Darin Adler.
+
+        Run-benchmark script should support MontionMark-1.1.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan: Added.
+
 2019-03-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add support for submit-to-ews url
