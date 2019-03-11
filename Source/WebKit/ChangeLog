@@ -1,3 +1,11 @@
+2019-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed build fix after r242745.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+
 2019-03-11  Chris Dumez  <cdumez@apple.com>
 
         Assert in WebPageProxy::suspendCurrentPageIfPossible()
