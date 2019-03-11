@@ -1,5 +1,14 @@
 2019-03-11  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix assertions in layout tests on iOS Simulator after r242666.
+
+        Log an error but do not crash if we fail to acquire a ProcessAssertion.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
         WebProcessCache should keep track of processes being added
         https://bugs.webkit.org/show_bug.cgi?id=195538
 

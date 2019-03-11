@@ -165,7 +165,6 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
             RELEASE_LOG_ERROR(ProcessSuspension, " %p - ProcessAssertion() PID %d Unable to acquire assertion for process with PID %d", this, getpid(), pid);
-            ASSERT_NOT_REACHED();
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakThis)
                     processAssertionWasInvalidated();
