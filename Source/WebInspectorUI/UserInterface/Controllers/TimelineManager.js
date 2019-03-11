@@ -122,9 +122,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker)
             return types;
 
-        if (WI.CPUInstrument.supported())
-            types.push(WI.TimelineRecord.Type.CPU);
-
         if (WI.MemoryInstrument.supported())
             types.push(WI.TimelineRecord.Type.Memory);
 
