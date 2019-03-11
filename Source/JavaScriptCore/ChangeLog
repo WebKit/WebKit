@@ -1,3 +1,33 @@
+2019-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BuiltinExecutables should behave like a WeakSet instead of generic WeakHandleOwner for memory footprint
+        https://bugs.webkit.org/show_bug.cgi?id=195508
+
+        Reviewed by Darin Adler.
+
+        Weak<> is not cheap in terms of memory footprint. We allocate WeakBlock (256 bytes) for book-keeping Weak<>.
+        Currently BuiltinExecutables has 203 Weak<> members and many WeakBlocks are actually allocated because
+        many UnlinkedFunctionExecutables in BuiltinExecutables are allocated during JSGlobalObject initialization process.
+
+        This patch changes two things in BuiltinExecutables.
+
+        1. Previously we have m_xxxSourceCode fields too. But we do not need to keep it since we know how to produce it when it is required.
+           We generate SourceCode in xxxSourceCode() method instead of just returning m_xxxSourceCode. This reduces sizeof(BuiltinExecutables) 24 x 203 = 4KB.
+
+        2. Instead of using Weak<>, BuiltinExecutables holds raw array of UnlinkedFunctionExecutable*. And Heap::finalizeUnconditionalFinalizers() correctly clears dead executables.
+           This is similar to JSWeakSet implementation. And it saves WeakBlock allocations.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        (JSC::BuiltinExecutables::finalizeUnconditionally):
+        (JSC::JSC_FOREACH_BUILTIN_CODE): Deleted.
+        (JSC::BuiltinExecutables::finalize): Deleted.
+        * builtins/BuiltinExecutables.h:
+        (JSC::BuiltinExecutables::static_cast<unsigned>):
+        (): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+
 2019-03-11  Robin Morisset  <rmorisset@apple.com>
 
         IntlDateTimeFormat can be shrunk by 32 bytes
