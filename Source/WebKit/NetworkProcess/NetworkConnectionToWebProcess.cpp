@@ -645,9 +645,9 @@ void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, c
     networkProcess().hasStorageAccess(sessionID, subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
 }
 
-void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
-    networkProcess().requestStorageAccessGranted(sessionID, subFrameDomain, topFrameDomain, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+    networkProcess().requestStorageAccessGranted(sessionID, subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
 }
 #endif
 

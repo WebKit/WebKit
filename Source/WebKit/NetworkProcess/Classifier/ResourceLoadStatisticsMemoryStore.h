@@ -96,7 +96,7 @@ public:
     void calculateAndSubmitTelemetry() const override;
 
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&) override;
-    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&) override;
+    void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, CompletionHandler<void(StorageAccessStatus)>&&) override;
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, FrameID, PageID, bool userWasPromptedNow, CompletionHandler<void(bool)>&&) override;
 
     void logFrameNavigation(const NavigatedToDomain&, const TopFrameDomain&, const NavigatedFromDomain&, bool isRedirect, bool isMainFrame) override;

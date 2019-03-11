@@ -225,7 +225,7 @@ void ResourceLoadStatisticsMemoryStore::hasStorageAccess(const SubFrameDomain& s
     });
 }
 
-void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameID frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameID frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -246,18 +246,19 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccess(SubFrameDomain&& su
         return;
     }
 
-    auto userWasPromptedEarlier = promptEnabled && hasUserGrantedStorageAccessThroughPrompt(subFrameStatistic, topFrameDomain);
-    if (promptEnabled && !userWasPromptedEarlier) {
+    auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatistic, topFrameDomain);
+    if (!userWasPromptedEarlier) {
 #if !RELEASE_LOG_DISABLED
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "About to ask the user whether they want to grant storage access to %{public}s under %{public}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
 #endif
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
         return;
-    } else if (userWasPromptedEarlier) {
+    }
+
 #if !RELEASE_LOG_DISABLED
+    if (userWasPromptedEarlier)
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "Storage access was granted to %{public}s under %{public}s.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
 #endif
-    }
 
     subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
 
@@ -308,8 +309,7 @@ void ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal(SubFrameDomai
         return;
     }
 
-    // FIXME: Remove m_storageAccessPromptsEnabled check if prompting is no longer experimental.
-    if (userWasPromptedNowOrEarlier && storageAccessPromptsEnabled()) {
+    if (userWasPromptedNowOrEarlier) {
         auto& subFrameStatistic = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatistic.hadUserInteraction);
         ASSERT(subFrameStatistic.storageAccessUnderTopFrameDomains.contains(topFrameDomain));

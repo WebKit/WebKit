@@ -231,8 +231,8 @@ public:
     void logUserInteraction(PAL::SessionID, const TopFrameDomain&, CompletionHandler<void()>&&);
     void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);
     void removePrevalentDomains(PAL::SessionID, const Vector<RegistrableDomain>&);
-    void requestStorageAccess(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
-    void requestStorageAccessGranted(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, bool promptEnabled, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccessGranted(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(PAL::SessionID, Optional<WallTime> modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);

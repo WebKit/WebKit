@@ -1,3 +1,29 @@
+2019-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove obsolete runtime flag for StorageAccess API Prompt
+        https://bugs.webkit.org/show_bug.cgi?id=195564
+        <rdar://problem/37279014>
+
+        Reviewed by Chris Dumez.
+
+        This bug tracks the work of removing the obsolete flag that had been used to optionally
+        prevent display of the StorageAccess API prompt. We have since shipped the final version
+        of this feature with an always-on prompt, and should have removed this runtime flag.
+
+        No test changes because this has no change in behavior. Tests already assume the prompt
+        behavior, and did not test turning the flag off.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setStorageAccessPromptsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::storageAccessPromptsEnabled const): Deleted.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setStorageAccessPromptsEnabled): Deleted.
+        * testing/InternalSettings.h:
+        (): Deleted.
+        * testing/InternalSettings.idl:
+
 2019-03-11  Eric Carlson  <eric.carlson@apple.com>
 
         Add web audio release logging

@@ -128,16 +128,6 @@
     _preferences->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
 }
 
-- (BOOL)_storageAccessPromptsEnabled
-{
-    return _preferences->storageAccessPromptsEnabled();
-}
-
-- (void)_setStorageAccessPromptsEnabled:(BOOL)enabled
-{
-    _preferences->setStorageAccessPromptsEnabled(enabled);
-}
-
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)

@@ -734,14 +734,14 @@ void NetworkProcessProxy::hasStorageAccess(PAL::SessionID sessionID, const Regis
     sendWithAsyncReply(Messages::NetworkProcess::HasStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID, pageID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void NetworkProcessProxy::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     }
 
-    sendWithAsyncReply(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID, pageID, promptEnabled), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::NetworkProcess::RequestStorageAccess(sessionID, resourceDomain, topFrameDomain, frameID, pageID), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::requestStorageAccessConfirm(uint64_t pageID, uint64_t frameID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, CompletionHandler<void(bool)>&& completionHandler)

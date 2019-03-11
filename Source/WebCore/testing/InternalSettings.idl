@@ -94,7 +94,6 @@ enum FontLoadTimingOverride { "Block", "Swap", "Failure" };
     void setWebMetalEnabled(boolean enabled);
     void setWebVREnabled(boolean enabled);
     void setScreenCaptureEnabled(boolean enabled);
-    void setStorageAccessPromptsEnabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
     [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);

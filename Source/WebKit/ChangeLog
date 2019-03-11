@@ -1,3 +1,61 @@
+2019-03-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove obsolete runtime flag for StorageAccess API Prompt
+        https://bugs.webkit.org/show_bug.cgi?id=195564
+        <rdar://problem/37279014>
+
+        Reviewed by Chris Dumez.
+
+        This bug tracks the work of removing the obsolete flag that had been used to optionally
+        prevent display of the StorageAccess API prompt. We have since shipped the final version
+        of this feature with an always-on prompt, and should have removed this runtime flag.
+
+        No test changes because this has no change in behavior. Tests already assume the prompt
+        behavior, and did not test turning the flag off.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsMemoryStore::grantStorageAccessInternal):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        (WebKit::ResourceLoadStatisticsStore::debugModeEnabled const):
+        (WebKit::ResourceLoadStatisticsStore::storageAccessPromptsEnabled const): Deleted.
+        (WebKit::ResourceLoadStatisticsStore::setStorageAccessPromptsEnabled): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessGranted):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::requestStorageAccess):
+        (WebKit::NetworkProcess::requestStorageAccessGranted):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetStorageAccessPromptsEnabled): Deleted.
+        (WKPreferencesGetStorageAccessPromptsEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _storageAccessPromptsEnabled]): Deleted.
+        (-[WKPreferences _setStorageAccessPromptsEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::requestStorageAccess):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestStorageAccess):
+
 2019-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Add a WKContentRuleList variant that uses copied memory instead of mmap'd shared memory for class A containerized apps

@@ -745,7 +745,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
     });
 }
 
-void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameID frameID, PageID pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameID frameID, PageID pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -771,8 +771,8 @@ void ResourceLoadStatisticsDatabaseStore::requestStorageAccess(SubFrameDomain&& 
         break;
     };
 
-    auto userWasPromptedEarlier = promptEnabled && hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain);
-    if (promptEnabled && !userWasPromptedEarlier) {
+    auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain);
+    if (!userWasPromptedEarlier) {
 #if !RELEASE_LOG_DISABLED
         RELEASE_LOG_INFO_IF(debugLoggingEnabled(), ResourceLoadStatisticsDebug, "About to ask the user whether they want to grant storage access to %{public}s under %{public}s or not.", subFrameDomain.string().utf8().data(), topFrameDomain.string().utf8().data());
 #endif
@@ -839,8 +839,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
         return;
     }
 
-    // FIXME: Remove m_storageAccessPromptsEnabled check if prompting is no longer experimental.
-    if (userWasPromptedNowOrEarlier && storageAccessPromptsEnabled()) {
+    if (userWasPromptedNowOrEarlier) {
 #ifndef NDEBUG
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);

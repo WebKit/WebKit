@@ -1162,11 +1162,6 @@ StorageAccessAPIEnabled:
   type: bool
   defaultValue: true
 
-StorageAccessPromptsEnabled:
-  type: bool
-  defaultValue: true
-  webcoreBinding: RuntimeEnabledFeatures
-
 LinkPreloadEnabled:
   type: bool
   defaultValue: true

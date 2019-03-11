@@ -107,7 +107,7 @@ messages -> NetworkProcess LegacyReceiver {
     LogUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain topFrameDomain) -> () Async
     RemoveAllStorageAccess(PAL::SessionID sessionID) -> () Async
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> domainsWithInteraction)
-    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled) -> (enum:uint8_t WebKit::StorageAccessStatus storageAccessStatus) Async
+    RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, WebCore::RegistrableDomain topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID) -> (enum:uint8_t WebKit::StorageAccessStatus storageAccessStatus) Async
     ResetParametersToDefaultValues(PAL::SessionID sessionID) -> () Async
     ScheduleClearInMemoryAndPersistent(PAL::SessionID sessionID, Optional<WallTime> modifiedSince, enum:bool WebKit::ShouldGrandfatherStatistics shouldGrandfather) -> () Async
     ScheduleCookieBlockingUpdate(PAL::SessionID sessionID) -> () Async

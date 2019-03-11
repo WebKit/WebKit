@@ -129,8 +129,6 @@ public:
 
     static bool webAnimationsCSSIntegrationEnabled();
 
-    static void setStorageAccessPromptsEnabled(bool);
-
 private:
     explicit InternalSettings(Page*);
 
@@ -219,7 +217,6 @@ private:
         bool m_shouldManageAudioSessionCategory;
 #endif
         bool m_customPasteboardDataEnabled;
-        bool m_promptForStorageAccessAPIEnabled { false };
     };
 
     Page* m_page;

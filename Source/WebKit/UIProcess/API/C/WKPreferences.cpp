@@ -208,16 +208,6 @@ bool WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(WKPreferencesRef pref
     return toImpl(preferencesRef)->javaScriptCanOpenWindowsAutomatically();
 }
 
-void WKPreferencesSetStorageAccessPromptsEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setStorageAccessPromptsEnabled(enabled);
-}
-
-bool WKPreferencesGetStorageAccessPromptsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->storageAccessPromptsEnabled();
-}
-
 void WKPreferencesSetHyperlinkAuditingEnabled(WKPreferencesRef preferencesRef, bool hyperlinkAuditingEnabled)
 {
     toImpl(preferencesRef)->setHyperlinkAuditingEnabled(hyperlinkAuditingEnabled);

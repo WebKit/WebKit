@@ -160,9 +160,6 @@ public:
     void setWebGLCompressedTextureASTCSupportEnabled(bool isEnabled) { m_isWebGLCompressedTextureASTCSupportEnabled = isEnabled; }
     bool webGLCompressedTextureASTCSupportEnabled() const { return m_isWebGLCompressedTextureASTCSupportEnabled; }
 
-    void setStorageAccessPromptsEnabled(bool isEnabled)  { m_promptForStorageAccessAPIEnabled = isEnabled; }
-    bool storageAccessPromptsEnabled() const { return m_promptForStorageAccessAPIEnabled; }
-
     void setServerTimingEnabled(bool isEnabled) { m_isServerTimingEnabled = isEnabled; }
     bool serverTimingEnabled() const { return m_isServerTimingEnabled; }
 
@@ -399,7 +396,6 @@ private:
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_crossOriginResourcePolicyEnabled { true };
     bool m_isWebGLCompressedTextureASTCSupportEnabled { false };
-    bool m_promptForStorageAccessAPIEnabled { false };
     bool m_isServerTimingEnabled { false };
     bool m_experimentalPlugInSandboxProfilesEnabled { false };
     bool m_disabledAdaptationsMetaTagEnabled { false };

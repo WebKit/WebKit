@@ -129,7 +129,7 @@ public:
     void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String> domains)>&&);
     void grantStorageAccess(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(PAL::SessionID, const RegistrableDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&&);
-    void requestStorageAccess(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccess(PAL::SessionID, const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessStatus)>&&);
     void requestStorageAccessConfirm(PageID, FrameID, const SubFrameDomain&, const TopFrameDomain&, CompletionHandler<void(bool)>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void removeAllStorageAccess(PAL::SessionID, CompletionHandler<void()>&&);

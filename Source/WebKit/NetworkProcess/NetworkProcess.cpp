@@ -977,11 +977,11 @@ void NetworkProcess::hasStorageAccess(PAL::SessionID sessionID, const Registrabl
     }
 }
 
-void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
+void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, Optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(StorageAccessStatus)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->requestStorageAccess(subFrameDomain, topFrameDomain, frameID.value(), pageID, promptEnabled, WTFMove(completionHandler));
+            resourceLoadStatistics->requestStorageAccess(subFrameDomain, topFrameDomain, frameID.value(), pageID, WTFMove(completionHandler));
         else
             completionHandler(StorageAccessStatus::CannotRequestAccess);
     } else {
@@ -990,11 +990,11 @@ void NetworkProcess::requestStorageAccess(PAL::SessionID sessionID, const Regist
     }
 }
 
-void NetworkProcess::requestStorageAccessGranted(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkProcess::requestStorageAccessGranted(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->requestStorageAccessGranted(subFrameDomain, topFrameDomain, frameID, pageID, promptEnabled, WTFMove(completionHandler));
+            resourceLoadStatistics->requestStorageAccessGranted(subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
         else
             completionHandler(false);
     } else {

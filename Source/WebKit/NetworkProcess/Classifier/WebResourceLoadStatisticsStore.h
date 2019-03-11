@@ -112,8 +112,8 @@ public:
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);
     void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(bool)>&& callback);
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID);
-    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
-    void requestStorageAccessGranted(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, bool promptEnabled, CompletionHandler<void(bool)>&&);
+    void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessStatus)>&&);
+    void requestStorageAccessGranted(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
     void requestUpdate();
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
