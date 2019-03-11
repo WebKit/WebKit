@@ -1,3 +1,14 @@
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r242664) WebKit.WebsitePoliciesDeviceOrientationEventEnabled API test is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=195561
+
+        Reviewed by Youenn Fablet.
+
+        Make sure the JS in the test requests for permission to receive device orientation events.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+
 2019-03-11  Youenn Fablet  <youenn@apple.com>
 
         Allow storage quota increase by default in WTR

@@ -1293,6 +1293,12 @@ static void runWebsitePoliciesDeviceOrientationEventTest(bool websitePolicyValue
     TestWebKitAPI::Util::run(&finishedNavigation);
     finishedNavigation = false;
 
+    bool askedForPermission = false;
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission()" completionHandler: [&] (id result, NSError *error) {
+        askedForPermission = true;
+    }];
+    TestWebKitAPI::Util::run(&askedForPermission);
+
     __block bool didReceiveMessage = false;
     [webView performAfterReceivingMessage:@"received-device-orientation-event" action:^{
         didReceiveMessage = true;
