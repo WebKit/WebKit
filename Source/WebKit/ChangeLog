@@ -1,3 +1,26 @@
+2019-03-10  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Using ⌥ to scroll horizontally is no different than arrow key
+        https://bugs.webkit.org/show_bug.cgi?id=195268
+        <rdar://problem/48326682>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:inDirection:]):
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:]): Deleted.
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator keyboardScrollForEvent:]):
+        (-[WKKeyboardScrollViewAnimator setDelegate:]):
+        (-[WKKeyboardScrollViewAnimator distanceForIncrement:inDirection:]):
+        (-[WKKeyboardScrollViewAnimator distanceForIncrement:]): Deleted.
+        Add a direction parameter to -distanceForIncrement:, so the client
+        can return a different page/document size based on the scrolling axis.
+        Adopt it both in the default implementation and in WKContentViewInteraction.
+        Make the option key scroll by page when scrolling horizontally, like it
+        does when scrolling vertically.
+
 2019-03-10  David Quesada  <david_quesada@apple.com>
 
         ASSERT(m_downloads.isEmpty()) fails in DownloadProxyMap::~DownloadProxyMap()

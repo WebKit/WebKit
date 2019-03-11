@@ -4432,13 +4432,19 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment
+- (CGFloat)keyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction
 {
+    BOOL directionIsHorizontal = direction == WebKit::ScrollingDirection::Left || direction == WebKit::ScrollingDirection::Right;
+
     switch (increment) {
-    case WebKit::ScrollingIncrement::Document:
-        return [self convertRect:self.bounds toView:_webView].size.height;
-    case WebKit::ScrollingIncrement::Page:
-        return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:_webView].height;
+    case WebKit::ScrollingIncrement::Document: {
+        CGSize documentSize = [self convertRect:self.bounds toView:_webView].size;
+        return directionIsHorizontal ? documentSize.width : documentSize.height;
+    }
+    case WebKit::ScrollingIncrement::Page: {
+        CGSize pageSize = [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pageStep(_page->unobscuredContentRect().height(), self.bounds.size.height)) toView:_webView];
+        return directionIsHorizontal ? pageSize.width : pageSize.height;
+    }
     case WebKit::ScrollingIncrement::Line:
         return [self convertSize:CGSizeMake(0, WebCore::Scrollbar::pixelsPerLineStep()) toView:_webView].height;
     }

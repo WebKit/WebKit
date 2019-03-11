@@ -42,8 +42,6 @@
 
 namespace WebKit {
 
-enum class ScrollingDirection : uint8_t { Up, Down, Left, Right };
-
 struct KeyboardScroll {
     WebCore::FloatSize offset; // Points per increment.
     WebCore::FloatSize maximumVelocity; // Points per second.
@@ -69,7 +67,7 @@ struct KeyboardScrollParameters {
 @protocol WKKeyboardScrollableInternal <NSObject>
 @required
 - (BOOL)isKeyboardScrollable;
-- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment;
+- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction;
 - (void)scrollToContentOffset:(WebCore::FloatPoint)offset animated:(BOOL)animated;
 - (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset;
 - (CGPoint)contentOffset;
@@ -233,6 +231,8 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
         switch (key) {
         case Key::LeftArrow:
         case Key::RightArrow:
+            if (altPressed)
+                return WebKit::ScrollingIncrement::Page;
             return WebKit::ScrollingIncrement::Line;
         case Key::UpArrow:
         case Key::DownArrow:
@@ -271,7 +271,7 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
         };
     }();
 
-    CGFloat scrollDistance = [_scrollable distanceForIncrement:increment];
+    CGFloat scrollDistance = [_scrollable distanceForIncrement:increment inDirection:direction];
 
     WebKit::KeyboardScroll scroll;
     scroll.offset = unitVector(direction).scaled(scrollDistance);
@@ -544,7 +544,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     _delegate = delegate;
 
     _delegateRespondsToIsKeyboardScrollable = [_delegate respondsToSelector:@selector(isScrollableForKeyboardScrollViewAnimator:)];
-    _delegateRespondsToDistanceForIncrement = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimator:distanceForIncrement:)];
+    _delegateRespondsToDistanceForIncrement = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimator:distanceForIncrement:inDirection:)];
     _delegateRespondsToWillScroll = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorWillScroll:)];
     _delegateRespondsToDidFinishScrolling = [_delegate respondsToSelector:@selector(keyboardScrollViewAnimatorDidFinishScrolling:)];
 }
@@ -571,7 +571,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     return [_delegate isScrollableForKeyboardScrollViewAnimator:self];
 }
 
-- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment
+- (CGFloat)distanceForIncrement:(WebKit::ScrollingIncrement)increment inDirection:(WebKit::ScrollingDirection)direction
 {
     auto scrollView = _scrollView.getAutoreleased();
     if (!scrollView)
@@ -580,12 +580,14 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     const CGFloat defaultPageScrollFraction = 0.8;
     const CGFloat defaultLineScrollHeight = 40;
 
+    BOOL directionIsHorizontal = direction == WebKit::ScrollingDirection::Left || direction == WebKit::ScrollingDirection::Right;
+
     if (!_delegateRespondsToDistanceForIncrement) {
         switch (increment) {
         case WebKit::ScrollingIncrement::Document:
-            return scrollView.contentSize.height;
+            return directionIsHorizontal ? scrollView.contentSize.width : scrollView.contentSize.height;
         case WebKit::ScrollingIncrement::Page:
-            return scrollView.frame.size.height * defaultPageScrollFraction;
+            return (directionIsHorizontal ? scrollView.frame.size.width : scrollView.frame.size.height) * defaultPageScrollFraction;
         case WebKit::ScrollingIncrement::Line:
             return defaultLineScrollHeight * scrollView.zoomScale;
         }
@@ -593,7 +595,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
         return 0;
     }
 
-    return [_delegate keyboardScrollViewAnimator:self distanceForIncrement:increment];
+    return [_delegate keyboardScrollViewAnimator:self distanceForIncrement:increment inDirection:direction];
 }
 
 - (void)scrollToContentOffset:(WebCore::FloatPoint)contentOffsetDelta animated:(BOOL)animated
