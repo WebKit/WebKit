@@ -1,3 +1,15 @@
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Assert in WebPageProxy::suspendCurrentPageIfPossible()
+        https://bugs.webkit.org/show_bug.cgi?id=195506
+        <rdar://problem/48733477>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-03-11  Shawn Roberts  <sroberts@apple.com>
 
         Adding myself to contributors.json

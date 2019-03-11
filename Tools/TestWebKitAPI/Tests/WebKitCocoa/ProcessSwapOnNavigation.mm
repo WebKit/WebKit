@@ -4709,6 +4709,48 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInNonDefaultPersistentSession
     EXPECT_WK_STREQ(@"foo=bar", receivedMessages.get()[0]);
 }
 
+TEST(ProcessSwap, ProcessSwapInRelatedView)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webView1Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webView1Configuration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webView1Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView1Configuration.get()]);
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView1 setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView1 loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView1 _webProcessIdentifier];
+
+    auto webView2Configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webView2Configuration setProcessPool:processPool.get()];
+    [webView2Configuration _setRelatedWebView:webView1.get()];
+    [webView2Configuration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webView2Configuration.get()]);
+    [webView2 _restoreSessionState:webView1.get()._sessionState andNavigate:NO];
+
+    [webView2 setNavigationDelegate:delegate.get()];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView2 loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView2 _webProcessIdentifier];
+    EXPECT_NE(applePID, webkitPID);
+}
+
 #if PLATFORM(MAC)
 
 TEST(ProcessSwap, TerminateProcessAfterProcessSwap)

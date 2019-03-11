@@ -1,5 +1,29 @@
 2019-03-11  Chris Dumez  <cdumez@apple.com>
 
+        Assert in WebPageProxy::suspendCurrentPageIfPossible()
+        https://bugs.webkit.org/show_bug.cgi?id=195506
+        <rdar://problem/48733477>
+
+        Reviewed by Alex Christensen.
+
+        The crash was caused by the top-hit preloading logic in MobileSafari which creates a new Web view that is *related*
+        to the previous one, restores the session state onto it and then triggers a load in this new Web view.
+
+        Initially, the 2 Web views use the same process as they are related. However, if the new load's URL is cross-site
+        with regards to the first view's URL, then we decide to process swap in the new view. This process swap makes
+        sense from a security standpoint. However, when we commit the load in the new process and call
+        suspendCurrentPageIfPossible() we end up in an unexpected state because we have a fromItem (due to the session
+        state having been restored on the new view) but we haven't committed any load yet in this new view.
+
+        To address the issue, suspendCurrentPageIfPossible() now returns early and does not attempt to suspend anything
+        if we have not committed any load yet.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        Do not attempt to suspend to current page if we have not committed any provisional load yet.
+
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
         Update device orientation & motion permission native SPI as per latest proposal
         https://bugs.webkit.org/show_bug.cgi?id=195567
 

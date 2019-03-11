@@ -770,6 +770,11 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
         return false;
     }
 
+    if (!hasCommittedAnyProvisionalLoads()) {
+        RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because has not committed any load yet", m_process->processIdentifier());
+        return false;
+    }
+
     if (isPageOpenedByDOMShowingInitialEmptyDocument()) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because it is showing the initial empty document", m_process->processIdentifier());
         return false;
