@@ -1,3 +1,15 @@
+2019-03-11  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r242697.
+
+        Broke internal builders.
+
+        Reverted changeset:
+
+        "Optimizing loads when creating new pages"
+        https://bugs.webkit.org/show_bug.cgi?id=195516
+        https://trac.webkit.org/changeset/242697
+
 2019-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Add a WKContentRuleList variant that uses copied memory instead of mmap'd shared memory for class A containerized apps

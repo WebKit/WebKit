@@ -467,7 +467,7 @@ bool NavigationState::NavigationClient::willGoToBackForwardListItem(WebPageProxy
 #endif
 
 #if !USE(APPLE_INTERNAL_SDK)
-static void tryOptimizingLoad(Ref<API::NavigationAction>&&, WebPageProxy&, Function<void(bool)>&& completionHandler)
+static void tryOptimizingLoad(const WebCore::ResourceRequest&, WebPageProxy&, Function<void(bool)>&& completionHandler)
 {
     completionHandler(false);
 }
@@ -477,16 +477,15 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 {
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
-        auto url = navigationAction->request().url();
-        auto* localCompletionHandler = new WTF::Function<void (bool)>([navigationAction = WTFMove(navigationAction), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+        auto* localCompletionHandler = new WTF::Function<void (bool)>([request = navigationAction->request().isolatedCopy(), weakPage = makeWeakPtr(page), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
             ASSERT(RunLoop::isMain());
             if (!success && weakPage) {
-                tryOptimizingLoad(WTFMove(navigationAction), *weakPage, WTFMove(completionHandler));
+                tryOptimizingLoad(request, *weakPage, WTFMove(completionHandler));
                 return;
             }
             completionHandler(success);
         });
-        [LSAppLink openWithURL:url completionHandler:[localCompletionHandler](BOOL success, NSError *) {
+        [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
             dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
                 (*localCompletionHandler)(success);
                 delete localCompletionHandler;
@@ -496,7 +495,7 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
     }
 #endif
 
-    tryOptimizingLoad(WTFMove(navigationAction), page, WTFMove(completionHandler));
+    tryOptimizingLoad(navigationAction->request(), page, WTFMove(completionHandler));
 }
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
@@ -588,7 +587,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             localListener->download();
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-            tryOptimizingLoad(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
+            tryOptimizingLoad(navigationAction->request(), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
                 if (optimizedLoad) {
                     localListener->ignore();
                     return;
