@@ -1,3 +1,34 @@
+2019-03-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Optimizing loads when creating new pages
+        https://bugs.webkit.org/show_bug.cgi?id=195516
+        <rdar://problem/48738086>
+
+        Reviewed by Darin Adler.
+
+        This patch adds hooks in WebPageProxy::createNewPage to optimize loads, and moves the creationParameters
+        of API::NavigationAction from UI clients to WebPageProxy::createNewPage. Also, we now pass the whole
+        API::NavigationAction to the load optimizer instead of the request within.
+
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryOptimizingLoad):
+        (WebKit::tryInterceptNavigation):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::tryOptimizingLoad):
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+
 2019-03-10  Tim Horton  <timothy_horton@apple.com>
 
         Add SPI to retrieve the set of text inputs in a given rect, and later focus one

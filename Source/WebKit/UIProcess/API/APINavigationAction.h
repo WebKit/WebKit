@@ -33,6 +33,10 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/URL.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/APINavigationActionAdditions.h>
+#endif
+
 namespace API {
 
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
@@ -65,6 +69,10 @@ public:
 
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
 
+#if HAVE(LOAD_OPTIMIZER)
+APINAVIGATIONACTION_LOADOPTIMIZER_ADDITIONS_1
+#endif
+
 private:
     NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, Optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation)
         : m_sourceFrame(sourceFrame)
@@ -92,6 +100,9 @@ private:
     WTF::URL m_originalURL;
 
     bool m_shouldOpenAppLinks;
+#if HAVE(LOAD_OPTIMIZER)
+APINAVIGATIONACTION_LOADOPTIMIZER_ADDITIONS_2
+#endif
 
     RefPtr<UserInitiatedAction> m_userInitiatedAction;
 
