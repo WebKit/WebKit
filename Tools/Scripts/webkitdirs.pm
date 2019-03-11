@@ -2262,6 +2262,15 @@ sub generateBuildSystemFromCMakeProject
     # Some ports have production mode, but build-webkit should always use developer mode.
     push @args, "-DDEVELOPER_MODE=ON" if isGtk() || isJSCOnly() || isWPE() || isWinCairo();
 
+    if ($architecture eq "x86_64" && shouldBuild32Bit()) {
+        # CMAKE_LIBRARY_ARCHITECTURE is needed to get the right .pc
+        # files in Debian-based systems, for the others
+        # CMAKE_PREFIX_PATH will get us /usr/lib, which should be the
+        # right path for 32bit. See FindPkgConfig.cmake.
+        push @cmakeArgs, '-DFORCE_32BIT=ON -DCMAKE_PREFIX_PATH="/usr" -DCMAKE_LIBRARY_ARCHITECTURE=x86';
+        $ENV{"CFLAGS"} =  "-m32" . ($ENV{"CFLAGS"} || "");
+        $ENV{"CXXFLAGS"} = "-m32" . ($ENV{"CXXFLAGS"} || "");
+    }
     push @args, @cmakeArgs if @cmakeArgs;
 
     my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();

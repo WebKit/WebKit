@@ -1,3 +1,13 @@
+2019-03-11  Xan Lopez  <xan@igalia.com>
+
+        [CMake] Build 32bit binaries on Linux/64bit when the --32-bit is passed to build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=194147
+
+        Reviewed by Michael Saboff.
+
+        * CMakeLists.txt: set WTF_CPU properly if FORCE_32BIT is set in
+        build-jsc.
+
 2019-03-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] Enable web process sandbox

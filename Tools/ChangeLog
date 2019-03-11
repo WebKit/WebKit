@@ -1,3 +1,24 @@
+2019-03-11  Xan Lopez  <xan@igalia.com>
+
+        [CMake] Build 32bit binaries on Linux/64bit when the --32-bit is passed to build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=194147
+
+        Reviewed by Michael Saboff.
+
+        To make --32-bit work correctly on Linux/64bit we need to:
+
+        - Set FORCE_32BIT on, which will be read by CMake to set WTF_CPU
+        correctly. Ideally we'd just redefine CMAKE_SYSTEM_PROCESSOR, but
+        unfortunately CMake only allows us to do this during
+        crosscompilation, which is overkill here.
+        - Set CMAKE_PREFIX_PATH and CMAKE_LIBRARY_ARCHITECTURE so that the
+        pkg-config detection module uses the x86 .pc files instead of the
+        x86_64 ones.
+        - Set the -m32 flags for the compiler.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2019-03-08  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add MotionMark-1.1 plan file for run-benchmark script.
