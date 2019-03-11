@@ -5179,6 +5179,12 @@
       ],
       "status" : "committer"
    },
+   "Shawn Roberts" : {
+      "emails" : [
+         "sroberts@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Shinichiro Hamaji" : {
       "emails" : [
          "hamaji@chromium.org"

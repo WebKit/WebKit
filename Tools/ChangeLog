@@ -1,3 +1,11 @@
+2019-03-11  Shawn Roberts  <sroberts@apple.com>
+
+        Adding myself to contributors.json
+
+        Unreviewed, addming myself to contributors.json .
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Add a WKContentRuleList variant that uses copied memory instead of mmap'd shared memory for class A containerized apps
