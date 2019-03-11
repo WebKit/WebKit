@@ -933,7 +933,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
     m_sizeChangeObserverWeakPtrFactory.revokeAll();
 }
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION)
 AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 {
     if (!getAVStreamSessionClass() || ![getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
@@ -954,6 +955,7 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
     }
     return m_streamSession.get();
 }
+#endif
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* session)
 {
@@ -964,12 +966,15 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     m_session = makeWeakPtr(toCDMSessionMediaSourceAVFObjC(session));
 
+#if HAVE(AVSTREAMSESSION)
     if (CDMSessionAVStreamSession* cdmStreamSession = toCDMSessionAVStreamSession(m_session.get()))
         cdmStreamSession->setStreamSession(streamSession());
+#endif
+
     for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
         sourceBuffer->setCDMSession(m_session.get());
 }
-#endif // HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(Uint8Array* initData)

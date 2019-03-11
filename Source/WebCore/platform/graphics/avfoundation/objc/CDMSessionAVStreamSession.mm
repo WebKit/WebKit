@@ -87,10 +87,10 @@ static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
 
 namespace WebCore {
 
-CDMSessionAVStreamSession::CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
+CDMSessionAVStreamSession::CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
     , m_dataParserObserver(adoptNS([[WebCDMSessionAVStreamSessionObserver alloc] initWithParent:this]))
-    , m_protocolVersions(protocolVersions)
+    , m_protocolVersions(WTFMove(protocolVersions))
     , m_mode(Normal)
 {
 }

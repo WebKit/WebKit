@@ -133,6 +133,10 @@ public:
     void setDecompressionSession(WebCoreDecompressionSession*);
 
     void bufferWasConsumed();
+    
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    Uint8Array* initData() { return m_initData.get(); }
+#endif
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -196,6 +200,7 @@ private:
     MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client { nullptr };
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    RefPtr<Uint8Array> m_initData;
     WeakPtr<CDMSessionMediaSourceAVFObjC> m_session { nullptr };
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)

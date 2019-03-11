@@ -37,7 +37,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC) && ENABLE(MEDIA_SOURCE)
+#if (HAVE(AVCONTENTKEYSESSION) || HAVE(AVSTREAMSESSION)) && ENABLE(MEDIA_SOURCE)
 #include "CDMPrivateMediaSourceAVFObjC.h"
 #endif
 
@@ -68,7 +68,7 @@ static Vector<CDMFactory*>& installedCDMFactories()
         new CDMFactory([](LegacyCDM* cdm) { return std::make_unique<CDMPrivateMediaPlayer>(cdm); },
             CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType),
 
-#if PLATFORM(MAC) && ENABLE(MEDIA_SOURCE)
+#if (HAVE(AVCONTENTKEYSESSION) || HAVE(AVSTREAMSESSION)) && ENABLE(MEDIA_SOURCE)
         new CDMFactory([](LegacyCDM* cdm) { return std::make_unique<CDMPrivateMediaSourceAVFObjC>(cdm); },
             CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType),
 #endif

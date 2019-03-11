@@ -115,9 +115,11 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
     void syncTextTrackBounds() override;
     
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVSTREAMSESSION)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
+#endif
     void setCDMSession(LegacyCDMSession*) override;
     CDMSessionMediaSourceAVFObjC* cdmSession() const { return m_session.get(); }
 #endif

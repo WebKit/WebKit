@@ -661,13 +661,13 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (!m_mediaSource)
         return;
 
-#if HAVE(AVSTREAMSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if HAVE(AVCONTENTKEYSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     ALWAYS_LOG(LOGIDENTIFIER, "track = ", trackID);
 
     m_protectedTrackID = trackID;
-    auto initDataArray = Uint8Array::create([initData length]);
-    [initData getBytes:initDataArray->data() length:initDataArray->length()];
-    m_mediaSource->sourceBufferKeyNeeded(this, initDataArray.ptr());
+    m_initData = Uint8Array::create([initData length]);
+    [initData getBytes:m_initData->data() length:m_initData->length()];
+    m_mediaSource->sourceBufferKeyNeeded(this, m_initData.get());
     if (auto session = m_mediaSource->player()->cdmSession()) {
         session->addParser(m_parser.get());
         hasSessionSemaphore->signal();

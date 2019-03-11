@@ -1,3 +1,57 @@
+2019-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Use AVContentKeySession for "com.apple.fps.2_0" CDM version when AVStreamSession is absent
+        https://bugs.webkit.org/show_bug.cgi?id=195462
+        <rdar://problem/48712306>
+
+        Reviewed by Eric Carlson.
+
+        The difference between "com.apple.fps.2_0" and "3_0" is a protocol difference more than an
+        implementation difference. In "2_0", the "EME nitialization" data comes in the form of a "content
+        identifier", while the true initialization data is retrieved through a side channel directly from
+        the attached element. In "3_0", the "EME initialization data" is the exact initialization data
+        given by the parser, with no "content identifier" at all.
+
+        In the original implementation, the "2_0" used AVStreamSession, and "3_0" used AVContentKeySession,
+        but in the absense of AVStreamSession, those protocol differences are minor and can be implemented
+        using AVContentKeySession.
+
+        Changes:
+
+        - Add a new helper struct in CDMPrivateMediaSourceAVFObjC that represents the parsed parameters
+          of the CDM string.
+        - Add an "initData()" accessor to SourceBufferPrivateAVFObjC so that the "2_0" path can implement
+          the side channel access to the necessary initialization data.
+        - Refactor some of the SPI code to not re-declare unnecessary APIs.
+        - In CDMSessionAVContentKeySession::generateKeyRequest(), this function can never be called twice
+          so it is a logical impossibility to have a certificate at this point. Remove all this if() code.
+
+        * Modules/encryptedmedia/legacy/LegacyCDM.cpp:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::parseKeySystem):
+        (WebCore::queryDecoderAvailability):
+        (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystem):
+        (WebCore::CDMPrivateMediaSourceAVFObjC::createSession):
+        (WebCore::validKeySystemRE): Deleted.
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::CDMSessionAVContentKeySession):
+        (WebCore::CDMSessionAVContentKeySession::generateKeyRequest):
+        (WebCore::CDMSessionAVContentKeySession::update):
+        (WebCore::CDMSessionAVContentKeySession::addParser):
+        (WebCore::CDMSessionAVContentKeySession::removeParser):
+        (WebCore::CDMSessionAVContentKeySession::contentKeySession):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.
