@@ -38,10 +38,8 @@ public:
     static Ref<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
     virtual ~WebCompiledContentRuleList();
 
-    const WebCompiledContentRuleListData& data() const { return m_data; }
+    WebCompiledContentRuleListData data() const { return m_data; }
 
-    bool usesCopiedMemory() const;
-    
 private:
     WebCompiledContentRuleList(WebCompiledContentRuleListData&&);
 

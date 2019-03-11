@@ -44,19 +44,14 @@ WebCompiledContentRuleList::~WebCompiledContentRuleList()
 {
 }
 
-bool WebCompiledContentRuleList::usesCopiedMemory() const
-{
-    return WTF::holds_alternative<RefPtr<WebCore::SharedBuffer>>(m_data.data);
-}
-
 bool WebCompiledContentRuleList::conditionsApplyOnlyToDomain() const
 {
-    return *reinterpret_cast<const uint32_t*>(reinterpret_cast<const uint8_t*>(m_data.dataPointer()) + m_data.conditionsApplyOnlyToDomainOffset);
+    return *reinterpret_cast<uint32_t*>(reinterpret_cast<uint8_t*>(m_data.data->data()) + m_data.conditionsApplyOnlyToDomainOffset);
 }
 
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentRuleList::filtersWithoutConditionsBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.dataPointer()) + m_data.filtersWithoutConditionsBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithoutConditionsBytecodeOffset;
 }
 
 unsigned WebCompiledContentRuleList::filtersWithoutConditionsBytecodeLength() const
@@ -66,7 +61,7 @@ unsigned WebCompiledContentRuleList::filtersWithoutConditionsBytecodeLength() co
 
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentRuleList::filtersWithConditionsBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.dataPointer()) + m_data.filtersWithConditionsBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.filtersWithConditionsBytecodeOffset;
 }
 
 unsigned WebCompiledContentRuleList::filtersWithConditionsBytecodeLength() const
@@ -76,7 +71,7 @@ unsigned WebCompiledContentRuleList::filtersWithConditionsBytecodeLength() const
 
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentRuleList::topURLFiltersBytecode() const
 {
-    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.dataPointer()) + m_data.topURLFiltersBytecodeOffset;
+    return static_cast<const WebCore::ContentExtensions::DFABytecode*>(m_data.data->data()) + m_data.topURLFiltersBytecodeOffset;
 }
 
 unsigned WebCompiledContentRuleList::topURLFiltersBytecodeLength() const
@@ -86,7 +81,7 @@ unsigned WebCompiledContentRuleList::topURLFiltersBytecodeLength() const
 
 const WebCore::ContentExtensions::SerializedActionByte* WebCompiledContentRuleList::actions() const
 {
-    return static_cast<const WebCore::ContentExtensions::SerializedActionByte*>(m_data.dataPointer()) + m_data.actionsOffset;
+    return static_cast<const WebCore::ContentExtensions::SerializedActionByte*>(m_data.data->data()) + m_data.actionsOffset;
 }
 
 unsigned WebCompiledContentRuleList::actionsLength() const

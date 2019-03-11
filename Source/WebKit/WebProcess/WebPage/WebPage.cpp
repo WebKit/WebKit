@@ -637,7 +637,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_userContentController->addUserStyleSheets(parameters.userStyleSheets);
     m_userContentController->addUserScriptMessageHandlers(parameters.messageHandlers);
 #if ENABLE(CONTENT_EXTENSIONS)
-    m_userContentController->addContentRuleLists(WTFMove(parameters.contentRuleLists));
+    m_userContentController->addContentRuleLists(parameters.contentRuleLists);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

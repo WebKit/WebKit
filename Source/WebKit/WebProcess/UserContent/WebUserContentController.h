@@ -69,7 +69,7 @@ public:
     void addUserStyleSheets(const Vector<WebUserStyleSheetData>&);
     void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerData>&);
 #if ENABLE(CONTENT_EXTENSIONS)
-    void addContentRuleLists(Vector<std::pair<String, WebCompiledContentRuleListData>>&&);
+    void addContentRuleLists(const Vector<std::pair<String, WebCompiledContentRuleListData>>&);
 #endif
 
 private:
