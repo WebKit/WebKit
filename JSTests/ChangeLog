@@ -1,3 +1,17 @@
+2019-03-11  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "~" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182216
+
+        Reviewed by Keith Miller.
+
+        * stress/big-int-bit-not-general.js: Added.
+        * stress/big-int-bitwise-not-jit.js: Added.
+        * stress/big-int-bitwise-not-wrapped-value.js: Added.
+        * stress/bit-op-with-object-returning-int32.js:
+        * stress/bitwise-not-fixup-rules.js: Added.
+        * stress/value-bit-not-ai-rule.js: Added.
+
 2019-03-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         Invalid flags in a RegExp literal should be an early SyntaxError

@@ -2080,6 +2080,10 @@ void SpeculativeJIT::compile(Node* node)
         recordSetLocal(dataFormatFor(node->variableAccessData()->flushFormat()));
         break;
 
+    case ValueBitNot:
+        compileValueBitNot(node);
+        break;
+
     case ArithBitNot:
         compileBitwiseNot(node);
         break;

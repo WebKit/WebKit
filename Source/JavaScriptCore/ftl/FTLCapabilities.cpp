@@ -91,6 +91,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueBitAnd:
     case ValueBitXor:
     case ValueBitOr:
+    case ValueBitNot:
     case ValueNegate:
     case ValueAdd:
     case ValueSub:

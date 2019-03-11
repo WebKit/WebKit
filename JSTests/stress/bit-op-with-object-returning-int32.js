@@ -36,3 +36,13 @@ for (var i = 0; i < 10000; i++)
 
 assert(numberOfDFGCompiles(bitXor) <= 1, true);
 
+function bitNot(a) {
+    return ~a;
+}
+noInline(bitNot);
+
+for (var i = 0; i < 10000; i++)
+    assert(bitNot(o), -14);
+
+assert(numberOfDFGCompiles(bitNot) <= 1, true);
+

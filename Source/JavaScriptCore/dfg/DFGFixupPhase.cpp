@@ -234,14 +234,27 @@ private:
             break;
         }
 
-        case ArithBitNot: {
-            if (node->child1().node()->shouldSpeculateUntypedForBitOps()) {
-                fixEdge<UntypedUse>(node->child1());
-                break;
-            }
+        case ValueBitNot: {
+            Edge& operandEdge = node->child1();
 
-            fixIntConvertingEdge(node->child1());
-            node->clearFlags(NodeMustGenerate);
+            if (operandEdge.node()->shouldSpeculateBigInt()) {
+                node->clearFlags(NodeMustGenerate);
+                fixEdge<BigIntUse>(operandEdge);
+            } else if (operandEdge.node()->shouldSpeculateUntypedForBitOps())
+                fixEdge<UntypedUse>(operandEdge);
+            else {
+                node->setOp(ArithBitNot);
+                node->setResult(NodeResultInt32);
+                node->clearFlags(NodeMustGenerate);
+                fixIntConvertingEdge(operandEdge);
+            }
+            break;
+        }
+
+        case ArithBitNot: {
+            Edge& operandEdge = node->child1();
+
+            fixIntConvertingEdge(operandEdge);
             break;
         }
 

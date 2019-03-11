@@ -378,6 +378,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValueSub:
     case ValueMul:
     case ValueDiv:
+    case ValueBitNot:
     case ValueNegate:
 #else
     // See comment at the top for why be default for all nodes should be to

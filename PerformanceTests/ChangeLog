@@ -1,3 +1,12 @@
+2019-03-11  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "~" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182216
+
+        Reviewed by Keith Miller.
+
+        * BigIntBench/big-int-simple-bit-not.js: Added.
+
 2019-03-04  Saam Barati  <sbarati@apple.com>
 
         Add a detailed summary page for JetStream 2

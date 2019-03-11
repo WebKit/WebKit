@@ -210,6 +210,7 @@ private:
         case CheckVarargs:
             break;
             
+        case ValueBitNot:
         case ArithBitNot: {
             flags |= NodeBytecodeUsesAsInt;
             flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);

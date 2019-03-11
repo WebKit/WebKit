@@ -802,6 +802,7 @@ private:
         case ValueBitAnd:
         case ValueBitXor:
         case ValueBitOr:
+        case ValueBitNot:
         case CallObjectConstructor:
         case GetArgument:
         case CallDOMGetter:

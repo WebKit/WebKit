@@ -715,9 +715,16 @@ SLOW_PATH_DECL(slow_path_bitnot)
 {
     BEGIN();
     auto bytecode = pc->as<OpBitnot>();
-    int32_t operand = GET_C(bytecode.m_operand).jsValue().toInt32(exec);
+    auto operandNumeric = GET_C(bytecode.m_operand).jsValue().toBigIntOrInt32(exec);
     CHECK_EXCEPTION();
-    RETURN_PROFILED(jsNumber(~operand));
+
+    if (WTF::holds_alternative<JSBigInt*>(operandNumeric)) {
+        JSBigInt* result = JSBigInt::bitwiseNot(exec, WTF::get<JSBigInt*>(operandNumeric));
+        CHECK_EXCEPTION();
+        RETURN_PROFILED(result);
+    }
+
+    RETURN_PROFILED(jsNumber(~WTF::get<int32_t>(operandNumeric)));
 }
 
 SLOW_PATH_DECL(slow_path_bitand)

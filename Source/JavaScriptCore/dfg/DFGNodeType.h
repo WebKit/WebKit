@@ -111,7 +111,8 @@ namespace JSC { namespace DFG {
     macro(InvalidationPoint, NodeMustGenerate) \
     \
     /* Nodes for bitwise operations. */\
-    macro(ArithBitNot, NodeResultInt32 | NodeMustGenerate) \
+    macro(ValueBitNot, NodeResultJS | NodeMustGenerate) \
+    macro(ArithBitNot, NodeResultInt32) \
     macro(ValueBitAnd, NodeResultJS | NodeMustGenerate) \
     macro(ArithBitAnd, NodeResultInt32) \
     macro(ValueBitOr, NodeResultJS | NodeMustGenerate) \

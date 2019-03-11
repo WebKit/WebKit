@@ -124,6 +124,7 @@ public:
     static JSBigInt* bitwiseAnd(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* bitwiseOr(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* bitwiseXor(ExecState*, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* bitwiseNot(ExecState*, JSBigInt* x);
 
     static JSBigInt* leftShift(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* signedRightShift(ExecState*, JSBigInt* x, JSBigInt* y);

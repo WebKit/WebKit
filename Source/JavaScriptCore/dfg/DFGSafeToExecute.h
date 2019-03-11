@@ -231,6 +231,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ValueBitAnd:
     case ValueBitXor:
     case ValueBitOr:
+    case ValueBitNot:
     case ValueNegate:
     case ValueAdd:
     case ValueSub:

@@ -1,3 +1,110 @@
+2019-03-11  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement "~" unary operation
+        https://bugs.webkit.org/show_bug.cgi?id=182216
+
+        Reviewed by Keith Miller.
+
+        This patch is adding support of BigInt into op_bitnot operations. In
+        addition, we are changing ArithBitNot to handle only Number operands,
+        while introducing a new node named ValueBitNot to handle Untyped and
+        BigInt. This node follows the same approach we are doing into other
+        arithimetic operations into DFG.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+        It is possible that fixup and prediction propagation don't convert a
+        ValueBitNot(ConstInt32) into ArithBitNot(ConstInt32) because these
+        analysis are conservative. In such case, we are adding constant
+        folding rules to ValueBitNot AI.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+
+        ValueBitNot has same rules as ArithBitNot on backwards propagation.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+        We can emit ArithBitNot if we know that operand of op_bitnot is a
+        Number or any int. Otherwise we fallback to ValueBitNot and rely on
+        fixup to convert the node to ArithBitNot when it is possible.
+        ValueBitNot uses heap prediction on prediction propagation and we
+        collect its type from op_bitnot's value profiler.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
+        When we have the case with ValueBitNot(BigInt), we don't clobberize
+        world.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+
+        ValueBitNot can GC on BigIntUse because, right now, all bitNot
+        operation allocates temporary BigInts to perform calculations and it
+        can potentially trigger GC.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        ValueBitNot is responsible do handle BigIntUse and UntypedUse. To all
+        other uses, we fallback to ArithBitNot.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::bitwiseBinaryOp):
+
+        This template function is abstracting the new semantics of numeric
+        values operations on bitwise operations. These operations usually
+        folow these steps:
+
+            1. rhsNumeric = GetInt32OrBigInt(rhs)
+            2. lhsNumeric = GetInt32OrBigInt(lhs)
+            3. trhow error if TypeOf(rhsNumeric) != TypeOf(lhsNumeric)
+            4. return BigInt::bitwiseOp(bitOp, rhs, lhs) if TypeOf(lhsNumeric) == BigInt
+            5. return rhs <int32BitOp> lhs
+
+        Since we have almost the same code for every bitwise op,
+        we use such template to avoid code duplication. The template receives
+        Int32 and BigInt operations as parameter. Error message is received as
+        `const char*` instead of `String&` to avoid String allocation even when
+        there is no error to throw.
+
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueBitNot):
+
+        ValueBitNot generates speculative code for BigIntUse and this code is a
+        call to `operationBitNotBigInt`. This operation is faster than
+        `operationValueBitNot` because there is no need to check types of
+        operands and execute properly operation. We still need to check
+        exceptions after `operationBitNotBigInt` because it can throw OOM.
+
+        (JSC::DFG::SpeculativeJIT::compileBitwiseNot):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitNot):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitNot):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::bitwiseNot):
+        * runtime/JSBigInt.h:
+
 2019-03-11  Darin Adler  <darin@apple.com>
 
         Specify fixed precision explicitly to prepare to change String::number and StringBuilder::appendNumber floating point behavior

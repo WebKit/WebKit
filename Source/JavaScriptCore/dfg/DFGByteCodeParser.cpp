@@ -4918,8 +4918,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_bitnot: {
             auto bytecode = currentInstruction->as<OpBitnot>();
+            SpeculatedType prediction = getPrediction();
             Node* op1 = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(ArithBitNot, op1));
+            if (op1->hasNumberOrAnyIntResult())
+                set(bytecode.m_dst, addToGraph(ArithBitNot, op1));
+            else
+                set(bytecode.m_dst, addToGraph(ValueBitNot, OpInfo(), OpInfo(prediction), op1));
             NEXT_OPCODE(op_bitnot);
         }
 

@@ -525,6 +525,16 @@ JSBigInt* JSBigInt::signedRightShift(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return rightShiftByAbsolute(exec, x, y);
 }
 
+JSBigInt* JSBigInt::bitwiseNot(ExecState* exec, JSBigInt* x)
+{
+    if (x->sign()) {
+        // ~(-x) == ~(~(x-1)) == x-1
+        return absoluteSubOne(exec, x, x->length());
+    } 
+    // ~x == -x-1 == -(x+1)
+    return absoluteAddOne(exec, x, SignOption::Signed);
+}
+
 #if USE(JSVALUE32_64)
 #define HAVE_TWO_DIGIT 1
 typedef uint64_t TwoDigit;
