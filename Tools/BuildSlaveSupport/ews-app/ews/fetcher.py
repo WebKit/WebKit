@@ -48,8 +48,13 @@ class FetchLoop():
 
 
 class BugzillaPatchFetcher():
-    def fetch(self):
-        patch_ids = Bugzilla.get_list_of_patches_needing_reviews()
+    def fetch(self, patch_ids=None):
+        if patch_ids and type(patch_ids) != list:
+            _log.error('Error: patch_ids should be a list, found: {}'.format(type(patch_ids)))
+            return -1
+
+        if not patch_ids:
+            patch_ids = Bugzilla.get_list_of_patches_needing_reviews()
         patch_ids = BugzillaPatchFetcher.filter_valid_patches(patch_ids)
         _log.debug('r? patches: {}'.format(patch_ids))
         Patch.save_patches(patch_ids)

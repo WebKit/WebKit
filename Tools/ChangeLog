@@ -1,3 +1,16 @@
+2019-03-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add support for submit-to-ews url
+        https://bugs.webkit.org/show_bug.cgi?id=195477
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html:
+        * BuildSlaveSupport/ews-app/ews/templates/submittoews.html: Copied from QueueStatusServer/templates/submittoews.html.
+        * BuildSlaveSupport/ews-app/ews/urls.py:
+        * BuildSlaveSupport/ews-app/ews/views/submittoews.py: Added.
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.

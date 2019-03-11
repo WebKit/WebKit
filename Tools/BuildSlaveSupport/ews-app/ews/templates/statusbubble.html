@@ -91,7 +91,7 @@ window.addEventListener("message", function(e) {
   {% endif %}
 
 {% if show_submit_to_ews %}
-  <form name="submit_to_ews" method="POST" action="/submit-to-ews">
+  <form name="submit_to_ews" method="POST" action="/submit-to-ews/">{% csrf_token %}
     <input type="hidden" name="patch_id" value="{{ patch_id }}">
     <input type="hidden" name="next_action" value="return_to_bubbles">
     <input class="status" type="submit" value="Submit for EWS analysis">
