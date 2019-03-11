@@ -43,8 +43,10 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
 
         this._detailsAverageElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
-        this._detailsMaxElement = this._detailsElement.appendChild(document.createElement("span"));
-        this._updateDetails(NaN, NaN);
+        this._detailsUsageElement = this._detailsElement.appendChild(document.createElement("span"));
+
+        this.clearLegend();
+        this._updateDetails(NaN);
 
         this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
@@ -56,15 +58,18 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
 
     // Public
 
+    get graphElement() { return this._graphElement; }
     get chart() { return this._chart; }
 
     clear()
     {
         this._cachedAverageSize = undefined;
-        this._cachedMaxSize = undefined;
-        this._updateDetails(NaN, NaN);
+        this._updateDetails(NaN);
+
+        this.clearLegend();
 
         this._chart.clear();
+        this._chart.needsLayout();
     }
 
     updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale, property)
@@ -76,9 +81,9 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
         console.assert(min <= average && average <= max);
         console.assert(property, "CPUUsageView needs a property of the dataPoints to graph");
 
-        this._updateDetails(min, max, average);
+        this._updateDetails(average);
 
-        this._chart.clear();
+        this._chart.clearPoints();
         this._chart.size = size;
         this._chart.needsLayout();
 
@@ -108,20 +113,30 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
         this._chart.addPoint(lastX, lastY);
     }
 
+    clearLegend()
+    {
+        this._detailsUsageElement.hidden = true;
+        this._detailsUsageElement.textContent = emDash;
+    }
+
+    updateLegend(value)
+    {
+        let usage = Number.isFinite(value) ? Number.percentageString(value / 100) : emDash;
+
+        this._detailsUsageElement.hidden = false;
+        this._detailsUsageElement.textContent = WI.UIString("Usage: %s").format(usage);
+    }
+
     // Private
 
-    _updateDetails(minSize, maxSize, averageSize)
+    _updateDetails(averageSize)
     {
-        if (this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
+        if (this._cachedAverageSize === averageSize)
             return;
 
         this._cachedAverageSize = averageSize;
-        this._cachedMaxSize = maxSize;
 
         this._detailsAverageElement.hidden = !Number.isFinite(averageSize);
-        this._detailsMaxElement.hidden = !Number.isFinite(maxSize);
-
         this._detailsAverageElement.textContent = WI.UIString("Average: %s").format(Number.isFinite(averageSize) ? Number.percentageString(averageSize / 100) : emDash);
-        this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.percentageString(maxSize / 100) : emDash);
     }
 };

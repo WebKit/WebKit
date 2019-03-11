@@ -29,7 +29,9 @@
 // To populate with data, first initialize the sections. The class names you
 // provide for the segments will allow you to style them. You can then include
 // a new set of (x, [y1, y2, y3]) points in the chart via `addPointSet`. The
-// order of `y` values must be in the same order as the sections.
+// order of `y` values must be in the same order as the sections. You can add
+// point markers (<circle>) with an (x, y) as well, note these are individual
+// instead of a set.
 //
 // SVG:
 //
@@ -56,8 +58,10 @@ WI.StackedAreaChart = class StackedAreaChart extends WI.View
         this._chartElement.setAttribute("preserveAspectRatio", "none");
 
         this._pathElements = [];
+        this._circleElements = [];
 
         this._points = [];
+        this._markers = [];
         this._size = null;
     }
 
@@ -101,9 +105,25 @@ WI.StackedAreaChart = class StackedAreaChart extends WI.View
         this._points.push({x, ys});
     }
 
-    clear()
+    clearPoints()
     {
         this._points = [];
+    }
+
+    addPointMarker(x, y)
+    {
+        this._markers.push({x, y});
+    }
+
+    clearPointMarkers()
+    {
+        this._markers = [];
+    }
+
+    clear()
+    {
+        this.clearPoints();
+        this.clearPointMarkers();
     }
 
     // Protected
@@ -135,6 +155,22 @@ WI.StackedAreaChart = class StackedAreaChart extends WI.View
             pathComponents[i].push("Z");
             let pathString = pathComponents[i].join(" ");
             this._pathElements[i].setAttribute("d", pathString);
+        }
+
+        if (this._circleElements.length) {
+            for (let circle of this._circleElements)
+                circle.remove();
+            this._circleElements = [];
+        }
+
+        if (this._markers.length) {
+            for (let {x, y} of this._markers) {
+                let circle = this._chartElement.appendChild(createSVGElement("circle"));
+                this._circleElements.push(circle);
+                circle.setAttribute("cx", x);
+                circle.setAttribute("cy", y);
+                circle.setAttribute("r", 3);
+            }
         }
     }
 };

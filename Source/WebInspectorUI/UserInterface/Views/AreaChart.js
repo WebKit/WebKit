@@ -26,7 +26,8 @@
 // AreaChart creates a single filled area chart.
 //
 // Initialize the chart with a size. You can then include a new point
-// in the area chart by providing an (x, y) point via `addPoint`.
+// in the area chart by providing an (x, y) point via `addPoint`. You
+// can add point markers (<circle>) with an (x, y) as well.
 //
 // SVG:
 //
@@ -50,8 +51,10 @@ WI.AreaChart = class AreaChart extends WI.View
         this._chartElement.setAttribute("preserveAspectRatio", "none");
 
         this._pathElement = this._chartElement.appendChild(createSVGElement("path"));
+        this._circleElements = [];
 
         this._points = [];
+        this._markers = [];
         this._size = null;
     }
 
@@ -79,9 +82,25 @@ WI.AreaChart = class AreaChart extends WI.View
         this._points.push({x, y});
     }
 
-    clear()
+    clearPoints()
     {
         this._points = [];
+    }
+
+    addPointMarker(x, y)
+    {
+        this._markers.push({x, y});
+    }
+
+    clearPointMarkers()
+    {
+        this._markers = [];
+    }
+
+    clear()
+    {
+        this.clearPoints();
+        this.clearPointMarkers();
     }
 
     // Protected
@@ -107,5 +126,20 @@ WI.AreaChart = class AreaChart extends WI.View
 
         let pathString = pathComponents.join(" ");
         this._pathElement.setAttribute("d", pathString);
+
+        if (this._circleElements.length) {
+            for (let circle of this._circleElements)
+                circle.remove();
+            this._circleElements = [];
+        }
+
+        if (this._markers.length) {
+            for (let {x, y} of this._markers) {
+                let circle = this._chartElement.appendChild(createSVGElement("circle"));
+                this._circleElements.push(circle);
+                circle.setAttribute("cx", x);
+                circle.setAttribute("cy", y);
+            }
+        }
     }
 };

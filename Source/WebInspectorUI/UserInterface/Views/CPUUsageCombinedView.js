@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
+WI.CPUUsageCombinedView = class CPUUsageCombinedView extends WI.View
 {
     constructor(displayName)
     {
         super();
 
-        this.element.classList.add("cpu-usage-stacked-view");
+        this.element.classList.add("cpu-usage-combined-view");
 
         this._detailsElement = this.element.appendChild(document.createElement("div"));
         this._detailsElement.classList.add("details");
@@ -43,31 +43,66 @@ WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
         this._detailsElement.appendChild(document.createElement("br"));
         this._detailsMaxElement = this._detailsElement.appendChild(document.createElement("span"));
         this._detailsElement.appendChild(document.createElement("br"));
-        this._detailsMinElement = this._detailsElement.appendChild(document.createElement("span"));
+        this._detailsElement.appendChild(document.createElement("br"));
         this._updateDetails(NaN, NaN);
 
         this._graphElement = this.element.appendChild(document.createElement("div"));
         this._graphElement.classList.add("graph");
 
+        // Combined thread usage area chart.
         this._chart = new WI.StackedAreaChart;
         this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
         this.addSubview(this._chart);
         this._graphElement.appendChild(this._chart.element);
+
+        // Main thread indicator strip.
+        this._rangeChart = new WI.RangeChart;
+        this.addSubview(this._rangeChart);
+        this._graphElement.appendChild(this._rangeChart.element);
+
+        function appendLegendRow(legendElement, className) {
+            let rowElement = legendElement.appendChild(document.createElement("div"));
+            rowElement.classList.add("row");
+
+            let swatchElement = rowElement.appendChild(document.createElement("div"));
+            swatchElement.classList.add("swatch", className);
+
+            let labelElement = rowElement.appendChild(document.createElement("div"));
+            labelElement.classList.add("label");
+
+            return labelElement;
+        }
+
+        this._legendElement = this._detailsElement.appendChild(document.createElement("div"));
+        this._legendElement.classList.add("legend-container");
+
+        this._legendMainThreadElement = appendLegendRow(this._legendElement, "main-thread");
+        this._legendWorkerThreadsElement = appendLegendRow(this._legendElement, "worker-threads");
+        this._legendOtherThreadsElement = appendLegendRow(this._legendElement, "other-threads");
+        this._legendTotalThreadsElement = appendLegendRow(this._legendElement, "total");
+
+        this.clearLegend();
     }
 
     // Public
 
+    get graphElement() { return this._graphElement; }
     get chart() { return this._chart; }
+    get rangeChart() { return this._rangeChart; }
 
     clear()
     {
         this._cachedAverageSize = undefined;
-        this._cachedMinSize = undefined;
         this._cachedMaxSize = undefined;
         this._updateDetails(NaN, NaN);
 
+        this.clearLegend();
+
         this._chart.clear();
         this._chart.needsLayout();
+
+        this._rangeChart.clear();
+        this._rangeChart.needsLayout();
     }
 
     updateChart(dataPoints, size, visibleEndTime, min, max, average, xScale, yScale)
@@ -78,9 +113,9 @@ WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
         console.assert(min <= max);
         console.assert(min <= average && average <= max);
 
-        this._updateDetails(min, max, average);
+        this._updateDetails(max, average);
 
-        this._chart.clear();
+        this._chart.clearPoints();
         this._chart.size = size;
         this._chart.needsLayout();
 
@@ -116,19 +151,98 @@ WI.CPUUsageStackedView = class CPUUsageStackedView extends WI.View
         this._chart.addPointSet(lastX, [lastY1, lastY2, lastY3]);
     }
 
+    updateMainThreadIndicator(samples, size, visibleEndTime, xScale)
+    {
+        console.assert(size instanceof WI.Size);
+
+        this._rangeChart.clear();
+        this._rangeChart.size = size;
+        this._rangeChart.needsLayout();
+
+        if (!samples.length)
+            return;
+
+        // Coalesce ranges of samples.
+        let ranges = [];
+        let currentRange = null;
+        let currentSampleType = undefined;
+        for (let i = 0; i < samples.length; ++i) {
+            // Back to idle, close any current chunk.
+            let type = samples[i];
+            if (!type) {
+                if (currentRange) {
+                    ranges.push(currentRange);
+                    currentRange = null;
+                    currentSampleType = undefined;
+                }
+                continue;
+            }
+
+            // Expand existing chunk.
+            if (type === currentSampleType) {
+                currentRange.endIndex = i;
+                continue;
+            }
+
+            // If type changed, close current chunk.
+            if (currentSampleType) {
+                ranges.push(currentRange);
+                currentRange = null;
+                currentSampleType = undefined;
+            }
+
+            // Start a new chunk.
+            console.assert(!currentRange);
+            console.assert(!currentSampleType);
+            currentRange = {type, startIndex: i, endIndex: i};
+            currentSampleType = type;
+        }
+
+        for (let {type, startIndex, endIndex} of ranges) {
+            let startX = xScale(startIndex);
+            let endX = xScale(endIndex + 1);
+            let width = endX - startX;
+            this._rangeChart.addRange(startX, width, type);
+        }
+    }
+
+    clearLegend()
+    {
+        this._legendMainThreadElement.textContent = WI.UIString("Main Thread");
+        this._legendWorkerThreadsElement.textContent = WI.UIString("Worker Threads");
+        this._legendOtherThreadsElement.textContent = WI.UIString("Other Threads");
+        this._legendTotalThreadsElement.textContent = "";
+    }
+
+    updateLegend(record)
+    {
+        if (!record) {
+            this.clearLegend();
+            return;
+        }
+
+        let {usage, mainThreadUsage, workerThreadUsage, webkitThreadUsage, unknownThreadUsage} = record;
+
+        this._legendMainThreadElement.textContent = WI.UIString("Main: %s").format(Number.percentageString(mainThreadUsage / 100));
+        this._legendWorkerThreadsElement.textContent = WI.UIString("Worker: %s").format(Number.percentageString(workerThreadUsage / 100));
+        this._legendOtherThreadsElement.textContent = WI.UIString("Other: %s").format(Number.percentageString((webkitThreadUsage + unknownThreadUsage) / 100));
+        this._legendTotalThreadsElement.textContent = WI.UIString("Total: %s").format(Number.percentageString(usage / 100));
+    }
+
     // Private
 
-    _updateDetails(minSize, maxSize, averageSize)
+    _updateDetails(maxSize, averageSize)
     {
-        if (this._cachedMinSize === minSize && this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
+        if (this._cachedMaxSize === maxSize && this._cachedAverageSize === averageSize)
             return;
 
         this._cachedAverageSize = averageSize;
-        this._cachedMinSize = minSize;
         this._cachedMaxSize = maxSize;
 
         this._detailsAverageElement.textContent = WI.UIString("Average: %s").format(Number.isFinite(maxSize) ? Number.percentageString(averageSize / 100) : emDash);
         this._detailsMaxElement.textContent = WI.UIString("Highest: %s").format(Number.isFinite(maxSize) ? Number.percentageString(maxSize / 100) : emDash);
-        this._detailsMinElement.textContent = WI.UIString("Lowest: %s").format(Number.isFinite(minSize) ? Number.percentageString(minSize / 100) : emDash);
     }
 };
+
+WI.CPUUsageCombinedView._cachedMainThreadIndicatorFillColor = null;
+WI.CPUUsageCombinedView._cachedMainThreadIndicatorStrokeColor = null;

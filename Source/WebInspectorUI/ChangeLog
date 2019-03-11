@@ -1,3 +1,95 @@
+2019-03-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline - Add legend and graph hover effects
+        https://bugs.webkit.org/show_bug.cgi?id=195390
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for the legends.
+
+        * UserInterface/Main.html:
+        Combined files.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark)):
+        Tweaked colors, including individual stroke and fill colors for each CPU section.
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.css:
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.total-usage):
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.main-thread-usage):
+        (.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.worker-thread-usage):
+        Updated colors.
+
+        * UserInterface/Views/CPUUsageCombinedView.css: Renamed from Source/WebInspectorUI/UserInterface/Views/CPUUsageStackedView.css.
+        (.cpu-usage-combined-view > .details > .legend-container):
+        (.cpu-usage-combined-view > .details > .legend-container > .row):
+        (.cpu-usage-combined-view > .details > .legend-container > .row + .row):
+        (.cpu-usage-combined-view > .details > .legend-container > .row > .swatch):
+        * UserInterface/Views/CPUUsageCombinedView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/CPUUsageStackedView.js.
+        (WI.CPUUsageCombinedView.appendLegendRow):
+        (WI.CPUUsageCombinedView):
+        (WI.CPUUsageCombinedView.prototype.get graphElement):
+        (WI.CPUUsageCombinedView.prototype.get chart):
+        (WI.CPUUsageCombinedView.prototype.get rangeChart):
+        (WI.CPUUsageCombinedView.prototype.clear):
+        (WI.CPUUsageCombinedView.prototype.updateChart):
+        (WI.CPUUsageCombinedView.prototype.updateMainThreadIndicator):
+        (WI.CPUUsageCombinedView.prototype.clearLegend):
+        (WI.CPUUsageCombinedView.prototype.updateLegend):
+        (WI.CPUUsageCombinedView.prototype._updateDetails):
+        * UserInterface/Views/CPUUsageIndicatorView.css: Removed.
+        * UserInterface/Views/CPUUsageIndicatorView.js: Removed.
+        Combined the Indicator and StackedAreaChart into a single view
+        that share a left details section.
+
+        * UserInterface/Views/CPUUsageView.js:
+        (WI.CPUUsageView):
+        (WI.CPUUsageView.prototype.get graphElement):
+        (WI.CPUUsageView.prototype.clear):
+        (WI.CPUUsageView.prototype.updateChart):
+        (WI.CPUUsageView.prototype.clearLegend):
+        (WI.CPUUsageView.prototype.updateLegend):
+        (WI.CPUUsageView.prototype._updateDetails):
+        Include a legend in the left details section.
+
+        * UserInterface/Views/AreaChart.js:
+        (WI.AreaChart):
+        (WI.AreaChart.prototype.addPointMarker):
+        (WI.AreaChart.prototype.clearPointMarkers):
+        (WI.AreaChart.prototype.clear):
+        (WI.AreaChart.prototype.layout):
+        * UserInterface/Views/StackedAreaChart.js:
+        (WI.StackedAreaChart):
+        (WI.StackedAreaChart.prototype.addPointMarker):
+        (WI.StackedAreaChart.prototype.clearPointMarkers):
+        (WI.StackedAreaChart.prototype.clear):
+        (WI.StackedAreaChart.prototype.layout):
+        Add point markers for the area charts.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView):
+        (WI.CPUTimelineView.prototype.get cpuUsageViewHeight):
+        (WI.CPUTimelineView.prototype.clear):
+        (WI.CPUTimelineView.prototype.initialLayout.appendLegendRow):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype.layout):
+        (WI.CPUTimelineView.prototype._graphPositionForMouseEvent):
+        (WI.CPUTimelineView.prototype._handleMouseClick):
+        (WI.CPUTimelineView.prototype._handleGraphMouseMove):
+        (WI.CPUTimelineView.prototype._showGraphOverlayNearTo):
+        (WI.CPUTimelineView.prototype._updateGraphOverlay):
+        (WI.CPUTimelineView.prototype._showGraphOverlay.xScale):
+        (WI.CPUTimelineView.prototype._showGraphOverlay.yScale):
+        (WI.CPUTimelineView.prototype._showGraphOverlay.addOverlayPoint):
+        (WI.CPUTimelineView.prototype._showGraphOverlay):
+        (WI.CPUTimelineView.prototype._clearOverlayMarkers.clearGraphOverlayElement):
+        (WI.CPUTimelineView.prototype._clearOverlayMarkers):
+        (WI.CPUTimelineView.prototype._hideGraphOverlay):
+        Include graph overlay markers.
+
 2019-03-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: eliminate manual syncing of numeric constants used by JavaScript and CSS

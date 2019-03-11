@@ -61,17 +61,19 @@ body[dir=rtl] .timeline-overview-graph.cpu > .stacked-column-chart {
     transform: scaleX(-1);
 }
 
-.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect {
-    stroke: var(--cpu-stroke-color);
-    fill: var(--cpu-fill-color);
+.timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.total-usage {
+    fill: var(--cpu-other-thread-fill-color);
+    stroke: var(--cpu-other-thread-stroke-color);
 }
 
 .timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.main-thread-usage {
     fill: var(--cpu-main-thread-fill-color);
+    stroke: var(--cpu-main-thread-stroke-color);
 }
 
 .timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.worker-thread-usage {
     fill: var(--cpu-worker-thread-fill-color);
+    stroke: var(--cpu-worker-thread-stroke-color);
 }
 
 .timeline-overview-graph.cpu > .stacked-column-chart > svg > rect.selected {

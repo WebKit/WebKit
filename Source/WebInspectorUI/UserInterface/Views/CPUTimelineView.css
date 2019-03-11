@@ -126,47 +126,42 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
     color: var(--text-color-secondary);
 }
 
-.timeline-view.cpu .legend {
+.timeline-view.cpu > .content > .overview .legend {
     -webkit-padding-start: 20px;
     text-align: start;
 }
 
-.timeline-view.cpu .legend .row {
+.timeline-view.cpu > .content > .overview .legend .row {
     display: flex;
 }
 
-.timeline-view.cpu .legend .row + .row {
+.timeline-view.cpu > .content > .overview .legend .row + .row {
     margin-top: 4px;
 }
 
-.timeline-view.cpu .legend .swatch {
+.timeline-view.cpu > .content > .overview .legend .swatch {
     width: 1em;
     height: 1em;
     margin-top: 1px;
     -webkit-margin-end: 8px;
 }
 
-.timeline-view.cpu .legend > .row > .swatch.sample-type-idle {
-    border: 1px solid var(--cpu-idle-stroke-color);
-    background-color: var(--cpu-idle-fill-color);
-}
-
-.timeline-view.cpu .legend > .row > .swatch.sample-type-script {
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-script {
     border: 1px solid var(--cpu-script-stroke-color);
     background-color: var(--cpu-script-fill-color);
 }
 
-.timeline-view.cpu .legend > .row > .swatch.sample-type-style {
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-style {
     border: 1px solid var(--cpu-style-stroke-color);
     background-color: var(--cpu-style-fill-color);
 }
 
-.timeline-view.cpu .legend > .row > .swatch.sample-type-layout {
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-layout {
     border: 1px solid var(--cpu-layout-stroke-color);
     background-color: var(--cpu-layout-fill-color);
 }
 
-.timeline-view.cpu .legend > .row > .swatch.sample-type-paint {
+.timeline-view.cpu > .content > .overview .legend > .row > .swatch.sample-type-paint {
     border: 1px solid var(--cpu-paint-stroke-color);
     background-color: var(--cpu-paint-fill-color);
 }
@@ -197,22 +192,20 @@ body[dir=rtl] .timeline-view.cpu > .content > .overview > .divider {
 }
 
 .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) svg > path {
-    stroke: var(--cpu-stroke-color);
-    fill: var(--cpu-fill-color);
+    fill: var(--cpu-other-thread-fill-color);
+    stroke: var(--cpu-other-thread-stroke-color);
 }
 
 .timeline-view.cpu .main-thread svg > path,
 .timeline-view.cpu svg > path.main-thread-usage {
     fill: var(--cpu-main-thread-fill-color);
+    stroke: var(--cpu-main-thread-stroke-color);
 }
 
 .timeline-view.cpu .worker-thread svg > path,
 .timeline-view.cpu svg > path.worker-thread-usage {
     fill: var(--cpu-worker-thread-fill-color);
-}
-
-.timeline-view.cpu .cpu-usage-view.empty {
-    display: none;
+    stroke: var(--cpu-worker-thread-stroke-color);
 }
 
 .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers {
@@ -247,28 +240,19 @@ body[dir=rtl] .timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .mar
     background-color: var(--background-color-content);
 }
 
-.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart rect {
-    stroke-opacity: 0.25;
+.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) circle {
+    r: 3;
+    fill: var(--cpu-overlay-color);
 }
 
-.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-script {
-    stroke: var(--cpu-script-stroke-color);
-    fill: var(--cpu-script-fill-color);
+.timeline-view.cpu .timeline-ruler > .markers > .marker.timestamp {
+    color: var(--cpu-overlay-color);
+    opacity: 0.8;
+    pointer-events: none;
 }
 
-.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-style {
-    stroke: var(--cpu-style-stroke-color);
-    fill: var(--cpu-style-fill-color);
-}
-
-.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-layout {
-    stroke: var(--cpu-layout-stroke-color);
-    fill: var(--cpu-layout-fill-color);
-}
-
-.timeline-view.cpu .cpu-usage-indicator-view > .graph > .range-chart .sample-type-paint {
-    stroke: var(--cpu-paint-stroke-color);
-    fill: var(--cpu-paint-fill-color);
+.timeline-view.cpu .timeline-ruler > .markers > .marker.timestamp::after {
+    display: none;
 }
 
 .timeline-view.cpu .gauge-chart .low {
