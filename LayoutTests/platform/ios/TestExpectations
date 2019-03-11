@@ -3233,3 +3233,5 @@ fast/events/ios/activating-checkbox-should-not-scroll-page.html [ Skip ]
 fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Skip ]
 fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Skip ]
 fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
+
+webkit.org/b/195433 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
