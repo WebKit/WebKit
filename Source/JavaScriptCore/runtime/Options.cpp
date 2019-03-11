@@ -906,7 +906,7 @@ void Option::dump(StringBuilder& builder) const
         builder.appendNumber(m_entry.sizeVal);
         break;
     case Options::Type::doubleType:
-        builder.appendNumber(m_entry.doubleVal);
+        builder.appendFixedPrecisionNumber(m_entry.doubleVal);
         break;
     case Options::Type::int32Type:
         builder.appendNumber(m_entry.int32Val);

@@ -326,10 +326,10 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     if (!strcmp(propertyName, "margin-left")) {
         if (style->marginLeft().isAuto())
             return "auto"_s;
-        return String::number(style->marginLeft().value());
+        return String::numberToStringFixedPrecision(style->marginLeft().value());
     }
     if (!strcmp(propertyName, "line-height"))
-        return String::number(style->lineHeight().value());
+        return String::numberToStringFixedPrecision(style->lineHeight().value());
     if (!strcmp(propertyName, "font-size"))
         return String::number(style->fontDescription().computedPixelSize());
     if (!strcmp(propertyName, "font-family"))

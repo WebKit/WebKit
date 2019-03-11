@@ -505,7 +505,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!inRange)
         return throwVMError(exec, scope, createRangeError(exec, "toPrecision() argument must be between 1 and 21"_s));
 
-    return JSValue::encode(jsString(exec, String::number(x, significantFigures, KeepTrailingZeros)));
+    return JSValue::encode(jsString(exec, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
 }
 
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)

@@ -1,3 +1,30 @@
+2019-03-11  Darin Adler  <darin@apple.com>
+
+        Specify fixed precision explicitly to prepare to change String::number and StringBuilder::appendNumber floating point behavior
+        https://bugs.webkit.org/show_bug.cgi?id=195533
+
+        Reviewed by Brent Fulgham.
+
+        Soon, we will change String::number and StringBuilder::appendNumber for floating
+        point to use "shortest form" serialization instead of the current default, which is
+        "6-digit fixed precision stripping trailing zeros". To prepare to do this safely
+        without accidentally changing any behavior, changing callers to call the explicit
+        versions. Later, we may want to return and change many of them to use shortest form
+        instead, but that may require rebaselining tests, and in some extreme cases, getting
+        rid of flawed logic that converts between different single and double precision
+        floating point; such problems may be hidden by fixed precision serialization.
+
+        Since "shortest form" is already the behavior for AtomicString::number and
+        for makeString, no changes required for clients of either of those.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString): Use numberToStringFixedPrecision.
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::toString const): Use appendFixedPrecisionNumber.
+        * wtf/text/ValueToString.h:
+        (WTF::ValueToString<float>::string): Use numberToStringFixedPrecision.
+        (WTF::ValueToString<double>::string): Ditto.
+
 2019-03-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r242702.

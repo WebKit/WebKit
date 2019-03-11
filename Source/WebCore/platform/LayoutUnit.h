@@ -833,12 +833,14 @@ inline LayoutUnit operator"" _lu(unsigned long long value)
 } // namespace WebCore
 
 #ifndef NDEBUG
+
 namespace WTF {
+
 // This structure is used by PODIntervalTree for debugging.
-template <>
-struct ValueToString<WebCore::LayoutUnit> {
-    static String string(const WebCore::LayoutUnit value) { return String::number(value.toFloat()); }
+template<> struct ValueToString<WebCore::LayoutUnit> {
+    static String string(WebCore::LayoutUnit value) { return String::numberToStringFixedPrecision(value.toFloat()); }
 };
 
 } // namespace WTF
+
 #endif

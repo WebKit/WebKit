@@ -167,35 +167,35 @@ String SVGTransformValue::valueAsString() const
     case SVG_TRANSFORM_MATRIX: {
         StringBuilder builder;
         builder.append(prefix);
-        builder.appendNumber(m_matrix.a());
+        builder.appendFixedPrecisionNumber(m_matrix.a());
         builder.append(' ');
-        builder.appendNumber(m_matrix.b());
+        builder.appendFixedPrecisionNumber(m_matrix.b());
         builder.append(' ');
-        builder.appendNumber(m_matrix.c());
+        builder.appendFixedPrecisionNumber(m_matrix.c());
         builder.append(' ');
-        builder.appendNumber(m_matrix.d());
+        builder.appendFixedPrecisionNumber(m_matrix.d());
         builder.append(' ');
-        builder.appendNumber(m_matrix.e());
+        builder.appendFixedPrecisionNumber(m_matrix.e());
         builder.append(' ');
-        builder.appendNumber(m_matrix.f());
+        builder.appendFixedPrecisionNumber(m_matrix.f());
         builder.append(')');
         return builder.toString();
     }
     case SVG_TRANSFORM_TRANSLATE: {
         StringBuilder builder;
         builder.append(prefix);
-        builder.appendNumber(m_matrix.e());
+        builder.appendFixedPrecisionNumber(m_matrix.e());
         builder.append(' ');
-        builder.appendNumber(m_matrix.f());
+        builder.appendFixedPrecisionNumber(m_matrix.f());
         builder.append(')');
         return builder.toString();
     }
     case SVG_TRANSFORM_SCALE: {
         StringBuilder builder;
         builder.append(prefix);
-        builder.appendNumber(m_matrix.xScale());
+        builder.appendFixedPrecisionNumber(m_matrix.xScale());
         builder.append(' ');
-        builder.appendNumber(m_matrix.yScale());
+        builder.appendFixedPrecisionNumber(m_matrix.yScale());
         builder.append(')');
         return builder.toString();
     }
@@ -207,12 +207,12 @@ String SVGTransformValue::valueAsString() const
         float cy = narrowPrecisionToFloat(cosAngle != 1 ? (m_matrix.e() * sinAngle / (1 - cosAngle) + m_matrix.f()) / 2 : 0);
         StringBuilder builder;
         builder.append(prefix);
-        builder.appendNumber(m_angle);
+        builder.appendFixedPrecisionNumber(m_angle);
         if (cx || cy) {
             builder.append(' ');
-            builder.appendNumber(cx);
+            builder.appendFixedPrecisionNumber(cx);
             builder.append(' ');
-            builder.appendNumber(cy);
+            builder.appendFixedPrecisionNumber(cy);
         }
         builder.append(')');
         return builder.toString();
@@ -221,7 +221,7 @@ String SVGTransformValue::valueAsString() const
     case SVG_TRANSFORM_SKEWY: {
         StringBuilder builder;
         builder.append(prefix);
-        builder.appendNumber(m_angle);
+        builder.appendFixedPrecisionNumber(m_angle);
         builder.append(')');
         return builder.toString();
     }

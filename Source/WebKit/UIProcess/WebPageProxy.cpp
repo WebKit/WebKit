@@ -6442,7 +6442,7 @@ void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const St
     if (!effectiveClient)
         return;
 
-    effectiveClient->logDiagnosticMessageWithValue(this, message, description, String::number(value, significantFigures));
+    effectiveClient->logDiagnosticMessageWithValue(this, message, description, String::numberToStringFixedPrecision(value, significantFigures));
 }
 
 void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample shouldSample)

@@ -693,7 +693,7 @@ String CSSLinearGradientValue::customCSSText() const
                 result.append(')');
             } else {
                 result.appendLiteral("color-stop(");
-                result.appendNumber(position);
+                result.appendFixedPrecisionNumber(position);
                 result.appendLiteral(", ");
                 result.append(stop.m_color->cssText());
                 result.append(')');
@@ -974,7 +974,7 @@ String CSSRadialGradientValue::customCSSText() const
                 result.append(')');
             } else {
                 result.appendLiteral("color-stop(");
-                result.appendNumber(position);
+                result.appendFixedPrecisionNumber(position);
                 result.appendLiteral(", ");
                 result.append(stop.m_color->cssText());
                 result.append(')');

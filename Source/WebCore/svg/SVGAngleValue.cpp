@@ -73,7 +73,7 @@ String SVGAngleValue::valueAsString() const
         return makeString(FormattedNumber::fixedPrecision(m_valueInSpecifiedUnits), "grad");
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
-        return String::number(m_valueInSpecifiedUnits);
+        return String::numberToStringFixedPrecision(m_valueInSpecifiedUnits);
     }
 
     ASSERT_NOT_REACHED();

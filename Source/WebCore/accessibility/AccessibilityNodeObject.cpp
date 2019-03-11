@@ -1098,7 +1098,7 @@ void AccessibilityNodeObject::changeValueByStep(bool increase)
 
     value += increase ? step : -step;
 
-    setValue(String::number(value));
+    setValue(String::numberToStringFixedPrecision(value));
 
     axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
 }
@@ -1110,11 +1110,11 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
     float value = valueForRange();
 
     // Make sure the specified percent will cause a change of one integer step or larger.
-    if (fabs(step) < 1)
-        step = fabs(percentChange) * (1 / percentChange);
+    if (std::abs(step) < 1)
+        step = std::abs(percentChange) * (1 / percentChange);
 
     value += step;
-    setValue(String::number(value));
+    setValue(String::numberToStringFixedPrecision(value));
 
     axObjectCache()->postNotification(node(), AXObjectCache::AXValueChanged);
 }

@@ -782,7 +782,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context)
 
                 GraphicsContextStateSaver verticalLabelStateSaver(context);
                 context.translate(zoom(x) + 0.5f, scrollY);
-                context.drawText(font, TextRun(String::number(x)), { 2, rulerLabelSize });
+                context.drawText(font, TextRun(String::numberToStringFixedPrecision(x)), { 2, rulerLabelSize });
             }
 
             for (float y = multipleBelow(minY, rulerStepIncrement * 2); y < maxY; y += rulerStepIncrement * 2) {
@@ -792,7 +792,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context)
                 GraphicsContextStateSaver horizontalLabelStateSaver(context);
                 context.translate(scrollX, zoom(y) + 0.5f);
                 context.rotate(-piOverTwoFloat);
-                context.drawText(font, TextRun(String::number(y)), { 2, rulerLabelSize });
+                context.drawText(font, TextRun(String::numberToStringFixedPrecision(y)), { 2, rulerLabelSize });
             }
         }
     }

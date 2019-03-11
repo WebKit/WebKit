@@ -47,7 +47,7 @@ String CSSFontVariationValue::customCSSText() const
     for (char c : m_tag)
         builder.append(c);
     builder.appendLiteral("\" ");
-    builder.appendNumber(m_value);
+    builder.appendFixedPrecisionNumber(m_value);
     return builder.toString();
 }
 

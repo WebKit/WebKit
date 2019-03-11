@@ -219,13 +219,13 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
     json.appendNumber(info.bodySize);
     json.appendLiteral(",\n");
     json.appendLiteral("\"worth\": ");
-    json.appendNumber(info.worth);
+    json.appendFixedPrecisionNumber(info.worth);
     json.appendLiteral(",\n");
     json.appendLiteral("\"partition\": ");
     json.appendQuotedJSONString(m_key.partition());
     json.appendLiteral(",\n");
     json.appendLiteral("\"timestamp\": ");
-    json.appendNumber(m_timeStamp.secondsSinceEpoch().milliseconds());
+    json.appendFixedPrecisionNumber(m_timeStamp.secondsSinceEpoch().milliseconds());
     json.appendLiteral(",\n");
     json.appendLiteral("\"URL\": ");
     json.appendQuotedJSONString(m_response.url().string());

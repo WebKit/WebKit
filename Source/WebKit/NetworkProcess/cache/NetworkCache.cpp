@@ -549,7 +549,7 @@ void Cache::dumpContentsToFile()
             epilogue.appendNumber(totals.bodySize);
             epilogue.appendLiteral(",\n");
             epilogue.appendLiteral("\"averageWorth\": ");
-            epilogue.appendNumber(totals.count ? totals.worth / totals.count : 0);
+            epilogue.appendFixedPrecisionNumber(totals.count ? totals.worth / totals.count : 0);
             epilogue.appendLiteral("\n");
             epilogue.appendLiteral("}\n}\n");
             auto writeData = epilogue.toString().utf8();

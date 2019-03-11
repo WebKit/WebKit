@@ -35,22 +35,18 @@
 
 namespace WTF {
 
-template<class T>
-struct ValueToString;
+template<typename> struct ValueToString;
 
-template <>
-struct ValueToString<int> {
-    static String string(const int value) { return String::number(value); }
+template<> struct ValueToString<int> {
+    static String string(int value) { return String::number(value); }
 };
 
-template <>
-struct ValueToString<float> {
-    static String string(const float value) { return String::number(value); }
+template<> struct ValueToString<float> {
+    static String string(float value) { return String::numberToStringFixedPrecision(value); }
 };
 
-template <>
-struct ValueToString<double> {
-    static String string(const double value) { return String::number(value); }
+template<> struct ValueToString<double> {
+    static String string(double value) { return String::numberToStringFixedPrecision(value); }
 };
 
 } // namespace WTF

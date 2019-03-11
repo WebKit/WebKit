@@ -439,7 +439,7 @@ static String gcTimerString(MonotonicTime timerFireDate, MonotonicTime now)
 {
     if (std::isnan(timerFireDate))
         return "[not scheduled]"_s;
-    return String::number((timerFireDate - now).seconds());
+    return String::numberToStringFixedPrecision((timerFireDate - now).seconds());
 }
 
 void ResourceUsageOverlay::platformDraw(CGContextRef context)

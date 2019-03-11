@@ -52,7 +52,7 @@ String SVGNumberListValues::valueAsString() const
         if (i > 0)
             builder.append(' ');
 
-        builder.appendNumber(at(i));
+        builder.appendFixedPrecisionNumber(at(i));
     }
 
     return builder.toString();

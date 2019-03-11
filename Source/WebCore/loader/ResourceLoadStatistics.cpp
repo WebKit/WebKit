@@ -412,14 +412,14 @@ String ResourceLoadStatistics::toString() const
     builder.append(registrableDomain.string());
     builder.append('\n');
     builder.appendLiteral("    lastSeen: ");
-    builder.appendNumber(lastSeen.secondsSinceEpoch().value());
+    builder.appendFixedPrecisionNumber(lastSeen.secondsSinceEpoch().value());
     builder.append('\n');
     
     // User interaction
     appendBoolean(builder, "hadUserInteraction", hadUserInteraction);
     builder.append('\n');
     builder.appendLiteral("    mostRecentUserInteraction: ");
-    builder.appendNumber(mostRecentUserInteractionTime.secondsSinceEpoch().value());
+    builder.appendFixedPrecisionNumber(mostRecentUserInteractionTime.secondsSinceEpoch().value());
     builder.append('\n');
     appendBoolean(builder, "grandfathered", grandfathered);
     builder.append('\n');

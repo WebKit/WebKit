@@ -98,7 +98,7 @@ void AccessibilityScrollbar::setValue(float value)
         return;
     
     float newValue = value * m_scrollbar->maximum();
-    if (dispatchAccessibleSetValueEvent(String::number(newValue)))
+    if (dispatchAccessibleSetValueEvent(String::numberToStringFixedPrecision(newValue)))
         return;
     m_scrollbar->scrollableArea().scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), newValue);
 }

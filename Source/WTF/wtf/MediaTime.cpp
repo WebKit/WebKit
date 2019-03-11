@@ -593,7 +593,7 @@ String MediaTime::toString() const
         builder.appendNumber(m_timeScale);
         builder.appendLiteral(" = ");
     }
-    builder.appendNumber(toDouble());
+    builder.appendFixedPrecisionNumber(toDouble());
     builder.append('}');
     return builder.toString();
 }

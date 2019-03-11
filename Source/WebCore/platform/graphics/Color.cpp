@@ -377,7 +377,7 @@ String Color::cssText() const
     builder.appendNumber(static_cast<unsigned char>(blue()));
     if (colorHasAlpha) {
         builder.appendLiteral(", ");
-        builder.appendNumber(alpha() / 255.0f);
+        builder.appendFixedPrecisionNumber(alpha() / 255.0f);
     }
         
     builder.append(')');
