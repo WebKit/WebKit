@@ -1,3 +1,18 @@
+2019-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: ( r240978-r240985 ) [ iOS Release ] Layout Test imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=194523
+
+        Reviewed by Alexey Proskuryakov.
+
+        Attempt another workaround to prevent crashes.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:needNewBodyStream:]):
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.

@@ -261,9 +261,6 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         ASSERT(cocoaSession.m_dataTaskMapWithoutState.get([m_task taskIdentifier]) == this);
         cocoaSession.m_dataTaskMapWithoutState.remove([m_task taskIdentifier]);
     }
-    
-    if (m_shouldExtendTaskLifetime)
-        RunLoop::main().dispatch([task = WTFMove(m_task)] { });
 }
 
 void NetworkDataTaskCocoa::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request, bool shouldBlockCookies)

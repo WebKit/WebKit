@@ -83,8 +83,6 @@ public:
 
     String description() const override;
 
-    void setShouldExtendTaskLifetime(bool shouldExtendTaskLifetime) { m_shouldExtendTaskLifetime = shouldExtendTaskLifetime; }
-
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly, bool dataTaskIsForMainFrameNavigation, Optional<NetworkActivityTracker>);
 
@@ -105,9 +103,6 @@ private:
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     uint64_t m_frameID;
     uint64_t m_pageID;
-
-    // FIXME: This is only needed until rdar://problem/28233746 is fixed.
-    bool m_shouldExtendTaskLifetime { false };
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };

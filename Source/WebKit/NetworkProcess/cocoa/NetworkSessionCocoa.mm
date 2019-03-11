@@ -383,8 +383,10 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
         return;
     }
 
-    networkDataTask->setShouldExtendTaskLifetime(true);
-    completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
+    // FIXME: Call the completionHandler immediately once rdar://problem/28233746 is fixed.
+    RunLoop::main().dispatch([body = makeRef(*body), completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler(WebCore::createHTTPBodyNSInputStream(body.get()).get());
+    });
 }
 
 #if HAVE(CFNETWORK_WITH_IGNORE_HSTS) && ENABLE(RESOURCE_LOAD_STATISTICS)
