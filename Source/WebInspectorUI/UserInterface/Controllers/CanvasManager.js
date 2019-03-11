@@ -54,7 +54,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     static supportsRecordingAutoCapture()
     {
-        return InspectorBackend.domains.CanvasAgent && InspectorBackend.domains.CanvasAgent.setRecordingAutoCaptureFrameCount;
+        return InspectorBackend.domains.Canvas && InspectorBackend.domains.Canvas.setRecordingAutoCaptureFrameCount;
     }
 
     // Public

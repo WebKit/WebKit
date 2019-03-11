@@ -114,6 +114,8 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         }
     }
 
+    static get memoryCategoryViewHeight() { return 75; }
+
     // Public
 
     shown()
@@ -165,6 +167,13 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
     get showsFilterBar() { return false; }
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        this.element.style.setProperty("--memory-category-view-height", MemoryTimelineView.memoryCategoryViewHeight + "px");
+    }
+
     layout()
     {
         if (this.layoutReason === WI.View.LayoutReason.Resize)
@@ -177,8 +186,6 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
 
         if (!this._didInitializeCategories)
             return;
-
-        const memoryCategoryViewHeight = 75; // Keep this in sync with .memory-category-view
 
         let graphStartTime = this.startTime;
         let graphEndTime = this.endTime;
@@ -265,7 +272,7 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
                 return (time - graphStartTime) / secondsPerPixel;
             }
 
-            let size = new WI.Size(xScale(graphEndTime), memoryCategoryViewHeight);
+            let size = new WI.Size(xScale(graphEndTime), MemoryTimelineView.memoryCategoryViewHeight);
 
             function yScale(value) {
                 return size.height - (((value - graphMin) / graphMax) * size.height);

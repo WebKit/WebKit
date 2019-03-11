@@ -30,6 +30,8 @@
     list-style: none;
     outline: none;
 
+    --tree-outline-item-padding: 5px;
+
     --tree-outline-icon-margin-start: 16px;
     --tree-outline-icon-margin-end: 3px;
 
@@ -47,7 +49,7 @@
 .tree-outline .item {
     height: 20px;
 
-    padding: 0 5px;
+    padding: 0 var(--tree-outline-item-padding);
 
     border-top: 1px solid transparent;
 

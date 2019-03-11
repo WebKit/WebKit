@@ -198,6 +198,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
     }
 
+    static get nodeWaterfallDOMEventSize() { return 8; }
+
     // Public
 
     get selectionPathComponents()
@@ -677,14 +679,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         let domNode = entry.domNode;
         if (domNode) {
-            const domEventElementSize = 8; // Keep this in sync with `--node-waterfall-dom-event-size`.
-
             let groupedDOMEvents = [];
             for (let domEvent of domNode.domEvents) {
                 if (domEvent.originator)
                     continue;
 
-                if (!groupedDOMEvents.length || (domEvent.timestamp - groupedDOMEvents.lastValue.endTimestamp) >= (domEventElementSize * secondsPerPixel)) {
+                if (!groupedDOMEvents.length || (domEvent.timestamp - groupedDOMEvents.lastValue.endTimestamp) >= (NetworkTableContentView.nodeWaterfallDOMEventSize * secondsPerPixel)) {
                     groupedDOMEvents.push({
                         startTimestamp: domEvent.timestamp,
                         domEvents: [],
@@ -762,7 +762,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 createDOMEventLine(groupedDOMEvents.lastValue.domEvents, groupedDOMEvents.lastValue.endTimestamp, this._waterfallEndTime);
 
             for (let {startTimestamp, endTimestamp, domEvents} of groupedDOMEvents) {
-                let paddingForCentering = domEventElementSize * secondsPerPixel / 2;
+                let paddingForCentering = NetworkTableContentView.nodeWaterfallDOMEventSize * secondsPerPixel / 2;
 
                 let eventElement = container.appendChild(document.createElement("div"));
                 eventElement.classList.add("dom-event");
@@ -972,6 +972,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     initialLayout()
     {
+        super.initialLayout();
+
+        this.element.style.setProperty("--node-waterfall-dom-event-size", NetworkTableContentView.nodeWaterfallDOMEventSize + "px");
+
         this._waterfallTimelineRuler = new WI.TimelineRuler;
         this._waterfallTimelineRuler.allowsClippedLabels = true;
 

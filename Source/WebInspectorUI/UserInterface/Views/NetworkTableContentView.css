@@ -23,10 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.network .network-table {
-    --node-waterfall-dom-event-size: 8px; /* Keep this in sync with `domEventElementSize`. */
-}
-
 .content-view.network .navigation-bar .filter-bar {
     background: none;
 }

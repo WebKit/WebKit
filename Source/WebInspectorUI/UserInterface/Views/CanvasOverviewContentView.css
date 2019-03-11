@@ -183,8 +183,6 @@
     min-width: 1.5em;
     margin: 0 var(--recording-auto-capture-input-margin); 
     text-align: center;
-
-    --recording-auto-capture-input-margin: 4px; /* Keep this in sync with `recordingAutoCaptureInputMargin`. */
 }
 
 .navigation-bar > .item.canvas-recording-auto-capture > label > input::-webkit-inner-spin-button {
