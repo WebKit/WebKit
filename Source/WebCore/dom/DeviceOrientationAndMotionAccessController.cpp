@@ -52,11 +52,15 @@ void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void
     if (!page)
         return callback(false);
 
+    auto* frame = m_document.frame();
+    if (!frame)
+        return callback(false);
+
     m_pendingRequests.append(WTFMove(callback));
     if (m_pendingRequests.size() > 1)
         return;
 
-    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(m_document.securityOrigin(), [this, weakThis = makeWeakPtr(*this)](bool granted) mutable {
+    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(*frame, [this, weakThis = makeWeakPtr(*this)](bool granted) mutable {
         if (weakThis)
             setAccessState(granted);
     });

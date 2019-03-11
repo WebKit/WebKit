@@ -178,7 +178,7 @@ struct UIEdgeInsets;
 
  If you do not implement this method, access to the device's orientation and motion will be granted.
  */
-- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #else // TARGET_OS_IPHONE
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));

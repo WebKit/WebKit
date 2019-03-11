@@ -1321,9 +1321,11 @@ void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFr
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(const SecurityOrigin& origin, CompletionHandler<void(bool)>&& callback)
+void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, CompletionHandler<void(bool)>&& callback)
 {
-    m_page.shouldAllowDeviceOrientationAndMotionAccess(origin, WTFMove(callback));
+    auto* webFrame = WebFrame::fromCoreFrame(frame);
+    ASSERT(webFrame);
+    m_page.shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), WTFMove(callback));
 }
 #endif
 

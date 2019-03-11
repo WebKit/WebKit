@@ -1,3 +1,33 @@
+2019-03-11  Chris Dumez  <cdumez@apple.com>
+
+        Update device orientation & motion permission native SPI as per latest proposal
+        https://bugs.webkit.org/show_bug.cgi?id=195567
+
+        Reviewed by Youenn Fablet.
+
+        The native SPI is now:
+        +- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)frameInfo decisionHandler:(void (^)(BOOL))decisionHandler;
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestDeviceOrientationAndMotionAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::shouldAllowDeviceOrientationAndMotionAccess):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-03-11  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Use PKPaymentAuthorizationController to present the Apple Pay UI remotely from the Networking service on iOS

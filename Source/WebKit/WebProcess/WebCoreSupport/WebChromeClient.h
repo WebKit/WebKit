@@ -367,7 +367,7 @@ private:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void shouldAllowDeviceOrientationAndMotionAccess(const WebCore::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
+    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::Frame&, CompletionHandler<void(bool)>&&) final;
 #endif
 
     String m_cachedToolTip;

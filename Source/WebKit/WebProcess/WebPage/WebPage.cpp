@@ -6341,9 +6341,9 @@ void WebPage::requestStorageAccess(String&& subFrameHost, String&& topFrameHost,
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebPage::shouldAllowDeviceOrientationAndMotionAccess(const WebCore::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::shouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPageProxy::RequestDeviceOrientationAndMotionAccess(origin.data()), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPageProxy::RequestDeviceOrientationAndMotionAccess(frameID, WTFMove(origin)), WTFMove(completionHandler));
 }
 #endif
     
