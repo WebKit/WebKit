@@ -1789,3 +1789,5 @@ webkit.org/b/189680 platform/mac/media/audio-session-category-video-paused.html 
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html [ Pass Failure ]
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html [ Pass Failure ]
+
+webkit-org/b/193399 media/media-fullscreen-return-to-inline.html [ Pass Timeout ]
