@@ -1,3 +1,14 @@
+2019-03-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Enable web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=195169
+
+        Reviewed by Daniel Bates.
+
+        * PlatformWPE.cmake:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+
 2019-03-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r242697.

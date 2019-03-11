@@ -1,3 +1,13 @@
+2019-03-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Enable web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=195169
+
+        Reviewed by Daniel Bates.
+
+        * wpe/install-dependencies:
+        * wpe/jhbuild.modules:
+
 2019-03-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Use port 17000 for worker communication
