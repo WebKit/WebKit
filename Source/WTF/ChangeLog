@@ -1,3 +1,16 @@
+2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make StaticStringImpl & StaticSymbolImpl actually static
+        https://bugs.webkit.org/show_bug.cgi?id=194212
+
+        Reviewed by Mark Lam.
+
+        Avoid mutation onto refcounts if `isStatic()` returns true so that the content of StaticStringImpl never gets modified.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::ref):
+        (WTF::StringImpl::deref):
+
 2019-03-11  Sihui Liu  <sihui_liu@apple.com>
 
         Crash under WebCore::IDBDatabase::connectionToServerLost
