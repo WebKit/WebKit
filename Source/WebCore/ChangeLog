@@ -1,3 +1,34 @@
+2019-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Make IDBDatabaseIdentifier take a ClientOrigin as member
+        https://bugs.webkit.org/show_bug.cgi?id=195544
+
+        Reviewed by Geoffrey Garen.
+
+        Instead of taking a top and a frame origin, make
+        make IDBDatabaseIdentifier take a ClientOrigin.
+
+        This allows reusing some ClientOrigin code
+        and will ease implementation of storage quota checking in
+        NetworkProcess, as quota managers are keyed by client origins.
+
+        No change of behavior.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy const):
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot const):
+        (WebCore::IDBDatabaseIdentifier::debugString const):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::hash const):
+        (WebCore::IDBDatabaseIdentifier::operator== const):
+        (WebCore::IDBDatabaseIdentifier::origin const):
+        (WebCore::IDBDatabaseIdentifier::isRelatedToOrigin const):
+        (WebCore::IDBDatabaseIdentifier::encode const):
+        (WebCore::IDBDatabaseIdentifier::decode):
+        * page/ClientOrigin.h:
+        (WebCore::ClientOrigin::isRelated const):
+
 2019-03-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Manually rolling out r242701 and r242703 since the changes

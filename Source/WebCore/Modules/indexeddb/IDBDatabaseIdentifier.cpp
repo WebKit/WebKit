@@ -38,9 +38,7 @@ namespace WebCore {
 IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, const PAL::SessionID& sessionID, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin)
     : m_databaseName(databaseName)
     , m_sessionID(sessionID)
-    , m_openingOrigin(WTFMove(openingOrigin))
-    , m_mainFrameOrigin(WTFMove(mainFrameOrigin))
-
+    , m_origin { WTFMove(openingOrigin), WTFMove(mainFrameOrigin) }
 {
     // The empty string is a valid database name, but a null string is not.
     ASSERT(!databaseName.isNull());
@@ -52,15 +50,14 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
 
     identifier.m_databaseName = m_databaseName.isolatedCopy();
     identifier.m_sessionID = m_sessionID.isolatedCopy();
-    identifier.m_openingOrigin = m_openingOrigin.isolatedCopy();
-    identifier.m_mainFrameOrigin = m_mainFrameOrigin.isolatedCopy();
+    identifier.m_origin = m_origin.isolatedCopy();
 
     return identifier;
 }
 
 String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory) const
 {
-    return databaseDirectoryRelativeToRoot(m_mainFrameOrigin, m_openingOrigin, rootDirectory);
+    return databaseDirectoryRelativeToRoot(m_origin.topOrigin, m_origin.clientOrigin, rootDirectory);
 }
 
 String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory)
@@ -77,7 +74,7 @@ String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOrig
 #if !LOG_DISABLED
 String IDBDatabaseIdentifier::debugString() const
 {
-    return makeString(m_databaseName, "@", m_openingOrigin.debugString(), ":", m_mainFrameOrigin.debugString());
+    return makeString(m_databaseName, "@", m_origin.topOrigin.debugString(), ":", m_origin.clientOrigin.debugString());
 }
 #endif
 

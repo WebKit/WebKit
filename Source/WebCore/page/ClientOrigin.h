@@ -41,6 +41,7 @@ struct ClientOrigin {
     template<class Decoder> static Optional<ClientOrigin> decode(Decoder&);
 
     ClientOrigin isolatedCopy() const;
+    bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
 
     SecurityOriginData topOrigin;
     SecurityOriginData clientOrigin;
