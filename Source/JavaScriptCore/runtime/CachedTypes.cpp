@@ -28,7 +28,6 @@
 
 #include "BytecodeCacheVersion.h"
 #include "BytecodeLivenessAnalysis.h"
-#include "JSCast.h"
 #include "JSImmutableButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "ScopedArgumentsTable.h"
@@ -40,12 +39,15 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomicStringImpl.h>
 
 namespace JSC {
+
+namespace Yarr {
+enum class Flags : uint8_t;
+}
 
 template <typename T, typename = void>
 struct SourceTypeImpl {
@@ -1111,7 +1113,7 @@ public:
 
 private:
     CachedString m_patternString;
-    RegExpFlags m_flags;
+    OptionSet<Yarr::Flags> m_flags;
 };
 
 class CachedTemplateObjectDescriptor : public CachedObject<TemplateObjectDescriptor> {

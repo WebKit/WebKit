@@ -26,14 +26,15 @@
 
 #pragma once
 
-#include "RegExpKey.h"
 #include "YarrErrorCode.h"
+#include "YarrFlags.h"
 #include "YarrUnicodeProperties.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringHash.h>
 
 namespace JSC { namespace Yarr {
 
@@ -352,7 +353,7 @@ struct TermChain {
 
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags, ErrorCode&, void* stackLimit = nullptr);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, OptionSet<Flags>, ErrorCode&, void* stackLimit = nullptr);
 
     void resetForReparsing()
     {
@@ -507,19 +508,19 @@ struct YarrPattern {
     void dumpPattern(const String& pattern);
     void dumpPattern(PrintStream& out, const String& pattern);
 
-    bool global() const { return m_flags & FlagGlobal; }
-    bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
-    bool multiline() const { return m_flags & FlagMultiline; }
-    bool sticky() const { return m_flags & FlagSticky; }
-    bool unicode() const { return m_flags & FlagUnicode; }
-    bool dotAll() const { return m_flags & FlagDotAll; }
+    bool global() const { return m_flags.contains(Flags::Global); }
+    bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
+    bool multiline() const { return m_flags.contains(Flags::Multiline); }
+    bool sticky() const { return m_flags.contains(Flags::Sticky); }
+    bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     bool m_containsBackreferences : 1;
     bool m_containsBOL : 1;
     bool m_containsUnsignedLengthPattern : 1;
     bool m_hasCopiedParenSubexpressions : 1;
     bool m_saveInitialStartValue : 1;
-    RegExpFlags m_flags;
+    OptionSet<Flags> m_flags;
     unsigned m_numSubpatterns { 0 };
     unsigned m_maxBackReference { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };

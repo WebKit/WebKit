@@ -2396,12 +2396,6 @@ test/language/literals/numeric/numeric-separator-literal-sign-minus-dds-nsl-dd.j
 test/language/literals/numeric/numeric-separator-literal-sign-plus-dds-nsl-dd.js:
   default: 'SyntaxError: No identifiers allowed directly after numeric literal'
   strict mode: 'SyntaxError: No identifiers allowed directly after numeric literal'
-test/language/literals/regexp/early-err-bad-flag.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/literals/regexp/early-err-dup-flag.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/literals/regexp/named-groups/invalid-dangling-groupname-2-u.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'

@@ -1,3 +1,17 @@
+2019-03-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Invalid flags in a RegExp literal should be an early SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=195514
+
+        Reviewed by Darin Adler.
+
+        * test262/expectations.yaml:
+        Mark 4 test cases as passing.
+
+        * stress/regexp-syntax-error-invalid-flags.js:
+        * stress/regress-161995.js: Removed.
+        Update existing test, merging in an older test for the same behavior.
+
 2019-03-08  Mark Lam  <mark.lam@apple.com>
 
         Stack overflow crash in JSC::JSObject::hasInstance.

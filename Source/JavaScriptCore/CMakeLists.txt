@@ -1000,6 +1000,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/RegularExpression.h
     yarr/Yarr.h
     yarr/YarrErrorCode.h
+    yarr/YarrFlags.h
     yarr/YarrInterpreter.h
     yarr/YarrJIT.h
     yarr/YarrParser.h

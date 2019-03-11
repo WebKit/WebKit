@@ -1,23 +1,17 @@
-function shouldThrow(func, errorMessage) {
-    var errorThrown = false;
-    var error = null;
+function shouldThrowSyntaxError(script) {
+    let error;
     try {
-        func();
+        eval(script);
     } catch (e) {
-        errorThrown = true;
         error = e;
     }
-    if (!errorThrown)
+
+    if (!error)
         throw new Error('not thrown');
-    if (String(error) !== errorMessage)
+    if (String(error) !== 'SyntaxError: Invalid regular expression: invalid flags')
         throw new Error(`bad error: ${String(error)}`);
 }
 
-function test()
-{
-    return /Hello/cocoa;
-}
-noInline(test);
-
-for (var i = 0; i < 1e4; ++i)
-    shouldThrow(test, `SyntaxError: Invalid regular expression: invalid flags`);
+shouldThrowSyntaxError('/Hello/cocoa');
+shouldThrowSyntaxError('/a/Z');
+shouldThrowSyntaxError('/./ii');

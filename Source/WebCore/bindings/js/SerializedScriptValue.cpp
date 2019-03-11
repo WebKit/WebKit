@@ -56,7 +56,6 @@
 #include "SharedBuffer.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/BooleanObject.h>
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/DateInstance.h>
@@ -81,6 +80,7 @@
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <JavaScriptCore/WasmModule.h>
+#include <JavaScriptCore/YarrFlags.h>
 #include <limits>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -2891,10 +2891,10 @@ private:
             CachedStringRef flags;
             if (!readStringData(flags))
                 return JSValue();
-            RegExpFlags reFlags = regExpFlags(flags->string());
-            ASSERT(reFlags != InvalidFlags);
+            auto reFlags = Yarr::parseFlags(flags->string());
+            ASSERT(reFlags.hasValue());
             VM& vm = m_exec->vm();
-            RegExp* regExp = RegExp::create(vm, pattern->string(), reFlags);
+            RegExp* regExp = RegExp::create(vm, pattern->string(), reFlags.value());
             return RegExpObject::create(vm, m_globalObject->regExpStructure(), regExp);
         }
         case ObjectReferenceTag: {

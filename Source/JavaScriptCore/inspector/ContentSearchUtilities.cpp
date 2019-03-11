@@ -31,6 +31,7 @@
 
 #include "RegularExpression.h"
 #include "Yarr.h"
+#include "YarrFlags.h"
 #include "YarrInterpreter.h"
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/StdLibExtras.h>
@@ -167,7 +168,7 @@ static String findMagicComment(const String& content, const String& patternStrin
         return String();
 
     JSC::Yarr::ErrorCode error { JSC::Yarr::ErrorCode::NoError };
-    YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, error);
+    YarrPattern pattern(patternString, JSC::Yarr::Flags::Multiline, error);
     ASSERT(!hasError(error));
     BumpPointerAllocator regexAllocator;
     auto bytecodePattern = byteCompile(pattern, &regexAllocator);

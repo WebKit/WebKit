@@ -1,3 +1,80 @@
+2019-03-10  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Invalid flags in a RegExp literal should be an early SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=195514
+
+        Reviewed by Darin Adler.
+
+        Currently we're throwing a *runtime* SyntaxError; this should occur at parse time. 
+
+          12.2.8.1 Static Semantics: Early Errors
+            PrimaryExpression : RegularExpressionLiteral
+              - It is a Syntax Error if BodyText of RegularExpressionLiteral cannot be recognized
+                using the goal symbol Pattern of the ECMAScript RegExp grammar specified in 21.2.1.
+              - It is a Syntax Error if FlagText of RegularExpressionLiteral contains any code points
+                other than "g", "i", "m",  "s", "u", or "y", or if it contains the same code point more than once.
+
+        In fixing this, let's also move flag handling from runtime/ to yarr/.
+
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::checkSyntax):
+        Check flags before checking pattern.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * runtime/CachedTypes.cpp:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::createWithoutCaching):
+        (JSC::RegExp::create):
+        (JSC::regExpFlags): Deleted.
+        * runtime/RegExp.h:
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::ensureEmptyRegExpSlow):
+        * runtime/RegExpCache.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::toFlags):
+        (JSC::regExpCreate):
+        (JSC::constructRegExp):
+        * runtime/RegExpKey.h:
+        (JSC::RegExpKey::RegExpKey):
+        (WTF::HashTraits<JSC::RegExpKey>::constructDeletedValue):
+        (WTF::HashTraits<JSC::RegExpKey>::isDeletedValue):
+        (): Deleted.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * testRegExp.cpp:
+        (parseRegExpLine):
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::compile):
+        * yarr/YarrFlags.cpp: Added.
+        (JSC::Yarr::parseFlags):
+        * yarr/YarrFlags.h: Added.
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::ignoreCase const):
+        (JSC::Yarr::BytecodePattern::multiline const):
+        (JSC::Yarr::BytecodePattern::sticky const):
+        (JSC::Yarr::BytecodePattern::unicode const):
+        (JSC::Yarr::BytecodePattern::dotAll const):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::YarrPattern::dumpPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::global const):
+        (JSC::Yarr::YarrPattern::ignoreCase const):
+        (JSC::Yarr::YarrPattern::multiline const):
+        (JSC::Yarr::YarrPattern::sticky const):
+        (JSC::Yarr::YarrPattern::unicode const):
+        (JSC::Yarr::YarrPattern::dotAll const):
+        Move flag handling to Yarr and modernize API.
+
 2019-03-09  Robin Morisset  <rmorisset@apple.com>
 
         Compilation can be shrunk by 8 bytes

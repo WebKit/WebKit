@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
+#include "YarrFlags.h"
 #include "YarrPattern.h"
 
 namespace WTF {
@@ -367,14 +368,14 @@ public:
 
     size_t estimatedSizeInBytes() const { return m_body->estimatedSizeInBytes(); }
     
-    bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
-    bool multiline() const { return m_flags & FlagMultiline; }
-    bool sticky() const { return m_flags & FlagSticky; }
-    bool unicode() const { return m_flags & FlagUnicode; }
-    bool dotAll() const { return m_flags & FlagDotAll; }
+    bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
+    bool multiline() const { return m_flags.contains(Flags::Multiline); }
+    bool sticky() const { return m_flags.contains(Flags::Sticky); }
+    bool unicode() const { return m_flags.contains(Flags::Unicode); }
+    bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
     std::unique_ptr<ByteDisjunction> m_body;
-    RegExpFlags m_flags;
+    OptionSet<Flags> m_flags;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
     // with a VM.  Cache a pointer to out VM's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;

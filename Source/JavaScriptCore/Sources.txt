@@ -1045,6 +1045,7 @@ yarr/RegularExpression.cpp
 yarr/YarrCanonicalizeUCS2.cpp
 yarr/YarrDisassembler.cpp
 yarr/YarrErrorCode.cpp
+yarr/YarrFlags.cpp
 yarr/YarrInterpreter.cpp
 yarr/YarrJIT.cpp
 yarr/YarrPattern.cpp

@@ -28,63 +28,12 @@
 #include "JSCInlines.h"
 #include "RegExpCache.h"
 #include "RegExpInlines.h"
-#include "Yarr.h"
 #include "YarrJIT.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
 
 const ClassInfo RegExp::s_info = { "RegExp", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(RegExp) };
-
-RegExpFlags regExpFlags(const String& string)
-{
-    RegExpFlags flags = NoFlags;
-
-    for (unsigned i = 0; i < string.length(); ++i) {
-        switch (string[i]) {
-        case 'g':
-            if (flags & FlagGlobal)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagGlobal);
-            break;
-
-        case 'i':
-            if (flags & FlagIgnoreCase)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagIgnoreCase);
-            break;
-
-        case 'm':
-            if (flags & FlagMultiline)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagMultiline);
-            break;
-
-        case 's':
-            if (flags & FlagDotAll)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagDotAll);
-            break;
-            
-        case 'u':
-            if (flags & FlagUnicode)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagUnicode);
-            break;
-                
-        case 'y':
-            if (flags & FlagSticky)
-                return InvalidFlags;
-            flags = static_cast<RegExpFlags>(flags | FlagSticky);
-            break;
-
-        default:
-            return InvalidFlags;
-        }
-    }
-
-    return flags;
-}
 
 #if REGEXP_FUNC_TEST_DATA_GEN
 const char* const RegExpFunctionalTestCollector::s_fileName = "/tmp/RegExpTestsData";
@@ -210,11 +159,12 @@ void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool es
 }
 #endif
 
-RegExp::RegExp(VM& vm, const String& patternString, RegExpFlags flags)
+RegExp::RegExp(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
     : JSCell(vm, vm.regExpStructure.get())
     , m_patternString(patternString)
     , m_flags(flags)
 {
+    ASSERT(m_flags != Yarr::Flags::DeletedValue);
 }
 
 void RegExp::finishCreation(VM& vm)
@@ -249,14 +199,14 @@ size_t RegExp::estimatedSize(JSCell* cell, VM& vm)
     return Base::estimatedSize(cell, vm) + regexDataSize;
 }
 
-RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, RegExpFlags flags)
+RegExp* RegExp::createWithoutCaching(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
 {
     RegExp* regExp = new (NotNull, allocateCell<RegExp>(vm.heap)) RegExp(vm, patternString, flags);
     regExp->finishCreation(vm);
     return regExp;
 }
 
-RegExp* RegExp::create(VM& vm, const String& patternString, RegExpFlags flags)
+RegExp* RegExp::create(VM& vm, const String& patternString, OptionSet<Yarr::Flags> flags)
 {
     return vm.regExpCache()->lookupOrCreate(patternString, flags);
 }

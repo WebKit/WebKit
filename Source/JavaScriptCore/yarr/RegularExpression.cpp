@@ -29,6 +29,7 @@
 #include "RegularExpression.h"
 
 #include "Yarr.h"
+#include "YarrFlags.h"
 #include "YarrInterpreter.h"
 #include <wtf/Assertions.h>
 #include <wtf/BumpPointerAllocator.h>
@@ -55,16 +56,16 @@ private:
 
     std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
-        RegExpFlags flags = NoFlags;
+        OptionSet<JSC::Yarr::Flags> flags;
 
         if (caseSensitivity == TextCaseInsensitive)
-            flags = static_cast<RegExpFlags>(flags | FlagIgnoreCase);
+            flags.add(Flags::IgnoreCase);
 
         if (multilineMode == MultilineEnabled)
-            flags = static_cast<RegExpFlags>(flags | FlagMultiline);
+            flags.add(Flags::Multiline);
 
         if (unicodeMode == UnicodeAwareMode)
-            flags = static_cast<RegExpFlags>(flags | FlagUnicode);
+            flags.add(Flags::Unicode);
 
         JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
         if (JSC::Yarr::hasError(m_constructionErrorCode)) {

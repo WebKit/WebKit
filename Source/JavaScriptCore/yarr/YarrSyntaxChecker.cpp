@@ -26,9 +26,9 @@
 #include "config.h"
 #include "YarrSyntaxChecker.h"
 
+#include "YarrFlags.h"
 #include "YarrParser.h"
 #include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
@@ -58,7 +58,12 @@ public:
 ErrorCode checkSyntax(const String& pattern, const String& flags)
 {
     SyntaxChecker syntaxChecker;
-    return parse(syntaxChecker, pattern, flags.contains('u'));
+
+    auto parsedFlags = parseFlags(flags);
+    if (!parsedFlags)
+        return ErrorCode::InvalidRegularExpressionFlags;
+
+    return parse(syntaxChecker, pattern, parsedFlags->contains(Flags::Unicode));
 }
 
 }} // JSC::Yarr

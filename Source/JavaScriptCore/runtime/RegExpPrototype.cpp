@@ -29,16 +29,15 @@
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
-#include "JSObject.h"
 #include "JSStringInlines.h"
 #include "Lexer.h"
 #include "ObjectPrototype.h"
-#include "RegExp.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
 #include "StringObject.h"
 #include "StringRecursionChecker.h"
+#include "YarrFlags.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -149,14 +148,12 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
         String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        RegExpFlags flags = NoFlags;
-        if (!arg1.isUndefined()) {
-            flags = regExpFlags(arg1.toWTFString(exec));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-            if (flags == InvalidFlags)
-                return throwVMError(exec, scope, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."_s));
-        }
-        regExp = RegExp::create(vm, pattern, flags);
+        auto flags = arg1.isUndefined() ? makeOptional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(exec));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (!flags)
+            return throwVMError(exec, scope, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."_s));
+
+        regExp = RegExp::create(vm, pattern, flags.value());
     }
 
     if (!regExp->isValid())

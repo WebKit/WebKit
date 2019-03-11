@@ -41,6 +41,7 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "StackAlignment.h"
+#include "YarrFlags.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
@@ -141,9 +142,13 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     if (dst == generator.ignoredResult())
         return nullptr;
-    RegExp* regExp = RegExp::create(*generator.vm(), m_pattern.string(), regExpFlags(m_flags.string()));
+
+    auto flags = Yarr::parseFlags(m_flags.string());
+    ASSERT(flags.hasValue());
+    RegExp* regExp = RegExp::create(*generator.vm(), m_pattern.string(), flags.value());
     if (regExp->isValid())
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
+
     const char* messageCharacters = regExp->errorMessage();
     const Identifier& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), bitwise_cast<const LChar*>(messageCharacters), strlen(messageCharacters));
     generator.emitThrowStaticError(ErrorType::SyntaxError, message);

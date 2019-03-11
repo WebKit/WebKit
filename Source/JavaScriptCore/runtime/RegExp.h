@@ -38,8 +38,6 @@ namespace JSC {
 struct RegExpRepresentation;
 class VM;
 
-JS_EXPORT_PRIVATE RegExpFlags regExpFlags(const String&);
-
 class RegExp final : public JSCell {
     friend class CachedRegExp;
 
@@ -47,23 +45,23 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, RegExpFlags);
+    JS_EXPORT_PRIVATE static RegExp* create(VM&, const String& pattern, OptionSet<Yarr::Flags>);
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
     static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 
-    bool global() const { return m_flags & FlagGlobal; }
-    bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
-    bool multiline() const { return m_flags & FlagMultiline; }
-    bool sticky() const { return m_flags & FlagSticky; }
+    bool global() const { return m_flags.contains(Yarr::Flags::Global); }
+    bool ignoreCase() const { return m_flags.contains(Yarr::Flags::IgnoreCase); }
+    bool multiline() const { return m_flags.contains(Yarr::Flags::Multiline); }
+    bool sticky() const { return m_flags.contains(Yarr::Flags::Sticky); }
     bool globalOrSticky() const { return global() || sticky(); }
-    bool unicode() const { return m_flags & FlagUnicode; }
-    bool dotAll() const { return m_flags & FlagDotAll; }
+    bool unicode() const { return m_flags.contains(Yarr::Flags::Unicode); }
+    bool dotAll() const { return m_flags.contains(Yarr::Flags::DotAll); }
 
     const String& pattern() const { return m_patternString; }
 
-    bool isValid() const { return !Yarr::hasError(m_constructionErrorCode) && m_flags != InvalidFlags; }
+    bool isValid() const { return !Yarr::hasError(m_constructionErrorCode); }
     const char* errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
     JSObject* errorToThrow(ExecState* exec) { return Yarr::errorToThrow(exec, m_constructionErrorCode); }
     void reset()
@@ -136,9 +134,9 @@ protected:
 
 private:
     friend class RegExpCache;
-    RegExp(VM&, const String&, RegExpFlags);
+    RegExp(VM&, const String&, OptionSet<Yarr::Flags>);
 
-    static RegExp* createWithoutCaching(VM&, const String&, RegExpFlags);
+    static RegExp* createWithoutCaching(VM&, const String&, OptionSet<Yarr::Flags>);
 
     enum RegExpState : uint8_t {
         ParseError,
@@ -161,7 +159,7 @@ private:
 
     String m_patternString;
     RegExpState m_state { NotCompiled };
-    RegExpFlags m_flags;
+    OptionSet<Yarr::Flags> m_flags;
     ConcurrentJSLock m_lock;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     unsigned m_numSubpatterns { 0 };

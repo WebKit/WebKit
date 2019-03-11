@@ -36,7 +36,6 @@
 #include <wtf/StackPointer.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
@@ -1110,9 +1109,6 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
 {
     YarrPatternConstructor constructor(*this, stackLimit);
 
-    if (m_flags == InvalidFlags)
-        return ErrorCode::InvalidRegularExpressionFlags;
-
     {
         ErrorCode error = parse(constructor, patternString, unicode());
         if (hasError(error))
@@ -1152,7 +1148,7 @@ ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
     return ErrorCode::NoError;
 }
 
-YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, ErrorCode& error, void* stackLimit)
+YarrPattern::YarrPattern(const String& pattern, OptionSet<Flags> flags, ErrorCode& error, void* stackLimit)
     : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
@@ -1160,6 +1156,7 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, ErrorCode& er
     , m_saveInitialStartValue(false)
     , m_flags(flags)
 {
+    ASSERT(m_flags != Flags::DeletedValue);
     error = compile(pattern, stackLimit);
 }
 
@@ -1420,7 +1417,7 @@ void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
     out.print("RegExp pattern for ");
     dumpPatternString(out, patternString);
 
-    if (m_flags != NoFlags) {
+    if (m_flags) {
         bool printSeperator = false;
         out.print(" (");
         if (global()) {

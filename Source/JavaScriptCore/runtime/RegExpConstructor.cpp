@@ -24,10 +24,10 @@
 
 #include "Error.h"
 #include "GetterSetter.h"
-#include "JSCInlines.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
 #include "StructureInlines.h"
+#include "YarrFlags.h"
 
 namespace JSC {
 
@@ -177,23 +177,22 @@ inline Structure* getRegExpStructure(ExecState* exec, JSGlobalObject* globalObje
     return structure;
 }
 
-inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
+inline OptionSet<Yarr::Flags> toFlags(ExecState* exec, JSValue flags)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (flags.isUndefined())
-        return NoFlags;
-    JSString* flagsString = flags.toStringOrNull(exec);
-    EXCEPTION_ASSERT(!!scope.exception() == !flagsString);
-    if (UNLIKELY(!flagsString))
-        return InvalidFlags;
-
-    RegExpFlags result = regExpFlags(flagsString->value(exec));
-    RETURN_IF_EXCEPTION(scope, InvalidFlags);
-    if (result == InvalidFlags)
+        return { };
+    
+    auto result = Yarr::parseFlags(flags.toWTFString(exec));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!result) {
         throwSyntaxError(exec, scope, "Invalid flags supplied to RegExp constructor."_s);
-    return result;
+        return { };
+    }
+
+    return result.value();
 }
 
 static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSValue newTarget, JSValue patternArg, JSValue flagsArg)
@@ -204,10 +203,8 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
     String pattern = patternArg.isUndefined() ? emptyString() : patternArg.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    RegExpFlags flags = toFlags(exec, flagsArg);
-    EXCEPTION_ASSERT(!!scope.exception() == (flags == InvalidFlags));
-    if (UNLIKELY(flags == InvalidFlags))
-        return nullptr;
+    auto flags = toFlags(exec, flagsArg);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RegExp* regExp = RegExp::create(vm, pattern, flags);
     if (UNLIKELY(!regExp->isValid())) {
@@ -246,12 +243,10 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         if (!flagsArg.isUndefined()) {
-            RegExpFlags flags = toFlags(exec, flagsArg);
-            EXCEPTION_ASSERT(!!scope.exception() == (flags == InvalidFlags));
-            if (flags == InvalidFlags)
-                return nullptr;
-            regExp = RegExp::create(vm, regExp->pattern(), flags);
+            auto flags = toFlags(exec, flagsArg);
+            RETURN_IF_EXCEPTION(scope, nullptr);
 
+            regExp = RegExp::create(vm, regExp->pattern(), flags);
             if (UNLIKELY(!regExp->isValid())) {
                 throwException(exec, scope, regExp->errorToThrow(exec));
                 return nullptr;
