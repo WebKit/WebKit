@@ -606,7 +606,6 @@
 		7CCE7F2E1A411B1000447C4C /* WKBrowsingContextGroupTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7D14587AA60025FB62 /* WKBrowsingContextGroupTest.mm */; };
 		7CCE7F2F1A411B1000447C4C /* WKBrowsingContextLoadDelegateTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3C4C7014575B6A0025FB62 /* WKBrowsingContextLoadDelegateTest.mm */; };
 		7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */; };
-		7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB62A92236086C0069CBB0 /* IteratorRange.cpp */; };
 		7CEFA9661AC0B9E200B910FD /* _WKUserContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */; };
 		7CFBCAE51743238F00B2BFCF /* WillLoad_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */; };
 		830F2E0C209A6A8E00D36FF1 /* WebContentProcessDidTerminate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 830F2E0B209A6A7400D36FF1 /* WebContentProcessDidTerminate.mm */; };
@@ -1819,7 +1818,6 @@
 		7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPILibrary.xcconfig; sourceTree = "<group>"; };
 		7CD0D5AA1D5534DE000CC9E1 /* Variant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Variant.cpp; sourceTree = "<group>"; };
 		7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringConcatenate.cpp; sourceTree = "<group>"; };
-		7CEB62A92236086C0069CBB0 /* IteratorRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IteratorRange.cpp; sourceTree = "<group>"; };
 		7CEFA9641AC0B9E200B910FD /* _WKUserContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKUserContentExtensionStore.mm; sourceTree = "<group>"; };
 		7CFBCADD1743234F00B2BFCF /* WillLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad.cpp; sourceTree = "<group>"; };
 		7CFBCAE31743238E00B2BFCF /* WillLoad_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WillLoad_Bundle.cpp; sourceTree = "<group>"; };
@@ -3245,7 +3243,6 @@
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
 				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
-				7CEB62A92236086C0069CBB0 /* IteratorRange.cpp */,
 				7A0509401FB9F04400B33FB8 /* JSONValue.cpp */,
 				531C1D8D1DF8EF72006E979F /* LEBDecoder.cpp */,
 				A57D54F71F3397B400A97AA7 /* LifecycleLogger.cpp */,
@@ -3858,7 +3855,6 @@
 				7C83DED21D0A590C00FEBCF3 /* HashMap.cpp in Sources */,
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
-				7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,
 				A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */,

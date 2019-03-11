@@ -129,7 +129,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/HashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Hasher.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/IntegerToStringConversion.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/IteratorRange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/JSONValue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LEBDecoder.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/LifecycleLogger.cpp

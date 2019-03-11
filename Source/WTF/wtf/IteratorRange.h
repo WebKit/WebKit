@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <iterator>
-
 namespace WTF {
 
 template<typename Iterator>
@@ -50,18 +48,6 @@ template<typename Iterator>
 IteratorRange<Iterator> makeIteratorRange(Iterator&& begin, Iterator&& end)
 {
     return IteratorRange<Iterator>(std::forward<Iterator>(begin), std::forward<Iterator>(end));
-}
-
-template<typename Container>
-IteratorRange<typename Container::reverse_iterator> makeReversedRange(Container& container)
-{
-    return makeIteratorRange(std::rbegin(container), std::rend(container));
-}
-
-template<typename Container>
-IteratorRange<typename Container::const_reverse_iterator> makeReversedRange(const Container& container)
-{
-    return makeIteratorRange(std::crbegin(container), std::crend(container));
 }
 
 template<typename Container, typename Iterator>
