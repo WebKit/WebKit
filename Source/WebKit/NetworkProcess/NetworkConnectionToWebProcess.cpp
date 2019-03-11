@@ -62,6 +62,10 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityPolicy.h>
 
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+#include "WebPaymentCoordinatorProxyMessages.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -197,6 +201,11 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 #endif
 
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
+        return paymentCoordinator().didReceiveMessage(connection, decoder);
+#endif
+
     ASSERT_NOT_REACHED();
 }
 
@@ -229,6 +238,11 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
             swConnection->didReceiveSyncMessage(connection, decoder, reply);
         return;
     }
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
+        return paymentCoordinator().didReceiveSyncMessage(connection, decoder, reply);
 #endif
 
     ASSERT_NOT_REACHED();
@@ -277,6 +291,10 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     
 #if ENABLE(SERVICE_WORKER)
     unregisterSWConnections();
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    m_paymentCoordinator = nullptr;
 #endif
 }
 

@@ -1,4 +1,4 @@
-; Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+; Copyright (C) 2014-2019 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -76,6 +76,11 @@
 (allow mach-lookup
     (global-name "com.apple.ocspd")
     (global-name "com.apple.securityd"))
+
+;; PassKit framework
+(allow mach-lookup
+    (global-name "com.apple.passd.in-app-payment")
+    (global-name "com.apple.passd.library"))
 
 (deny file-write-create
        (vnode-type SYMLINK))

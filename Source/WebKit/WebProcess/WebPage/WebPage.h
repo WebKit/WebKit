@@ -232,6 +232,7 @@ class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPageInspectorTargetController;
 class WebPageOverlay;
+class WebPaymentCoordinator;
 class WebPopupMenu;
 class WebTouchEvent;
 class WebURLSchemeHandlerProxy;
@@ -1159,6 +1160,10 @@ public:
 
     void suspendAllMediaBuffering();
     void resumeAllMediaBuffering();
+
+#if ENABLE(APPLE_PAY)
+    WebPaymentCoordinator* paymentCoordinator();
+#endif
 
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);

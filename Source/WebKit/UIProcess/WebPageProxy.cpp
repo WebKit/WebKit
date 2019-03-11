@@ -8767,35 +8767,6 @@ void WebPageProxy::clearAdClickAttribution(CompletionHandler<void()>&& completio
     m_process->processPool().clearAdClickAttribution(m_websiteDataStore->sessionID(), WTFMove(completionHandler));
 }
 
-#if ENABLE(APPLE_PAY)
-
-IPC::Connection* WebPageProxy::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
-{
-    return messageSenderConnection();
-}
-
-IPC::MessageReceiverMap& WebPageProxy::paymentCoordinatorMessageReceiver(const WebPaymentCoordinatorProxy&)
-{
-    return process().messageReceiverMap();
-}
-
-const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&)
-{
-    return websiteDataStore().sourceApplicationBundleIdentifier();
-}
-
-const String& WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&)
-{
-    return websiteDataStore().sourceApplicationSecondaryIdentifier();
-}
-
-uint64_t WebPageProxy::paymentCoordinatorDestinationID(const WebPaymentCoordinatorProxy&)
-{
-    return messageSenderDestinationID();
-}
-
-#endif
-
 void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.add(&observer, makeWeakPtr(observer));

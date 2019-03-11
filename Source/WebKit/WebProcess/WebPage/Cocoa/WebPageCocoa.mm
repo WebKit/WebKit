@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "WebPageProxyMessages.h"
+#import "WebPaymentCoordinator.h"
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -37,6 +38,7 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/NodeRenderStyle.h>
+#import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
@@ -188,6 +190,16 @@ void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
 }
+
+#if ENABLE(APPLE_PAY)
+WebPaymentCoordinator* WebPage::paymentCoordinator()
+{
+    if (!m_page)
+        return nullptr;
+    auto& client = m_page->paymentCoordinator().client();
+    return is<WebPaymentCoordinator>(client) ? downcast<WebPaymentCoordinator>(&client) : nullptr;
+}
+#endif
 
 } // namespace WebKit
 

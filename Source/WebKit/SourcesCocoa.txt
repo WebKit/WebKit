@@ -43,6 +43,7 @@ NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm
 NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
 
+NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm
 NetworkProcess/ios/NetworkProcessIOS.mm
 
 NetworkProcess/mac/NetworkProcessMac.mm
@@ -75,6 +76,7 @@ Platform/cocoa/WebKitAdditions.mm @no-unify
 Platform/foundation/LoggingFoundation.mm
 
 Platform/ios/AccessibilityIOS.mm
+Platform/ios/PaymentAuthorizationController.mm
 
 Platform/IPC/mac/ConnectionMac.mm
 Platform/IPC/mac/MachMessage.cpp

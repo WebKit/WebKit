@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include "WebMDNSRegisterMessages.h"
 #include "WebPage.h"
 #include "WebPageMessages.h"
+#include "WebPaymentCoordinator.h"
 #include "WebProcess.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCMonitorMessages.h"
@@ -56,6 +57,10 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+#include "WebPaymentCoordinatorMessages.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -141,6 +146,14 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
 #endif
 
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
+        if (auto webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+            webPage->paymentCoordinator()->didReceiveMessage(connection, decoder);
+        return;
+    }
+#endif
+
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }
 
@@ -151,6 +164,14 @@ void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
             static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return;
+    }
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
+        if (auto webPage = WebProcess::singleton().webPage(decoder.destinationID()))
+            webPage->paymentCoordinator()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return;
     }
 #endif

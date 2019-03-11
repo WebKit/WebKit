@@ -1289,6 +1289,7 @@
 		A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */; };
 		A1798B49222E531D000764BD /* WKPaymentAuthorizationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B47222E530A000764BD /* WKPaymentAuthorizationDelegate.h */; };
 		A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */; };
+		A1798B512230A10E000764BD /* PaymentAuthorizationController.h in Headers */ = {isa = PBXBuildFile; fileRef = A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */; };
 		A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A181A79721ACAC610059A316 /* WebKitAdditions.mm */; };
 		A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */; };
 		A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */; };
@@ -3869,6 +3870,9 @@
 		A1798B48222E530A000764BD /* WKPaymentAuthorizationDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPaymentAuthorizationDelegate.mm; sourceTree = "<group>"; };
 		A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAuthorizationPresenter.mm; sourceTree = "<group>"; };
 		A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPaymentCoordinatorProxyCocoa.h; sourceTree = "<group>"; };
+		A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaymentAuthorizationController.h; sourceTree = "<group>"; };
+		A1798B502230A0FE000764BD /* PaymentAuthorizationController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentAuthorizationController.mm; sourceTree = "<group>"; };
+		A1798B5722332203000764BD /* NetworkConnectionToWebProcessIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkConnectionToWebProcessIOS.mm; sourceTree = "<group>"; };
 		A181A79721ACAC610059A316 /* WebKitAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAdditions.mm; sourceTree = "<group>"; };
 		A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityIOS.mm; sourceTree = "<group>"; };
 		A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityIOS.h; sourceTree = "<group>"; };
@@ -5927,6 +5931,7 @@
 		2DA944BB188511DD00ED86DB /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A1798B5722332203000764BD /* NetworkConnectionToWebProcessIOS.mm */,
 				2DA944BC188511E700ED86DB /* NetworkProcessIOS.mm */,
 			);
 			path = ios;
@@ -7149,6 +7154,8 @@
 			children = (
 				A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */,
 				A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */,
+				A1798B4F2230A0FE000764BD /* PaymentAuthorizationController.h */,
+				A1798B502230A0FE000764BD /* PaymentAuthorizationController.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -9285,6 +9292,7 @@
 				1AC7537C183A9FDB0072CB15 /* PageLoadState.h in Headers */,
 				1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
+				A1798B512230A10E000764BD /* PaymentAuthorizationController.h in Headers */,
 				A1798B3E222D97A2000764BD /* PaymentAuthorizationPresenter.h in Headers */,
 				A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */,
 				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
@@ -10226,6 +10234,9 @@
 					5325BDCD21DFF47700A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
+					};
+					A1798B59223464C4000764BD = {
+						CreatedOnToolsVersion = 10.2;
 					};
 					E1AC2E2720F7B94C00B0897D = {
 						CreatedOnToolsVersion = 9.3;

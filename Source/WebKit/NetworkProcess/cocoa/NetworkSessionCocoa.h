@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,9 +47,12 @@ public:
     static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCocoa();
 
+    const String& sourceApplicationBundleIdentifier() const;
+    const String& sourceApplicationSecondaryIdentifier() const;
     // Must be called before any NetworkSession has been created.
     // FIXME: Move this to NetworkSessionCreationParameters.
 #if PLATFORM(IOS_FAMILY)
+    const String& ctDataConnectionServiceType() const;
     static void setCTDataConnectionServiceType(const String&);
 #endif
 
@@ -82,6 +85,8 @@ private:
     RetainPtr<WKNetworkSessionDelegate> m_statelessSessionDelegate;
 
     String m_boundInterfaceIdentifier;
+    String m_sourceApplicationBundleIdentifier;
+    String m_sourceApplicationSecondaryIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     bool m_shouldLogCookieInformation { false };
     Seconds m_loadThrottleLatency;

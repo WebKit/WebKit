@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "SafeBrowsingWarning.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import "WebsiteDataStore.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
@@ -206,5 +207,36 @@ void WebPageProxy::performDictionaryLookupOfCurrentSelection()
     
     process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_pageID);
 }
+    
+#if ENABLE(APPLE_PAY)
+
+IPC::Connection* WebPageProxy::paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&)
+{
+    return messageSenderConnection();
+}
+
+const String& WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
+{
+    ASSERT_UNUSED(sessionID, sessionID == websiteDataStore().sessionID());
+    return websiteDataStore().sourceApplicationBundleIdentifier();
+}
+
+const String& WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID sessionID)
+{
+    ASSERT_UNUSED(sessionID, sessionID == websiteDataStore().sessionID());
+    return websiteDataStore().sourceApplicationSecondaryIdentifier();
+}
+
+void WebPageProxy::paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference& messageReceiverName, IPC::MessageReceiver& messageReceiver)
+{
+    process().addMessageReceiver(messageReceiverName, m_pageID, messageReceiver);
+}
+
+void WebPageProxy::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference& messageReceiverName)
+{
+    process().removeMessageReceiver(messageReceiverName, m_pageID);
+}
+
+#endif
 
 } // namespace WebKit

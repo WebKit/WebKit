@@ -38,9 +38,9 @@
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, sessionID, request);
 
     ASSERT(!m_authorizationPresenter);
     m_authorizationPresenter = m_client.paymentCoordinatorAuthorizationPresenter(*this, paymentRequest.get());
@@ -52,7 +52,8 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
 
 void WebPaymentCoordinatorProxy::hidePaymentUI()
 {
-    m_authorizationPresenter->dismiss();
+    if (m_authorizationPresenter)
+        m_authorizationPresenter->dismiss();
     m_authorizationPresenter = nullptr;
 }
 

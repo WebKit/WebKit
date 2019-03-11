@@ -1580,6 +1580,14 @@ ReferrerPolicyAttributeEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+ApplePayRemoteUIEnabled:
+  category: internal
+  condition: ENABLE(APPLE_PAY_REMOTE_UI)
+  defaultValue: true
+  humanReadableDescription: "Enable Apple Pay Remote UI"
+  humanReadableName: "Apple Pay Remote UI"
+  type: bool
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

@@ -86,8 +86,6 @@ public:
 
     void setProcessSuppressionEnabled(bool);
 
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
-
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

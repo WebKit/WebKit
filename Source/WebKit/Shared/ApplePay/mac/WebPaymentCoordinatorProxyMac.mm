@@ -35,9 +35,9 @@
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, sessionID, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = makeWeakPtr(*this);
@@ -97,7 +97,9 @@ void WebPaymentCoordinatorProxy::hidePaymentUI()
     m_sheetWindowWillCloseObserver = nullptr;
 
     [[m_sheetWindow sheetParent] endSheet:m_sheetWindow.get()];
-    m_authorizationPresenter->dismiss();
+
+    if (m_authorizationPresenter)
+        m_authorizationPresenter->dismiss();
     m_authorizationPresenter = nullptr;
 
     m_sheetWindow = nullptr;

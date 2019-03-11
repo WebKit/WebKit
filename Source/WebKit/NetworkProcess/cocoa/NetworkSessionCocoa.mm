@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -803,15 +803,28 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
+const String& NetworkSessionCocoa::sourceApplicationBundleIdentifier() const
+{
+    return m_sourceApplicationBundleIdentifier;
+}
+
+const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
+{
+    return m_sourceApplicationSecondaryIdentifier;
+}
+
 #if PLATFORM(IOS_FAMILY)
 static String& globalCTDataConnectionServiceType()
 {
     static NeverDestroyed<String> ctDataConnectionServiceType;
     return ctDataConnectionServiceType.get();
 }
-#endif
 
-#if PLATFORM(IOS_FAMILY)
+const String& NetworkSessionCocoa::ctDataConnectionServiceType() const
+{
+    return globalCTDataConnectionServiceType();
+}
+
 void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
 {
     ASSERT(!sessionsCreated);
@@ -850,6 +863,8 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters.sessionID)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
+    , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
+    , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
@@ -882,13 +897,13 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     if (auto data = networkProcess.sourceApplicationAuditData())
         configuration._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
-    if (!parameters.sourceApplicationBundleIdentifier.isEmpty()) {
-        configuration._sourceApplicationBundleIdentifier = parameters.sourceApplicationBundleIdentifier;
+    if (!m_sourceApplicationBundleIdentifier.isEmpty()) {
+        configuration._sourceApplicationBundleIdentifier = m_sourceApplicationBundleIdentifier;
         configuration._sourceApplicationAuditTokenData = nil;
     }
 
-    if (!parameters.sourceApplicationSecondaryIdentifier.isEmpty())
-        configuration._sourceApplicationSecondaryIdentifier = parameters.sourceApplicationSecondaryIdentifier;
+    if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
+        configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
 
     configuration.connectionProxyDictionary = proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
 

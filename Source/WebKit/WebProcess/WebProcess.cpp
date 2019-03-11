@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,7 @@
 #include "WebMessagePortChannelProvider.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
+#include "WebPaymentCoordinator.h"
 #include "WebPlatformStrategies.h"
 #include "WebPluginInfoProvider.h"
 #include "WebProcessCreationParameters.h"
@@ -1286,8 +1287,13 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     m_webLoaderStrategy.networkProcessCrashed();
     WebSocketStream::networkProcessCrashed();
 
-    for (auto& page : m_pageMap.values())
+    for (auto& page : m_pageMap.values()) {
         page->stopAllURLSchemeTasks();
+#if ENABLE(APPLE_PAY)
+        if (auto paymentCoordinator = page->paymentCoordinator())
+            paymentCoordinator->networkProcessConnectionClosed();
+#endif
+    }
 }
 
 WebLoaderStrategy& WebProcess::webLoaderStrategy()

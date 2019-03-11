@@ -32,6 +32,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
+#include "WebPaymentCoordinatorProxy.h"
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
@@ -63,7 +64,12 @@ namespace NetworkCache {
 struct DataKey;
 }
 
-class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, IPC::Connection::Client {
+class NetworkConnectionToWebProcess
+    : public RefCounted<NetworkConnectionToWebProcess>
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    , public WebPaymentCoordinatorProxy::Client
+#endif
+    , IPC::Connection::Client {
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
 
@@ -244,6 +250,20 @@ private:
     size_t findRootNetworkActivity(uint64_t pageID);
     size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
 
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    WebPaymentCoordinatorProxy& paymentCoordinator();
+
+    // WebPaymentCoordinatorProxy::Client
+    IPC::Connection* paymentCoordinatorConnection(const WebPaymentCoordinatorProxy&) final;
+    UIViewController *paymentCoordinatorPresentingViewController(const WebPaymentCoordinatorProxy&) final;
+    const String& paymentCoordinatorCTDataConnectionServiceType(const WebPaymentCoordinatorProxy&, PAL::SessionID) final;
+    const String& paymentCoordinatorSourceApplicationBundleIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID) final;
+    const String& paymentCoordinatorSourceApplicationSecondaryIdentifier(const WebPaymentCoordinatorProxy&, PAL::SessionID) final;
+    std::unique_ptr<PaymentAuthorizationPresenter> paymentCoordinatorAuthorizationPresenter(WebPaymentCoordinatorProxy&, PKPaymentRequest *) final;
+    void paymentCoordinatorAddMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference&, IPC::MessageReceiver&) final;
+    void paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinatorProxy&, const IPC::StringReference&) final;
+#endif
+
     Ref<IPC::Connection> m_connection;
     Ref<NetworkProcess> m_networkProcess;
 
@@ -269,9 +289,13 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     HashMap<uint64_t, RefPtr<WebIDBConnectionToClient>> m_webIDBConnections;
 #endif
-    
+
 #if ENABLE(SERVICE_WORKER)
     HashMap<WebCore::SWServerConnectionIdentifier, WeakPtr<WebSWServerConnection>> m_swConnections;
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
 };
 

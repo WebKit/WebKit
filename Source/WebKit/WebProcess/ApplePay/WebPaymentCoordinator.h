@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "MessageReceiver.h"
+#include "MessageSender.h"
 #include <WebCore/PaymentCoordinatorClient.h>
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
@@ -46,12 +47,16 @@ class PaymentContact;
 
 namespace WebKit {
 
+class NetworkProcessConnection;
 class WebPage;
 
-class WebPaymentCoordinator final : public WebCore::PaymentCoordinatorClient, private IPC::MessageReceiver {
+class WebPaymentCoordinator final : public WebCore::PaymentCoordinatorClient, private IPC::MessageReceiver, private IPC::MessageSender {
 public:
+    friend class NetworkProcessConnection;
     explicit WebPaymentCoordinator(WebPage&);
     ~WebPaymentCoordinator();
+
+    void networkProcessConnectionClosed();
 
 private:
     // WebCore::PaymentCoordinatorClient.
@@ -71,8 +76,14 @@ private:
 
     void paymentCoordinatorDestroyed() override;
 
+    bool isWebPaymentCoordinator() const override { return true; }
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    
+    // IPC::MessageSender.
+    IPC::Connection* messageSenderConnection() const final;
+    uint64_t messageSenderDestinationID() const final;
 
     // Message handlers.
     void validateMerchant(const String& validationURLString);
@@ -83,7 +94,11 @@ private:
     void didCancelPaymentSession();
 
     WebCore::PaymentCoordinator& paymentCoordinator();
-    
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    bool remoteUIEnabled() const;
+#endif
+
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     const AvailablePaymentNetworksSet& availablePaymentNetworks();
 
@@ -96,5 +111,10 @@ private:
 #endif
 };
 
-}
+} // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebPaymentCoordinator)
+static bool isType(const WebCore::PaymentCoordinatorClient& paymentCoordinatorClient) { return paymentCoordinatorClient.isWebPaymentCoordinator(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

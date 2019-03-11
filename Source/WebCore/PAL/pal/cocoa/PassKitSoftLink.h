@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,10 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentMerchantSession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequest)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentSummaryItem)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKShippingMethod)
+
+#if PLATFORM(IOS_FAMILY)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
+#endif
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKDrawApplePayButton, void, (CGContextRef context, CGRect drawRect, CGFloat scale, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, type, style, languageCode))

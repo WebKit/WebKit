@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -56,6 +56,12 @@
 #if !defined(ENABLE_AIRPLAY_PICKER)
 #if !PLATFORM(IOSMAC)
 #define ENABLE_AIRPLAY_PICKER 1
+#endif
+#endif
+
+#if !defined(ENABLE_APPLE_PAY_REMOTE_UI)
+#if !PLATFORM(APPLETV) && !PLATFORM(IOSMAC) && !PLATFORM(WATCHOS)
+#define ENABLE_APPLE_PAY_REMOTE_UI 1
 #endif
 #endif
 

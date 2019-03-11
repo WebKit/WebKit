@@ -1,3 +1,189 @@
+2019-03-11  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Use PKPaymentAuthorizationController to present the Apple Pay UI remotely from the Networking service on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195530
+        <rdar://problem/48747164>
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/Network-iOS.entitlements: Added the 'com.apple.payment.all-access'
+        entitlement and reordered the others.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage): Forwarded
+        WebPaymentCoordinatorProxy messages to the payment coordinator.
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage): Ditto.
+        (WebKit::NetworkConnectionToWebProcess::didClose): Set m_paymentCoordinator to nullptr.
+        * NetworkProcess/NetworkConnectionToWebProcess.h: Inherited from
+        WebPaymentCoordinatorProxy::Client and added a unique_ptr<WebPaymentCoordinatorProxy> member.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h: Declared getters for source application bundle
+        and secondary identifiers, and CTDataConnectionServiceType on iOS.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sourceApplicationBundleIdentifier const): Defined getter.
+        (WebKit::NetworkSessionCocoa::sourceApplicationSecondaryIdentifier const): Ditto.
+        (WebKit::NetworkSessionCocoa::ctDataConnectionServiceType const): Ditto.
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Initialized
+        m_sourceApplicationBundleIdentifier and m_sourceApplicationSecondaryIdentifier with
+        corresponding NetworkSessionCreationParameters.
+
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm: Added.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinator): Added. Returns
+        m_paymentCoordinator after lazily initializing it.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorConnection): Added. Returns the
+        connection to the web process.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorPresentingViewController): Added.
+        Returns nil.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorCTDataConnectionServiceType):
+        Added. Returns the value from the network session identified by sessionID.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationBundleIdentifier):
+        Ditto.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorSourceApplicationSecondaryIdentifier):
+        Ditto.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorAuthorizationPresenter): Added.
+        Returns a new PaymentAuthorizationController.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorAddMessageReceiver): Added empty
+        definition. NetworkConnectionToWebProcess explicitly forwards WebPaymentCoordinatorProxy
+        messages to its payment coordinator, so there's no need to register with a MessageReceiverMap.
+        (WebKit::NetworkConnectionToWebProcess::paymentCoordinatorRemoveMessageReceiver): Ditto.
+
+        * Platform/ios/PaymentAuthorizationController.h: Added. Declares a
+        PaymentAuthorizationPresenter subclass based on PKPaymentAuthorizationController.
+        * Platform/ios/PaymentAuthorizationController.mm: Added.
+        (-[WKPaymentAuthorizationControllerDelegate initWithRequest:presenter:]):
+        Initialized WKPaymentAuthorizationDelegate with request and presenter.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationControllerDidFinish:]):
+        Forwarded call to WKPaymentAuthorizationDelegate.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didAuthorizePayment:handler:]):
+        Ditto.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didSelectShippingMethod:handler:]):
+        Ditto.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didSelectShippingContact:handler:]):
+        Ditto.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didSelectPaymentMethod:handler:]):
+        Ditto.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:willFinishWithError:]):
+        Ditto.
+        (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didRequestMerchantSession:]):
+        Ditto.
+        (WebKit::PaymentAuthorizationController::PaymentAuthorizationController):
+        Initialized m_controller with a new PKPaymentAuthorizationController and m_delegate with a
+        new WKPaymentAuthorizationControllerDelegate.
+        (WebKit::PaymentAuthorizationController::platformDelegate): Returned m_delegate.
+        (WebKit::PaymentAuthorizationController::dismiss): Dismissed the controller, set its
+        delegates to nil, set m_controller to nil, invalidated the delegate, and set m_delegate to
+        nil.
+        (WebKit::PaymentAuthorizationController::present): Called -presentWithCompletion: on the
+        controller, forwarding the passed-in completion handler.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb: Allowed PassKit to look up
+        the "com.apple.passd.in-app-payment" and "com.apple.passd.library" service endpoints.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy): Changed to call
+        paymentCoordinatorAddMessageReceiver.
+        (WebKit::WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy): Changed to call
+        paymentCoordinatorRemoveMessageReceiver.
+        (WebKit::WebPaymentCoordinatorProxy::messageSenderDestinationID const): Deleted.
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard): Passed sessionID to
+        platformCanMakePaymentsWithActiveCard.
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI): Stored destinationID and passed
+        sessionID to platformShowPaymentUI.
+        (WebKit::WebPaymentCoordinatorProxy::cancelPaymentSession): Changed to account for new
+        behavior of didCancelPaymentSession.
+        (WebKit::WebPaymentCoordinatorProxy::didCancelPaymentSession): Changed to call hidePaymentUI.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidFinish): Changed to only call hidePaymentUI
+        when didReachFinalState is true, since didCancelPaymentSession is called otherwise.
+        (WebKit::WebPaymentCoordinatorProxy::didReachFinalState): Cleared m_destinationID.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h: Added m_destionationID member.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in: Changed
+        CanMakePaymentsWithActiveCard and ShowPaymentUI messages to take destinationID and sessionID
+        arguments.
+
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard): Passed
+        sessionID to paymentCoordinatorSourceApplicationSecondaryIdentifier.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest): Passed sessionID to various
+        m_client call sites.
+
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Passed sessionID to
+        platformPaymentRequest.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Null-checked m_authorizationPresenter
+        before calling dismiss.
+
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Passed sessionID to
+        platformPaymentRequest.
+        (WebKit::WebPaymentCoordinatorProxy::hidePaymentUI): Null-checked m_authorizationPresenter
+        before calling dismiss.
+
+        * Shared/WebPreferences.yaml: Added ApplePayRemoteUIEnabled as an internal preference.
+
+        * SourcesCocoa.txt: Added NetworkConnectionToWebProcessIOS.mm and
+        PaymentAuthorizationController.mm.
+
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::messageReceiverMap): Deleted.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorConnection): Moved from WebPageProxy.cpp.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorAddMessageReceiver): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorRemoveMessageReceiver): Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::paymentCoordinatorConnection): Moved to WebPageProxyCocoa.mm.
+        (WebKit::WebPageProxy::paymentCoordinatorMessageReceiver): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationBundleIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorSourceApplicationSecondaryIdentifier): Ditto.
+        (WebKit::WebPageProxy::paymentCoordinatorDestinationID): Ditto.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::paymentCoordinatorCTDataConnectionServiceType): Asserted that
+        sessionID equals the website data store's sessionID.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::networkProcessConnectionClosed): Added. Cancels the current
+        session if Apple Pay Remote UI is enabled and the network process connection closes.
+        (WebKit::WebPaymentCoordinator::availablePaymentNetworks): Changed to account for
+        WebPaymentCoordinator being an IPC::MessageSender.
+        (WebKit::WebPaymentCoordinator::canMakePayments): Ditto.
+        (WebKit::WebPaymentCoordinator::canMakePaymentsWithActiveCard): Ditto.
+        (WebKit::WebPaymentCoordinator::openPaymentSetup): Ditto.
+        (WebKit::WebPaymentCoordinator::showPaymentUI): Ditto.
+        (WebKit::WebPaymentCoordinator::completeMerchantValidation): Ditto.
+        (WebKit::WebPaymentCoordinator::completeShippingMethodSelection): Ditto.
+        (WebKit::WebPaymentCoordinator::completeShippingContactSelection): Ditto.
+        (WebKit::WebPaymentCoordinator::completePaymentMethodSelection): Ditto.
+        (WebKit::WebPaymentCoordinator::completePaymentSession): Ditto.
+        (WebKit::WebPaymentCoordinator::abortPaymentSession): Ditto.
+        (WebKit::WebPaymentCoordinator::cancelPaymentSession): Ditto.
+        (WebKit::WebPaymentCoordinator::messageSenderConnection const): Added. Returns a connection
+        to the network process if Apple Pay Remote UI is enabled. Otherwise, returned the web
+        process's parent connection.
+        (WebKit::WebPaymentCoordinator::messageSenderDestinationID const): Added. Returns the web
+        page's ID.
+        (WebKit::WebPaymentCoordinator::remoteUIEnabled const): Added. Calls Settings::applePayRemoteUIEnabled.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h: Inherited from IPC::MessageSender.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage): Forwarded WebPaymentCoordinator
+        messages to the payment coordinator of the web page matching the decoder's destination ID.
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage): Ditto for sync messages.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::paymentCoordinator): Added a payment coordinator getter.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed): Called
+        WebPaymentCoordinator::networkProcessConnectionClosed when the network process connection
+        closes.
+
 2019-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Block access to backboardd service

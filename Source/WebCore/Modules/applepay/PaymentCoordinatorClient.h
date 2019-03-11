@@ -63,6 +63,7 @@ public:
     virtual void paymentCoordinatorDestroyed() = 0;
 
     virtual bool isMockPaymentCoordinator() const { return false; }
+    virtual bool isWebPaymentCoordinator() const { return false; }
 
 protected:
     virtual ~PaymentCoordinatorClient() = default;
