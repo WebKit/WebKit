@@ -145,8 +145,23 @@ void updateFileModificationTimeIfNeeded(const String& path)
 #endif
 }
 
+static String& pathRegisteredAsUnsafeToMemoryMapForTesting()
+{
+    static NeverDestroyed<String> path;
+    return path.get();
+}
+
+void registerPathAsUnsafeToMemoryMapForTesting(const String& path)
+{
+    pathRegisteredAsUnsafeToMemoryMapForTesting() = path;
+}
+
+    
 bool isSafeToUseMemoryMapForPath(const String& path)
 {
+    if (path == pathRegisteredAsUnsafeToMemoryMapForTesting())
+        return false;
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     struct {
         uint32_t length;

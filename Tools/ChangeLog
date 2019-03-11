@@ -1,3 +1,16 @@
+2019-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add a WKContentRuleList variant that uses copied memory instead of mmap'd shared memory for class A containerized apps
+        https://bugs.webkit.org/show_bug.cgi?id=195511
+        <rdar://problem/44873269>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentExtensionStore.mm:
+        (-[TestSchemeHandlerSubresourceShouldBeBlocked webView:startURLSchemeTask:]):
+        (-[TestSchemeHandlerSubresourceShouldBeBlocked webView:stopURLSchemeTask:]):
+        (TEST_F):
+
 2019-03-10  Tim Horton  <timothy_horton@apple.com>
 
         Add SPI to retrieve the set of text inputs in a given rect, and later focus one

@@ -42,6 +42,11 @@ ContentRuleList::~ContentRuleList()
 {
 }
 
+bool ContentRuleList::usesCopiedMemory() const
+{
+    return m_compiledRuleList->usesCopiedMemory();
+}
+
 } // namespace API
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

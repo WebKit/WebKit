@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "SandboxUtilities.h"
+#include <WebCore/SharedBuffer.h>
 
 namespace API {
 
@@ -61,6 +62,15 @@ WTF::String ContentRuleListStore::defaultStorePath(bool legacyFilename)
         LOG_ERROR("Failed to create directory %@", contentRuleListStoreURL);
 
     return contentRuleListStoreURL.absoluteURL.path.fileSystemRepresentation;
+}
+
+RefPtr<WebCore::SharedBuffer> ContentRuleListStore::readContentsOfFile(const String& filePath)
+{
+    ASSERT(!isMainThread());
+    NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:filePath isDirectory:NO]];
+    if (!data)
+        return nullptr;
+    return WebCore::SharedBuffer::create(data);
 }
 
 } // namespace API

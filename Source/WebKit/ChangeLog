@@ -1,3 +1,64 @@
+2019-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add a WKContentRuleList variant that uses copied memory instead of mmap'd shared memory for class A containerized apps
+        https://bugs.webkit.org/show_bug.cgi?id=195511
+        <rdar://problem/44873269>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkContentRuleListManager.cpp:
+        (WebKit::NetworkContentRuleListManager::addContentRuleLists):
+        * NetworkProcess/NetworkContentRuleListManager.h:
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::pathRegisteredAsUnsafeToMemoryMapForTesting):
+        (WebKit::NetworkCache::registerPathAsUnsafeToMemoryMapForTesting):
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * Shared/WebCompiledContentRuleList.cpp:
+        (WebKit::WebCompiledContentRuleList::usesCopiedMemory const):
+        (WebKit::WebCompiledContentRuleList::conditionsApplyOnlyToDomain const):
+        (WebKit::WebCompiledContentRuleList::filtersWithoutConditionsBytecode const):
+        (WebKit::WebCompiledContentRuleList::filtersWithConditionsBytecode const):
+        (WebKit::WebCompiledContentRuleList::topURLFiltersBytecode const):
+        (WebKit::WebCompiledContentRuleList::actions const):
+        * Shared/WebCompiledContentRuleList.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::size const):
+        (WebKit::WebCompiledContentRuleListData::dataPointer const):
+        (WebKit::WebCompiledContentRuleListData::encode const):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        * Shared/WebCompiledContentRuleListData.h:
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        * UIProcess/API/APIContentRuleList.cpp:
+        (API::ContentRuleList::usesCopiedMemory const):
+        * UIProcess/API/APIContentRuleList.h:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::getData):
+        (API::decodeContentRuleListMetaData):
+        (API::ContentRuleListStore::readContentsOfFile):
+        (API::MappedOrCopiedData::dataPointer const):
+        (API::openAndMapOrCopyContentRuleList):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        (API::openAndMapContentRuleList): Deleted.
+        * UIProcess/API/APIContentRuleListStore.h:
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        (API::ContentRuleListStore::readContentsOfFile):
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore _registerPathAsUnsafeToMemoryMapForTesting:]):
+        * UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter usesCopiedMemory]):
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addContentRuleLists):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_hostFileDescriptor):
+
 2019-03-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         Optimizing loads when creating new pages
