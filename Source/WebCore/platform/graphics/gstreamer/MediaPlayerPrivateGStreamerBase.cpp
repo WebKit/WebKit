@@ -269,7 +269,9 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
+#if USE(GSTREAMER_GL)
     flushCurrentBuffer();
+#endif
 #if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
     downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).invalidateClient();
 #endif
