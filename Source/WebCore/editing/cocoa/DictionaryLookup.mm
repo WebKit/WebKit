@@ -68,6 +68,15 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 
 #endif // PLATFORM(IOSMAC)
 
+#if ENABLE(REVEAL)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Reveal)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RevealCore)
+SOFT_LINK_CLASS_OPTIONAL(Reveal, RVPresenter)
+SOFT_LINK_CLASS_OPTIONAL(Reveal, RVPresentingContext)
+SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVItem)
+SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
+#endif
+
 #if PLATFORM(MAC)
 
 @interface WebRevealHighlight <RVPresenterHighlightDelegate> : NSObject {
@@ -266,7 +275,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(co
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    if (!getRVItemClass())
+    if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
     
     auto selectedRange = selection.toNormalizedRange();
@@ -301,7 +310,7 @@ std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    if (!getRVItemClass())
+    if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
     
     auto* node = hitTestResult.innerNonSharedNode();
@@ -392,7 +401,7 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    if (!getRVItemClass())
+    if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass())
         return { nullptr, nil };
 
     // Don't do anything if there is no character at the point.
@@ -436,7 +445,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     
 #if PLATFORM(MAC)
     
-    if (!getRVItemClass() || !getRVPresenterClass())
+    if (!RevealLibrary() || !RevealCoreLibrary() || !getRVItemClass() || !getRVPresenterClass())
         return nil;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
