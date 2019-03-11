@@ -1,3 +1,39 @@
+2019-03-10  Yusuke Suzuki <utatane.tea@gmail.com> and Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] Align assumption in RunLoopWin to the other platform's RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=181151
+
+        Reviewed by Don Olmstead.
+
+        This patch fixes RunLoop in Windows to align it to the implementations in the other platforms
+        to use RunLoop more aggressively.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::Timer::Timer):
+        * wtf/win/MainThreadWin.cpp:
+        (initializeMainThreadPlatform): Call RunLoop::registerRunLoopMessageWindowClass.
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::wndProc):
+        (WTF::RunLoop::iterate):
+        (WTF::RunLoop::stop):
+        PostQuitMessage is only available in the RunLoop's thread. We should post a message and call
+        it inside this task.
+
+        (WTF::RunLoop::registerRunLoopMessageWindowClass):
+        Changed the return type from bool to void, and added RELEASE_ASSERT to check the return value of RegisterClass.
+
+        (WTF::RunLoop::~RunLoop):
+        When the RunLoop's thread is freed, its associated window is freed. We do not need to do here.
+
+        (WTF::RunLoop::TimerBase::timerFired):
+        (WTF::RunLoop::TimerBase::TimerBase):
+        (WTF::RunLoop::TimerBase::start):
+        (WTF::RunLoop::TimerBase::stop):
+        (WTF::RunLoop::TimerBase::isActive const):
+        (WTF::RunLoop::TimerBase::secondsUntilFire const):
+        (WTF::generateTimerID): Deleted.
+        We can use TimerBase's pointer as ID since it is uintptr_t.
+
 2019-03-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

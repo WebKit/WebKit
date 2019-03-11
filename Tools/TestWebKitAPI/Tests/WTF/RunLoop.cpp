@@ -27,6 +27,7 @@
 
 #include "Utilities.h"
 #include <wtf/RunLoop.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 
@@ -54,90 +55,69 @@ TEST(WTF_RunLoop, Deadlock)
     Util::run(&testFinished);
 }
 
-TEST(WTF_RunLoop, NestedRunLoop)
-{
-    RunLoop::initializeMainRunLoop();
+class DerivedOneShotTimer : public RunLoop::Timer<DerivedOneShotTimer> {
+public:
+    DerivedOneShotTimer(bool& testFinished)
+        : RunLoop::Timer<DerivedOneShotTimer>(RunLoop::current(), this, &DerivedOneShotTimer::fired)
+        , m_testFinished(testFinished)
+    {
+    }
 
-    bool testFinished = false;
-    RunLoop::current().dispatch([&] {
-        RunLoop::current().dispatch([&] {
-            testFinished = true;
-        });
-        Util::run(&testFinished);
-    });
+    void fired()
+    {
+        m_testFinished = true;
+        stop();
+    }
 
-    Util::run(&testFinished);
-}
+private:
+    bool& m_testFinished;
+};
+
 
 TEST(WTF_RunLoop, OneShotTimer)
 {
     RunLoop::initializeMainRunLoop();
 
     bool testFinished = false;
+    DerivedOneShotTimer timer(testFinished);
+    timer.startOneShot(100_ms);
+    Util::run(&testFinished);
+}
 
-    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
-    public:
-        DerivedTimer(bool& testFinished)
-            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
-            , m_testFinished(testFinished)
-        {
-        }
+class DerivedRepeatingTimer : public RunLoop::Timer<DerivedRepeatingTimer> {
+public:
+    DerivedRepeatingTimer(bool& testFinished)
+        : RunLoop::Timer<DerivedRepeatingTimer>(RunLoop::current(), this, &DerivedRepeatingTimer::fired)
+        , m_testFinished(testFinished)
+    {
+    }
 
-        void fired()
-        {
+    void fired()
+    {
+        if (++m_count == 10) {
             m_testFinished = true;
             stop();
         }
-
-    private:
-        bool& m_testFinished;
-    };
-
-    {
-        DerivedTimer timer(testFinished);
-        timer.startOneShot(100_ms);
-        Util::run(&testFinished);
     }
-}
+
+private:
+    unsigned m_count { 0 };
+    bool& m_testFinished;
+};
+
 
 TEST(WTF_RunLoop, RepeatingTimer)
 {
     RunLoop::initializeMainRunLoop();
 
     bool testFinished = false;
-
-    class DerivedTimer : public RunLoop::Timer<DerivedTimer> {
-    public:
-        DerivedTimer(bool& testFinished)
-            : RunLoop::Timer<DerivedTimer>(RunLoop::current(), this, &DerivedTimer::fired)
-            , m_testFinished(testFinished)
-        {
-        }
-
-        void fired()
-        {
-            if (++m_count == 10) {
-                m_testFinished = true;
-                stop();
-            }
-        }
-
-    private:
-        unsigned m_count { 0 };
-        bool& m_testFinished;
-    };
-
-    {
-        DerivedTimer timer(testFinished);
-        timer.startRepeating(10_ms);
-        Util::run(&testFinished);
-    }
+    DerivedRepeatingTimer timer(testFinished);
+    timer.startRepeating(10_ms);
+    Util::run(&testFinished);
 }
 
 TEST(WTF_RunLoop, ManyTimes)
 {
-    RunLoop::initializeMainRunLoop();
-
     class Counter {
     public:
         void run()
@@ -155,12 +135,13 @@ TEST(WTF_RunLoop, ManyTimes)
         unsigned m_count { 0 };
     };
 
-    Counter counter;
-
-    RunLoop::current().dispatch([&counter] {
-        counter.run();
-    });
-    RunLoop::run();
+    Thread::create("RunLoopManyTimes", [] {
+        Counter counter;
+        RunLoop::current().dispatch([&counter] {
+            counter.run();
+        });
+        RunLoop::run();
+    })->waitForCompletion();
 }
 
 } // namespace TestWebKitAPI

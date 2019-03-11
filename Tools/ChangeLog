@@ -1,3 +1,23 @@
+2019-03-10  Yusuke Suzuki <utatane.tea@gmail.com>
+
+        [WTF] Align assumption in RunLoopWin to the other platform's RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=181151
+
+        Reviewed by Don Olmstead.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWin.cmake:
+        Enable TestWTF RunLoop tests in all platforms.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::DerivedOneShotTimer::DerivedOneShotTimer):
+        (TestWebKitAPI::DerivedOneShotTimer::fired):
+        (TestWebKitAPI::TEST):
+        Only a few platforms support nested RunLoop.
+
+        (TestWebKitAPI::DerivedRepeatingTimer::DerivedRepeatingTimer):
+        (TestWebKitAPI::DerivedRepeatingTimer::fired):
+
 2019-03-10  David Quesada  <david_quesada@apple.com>
 
         ASSERT(m_downloads.isEmpty()) fails in DownloadProxyMap::~DownloadProxyMap()

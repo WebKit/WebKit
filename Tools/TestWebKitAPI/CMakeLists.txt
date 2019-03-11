@@ -153,6 +153,7 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RefCounter.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RefLogger.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/RefPtr.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/RunLoop.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SHA1.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/SaturatedArithmeticOperations.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Scope.cpp
@@ -186,7 +187,6 @@ set(TestWTF_SOURCES
 if (NOT WIN32)
     list(APPEND TestWTF_SOURCES
         ${TESTWEBKITAPI_DIR}/Tests/WTF/FileSystem.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WTF/RunLoop.cpp
     )
 endif ()
 

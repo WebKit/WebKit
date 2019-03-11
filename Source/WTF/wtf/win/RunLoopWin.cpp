@@ -56,7 +56,7 @@ LRESULT RunLoop::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         performWork();
         return 0;
     case WM_TIMER:
-        RunLoop::TimerBase::timerFired(this, wParam);
+        bitwise_cast<RunLoop::TimerBase*>(wParam)->timerFired();
         return 0;
     }
 
@@ -74,27 +74,36 @@ void RunLoop::run()
     }
 }
 
-void RunLoop::stop()
+void RunLoop::iterate()
 {
-    ::PostQuitMessage(0);
+    MSG message;
+    while (::PeekMessage(&message, 0, 0, 0, PM_REMOVE)) {
+        ::TranslateMessage(&message);
+        ::DispatchMessage(&message);
+    }
 }
 
-bool RunLoop::registerRunLoopMessageWindowClass()
+void RunLoop::stop()
 {
-    // FIXME: This really only needs to be called once.
+    // RunLoop::stop() can be called from threads unrelated to this RunLoop.
+    // We should post a message that call PostQuitMessage in RunLoop's thread.
+    dispatch([] {
+        ::PostQuitMessage(0);
+    });
+}
 
-    WNDCLASS windowClass { };
+void RunLoop::registerRunLoopMessageWindowClass()
+{
+    WNDCLASS windowClass = { };
     windowClass.lpfnWndProc     = RunLoop::RunLoopWndProc;
     windowClass.cbWndExtra      = sizeof(RunLoop*);
     windowClass.lpszClassName   = kRunLoopMessageWindowClassName;
-
-    return !!::RegisterClass(&windowClass);
+    bool result = ::RegisterClass(&windowClass);
+    RELEASE_ASSERT(result);
 }
 
 RunLoop::RunLoop()
 {
-    registerRunLoopMessageWindowClass();
-
     m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, 0, 0,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, 0, 0, this);
     ASSERT(::IsWindow(m_runLoopMessageWindow));
@@ -102,7 +111,6 @@ RunLoop::RunLoop()
 
 RunLoop::~RunLoop()
 {
-    // FIXME: Tear down the work item queue here.
 }
 
 void RunLoop::wakeUp()
@@ -114,39 +122,26 @@ void RunLoop::wakeUp()
 
 // RunLoop::Timer
 
-void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
+void RunLoop::TimerBase::timerFired()
 {
-    TimerBase* timer = nullptr;
     {
-        LockHolder locker(runLoop->m_activeTimersLock);
-        TimerMap::iterator it = runLoop->m_activeTimers.find(ID);
-        if (it == runLoop->m_activeTimers.end()) {
-            // The timer must have been stopped after the WM_TIMER message was posted to the message queue.
+        LockHolder locker(m_runLoop->m_loopLock);
+
+        if (!m_isActive)
             return;
-        }
 
-        timer = it->value;
-
-        if (!timer->m_isRepeating) {
-            runLoop->m_activeTimers.remove(it);
-            ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
+        if (!m_isRepeating) {
+            m_isActive = false;
+            ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
         } else
-            timer->m_nextFireDate = MonotonicTime::now() + timer->m_interval;
+            m_nextFireDate = MonotonicTime::now() + m_interval;
     }
 
-    timer->fired();
-}
-
-static uint64_t generateTimerID()
-{
-    static uint64_t uniqueTimerID = 1;
-    return uniqueTimerID++;
+    fired();
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
-    , m_ID(generateTimerID())
-    , m_isRepeating(false)
 {
 }
 
@@ -157,43 +152,41 @@ RunLoop::TimerBase::~TimerBase()
 
 void RunLoop::TimerBase::start(Seconds nextFireInterval, bool repeat)
 {
-    LockHolder locker(m_runLoop->m_activeTimersLock);
+    LockHolder locker(m_runLoop->m_loopLock);
     m_isRepeating = repeat;
-    m_runLoop->m_activeTimers.set(m_ID, this);
+    m_isActive = true;
     m_interval = nextFireInterval;
     m_nextFireDate = MonotonicTime::now() + m_interval;
-    ::SetTimer(m_runLoop->m_runLoopMessageWindow, m_ID, nextFireInterval.millisecondsAs<unsigned>(), 0);
+    ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), nextFireInterval.millisecondsAs<UINT>(), 0);
 }
 
 void RunLoop::TimerBase::stop()
 {
-    LockHolder locker(m_runLoop->m_activeTimersLock);
-    TimerMap::iterator it = m_runLoop->m_activeTimers.find(m_ID);
-    if (it == m_runLoop->m_activeTimers.end())
+    LockHolder locker(m_runLoop->m_loopLock);
+    if (!isActive(locker))
         return;
 
-    m_runLoop->m_activeTimers.remove(it);
-    ::KillTimer(m_runLoop->m_runLoopMessageWindow, m_ID);
+    m_isActive = false;
+    ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
 }
 
 bool RunLoop::TimerBase::isActive(const AbstractLocker&) const
 {
-    return m_runLoop->m_activeTimers.contains(m_ID);
+    return m_isActive;
 }
 
 bool RunLoop::TimerBase::isActive() const
 {
-    LockHolder locker(m_runLoop->m_activeTimersLock);
+    LockHolder locker(m_runLoop->m_loopLock);
     return isActive(locker);
 }
 
 Seconds RunLoop::TimerBase::secondsUntilFire() const
 {
-    LockHolder locker(m_runLoop->m_activeTimersLock);
+    LockHolder locker(m_runLoop->m_loopLock);
     if (isActive(locker))
         return std::max<Seconds>(m_nextFireDate - MonotonicTime::now(), 0_s);
     return 0_s;
 }
-
 
 } // namespace WTF

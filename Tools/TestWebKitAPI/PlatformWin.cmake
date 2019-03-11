@@ -107,6 +107,7 @@ endif ()
 add_library(TestWTFLib SHARED
     ${test_main_SOURCES}
     ${TestWTF_SOURCES}
+    ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
 )
 set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTFLib")
 target_link_libraries(TestWTFLib ${test_wtf_LIBRARIES})
