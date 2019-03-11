@@ -1,3 +1,43 @@
+2019-03-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][v4l2] Synchronous video texture flushing support
+        https://bugs.webkit.org/show_bug.cgi?id=195453
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The v4l2 video decoder currently requires that downstream users of
+        the graphics resources complete any pending draw call and release
+        resources before returning from the DRAIN query.
+
+        To accomplish this the player monitors the pipeline and whenever a
+        v4l2 decoder is added, synchronous video texture flushing support
+        is enabled. Additionally and for all decoder configurations, a
+        flush is performed before disposing of the player.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbinDeepElementAddedCallback):
+        Monitor elements added to the decodebin bin.
+        (WebCore::MediaPlayerPrivateGStreamer::decodebinElementAdded): Set
+        a flag if a v4l2 decoder was added in decodebin.
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Connect
+        to the deep-element-added signal so as to monitor pipeline
+        topology updates.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        Flush video texture before disposing of the player.
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        Synchronously flush if the pipeline contains a v4l2 decoder.
+        (WebCore::MediaPlayerPrivateGStreamerBase::createGLAppSink): Monitor push events only.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::pushNextBuffer): New
+        boolean flag used mostly to trigger synchronous flush conditions.
+        (WebCore::TextureMapperPlatformLayerProxy::dropCurrentBufferWhilePreservingTexture):
+        Optionally drop the current buffer in a synchronous manner. By
+        default the method keeps operating asynchronously.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+
 2019-03-11  Antti Koivisto  <antti@apple.com>
 
         Rename contentOffsetInCompostingLayer to contentOffsetInCompositingLayer

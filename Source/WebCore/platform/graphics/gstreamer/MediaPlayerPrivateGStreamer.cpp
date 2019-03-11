@@ -2445,6 +2445,15 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
 
+    g_signal_connect(GST_BIN_CAST(m_pipeline.get()), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin* subBin, GstElement* element, MediaPlayerPrivateGStreamer* player) {
+        GUniquePtr<char> binName(gst_element_get_name(GST_ELEMENT_CAST(subBin)));
+        if (!g_str_has_prefix(binName.get(), "decodebin"))
+            return;
+
+        GUniquePtr<char> elementName(gst_element_get_name(element));
+        player->m_isVideoDecoderVideo4Linux = g_str_has_prefix(elementName.get(), "v4l2");
+    }), this);
+
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(sourceSetupCallback), this);
     if (m_isLegacyPlaybin) {
         g_signal_connect_swapped(m_pipeline.get(), "video-changed", G_CALLBACK(videoChangedCallback), this);

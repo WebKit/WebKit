@@ -282,6 +282,8 @@ protected:
     HashSet<uint32_t> m_handledProtectionEvents;
     bool m_waitingForKey { false };
 #endif
+
+    mutable bool m_isVideoDecoderVideo4Linux { false };
 };
 
 }
