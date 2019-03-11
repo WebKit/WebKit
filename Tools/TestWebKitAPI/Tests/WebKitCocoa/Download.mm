@@ -42,6 +42,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
 static bool isDone;
@@ -733,6 +734,46 @@ TEST(_WKDownload, StartDownloadWithDownloadAttribute)
     [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
     [delegate waitForDownloadDidStart];
     EXPECT_FALSE([delegate didStartProvisionalNavigation]);
+}
+
+static bool didDownloadStart;
+
+@interface WaitUntilDownloadCanceledDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation WaitUntilDownloadCanceledDelegate
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    didDownloadStart = true;
+}
+
+- (void)_downloadDidCancel:(_WKDownload *)download
+{
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, CrashAfterDownloadDidFinishWhenDownloadProxyHoldsTheLastRefOnWebProcessPool)
+{
+    auto navigationDelegate = adoptNS([[DownloadNavigationDelegate alloc] init]);
+    auto downloadDelegate = adoptNS([[WaitUntilDownloadCanceledDelegate alloc] init]);
+    WeakObjCPtr<WKProcessPool> processPool;
+    @autoreleasepool {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        processPool = [webView configuration].processPool;
+        [webView configuration].processPool._downloadDelegate = downloadDelegate.get();
+        [webView loadRequest:[NSURLRequest requestWithURL:sourceURL]];
+
+        didDownloadStart = false;
+        TestWebKitAPI::Util::run(&didDownloadStart);
+    }
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_NULL(processPool.get());
 }
 
 #endif

@@ -1,3 +1,17 @@
+2019-03-10  David Quesada  <david_quesada@apple.com>
+
+        ASSERT(m_downloads.isEmpty()) fails in DownloadProxyMap::~DownloadProxyMap()
+        https://bugs.webkit.org/show_bug.cgi?id=152480
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::downloadFinished):
+            If the DownloadProxy is holding the last reference to the process pool, then
+            invalidating the proxy will cause the process pool, the network process proxy,
+            and this DownloadProxyMap to deallocate. Ensure that doesn't happen until this
+            method has done everything it wants to do to clean up.
+
 2019-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix some misleading function and variable names in WKContentViewInteraction.mm

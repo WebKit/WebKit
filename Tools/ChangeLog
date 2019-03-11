@@ -1,3 +1,25 @@
+2019-03-10  David Quesada  <david_quesada@apple.com>
+
+        ASSERT(m_downloads.isEmpty()) fails in DownloadProxyMap::~DownloadProxyMap()
+        https://bugs.webkit.org/show_bug.cgi?id=152480
+
+        Reviewed by Chris Dumez.
+
+        Add a unit test based on Daniel Bates's test case that starts a download, ensures
+        there are no additional references to the process pool besides the one held by
+        the download, waits for the download to finish (in the sense that the
+        DownloadProxyMap is done tracking the DownloadProxy), and doesn't crash. For good
+        measure, also check that the process pool has been deallocated at the end of the
+        test. The test wouldn't be meaningful if the process pool were still alive.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[WaitUntilDownloadCanceledDelegate _downloadDidStart:]):
+        (-[WaitUntilDownloadCanceledDelegate _downloadDidCancel:]):
+            The download will be canceled because the delegate does not implement the
+            method to decide the download's destination, so this is where we know the
+            DownloadProxyMap is done with the DownloadProxy.
+        (TEST):
+
 2019-03-08  Chris Dumez  <cdumez@apple.com>
 
         Add support for Device Orientation / Motion permission API

@@ -71,6 +71,9 @@ void DownloadProxyMap::downloadFinished(DownloadProxy* downloadProxy)
 {
     auto downloadID = downloadProxy->downloadID();
 
+    // The DownloadProxy may be holding the last reference to the process pool.
+    auto protectedProcessPool = makeRefPtr(m_process->processPool());
+
     ASSERT(m_downloads.contains(downloadID));
 
     m_process->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), downloadID.downloadID());
