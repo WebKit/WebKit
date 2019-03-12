@@ -1,5 +1,27 @@
 2019-03-12  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [Media][MSE] Don't emit timeUpdate after play() if currentTime hasn't changed
+        https://bugs.webkit.org/show_bug.cgi?id=195454
+
+        Reviewed by Jer Noble.
+
+        This change fixes YouTube 2019 MSE Conformance Tests "26. SFRPausedAccuracy"
+        and "27. HFRPausedAccuracy".
+
+        The first timeUpdate event after play() is omitted, because currentTime
+        doesn't actually change in that scenario.
+
+        Tests 26 and 27 measure the time drift (real time vs. media time) on playback
+        and start counting since the first timeUpdate event. In WebKit, that event
+        happens at play(), before the pipeline has completed the transition to playing.
+        Therefore, the real time inherits this startup delay and the test thinks that
+        the player has drifted.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playInternal): Don't emit a timeUpdated event unless currentTime has changed.
+
+2019-03-12  Enrique Ocaña González  <eocanha@igalia.com>
+
         [EME][GStreamer] Speculative build fix
         https://bugs.webkit.org/show_bug.cgi?id=195614
 

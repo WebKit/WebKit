@@ -5,6 +5,7 @@
         <script src=video-test.js></script>
         <script>
             var timeUpdateWasCalled = false;
+            var startTime = NaN;
             function start()
             {
                 findMediaElement();
@@ -17,17 +18,22 @@
             function canPlayThrough()
             {
                 video.playbackRate = 0;
+                startTime = video.currentTime;
+                setTimeout("checkplayback()", 250);
                 video.play();
             }
 
             function timeupdate()
             {
+                if (video.currentTime != startTime)
+                    failTest("Time was updated, but should not change.");
+            }
+
+            function checkplayback()
+            {
                 testExpected('video.currentTime', 0);
                 testExpected('video.paused', false);
-                if(timeUpdateWasCalled)
-                    failTest("Time was updated, but should not change.");
-                timeUpdateWasCalled = true;
-                setTimeout("endTest()", 150);
+                endTest();
             }
         </script>
     </head>

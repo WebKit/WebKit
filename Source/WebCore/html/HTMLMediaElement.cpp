@@ -3587,7 +3587,12 @@ void HTMLMediaElement::playInternal()
     if (m_paused) {
         m_paused = false;
         invalidateCachedTime();
-        m_playbackStartedTime = currentMediaTime().toDouble();
+
+        // This avoids the first timeUpdated event after playback starts, when currentTime is still
+        // the same as it was when the video was paused (and the time hasn't changed yet).
+        m_lastTimeUpdateEventMovieTime = currentMediaTime();
+        m_playbackStartedTime = m_lastTimeUpdateEventMovieTime.toDouble();
+
         scheduleEvent(eventNames().playEvent);
 
 #if ENABLE(MEDIA_SESSION)

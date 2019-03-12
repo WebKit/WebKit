@@ -1,12 +1,11 @@
 
-Test that calling play() and pause() triggers async play, timeupdate and pause events.
+Test that calling play() and pause() triggers async play, no timeupdate event and pause event.
 
 RUN(handlePromise(video.play()))
 RUN(video.pause())
 SCRIPT DONE
 EVENT(play)
 EVENT(waiting)
-EVENT(timeupdate)
 EVENT(pause)
 EXPECTED (video.paused == 'true') OK
 END OF TEST

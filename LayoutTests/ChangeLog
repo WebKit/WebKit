@@ -1,3 +1,23 @@
+2019-03-12  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [Media][MSE] Don't emit timeUpdate after play() if currentTime hasn't changed
+        https://bugs.webkit.org/show_bug.cgi?id=195454
+
+        Reviewed by Jer Noble.
+
+        This patch removes expectations for the first timeUpdate event after
+        play(), because currentTime doesn't actually change in that scenario
+        and the spec[1] states that a timeupdate event is fired if "The current
+        playback position changed as part of normal playback or in an
+        especially interesting way, for example discontinuously."
+
+        [1] https://www.w3.org/TR/html52/semantics-embedded-content.html#eventdef-media-timeupdate
+
+        * media/video-paused-0-rate.html: Don't require the timeUpdate event when currentTime=0 to pass the test.
+        * media/video-play-pause-events-expected.txt: Ditto, and changed test description.
+        * media/video-play-pause-events.html: Changed test description to reflect the new behaviour.
+        * media/video-play-pause-exception-expected.txt: Don't require the timeUpdate event.
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242763.
