@@ -1,3 +1,12 @@
+2019-03-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] change max_builds for local-worker to 1
+        https://bugs.webkit.org/show_bug.cgi?id=195568
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2019-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build

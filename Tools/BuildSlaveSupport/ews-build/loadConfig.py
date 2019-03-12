@@ -50,7 +50,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
     if use_localhost_worker:
-        c['workers'].append(Worker('local-worker', 'password', max_builds=2))
+        c['workers'].append(Worker('local-worker', 'password', max_builds=1))
 
     c['builders'] = []
     for builder in config['builders']:
