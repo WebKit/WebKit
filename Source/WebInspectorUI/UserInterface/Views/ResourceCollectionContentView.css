@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.collection {
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: auto !important;
-}
-
-.content-view.collection > .content-view {
-    flex-grow: 1;
-}
-
-.content-view.collection > .content-view[hidden] {
-    display: none;
+.resource-collection-image-type-scope-bar.default-item-selected {
+    --scope-bar-text-color-override: var(--text-color);
+    --scope-bar-background-color-override: transparent;
+    --scope-bar-border-color-override: transparent;
 }

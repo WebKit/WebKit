@@ -1,3 +1,37 @@
+2019-03-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: allow image collections to be filtered by type
+        https://bugs.webkit.org/show_bug.cgi?id=195630
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView):
+        (WI.ResourceCollectionContentView.prototype.get navigationItems): Added.
+        (WI.ResourceCollectionContentView.prototype.contentViewAdded):
+        (WI.ResourceCollectionContentView.prototype.contentViewRemoved): Added.
+        (WI.ResourceCollectionContentView.prototype._updateImageTypeScopeBar): Added.
+        (WI.ResourceCollectionContentView.prototype._handleImageTypeSelectionChanged): Added.
+        * UserInterface/Views/ResourceCollectionContentView.css: Asdded.
+        (.resource-collection-image-type-scope-bar.default-item-selected):
+
+        * UserInterface/Views/CollectionContentView.css:
+        (.content-view.collection > .content-view[hidden]): Added.
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WI.ScopeBarItem.prototype.set hidden):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WI.MultipleScopeBarItem.prototype.set scopeBarItems):
+        (WI.MultipleScopeBarItem.prototype.set selectedScopeBarItem):
+        (WI.MultipleScopeBarItem.prototype.get _visibleScopeBarItems): Added.
+        (WI.MultipleScopeBarItem.prototype._selectElementSelectionChanged):
+        (WI.MultipleScopeBarItem.prototype._handleItemHiddenChanged): Added.
+        Dispatch an event when an item is hidden so that any owner `WI.MultipleScopeBarItem` can
+        rerender it's <select> without that item.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+
 2019-03-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Keyboard shortcut for settings tab too greedy on non-US keyboards

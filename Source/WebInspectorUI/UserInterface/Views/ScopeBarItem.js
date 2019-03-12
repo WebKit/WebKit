@@ -101,6 +101,8 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
         this._hidden = flag;
 
         this._element.classList.toggle("hidden", flag);
+
+        this.dispatchEventToListeners(WI.ScopeBarItem.Event.HiddenChanged);
     }
 
     // Private
@@ -116,5 +118,6 @@ WI.ScopeBarItem = class ScopeBarItem extends WI.Object
 };
 
 WI.ScopeBarItem.Event = {
-    SelectionChanged: "scope-bar-item-selection-did-change"
+    SelectionChanged: "scope-bar-item-selection-changed",
+    HiddenChanged: "scope-bar-item-hidden-changed",
 };
