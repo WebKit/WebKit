@@ -168,6 +168,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
 - (_WKElementAction *)_elementActionForDDAction:(DDAction *)action
 {
+#if PLATFORM(IOS)
     auto retainedSelf = retainPtr(self);
     _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
         retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
@@ -177,6 +178,9 @@ static LSAppLink *appLinkForURL(NSURL *url)
         return !action.hasUserInterface;
     };
     return elementAction;
+#else
+    return nil;
+#endif
 }
 
 static const CGFloat presentationElementRectPadding = 15;
