@@ -1,3 +1,9 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed speculative WPE build fix after r195586.
+
+        * platform/encryptedmedia/CDMInstance.h:
+
 2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove MediaWiki site specific quirks
