@@ -1,5 +1,17 @@
 2019-03-11  Per Arne Vollan  <pvollan@apple.com>
 
+        [macOS] Remove the Kerberos rules from the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=195464
+        <rdar://problem/35369230>
+
+        Reviewed by Brent Fulgham.
+
+        Kerberos auth is done in the UIProcess or NetworkProcess now.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2019-03-11  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Add entitlement to enable use of graphics endpoint with limited capabilities
         https://bugs.webkit.org/show_bug.cgi?id=195582
         <rdar://problem/36082379>

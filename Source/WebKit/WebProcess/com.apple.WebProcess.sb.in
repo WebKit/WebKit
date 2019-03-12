@@ -690,17 +690,6 @@
 (allow network-outbound
        (remote udp))
 #endif
-(allow user-preference-read
-    (preference-domain
-        "com.apple.Kerberos"
-        "com.apple.GSS"))
-
-(allow file-read*
-        (literal "/private/etc/krb5.conf")
-        (literal "/private/etc/services")
-        (literal "/private/etc/host")
-        (subpath "/Library/KerberosPlugins/GSSAPI")
-        (subpath "/Library/KerberosPlugins/KerberosFrameworkPlugins"))
 #endif
 
 (if (defined? 'vnode-type)
